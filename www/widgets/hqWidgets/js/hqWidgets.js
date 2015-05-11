@@ -464,58 +464,59 @@
 // Add words for bars
 if (vis.editMode) {
     $.extend(true, systemDictionary, {
-        "circleWidth":      {"en": "Ñircle width",      "de": "Kreisbreite",            "ru": "Øèðèíà äóãè"},
-        "showValue":        {"en": "Show value",        "de": "Wert anzeigen",          "ru": "Ïîêàçàòü çíà÷åíèå"},
-        "alwaysShow":       {"en": "Always show circle", "de": "Kreis immer zeigen",    "ru": "Ïîêàçûâàòü êðóã âñåãäà"},
-        "iconName":         {"en": "Icon",              "de": "Kleinbild",              "ru": "Ìèíèàòþðà"},
-        "iconOn":           {"en": "Active icon",       "de": "Aktivbild",              "ru": "Àêòèâíàÿ ìèíèàòþðà"},
-        "btIconWidth":      {"en": "Icon width",        "de": "Bildbreite",             "ru": "Øèðèíà ìèíèàòþðû"},
-        "offsetAuto":       {"en": "Auto positioning",  "de": "Positionieren(Auto)",    "ru": "Àâòîìàòè÷åñêîå ïîçèöèîíèðîâàíèå"},
-        "leftOffset":       {"en": "Left offset",       "de": "Offset links",           "ru": "Ñäâèã ñëåâà"},
-        "topOffset":        {"en": "Top offset",        "de": "Offset von Oben",        "ru": "Ñäâèã ñâåðõó"},
-        "group_leftRight":  {"en": "Descriptions",      "de": "Beschreibungen",         "ru": "Ïîäïèñè"},
-        "hoursLastAction":  {"en": "Hide last action after(hrs)", "de": "Ausblenden letze Anderungszeit nach(Std)", "ru": "Ñêðûòü ïîñëåäíåå èçìåíåíèå(÷àñîâ)"},
-        "timeAsInterval":   {"en": "Time as interval",  "de": "Zeit als Intervall",     "ru": "Âðåìÿ, êàê èíòåðâàë"},
-        "descriptionLeft":  {"en": "Description (left)", "de": "Beschreibung (links)",  "ru": "Ïîäïèñü (ñëåâà)"},
-        "infoLeftFontSize": {"en": "Left font size",    "de": "Schriftgrosse links",    "ru": "Ðàçìåð øðèôòà ñëåâà"},
-        "infoRight":        {"en": "Description (right)", "de": "Beschreibung (rechts)", "ru": "Ïîäïèñü (ñïðàâà)"},
-        "infoFontRightSize": {"en": "Right font size",  "de": "Schriftgrosse rechts",   "ru": "Ðàçìåð øðèôòà ñïðàâà"},
-        "group_styles":     {"en": "Styles",            "de": "Stil",                   "ru": "Ñòèëè"},
-        "styleNormal":      {"en": "Normal",            "de": "Normal",                 "ru": "Íîðìàëüíûé"},
-        "styleActive":      {"en": "Active",            "de": "Aktiv",                 "ru": "Àêòèâíûé"},
-        "usejQueryStyle":   {"en": "Use jQuery Styles", "de": "jQuery Stil anwenden",   "ru": "Ïðèìåíèòü jQuery ñòèëè"},
-        "changeEffect":     {"en": "Change effect",     "de": "Anderungseffekt",        "ru": "Ýôôåêò ïðè èçìåíåíèè"},
-        "waveColor":        {"en": "Wave color",        "de": "Wellenfarbe",            "ru": "Öâåò âîëí"},
-        "testActive":       {"en": "Test",              "de": "Test",                   "ru": "Òåñò"},
-        "oid-battery":      {"en": "Battery object ID", "de": "Battery ObjektID",       "ru": "ID áàòàðåéíîãî èíäèêàòîðà"},
-        "oid-signal":       {"en": "Signal object ID",  "de": "Signal ObjektID",        "ru": "ID êà÷åñòâà ñèãíàëà"},
-        "group_value":      {"en": "Value",             "de": "Wert",                   "ru": "Çíà÷åíèå"},
-        "unit":             {"en": "Unit",              "de": "Einheit",                "ru": "Åäèíèöû"},
-        "readOnly":         {"en": "Read only",         "de": "Nur lesend",             "ru": "Íå èçìåíÿòü"},
-        "group_center":     {"en": "Center",            "de": "Zentrum",                "ru": "Öåíòð"},
-        "caption":          {"en": "Caption",           "de": "Beschriftung",           "ru": "Ïîäïèñü"},
-        "hideNumber":       {"en": "Hide number",       "de": "Nummer ausblenden",      "ru": "Ñêðûòü ÷èñëî"},
-        "group_arc":        {"en": "Arc",               "de": "Bogen",                  "ru": "Äóãà"},
-        "angleOffset":      {"en": "Angle offset",      "de": "Winkeloffset",           "ru": "Ñäâèã äóãè"},
-        "angleArc":         {"en": "Angle arc",         "de": "Bogenwinkel",            "ru": "Óãîë äóãè"},
-        "displayPrevious":  {"en": "Display previous",  "de": "Letztes Wert zeigen",    "ru": "Ïîêàçûâàòü ïðåäûäóùåå çíà÷åíèå"},
-        "cursor":           {"en": "Cursor",            "de": "Griff",                  "ru": "Ðó÷êà"},
-        "thickness":        {"en": "Thickness",         "de": "Dicke",                  "ru": "Òîëùèíà"},
-        "bgcolor":          {"en": "Background color",  "de": "Hintergrundfarbe",       "ru": "Öâåò ôîíà"},
-        "linecap":          {"en": "Line cap",          "de": "Linienende",             "ru": "Îêðóãëîå îêîí÷àíèå"},
-        "anticlockwise":    {"en": "Anticlockwise",     "de": "Gegenuhrzeigersinn",     "ru": "Ïðîòèâ ÷àñîâîé ñòðåëêè"}
+        "circleWidth":      {"en": "Ð¡ircle width",      "de": "Kreisbreite",            "ru": "Ð¨Ð¸Ñ€Ð¸Ð½Ð° Ð´ÑƒÐ³Ð¸"},
+        "showValue":        {"en": "Show value",        "de": "Wert anzeigen",          "ru": "ÐŸÐ¾ÐºÐ°Ð·Ð°Ñ‚ÑŒ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ"},
+        "alwaysShow":       {"en": "Always show circle", "de": "Kreis immer zeigen",    "ru": "ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ ÐºÑ€ÑƒÐ³ Ð²ÑÐµÐ³Ð´Ð°"},
+        "iconName":         {"en": "Icon",              "de": "Kleinbild",              "ru": "ÐœÐ¸Ð½Ð¸Ð°Ñ‚ÑŽÑ€Ð°"},
+        "iconOn":           {"en": "Active icon",       "de": "Aktivbild",              "ru": "ÐÐºÑ‚Ð¸Ð²Ð½Ð°Ñ Ð¼Ð¸Ð½Ð¸Ð°Ñ‚ÑŽÑ€Ð°"},
+        "btIconWidth":      {"en": "Icon width",        "de": "Bildbreite",             "ru": "Ð¨Ð¸Ñ€Ð¸Ð½Ð° Ð¼Ð¸Ð½Ð¸Ð°Ñ‚ÑŽÑ€Ñ‹"},
+        "offsetAuto":       {"en": "Auto positioning",  "de": "Positionieren(Auto)",    "ru": "ÐÐ²Ñ‚Ð¾Ð¼Ð°Ñ‚Ð¸Ñ‡ÐµÑÐºÐ¾Ðµ Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ð¾Ð½Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð¸Ðµ"},
+        "leftOffset":       {"en": "Left offset",       "de": "Offset links",           "ru": "Ð¡Ð´Ð²Ð¸Ð³ ÑÐ»ÐµÐ²Ð°"},
+        "topOffset":        {"en": "Top offset",        "de": "Offset von Oben",        "ru": "Ð¡Ð´Ð²Ð¸Ð³ ÑÐ²ÐµÑ€Ñ…Ñƒ"},
+        "group_leftRight":  {"en": "Descriptions",      "de": "Beschreibungen",         "ru": "ÐŸÐ¾Ð´Ð¿Ð¸ÑÐ¸"},
+        "hoursLastAction":  {"en": "Hide last action after(hrs)", "de": "Ausblenden letze Anderungszeit nach(Std)", "ru": "Ð¡ÐºÑ€Ñ‹Ñ‚ÑŒ Ð¿Ð¾ÑÐ»ÐµÐ´Ð½ÐµÐµ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ðµ(Ñ‡Ð°ÑÐ¾Ð²)"},
+        "timeAsInterval":   {"en": "Time as interval",  "de": "Zeit als Intervall",     "ru": "Ð’Ñ€ÐµÐ¼Ñ, ÐºÐ°Ðº Ð¸Ð½Ñ‚ÐµÑ€Ð²Ð°Ð»"},
+        "descriptionLeft":  {"en": "Description (left)", "de": "Beschreibung (links)",  "ru": "ÐŸÐ¾Ð´Ð¿Ð¸ÑÑŒ (ÑÐ»ÐµÐ²Ð°)"},
+        "infoLeftFontSize": {"en": "Left font size",    "de": "Schriftgrosse links",    "ru": "Ð Ð°Ð·Ð¼ÐµÑ€ ÑˆÑ€Ð¸Ñ„Ñ‚Ð° ÑÐ»ÐµÐ²Ð°"},
+        "infoRight":        {"en": "Description (right)", "de": "Beschreibung (rechts)", "ru": "ÐŸÐ¾Ð´Ð¿Ð¸ÑÑŒ (ÑÐ¿Ñ€Ð°Ð²Ð°)"},
+        "infoFontRightSize": {"en": "Right font size",  "de": "Schriftgrosse rechts",   "ru": "Ð Ð°Ð·Ð¼ÐµÑ€ ÑˆÑ€Ð¸Ñ„Ñ‚Ð° ÑÐ¿Ñ€Ð°Ð²Ð°"},
+        "group_styles":     {"en": "Styles",            "de": "Stil",                   "ru": "Ð¡Ñ‚Ð¸Ð»Ð¸"},
+        "styleNormal":      {"en": "Normal",            "de": "Normal",                 "ru": "ÐÐ¾Ñ€Ð¼Ð°Ð»ÑŒÐ½Ñ‹Ð¹"},
+        "styleActive":      {"en": "Active",            "de": "Aktiv",                 "ru": "ÐÐºÑ‚Ð¸Ð²Ð½Ñ‹Ð¹"},
+        "usejQueryStyle":   {"en": "Use jQuery Styles", "de": "jQuery Stil anwenden",   "ru": "ÐŸÑ€Ð¸Ð¼ÐµÐ½Ð¸Ñ‚ÑŒ jQuery ÑÑ‚Ð¸Ð»Ð¸"},
+        "changeEffect":     {"en": "Change effect",     "de": "Anderungseffekt",        "ru": "Ð­Ñ„Ñ„ÐµÐºÑ‚ Ð¿Ñ€Ð¸ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ð¸"},
+        "waveColor":        {"en": "Wave color",        "de": "Wellenfarbe",            "ru": "Ð¦Ð²ÐµÑ‚ Ð²Ð¾Ð»Ð½"},
+        "testActive":       {"en": "Test",              "de": "Test",                   "ru": "Ð¢ÐµÑÑ‚"},
+        "oid-battery":      {"en": "Battery object ID", "de": "Battery ObjektID",       "ru": "ID Ð±Ð°Ñ‚Ð°Ñ€ÐµÐ¹Ð½Ð¾Ð³Ð¾ Ð¸Ð½Ð´Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð°"},
+        "oid-signal":       {"en": "Signal object ID",  "de": "Signal ObjektID",        "ru": "ID ÐºÐ°Ñ‡ÐµÑÑ‚Ð²Ð° ÑÐ¸Ð³Ð½Ð°Ð»Ð°"},
+        "group_value":      {"en": "Value",             "de": "Wert",                   "ru": "Ð—Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ"},
+        "unit":             {"en": "Unit",              "de": "Einheit",                "ru": "Ð•Ð´Ð¸Ð½Ð¸Ñ†Ñ‹"},
+        "readOnly":         {"en": "Read only",         "de": "Nur lesend",             "ru": "ÐÐµ Ð¸Ð·Ð¼ÐµÐ½ÑÑ‚ÑŒ"},
+        "group_center":     {"en": "Center",            "de": "Zentrum",                "ru": "Ð¦ÐµÐ½Ñ‚Ñ€"},
+        "caption":          {"en": "Caption",           "de": "Beschriftung",           "ru": "ÐŸÐ¾Ð´Ð¿Ð¸ÑÑŒ"},
+        "hideNumber":       {"en": "Hide number",       "de": "Nummer ausblenden",      "ru": "Ð¡ÐºÑ€Ñ‹Ñ‚ÑŒ Ñ‡Ð¸ÑÐ»Ð¾"},
+        "group_arc":        {"en": "Arc",               "de": "Bogen",                  "ru": "Ð”ÑƒÐ³Ð°"},
+        "angleOffset":      {"en": "Angle offset",      "de": "Winkeloffset",           "ru": "Ð¡Ð´Ð²Ð¸Ð³ Ð´ÑƒÐ³Ð¸"},
+        "angleArc":         {"en": "Angle arc",         "de": "Bogenwinkel",            "ru": "Ð£Ð³Ð¾Ð» Ð´ÑƒÐ³Ð¸"},
+        "displayPrevious":  {"en": "Display previous",  "de": "Letztes Wert zeigen",    "ru": "ÐŸÐ¾ÐºÐ°Ð·Ñ‹Ð²Ð°Ñ‚ÑŒ Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰ÐµÐµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ"},
+        "cursor":           {"en": "Cursor",            "de": "Griff",                  "ru": "Ð ÑƒÑ‡ÐºÐ°"},
+        "thickness":        {"en": "Thickness",         "de": "Dicke",                  "ru": "Ð¢Ð¾Ð»Ñ‰Ð¸Ð½Ð°"},
+        "bgcolor":          {"en": "Background color",  "de": "Hintergrundfarbe",       "ru": "Ð¦Ð²ÐµÑ‚ Ñ„Ð¾Ð½Ð°"},
+        "linecap":          {"en": "Line cap",          "de": "Linienende",             "ru": "ÐžÐºÑ€ÑƒÐ³Ð»Ð¾Ðµ Ð¾ÐºÐ¾Ð½Ñ‡Ð°Ð½Ð¸Ðµ"},
+        "anticlockwise":    {"en": "Anticlockwise",     "de": "Gegenuhrzeigersinn",     "ru": "ÐŸÑ€Ð¾Ñ‚Ð¸Ð² Ñ‡Ð°ÑÐ¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€ÐµÐ»ÐºÐ¸"}
     });
 }
 
 $.extend(true, systemDictionary, {
-    "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;ìèí. íàçàä"},
+    "just&nbsp;now":  {"en": "just&nbsp;now", "de": "gerade&nbsp;jetzt", "ru": "Ñ‚Ð¾Ð»ÑŒÐºÐ¾&nbsp;Ñ‡Ñ‚Ð¾"},
+    "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;Ð¼Ð¸Ð½. Ð½Ð°Ð·Ð°Ð´"},
     "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
         "en": "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.",
         "de": "vor&nbsp;%s&nbsp;St.&nbsp;und&nbsp;%s&nbsp;Min.",
-        "ru": "%s&nbsp;÷àñîâ&nbsp;è&nbsp;%s&nbsp;ìèí. íàçàä"
+        "ru": "%s&nbsp;Ñ‡Ð°ÑÐ¾Ð²&nbsp;Ð¸&nbsp;%s&nbsp;Ð¼Ð¸Ð½. Ð½Ð°Ð·Ð°Ð´"
     },
-    "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "â÷åðà"},
-    "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;÷àñîâ íàçàä"}
+    "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "Ð²Ñ‡ÐµÑ€Ð°"},
+    "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;Ñ‡Ð°ÑÐ¾Ð² Ð½Ð°Ð·Ð°Ð´"}
 });
 // widget can has following parts:
 // left info (descriptionLeft)
@@ -550,6 +551,9 @@ vis.binds.hqWidgets = {
 
         if (hoursToShow && (seconds / 3600) > hoursToShow) return '';
 
+        if (seconds < 60) {
+            result = _('just&nbsp;now');
+        } else
         if (seconds <= 3600)
             result = _('for&nbsp;%s&nbsp;min.', Math.floor (seconds / 60));
         else
@@ -622,7 +626,7 @@ vis.binds.hqWidgets = {
 
         },
         // Calculate state of button
-        changeState: function ($div, isInit, isForce) {
+        changeState: function ($div, isInit, isForce, isOwn) {
             var data = $div.data('data');
 
             var value = (data.tempValue !== undefined) ? data.tempValue : data.value;
@@ -700,7 +704,7 @@ vis.binds.hqWidgets = {
             }
 
             // Show change effect
-            if (data.changeEffect && (!isInit || (vis.editMode && data.testActive))) {
+            if (data.changeEffect && ((!isInit && !isOwn) || (vis.editMode && data.testActive))) {
                 var $main = $div.find('.vis-hq-main');
                 $main.animateDiv(data.changeEffect, {color: data.waveColor});
             }
@@ -726,6 +730,7 @@ vis.binds.hqWidgets = {
                         (data.infoRight || '').replace(/\s/g, '&nbsp;').replace(/\\n/g, '<br>') + '</span>';
 
                     if (data.hoursLastAction) {
+                        if (data.infoRight || data.wType == 'number') text += '<br>';
                         text += '<span class="vis-hq-time"></span>';
                     }
 
@@ -792,7 +797,7 @@ vis.binds.hqWidgets = {
             }
 
             // action
-            if (!vis.editMode) {
+            if (1 || !vis.editMode) {
                 if (data.oid) {
 
                     $div.append('<div class="vis-hq-nodata"><span class="ui-icon ui-icon-cancel"></span></div>');
@@ -872,7 +877,7 @@ vis.binds.hqWidgets = {
                         data.ack   = false;
                         console.log('Set value: ' + data.value);
                         data.tempValue = undefined;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                         vis.setValue(data.oid, data.value);
                     },
                     changing: function (value) {
@@ -880,7 +885,7 @@ vis.binds.hqWidgets = {
                         if (data.digits !== null) data.tempValue = data.tempValue.toFixed(data.digits);
                         if (data.is_comma) data.tempValue = data.tempValue.toString().replace('.', ',');
                         data.tempValue = parseFloat(data.tempValue);
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                     },
                     click: function (val) {
                         val = data.value;
@@ -911,7 +916,7 @@ vis.binds.hqWidgets = {
                     $main.click(function () {
                         data.value = (data.state == 'normal') ? data.max : data.min;
                         data.ack   = false;
-                        vis.binds.hqWidgets.button.changeState($div);
+                        vis.binds.hqWidgets.button.changeState($div, false, false, true);
                         vis.setValue(data.oid, data.value);
                     });
                 }
@@ -988,11 +993,13 @@ vis.binds.hqWidgets = {
             var $scalaInput = $div.find('input');
 
             if (settings.oid) {
-                $scalaInput.val(vis.states[settings.oid + '.val']);
-                vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
-                    data.value = newVal;
-                    $scalaInput.val(data.value).trigger('change');
-                });
+                $scalaInput.val(vis.states.attr(settings.oid + '.val'));
+                if (1 || !vis.editMode) {
+                    vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
+                        data.value = newVal;
+                        $scalaInput.val(data.value).trigger('change');
+                    });
+                }
             } else {
                 $scalaInput.val(settings.min);
             }
@@ -1006,7 +1013,7 @@ vis.binds.hqWidgets = {
             $scalaInput.attr('data-angleArc',    data.angleArc);
             $scalaInput.attr('data-thickness',   data.thickness);
             $scalaInput.attr('data-linecap',     (settings.linecap === 'true' || settings.linecap === true) ? 'round' : 'butt');
-
+            $scalaInput.show();
             var $knobDiv = $scalaInput.knob({
                 width:   $div.width(),
                 release: function () {
