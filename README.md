@@ -11,6 +11,88 @@ WEB visualisation for ioBroker platform.
 
 [Online Demos](http://dashui.ccu.io)
 
+## Bindings of objects
+Normally most of widgets have ObjectID attribute. And this attribute can be bound with some value of object ID.
+But there is another option how to bind *any* attribute of widget to some ObjectID. 
+
+Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
+If you will use special format, you can even make some simple operations with it, e.g. multiplying or formatting.
+Patten has following format:
+
+```
+{objectID;operation1;operation2;...}
+```
+
+Following operations are supported:
+
+- * - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
+- + - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
+- - - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
+- / - dividing. Argument must be in brackets, like "/(0.5)". In this sample we dividing value by 0.5.
+- % - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
+- round - round the value.
+- round(N) - round the value with N places after point, e.g. 34.678;round(1) => 34.7
+- hex - convert value to hexadecimal value. All letters are lower cased. 
+- hex2 - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
+- HEX - same as hex, but upper cased.
+- HEX2 - same as hex2, but upper cased.
+- date - format date according to given format. Format is the same as in [ioBroker.javascript](https://github.com/ioBroker/ioBroker.javascript/blob/master/README.md#formatdate)
+- min(N) - if value is less than N, take the N, elsewise value
+- max(M) - if value is greater than M, take the M, elsewise value
+- sqrt - square root
+- pow(n) - power of N.
+- pow - power of 2.
+- floor - Math.floor
+- ceil - Math.ceil
+- random(R) - Math.random() * R, or just Math.random() if no argument
+
+You can use this pattern in any text, like
+
+```
+My calculations with {objectID1;operation1;operation2;...} are {objectID2;operation3;operation4;...}
+```
+
+or color calculations:
+
+```
+#{objectRed;/(100);*(255);HEX2}{objectGreen;HEX2}{objectBlue;HEX2}
+```
+
+To show timestamp of object write ".ts" or ".lc" (for last change) at the end of object id, e.g.:
+
+```
+Last change: {objectRed.lc;date(hh:mm)}
+```
+
+There is another possibility to write pattern:
+
+```
+Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(h*h + w*w))}
+```
+
+```{h:height;w:width;h*w}``` will be interpreted as function:
+
+```
+value = (function () {
+    var h = "10";
+    var w = "20";
+    return Math.max(20, Math.sqrt(h*h + w*w));
+})();
+```
+
+You can use *any* javascript functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
+
+Take care about types. All of them defined as strings. To be sure, that value will be treated as number use parseFloat function.
+
+```
+Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
+```
+
+## Filters
+To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
+ 
+Every widget has a field "filter". If you set it to some value, e.g. "light", so you can use other widget (bars - filters) to control which filter is actually active. 
+
 ## Control interface
 Vis creates 3 variables:
 
@@ -49,6 +131,29 @@ If user changes the view or at start the variables will be filled by vis with
 ### ???
 - (smiling_Jack) Bugfix View select tabs
 
+### 0.3.2 (2015-05-09)
+- (bluefox) fix errors in binding
+- (bluefox) start implement hqWidgets
+
+### 0.3.1 (2015-05-01)
+- (bluefox) support of binding with formula "{object;*(2);/(3)}"
+
+### 0.3.0 (2015-05-01)
+- (bluefox) enable binding of any attribute of widget to object
+- (bluefox) implement export/import of array of widgets (and not only whole views)
+- (bluefox) update jquery-ui
+- (bluefox) optimize styles of views
+
+### 0.2.15 (2015-04-26)
+- (bluefox) fix error with bars
+
+### 0.2.14 (2015-04-26)
+- (bluefox) Add BARS
+- (bluefox) Add "accordion" to properties of widget
+- (bluefox) Better import 
+- (bluefox) Fix error with lock-widget zindex and the Color Select Dialog and the Image Select Dialog
+- (bluefox) Switch Tab to widget, when widget is selected
+
 ### 0.2.13 (2015-04-20)
 - (smiling_Jack) Bugfix View Size
 - (smiling_Jack) Add "_project" view
@@ -58,8 +163,6 @@ If user changes the view or at start the variables will be filled by vis with
 - (smiling_Jack) some small Bugfix
 - (smiling_Jack) remove animation on add Widget by Drag&Drop
 - (smiling_Jack) fm_manager safety function vor sandbox
-
-
 
 ### 0.2.12 (2015-04-14)
 - (bluefox) fix jqui radio

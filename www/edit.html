@@ -2,14 +2,14 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.2.11 -->
+    <!-- ioBroker.vis Version 0.3.2 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
 		Before you start Chrome anew all other instances should be closed.
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
-    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="editorTheme">
+    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="commonTheme">
 
     <meta charset="utf-8"/>
 
@@ -33,7 +33,7 @@
 
 
     <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
-    <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-ui-1.11.4.full.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript" src="lib/js/selectID.js"></script>
     <script type="text/javascript" src="lib/js/socket.io.js"></script>
@@ -43,7 +43,7 @@
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="lib/js/dropzone.js"></script>
-    <script type="text/javascript" src="lib/js/canjs.2.1.3.min.js"></script>
+    <script type="text/javascript" src="lib/js/can.2.2.4.custom.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
@@ -57,7 +57,7 @@
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
 
     <script type="text/javascript" src="js/visLang.js"></script>
-    <script type="text/javascript" src="/_socket/info.js"></script>
+    <script type="text/javascript" src="_socket/info.js"></script>
     <script type="text/javascript" src="js/conn.js"></script>
     <script type="text/javascript" src="js/vis.js"></script>
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
@@ -65,10 +65,10 @@
     <script type="text/javascript" src="js/visEditExt.js"></script>
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
 
-    <!--- widgets -->
-    <script type="text/javascript" src="widgets/bars/js/bars.js"></script>
-    <script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
-    <!--- widgetsStop -->
+    <!-- widgets ->
+    <script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
+    <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
+    <-- widgetsStop -->
 </head>
 <body >
 
@@ -116,14 +116,13 @@
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
-<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+<div style="display: none;" id="dialog_export_view" title="export" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
     <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
               id="textarea_import_view"></textarea>
-    <br/>
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
 </div>
@@ -211,17 +210,12 @@
                             <li class="ui-state-default menu-item" data-theme="blitzer">
                                 <a data-info="blitzer">blitzer</a>
                             </li>
-                            <li class="ui-state-default menu-item" data-theme="swanky-purse">
-                                <a data-info="swanky-purse">Swanky Purse</a>
-                            </li>
                             <li class="ui-state-default menu-item" data-theme="black-tie">
                                 <a data-info="black-tie">BlackTie</a>
                             </li>
                             <li class="ui-state-default menu-item" data-theme="cupertino">
                                 <a data-info="cupertino">Cupertino</a>
                             </li>
-                            <!--<li class="ui-state-default  menu-item">
-                            <a  data-info="dot-lov">Dot Lov</a></li>-->
                             <li class="ui-state-default menu-item" data-theme="eggplant">
                                 <a data-info="eggplant">Eggplant</a>
                             </li>
@@ -452,6 +446,19 @@
                     </tr>
                 </table>
             </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_widgets">export widgets</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_widgets">import widgets</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
@@ -488,22 +495,20 @@
                                 <option value="568x300">iPhone 5, 5S - Landscape</option>
                                 <option value="768x1004">iPad - Portrait</option>
                                 <option value="1024x748">iPad - Landscape</option>
-                                <option value="480x800">Samsung S2 - Portrait</option>
-                                <option value="800x480">Samsung S2 - Landscape</option>
-                                <option value="720x1280">Samsung S3, Note 2 - Portrait</option>
-                                <option value="1280x720">Samsung S3, Note 2 - Landscape</option>
-                                <option value="1080x1920">Samsung S4, S5, Note 3 - Portrait</option>
-                                <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
-                                <option value="768x1280">Nexus 4 - Portrait</option>
-                                <option value="1280x768">Nexus 4 - Landscape</option>
-                                <option value="328x581">Nexus 5 - Portrait</option>
-                                <option value="581x328">Nexus 5 - Landscape</option>
-                                <option value="800x1280">Nexus 7 (2012) - Portrait</option>
-                                <option value="1280x800">Nexus 7 (2012) - Landscape</option>
-                                <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
-                                <option value="1920x1200">Nexus 7 (2013) - Landscape</option>
-                                <option value="1600x2560">Nexus 10 - Portrait</option>
-                                <option value="2560x1600">Nexus 10 - Landscape</option>
+                                <option value="320x533">Samsung S2 - Portrait</option>
+                                <option value="533x320">Samsung S2 - Landscape</option>
+                                <option value="360x640">Samsung S3, Note 2 - Portrait</option>
+                                <option value="640x360">Samsung S3, Note 2 - Landscape</option>
+                                <option value="360x640">Samsung S4, S5, Note 3 - Portrait</option>
+                                <option value="640x360">Samsung S4, S5, Note 3 - Landscape</option>
+                                <option value="384x640">Nexus 4 - Portrait</option>
+                                <option value="640x384">Nexus 4 - Landscape</option>
+                                <option value="360x640">Nexus 5 - Portrait</option>
+                                <option value="640x360">Nexus 5 - Landscape</option>
+                                <option value="604x966">Nexus 7 (2012) - Portrait</option>
+                                <option value="966x604">Nexus 7 (2012) - Landscape</option>
+                                <option value="800x1280">Nexus 10 - Portrait</option>
+                                <option value="1280x800">Nexus 10 - Landscape</option>
                                 <option value="720x1280">HD - Portrait</option>
                                 <option value="1280x720">HD - Landscape</option>
                                 <option value="1080x1920">Full HD - Portrait</option>
@@ -664,7 +669,7 @@
     </div>
     <div id="attr_wrap">
         <div id="pan_attr">
-            <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
+            <div class="ui-state-default" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;"><span class="translate">Attributes</span><button id="btn_accordeon" style="float: right;"></button></div>
             <ul style="border-radius: 0; display: inline-block; background: transparent; border: none; margin-bottom: -2px">
                 <li>
                     <a href="#tab_view_attr" style="padding: 2px 4px 2px 4px" class="translate">View</a>
