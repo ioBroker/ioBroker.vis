@@ -80,7 +80,7 @@ vis.styleSelect = {
     },
 
     // Functions
-    Show: function (options) {
+    show: function (options) {
         // Fill the list of styles
         if (this._internalList == null) {
             this._internalList = {};
@@ -90,44 +90,46 @@ vis.styleSelect = {
                 if (ruleList) {
                     var bglen = "hq-background-".length;
                     for (var rule = 0; rule < ruleList.length; rule ++) {
-                        if (ruleList[rule].selectorText === undefined || ruleList[rule].selectorText == null || ruleList[rule].selectorText == "")
-                            continue;
+                        if (!ruleList[rule].selectorText) continue;
 
                         var styles = ruleList[rule].selectorText.split(' ');
-                        for (var i = 0; i < styles.length; i++) {
-                            if (styles[i] == "" || styles[i][0] != '.' || styles[i].indexOf(':') != -1)
-                                break;
+                        var style = styles[styles.length - 1].replace('::before', '').replace('::after', '');
 
-                            var name = styles[i];
-                            name = name.replace(",", "");
-                            if (name.length > 0 && (name[0] == '.' || name[0] == '#'))
-                                name = name.substring(1);
-                            var val  = name;
-                            if (name.length >= bglen && name.substring(0, bglen) == "hq-background-")
-                                name = name.substring(bglen);
+                        if (!style || style[0] != '.' || style.indexOf(':') != -1) continue;
 
-                            if (name.substring(0, "hq-".length) == "hq-")
-                                name = name.substring(3);
+                        var name = style;
+                        name = name.replace(',', '');
+                        name = name.replace(/^\./, '');
 
-                            if (name.substring(0, "ui-".length) == "ui-")
-                                name = name.substring(3);
+                        var val  = name;
+                        name = name.replace(/^hq-background-/, '');
+                        name = name.replace(/^hq-/, '');
+                        name = name.replace(/^ui-/, '');
+                        name = name.replace(/[-_]/g, ' ');
 
-                            name = name.replace(/-/g, " ");
-                            if (name.length > 0) {
-                                name = name[0].toUpperCase() + name.substring(1);
-                                var fff = document.styleSheets[sSheet].href;
-                                if (fff && fff.indexOf('/') != -1)
-                                    fff = fff.substring(fff.lastIndexOf('/')+1);
-                                this._internalList[name] = {style: val, file: fff, attrs: ruleList[rule].style};
+                        if (name.length > 0) {
+                            name = name[0].toUpperCase() + name.substring(1);
+                            var fff = document.styleSheets[sSheet].href;
+
+                            if (fff && fff.indexOf('/') != -1) {
+                                fff = fff.substring(fff.lastIndexOf('/') + 1);
                             }
-                            break;
+
+                            if (!this._internalList[val]) {
+                                if (styles.length > 1) {
+                                    this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: styles[0].replace('.', '')};
+                                } else {
+                                    this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style};
+                                }
+                            }
                         }
                     }
                 }
             }
         }
 
-        // Detect scrollbar width
+
+        /*// Detect scrollbar width
         if (this._scrollWidth == -1) {
             // Create the measurement node
             var scrollDiv = document.createElement("div");
@@ -173,37 +175,38 @@ vis.styleSelect = {
         htmlElem.settings.id = options.name;
         htmlElem.settings.styles = {};
         htmlElem.settings.styles[_("Default")] = {style: null, file: null};
+*/
+        options.filterName  = options.filterName  || '';
+        options.filterAttrs = options.filterAttrs || '';
+        options.filterFile  = options.filterFile  || '';
+
+        var styles = {};
 
         if (options.styles) {
-            htmlElem.settings.styles = $.extend(htmlElem.settings.styles, options.styles);
+            styles = $.extend(styles, options.styles);
         } else {
             // IF filter defined
-            if (htmlElem.settings.filterFile !== null || htmlElem.settings.filterName !== null) {
-                var filters = null;
-                if (htmlElem.settings.filterName !== null && htmlElem.settings.filterName != "")
-                    filters = htmlElem.settings.filterName.split(' ');
+            if (options.filterFile || options.filterName) {
+                var filters = (options.filterName)  ? options.filterName.split(' ')  : null;
+                var attrs   = (options.filterAttrs) ? options.filterAttrs.split(' ') : null;
 
-                var attrs = null;
-                if (htmlElem.settings.filterAttrs !== null && htmlElem.settings.filterAttrs != "")
-                    attrs = htmlElem.settings.filterAttrs.split(' ');
-
-                for (var name in this._internalList) {
-                    if (htmlElem.settings.filterFile == null ||
-                       (this._internalList[name].file !== null && this._internalList[name].file.indexOf(htmlElem.settings.filterFile) != -1)) {
-                        var isFound = (filters == null);
+                for (var style in this._internalList) {
+                    if (!options.filterFile ||
+                       (this._internalList[style].file && this._internalList[style].file.indexOf(options.filterFile) != -1)) {
+                        var isFound = !filters;
                         if (!isFound) {
                             for (var k = 0; k < filters.length; k++) {
-                                if (this._internalList[name].style.indexOf(filters[k]) != -1) {
+                                if (style.indexOf(filters[k]) != -1) {
                                     isFound = true;
                                     break;
                                 }
                             }
                         }
                         if (isFound) {
-                            isFound = (attrs == null);
+                            isFound = !attrs;
                             if (!isFound) {
                                 for (var k = 0; k < attrs.length; k++) {
-                                    var t = this._internalList[name].attrs[attrs[k]];
+                                    var t = this._internalList[style].attrs[attrs[k]];
                                     if (t || t === 0) {
                                         isFound = true;
                                         break;
@@ -211,17 +214,87 @@ vis.styleSelect = {
                                 }
                             }
                         }
+
                         if (isFound) {
-                            htmlElem.settings.styles[name] = {style: this._internalList[name].style, file: this._internalList[name].file};
+                            var n = this._internalList[style].name;
+                            if (options.removeName) {
+                                n = n.replace(options.removeName, '');
+                                n = n[0].toUpperCase() + n.substring(1).toLowerCase();
+                            }
+                            styles[style] = {
+                                name:        n,
+                                file:        this._internalList[style].file,
+                                parentClass: this._internalList[style].parentClass
+                            };
                         }
                     }
                 }
             } else {
-                htmlElem.settings.styles = $.extend(htmlElem.settings.styles, this._internalList);
+                styles = $.extend(styles, this._internalList);
             }
         }
 
-        $('#' + nameImg).css({width: htmlElem.settings.height * 2, height: htmlElem.settings.height - 4}).addClass('ui-corner-all');
+        var text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
+        for (var style in styles) {
+            text += '<option ' + ((options.style == style) ? 'selected' : '') + ' value="' + style + '" data-parent-style="' +  styles[style].parentClass + '">' + styles[style].name + '</option>\n';
+        }
+        text += '</select>';
+        $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+            _renderItem: function( ul, item ) {
+                var li = $( "<li>", {text: item.label});
+
+                if (item.disabled) {
+                    li.addClass( "ui-state-disabled" );
+                }
+
+                $("<span>", {
+                    style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
+                    "class": 'ui-corner-all ' + item.value
+                }).prependTo(li);
+
+                li.css('font-size', '16px');
+
+                if (styles[item.value] && styles[item.value].parentClass) li.addClass(styles[item.value].parentClass);
+
+                return li.appendTo( ul );
+            }
+        });
+        $('#' + options.name).hide().after(text);
+
+        var $div = $('#' + options.name + '_styles').iconselectmenu({
+            width: '100%',
+            style: 'dropdown',
+            change: function (event, ui) {
+                 if (options.onchange) options.onchange(ui.item.value);
+
+                var $text = $('#' + options.name + '_styles-button').find('.ui-selectmenu-text');
+                $("<span>", {
+                    style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
+                    "class": 'ui-corner-all vis-current-style ' + ui.item.value
+                }).prependTo($text);
+
+                $text.css('font-size', '16px');
+
+                if (styles[ui.item.value] && styles[ui.item.value].parentClass) {
+                    $text.parent().addClass(styles[ui.item.value].parentClass);
+                }            }
+        }).iconselectmenu("menuWidget");
+
+        $('#' + options.name + '_styles-menu').addClass('custom-vis-menu');
+
+        var $text = $('#' + options.name + '_styles-button').find('.ui-selectmenu-text');
+        $("<span>", {
+            style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
+            "class": 'ui-corner-all vis-current-style ' + options.style
+        }).prependTo($text);
+
+        $text.css('font-size', '16px');
+
+        if (styles[options.style] && styles[options.style].parentClass) {
+            $text.parent().addClass(styles[options.style].parentClass);
+        }
+
+        /*$('#' + nameImg).css({width: htmlElem.settings.height * 2, height: htmlElem.settings.height - 4}).addClass('ui-corner-all');
         $('#' + nameText).css({width: htmlElem.settings.width});
         $('#' + nameBtn).button({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
         $('#' + nameBtn).click(htmlElem, function (e) {
@@ -243,7 +316,7 @@ vis.styleSelect = {
             var i = 0;
             for (var st in htmlElem.settings.styles) {
                 text += '<input type="radio" id="styleSelectBox' + options.name + i + '" name="radio"/><label for="styleSelectBox' + options.name + i +'">';
-                text += '<table><tr><td width="' + (htmlElem.settings.height * 2 + 4)+'px">' +
+                text += '<table><tr><td width="' + (htmlElem.settings.height * 2 + 4)+'px" ' + (htmlElem.settings.styles[st].parentClass ? 'class="' + htmlElem.settings.styles[st].parentClass + '"' : '')+ '>' +
                     '<div class="ui-corner-all ' + htmlElem.settings.styles[st].style + '" style="padding: 0px; margin; 0px; z-index: auto; display: block; position: relative; width:' + (htmlElem.settings.height * 2) + 'px; height:' + (htmlElem.settings.height - 4) + 'px">' +
                     '</div></td><td width="10"></td>';
                 text += '<td style="text-align: left; vertical-align: middle;"><div style="text-align: left; vertical-align: middle">';
@@ -255,30 +328,37 @@ vis.styleSelect = {
             htmlElem.settings.parent.append(text);
         }
 
-        var box = $('#styleSelectBox'+options.name);
+        var box = $('#styleSelectBox' + options.name);
         box.buttonset();
-        $('#styleSelectBox'+options.name+" :radio").click(htmlElem, function (e) {
+        $('#styleSelectBox' + options.name + " :radio").click(htmlElem, function (e) {
             var rawElement = this;
-            vis.styleSelect._select (e.data, rawElement.iStyle);
+            vis.styleSelect._select(e.data, rawElement.iStyle, rawElement.iParentStyle);
             vis.styleSelect._toggleDrop(e.data);
         });
+
         i = 0;
         // Set context
         for (var st in htmlElem.settings.styles) {
-            document.getElementById("styleSelectBox"+options.name+""+i).iStyle = htmlElem.settings.styles[st].style;
+            var _box = document.getElementById("styleSelectBox" + options.name + "" + i);
+            _box.iStyle = htmlElem.settings.styles[st].style;
+            _box.iParentStyle = htmlElem.settings.styles[st].parentClass;
             // Select current button
             if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
-                $("#styleSelectBox"+options.name+""+i).attr("checked","checked");
+                $("#styleSelectBox" + options.name + "" + i).attr("checked", "checked");
                 box.buttonset('refresh');
+                if (htmlElem.settings.styles[st].parentClass) {
+                    htmlElem.settings.parentClass = htmlElem.settings.styles[st].parentClass;
+                    $('#' + nameImg).parent().addClass(htmlElem.settings.styles[st].parentClass);
+                }
             }
             i++;
         }
         htmlElem.settings.count = i;
-        box.css({width: $('#styleSelect'+options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
+        box.css({width: $('#styleSelect' + options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
         box.css({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
         box.hide ();
         this._currentElement++;
-        return htmlElem;
+        return htmlElem;*/
     },
     _toggleDrop: function (obj) {
         if (obj.settings.dropOpened) {
@@ -311,20 +391,30 @@ vis.styleSelect = {
         }
 
     },
-    _select: function (obj, iStyle) {
-        var nameImg  = "styleSelectImg" +obj.settings.id;
-        var nameText = "styleSelectText"+obj.settings.id;
-        $('#'+nameImg).removeClass(obj.settings.style);
+    _select: function (obj, iStyle, iParentStyle) {
+        var nameImg  = "styleSelectImg"  + obj.settings.id;
+        var nameText = "styleSelectText" + obj.settings.id;
+        $('#' + nameImg).removeClass(obj.settings.style);
+        if (obj.settings.parentClass) {
+            $('#' + nameImg).parent().removeClass(obj.settings.parentClass);
+        }
+
         obj.settings.style = iStyle;
-        $('#'+nameImg).addClass(obj.settings.style);
-        $('#'+nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
+        obj.settings.parentClass = iParentStyle;
+
+        $('#' + nameImg).addClass(obj.settings.style);
+        if (iParentStyle) {
+            $('#' + nameImg).parent().addClass(iParentStyle);
+        }
+        $('#' + nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
+
         if (obj.settings.onchange) {
             obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);
         }
     },
     destroy: function (htmlElem) {
-        $("#styleSelectBox"+htmlElem.settings.id).remove();
-        $('#styleSelect'+htmlElem.settings.id).remove();
+        $("#styleSelectBox" + htmlElem.settings.id).remove();
+        $('#styleSelect' +    htmlElem.settings.id).remove();
     }
 };
 

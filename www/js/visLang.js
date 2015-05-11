@@ -149,6 +149,7 @@ $.extend(systemDictionary, {
     'Room':     {"en": "Room", "de": "Zimmer", "ru": "Комната"},
     'Value':    {"en": "Value", "de": "Wert", "ru": "Значение"},
     'Members':  {"en": "Members", "de": "Mitglieder", "ru": "Объекты"},
+    "nothing":  {"en": "none", "de": "keins", "ru": "ничего"},
     'Import / Export View': {
         'en': 'Import / Export View',
         'de': 'Importieren / Exportieren View',

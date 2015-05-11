@@ -768,3 +768,8 @@ td > .select_active_widget :nth-child(2) {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
+.custom-vis-menu {
+    height: 300px !important;
+    overflow-y: scroll;
+}

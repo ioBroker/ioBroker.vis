@@ -2624,15 +2624,16 @@ vis = $.extend(true, vis, {
             input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
             init: function (_wid_attr, data) {
                 if (that.styleSelect) {
-                    that.styleSelect.Show({
+                    that.styleSelect.show({
                         width:      '100%',
                         name:       'inspect_' + _wid_attr,
                         filterFile:  options[0],
                         filterName:  options[1],
                         filterAttrs: options[2],
-                        style:      data,
-                        parent:     $(this).parent(),
-                        onchange: function (newStyle, obj) {
+                        removeName:  options[3],
+                        style:       data,
+                        parent:      $(this).parent(),
+                        onchange:    function (newStyle) {
                             $('#inspect_' + widAttr).val(newStyle).trigger('change');
                         }
                     });
@@ -4211,14 +4212,14 @@ vis = $.extend(true, vis, {
 
         // Init background selector
         if (this.styleSelect && this.views[view] && this.views[view].settings) {
-            this.styleSelect.Show({
+            this.styleSelect.show({
                 width:      '100%',
                 name:       'inspect_view_bkg_def',
                 filterName: 'background',
                 //filterFile: "backgrounds.css",
                 style: this.views[view].settings.style.background_class,
                 parent: $('#inspect_view_bkg_parent'),
-                onchange: function (newStyle, obj) {
+                onchange: function (newStyle) {
                     if (that.views[view].settings.style['background_class']) {
                         $('#visview_' + view).removeClass(that.views[view].settings.style['background_class']);
                     }
