@@ -25,9 +25,9 @@ Patten has following format:
 
 Following operations are supported:
 
-- * - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
-- + - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
-- - - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
+- \* - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
+- \+ - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
+- \- - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
 - / - dividing. Argument must be in brackets, like "/(0.5)". In this sample we dividing value by 0.5.
 - % - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
 - round - round the value.
@@ -91,7 +91,7 @@ Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Ma
 ## Filters
 To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
  
-Every widget has a field "filter". If you set it to some value, e.g. "light", so you can use other widget (bars - filters) to control which filter is actually active. 
+Every widget has a field "filter". If you set it to some value, e.g. "light", so you can use other widget (bars - filters, filter - dropdown) to control which filter is actually active. 
 
 ## Control interface
 Vis creates 3 variables:
@@ -126,15 +126,35 @@ If user changes the view or at start the variables will be filled by vis with
 - "control.data": project and view name in form "project/view", e.g. "main/view" (and ack=true)
 - "control.command": "changedView" and ack=true
 
+You can write the JSON-string or Object into control.command as ```{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}```. In this case the instance and data will be taken from JSON object.
+
+## Default view
+You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
+
+Additionally you can define if this view must be used as default for this resolution. 
+
+So every time the **index.html** (without #viewName) is called, the best suitable for this resolution view will be opened. 
+If only one view has *"Default"* flag, so this view will be opened independent from screen resolution or orientation.      
+
+E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
+
+There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
-### ???
+### 0.4.0 (2015-05-09)
 - (smiling_Jack) Bugfix View select tabs
 - (smiling_Jack) Add a optional attr "data-vis-beta" in tpl set. To show a "!!! Beta !!!" label at the Widgetpreview
-- (smiling_Jack) Add plump set
+- (smiling_Jack) *Add plump set*
 - (smiling_Jack) change widget-helper size
-
-
+- (bluefox) fix error in hqWidgets
+- (bluefox) *default view settings*
+- (bluefox) new metro Widget iFrame /Dialog
+- (bluefox) all metro widgets are revised
+- (bluefox) add dev6 as string
+- (bluefox) add widget filter
+- (bluefox) change style selector
+- (bluefox) update canJS to 2.2.4
+- (bluefox) send vis.command from browsers with no instanceID
 
 ### 0.3.2 (2015-05-09)
 - (bluefox) fix errors in binding

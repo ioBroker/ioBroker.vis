@@ -75,7 +75,7 @@ var servConn = {
         // - create "_socket/info.js" file with
         //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
         //   in this case you can overwrite browser language settings
-        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local' ))) {
+        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local'))) {
             this._type =  'local';
         }
 
@@ -583,8 +583,8 @@ var servConn = {
         });
     },
     sendCommand:      function (instance, command, data) {
-        this.setState(this.namespace + '.control.instance', {val: instance, ack: true});
-        this.setState(this.namespace + '.control.data',     {val: data, ack: true});
+        this.setState(this.namespace + '.control.instance', {val: instance || 'notdefined', ack: true});
+        this.setState(this.namespace + '.control.data',     {val: data,    ack: true});
         this.setState(this.namespace + '.control.command',  {val: command, ack: true});
     }
 };

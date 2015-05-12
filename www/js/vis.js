@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.3.2',
+    version:                '0.4.0',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -466,10 +466,8 @@ var vis = {
         // View selected?
         if (!hash) {
             // Take first view in the list
-            for (var _view in this.views) {
-                this.activeView = _view;
-                break;
-            }
+            this.activeView = this.findNearestResolution(true);
+
             // Create default view in demo mode
             if (typeof io == 'undefined') {
                 if (!this.activeView) {
@@ -968,7 +966,7 @@ var vis = {
 
         this.updateContainers(view);
 
-        if (!this.editMode && this.instance) {
+        if (!this.editMode) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
         }
 
@@ -985,6 +983,9 @@ var vis = {
 
         // --------- Editor -----------------
         if (this.editMode) this.changeViewEdit(view);
+
+
+        // update resolution tool widget
 
         return;
     },
@@ -1427,7 +1428,7 @@ var vis = {
                             }
                         }
                     } else {
-                        var parse = parts[u].match(/([\w\s\+\-\*\/]+)(\(.+\))?/);
+                        var parse = parts[u].match(/([\w\s\/\+\*\-]+)(\(.+\))?/);
                         if (parse && parse[1]) {
                             parse[1] = parse[1].trim();
                             // operators requires paremeter
@@ -1613,6 +1614,73 @@ var vis = {
             format = format.replace(oids[t].token, value);
         }
         return format;
+    },
+    findNearestResolution: function (resultRequiredOrX, height) {
+        var w;
+        var h;
+        if (height !== undefined) {
+            w = resultRequiredOrX;
+            h = height;
+            resultRequiredOrX = false;
+        } else {
+            w = $(window).width();
+            h = $(window).height();
+        }
+        var result = null;
+        var views = [];
+        var difference = 10000;
+
+        // First find all with best fitting width
+        for (var view in this.views) {
+            if (this.views[view].settings && this.views[view].settings.useAsDefault) {
+                // If difference less than 20%
+                if (Math.abs(this.views[view].settings.sizex - w) / this.views[view].settings.sizex < 0.2) {
+                    views.push(view);
+                }
+            }
+        }
+
+        for (var i in views) {
+            if (Math.abs(this.views[views[i]].settings.sizey - h) < difference) {
+                result = views[i];
+                difference = Math.abs(this.views[views[i]].settings.sizey - h);
+            }
+        }
+
+        // try to find by ratio
+        if (!result) {
+            var ratio = w / h;
+            difference = 10000;
+
+            for (var view in this.views) {
+                if (this.views[view].settings && this.views[view].settings.useAsDefault) {
+                    // If difference less than 20%
+                    if (this.views[view].settings.sizey && Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey)) < difference) {
+                        result = view;
+                        difference = Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey));
+                    }
+                }
+            }
+        }
+
+        if (!result && resultRequiredOrX) {
+            for (view in this.views) {
+                return view;
+            }
+        }
+
+        return result;
+    },
+    orientationChange: function () {
+        if (this.resolutionTimer) return;
+        var that = this;
+        this.resolutionTimer = setTimeout(function () {
+            that.resolutionTimer = null;
+            var view = that.findNearestResolution();
+            if (view && view != that.activeView) {
+                that.changeView(view);
+            }
+        }, 200);
     }
 };
 
@@ -1807,9 +1875,7 @@ window.onpopstate();
                     // first of all try to load views
                     vis.loadRemote(function () {
                         // Read all states from server
-
                         vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
-
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];
@@ -2129,6 +2195,16 @@ window.onpopstate();
                 return true;
             }
         });
+
+        if (!vis.editMode) {
+            // Listen for resize changes
+            window.addEventListener("orientationchange", function () {
+                vis.orientationChange();
+            }, false);
+            window.addEventListener("resize", function () {
+                vis.orientationChange();
+            }, false);
+        }
     });
 
     //vis.preloadImages(["../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);

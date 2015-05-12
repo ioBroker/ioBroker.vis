@@ -129,53 +129,6 @@ vis.styleSelect = {
         }
 
 
-        /*// Detect scrollbar width
-        if (this._scrollWidth == -1) {
-            // Create the measurement node
-            var scrollDiv = document.createElement("div");
-            scrollDiv.style.width    = 100;
-            scrollDiv.style.height   = 100;
-            scrollDiv.style.overflow = "scroll";
-            scrollDiv.style.position = "absolute";
-            scrollDiv.style.top      = "-9999px";
-            document.body.appendChild(scrollDiv);
-
-            // Get the scrollbar width
-            this._scrollWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-
-            // Delete the DIV
-            document.body.removeChild(scrollDiv);
-        }
-        if (options.name === undefined || options.name == '') {
-            options.name = '' + this._currentElement;
-        }
-
-        var nameImg  = "styleSelectImg"  + options.name;
-        var nameText = "styleSelectText" + options.name;
-        var nameBtn  = "styleSelectB"    + options.name;
-        var nameElem = "styleSelect"     + options.name;
-        if (document.getElementById(nameElem) != undefined) {
-            $('#' + nameElem).remove();
-            $('#styleSelectBox' + options.name).remove();
-        }
-        var text = '<table id="' + nameElem + '" style="width:' + options.width + '"><tr><td>';
-            text += '<table><tr><td><div id="' + nameImg + '"></div></td><td width=10></td>' +
-            '<td style="text-align: left; vertical-align: middle;width:100%""><div style="text-align: left; vertical-align: middle;" id="' + nameText + '"></div>';
-            text += '</td></tr></table></td><td width="30">';
-            text += '<button id="' + nameBtn + '"/>';
-            text += '</td></tr></table>';
-
-        var parent = (options.parent == null) ? $("body") : options.parent;
-        parent.append(text);
-        var htmlElem = document.getElementById(nameElem);
-        htmlElem.settings = {};
-        htmlElem.settings = $.extend(htmlElem.settings, this.settings);
-        htmlElem.settings = $.extend(htmlElem.settings, options);
-        htmlElem.settings.parent = parent;
-        htmlElem.settings.id = options.name;
-        htmlElem.settings.styles = {};
-        htmlElem.settings.styles[_("Default")] = {style: null, file: null};
-*/
         options.filterName  = options.filterName  || '';
         options.filterAttrs = options.filterAttrs || '';
         options.filterFile  = options.filterFile  || '';
@@ -234,31 +187,37 @@ vis.styleSelect = {
             }
         }
 
-        var text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
-        for (var style in styles) {
-            text += '<option ' + ((options.style == style) ? 'selected' : '') + ' value="' + style + '" data-parent-style="' +  styles[style].parentClass + '">' + styles[style].name + '</option>\n';
-        }
-        text += '</select>';
-        $.widget("custom.iconselectmenu", $.ui.selectmenu, {
-            _renderItem: function( ul, item ) {
-                var li = $( "<li>", {text: item.label});
-
-                if (item.disabled) {
-                    li.addClass( "ui-state-disabled" );
-                }
-
-                $("<span>", {
-                    style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
-                    "class": 'ui-corner-all ' + item.value
-                }).prependTo(li);
-
-                li.css('font-size', '16px');
-
-                if (styles[item.value] && styles[item.value].parentClass) li.addClass(styles[item.value].parentClass);
-
-                return li.appendTo( ul );
+        if (!$('#' + options.name + '_styles').length) {
+            var text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
+            for (var style in styles) {
+                text += '<option ' + ((options.style == style) ? 'selected' : '') + ' value="' + style + '" data-parent-style="' +  styles[style].parentClass + '">' + styles[style].name + '</option>\n';
             }
-        });
+            text += '</select>';
+        }
+
+        if (!$.fn.iconselectmenu) {
+            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+                _renderItem: function (ul, item) {
+                    var li = $( "<li>", {text: item.label});
+                    var styles = ul.data('styles');
+
+                    if (item.disabled) {
+                        li.addClass( "ui-state-disabled" );
+                    }
+
+                    $("<span>", {
+                        style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
+                        "class": 'ui-corner-all ' + item.value
+                    }).prependTo(li);
+
+                    li.css('font-size', '16px');
+                    if (styles[item.value] && styles[item.value].parentClass) li.addClass(styles[item.value].parentClass);
+
+                    return li.appendTo( ul );
+                }
+            });
+        }
+
         $('#' + options.name).hide().after(text);
 
         var $div = $('#' + options.name + '_styles').iconselectmenu({
@@ -278,9 +237,15 @@ vis.styleSelect = {
                 if (styles[ui.item.value] && styles[ui.item.value].parentClass) {
                     $text.parent().addClass(styles[ui.item.value].parentClass);
                 }            }
-        }).iconselectmenu("menuWidget");
+        }).iconselectmenu("menuWidget").data('styles', styles);
 
         $('#' + options.name + '_styles-menu').addClass('custom-vis-menu');
+
+        if ($('#' + options.name + '_styles-button .vis-current-style').length) {
+            $('#' + options.name + '_styles-button .vis-current-style').remove();
+            $('#' + options.name + '_styles').val(options.style);
+            $('#' + options.name + '_styles').iconselectmenu('refresh');
+        }
 
         var $text = $('#' + options.name + '_styles-button').find('.ui-selectmenu-text');
         $("<span>", {
@@ -293,72 +258,6 @@ vis.styleSelect = {
         if (styles[options.style] && styles[options.style].parentClass) {
             $text.parent().addClass(styles[options.style].parentClass);
         }
-
-        /*$('#' + nameImg).css({width: htmlElem.settings.height * 2, height: htmlElem.settings.height - 4}).addClass('ui-corner-all');
-        $('#' + nameText).css({width: htmlElem.settings.width});
-        $('#' + nameBtn).button({icons: {primary: "ui-icon-circle-triangle-s"}, text: false});
-        $('#' + nameBtn).click(htmlElem, function (e) {
-            vis.styleSelect._toggleDrop(e.data);
-        });
-        $('#' + nameBtn).height(htmlElem.settings.height).width(htmlElem.settings.height);
-        var elem = $('#styleSelect' + options.name);
-        elem.addClass('ui-corner-all ui-widget-content');
-        if (htmlElem.settings.style != "") {
-            $('#' + nameImg).addClass(htmlElem.settings.style);
-            $('#' + nameText).html(this._findTitle(htmlElem.settings.styles, htmlElem.settings.style));
-        } else {
-            $('#' + nameText).html(_('None'));
-        }
-
-        // Build dropdown box
-        if (document.getElementById('styleSelectBox' + options.name) == undefined) {
-            var text = '<form id="styleSelectBox' + options.name + '" style="z-index:4">';
-            var i = 0;
-            for (var st in htmlElem.settings.styles) {
-                text += '<input type="radio" id="styleSelectBox' + options.name + i + '" name="radio"/><label for="styleSelectBox' + options.name + i +'">';
-                text += '<table><tr><td width="' + (htmlElem.settings.height * 2 + 4)+'px" ' + (htmlElem.settings.styles[st].parentClass ? 'class="' + htmlElem.settings.styles[st].parentClass + '"' : '')+ '>' +
-                    '<div class="ui-corner-all ' + htmlElem.settings.styles[st].style + '" style="padding: 0px; margin; 0px; z-index: auto; display: block; position: relative; width:' + (htmlElem.settings.height * 2) + 'px; height:' + (htmlElem.settings.height - 4) + 'px">' +
-                    '</div></td><td width="10"></td>';
-                text += '<td style="text-align: left; vertical-align: middle;"><div style="text-align: left; vertical-align: middle">';
-                text += ((st != '') ? st : htmlElem.settings.styles[st].style) + '</div></td></tr></table>';
-                text += '</label><br>';
-                i++;
-            }
-            text += "</form>";
-            htmlElem.settings.parent.append(text);
-        }
-
-        var box = $('#styleSelectBox' + options.name);
-        box.buttonset();
-        $('#styleSelectBox' + options.name + " :radio").click(htmlElem, function (e) {
-            var rawElement = this;
-            vis.styleSelect._select(e.data, rawElement.iStyle, rawElement.iParentStyle);
-            vis.styleSelect._toggleDrop(e.data);
-        });
-
-        i = 0;
-        // Set context
-        for (var st in htmlElem.settings.styles) {
-            var _box = document.getElementById("styleSelectBox" + options.name + "" + i);
-            _box.iStyle = htmlElem.settings.styles[st].style;
-            _box.iParentStyle = htmlElem.settings.styles[st].parentClass;
-            // Select current button
-            if (htmlElem.settings.style == htmlElem.settings.styles[st].style) {
-                $("#styleSelectBox" + options.name + "" + i).attr("checked", "checked");
-                box.buttonset('refresh');
-                if (htmlElem.settings.styles[st].parentClass) {
-                    htmlElem.settings.parentClass = htmlElem.settings.styles[st].parentClass;
-                    $('#' + nameImg).parent().addClass(htmlElem.settings.styles[st].parentClass);
-                }
-            }
-            i++;
-        }
-        htmlElem.settings.count = i;
-        box.css({width: $('#styleSelect' + options.name).width(), overflow: "auto"}).addClass('ui-corner-all ui-widget-content');
-        box.css({position: 'absolute', top: elem.position().top + elem.height(), left: elem.position().left});
-        box.hide ();
-        this._currentElement++;
-        return htmlElem;*/
     },
     _toggleDrop: function (obj) {
         if (obj.settings.dropOpened) {

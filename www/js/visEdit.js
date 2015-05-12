@@ -302,20 +302,21 @@ vis = $.extend(true, vis, {
             change: function () {
                 var val = $(this).val();
                 if (!val) {
-                    $('#screen_size_x').prop('disabled', true);
-                    $('#screen_size_y').prop('disabled', true);
-                    $('#screen_size_x').val('').trigger('change');
-                    $('#screen_size_y').val('').trigger('change');
+                    $('#screen_size_x').prop('disabled', true).val('').trigger('change');
+                    $('#screen_size_y').prop('disabled', true).val('').trigger('change');
+                    $('.vis-screen-default').prop('disabled', true).prop('checked', false);
                     $('.rib_tool_resolution_toggle').button('disable');
                 } else if (val == 'user') {
                     $('#screen_size_x').prop('disabled', false);
                     $('#screen_size_y').prop('disabled', false);
+                    $('.vis-screen-default').prop('disabled', false);
                     $('.rib_tool_resolution_toggle').button('enable');
                     $("#rib_tools_resolution_fix").toggle();
                     $("#rib_tools_resolution_manuel").toggle();
                 } else {
                     var size = val.split('x');
                     $('.rib_tool_resolution_toggle').button('enable');
+                    $('.vis-screen-default').prop('disabled', false);
                     $('#screen_size_x').val(size[0]).trigger('change').prop('disabled', true);
                     $('#screen_size_y').val(size[1]).trigger('change').prop('disabled', true);
                 }
@@ -340,9 +341,30 @@ vis = $.extend(true, vis, {
                 that.setViewSize(that.activeView);
                 that.save();
             }
-
         }).keyup(function () {
             $(this).trigger('change');
+        }).keydown(function (e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
+
+        $('.vis-screen-default').change(function () {
+            if (that.views[that.activeView].settings.useAsDefault != $(this).prop('checked')) {
+                that.views[that.activeView].settings.useAsDefault = $(this).prop('checked');
+                $('.vis-screen-default').prop('checked', $(this).prop('checked'));
+                that.save();
+            }
         });
 
         $('#screen_hide_description').change(function () {
@@ -379,6 +401,20 @@ vis = $.extend(true, vis, {
 
         }).keyup(function () {
             $(this).trigger('change');
+        }).keydown(function (e) {
+            // Allow: backspace, delete, tab, escape, enter and .
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A, Command+A
+                (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+                // Allow: home, end, left, right, down, up
+                (e.keyCode >= 35 && e.keyCode <= 40)) {
+                // let it happen, don't do anything
+                return;
+            }
+            // Ensure that it is a number and stop the keypress
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
         });
 
         $('#grid_size').change(function () {
@@ -722,7 +758,6 @@ vis = $.extend(true, vis, {
         });
 
         // Widget Align ---------------------
-
         $("#wid_align_left").click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
@@ -1259,7 +1294,7 @@ vis = $.extend(true, vis, {
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = $('#' + tpl).data('vis-type') || '';
-                var beta;
+                var beta = '';
                 var classtypes = '';
 
                 if (type) {
@@ -1363,8 +1398,8 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
+                self_w:   $('#view_select_tabs').width(),
+                self_l:   parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
@@ -1384,8 +1419,8 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w:   $('#view_select_tabs').width(),
-                self_l:   parseInt($('#view_select_tabs').css('left'))
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
@@ -1619,6 +1654,14 @@ vis = $.extend(true, vis, {
                 } else {
                     $('.wid_prev').hide();
                     $('.' + tpl + '_prev').css("display", "inline-block");
+
+                    // Remove filter
+                    if ($filter_set.val() && $filter_set.val() != '*') {
+                        $filter_set.val('*');
+                        var textToShow = $filter_set.find(":selected").text();
+                        $filter_set.parent().find("span").find("input").val(textToShow);
+                        filterWidgets();
+                    }
                 }
             }
         });
@@ -1673,10 +1716,12 @@ vis = $.extend(true, vis, {
             }
             filterWidgets();
         }).bind('dblclick', function () {
-            $filter_set.val('*');
-            var textToShow = $filter_set.find(":selected").text();
-            $filter_set.parent().find("span").find("input").val(textToShow);
-            filterWidgets();
+            if ($filter_set.val() && $filter_set.val() != '*') {
+                $filter_set.val('*');
+                var textToShow = $filter_set.find(":selected").text();
+                $filter_set.parent().find("span").find("input").val(textToShow);
+                filterWidgets();
+            }
         });
 
         if (this.config['select/select_set'] != "all" && this.config['select/select_set']) {
@@ -3631,6 +3676,7 @@ vis = $.extend(true, vis, {
         //              fontName - Font name
         //              slider,min,max,step - Default step is ((max - min) / 100)
         //              select,value1,value2,... - dropdown select
+        //              nselect,value1,value2,... - same as select, but without translation of items
         //              style,fileFilter,nameFilter,attrFilter
         //              custom,functionName,options,... - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
         //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
@@ -4319,6 +4365,7 @@ vis = $.extend(true, vis, {
             });
         }
 
+        // View (Resolution) settings
         if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
             var res = this.views[view].settings.sizex + 'x' + this.views[view].settings.sizey;
@@ -4329,9 +4376,13 @@ vis = $.extend(true, vis, {
                     return false;
                 }
             });
-            if (!res || res == 'x') {
+            if (!res) {
                 $('#screen_size_x').prop('disabled', true);
                 $('#screen_size_y').prop('disabled', true);
+            } else if (res == 'x') {
+                $('#screen_size_x').prop('disabled', true);
+                $('#screen_size_y').prop('disabled', true);
+                $('#screen_size').val('');
             } else {
                 $('#screen_size').val('user');
             }
@@ -4340,7 +4391,7 @@ vis = $.extend(true, vis, {
 
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
-            if (res == 'x') $('.rib_tool_resolution_toggle').button('disable');
+            $('.rib_tool_resolution_toggle').button((res == 'x') ? 'disable' : 'enable');
 
             $('#screen_hide_description').prop('checked', this.views[view].settings.hideDescription).trigger('change');
 
@@ -4351,6 +4402,16 @@ vis = $.extend(true, vis, {
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
             $('#snap_type').val(this.views[view].settings.snapType || 0).selectmenu('refresh');
             $('#grid_size').prop('disabled', this.views[view].settings.snapType != 2);
+
+            if (this.views[view].settings.sizex) {
+                $('.vis-screen-default').prop('checked', this.views[view].settings.useAsDefault);
+            } else {
+                $('.vis-screen-default').prop('checked', false).prop('disabled', true);
+            }
+        } else {
+            $('#screen_size').val('').selectmenu('refresh');
+            $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
+            $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
         }
 
         this.$selectActiveWidgets.html('');//('<option value="none">' + _('none selected') + '</option>');

@@ -313,7 +313,7 @@
                         if (html) {
                             if (isIframe) {
                                 content.css('overflow', 'hidden');
-                                content.html('<iframe src="' + html + '" style="width: 100%; height: 100%" scrolling="' + options.scroll ? 'yes' : 'no' + '"></iframe>');
+                                content.html('<iframe src="' + html + '" style="width: 100%; height: 100%" scrolling="' + (options.scroll ? 'yes' : 'no') + '"></iframe>');
                             } else {
                                 content.html(html);
                             }
@@ -1297,7 +1297,7 @@
 <script id="tplMetroTileStaticDialogNumber"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileStaticDialogNumber" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px; z-index: 0;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-book"></i> </div> <div class="brand bg-orange"> <span class="label fg-white"></span> <div style="display: none;" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div> <div></div> </div>'
+        data-vis-prev='<div id="prev_tplMetroTileStaticDialogNumber" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 120px; height: 120px; padding: 3px; z-index: 0;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-book"></i> </div> <div class="brand bg-orange"> <span class="label fg-white"></span> <div style="display: none;" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div> <div></div> </div>'
         data-vis-attrs="label;content_oid/id;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-attrs0="group.badge;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="group.dialog;html;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
@@ -1473,36 +1473,31 @@
 <script id="tplMetroTileFrameDialogNumber"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileStaticDialogNumber" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px; z-index: 0;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-book"></i> </div> <div class="brand bg-orange"> <span class="label fg-white"></span> <div style="display: none;" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div> <div></div> </div>'
-        data-vis-attrs="content;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[icon-pictures]/style,iconFont,icon-,,Icon ;"
+        data-vis-prev='<div id="prev_tplMetroTileFrameDialogNumber" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 136px; height: 136px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"><div class="tile-content icon"><i class="icon-cloud"></i></div><div class="brand ribbed-steel"><span class="label fg-white">iFrame Dialog</span> <div style="" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div>  </div></div>'
+        data-vis-attrs="content;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[icon-accessibility]/style,iconFont,icon-,,Icon ;"
         data-vis-attrs0="group.badge;label;badge_label;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
-        data-vis-attrs1="group.dialog;url;scroll;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs1="group.dialog;dialog_url[https:~~maps.google.com~maps?f=q&source=s_q&hl=de&geocode=&q=Karlsruhe&ie=UTF8&t=m&z=12&output=embed&iwloc=near];dialog_scroll;dialog_width[400px];dialog_height[300px];dialog_title[Google maps];dialog_flat[true]/checkbox;dialog_shadow[true]/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[icon-globe]/style,iconFont,icon-,,Icon ;"
         data-vis-set="metro"
         data-vis-type="iframe,dialog"
         data-vis-name="Tile Dialog / iFrame">
     <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;">
-    <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
-
-        <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>" >
-        <div class="tile-content <%= this.data.attr("icon_class") ? 'icon' : '' %>">
-        <%== this.data.attr("icon_src") ? '<img style="' + (this.data.attr('icon_width') ? ('width:' + this.data.attr('icon_width') + ';') : '') + (this.data.attr('icon_height') ? ('height:' + this.data.attr('icon_height') + ';') : '') + '" src="' + this.data.attr("icon_src") + '"/>' : '' %>
-        <i class="<%= this.data.attr("icon_class") %>"></i>
-        <%== this.data.attr('content_oid') ? vis.states.attr(this.data.content_oid + '.val') : '' %>
-
-    </div>
-    <div class="brand <%= this.data.attr("brand_bg_class") %>">
-    <span class="label fg-white"><%= this.data.attr("label") %></span>
-
-    <div style="<%= vis.states.attr(this.data.number_oid + '.val') > 0 ? '' : 'display:none;' %>" class="badge <%= this.data.attr("badge_bg_class") %>"><%= vis.states.attr(this.data.number_oid + '.val') %></div>
-
-    </div>
-    </div>
-
-    <div <%= (el) -> vis.binds.metro.tileDialog(el, data.wid, null, {title: data.dialog_title,flat: data.dialog_flat,shadow: data.dialog_shadow,overlay: data.dialog_modal,icon: data.dialog_icon_src, icon_class:data.dialog_icon_class, draggable: data.dialog_draggable, width:data.dialog_width, height:data.dialog_height, scroll: data.scroll}, data.url, true) %> style="padding: 42px 10px 10px;">
-    <div class="caption"></div>
-    <div class="content"></div></div>
-    </div>
-    <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
+        <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
+            <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>" >
+                <div class="tile-content <%= this.data.attr("icon_class") ? 'icon' : 'icon icon-custom' %>">
+                    <%== this.data.attr("icon_src") ? '<img style="' + (this.data.attr('icon_width') ? ('width:' + this.data.attr('icon_width') + ';') : '') + (this.data.attr('icon_height') ? ('height:' + this.data.attr('icon_height') + ';') : '') + '" src="' + this.data.attr("icon_src") + '"/>' : '' %>
+                    <i class="<%= this.data.attr("icon_class") %>"></i>
+                    <%== this.data.attr('content') || '' %>
+                </div>
+                <div class="brand <%= this.data.attr("brand_bg_class") %>">
+                    <span class="label fg-white"><%= this.data.attr('label') %></span>
+                    <div style="" class="badge <%= this.data.attr('badge_bg_class') %>"><%= this.data.attr('badge_label') %></div>
+                </div>
+            </div>
+            <div <%= (el) -> vis.binds.metro.tileDialog(el, data.wid, null, {title: data.dialog_title, flat: data.dialog_flat, shadow: data.dialog_shadow, overlay: data.dialog_modal, icon: data.dialog_icon_src, icon_class: data.dialog_icon_class, draggable: data.dialog_draggable, width: data.dialog_width, height: data.dialog_height, scroll: data.dialog_scroll}, data.dialog_url, true) %> style="padding: 42px 10px 10px;">
+                <div class="caption"></div>
+                <div class="content"></div></div>
+            </div>
+        <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
     </div>
 </script>
 

@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.3.2 -->
+    <!-- ioBroker.vis Version 0.4.0 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -463,7 +463,7 @@
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
         <div class="ribbon_tab_content ui-widget-content" >
-            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 350px">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 450px">
                 <table style="border-spacing: 0px; width: 100%">
                     <colgroup>
                         <col width="80px" style="text-align:left"/>
@@ -481,6 +481,11 @@
                         </td>
                         <td>
                             <div class="rib_tool_resolution_toggle"></div>
+                        </td>
+                        <td>
+                            <table style="border: 0px"><tr>
+                                <td><label for="screen_default_man" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td></tr>
+                            </table>
                         </td>
                     </tr>
                     <tr id="rib_tools_resolution_fix">
@@ -517,6 +522,11 @@
                         </td>
                         <td>
                             <div class="rib_tool_resolution_toggle"></div>
+                        </td>
+                        <td>
+                            <table style="border: 0px"><tr>
+                                <td><label for="screen_default_fix" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_fix" type="checkbox"/></td></tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -652,7 +662,7 @@
             <div id="btn_prev_type" title="Show type of widgets" class="translateT"><span class="ui-icon ui-icon-tag"></span></div>
             <div id="btn_prev_zoom" title="Small widgets" class="translateT"><span class="ui-icon ui-icon-zoomout"></span></div>
         </div>
-        <input id="filter_set" value="*" type="text" style="width: calc(100% - 4px);" class="translateT" title="Widgets filter. Double click to clear."/>
+        <input id="filter_set" value="*" type="text" style="width: 100%" class="translateT" title="Widgets filter. Double click to clear."/>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
         <div id="toolbox" class="toolbox"></div>
@@ -746,7 +756,7 @@
                                 <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
                             </tr>
                             <tr class="group-view-css-background">
-                                <td colspan="3" id="inspect_view_bkg_parent"></td>
+                                <td colspan="3" id="inspect_view_bkg_parent"><input id="inspect_view_bkg_def" type="text"/></td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>background</td>
