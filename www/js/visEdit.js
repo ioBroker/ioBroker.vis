@@ -1259,6 +1259,7 @@ vis = $.extend(true, vis, {
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = $('#' + tpl).data('vis-type') || '';
+                var beta;
                 var classtypes = '';
 
                 if (type) {
@@ -1269,10 +1270,13 @@ vis = $.extend(true, vis, {
                         classtypes += types[z].trim() + ' ';
                     }
                 }
+                if ($("#" + tpl).data('vis-beta')) {
+                    beta = '<div style="color:red;width: 100%;  z-index: 100; top: 50% ;font-size: 15px;">!!! BETA !!!</div>';
+                }
                 classtypes += set + ' ' + $("#" + tpl).data('vis-name');
                 classtypes = classtypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
 
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classtypes + '" data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classtypes + '" data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div>'  + beta +'</div>');
 
                 if ($(tpl_list[i]).data('vis-prev')) {
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
@@ -1359,15 +1363,15 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w:   $('#view_select_tabs').width(),
-                self_l:   parseInt($('#view_select_tabs').css('left'))
+                self_w: $('#view_select_tabs').width(),
+                self_l: parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
-                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
+                if ((o.self_l + 50) <= 0) {
+                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
+                    $('#view_select_tabs').css('left', "0px");
                 }
             }
         });
@@ -1380,15 +1384,15 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
+                self_w:   $('#view_select_tabs').width(),
+                self_l:   parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
-                if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
+                if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
+                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
                 } else {
-                    $('#view_select_tabs').css('left', "0px");
+                    $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                 }
             }
         });
@@ -3600,10 +3604,10 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   pos.left - 2,
-                    top:    pos.top  - 2,
-                    height: $widget.outerHeight() + 2,
-                    width:  $widget.outerWidth()  + 2
+                    left:   parseInt(pos.left) - 2 +"px" ,
+                    top:    parseInt(pos.top) - 2 + "px" ,
+                    height: parseInt($widget.outerHeight()) + 2 +'px',
+                    width:  parseInt($widget.outerWidth()) + 2 +'px'
                 }
             ).show();
         } else {
@@ -4035,7 +4039,7 @@ vis = $.extend(true, vis, {
 
             if (this.activeWidgets.length == 1) {
                 $widget = $('#' + this.activeWidgets[0]);
-                if (!$widget.hasClass('ui-resizable')) {
+                if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
                     this.resizable($widget);
                 }
             }
@@ -4464,6 +4468,10 @@ vis = $.extend(true, vis, {
                     if ($wid[0]._customHandlers && $wid[0]._customHandlers.onMoveEnd) {
                         $wid[0]._customHandlers.onMoveEnd($wid[0], wid);
                     }
+                    $('#widget_helper_' + wid).css({
+                        left: parseInt($wid.css("left")) - 2 + 'px',
+                        top: parseInt($wid.css("top")) - 2 + 'px'
+                    });
                 }
                 $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets, 'top', true));
                 $('#inspect_css_left').val(that.findCommonValue(that.activeWidgets, 'left', true));
@@ -4488,7 +4496,7 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y -2});
 
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
@@ -4567,8 +4575,9 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  + 2,
-                        height: ui.element.outerHeight() + 2});
+                        width: parseInt( ui.element.outerWidth()) + 2 +'px',
+                        height:  parseInt(ui.element.outerHeight()) + 2 +'px'
+                    });
                 }
             }, resizableOptions));
         }

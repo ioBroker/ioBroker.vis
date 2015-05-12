@@ -674,6 +674,10 @@ var vis = {
                 $(".vis-widget").addClass("vis-widget-lock");
             }
         }
+        setTimeout(function(){
+            $("#visview_"+view).trigger("rendered")
+        })
+
     },
     addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
@@ -1803,7 +1807,9 @@ window.onpopstate();
                     // first of all try to load views
                     vis.loadRemote(function () {
                         // Read all states from server
+
                         vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];

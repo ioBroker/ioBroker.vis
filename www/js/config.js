@@ -1,3 +1,4 @@
+
 var visConfig = {
     widgetSets: [
         "basic",
@@ -11,26 +12,25 @@ var visConfig = {
         "weather-adapter",
         "RGraph",
         "hqWidgets",
-        //"plumb",
+        "plumb",
         "bars",
         {name: "lcars",       depends: ["basic"]}
         //"vkb"
-        //"plumb",
         //"table"
         /*
-        "bars",
-        "colorpicker",
-        {name: "homematic", depends: ["basic", "jqui"]},
-//        {name: "hqWidgets", edit: "hqWidgetsEdit"},
+         "bars",
+         "colorpicker",
+         {name: "homematic", depends: ["basic", "jqui"]},
+         //        {name: "hqWidgets", edit: "hqWidgetsEdit"},
          "knob"
-        "special",
-        "swipe",
-        "dev"*/
+         "special",
+         "swipe",
+         "dev"*/
     ]
 };
 
 if (typeof exports != 'undefined') {
     exports.config = visConfig;
 } else {
-	visConfig.language = window.navigator.userLanguage || window.navigator.language;
+    visConfig.language = window.navigator.userLanguage || window.navigator.language;
 }

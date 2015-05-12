@@ -128,6 +128,14 @@ If user changes the view or at start the variables will be filled by vis with
 
 
 ## Changelog
+### ???
+- (smiling_Jack) Bugfix View select tabs
+- (smiling_Jack) Add a optional attr "data-vis-beta" in tpl set. To show a "!!! Beta !!!" label at the Widgetpreview
+- (smiling_Jack) Add plump set
+- (smiling_Jack) change widget-helper size
+
+
+
 ### 0.3.2 (2015-05-09)
 - (bluefox) fix errors in binding
 - (bluefox) start implement hqWidgets

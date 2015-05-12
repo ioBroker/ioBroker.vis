@@ -75,7 +75,7 @@ var servConn = {
         // - create "_socket/info.js" file with
         //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
         //   in this case you can overwrite browser language settings
-        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local'))) {
+        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local' ))) {
             this._type =  'local';
         }
 
@@ -247,7 +247,7 @@ var servConn = {
         if (this._type === 'local') {
             try {
                 var data = storage.get(filename);
-                callback(null, data ? JSON.parse(storage.get(data)) : null);
+                callback(null, data ? JSON.parse(storage.get(filename)) : null);
             } catch (err) {
                 callback(err, null);
             }
@@ -392,22 +392,27 @@ var servConn = {
     },
     // callback(err, data)
     getStates:        function (IDs, callback) {
-        if (typeof IDs == 'function') {
-            callback = IDs;
-            IDs = null;
-        }
+        if (this._type === 'local') {
+            return callback(null, []);
+        }else {
 
-        if (!this._checkConnection('getStates', arguments)) return;
-
-        this._socket.emit('getStates', IDs, function (err, data) {
-            if (err || !data) {
-                if (callback) {
-                    callback(err || 'Authentication required');
-                }
-            } else if (callback) {
-                callback(null, data);
+            if (typeof IDs == 'function') {
+                callback = IDs;
+                IDs = null;
             }
-        });
+
+            if (!this._checkConnection('getStates', arguments)) return;
+
+            this._socket.emit('getStates', IDs, function (err, data) {
+                if (err || !data) {
+                    if (callback) {
+                        callback(err || 'Authentication required');
+                    }
+                } else if (callback) {
+                    callback(null, data);
+                }
+            });
+        }
     },
     // callback(err, data)
     getObjects:       function (callback) {

@@ -160,14 +160,23 @@
     height: 100%;
     width: 100%;
     position: absolute;
-    border-radius: 100%;
-
+    border-radius: 0;
 }
-
+.plumb_sprinkler_r_head{
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    position: relative;
+}
 .plumb_sprinkler_r_water{
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+}
+.plumb_sprinkler_r_body{
+    overflow: visible;
 }
 
 .plumb_c_valve_h_img{
@@ -346,5 +355,14 @@ transform: scaleY(-1);
     position: absolute;
     width: 100%;
     height: 100%;
+    /*margin-left: -1px;*/
+    /*margin-top: -1px;*/
     line-height: 0;
+}
+
+.plumb-dock-svg{
+    width: 100%;
+    height: 100%;
+    /*margin-left: -1px;*/
+    /*margin-top: -1px;*/
 }
