@@ -1803,7 +1803,9 @@ window.onpopstate();
                     // first of all try to load views
                     vis.loadRemote(function () {
                         // Read all states from server
+
                         vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];

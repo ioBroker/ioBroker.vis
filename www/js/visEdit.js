@@ -1248,10 +1248,15 @@ vis = $.extend(true, vis, {
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = "";
+                var beta = "";
                 if ($("#" + tpl).data('vis-type')) {
                     type = '<div class="wid_prev_type">' + $("#" + tpl).data("vis-type") + '</div>';
                 }
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
+
+                if ($("#" + tpl).data('vis-beta')) {
+                    beta = '<div style="color:red; position:absolute;  width: 100%;  z-index: 100;  height: 20px; top: 50% ;font-size: 1.5em">!!! BETA !!!</div>';
+                }
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' +beta+ '' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
@@ -3517,8 +3522,8 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   pos.left -2 ,
-                    top:    pos.top -2 ,
+                    left:   parseInt(pos.left) -1 +"px" ,
+                    top:    parseInt(pos.top) -1 + "px" ,
                     height: $widget.outerHeight(),
                     width:  $widget.outerWidth()
                 }
@@ -4405,7 +4410,7 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 1, top: y -1});
 
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 

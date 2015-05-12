@@ -87,6 +87,8 @@
             var drag_id;
             var self_id;
             var drop_cancel;
+            var left;
+            var top;
             if (vis.editMode) {
 
                 $($this).find(".plumb_dock_top").droppable({
@@ -97,26 +99,28 @@
 
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
+                        top = parseInt($this.css("top")) - ui.draggable.height() + "px";
+                        left = parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
+
+
                         vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conBottom = self_id;
-                        $("#inspect_conBottom").val(self_id);
-                        vis.save();
-                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-                            $(ui.draggable).css({
-                                "top": parseInt($this.css("top")) - ui.draggable.height() + "px",
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
-                            });
-                            $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px",
-                                "top": parseInt($this.css("top")) - ui.draggable.height() + "px"
-                            });
-                        }
-                        ;
+                        vis.views[vis.activeView].widgets[drag_id].style.top = top;
+                        vis.views[vis.activeView].widgets[drag_id].style.left = left;
 
-                        setTimeout(function () {
-                            vis.reRenderWidgetEdit(drag_id);
-                            vis.reRenderWidgetEdit(self_id);
-                        }, 0)
+                        $("#inspect_conBottom").val(self_id);
+
+                        $(ui.draggable).css({
+                            "top": top,
+                            "left": left
+                        });
+
+                        $(".widget-helper").css({
+                            "top": parseInt(top) - 1  + "px",
+                            "left": parseInt(left) - 1 + "px"
+                        });
+                        vis.save();
+
                     }
                 });
                 $($this).find(".plumb_dock_bottom").droppable({
@@ -126,25 +130,26 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
+                        left = parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px";
+                        top = parseInt($this.css("top")) + $this.height() + "px";
+
                         vis.views[vis.activeView].widgets[self_id].data.conBottom = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
-                        $("#inspect_conTop").val(self_id);
-                        vis.save();
-                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-                            $(ui.draggable).css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
-                                "top": parseInt($this.css("top")) + $this.height() + "px"
-                            });
-                            $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px",
-                                "top": parseInt($this.css("top")) + $this.height() + "px"
-                            });
-                        }
+                        vis.views[vis.activeView].widgets[drag_id].style.top = top;
+                        vis.views[vis.activeView].widgets[drag_id].style.left = left;
 
-                        setTimeout(function () {
-                            vis.reRenderWidgetEdit(drag_id);
-                            vis.reRenderWidgetEdit(self_id);
-                        }, 0)
+                        $("#inspect_conTop").val(self_id);
+
+                        $(ui.draggable).css({
+                            "top": top,
+                            "left": left
+                        });
+
+                        $(".widget-helper").css({
+                            "top": parseInt(top) - 1  + "px",
+                            "left": parseInt(left) - 1 + "px"
+                        });
+                        vis.save();
                     }
                 });
 
@@ -155,26 +160,26 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
+                        left = parseInt($this.css("left")) - ui.draggable.width() + "px";
+                        top = parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px";
+
                         vis.views[vis.activeView].widgets[self_id].data.conLeft = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
+                        vis.views[vis.activeView].widgets[drag_id].style.top = top;
+                        vis.views[vis.activeView].widgets[drag_id].style.left = left;
+
                         $("#inspect_conRight").val(self_id);
+
+                        $(ui.draggable).css({
+                            "top": top,
+                            "left": left
+                        });
+
+                        $(".widget-helper").css({
+                            "top": parseInt(top) - 1  + "px",
+                            "left": parseInt(left) - 1 + "px"
+                        });
                         vis.save();
-                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-
-                            $(ui.draggable).css({
-                                "left": parseInt($this.css("left")) - ui.draggable.width() + "px",
-                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
-                            });
-                            $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) - ui.draggable.width() + "px",
-                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px"
-                            });
-                        }
-
-                        setTimeout(function () {
-                            vis.reRenderWidgetEdit(drag_id);
-                            vis.reRenderWidgetEdit(self_id);
-                        }, 0)
                     }
                 });
 
@@ -185,144 +190,26 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
+                        left = parseInt($this.css("left")) + $this.width() + "px";
+                        top = parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px";
+
                         vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
+                        vis.views[vis.activeView].widgets[drag_id].style.top = top;
+                        vis.views[vis.activeView].widgets[drag_id].style.left = left;
 
                         $("#inspect_conLeft").val(self_id);
-                        vis.save();
-                        if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
 
-                            $(ui.draggable).css({
-                                "left": parseInt($this.css("left")) + $this.width() + "px",
-                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px"
-                            });
-                            $(".widget-helper").css({
-                                "left": parseInt($this.css("left")) + $this.width() - 2 + "px",
-                                "top": parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) - 2 + "px"
-                            });
-                        }
-
-                        setTimeout(function () {
-                            vis.reRenderWidgetEdit(drag_id);
-                            vis.reRenderWidgetEdit(self_id);
-                        }, 0)
-                    }
-                });
-
-                $($this).find(".plumb_dock_center").droppable({
-                    accept: ".pl:not(#" + $($this).attr("id") + ")",
-                    hoverClass: "drop-hover",
-                    tolerance: "touch",
-                    drop: function (event, ui) {
-                        drag_id = $(ui.draggable).attr("id");
-                        self_id = $this.attr("id");
-
-                        var dl = ui.draggable[0].offsetLeft;
-                        var dt = ui.draggable[0].offsetTop;
-                        var dw = ui.draggable[0].offsetWidth;
-                        var dh = ui.draggable[0].offsetHeight;
-                        var cl = parseInt($this.css("left")) + ($this.width() / 2) - 10;
-                        var ct = parseInt($this.css("top")) + ($this.height() / 2) - 10;
-
-                        var data = {
-                            left: (cl - dl - dw) * -1,
-                            right: (dl - cl - 20) * -1,
-                            top: (ct - dt - dh) * -1,
-                            bottom: (dt - ct - 20) * -1
-                        };
-
-                        var ist = 9999;
-                        var _ist;
-                        $.each(data, function (key) {
-                            if (this < ist) {
-                                ist = this;
-                                _ist = key;
-                            }
+                        $(ui.draggable).css({
+                            "top": top,
+                            "left": left
                         });
 
-                        if (_ist = "left") {
-                            vis.views[vis.activeView].widgets[self_id].data.conLeft = drag_id;
-                            vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
-                            $("#inspect_conRight").val(self_id);
-                            vis.save();
-                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-                                $(ui.draggable).css({
-                                    "left": $this.position().left - ui.draggable.width() + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
-                                });
-                                $(".widget-helper").css({
-                                    "left": $this.position().left - ui.draggable.width() + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
-                                });
-                            }
-                            setTimeout(function () {
-                                vis.reRenderWidgetEdit(drag_id);
-                                vis.reRenderWidgetEdit(self_id);
-                            }, 0)
-                        }
-                        if (_ist = "right") {
-                            vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
-                            vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
-
-                            $("#inspect_conLeft").val(self_id);
-                            vis.save();
-                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-
-                                $(ui.draggable).css({
-                                    "left": $this.position().left + $this.width() + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
-                                });
-                                $(".widget-helper").css({
-                                    "left": $this.position().left + $this.width() + "px",
-                                    "top": $this.position().top - (($(ui.draggable).height() - $this.height()) / 2 ) + "px"
-                                });
-                            }
-                            setTimeout(function () {
-                                vis.reRenderWidgetEdit(drag_id);
-                                vis.reRenderWidgetEdit(self_id);
-                            }, 0)
-
-                        }
-                        if (_ist = "top") {
-                            vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
-                            vis.views[vis.activeView].widgets[drag_id].data.conBottom = self_id;
-                            $("#inspect_conBottom").val(self_id);
-                            vis.save();
-                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-                                $(ui.draggable).css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
-                                    "top": $this.position().top - ui.draggable.height() + "px"
-                                });
-                                $(".widget-helper").css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
-                                    "top": $this.position().top - ui.draggable.height() - 2 + "px"
-                                });
-                            }
-                            setTimeout(function () {
-                                vis.reRenderWidgetEdit(drag_id);
-                                vis.reRenderWidgetEdit(self_id);
-                            }, 0)
-                        }
-                        if (_ist = "bottom") {
-                            vis.views[vis.activeView].widgets[self_id].data.conBottom = drag_id;
-                            vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
-                            $("#inspect_conTop").val(self_id);
-                            vis.save();
-                            if (!no_pos && $("#" + drag_id).hasClass("pl_nocenter") == false) {
-                                $(ui.draggable).css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
-                                    "top": $this.position().top + $this.height() + "px"
-                                });
-                                $(".widget-helper").css({
-                                    "left": $this.position().left - (($(ui.draggable).width() - $this.width()) / 2) + "px",
-                                    "top": $this.position().top + $this.height() - 2 + "px"
-                                });
-                            }
-                            setTimeout(function () {
-                                vis.reRenderWidgetEdit(drag_id);
-                                vis.reRenderWidgetEdit(self_id);
-                            }, 0)
-                        }
+                        $(".widget-helper").css({
+                            "top": parseInt(top) - 1 + "px",
+                            "left": parseInt(left) - 1 + "px"
+                        });
+                        vis.save();
                     }
                 });
 
@@ -2299,14 +2186,11 @@
             });
         },
         tank_simple: function (el, data) {
-
-            console.log("tank")
-
             if (data.conRight_pos != undefined) {
                 var $this = $(el).parent();
                 var id = $this.attr("id");
                 var plumb = vis.binds.plumb.data;
-var last_event;
+                var last_event;
                 vis.binds.plumb.data[id] = {
                     type: "pump",
                     cons: [],
@@ -2510,6 +2394,7 @@ var last_event;
                     } else {
                         val = data.level_min * step;
                     }
+
                     level = parseInt(100/600*val);
                     $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
                     $('#fill_grad_' + id).attr("y1", 600 - val);
@@ -2532,10 +2417,11 @@ var last_event;
 //                        c: event.color.c || "#C0C0C0"
                     }
                 };
-//
-//
+
+
+                console.log(level > parseInt(data.conRight_level))
                 if (self.conRight != last_event) {
-                    if (level >= data.conRight_level) {
+                    if (level > parseInt(data.conRight_level)) {
                         ev.color.c = data.conRight_color_on;
                         ev.color.c_default = data.conRight_color_off;
                     } else {
@@ -2543,12 +2429,13 @@ var last_event;
                         ev.color.c = data.conRight_color_off;
                         ev.color.c_default = data.conRight_color_off;
                     }
+                    console.log("trigger")
                     $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
                     $("#" + self.conRight).trigger(ev);
 
                 }
                 if (self.conLeft != last_event) {
-                    if (level >= data.conLeft_level) {
+                    if (level >= parseInt(data.conLeft_level)) {
                         ev.color.c = data.conLeft_color_on;
                         ev.color.c_default = data.conLeft_color_off;
                     } else {
@@ -2560,7 +2447,7 @@ var last_event;
                     $("#" + self.conLeft).trigger(ev);
                 }
                 if (self.conTop != last_event) {
-                    if (level >= data.conTop_level) {
+                    if (level >= parseInt(data.conTop_level)) {
                         ev.color.c = data.conTop_color_on;
                         ev.color.c_default = data.conTop_color_off;
                     } else {
@@ -2572,7 +2459,7 @@ var last_event;
                     $("#" + self.conTop).trigger(ev);
                 }
                 if (self.conBottom != last_event) {
-                    if (level >= data.conBottom_level) {
+                    if (level >= parseInt(data.conBottom_level)) {
                         ev.color.c = data.conBottom_color_on;
                         ev.color.c_default = data.conBottom_color_off;
                     } else {
@@ -2596,283 +2483,7 @@ var last_event;
             }
 
         },
-//        tank_filter: function (el, data) {
-//
-//            if (data.conRight_pos != undefined) {
-//                var $this = $(el).parent();
-//                var id = $this.attr("id");
-//                var plumb = vis.binds.plumb.data;
-//
-//                vis.binds.plumb.data[id] = {
-//                    type: "pump",
-//                    cons: [],
-//                    coli: false,
-//                    conLeft: data.conLeft || null,
-//                    conRight: data.conRight || null,
-//                    conTop: data.conTop || null,
-//                    conBottom: data.conBottom || null,
-//                    status: false,
-//                    color: {
-//                        c: null,
-//                        c_from: null,
-//                        c_default: null
-//                    }
-//                };
-//
-//                var self = plumb[id];
-//                vis.binds.plumb.plumb_drop($this);
-//
-//                console.log(data)
-//                $this.find(".tank_simple_svg").append('\
-//                <svg\
-//            height="100%"\
-//            viewBox="0 0 300 600"\
-//            width="100%"\
-//            preserveAspectRatio="none"\
-//             >\
-//            <defs>\
-//            <clipPath id="e_' + id + '" clipPathUnits="userSpaceOnUse">\
-//            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-//            </clipPath>\
-//            <linearGradient id="d_' + id + '" gradientUnits="userSpaceOnUse" y1="300" x2="300" y2="300">\
-//            <stop stop-color="#000000" stop-opacity=".5" offset="0"/>\
-//            <stop stop-color="#000000" stop-opacity="0" offset=".5"/>\
-//            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
-//            </linearGradient>\
-//            <linearGradient id="a_' + id + '">\
-//            <stop stop-color="#000000" stop-opacity="0" offset="0"/>\
-//            <stop stop-color="#000000" stop-opacity=".5" offset="1"/>\
-//            </linearGradient>\
-//            <radialGradient id="c_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="172.7" cx="153.34" gradientTransform="matrix(.98033 .00033848 -.00012370 .35826 3.079 -12.306)" r="150"/>\
-//            <radialGradient id="b_' + id + '" xlink:href="#a_' + id + '" gradientUnits="userSpaceOnUse" cy="427.04" cx="150" gradientTransform="matrix(-1 0 0 -.37168 300 709.06)" r="150"/>\
-//            <linearGradient x1="150" y1="300" x2="150" y2="600" id="fill_grad_' + id + '" gradientUnits="userSpaceOnUse">\
-//            <stop id="fill_grad_top' + id + '"    offset="0" style="stop-color:' + data.top_water + ';stop-opacity:1" />\
-//            <stop id="fill_grad_bottom' + id + '" offset="1" style="stop-color:' + data.bottom_water + ';stop-opacity:1"  />\
-//            </linearGradient>\
-//            <pattern id="kies_' + id + '" x="0" y="0" height="' + data.filter_size + '" width="' + data.filter_size + '" patternUnits="userSpaceOnUse">\
-//                    <image height="' + data.filter_size + '" width="' + data.filter_size + '"  xlink:href="' + data.filter_pattern + '"></image>\
-//            </pattern>\
-//            </defs>\
-//            <path d="m146.46.013672a150 50 0 0 0 -71.46 6.6855 150 50 0 0 0 -75 43.301v499.8.20h.013672a150 50.2 0 0 0 74.986 43.28 150 50.2 0 0 0 150 0 150 50.2 0 0 0 74.97 -43.28h.03v-.20-499.8a150 50 0 0 0 -75 -43.301 150 50 0 0 0 -78.54 -6.6853z" fill="' + data.color + '"/>\
-//            <rect id="' + data.wid + '_fill" style="color:#000000" clip-path="url(#e_' + id + ')" height="300" width="300" y="300" x="0" fill="url(#fill_grad_' + id + ')"/>\
-//            <rect id="' + id + '_kies" clip-path="url(#e_' + id + ')" height="450" width="300" y="150" x="0" style="opacity:' + data.filter_opa / 100 + '" fill="url(#kies_' + id + ')"/>\
-//            <path d="m0 50h300v500h-300z" fill="url(#d_' + id + ')"/>\
-//            <path fill="url(#b_' + id + ')" d="m300 550a150 50 0 0 1 -75 43 150 50 0 0 1 -150 0 150 50 0 0 1 -75 -43h150z"/>\
-//            <path fill="url(#c_' + id + ')" d="m0  50a150 50 0 0 1 75 -43 150 50 0 0 1 150 -0 150 50 0 0 1 75 43h-0z"/>\
-//            </svg>\
-//            ');
-//
-//                setTimeout(function () {
-//
-//                    $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
-//                    var l;
-//                    var t;
-//                    var s;
-//                    var shadow;
-//
-//                    if (data.conTop_show == true) {
-//                        self.cons.push("conTop");
-//
-//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>');
-//                        vis.binds.plumb.svg_pipe_v(id + "_dock_top");
-//
-//                        s = (parseInt(data.conTop_size) || 20);
-//                        t = "-9";
-//                        l = (($this.width() - s) / 100 * (data.conTop_pos || 50));
-//
-//                        $this.find(".plumb_dock_top").css({
-//                            top: t + "px",
-//                            left: l + "px",
-//                            height: "50px",
-//                            width: s + "px",
-//                            overflow: "hidden"
-//                        }).find("svg").css({
-//                            position: 'absolute',
-//                            width: '100%',
-//                            height: '100%',
-//                            'margin-left': '-1px',
-//                            'margin-top': '-1px',
-//                        });
-//
-//                        $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
-//                    }
-//
-//                    if (data.conBottom_show == true) {
-//                        self.cons.push("conBottom");
-//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>');
-//                        vis.binds.plumb.svg_pipe_v(id + "_dock_bottom");
-//                        s = (parseInt(data.conBottom_size) || 20);
-//                        t = "-9";
-//                        l = (($this.width() - s) / 100 * (data.conBottom_pos || 50));
-//
-//                        $this.find(".plumb_dock_bottom").css({
-//                            bottom: t + "px",
-//                            left: l + "px",
-//                            height: "50px",
-//                            width: s + "px",
-//                            overflow: "hidden"
-//                        }).find("svg").css({
-//                            position: 'absolute',
-//                            width: '100%',
-//                            height: '100%',
-//                            'margin-left': '-1px',
-//                            'margin-top': '-1px',
-//                        });
-//                        $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
-//                    }
-//                    if (data.conLeft_show == true) {
-//                        self.cons.push("conLeft");
-//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>');
-//                        vis.binds.plumb.svg_pipe_h(id + "_dock_left");
-//                        s = (parseInt(data.conLeft_size) || 20);
-//                        l = "-9";
-//                        t = (($this.height() - s) / 100 * (data.conLeft_pos || 50));
-//
-//                        $this.find(".plumb_dock_left").css({
-//                            top: t + "px",
-//                            left: l + "px",
-//                            height: s + "px",
-//                            width: "20px",
-//                            overflow: "hidden"
-//                        }).find("svg").css({
-//                            position: 'absolute',
-//                            width: '100%',
-//                            height: '100%',
-//                            'margin-left': '-1px',
-//                            'margin-top': '-1px',
-//                        });
-//                        $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
-//                    }
-//                    if (data.conRight_show == true) {
-//                        self.cons.push("conRight");
-//                        $this.find(".tank_simple").append('<div id="' + id + '_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>');
-//                        vis.binds.plumb.svg_pipe_h(id + "_dock_right");
-//                        s = (parseInt(data.conRight_size) || 20);
-//                        l = "-9";
-//                        t = (($this.height() - s) / 100 * (data.conRight_pos || 50));
-//
-//                        $this.find(".plumb_dock_right").css({
-//                            top: t + "px",
-//                            right: l + "px",
-//                            height: s + "px",
-//                            width: "20px",
-//                            overflow: "hidden"
-//                        }).find("svg").css({
-//                            position: 'absolute',
-//                            width: '100%',
-//                            height: '100%',
-//                            'margin-left': '-1px',
-//                            'margin-top': '-1px',
-//                        });
-//                        $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
-//                    }
-//                    vis.binds.plumb.plumb_drop($this);
-//
-//                    if (data.oid != "") {
-//                        set(vis.states[data.oid + '.val'])
-//                    }
-//                    vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
-//
-//                        set(newVal)
-//
-//                    });
-//                });
-//                $this.bind("plumb_change", function (event) {
-//
-//                    var ev = {
-//                        type: "plumb_change",
-//                        from: id,
-//                        status: true,
-//                        color: {
-//                            c_from: id,
-//                            c_default: event.color.c_default || "#C0C0C0",
-//                            c: event.color.c || "#C0C0C0"
-//                        }
-//                    };
-//                    if (self.conRight != event.from) {
-//                        if (event.status == true) {
-//                            ev.color.c = data.conRight_water;
-//                        } else {
-//                            ev.status = false;
-//                            ev.color.c = event.color.c_default || "#C0C0C0";
-//                        }
-//                        $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
-//                        $("#" + self.conRight).trigger(ev);
-//
-//                    }
-//                    if (self.conLeft != event.from) {
-//                        if (event.status == true) {
-//                            ev.color.c = data.conRight_Left;
-//                        } else {
-//                            ev.status = false;
-//                            ev.color.c = event.color.c_default || "#C0C0C0";
-//                        }
-//                        $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
-//                        $("#" + self.conLeft).trigger(ev);
-//                    }
-//                    if (self.conTop != event.from) {
-//                        if (event.status == true) {
-//                            ev.color.c = data.conTop_water;
-//                        } else {
-//                            ev.status = false;
-//                            ev.color.c = event.color.c_default || "#C0C0C0";
-//                        }
-//                        $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
-//                        $("#" + self.conTop).trigger(ev);
-//                    }
-//                    if (self.conBottom != event.from) {
-//                        if (event.status == true) {
-//                            ev.color.c = data.conBottom_water;
-//                        } else {
-//                            ev.status = false;
-//                            ev.color.c = event.color.c_default || "#C0C0C0";
-//                        }
-//                        $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
-//                        $("#" + self.conBottom).trigger(ev);
-//                    }
-//
-//                    if (self.conRight == event.from) {
-//                        $("#" + id + "_dock_right_fill").attr("fill", event.color.c);
-//                    } else if (self.conLeft == event.from) {
-//                        $("#" + id + "_dock_left_fill").attr("fill", event.color.c);
-//                    } else if (self.conTop == event.from) {
-//                        $("#" + id + "_dock_top_fill").attr("fill", event.color.c);
-//                    } else if (self.conBottom == event.from) {
-//                        $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
-//                    }
-//                });
-//            }
-//            function set(_newVal) {
-//                var newVal = _newVal || 0;
-//                var step = 600 / 100;
-//                var val;
-//                if (data.type == "level") {
-//                    step = 600 / (data.level_max - data.level_min );
-//                    val = (newVal - data.level_min) * step;
-//                    if (val < 0) {
-//                        val = 0
-//                    }
-//                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
-//                    $('#fill_grad_' + id).attr("y1", 600 - val);
-//                } else if (data.type == "bool") {
-//                    step = 600 / 100;
-//
-//                    if (newVal == true) {
-//                        val = data.bool_on * step;
-//                    } else {
-//                        val = data.bool_off * step;
-//                    }
-//
-//                    $("#" + data.wid + "_fill").attr("height", val).attr("y", 600 - val);
-//                    $('#fill_grad_' + id).attr("y1", 600 - val);
-//                } else if (data.type == "fix") {
-//
-//                    $("#" + data.wid + "_fill").attr("height", data.fix * step).attr("y", 600 - data.fix * step);
-//                    $('#fill_grad_' + id).attr("y1", 600 - data.fix * step);
-//                }
-//            }
-//
-//        }
+
     }
 </script>
 
@@ -2881,6 +2492,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplPlump_pump" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_b pl_t ui-selectee ui-draggable-handle " data-vis-resizable="{}" style="top: 163px; left: 449px; width: 57px; height: 183px;" > <div class="vis-widget-prev-body">			<div class="pump" ><img style="position: absolute; width: 100%;" src="./widgets/plumb/img/pumpe.png"><div class="plumb_dock_top ui-droppable"></div><div class="plumb_dock_bottom ui-droppable"></div>				<div class="plumb_dock_left ui-droppable"></div>				<div class="plumb_dock_right ui-droppable"></div>			</div> </div> </div></div>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="Pump"
         data-vis-attrs="oid;src[./widgets/plumb/img/pumpe.png];color_off[#C0C0C0]/color;color_on[#00ff00]/color;group.conTop;conTop_show/checkbox;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">
@@ -2907,6 +2519,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" > <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="Sprinker I"
         data-vis-attrs="_no_resize[true]/hidden;test/checkbox;spray_width[100]/slider,10,500,1;head_size[20]/slider,10,50,5;time[4];start[0];ende[90];stroke[4];opacity[0.8];fog/checkbox;water_color[blue]/color;head_color[black]/color;head_show[true]/checkbox;head_round[true]/checkbox">
@@ -2931,6 +2544,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplPlump_istrinkler" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_b pl_t pl_l pl_r ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 10 ]}" style="width: 20px; height: 17px; overflow: visible; left: 242px; top: 228px; position: absolute;" > <div class="plumb_sprinkler_i_body vis-widget-prev-body" style="border-top-left-radius: 100%; border-top-right-radius: 100%; border-bottom-right-radius: 100%; border-bottom-left-radius: 100%; background-color: rgb(0, 0, 0);"> <div class="plumb_sprinkler_i" > <div class="plumb_splinkler_i_water" style="height: 60px; width: 5px; left: 7px; top: -51px; position: relative; background-color: rgb(27, 138, 222);"></div> </div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div></div>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="Sprinker R"
         data-vis-attrs="_no_resize[true]/hidden;spray_width[100]/slider,10,500,1;"
@@ -2955,6 +2569,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_pipe_v.png" ></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_V"
         data-vis-attrs="pipe_size[20]/slider,10,50,5;conTop;conBottom">
@@ -2976,6 +2591,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_pipe_h.png" class=""></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_H"
         data-vis-attrs="pipe_size[20]/slider,10,50,5;conLeft;conRight">
@@ -2997,6 +2613,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class=""></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Bogen_br"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conBottom;conRight">
@@ -3018,6 +2635,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-flip-x"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Bogen_bl"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conBottom;conLeft">
@@ -3039,6 +2657,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-flip-y"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Bogen_tr"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conTop;conRight">
@@ -3060,6 +2679,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_bogen.png" class="plumb-rotate180"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Bogen_tl"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conTop;conLeft">
@@ -3081,6 +2701,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplPlump_valve_H" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_l pl_r ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 20, 10 ],"aspectRatio": true}" style="top: 245px; left: 240px; width: 40px; height: 20px;" > <div class="vis-widget-prev-body">   <div class="valve_h" >    <div class="plumb_valve_l" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 10px 0px 10px 20px;"></div>    <div class="plumb_valve_r" style="border-color: rgba(0, 0, 0, 0) rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 10px 20px 10px 0px;"></div>    <div class="plumb_dock_left ui-droppable"></div>    <div class="plumb_dock_right ui-droppable"></div>   </div> </div> </div></div>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="valve_H"
         data-vis-attrs="_no_resize[true]/hidden;oid;pipe_size[20]/slider,10,50,5;conLeft;conRight;ctrl/checkbox">
@@ -3108,6 +2729,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplPlump_valve_v" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl_t pl_b ui-selectee ui-draggable-handle " data-vis-resizable="{"grid": [ 10, 20 ],"aspectRatio": true}" style="width: 20px; height: 35px; left: 121px; top: 469px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="valve_v " > <div class="plumb_valve_t" style="border-color: rgb(255, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0); border-width: 20px 10px 0px;"></div> <div class="plumb_valve_b" style="border-color: rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgb(255, 0, 0); border-width: 0px 10px 20px;"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_bottom ui-droppable"></div> </div> </div> </div></div>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="valve_V"
         data-vis-attrs="_no_resize[true]/hidden;oid;pipe_size[20]/slider,10,50,5;conTop;conBottom;ctrl/checkbox">
@@ -3135,6 +2757,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_c_valve_h.png" ></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="Check Valve H"
         data-vis-attrs="_no_resize[true]/hidden;conLeft;conRight;pipe_size[20]/slider,10,50,5;turn_direction[false]/checkbox">
@@ -3156,6 +2779,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_c_valve_v.png"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="val"
         data-vis-name="Check Valve V"
         data-vis-attrs="_no_resize[true]/hidden;conTop;conBottom;pipe_size[20]/slider,10,50,5;turn_direction[false]/checkbox">
@@ -3177,6 +2801,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" ></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_HT"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conRight;conTop">
@@ -3200,7 +2825,9 @@ var last_event;
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-flip-y" ></img>'
+        data-vis-beta="true"
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_HB"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conRight;conBottom">
@@ -3223,6 +2850,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-rotate270" style="margin:15px"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_VL"
         data-vis-attrs="_no_resize[true]/hidden;pipe_size[20]/slider,10,50,5;conLeft;conBottom;conTop">
@@ -3246,6 +2874,7 @@ var last_event;
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_tpice.png" class="plumb-rotate90" style="margin:15px"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Pipe_VR"
         data-vis-attrs=_no_resize[true]/hidden;"pipe_size[20]/slider,10,50,5;conBottom;conRight;conTop">
@@ -3263,34 +2892,12 @@ var last_event;
 
 </script>
 
-<script id="tplPlump_tank_ent_e"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<div id="prev_tplPlump_tank_ent_e" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 110px; height: 240px; left: 330px; top: 47px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_ent-e " > <div class="ent-e_top_pipe-l" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top_pipe-r" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset, rgb(0, 0, 0) 0px 45px 45px -45px inset;"></div> <div class="ent-e_center" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"> <div class="ent-e_schott"></div> <div class="ent-e_kies"></div> </div> <div class="ent-e_bottom" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"></div> <div class="ent-e_bottom_pipe"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'
-        data-vis-set="plumb"
-        data-vis-type="static"
-        data-vis-name="Tank Enteisung"
-        data-vis-attrs="color[#C0C0C0]/color;water_color[#0000ff]/color;conTop,cnBottom;conLeft;conRight;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1">
-    <div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": false,"handles": "n, e, s, w"}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>
-			<div class="tank_ent-e " >
-                <div class="tank_simple_svg">
-                <div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>
-				<div id="<%= this.data.attr('wid') %>_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>
-			</div>
-        </div>
-    </div>
-
-
-</script>
-
 <script id="tplPlump_tank_simple"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<img src="widgets\plumb\img\prev_tank_simple.png"></img>'
         data-vis-set="plumb"
+        data-vis-beta="true"
         data-vis-type="static"
         data-vis-name="Tank"
         data-vis-attrs="type[level]/nselect,fix,bool,level;level_min[0];level_max[100];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;"
@@ -3314,19 +2921,20 @@ var last_event;
 
 </script>
 
-<!--<script id="tplPlump_tank_filter"-->
+<!--<script id="tplPlump_tank_ent_e"-->
         <!--type="text/ejs"-->
         <!--class="vis-tpl"-->
-        <!--data-vis-prev='<img src="widgets\plumb\img\prev_tank_simple.png"></img>'-->
-        <!--data-vis-set="plumb"-->
+        <!--data-vis-prev='<div id="prev_tplPlump_tank_ent_e" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev pl pl_l pl_r pl_t ui-draggable-handle " data-vis-resizable="{"grid": [ 30, 30 ],"aspectRatio": true}" style="width: 110px; height: 240px; left: 330px; top: 47px; position: absolute;" > <div class="vis-widget-prev-body"> <div class="tank_ent-e " > <div class="ent-e_top_pipe-l" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top_pipe-r" style="box-shadow: rgb(0, 0, 0) 10px 0px 10px -10px inset, rgb(0, 0, 0) -10px 0px 10px -10px inset;"></div> <div class="ent-e_top" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset, rgb(0, 0, 0) 0px 45px 45px -45px inset;"></div> <div class="ent-e_center" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"> <div class="ent-e_schott"></div> <div class="ent-e_kies"></div> </div> <div class="ent-e_bottom" style="box-shadow: rgb(0, 0, 0) 90px 0px 90px -90px inset, rgb(0, 0, 0) -90px 0px 90px -90px inset;"></div> <div class="ent-e_bottom_pipe"></div> <div class="plumb_dock_top ui-droppable"></div> <div class="plumb_dock_left ui-droppable"></div> <div class="plumb_dock_right ui-droppable"></div> </div> </div> </div></div>'-->
+       <!--data-vis-set="plumb"-->
+        <!--data-vis-beta="true"-->
         <!--data-vis-type="static"-->
-        <!--data-vis-name="Tank Filter"-->
-        <!--data-vis-attrs="type[level]/nselect,fix,bool,level;fix[50];bool_on[90];bool_off[20];level_min[0];level_max[100];oid;color[#C0C0C0]/color;top_water[#0000ff]/color;bottom_water[#00ffff]/color;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1;group.conTop;conTop_show/checkbox;conTop_water[#0000ff]/color;conTop_size[20]/slider,10,50,5;conTop_pos[50]/slider,0,100,1;conTop;group.conBottom;conBottom_show/checkbox;conBottom_water[#0000ff]/color;conBottom_size[20]/slider,10,50,5;conBottom_pos[50]/slider,0,100,1;conBottom;group.conLeft;conLeft_show/checkbox;conLeft_water[#0000ff]/color;conLeft_size[20]/slider,10,50,5;conLeft_pos[50]/slider,0,100,1;conLeft;group.conRight;conRight_show/checkbox;conRight_water[#0000ff]/color;conRight_size[20]/slider,10,50,5;conRight_pos[50]/slider,0,100,1;conRight">-->
-    <!--<div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t pl_b" data-vis-resizable='{}' style="min-width: 70px; min-height: 135px;" id="<%= this.data.attr('wid') %>">-->
-        <!--<div class="vis-widget-body" <%= (el) -> vis.binds.plumb.tank_filter(el, data) %>>-->
-			<!--<div class="tank_simple" >-->
-            	<!--<div class="tank_simple_svg">-->
-				<!--<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>-->
+        <!--data-vis-name="Tank Enteisung"-->
+        <!--data-vis-attrs="color[#C0C0C0]/color;water_color[#0000ff]/color;conTop,cnBottom;conLeft;conRight;filter_pattern[widgets/plumb/img/kies.png]/image;filter_size[15];filter_opa[50]/slider,0,100,1">-->
+    <!--<div class="vis-widget <%== this.data.attr('class') %> pl pl_l pl_r pl_t" data-vis-resizable='{"grid": [ 5, 5 ],"aspectRatio": false,"handles": "n, e, s, w"}' style="min-width: 140px; min-height: 270px;" id="<%= this.data.attr('wid') %>">-->
+        <!--<div class="vis-widget-body" <%= (el) -> vis.binds.plumb.ent_e_top(el, data) %>>-->
+			<!--<div class="tank_ent-e " >-->
+                <!--<div class="tank_simple_svg">-->
+                <!--<div id="<%= this.data.attr('wid') %>_dock_left_svg" class="plumb-dock-svg plumb_dock_left"></div>-->
 				<!--<div id="<%= this.data.attr('wid') %>_dock_right_svg" class="plumb-dock-svg plumb_dock_right"></div>-->
 				<!--<div id="<%= this.data.attr('wid') %>_dock_top_svg" class="plumb-dock-svg plumb_dock_top"></div>-->
 				<!--<div id="<%= this.data.attr('wid') %>_dock_bottom_svg" class="plumb-dock-svg plumb_dock_bottom"></div>-->
@@ -3334,9 +2942,6 @@ var last_event;
         <!--</div>-->
     <!--</div>-->
 <!--</script>-->
-
-
-
 
 
 
