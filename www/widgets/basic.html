@@ -901,6 +901,34 @@
                 format = format.replace('с', v);
             }
             return format;
+        },
+        detectScreen: function (el) {
+            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) == -1) {
+                vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
+            }
+
+            setTimeout(function () {
+                $(window).bind('resize', function () {
+                    if (vis.editMode) {
+                        $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+                        $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+                        $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+                    } else {
+                        $('.vis-resolution-width').html($(window).width());
+                        $('.vis-resolution-height').html($(window).height());
+                        $('.vis-resolution-default-view').html(vis.findNearestResolution());
+                    }
+                });
+                if (vis.editMode) {
+                    $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+                    $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+                } else {
+                    $('.vis-resolution-width').html($(window).width());
+                    $('.vis-resolution-height').html($(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution());
+                }
+            }, 100);
         }
     };
 
@@ -1639,6 +1667,22 @@
 		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
 			<%== this.data.attr("html_prepend") %><%= (this.data.test_text && vis.editMode) ? this.data.test_text : (vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
 		</div>
+    </div>
+</script>
+
+<script id="tplScreenResolution"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplScreenResolution" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-draggable-handle " style="width: 120px; height: 54px; border: 1px solid rgb(136, 136, 136); font-size: 12px; opacity: 0.8;" > <div style="padding: 10px"> Width: <span>640</span><br>Height: <span>360</span><br>Default view:<span></span> </div> </div></div>'
+        data-vis-set="basic"
+        data-vis-type="tools"
+        data-vis-name="Screen Resolution"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:150px; height:60px; border: 1px solid #888; font-size: 12px; opacity: 0.8" id="<%= this.data.attr('wid') %>">
+		<div id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
+			Default view: <span class='vis-resolution-default-view'></span><br>Width: <span class='vis-resolution-width'></span><br>Height: <span class='vis-resolution-height'></span>
+		</div>
+		<%= vis.binds.basic.detectScreen() %>
     </div>
 </script>
 

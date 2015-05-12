@@ -618,7 +618,7 @@ vis.binds.hqWidgets = {
             }
 
             // Hide right info if empty
-            if (time || (text && text.text())) {
+            if (data.infoRight || time || (text && text.text())) {
                 $div.find('.vis-hq-rightinfo').show();
             } else {
                 $div.find('.vis-hq-rightinfo').hide();

@@ -344,8 +344,8 @@ body{
 
 .toolbox {
     text-align: center;
-    height: -webkit-calc(100% - 60px);
-    height: calc(100% - 60px);
+    height: -webkit-calc(100% - 83px);
+    height: calc(100% - 83px);
     overflow: auto;
     border-color: inherit;
     margin: 0;
@@ -572,8 +572,8 @@ body{
     border-width: 1px 0 0 0 !important;
     font-size: 12px;
     font-weight: normal !important;
-    height: -webkit-calc(100% - 50px);
-    height: calc(100% - 50px);
+    height: -webkit-calc(100% - 70px);
+    height: calc(100% - 70px);
     overflow: auto;
 }
 
