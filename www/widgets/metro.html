@@ -288,7 +288,7 @@
                 });
             }, 100);
         },
-        tileDialog: function (el, wid, view, options, html) {
+        tileDialog: function (el, wid, view, options, html, isIframe) {
             var $this = $(el).parent().find('.tile');
 
             var width  = parseInt(options.width, 10);
@@ -311,7 +311,12 @@
                     onShow:    function(_dialog){
                         var content = _dialog.children('.content');
                         if (html) {
-                            content.html(html);
+                            if (isIframe) {
+                                content.css('overflow', 'hidden');
+                                content.html('<iframe src="' + html + '" style="width: 100%; height: 100%" scrolling="' + options.scroll ? 'yes' : 'no' + '"></iframe>');
+                            } else {
+                                content.html(html);
+                            }
                         } else {
                             content.html('<div class="vis-view-container" data-vis-contains="' + view + '"></div>');
                             if (vis.views[view]) {
@@ -511,7 +516,7 @@
         data-vis-prev='<div id="prev_tplMetroSlider" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 21px; left: 41px; width: 78px; height: 17px;"> <div class="metro vis-widget-prev-body " style="padding:2px"> <div data-o data-oid-working="" class="slider" data-role="slider"><div class="complete" style="background-color: rgb(32, 32, 255); width: 0px;"></div><a class="marker" style="background-color: rgb(32, 32, 255); left: 0px;"></a></div> <div></div> </div> </div>'
         data-vis-attrs="oid;oid-working;min;max;step;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color"
         data-vis-set="metro"
-        data-vis-type="ctrl,slider"
+        data-vis-type="ctrl,slider,dimmer"
         data-vis-name="Slider horizontal">
     <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:360px; height:16px;">
         <div class="metro vis-widget-body <%== this.data.attr('class') %>" style="padding:2px" >
@@ -530,7 +535,7 @@
         data-vis-prev='<div id="prev_tplMetroSliderVertical" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee" style="top: 215px; left: 460px; width: 12px; height: 73px;"> <div class="metro vis-widget-prev-body " style="padding:2px"> <div data-o data-oid-working="" style="height:100%;" class="slider vertical" data-role="slider"><div class="complete" style="height: 12px;"></div><a class="marker" style="background-color: rgb(75, 0, 130); top: 344px;"></a></div> <div></div> </div> </div>'
         data-vis-attrs="oid;oid-working;min;max;step;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color"
         data-vis-set="metro"
-        data-vis-type="ctrl,slider"
+        data-vis-type="ctrl,slider,dimmer"
         data-vis-name="Slider vertical">
     <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:16px; height:360px;">
         <div class="metro vis-widget-body <%== this.data.attr('class') %>" style="padding:2px" >
@@ -1015,7 +1020,7 @@
 <script id="tplMetroTileShutter"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileShutter" style="position: relative; text-align: initial;padding: 4px "><div id="19l1ml014" class="vis-widget_prev  vis-widget-lock " style="width: 287px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" id="metroTile_19l1ml014" class="tile hover bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/fts_shutter_100.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="19l1ml014_checkbox" id="19l1ml014_checkbox" data-oid="nothing_selected" data-oid-working=""> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" data-oid="nothing_selected" data-oid-working="" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div>  </div> <div class="brand ribbed-steel"><span class="label fg-white">Shutter</span></div></div><div></div> </div></div></div>'
+        data-vis-prev='<div id="prev_tplMetroTileShutter" style="position: relative; text-align: initial;padding: 4px "><div id="19l1ml014" class="vis-widget_prev  vis-widget-lock " style="width: 287px; height: 120px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" id="metroTile_19l1ml014" class="tile hover bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/fts_shutter_100.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="19l1ml014_checkbox" id="19l1ml014_checkbox" data-oid="nothing_selected" data-oid-working=""> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" data-oid="nothing_selected" data-oid-working="" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div>  </div> <div class="brand ribbed-steel"><span class="label fg-white">Shutter</span></div></div><div></div> </div></div></div>'
         data-vis-attrs="oid;oid-working;min;max;hover/checkbox;transform/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -1293,9 +1298,9 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplMetroTileStaticDialogNumber" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px; z-index: 0;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-book"></i> </div> <div class="brand bg-orange"> <span class="label fg-white"></span> <div style="display: none;" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div> <div></div> </div>'
-        data-vis-attrs="html;label;content_oid/id;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs="label;content_oid/id;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-attrs0="group.badge;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
-        data-vis-attrs1="group.dialog;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs1="group.dialog;html;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-set="metro"
         data-vis-type="static,dialog"
         data-vis-name="Tile Dialog / val - Badge Number">
@@ -1328,8 +1333,10 @@
 <script id="tplMetroTileDialogString"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-attrs="content_oid/id;dialog_oid/id;label;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;icon_badge[]/style,iconFont,icon-,,Icon ;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
-        data-vis-attrs0="group.dialog;dialog_fontSize[12px];dialog_padding[0px 0px 0px 0px];dialog_textAlign;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-prev='<div id="prev_tplMetroTileDialogString" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-film"></i> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Dialog Object</span> <div class="badge "><i class=""></i></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div>  </div></div>'
+        data-vis-attrs="content_oid/id;dialog_oid/id;label;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
+        data-vis-attrs0="group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;icon_badge[]/style,iconFont,icon-,,Icon ;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
+        data-vis-attrs1="group.dialog;dialog_fontSize[12px];dialog_padding[0px 0px 0px 0px];dialog_textAlign;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-set="metro"
         data-vis-type="val,dialog"
         data-vis-name="Tile Dialog">
@@ -1359,7 +1366,10 @@
 <script id="tplMetroTileStringDialogNumber"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-attrs="content_oid;dialog_oid/id;label;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;bg_class[]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;group.badge;badge_bg_class[]/style,metro-,bg-;brand_bg_class[]/style,metro-,bg- ribbed-;group.dialog;dialog_fontSize[12px];dialog_padding[0px 0px 0px 0px];dialog_textAlign;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-prev='<div id="prev_tplMetroTileStringDialogNumber" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;"class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-film"></i> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Dialog Object</span> <div class="badge bg-cyan">1</div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div>  </div></div>'
+        data-vis-attrs="content_oid;dialog_oid/id;label;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
+        data-vis-attrs0="group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[icon-database]/style,iconFont,icon-,,Icon ;group.badge;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
+        data-vis-attrs1="group.dialog;dialog_fontSize[12px];dialog_padding[0px 0px 0px 0px];dialog_textAlign;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-set="metro"
         data-vis-type="val,dialog"
         data-vis-name="Tile Dialog / Badge Number">
@@ -1391,13 +1401,14 @@
 <script id="tplMetroTileDialog"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<div id="prev_tplMetroTileDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-pictures"></i> </div> <div class="brand ribbed-steel"> <span class="label fg-white">View Container</span> <div class="badge "><i class=""></i></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div> </div> </div>  </div></div>'
         data-vis-attrs="contains_view/views;label;hover[true]/checkbox;transform[true]/checkbox;"
-        data-vis-attrs0="bg_class[]/style,metro-,bg- ribbed-;"
+        data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="group.icon;icon_src/image;icon_width[100%];icon_height;"
-        data-vis-attrs2="icon_class[]/style,iconFont,icon-,,Icon ;"
-        data-vis-attrs3="badge.group;icon_badge[]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs2="icon_class[icon-pictures]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs3="group.badge;icon_badge[]/style,iconFont,icon-,,Icon ;"
         data-vis-attrs4="badge_bg_class[]/style,metro-,bg-;"
-        data-vis-attrs5="brand_bg_class[]/style,metro-,bg- ribbed-;"
+        data-vis-attrs5="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs6="group.dialog;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;"
         data-vis-attrs7="dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-set="metro"
@@ -1426,11 +1437,12 @@
 
 <script id="tplMetroTileDialogNumber"
         type="text/ejs"
+        data-vis-prev='<div id="prev_tplMetroTileDialogNumber" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-draggable-handle " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-pictures"></i> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Dialog num</span> <div class="badge bg-teal">2</div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div> </div> </div>  </div></div>'
         data-vis-attrs="contains_view/views;label;number_oid/id;hide_on_0/checkbox;hover[true]/checkbox;transform[true]/checkbox;"
         data-vis-attrs0="bg_class[]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[]/style,iconFont,icon-,,Icon ;"
         data-vis-attrs2="group.badge;badge_bg_class[]/style,metro-,bg-;"
-        data-vis-attrs3="brand_bg_class[]/style,metro-,bg- ribbed-;"
+        data-vis-attrs3="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs4="group.dialog;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;"
         data-vis-attrs5="dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
         class="vis-tpl"
@@ -1458,4 +1470,39 @@
     </div>
 </script>
 
+<script id="tplMetroTileFrameDialogNumber"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplMetroTileStaticDialogNumber" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px; z-index: 0;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content icon"> <i class="icon-book"></i> </div> <div class="brand bg-orange"> <span class="label fg-white"></span> <div style="display: none;" class="badge "></div> </div> </div> <div style="padding: 42px 10px 10px;"> <div class="caption"></div> <div class="content"></div></div> </div> <div></div> </div>'
+        data-vis-attrs="content;hover[true]/checkbox;transform[true]/checkbox;bg_class[bg-indigo]/style,metro-,bg- ribbed-;group.icon;icon_src/image;icon_width[100%];icon_height;icon_class[icon-pictures]/style,iconFont,icon-,,Icon ;"
+        data-vis-attrs0="group.badge;label;badge_label;badge_bg_class[]/style,metro-,bg-;brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
+        data-vis-attrs1="group.dialog;url;scroll;dialog_width;dialog_height;dialog_title;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;dialog_icon_src/image;dialog_icon_class[]/style,iconFont,icon-,,Icon ;"
+        data-vis-set="metro"
+        data-vis-type="iframe,dialog"
+        data-vis-name="Tile Dialog / iFrame">
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;">
+    <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
+
+        <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>" >
+        <div class="tile-content <%= this.data.attr("icon_class") ? 'icon' : '' %>">
+        <%== this.data.attr("icon_src") ? '<img style="' + (this.data.attr('icon_width') ? ('width:' + this.data.attr('icon_width') + ';') : '') + (this.data.attr('icon_height') ? ('height:' + this.data.attr('icon_height') + ';') : '') + '" src="' + this.data.attr("icon_src") + '"/>' : '' %>
+        <i class="<%= this.data.attr("icon_class") %>"></i>
+        <%== this.data.attr('content_oid') ? vis.states.attr(this.data.content_oid + '.val') : '' %>
+
+    </div>
+    <div class="brand <%= this.data.attr("brand_bg_class") %>">
+    <span class="label fg-white"><%= this.data.attr("label") %></span>
+
+    <div style="<%= vis.states.attr(this.data.number_oid + '.val') > 0 ? '' : 'display:none;' %>" class="badge <%= this.data.attr("badge_bg_class") %>"><%= vis.states.attr(this.data.number_oid + '.val') %></div>
+
+    </div>
+    </div>
+
+    <div <%= (el) -> vis.binds.metro.tileDialog(el, data.wid, null, {title: data.dialog_title,flat: data.dialog_flat,shadow: data.dialog_shadow,overlay: data.dialog_modal,icon: data.dialog_icon_src, icon_class:data.dialog_icon_class, draggable: data.dialog_draggable, width:data.dialog_width, height:data.dialog_height, scroll: data.scroll}, data.url, true) %> style="padding: 42px 10px 10px;">
+    <div class="caption"></div>
+    <div class="content"></div></div>
+    </div>
+    <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
+    </div>
+</script>
 
