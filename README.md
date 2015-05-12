@@ -139,7 +139,23 @@ If only one view has *"Default"* flag, so this view will be opened independent f
 E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
+
 ## Changelog
+### 0.4.0 (2015-05-09)
+- (smiling_Jack) Bugfix View select tabs
+- (smiling_Jack) Add a optional attr "data-vis-beta" in tpl set. To show a "!!! Beta !!!" label at the Widgetpreview
+- (smiling_Jack) *Add plump set*
+- (smiling_Jack) change widget-helper size
+- (bluefox) fix error in hqWidgets
+- (bluefox) *default view settings*
+- (bluefox) new metro Widget iFrame /Dialog
+- (bluefox) all metro widgets are revised
+- (bluefox) add dev6 as string
+- (bluefox) add widget filter
+- (bluefox) change style selector
+- (bluefox) update canJS to 2.2.4
+- (bluefox) send vis.command from browsers with no instanceID
+
 ### 0.3.2 (2015-05-09)
 - (bluefox) fix errors in binding
 - (bluefox) start implement hqWidgets
