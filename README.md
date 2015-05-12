@@ -155,6 +155,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 - (bluefox) change style selector
 - (bluefox) update canJS to 2.2.4
 - (bluefox) send vis.command from browsers with no instanceID
+- (bluefox) performance improvement in edit mode (no map of states)
 
 ### 0.3.2 (2015-05-09)
 - (bluefox) fix errors in binding
