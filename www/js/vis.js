@@ -674,10 +674,7 @@ var vis = {
                 $(".vis-widget").addClass("vis-widget-lock");
             }
         }
-
         setTimeout(function(){
-            console.log("trigger "  + view )
-            console.log($("#visview_"+view) )
             $("#visview_"+view).trigger("rendered")
         })
 

@@ -63,7 +63,21 @@
             "test": {"en": "test", "de": "Test", "ru": "test"},
             "head_size": {"en": "head_size", "de": "Kopfgröse", "ru": "head_size"},
             "opacity": {"en": "opacity", "de": "Transparenz", "ru": "opacity"},
-        });
+
+            "group_filter": {"en": "group_filter", "de": "Filter", "ru": "group_filter"},
+            "conTop_level": {"en": "conTop_level", "de": "Füllstand", "ru": "conTop_level"},
+            "conTop_color_off": {"en": "conTop_color_off", "de": "Farbe aus", "ru": "conTop_color_off"},
+            "conTop_color_on": {"en": "conTop_color_on", "de": "Farbe an", "ru": "conTop_color_on"},
+            "conBottom_level": {"en": "conBottom_level", "de": "Füllstand", "ru": "conBottom_level"},
+            "conBottom_color_off": {"en": "conBottom_color_off", "de": "Farbe aus", "ru": "conBottom_color_off"},
+            "conBottom_color_on": {"en": "conBottom_color_on", "de": "Farbe an", "ru": "conBottom_color_on"},
+            "conLeft_level": {"en": "conLeft_level", "de": "Füllstand", "ru": "conLeft_level"},
+            "conLeft_color_off": {"en": "conLeft_color_off", "de": "Farbe aus", "ru": "conLeft_color_off"},
+            "conLeft_color_on": {"en": "conLeft_color_on", "de": "Farbe an", "ru": "conLeft_color_on"},
+            "conRight_level": {"en": "conRight_level", "de": "Füllstand", "ru": "conRight_level"},
+            "conRight_color_off": {"en": "conRight_color_off", "de": "Farbe aus", "ru": "conRight_color_off"},
+            "conRight_color_on": {"en": "conRight_color_on", "de": "Farbe an", "ru": "conRight_color_on"},
+    });
 
         $(document).keydown(function (e) {
             if (vis.binds.plumb.dragging) {
@@ -2418,7 +2432,6 @@
                 
                 
 //                --------------------------------------------------------------------------------------------------------------------
-                console.log(level)
                 var ev = {
                     type: "plumb_change",
                     from: id,
@@ -2429,9 +2442,6 @@
 //                        c: event.color.c || "#C0C0C0"
                     }
                 };
-
-
-                console.log(level > parseInt(data.conRight_level))
                 if (self.conRight != last_event) {
                     if (level > parseInt(data.conRight_level)) {
                         ev.color.c = data.conRight_color_on;
@@ -2441,7 +2451,6 @@
                         ev.color.c = data.conRight_color_off;
                         ev.color.c_default = data.conRight_color_off;
                     }
-                    console.log("trigger")
                     $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
                     $("#" + self.conRight).trigger(ev);
 
@@ -2493,7 +2502,6 @@
 //                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
 //                }
             }
-
 
             setTimeout(function(){
                 $($this.parent()).on("rendered",function(){
