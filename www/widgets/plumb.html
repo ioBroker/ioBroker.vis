@@ -5,8 +5,8 @@
 
     if (vis.editMode) {
         $.extend(true, systemDictionary, {
-            "color_off": {"en": "color_off", "de": "Farbe an", "ru": "color_off"},
-            "color_on": {"en": "color_on", "de": "Farbe aus", "ru": "color_on"},
+            "color_off": {"en": "color_off", "de": "Farbe aus", "ru": "color_off"},
+            "color_on": {"en": "color_on", "de": "Farbe an", "ru": "color_on"},
             "group_conTop": {"en": "group_conTop", "de": "Verbindung oben", "ru": "group_conTop"},
             "conTop_show": {"en": "conTop_show", "de": "Anzeigen", "ru": "conTop_show"},
             "conTop_size": {"en": "conTop_size", "de": "Größe", "ru": "conTop_size"},
@@ -99,8 +99,8 @@
 
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
-                        top = parseInt($this.css("top")) - ui.draggable.height() + "px";
-                        left = parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 ) + "px"
+                        top = Math.round(parseInt($this.css("top")) - ui.draggable.height()) + "px";
+                        left = Math.round(parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_bottom").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_bottom").width()) / 2 )) + "px"
 
 
                         vis.views[vis.activeView].widgets[self_id].data.conTop = drag_id;
@@ -130,8 +130,8 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
-                        left = parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 ) + "px";
-                        top = parseInt($this.css("top")) + $this.height() + "px";
+                        left = Math.round(parseInt($this.css("left")) + $(this).position().left - $(ui.draggable).find(".plumb_dock_top").position().left + (($(this).width() - $(ui.draggable).find(".plumb_dock_top").width()) / 2 )) + "px";
+                        top = Math.round(parseInt($this.css("top")) + $this.height()) + "px";
 
                         vis.views[vis.activeView].widgets[self_id].data.conBottom = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conTop = self_id;
@@ -160,8 +160,8 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
-                        left = parseInt($this.css("left")) - ui.draggable.width() + "px";
-                        top = parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 ) + "px";
+                        left = Math.round(parseInt($this.css("left")) - ui.draggable.width()) + "px";
+                        top = Math.round(parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_right").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_right").height()) / 2 )) + "px";
 
                         vis.views[vis.activeView].widgets[self_id].data.conLeft = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conRight = self_id;
@@ -190,8 +190,8 @@
                     drop: function (event, ui) {
                         drag_id = $(ui.draggable).attr("id");
                         self_id = $this.attr("id");
-                        left = parseInt($this.css("left")) + $this.width() + "px";
-                        top = parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 ) + "px";
+                        left = Math.round(parseInt($this.css("left")) + $this.width()) + "px";
+                        top = Math.round(parseInt($this.css("top")) + $(this).position().top - $(ui.draggable).find(".plumb_dock_left").position().top + (($(this).height() - $(ui.draggable).find(".plumb_dock_left").height()) / 2 )) + "px";
 
                         vis.views[vis.activeView].widgets[self_id].data.conRight = drag_id;
                         vis.views[vis.activeView].widgets[drag_id].data.conLeft = self_id;
@@ -712,33 +712,37 @@
                 });
             });
 
-            setTimeout(function () { //todo change to view renderd finish event
-                var ev = {
-                    type: "plumb_change",
-                    from: id,
-                    color: {
-                        c_from: id,
-                        c_default: data.color_off
+
+            setTimeout(function(){
+                $($this.parent()).on("rendered",function(){
+                    var ev = {/**/
+                        type: "plumb_change",
+                        from: id,
+                        color: {
+                            c_from: id,
+                            c_default: data.color_off
+                        }
+                    };
+                    if (vis.states[data.oid + '.val'] >= 1) {
+                        ev.color.c = data.color_on;
+                        ev.status = true
+                    } else {
+                        ev.color.c = data.color_off;
+                        ev.status = false
                     }
-                };
-                if (vis.states[data.oid + '.val'] >= 1) {
-                    ev.color.c = data.color_on;
-                    ev.status = true
-                } else {
-                    ev.color.c = data.color_off;
-                    ev.status = false
-                }
-                self.color = ev.color;
-                $.each(self.cons, function () {
-                    $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
-                    $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
-                    $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
-                    $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
-                    if ($("#" + self[this])) {
-                        $("#" + self[this]).trigger(ev);
-                    }
-                });
-            }, 2);
+                    self.color = ev.color;
+                    $.each(self.cons, function () {
+                        $("#" + id + "_dock_top_fill").attr("fill", ev.color.c);
+                        $("#" + id + "_dock_bottom_fill").attr("fill", ev.color.c);
+                        $("#" + id + "_dock_left_fill").attr("fill", ev.color.c);
+                        $("#" + id + "_dock_right_fill").attr("fill", ev.color.c);
+                        if ($("#" + self[this])) {
+                            $("#" + self[this]).trigger(ev);
+                        }
+                    });
+                })
+            });
+
         },
         sprinkler_i: function (el, data) {
             var $this = $(el).parent();
@@ -2258,6 +2262,10 @@
                     }
 
                     $this.find(".plumb_dock_right, .plumb_dock_left, .plumb_dock_top, .plumb_dock_bottom").remove();
+                    $this.removeClass("pl_l");
+                    $this.removeClass("pl_r");
+                    $this.removeClass("pl_t");
+                    $this.removeClass("pl_b");
                     var l;
                     var t;
                     var s;
@@ -2286,6 +2294,7 @@
                         });
 
                         $("#" + id + "_dock_top_fill").attr("fill", data.color_off);
+                        $this.addClass("pl_t")
                     }
 
                     if (data.conBottom_show == true) {
@@ -2308,6 +2317,7 @@
                             height: '100%',
                         });
                         $("#" + id + "_dock_bottom_fill").attr("fill", data.color_off);
+                        $this.addClass("pl_b")
                     }
                     if (data.conLeft_show == true) {
                         self.cons.push("conLeft");
@@ -2329,6 +2339,7 @@
                             height: '100%',
                         });
                         $("#" + id + "_dock_left_fill").attr("fill", data.color_off);
+                        $this.addClass("pl_l")
                     }
                     if (data.conRight_show == true) {
                         self.cons.push("conRight");
@@ -2350,6 +2361,7 @@
                             height: '100%',
                         });
                         $("#" + id + "_dock_right_fill").attr("fill", data.color_off);
+                        $this.addClass("pl_r")
                     }
                     vis.binds.plumb.plumb_drop($this);
 
@@ -2361,7 +2373,7 @@
                         set(newVal)
 
                     });
-                });
+                },0);
 
 
                 $this.bind("plumb_change", function (event) {
@@ -2481,6 +2493,16 @@
 //                    $("#" + id + "_dock_bottom_fill").attr("fill", event.color.c);
 //                }
             }
+
+
+            setTimeout(function(){
+                $($this.parent()).on("rendered",function(){
+                    if (data.oid != "") {
+                        set(vis.states[data.oid + '.val'])
+                    }
+                })
+            },0);
+
 
         },
 

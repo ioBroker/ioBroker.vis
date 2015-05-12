@@ -712,8 +712,8 @@ td > .select_active_widget :nth-child(2) {
 .widget_inner_helper {
     border: 1px dashed black;
     pointer-events: none;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
 }
 
 .oid-dev {

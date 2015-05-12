@@ -75,7 +75,7 @@ var servConn = {
         // - create "_socket/info.js" file with
         //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
         //   in this case you can overwrite browser language settings
-        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local' || true))) {
+        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local' ))) {
             this._type =  'local';
         }
 

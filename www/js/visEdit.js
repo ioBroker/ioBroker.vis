@@ -1254,9 +1254,9 @@ vis = $.extend(true, vis, {
                 }
 
                 if ($("#" + tpl).data('vis-beta')) {
-                    beta = '<div style="color:red; position:absolute;  width: 100%;  z-index: 100;  height: 20px; top: 50% ;font-size: 1.5em">!!! BETA !!!</div>';
+                    beta = '<div style="color:red;width: 100%;  z-index: 100; top: 50% ;font-size: 15px;">!!! BETA !!!</div>';
                 }
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' +beta+ '' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev " data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + ' </div>'  + beta +'</div>');
                 if ($(tpl_list[i]).data('vis-prev')) {
 
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
@@ -3522,10 +3522,10 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   parseInt(pos.left) -1 +"px" ,
-                    top:    parseInt(pos.top) -1 + "px" ,
-                    height: $widget.outerHeight(),
-                    width:  $widget.outerWidth()
+                    left:   parseInt(pos.left) - 2 +"px" ,
+                    top:    parseInt(pos.top) - 2 + "px" ,
+                    height: parseInt($widget.outerHeight()) + 2 +'px',
+                    width:  parseInt($widget.outerWidth()) + 2 +'px'
                 }
             ).show();
         } else {
@@ -4386,6 +4386,10 @@ vis = $.extend(true, vis, {
                     if ($wid[0]._customHandlers && $wid[0]._customHandlers.onMoveEnd) {
                         $wid[0]._customHandlers.onMoveEnd($wid[0], wid);
                     }
+                    $('#widget_helper_' + wid).css({
+                        left: parseInt($wid.css("left")) - 2 + 'px',
+                        top: parseInt($wid.css("top")) - 2 + 'px'
+                    });
                 }
                 $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets, 'top', true));
                 $('#inspect_css_left').val(that.findCommonValue(that.activeWidgets, 'left', true));
@@ -4410,7 +4414,7 @@ vis = $.extend(true, vis, {
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 1, top: y -1});
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y -2});
 
                     if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
@@ -4489,8 +4493,9 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width:  ui.element.outerWidth()  ,
-                        height: ui.element.outerHeight()});
+                        width: parseInt( ui.element.outerWidth()) + 2 +'px',
+                        height:  parseInt(ui.element.outerHeight()) + 2 +'px'
+                    });
                 }
             }, resizableOptions));
         }
