@@ -1259,6 +1259,7 @@ vis = $.extend(true, vis, {
             $.each(tpl_list, function (i) {
                 var tpl = $(tpl_list[i]).attr('id');
                 var type = $('#' + tpl).data('vis-type') || '';
+                var beta;
                 var classtypes = '';
 
                 if (type) {
@@ -1269,10 +1270,13 @@ vis = $.extend(true, vis, {
                         classtypes += types[z].trim() + ' ';
                     }
                 }
+                if ($("#" + tpl).data('vis-beta')) {
+                    beta = '<div style="color:red;width: 100%;  z-index: 100; top: 50% ;font-size: 15px;">!!! BETA !!!</div>';
+                }
                 classtypes += set + ' ' + $("#" + tpl).data('vis-name');
                 classtypes = classtypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
 
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classtypes + '" data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div></div>');
+                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classtypes + '" data-tpl="' + tpl + '">' + type + '<div class="wid_prev_name" >' + $("#" + tpl).data('vis-name') + '</div>'  + beta +'</div>');
 
                 if ($(tpl_list[i]).data('vis-prev')) {
                     var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
