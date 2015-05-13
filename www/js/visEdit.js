@@ -2114,6 +2114,7 @@ vis = $.extend(true, vis, {
                 exportView.widgets[wid] = exportView.widgets[widget];
                 delete exportView.widgets[widget];
             }
+            if (exportView.activeWidgets) delete exportView.activeWidgets;
         }
         $('#textarea_export_view').html(JSON.stringify(exportView, null, '  '));
         document.getElementById("textarea_export_view").select();
@@ -2147,6 +2148,8 @@ vis = $.extend(true, vis, {
                         importObject[v][w] = vis.binds.bars.convertOldBars(importObject[v][w]);
                     }
                 }
+                // Remove active widgets
+                if (importObject[v].activeWidgets) delete importObject[v].activeWidgets;
             }
 
             this.views = importObject;
@@ -2162,12 +2165,14 @@ vis = $.extend(true, vis, {
             // Set for all widgets the new ID...
             for (var widget in this.views[_name].widgets) {
                 if (this.binds.bars && this.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
-                    this.views[_name].widgets[widget] = thisbinds.bars.convertOldBars(this.views[_name].widgets[widget]);
+                    this.views[_name].widgets[widget] = this.binds.bars.convertOldBars(this.views[_name].widgets[widget]);
                 }
 
                 this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
                 delete this.views[_name].widgets[widget];
             }
+            // Remove active widgets
+            if (this.views[_name].activeWidgets) delete this.views[_name].activeWidgets;
             this.saveRemote(function () {
                 that.renderView(_name);
                 that.changeView(_name);
@@ -4061,12 +4066,16 @@ vis = $.extend(true, vis, {
 
             // Select selected widgets
             for (var p = 0; p < select.length; p++) {
-                $widget = $('#' + select[p]);
-                this.$selectActiveWidgets.find('option[value="' + select[p] + '"]').attr('selected', 'selected');
-                this.showWidgetHelper(select[p], true);
+                try {
+                    $widget = $('#' + select[p]);
+                    this.$selectActiveWidgets.find('option[value="' + select[p] + '"]').attr('selected', 'selected');
+                    this.showWidgetHelper(select[p], true);
 
-                if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
-                    this.draggable($widget);
+                    if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+                        this.draggable($widget);
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
             }
 
@@ -4084,9 +4093,13 @@ vis = $.extend(true, vis, {
             }
 
             if (this.activeWidgets.length == 1) {
-                $widget = $('#' + this.activeWidgets[0]);
-                if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
-                    this.resizable($widget);
+                try {
+                    $widget = $('#' + this.activeWidgets[0]);
+                    if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
+                        this.resizable($widget);
+                    }
+                } catch (e) {
+                    console.log(e);
                 }
             }
             this.oldActiveWidgets = [];
