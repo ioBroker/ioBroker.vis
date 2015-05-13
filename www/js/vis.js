@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.4.0',
+    version:                '0.4.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -797,13 +797,17 @@ var vis = {
 
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
-        this.widgets[id] = {
-            wid: id,
-            data: new can.Map($.extend({
-                "wid": id
-            }, widget.data))
-        };
-        //console.log(widget);
+        //try {
+            this.widgets[id] = {
+                wid: id,
+                data: new can.Map($.extend({
+                    "wid": id
+                }, widget.data))
+            };
+        //} catch (e) {
+        //    console.log('Cannot bind data of widget widget:' + id);
+        //    return;
+        //}
         // Register oid to detect changes
         // if (widget.data.oid != 'nothing_selected')
         //   $.homematic("advisState", widget.data.oid, widget.data.hm_wid);
