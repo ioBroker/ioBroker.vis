@@ -141,7 +141,10 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
-### 0.4.0 (2015-05-09)
+### 0.4.1 (2015-05-13)
+- (bluefox) fix error with CanJS
+
+### 0.4.0 (2015-05-12)
 - (smiling_Jack) Bugfix View select tabs
 - (smiling_Jack) Add a optional attr "data-vis-beta" in tpl set. To show a "!!! Beta !!!" label at the Widgetpreview
 - (smiling_Jack) *Add plump set*
