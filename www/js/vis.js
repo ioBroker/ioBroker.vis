@@ -452,7 +452,7 @@ var vis = {
     },
     initNext: function () {
         this.showWaitScreen(false);
-
+        var that = this;
         // First start.
         if (!this.views) {
             this.initViewObject();
@@ -510,19 +510,21 @@ var vis = {
 
         // Navigation
         $(window).bind('hashchange', function (e) {
-            this.changeView(window.location.hash.slice(1));
+            that.changeView(window.location.hash.slice(1));
         });
 
         this.bindInstance();
 
         // EDIT mode
         if (this.editMode) {
-                this.editInitNext();
-            }
+            this.editInitNext();
+        }
+
         this.initialized = true;
+
         // If this function called earlier, it makes problems under FireFox.
-        if(this.views["_project"]){
-            this.renderView("_project",false,true);
+        if (this.views["_project"]) {
+            this.renderView("_project", false, true);
         }
 
         this.changeView(this.activeView);

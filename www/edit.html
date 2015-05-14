@@ -680,6 +680,35 @@
                  style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
             <div id="size_y"
                  style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+            <ul id="context_menu" style="position: absolute;display:none;z-index:999; min-width:300px">
+                <li id="context_menu_select">
+                    <span class="translate">Select</span>
+                </li>
+                <li id="context_menu_copy" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-copy"></span>
+                    <span class="translate">Copy</span>
+                </li>
+                <li id="context_menu_cut" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-scissors"></span>
+                    <span class="translate">Cut</span>
+                </li>
+                <li id="context_menu_paste" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-document"></span>
+                    <span class="translate">Paste</span>
+                </li>
+                <li id="context_menu_delete" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-trash"></span>
+                    <span class="translate">Delete</span>
+                </li>
+                <!--li id="context_menu_front" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-arrowthick-1-n"></span>
+                    <span class="translate">Bring to front</span>
+                </li>
+                <li id="context_menu_back" class="ui-state-disabled">
+                    <span class="ui-icon ui-icon-arrowthick-1-s"></span>
+                    <span class="translate">Move to back</span>
+                </li-->
+            </ul>
         </div>
     </div>
     <div id="attr_wrap">

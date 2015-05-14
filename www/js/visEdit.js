@@ -1088,7 +1088,10 @@ vis = $.extend(true, vis, {
             }
             that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
-        if (this.config['button/wid_all_lock_function']) {
+
+        // Enable by default widget lock function
+        if (this.config['button/wid_all_lock_function'] === undefined ||
+            this.config['button/wid_all_lock_function']) {
             setTimeout(function () {
                 $('#wid_all_lock_function').prop('checked', true);
                 $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
@@ -1244,6 +1247,21 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         })
 
+        $('#vis_container').on('contextmenu', function (e) {
+            if (!e.shiftKey && !e.ctrlKey) {
+                var parentOffset = $(this).offset();
+                //or $(this).offset(); if you really just want the current element's offset
+                var relX = e.pageX - parentOffset.left;
+                var relY = e.pageY - parentOffset.top;
+
+                relX += $("#vis_container").scrollLeft();
+                relY += $("#vis_container").scrollTop();
+
+                vis.showContextMenu({left: relX, top: relY});
+
+                e.preventDefault();
+            }
+        });
     },
     editInitWidgetPreview: function () {
         var that = this;
@@ -2420,7 +2438,7 @@ vis = $.extend(true, vis, {
 
         return widgetId;
     },
-    dupWidgets: function (widgets, targetView) {
+    dupWidgets: function (widgets, targetView, offsetX, offsetY) {
         if (!widgets)    widgets    = this.activeWidgets;
         if (!targetView) targetView = this.activeView;
 
@@ -2429,12 +2447,15 @@ vis = $.extend(true, vis, {
         var data;
         var style;
         var newWidgets = [];
+        var firstOffsetX = null;
+        var firstOffsetY = null;
 
         for (var i = 0; i < widgets.length; i++) {
             var objWidget;
+
             // if from clipboard
             if (widgets[i].widget) {
-                objWidget   = widgets[i].widget;
+                objWidget       = widgets[i].widget;
                 activeView      = widgets[i].view;
                 tpl             = objWidget.tpl;
                 data            = objWidget.data;
@@ -2448,12 +2469,30 @@ vis = $.extend(true, vis, {
                 style      = $.extend({}, this.views[this.activeView].widgets[widgets[i]].style);
             }
 
-            if (activeView == targetView) {
-                style.top  = parseInt(style.top,  10);
-                style.left = parseInt(style.left, 10);
+            if (offsetX !== undefined) {
+                if (firstOffsetX === null) {
+                    firstOffsetX = parseInt(style.left, 10);
+                    firstOffsetY = parseInt(style.top, 10);
 
-                style.top  += 10;
-                style.left += 10;
+                    style.left = offsetX;
+                    style.top  = offsetY;
+                } else {
+                    style.top  = parseInt(style.top, 10);
+                    style.left = parseInt(style.left, 10);
+
+                    style.top = firstOffsetY  - style.top  + offsetY;
+                    style.left = firstOffsetX - style.left + offsetX;
+                }
+            }
+            if (activeView == targetView) {
+                if (offsetX === undefined) {
+                    style.top  = parseInt(style.top,  10);
+                    style.left = parseInt(style.left, 10);
+
+                    style.top  += 10;
+                    style.left += 10;
+                }
+
                 // Store new settings
                 if (widgets[i].widget) {
                     // If after copy to clipboard, the copied widget was changed, so the new modified version will be pasted and not the original one.
@@ -3985,6 +4024,9 @@ vis = $.extend(true, vis, {
         // Deselect all elements
         $(':focus').blur();
 
+        // Hide context menu
+        $('#context_menu').hide();
+
         if (typeof addWidget == 'boolean') {
             onlyUpdate = addWidget;
             addWidget = undefined;
@@ -4492,6 +4534,7 @@ vis = $.extend(true, vis, {
         var draggableOptions = {
             cancel: false,
             start:  function (event, ui) {
+                $('#context_menu').hide();
                 that.dragging = true;
                 origX = ui.position.left;
                 origY = ui.position.top;
@@ -4649,8 +4692,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width: parseInt( ui.element.outerWidth()) + 2 +'px',
-                        height:  parseInt(ui.element.outerHeight()) + 2 +'px'
+                        width:  parseInt(ui.element.outerWidth())  + 2 +'px',
+                        height: parseInt(ui.element.outerHeight()) + 2 +'px'
                     });
                 }
             }, resizableOptions));
@@ -5132,16 +5175,15 @@ vis = $.extend(true, vis, {
         var $focused = $(':focus');
         if (!$focused.length) {
             if (this.clipboard && this.clipboard.length) {
-                var widgets = [];
                 this.dupWidgets(this.clipboard);
                 this.save();                // Select main widget and add to selection the secondary ones
                 this.inspectWidgets();
             }
         }
     },
-    copy: function (isCut) {
+    copy: function (isCut, widgets) {
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.length) {
+        if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
                 $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');
@@ -5150,6 +5192,15 @@ vis = $.extend(true, vis, {
 
             this.clipboard = [];
             var widgetNames = '';
+            if (widgets) {
+                for (var i = 0, len = widgets.length; i < len; i++) {
+                    widgetNames += (widgetNames ? ', ' : '') + widgets[i];
+                    this.clipboard.push({
+                        widget: $.extend(true, {}, this.views[this.activeView].widgets[widgets[i]]),
+                        view: (!isCut) ? this.activeView : '---copied---'
+                    });
+                }
+            } else
             if (this.activeWidgets.length) {
                 for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
                     widgetNames += (widgetNames ? ', ' : '') + this.activeWidgets[i];
@@ -5182,8 +5233,10 @@ vis = $.extend(true, vis, {
                 });
             } else {
                 if (isCut) {
-                    this.delWidgets();
-                    this.inspectWidgets([]);
+                    this.delWidgets(widgets);
+                    if (!widgets) {
+                        this.inspectWidgets([]);
+                    }
                 }
             }
 
@@ -5196,16 +5249,24 @@ vis = $.extend(true, vis, {
             $('#clipboard_content').remove();
         }
     },
-    onButtonDelete: function () {
+    onButtonDelete: function (widgets) {
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.length) {
+        if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var isHideDialog = this.config['dialog/delete_is_show'] || false;
 
             if (!isHideDialog) {
-                if (this.activeWidgets.length > 1) {
-                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', this.activeWidgets.length + 1));
+                if (widgets) {
+                    if (widgets.length > 1) {
+                        $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length + 1));
+                    } else {
+                        $('#dialog_delete_content').html(_('Do you want delete widget %s?', widgets[0]));
+                    }
                 } else {
-                    $('#dialog_delete_content').html(_('Do you want delete widget %s?', this.activeWidgets[0]));
+                    if (this.activeWidgets.length > 1) {
+                        $('#dialog_delete_content').html(_('Do you want delete %s widgets?', this.activeWidgets.length + 1));
+                    } else {
+                        $('#dialog_delete_content').html(_('Do you want delete widget %s?', this.activeWidgets[0]));
+                    }
                 }
 
                 var dialog_buttons = {};
@@ -5217,8 +5278,10 @@ vis = $.extend(true, vis, {
                         that.editSaveConfig('dialog/delete_is_show', true);
                     }
                     $(this).dialog('close');
-                    that.delWidgets();
-                    that.inspectWidgets([]);
+                    that.delWidgets(widgets);
+                    if (!widgets) {
+                        that.inspectWidgets([]);
+                    }
                 };
                 dialog_buttons[_('Cancel')] = function () {
                     $(this).dialog('close');
@@ -5237,8 +5300,10 @@ vis = $.extend(true, vis, {
                     buttons: dialog_buttons
                 });
             } else {
-                this.delWidgets();
-                this.inspectWidgets([]);
+                this.delWidgets(widgets);
+                if (!widgets) {
+                    this.inspectWidgets([]);
+                }
             }
             return true;
         } else {
@@ -5366,6 +5431,241 @@ vis = $.extend(true, vis, {
             that.instance = $(this).val();
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
+    },
+    showContextMenu: function (options) {
+        var that = this;
+        var offset;
+        var range;
+        var $list = [];
+
+        $('#context_menu_paste').data('posX', options.left);
+        $('#context_menu_paste').data('posY', options.top);
+
+        if (!$('#context_menu_paste').data('inited')) {
+            $('#context_menu_paste').data('inited', true);
+            $('#context_menu_paste').click(function () {
+                var x = $('#context_menu_paste').data('posX');
+                var y = $('#context_menu_paste').data('posY');
+                // modify position of widget
+                that.dupWidgets(that.clipboard, that.activeView, x, y);
+                that.save();                // Select main widget and add to selection the secondary ones
+                that.inspectWidgets();
+                $("#context_menu").hide();
+            });
+            $("#context_menu").blur(function () {
+                $("#context_menu").hide();
+            });
+        }
+
+        $('#context_menu_select_ul').remove();
+        $('#context_menu_delete_ul').remove();
+        $('#context_menu_copy_ul').remove();
+        $('#context_menu_cut_ul').remove();
+
+        $('#context_menu_copy_wid').remove();
+        $('#context_menu_delete_wid').remove();
+        $('#context_menu_select_wid').remove();
+        $('#context_menu_cut_wid').remove();
+
+        $('#context_menu_copy').unbind('click');
+        $('#context_menu_delete').unbind('click');
+        $('#context_menu_select').unbind('click');
+        $('#context_menu_cut').unbind('click');
+
+        // If some widgets selected => find out if click on some widget
+        if (this.activeWidgets && this.activeWidgets.length) {
+            var isHit = false;
+            // Find all widgets under the cursor
+            for (var w = 0; w < this.activeWidgets.length; w++) {
+                var $wid = $('#' + this.activeWidgets[w]);
+                offset = $wid.position();
+                range = {
+                    x: [ offset.left, offset.left + $wid.outerWidth()  ],
+                    y: [ offset.top,  offset.top  + $wid.outerHeight() ]
+                };
+                if ((options.left >= range.x[0] && options.left <= range.x[1]) &&
+                    (options.top  >= range.y[0] && options.top  <= range.y[1])) {
+                    isHit = true;
+                    break;
+                }
+            }
+            if (isHit) {
+                $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+                    return that.activeWidgets.indexOf($(this).attr('id')) != -1;
+                });
+            } else {
+                // Remove selection
+                this.inspectWidgets([]);
+            }
+        }
+
+        if (!$list.length) {
+            // Find all widgets under the cursor
+            $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+                offset = $(this).position();
+                range = {
+                    x: [ offset.left, offset.left + $(this).outerWidth()  ],
+                    y: [ offset.top,  offset.top  + $(this).outerHeight() ]
+                };
+                return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1])
+            });
+        }
+
+        if ($list.length == 1) {
+            var wid = $($list[0]).attr('id');
+            $('#context_menu_paste').data('widgets', wid);
+            wid = that.getWidgetName(that.activeView, wid);
+            $('#context_menu_copy').append('<span id="context_menu_copy_wid">' + wid + '</span>');
+            $('#context_menu_delete').append('<span id="context_menu_delete_wid">' + wid + '</span>');
+            $('#context_menu_select').append('<span id="context_menu_select_wid">' + wid + '</span>');
+            $('#context_menu_cut').append('<span id="context_menu_cut_wid">' + wid + '</span>');
+
+            $('#context_menu_copy').removeClass('ui-state-disabled');
+            $('#context_menu_delete').removeClass('ui-state-disabled');
+            $('#context_menu_select').removeClass('ui-state-disabled');
+            $('#context_menu_cut').removeClass('ui-state-disabled');
+
+            $('#context_menu_copy').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.copy(false, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_cut').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.copy(true, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_delete').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.onButtonDelete(widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_select').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.inspectWidgets(widgets);
+                $("#context_menu").hide();
+            });
+
+        } else if ($list.length > 1) {
+            var widgets = [];
+            var text = '<li data-wid="">' +  _('all') + '</li>';
+            $list.each(function () {
+                var wid = $(this).attr('id');
+                text += '<li data-wid="' + wid + '">' +  that.getWidgetName(that.activeView, wid) + '</li>';
+                widgets.push(wid);
+            });
+            $('#context_menu_paste').data('widgets', widgets.join(' '));
+
+            $('#context_menu_copy')  .append('<ul id="context_menu_copy_ul" style="min-width:300px">'   + text + '</ul>');
+            $('#context_menu_delete').append('<ul id="context_menu_delete_ul" style="min-width:300px">' + text + '</ul>');
+            $('#context_menu_select').append('<ul id="context_menu_select_ul" style="min-width:300px">' + text + '</ul>');
+            $('#context_menu_cut')   .append('<ul id="context_menu_select_ul" style="min-width:300px">' + text + '</ul>');
+
+            $('#context_menu_copy').removeClass('ui-state-disabled');
+            $('#context_menu_delete').removeClass('ui-state-disabled');
+            $('#context_menu_select').removeClass('ui-state-disabled');
+            $('#context_menu_cut').removeClass('ui-state-disabled');
+
+            $('#context_menu_copy li').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.copy(false, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_delete li').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.onButtonDelete(widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_select li').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+
+                that.inspectWidgets(widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_cut li').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.copy(true, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_copy').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.copy(false, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_cut').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.copy(true, widgets);
+                $("#context_menu").hide();
+            });
+
+            $('#context_menu_delete').click(function () {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                that.onButtonDelete(widgets);
+                $("#context_menu").hide();
+            });
+
+        } else {
+            $('#context_menu_paste').data('widgets', '');
+
+            $('#context_menu_select').hide();
+            $('#context_menu_copy').addClass('ui-state-disabled');
+            $('#context_menu_delete').addClass('ui-state-disabled');
+            $('#context_menu_cut').addClass('ui-state-disabled');
+        }
+
+        // Enable paste if something in clipboard
+        if (this.clipboard && this.clipboard.length) {
+            $('#context_menu_paste').removeClass('ui-state-disabled');
+        } else {
+            $('#context_menu_paste').addClass('ui-state-disabled');
+        }
+        if (!$("#context_menu").data('inited')) {
+            $("#context_menu").data('inited', true);
+        } else {
+            $("#context_menu").menu('destroy');
+        }
+
+        $("#context_menu").css(options)
+            .appendTo('#visview_' + this.activeView)
+            .show()
+            .focus()
+            .menu({
+            focus: function (event, ui) {
+                var widgets = [ui.item.data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                for (var i = 0; i < widgets.length; i++) {
+                    $('#' + widgets[i]).addClass('vis-widgets-highlight');
+                }
+            },
+            blur: function (event, ui) {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                for (var i = 0; i < widgets.length; i++) {
+                    $('#' + widgets[i]).removeClass('vis-widgets-highlight');
+                }
+            }
+        });
     }
 });
 
@@ -5485,7 +5785,7 @@ $(document).keydown(function (e) {
 $(window).on('paste', function (e) {
     vis.paste();
 }).on('copy cut', function (e) {
-    vis.copy(e.type == "cut");
+    vis.copy(e.type == 'cut');
 });
 
 window.onbeforeunload = function () {

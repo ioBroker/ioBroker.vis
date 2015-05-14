@@ -5,3 +5,6 @@
 
 * Special "_project" view: Widgets
    for example: popups, soundplay,.....
+   
+* Do not render widget X times by creation
+* Create dividers in widget inspector

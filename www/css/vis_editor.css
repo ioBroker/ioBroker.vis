@@ -443,7 +443,7 @@ body{
     width: calc(100% - 3px);
     height: -webkit-calc(100% - 3px);
     height: calc(100% - 3px);
-    z-index: 999;
+    z-index: 998;
 }
 
 .vis-widget_prev {
@@ -461,6 +461,19 @@ body{
     height: 30px !important;
     text-align: center;
 
+}
+
+.vis-widgets-highlight:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: -webkit-calc(100% - 3px);
+    width: calc(100% - 3px);
+    height: -webkit-calc(100% - 3px);
+    height: calc(100% - 3px);
+    z-index: 997;
+    background: rgba(255,215,0,0.4)
 }
 
 #pan_add_wid {
