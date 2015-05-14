@@ -2058,11 +2058,11 @@ vis = $.extend(true, vis, {
             $('.view-select-tab.ui-state-active').parent().children().last().trigger('click');
         }
     },
-    exportWidgets: function () {
+    exportWidgets: function (widgets) {
         var exportW = [];
-
-        for (var i = 0; i < this.activeWidgets.length; i++) {
-            exportW.push(this.views[this.activeView].widgets[this.activeWidgets[i]]);
+        widgets = widgets || this.activeWidgets;
+        for (var i = 0; i < widgets.length; i++) {
+            exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
         $('#textarea_export_view').html(JSON.stringify(exportW, null, '  '));
@@ -5192,20 +5192,12 @@ vis = $.extend(true, vis, {
 
             this.clipboard = [];
             var widgetNames = '';
-            if (widgets) {
+            widgets = widgets || this.activeWidgets;
+            if (widgets.length) {
                 for (var i = 0, len = widgets.length; i < len; i++) {
                     widgetNames += (widgetNames ? ', ' : '') + widgets[i];
                     this.clipboard.push({
                         widget: $.extend(true, {}, this.views[this.activeView].widgets[widgets[i]]),
-                        view: (!isCut) ? this.activeView : '---copied---'
-                    });
-                }
-            } else
-            if (this.activeWidgets.length) {
-                for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                    widgetNames += (widgetNames ? ', ' : '') + this.activeWidgets[i];
-                    this.clipboard.push({
-                        widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidgets[i]]),
                         view: (!isCut) ? this.activeView : '---copied---'
                     });
                 }
@@ -5224,19 +5216,17 @@ vis = $.extend(true, vis, {
 
             var that = this;
             if (typeof html2canvas != "undefined") {
-                this.getWidgetThumbnail(this.activeWidgets[0], 0, 0, function (canvas) {
+                this.getWidgetThumbnail(widgets[0], 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                     if (isCut) {
-                        that.delWidgets();
+                        that.delWidgets(widgets);
                         that.inspectWidgets([]);
                     }
                 });
             } else {
                 if (isCut) {
                     this.delWidgets(widgets);
-                    if (!widgets) {
-                        this.inspectWidgets([]);
-                    }
+                    this.inspectWidgets([]);
                 }
             }
 
@@ -5252,21 +5242,14 @@ vis = $.extend(true, vis, {
     onButtonDelete: function (widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
+            widgets = widgets || this.activeWidgets;
             var isHideDialog = this.config['dialog/delete_is_show'] || false;
 
             if (!isHideDialog) {
-                if (widgets) {
-                    if (widgets.length > 1) {
-                        $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length + 1));
-                    } else {
-                        $('#dialog_delete_content').html(_('Do you want delete widget %s?', widgets[0]));
-                    }
+                if (widgets.length > 1) {
+                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length + 1));
                 } else {
-                    if (this.activeWidgets.length > 1) {
-                        $('#dialog_delete_content').html(_('Do you want delete %s widgets?', this.activeWidgets.length + 1));
-                    } else {
-                        $('#dialog_delete_content').html(_('Do you want delete widget %s?', this.activeWidgets[0]));
-                    }
+                    $('#dialog_delete_content').html(_('Do you want delete widget %s?', widgets[0]));
                 }
 
                 var dialog_buttons = {};
@@ -5279,9 +5262,7 @@ vis = $.extend(true, vis, {
                     }
                     $(this).dialog('close');
                     that.delWidgets(widgets);
-                    if (!widgets) {
-                        that.inspectWidgets([]);
-                    }
+                    that.inspectWidgets([]);
                 };
                 dialog_buttons[_('Cancel')] = function () {
                     $(this).dialog('close');
@@ -5301,9 +5282,7 @@ vis = $.extend(true, vis, {
                 });
             } else {
                 this.delWidgets(widgets);
-                if (!widgets) {
-                    this.inspectWidgets([]);
-                }
+                this.inspectWidgets([]);
             }
             return true;
         } else {
@@ -5432,6 +5411,115 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
+    bringTo: function (widgets, isToFront) {
+        widgets = widgets || this.activeWidgets;
+        var x = {min: 10000, max: -10000};
+        var y = {min: 10000, max: -10000};
+        var z = {min: 10000, max: -10000};
+
+        // Calculate biggest square
+        for (var w = 0; w < widgets.length; w++) {
+            var $wid = $('#' + widgets[w]);
+            var offset = $wid.position();
+            var width  = $wid.outerWidth();
+            var height = $wid.outerHeight();
+            var zindex = parseInt($wid.css('z-index'), 10) || 0;
+            if (offset.left < x.min) x.min = offset.left;
+            if (offset.left + width > x.max) x.max = offset.left + width;
+            if (offset.top  < y.min) y.min = offset.top;
+            if (offset.top  + height > y.max) y.max = offset.top + height;
+            if (zindex < z.min) z.min = zindex;
+            if (zindex > z.max) z.max = zindex;
+        }
+        var minZ = 10000;
+        var maxZ = -10000;
+
+        // Find all widgets in this square
+        var $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+            if (widgets.indexOf($(this).attr('id')) != -1) return false;
+            var offset = $(this).position();
+            var tl = {x: offset.left, y: offset.top}; // top left
+            var br = {x: offset.left + $(this).outerWidth(), y: offset.top + $(this).outerHeight()};  // bottom right
+
+            var isInside = false;
+            if ((x.min <= tl.x  && tl.x <= x.max) &&
+                (y.min <= tl.y  && tl.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= br.x  && br.x <= x.max) &&
+                (y.min <= tl.y  && tl.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= tl.x  && tl.x <= x.max) &&
+                (y.min <= br.y  && br.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= br.x  && br.x <= x.max) &&
+                (y.min <= br.y  && br.y <= y.max)) {
+                isInside = true;
+            }
+
+            if (isInside) {
+                var z = parseInt($(this).css('z-index'), 10) || 0;
+                if (minZ > z) minZ = z;
+                if (maxZ < z) maxZ = z;
+            }
+
+            return isInside;
+        });
+
+        if (!$list.length) return;
+        var that = this;
+        // Move all widgets
+        if (isToFront) {
+            // If z-index will be over 900
+            if (z.max - z.min >= 900 - maxZ) {
+                var offset = z.max - z.min - (900 - maxZ) + 1;
+                // Move all widgets to let place under them
+                $list.each(function () {
+                    var zindex = parseInt($(this).css('z-index'), 10) || 0;
+                    zindex = zindex - offset < 0 ? 0 : zindex - offset;
+                    $(this).css('z-index', zindex);
+                    that.views[that.activeView].widgets[$(this).attr('id')].style['z-index'] = zindex;
+                });
+                maxZ -= offset;
+            }
+
+            // If everything is OK
+            if (maxZ < z.min) return;
+            if (maxZ == z.min) maxZ++;
+            for (var w = 0; w < widgets.length; w++) {
+                var $wid = $('#' + widgets[w]);
+                var zindex = parseInt($wid.css('z-index'), 10) || 0;
+                zindex = maxZ + zindex - z.min;
+                $wid.css('z-index', zindex);
+                this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
+            }
+        } else {
+            // If z-index will be negative
+            if (z.max - z.min >= minZ) {
+                var offset = z.max - z.min - minZ + 1;
+                // Move all widgets to let place under them
+                $list.each(function () {
+                    var zindex = parseInt($(this).css('z-index'), 10) || 0;
+                    zindex = zindex + offset > 900 ? 900 : zindex + offset;
+                    $(this).css('z-index', zindex);
+                    that.views[that.activeView].widgets[$(this).attr('id')].style['z-index'] = zindex;
+                });
+                minZ += offset;
+            }
+            if (z.max < minZ) return;
+            if (minZ == z.max) minZ--;
+
+            for (var w = 0; w < widgets.length; w++) {
+                var $wid = $('#' + widgets[w]);
+                var zindex = parseInt($wid.css('z-index'), 10) || 0;
+                zindex = minZ - zindex + z.max;
+                $wid.css('z-index', zindex);
+                this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
+            }
+        }
+    },
     showContextMenu: function (options) {
         var that = this;
         var offset;
@@ -5450,27 +5538,20 @@ vis = $.extend(true, vis, {
                 that.dupWidgets(that.clipboard, that.activeView, x, y);
                 that.save();                // Select main widget and add to selection the secondary ones
                 that.inspectWidgets();
-                $("#context_menu").hide();
+                $('#context_menu').hide();
             });
-            $("#context_menu").blur(function () {
-                $("#context_menu").hide();
+            $('#context_menu').blur(function () {
+                $('#context_menu').hide();
+            });
+            $('#context_menu_import').click(function () {
+                $('#context_menu').hide();
+                that.importWidgets();
             });
         }
 
-        $('#context_menu_select_ul').remove();
-        $('#context_menu_delete_ul').remove();
-        $('#context_menu_copy_ul').remove();
-        $('#context_menu_cut_ul').remove();
-
-        $('#context_menu_copy_wid').remove();
-        $('#context_menu_delete_wid').remove();
-        $('#context_menu_select_wid').remove();
-        $('#context_menu_cut_wid').remove();
-
-        $('#context_menu_copy').unbind('click');
-        $('#context_menu_delete').unbind('click');
-        $('#context_menu_select').unbind('click');
-        $('#context_menu_cut').unbind('click');
+        $('.context-menu-ul').remove();
+        $('.context-menu-wid').remove();
+        $('.context-submenu').unbind('click');
 
         // If some widgets selected => find out if click on some widget
         if (this.activeWidgets && this.activeWidgets.length) {
@@ -5504,8 +5585,8 @@ vis = $.extend(true, vis, {
             $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
                 offset = $(this).position();
                 range = {
-                    x: [ offset.left, offset.left + $(this).outerWidth()  ],
-                    y: [ offset.top,  offset.top  + $(this).outerHeight() ]
+                    x: [ offset.left, offset.left + $(this).outerWidth() ],
+                    y: [ offset.top,  offset.top  + $(this).outerHeight()]
                 };
                 return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1])
             });
@@ -5515,40 +5596,7 @@ vis = $.extend(true, vis, {
             var wid = $($list[0]).attr('id');
             $('#context_menu_paste').data('widgets', wid);
             wid = that.getWidgetName(that.activeView, wid);
-            $('#context_menu_copy').append('<span id="context_menu_copy_wid">' + wid + '</span>');
-            $('#context_menu_delete').append('<span id="context_menu_delete_wid">' + wid + '</span>');
-            $('#context_menu_select').append('<span id="context_menu_select_wid">' + wid + '</span>');
-            $('#context_menu_cut').append('<span id="context_menu_cut_wid">' + wid + '</span>');
-
-            $('#context_menu_copy').removeClass('ui-state-disabled');
-            $('#context_menu_delete').removeClass('ui-state-disabled');
-            $('#context_menu_select').removeClass('ui-state-disabled');
-            $('#context_menu_cut').removeClass('ui-state-disabled');
-
-            $('#context_menu_copy').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.copy(false, widgets);
-                $("#context_menu").hide();
-            });
-
-            $('#context_menu_cut').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.copy(true, widgets);
-                $("#context_menu").hide();
-            });
-
-            $('#context_menu_delete').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.onButtonDelete(widgets);
-                $("#context_menu").hide();
-            });
-
-            $('#context_menu_select').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.inspectWidgets(widgets);
-                $("#context_menu").hide();
-            });
-
+            $('.context-submenu').append('<span class="context-menu-wid">' + wid + '</span>');
         } else if ($list.length > 1) {
             var widgets = [];
             var text = '<li data-wid="">' +  _('all') + '</li>';
@@ -5559,17 +5607,15 @@ vis = $.extend(true, vis, {
             });
             $('#context_menu_paste').data('widgets', widgets.join(' '));
 
-            $('#context_menu_copy')  .append('<ul id="context_menu_copy_ul" style="min-width:300px">'   + text + '</ul>');
-            $('#context_menu_delete').append('<ul id="context_menu_delete_ul" style="min-width:300px">' + text + '</ul>');
-            $('#context_menu_select').append('<ul id="context_menu_select_ul" style="min-width:300px">' + text + '</ul>');
-            $('#context_menu_cut')   .append('<ul id="context_menu_select_ul" style="min-width:300px">' + text + '</ul>');
+            $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width:300px">'   + text + '</ul>');
+        } else {
+            $('#context_menu_paste').data('widgets', '');
+            $('.context-submenu').hide();
+        }
+        if ($list.length > 0) {
+            $('.context-submenu').removeClass('ui-state-disabled');
 
-            $('#context_menu_copy').removeClass('ui-state-disabled');
-            $('#context_menu_delete').removeClass('ui-state-disabled');
-            $('#context_menu_select').removeClass('ui-state-disabled');
-            $('#context_menu_cut').removeClass('ui-state-disabled');
-
-            $('#context_menu_copy li').click(function () {
+            $('#context_menu_copy li, #context_menu_copy').click(function () {
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
@@ -5578,7 +5624,7 @@ vis = $.extend(true, vis, {
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_delete li').click(function () {
+            $('#context_menu_delete li, #context_menu_delete').click(function () {
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
@@ -5587,7 +5633,7 @@ vis = $.extend(true, vis, {
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_select li').click(function () {
+            $('#context_menu_select li, #context_menu_select').click(function () {
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
@@ -5597,7 +5643,7 @@ vis = $.extend(true, vis, {
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_cut li').click(function () {
+            $('#context_menu_cut li, #context_menu_cut').click(function () {
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
@@ -5606,31 +5652,33 @@ vis = $.extend(true, vis, {
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_copy').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.copy(false, widgets);
+            $('#context_menu_front li, #context_menu_front').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.bringTo(widgets, true);
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_cut').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.copy(true, widgets);
+            $('#context_menu_back li, #context_menu_back').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.bringTo(widgets, false);
                 $("#context_menu").hide();
             });
 
-            $('#context_menu_delete').click(function () {
-                var widgets = $('#context_menu_paste').data('widgets').split(' ');
-                that.onButtonDelete(widgets);
+            $('#context_menu_export li, #context_menu_export').click(function () {
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+
+                that.exportWidgets(widgets);
                 $("#context_menu").hide();
             });
-
-        } else {
-            $('#context_menu_paste').data('widgets', '');
-
-            $('#context_menu_select').hide();
-            $('#context_menu_copy').addClass('ui-state-disabled');
-            $('#context_menu_delete').addClass('ui-state-disabled');
-            $('#context_menu_cut').addClass('ui-state-disabled');
         }
 
         // Enable paste if something in clipboard
