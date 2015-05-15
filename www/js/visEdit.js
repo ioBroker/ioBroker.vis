@@ -2324,34 +2324,39 @@ vis = $.extend(true, vis, {
 
         this.inspectWidgets([]);
     },
-    bindWidgetClick: function (id) {
+    bindWidgetClick: function (view, id) {
         var that = this;
-        $('#' + id).click(function (e) {
-            if (that.dragging) return;
+        var $wid = $('#' + id);
+        if (!this.views[view].widgets[id].data.locked) {
+            $('#' + id).unbind('click').click(function (e) {
+                if (that.dragging) return;
 
-            var widgetId   = $(this).attr('id');
-            // if shift or control pressed
-            if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                var pos = that.activeWidgets.indexOf(widgetId);
+                var widgetId = $(this).attr('id');
+                // if shift or control pressed
+                if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                    var pos = that.activeWidgets.indexOf(widgetId);
 
-                // Add to list
-                if (pos === -1) {
-                    that.inspectWidgets(widgetId);
+                    // Add to list
+                    if (pos === -1) {
+                        that.inspectWidgets(widgetId);
+                    } else {
+                        // Remove from list
+                        that.inspectWidgets(null, widgetId);
+                    }
                 } else {
-                    // Remove from list
-                    that.inspectWidgets(null, widgetId);
+                    // Simple click on some widget
+                    if (that.activeWidgets.length != 1 || that.activeWidgets[0] != widgetId) {
+                        that.inspectWidgets([widgetId]);
+                    }
                 }
-            } else {
-                // Simple click on some widget
-                if (that.activeWidgets.length != 1 || that.activeWidgets[0] != widgetId) {
-                    that.inspectWidgets([widgetId]);
-                }
-            }
 
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        });
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+        } else {
+            $wid.addClass('vis-widget-edit-locked').removeClass('ui-selectee').unbind('click');
+        }
     },
     addWidget: function (tpl, data, style, wid, view, hidden, noSave, no_animate) {
         if (!view) view = this.activeView;
@@ -2430,7 +2435,7 @@ vis = $.extend(true, vis, {
 
         if (!noSave) this.save();
 
-        this.bindWidgetClick(widgetId);
+        this.bindWidgetClick(view, widgetId);
 
         if ($('#wid_all_lock_function').prop('checked')) {
             $jWidget.addClass('vis-widget-lock');
@@ -3250,6 +3255,11 @@ vis = $.extend(true, vis, {
     },
     // adds extracted attributes to array
     addToInspect: function (widgets, widAttr, group, options, onchange) {
+        if (widgets === 'delimiter') {
+            this.groups[widAttr || group] = this.groups[widAttr || group] || {};
+            this.groups[widAttr || group]['delimiter'] = 'delimiter';
+            return;
+        }
         if (typeof widAttr != 'object') {
             widAttr = {name: widAttr};
         }
@@ -3277,7 +3287,8 @@ vis = $.extend(true, vis, {
 
                 if (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined) {
                     widgetData[widAttr.name] = widAttr.default;
-                    this.reRenderWidgetEdit(widgets[i]);
+                    this.reRenderList = this.reRenderList || [];
+                    if (this.reRenderList.indexOf(widgets[i]) == -1) this.reRenderList.push(widgets[i]);
                 }
             }
         }
@@ -3398,6 +3409,10 @@ vis = $.extend(true, vis, {
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
+                if (line == 'delimiter') {
+                    $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header"></td></tr>');
+                    continue;
+                }
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
                 var title = _(widAttr + '_tooltip');
@@ -4212,12 +4227,14 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'comment',   group);
         this.addToInspect(this.activeWidgets, 'class',     group);
         this.addToInspect(this.activeWidgets, 'filterkey', group);
-        this.addToInspect(this.activeWidgets, {name: 'views', type: 'select-views'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'views',  type: 'select-views'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'locked', type: 'checkbox'}, group);
+
         group = 'visibility';
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
-
+        this.addToInspect('delimiter', group);
         // Edit all attributes
         group = 'common';
         for (group in this.actualAttrs) {
@@ -4226,12 +4243,21 @@ vis = $.extend(true, vis, {
             }
         }
 
+        this.addToInspect('delimiter', group);
         // Add common css
         this.editCssCommon();
         this.editCssFontText();
         this.editCssBackground();
         this.editCssBorder();
         this.editCssShadowPadding();
+
+        // Rerender all widgets, where default values applied
+        if (this.reRenderList && this.reRenderList.length) {
+            for (var r = 0; r < this.reRenderList.length; r++) {
+                this.reRenderWidgetEdit(this.reRenderList[r]);
+            }
+            this.reRenderList = [];
+        }
 
         this.showInspect(view, this.activeWidgets);
 
@@ -4337,30 +4363,35 @@ vis = $.extend(true, vis, {
             $('#menu_body').tabs({'active': 2});
         }
     },
-    // Init all edit fields for one view
-    changeViewEdit: function (view, noChange) {
+    installSelectable: function (view, isDestroy) {
         var that = this;
+        view = view || this.activeView;
         if (this.selectable) {
-            $('.vis-view.ui-selectable').selectable('destroy');
+            if (isDestroy) $('.vis-view.ui-selectable').selectable('destroy');
 
             $('#visview_' + view).selectable({
-                filter:    'div.vis-widget',
+                filter:    'div.vis-widget:not(.vis-widget-edit-locked)',
                 tolerance: 'fit',
-                cancel:    'div.vis-widget',
+                cancel:    'div.vis-widget:not(.vis-widget-edit-locked)',
                 stop: function (e, ui) {
                     if (!$('.ui-selected').length) {
                         that.inspectWidgets([]);
-                   } else {
+                    } else {
                         var newWidgets = [];
                         $('.ui-selected').each(function () {
-                            if ($(this).attr('id')) newWidgets.push($(this).attr('id'));
+                            var id = $(this).attr('id');
+                            if (id && !$(this).hasClass('vis-widget-edit-locked')) {
+                                newWidgets.push(id);
+                            }
                         });
                         that.inspectWidgets(newWidgets);
                     }
                     //$('#allwidgets_helper').hide();
                 },
                 selecting: function (e, ui) {
-                    if (ui.selecting.id && that.activeWidgets.indexOf(ui.selecting.id) === -1) {
+                    if (ui.selecting.id &&
+                        that.activeWidgets.indexOf(ui.selecting.id) === -1 &&
+                        !that.views[that.activeView].widgets[ui.selecting.id].data.locked) {
                         that.activeWidgets.push(ui.selecting.id);
                         that.showWidgetHelper(ui.selecting.id, true);
                     }
@@ -4372,12 +4403,19 @@ vis = $.extend(true, vis, {
                         that.showWidgetHelper(ui.unselecting.id, false);
                     }
                     /*if ($('#widget_helper_' + ui.unselecting.id).html()) {
-                        $("#widget_helper_" + ui.unselecting.id).remove();
-                        that.activeWidgets.splice(that.activeWidgets.indexOf(ui.unselecting.id), 1);
-                    }*/
+                     $("#widget_helper_" + ui.unselecting.id).remove();
+                     that.activeWidgets.splice(that.activeWidgets.indexOf(ui.unselecting.id), 1);
+                     }*/
                 }
             });
+
+            $('.vis-widget-edit-locked').removeClass('ui-selectee');
         }
+    },
+    // Init all edit fields for one view
+    changeViewEdit: function (view, noChange) {
+        var that = this;
+        this.installSelectable(view, true);
 
         if (!noChange) {
             this.undoHistory = [$.extend(true, {}, this.views[view])];
@@ -4719,9 +4757,9 @@ vis = $.extend(true, vis, {
                 var $tpl = $('#' + tpl);
                 var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                // Widget attributs default values
+                // Widget attributes default values
                 var attrs = $tpl.attr('data-vis-attrs');
-                // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
                 var t = 0;
                 var attr;
                 while (attr = $tpl.attr('data-vis-attrs' + t)) {
@@ -5411,6 +5449,31 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
+    lockWidgets: function (view, widgets) {
+        view = view || this.activeView;
+        // Disable selecte for all widgets
+        var activeWidgets = $('#context_menu_paste').data('old-widgets');
+        if (activeWidgets) activeWidgets = activeWidgets.split(' ');
+        for (var w = 0; w < widgets.length; w++) {
+            $('#' + widgets[w]).addClass('vis-widget-edit-locked').removeClass('ui-selectee ui-selected').unbind('click');
+            this.views[view].widgets[widgets[w]].data.locked = true;
+            if (activeWidgets && activeWidgets.indexOf(widgets[w]) != -1) {
+                activeWidgets.splice(activeWidgets.indexOf(widgets[w]), 1);
+            }
+        }
+        if (activeWidgets) $('#context_menu_paste').data('old-widgets', activeWidgets.join(' '));
+    },
+    unlockWidgets: function (view, widgets) {
+        view = view || this.activeView;
+        // Enable selecte for all widgets
+        for (var w = 0; w < widgets.length; w++) {
+            $('#' + widgets[w]).removeClass('vis-widget-edit-locked').addClass('ui-selectee');
+            if (this.views[view].widgets[widgets[w]].data.locked !== undefined) {
+                delete this.views[view].widgets[widgets[w]].data.locked;
+            }
+            this.bindWidgetClick(view, widgets[w]);
+        }
+    },
     bringTo: function (widgets, isToFront) {
         widgets = widgets || this.activeWidgets;
         var x = {min: 10000, max: -10000};
@@ -5433,6 +5496,8 @@ vis = $.extend(true, vis, {
         }
         var minZ = 10000;
         var maxZ = -10000;
+
+        console.log('Square (x.min ' + x.min + ', y.min ' +  y.min + '; x.max ' + x.max + ', y.max ' + y.max + ') z.min: '+ z.min + ', z.max: ' + z.max);
 
         // Find all widgets in this square
         var $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
@@ -5457,12 +5522,17 @@ vis = $.extend(true, vis, {
             if ((x.min <= br.x  && br.x <= x.max) &&
                 (y.min <= br.y  && br.y <= y.max)) {
                 isInside = true;
+            } else
+            if ((tl.x <= x.min  && x.max <= br.x) &&
+                (tl.y <= y.min  && y.max <= br.y)) {
+                isInside = true;
             }
 
             if (isInside) {
                 var z = parseInt($(this).css('z-index'), 10) || 0;
                 if (minZ > z) minZ = z;
                 if (maxZ < z) maxZ = z;
+                console.log('Widget in square: ' + $(this).attr('id') + ', zindex ' + z);
             }
 
             return isInside;
@@ -5491,7 +5561,8 @@ vis = $.extend(true, vis, {
             for (var w = 0; w < widgets.length; w++) {
                 var $wid = $('#' + widgets[w]);
                 var zindex = parseInt($wid.css('z-index'), 10) || 0;
-                zindex = maxZ + zindex - z.min;
+                console.log('Move ' + widgets[w] + ' from ' + zindex  + ' to ' + (maxZ + zindex - z.min));
+                zindex = maxZ + zindex - z.min + 1;
                 $wid.css('z-index', zindex);
                 this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
             }
@@ -5514,11 +5585,28 @@ vis = $.extend(true, vis, {
             for (var w = 0; w < widgets.length; w++) {
                 var $wid = $('#' + widgets[w]);
                 var zindex = parseInt($wid.css('z-index'), 10) || 0;
-                zindex = minZ - zindex + z.max;
+                console.log('Move ' + widgets[w] + ' from ' + zindex  + ' to ' + (maxZ + zindex - z.min));
+                zindex = minZ - zindex + z.max - 1;
                 $wid.css('z-index', zindex);
                 this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
             }
         }
+    },
+    hideContextMenu: function (e) {
+        if (e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        }
+        var that = this;
+        setTimeout(function () {
+            var oldWidgets = $('#context_menu_paste').data('old-widgets');
+            if (oldWidgets == 'null') return;
+
+            oldWidgets = oldWidgets.split(' ');
+
+            that.inspectWidgets(oldWidgets);
+        }, 200);
+        $('#context_menu').hide();
     },
     showContextMenu: function (options) {
         var that = this;
@@ -5526,25 +5614,29 @@ vis = $.extend(true, vis, {
         var range;
         var $list = [];
 
+        // Remove selectable to prevent widgets selection after click
+        //if (this.selectable) $('#visview_' + this.activeView).selectable('destroy');
+        $('#context_menu_paste').data('old-widgets', this.activeWidgets.join(' '));
+
         $('#context_menu_paste').data('posX', options.left);
         $('#context_menu_paste').data('posY', options.top);
 
         if (!$('#context_menu_paste').data('inited')) {
             $('#context_menu_paste').data('inited', true);
-            $('#context_menu_paste').click(function () {
+            $('#context_menu_paste').click(function (e) {
+                that.hideContextMenu(e);
                 var x = $('#context_menu_paste').data('posX');
                 var y = $('#context_menu_paste').data('posY');
                 // modify position of widget
                 that.dupWidgets(that.clipboard, that.activeView, x, y);
                 that.save();                // Select main widget and add to selection the secondary ones
                 that.inspectWidgets();
-                $('#context_menu').hide();
             });
             $('#context_menu').blur(function () {
                 $('#context_menu').hide();
             });
-            $('#context_menu_import').click(function () {
-                $('#context_menu').hide();
+            $('#context_menu_import').click(function (e) {
+                that.hideContextMenu(e);
                 that.importWidgets();
             });
         }
@@ -5552,6 +5644,7 @@ vis = $.extend(true, vis, {
         $('.context-menu-ul').remove();
         $('.context-menu-wid').remove();
         $('.context-submenu').unbind('click');
+        $('#context_menu_wid').html('').hide();
 
         // If some widgets selected => find out if click on some widget
         if (this.activeWidgets && this.activeWidgets.length) {
@@ -5559,6 +5652,7 @@ vis = $.extend(true, vis, {
             // Find all widgets under the cursor
             for (var w = 0; w < this.activeWidgets.length; w++) {
                 var $wid = $('#' + this.activeWidgets[w]);
+                if (!$wid.length) continue;
                 offset = $wid.position();
                 range = {
                     x: [ offset.left, offset.left + $wid.outerWidth()  ],
@@ -5584,6 +5678,7 @@ vis = $.extend(true, vis, {
             // Find all widgets under the cursor
             $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
                 offset = $(this).position();
+                if (!$(this).length) return false;
                 range = {
                     x: [ offset.left, offset.left + $(this).outerWidth() ],
                     y: [ offset.top,  offset.top  + $(this).outerHeight()]
@@ -5595,17 +5690,24 @@ vis = $.extend(true, vis, {
         if ($list.length == 1) {
             var wid = $($list[0]).attr('id');
             $('#context_menu_paste').data('widgets', wid);
+            if (this.activeWidgets.length == 1 && wid == this.activeWidgets[0]) {
+                $('#context_menu_select').hide();
+            } else {
+                $('#context_menu_select').show();
+            }
             wid = that.getWidgetName(that.activeView, wid);
-            $('.context-submenu').append('<span class="context-menu-wid">' + wid + '</span>');
+            $('#context_menu_wid').append(wid).show();
+
         } else if ($list.length > 1) {
             var widgets = [];
             var text = '<li data-wid="">' +  _('all') + '</li>';
             $list.each(function () {
                 var wid = $(this).attr('id');
-                text += '<li data-wid="' + wid + '">' +  that.getWidgetName(that.activeView, wid) + '</li>';
+                text += '<li data-wid="' + wid + '" class="context-menu-common-item">' +  that.getWidgetName(that.activeView, wid) + '</li>';
                 widgets.push(wid);
             });
             $('#context_menu_paste').data('widgets', widgets.join(' '));
+            $('#context_menu_select').show();
 
             $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width:300px">'   + text + '</ul>');
         } else {
@@ -5615,69 +5717,99 @@ vis = $.extend(true, vis, {
         if ($list.length > 0) {
             $('.context-submenu').removeClass('ui-state-disabled');
 
-            $('#context_menu_copy li, #context_menu_copy').click(function () {
+            /*$('#context_menu_copy li, #context_menu_copy').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
                 that.copy(false, widgets);
-                $("#context_menu").hide();
             });
 
-            $('#context_menu_delete li, #context_menu_delete').click(function () {
+            $('#context_menu_delete li, #context_menu_delete').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
                 that.onButtonDelete(widgets);
-                $("#context_menu").hide();
             });
 
-            $('#context_menu_select li, #context_menu_select').click(function () {
+            $('#context_menu_select li, #context_menu_select').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
-
                 that.inspectWidgets(widgets);
-                $("#context_menu").hide();
             });
 
-            $('#context_menu_cut li, #context_menu_cut').click(function () {
+            $('#context_menu_cut li, #context_menu_cut').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
                 that.copy(true, widgets);
-                $("#context_menu").hide();
             });
 
-            $('#context_menu_front li, #context_menu_front').click(function () {
+            $('#context_menu_front li, #context_menu_front').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
                 that.bringTo(widgets, true);
-                $("#context_menu").hide();
             });
 
-            $('#context_menu_back li, #context_menu_back').click(function () {
+            $('#context_menu_back li, #context_menu_back').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
                 that.bringTo(widgets, false);
-                $("#context_menu").hide();
-            });
+            });*/
 
-            $('#context_menu_export li, #context_menu_export').click(function () {
+            /*$('#context_menu_export li, #context_menu_export')*/
+            $('.context-menu-common-item').click(function (e) {
+                that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
                     widgets = $('#context_menu_paste').data('widgets').split(' ');
                 }
-
-                that.exportWidgets(widgets);
-                $("#context_menu").hide();
+                var action = $(this).data('action');
+                if (!action) action = $(this).parent().parent().data('action');
+                switch(action) {
+                    case 'lock':
+                        that.lockWidgets(null, widgets);
+                        break;
+                    case 'unlock':
+                        that.unlockWidgets(null, widgets);
+                        break;
+                    case 'export':
+                        that.exportWidgets(widgets);
+                        break;
+                    case 'bringToBack':
+                        that.bringTo(widgets, false);
+                        break;
+                    case 'bringToFront':
+                        that.bringTo(widgets, true);
+                        break;
+                    case 'copy':
+                        that.copy(false, widgets);
+                        break;
+                    case 'select':
+                        $('#context_menu_paste').data('old-widgets', 'null');
+                        that.inspectWidgets(widgets);
+                        break;
+                    case 'delete':
+                        that.onButtonDelete(widgets);
+                        break;
+                    case 'cut':
+                        that.copy(true, widgets);
+                        break;
+                }
             });
         }
 

@@ -129,6 +129,11 @@ $.extend(systemDictionary, {
     "export widgets":       {"en": "Export widgets", "de": "Widgets Exportieren", "ru": "Экспорт элементов"},
     "import widgets":       {"en": "Import widgets", "de": "Widgets Importieren", "ru": "Импорт элементов"},
     "More":                 {"en": "More...",           "de": "Mehr...",                "ru": "Дальше..."},
+    "locked":               {
+        "en": '<div class="ui-icon ui-icon-locked" style="width: 15px;height: 13px;display:inline-block"></div>Locked',
+        "de": '<div class="ui-icon ui-icon-locked" style="width: 15px;height: 13px;display:inline-block"></div>Inaktiv(locked)',
+        "ru": '<div class="ui-icon ui-icon-locked" style="width: 15px;height: 13px;display:inline-block"></div>Не выбирать'
+    },
     'clear cached views':   {'en': 'Clear views from cache', 'de': 'Views aus Browser-Cache löschen', 'ru': 'Очистить страницы из броузера'},
     'Select object ID':     {"en": "Select object ID",  "de": "Id vom Objekt auswählen", "ru": "Выбрать ID объекта"},
     'Select image':         {"en": "Select image",      "de": "Bild auswählen",         "ru": "Выбрать изображение"},

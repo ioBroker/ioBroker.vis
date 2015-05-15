@@ -852,7 +852,7 @@ var vis = {
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
-                this.bindWidgetClick(id);
+                this.bindWidgetClick(view, id);
 
                 // @SJ cannot select menu and dialogs if it is enabled
                 /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
@@ -860,7 +860,7 @@ var vis = {
                 }*/
             }
 
-            $(document).trigger("wid_added",id)
+            $(document).trigger('wid_added', id);
         } catch (e) {
            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }

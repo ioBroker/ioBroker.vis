@@ -681,41 +681,50 @@
             <div id="size_y"
                  style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
             <ul id="context_menu" style="position: absolute;display:none;z-index:999; min-width:300px">
-                <li id="context_menu_select" class="context-submenu">
+                <li id="context_menu_wid" class="ui-state-disabled"></li>
+                <li id="context_menu_select" class="context-submenu context-menu-common-item" data-action="select">
                     <span class="translate">Select</span>
                 </li>
-                <li id="context_menu_copy" class="ui-state-disabled context-submenu">
+                <li id="context_menu_copy" class="ui-state-disabled context-submenu context-menu-common-item" data-action="copy">
                     <span class="ui-icon ui-icon-copy"></span>
                     <span class="translate">Copy</span>
                 </li>
-                <li id="context_menu_cut" class="ui-state-disabled context-submenu">
+                <li id="context_menu_cut" class="ui-state-disabled context-submenu context-menu-common-item" data-action="cut">
                     <span class="ui-icon ui-icon-scissors"></span>
                     <span class="translate">Cut</span>
                 </li>
-                <li id="context_menu_paste" class="ui-state-disabled context-submenu">
+                <li id="context_menu_paste" class="ui-state-disabled context-submenu context-menu-common-item" data-action="paste">
                     <span class="ui-icon ui-icon-document"></span>
                     <span class="translate">Paste</span>
                 </li>
-                <li id="context_menu_delete" class="ui-state-disabled context-submenu">
+                <li id="context_menu_delete" class="ui-state-disabled context-submenu context-menu-common-item" data-action="delete">
                     <span class="ui-icon ui-icon-trash"></span>
                     <span class="translate">Delete</span>
                 </li>
                 <li id="context_menu_more"><span class="translate">More</span>
                     <ul style="min-width:250px">
-                        <li id="context_menu_front" class="ui-state-disabled context-submenu">
+                        <li id="context_menu_lock" class="ui-state-disabled context-submenu context-menu-common-item" data-action="lock">
+                            <span class="ui-icon ui-icon-locked"></span>
+                            <span class="translate">Lock</span>
+                        </li>
+                        <li id="context_menu_unlock" class="ui-state-disabled context-submenu context-menu-common-item" data-action="unlock">
+                            <span class="ui-icon ui-icon-unlocked"></span>
+                            <span class="translate">Unlock</span>
+                        </li>
+                        <li id="context_menu_front" class="ui-state-disabled context-submenu context-menu-common-item" data-action="bringToFront">
                             <span class="ui-icon ui-icon-arrowthick-1-n"></span>
                             <span class="translate">Bring to front</span>
                         </li>
-                        <li id="context_menu_back" class="ui-state-disabled context-submenu">
+                        <li id="context_menu_back" class="ui-state-disabled context-submenu context-menu-common-item" data-action="bringToBack">
                             <span class="ui-icon ui-icon-arrowthick-1-s"></span>
                             <span class="translate">Move to back</span>
                         </li>
-                        <li id="context_menu_export" class="ui-state-disabled context-submenu">
-                            <span class="ui-icon ui-icon-arrowthick-1-s"></span>
+                        <li id="context_menu_export" class="ui-state-disabled context-submenu context-menu-common-item" data-action="export">
+                            <span class="ui-icon ui-icon-arrowthickstop-1-e"></span>
                             <span class="translate">export widgets</span>
                         </li>
                         <li id="context_menu_import">
-                            <span class="ui-icon ui-icon-arrowthick-1-s"></span>
+                            <span class="ui-icon ui-icon-arrowthickstop-1-w"></span>
                             <span class="translate">import widgets</span>
                         </li>
                     </ul>
