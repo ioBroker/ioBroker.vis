@@ -1088,7 +1088,10 @@ vis = $.extend(true, vis, {
             }
             that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
-        if (this.config['button/wid_all_lock_function']) {
+
+        // Enable by default widget lock function
+        if (this.config['button/wid_all_lock_function'] === undefined ||
+            this.config['button/wid_all_lock_function']) {
             setTimeout(function () {
                 $('#wid_all_lock_function').prop('checked', true);
                 $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
@@ -1244,6 +1247,21 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         })
 
+        $('#vis_container').on('contextmenu', function (e) {
+            if (!e.shiftKey && !e.ctrlKey) {
+                var parentOffset = $(this).offset();
+                //or $(this).offset(); if you really just want the current element's offset
+                var relX = e.pageX - parentOffset.left;
+                var relY = e.pageY - parentOffset.top;
+
+                relX += $("#vis_container").scrollLeft();
+                relY += $("#vis_container").scrollTop();
+
+                vis.showContextMenu({left: relX, top: relY});
+
+                e.preventDefault();
+            }
+        });
     },
     editInitWidgetPreview: function () {
         var that = this;
@@ -2040,11 +2058,11 @@ vis = $.extend(true, vis, {
             $('.view-select-tab.ui-state-active').parent().children().last().trigger('click');
         }
     },
-    exportWidgets: function () {
+    exportWidgets: function (widgets) {
         var exportW = [];
-
-        for (var i = 0; i < this.activeWidgets.length; i++) {
-            exportW.push(this.views[this.activeView].widgets[this.activeWidgets[i]]);
+        widgets = widgets || this.activeWidgets;
+        for (var i = 0; i < widgets.length; i++) {
+            exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
         $('#textarea_export_view').html(JSON.stringify(exportW, null, '  '));
@@ -2306,34 +2324,39 @@ vis = $.extend(true, vis, {
 
         this.inspectWidgets([]);
     },
-    bindWidgetClick: function (id) {
+    bindWidgetClick: function (view, id) {
         var that = this;
-        $('#' + id).click(function (e) {
-            if (that.dragging) return;
+        var $wid = $('#' + id);
+        if (!this.views[view].widgets[id].data.locked) {
+            $('#' + id).unbind('click').click(function (e) {
+                if (that.dragging) return;
 
-            var widgetId   = $(this).attr('id');
-            // if shift or control pressed
-            if (e.shiftKey || e.ctrlKey || e.metaKey) {
-                var pos = that.activeWidgets.indexOf(widgetId);
+                var widgetId = $(this).attr('id');
+                // if shift or control pressed
+                if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                    var pos = that.activeWidgets.indexOf(widgetId);
 
-                // Add to list
-                if (pos === -1) {
-                    that.inspectWidgets(widgetId);
+                    // Add to list
+                    if (pos === -1) {
+                        that.inspectWidgets(widgetId);
+                    } else {
+                        // Remove from list
+                        that.inspectWidgets(null, widgetId);
+                    }
                 } else {
-                    // Remove from list
-                    that.inspectWidgets(null, widgetId);
+                    // Simple click on some widget
+                    if (that.activeWidgets.length != 1 || that.activeWidgets[0] != widgetId) {
+                        that.inspectWidgets([widgetId]);
+                    }
                 }
-            } else {
-                // Simple click on some widget
-                if (that.activeWidgets.length != 1 || that.activeWidgets[0] != widgetId) {
-                    that.inspectWidgets([widgetId]);
-                }
-            }
 
-            e.preventDefault();
-            e.stopPropagation();
-            return false;
-        });
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            });
+        } else {
+            $wid.addClass('vis-widget-edit-locked').removeClass('ui-selectee').unbind('click');
+        }
     },
     addWidget: function (tpl, data, style, wid, view, hidden, noSave, no_animate) {
         if (!view) view = this.activeView;
@@ -2412,7 +2435,7 @@ vis = $.extend(true, vis, {
 
         if (!noSave) this.save();
 
-        this.bindWidgetClick(widgetId);
+        this.bindWidgetClick(view, widgetId);
 
         if ($('#wid_all_lock_function').prop('checked')) {
             $jWidget.addClass('vis-widget-lock');
@@ -2420,7 +2443,7 @@ vis = $.extend(true, vis, {
 
         return widgetId;
     },
-    dupWidgets: function (widgets, targetView) {
+    dupWidgets: function (widgets, targetView, offsetX, offsetY) {
         if (!widgets)    widgets    = this.activeWidgets;
         if (!targetView) targetView = this.activeView;
 
@@ -2429,12 +2452,15 @@ vis = $.extend(true, vis, {
         var data;
         var style;
         var newWidgets = [];
+        var firstOffsetX = null;
+        var firstOffsetY = null;
 
         for (var i = 0; i < widgets.length; i++) {
             var objWidget;
+
             // if from clipboard
             if (widgets[i].widget) {
-                objWidget   = widgets[i].widget;
+                objWidget       = widgets[i].widget;
                 activeView      = widgets[i].view;
                 tpl             = objWidget.tpl;
                 data            = objWidget.data;
@@ -2448,12 +2474,30 @@ vis = $.extend(true, vis, {
                 style      = $.extend({}, this.views[this.activeView].widgets[widgets[i]].style);
             }
 
-            if (activeView == targetView) {
-                style.top  = parseInt(style.top,  10);
-                style.left = parseInt(style.left, 10);
+            if (offsetX !== undefined) {
+                if (firstOffsetX === null) {
+                    firstOffsetX = parseInt(style.left, 10);
+                    firstOffsetY = parseInt(style.top, 10);
 
-                style.top  += 10;
-                style.left += 10;
+                    style.left = offsetX;
+                    style.top  = offsetY;
+                } else {
+                    style.top  = parseInt(style.top, 10);
+                    style.left = parseInt(style.left, 10);
+
+                    style.top = firstOffsetY  - style.top  + offsetY;
+                    style.left = firstOffsetX - style.left + offsetX;
+                }
+            }
+            if (activeView == targetView) {
+                if (offsetX === undefined) {
+                    style.top  = parseInt(style.top,  10);
+                    style.left = parseInt(style.left, 10);
+
+                    style.top  += 10;
+                    style.left += 10;
+                }
+
                 // Store new settings
                 if (widgets[i].widget) {
                     // If after copy to clipboard, the copied widget was changed, so the new modified version will be pasted and not the original one.
@@ -3211,6 +3255,11 @@ vis = $.extend(true, vis, {
     },
     // adds extracted attributes to array
     addToInspect: function (widgets, widAttr, group, options, onchange) {
+        if (widgets === 'delimiter') {
+            this.groups[widAttr || group] = this.groups[widAttr || group] || {};
+            this.groups[widAttr || group]['delimiter'] = 'delimiter';
+            return;
+        }
         if (typeof widAttr != 'object') {
             widAttr = {name: widAttr};
         }
@@ -3238,7 +3287,8 @@ vis = $.extend(true, vis, {
 
                 if (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined) {
                     widgetData[widAttr.name] = widAttr.default;
-                    this.reRenderWidgetEdit(widgets[i]);
+                    this.reRenderList = this.reRenderList || [];
+                    if (this.reRenderList.indexOf(widgets[i]) == -1) this.reRenderList.push(widgets[i]);
                 }
             }
         }
@@ -3359,6 +3409,10 @@ vis = $.extend(true, vis, {
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
+                if (line == 'delimiter') {
+                    $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header"></td></tr>');
+                    continue;
+                }
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
                 var title = _(widAttr + '_tooltip');
@@ -3985,6 +4039,9 @@ vis = $.extend(true, vis, {
         // Deselect all elements
         $(':focus').blur();
 
+        // Hide context menu
+        $('#context_menu').hide();
+
         if (typeof addWidget == 'boolean') {
             onlyUpdate = addWidget;
             addWidget = undefined;
@@ -4170,12 +4227,14 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'comment',   group);
         this.addToInspect(this.activeWidgets, 'class',     group);
         this.addToInspect(this.activeWidgets, 'filterkey', group);
-        this.addToInspect(this.activeWidgets, {name: 'views', type: 'select-views'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'views',  type: 'select-views'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'locked', type: 'checkbox'}, group);
+
         group = 'visibility';
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
-
+        this.addToInspect('delimiter', group);
         // Edit all attributes
         group = 'common';
         for (group in this.actualAttrs) {
@@ -4184,12 +4243,21 @@ vis = $.extend(true, vis, {
             }
         }
 
+        this.addToInspect('delimiter', group);
         // Add common css
         this.editCssCommon();
         this.editCssFontText();
         this.editCssBackground();
         this.editCssBorder();
         this.editCssShadowPadding();
+
+        // Rerender all widgets, where default values applied
+        if (this.reRenderList && this.reRenderList.length) {
+            for (var r = 0; r < this.reRenderList.length; r++) {
+                this.reRenderWidgetEdit(this.reRenderList[r]);
+            }
+            this.reRenderList = [];
+        }
 
         this.showInspect(view, this.activeWidgets);
 
@@ -4295,30 +4363,35 @@ vis = $.extend(true, vis, {
             $('#menu_body').tabs({'active': 2});
         }
     },
-    // Init all edit fields for one view
-    changeViewEdit: function (view, noChange) {
+    installSelectable: function (view, isDestroy) {
         var that = this;
+        view = view || this.activeView;
         if (this.selectable) {
-            $('.vis-view.ui-selectable').selectable('destroy');
+            if (isDestroy) $('.vis-view.ui-selectable').selectable('destroy');
 
             $('#visview_' + view).selectable({
-                filter:    'div.vis-widget',
+                filter:    'div.vis-widget:not(.vis-widget-edit-locked)',
                 tolerance: 'fit',
-                cancel:    'div.vis-widget',
+                cancel:    'div.vis-widget:not(.vis-widget-edit-locked)',
                 stop: function (e, ui) {
                     if (!$('.ui-selected').length) {
                         that.inspectWidgets([]);
-                   } else {
+                    } else {
                         var newWidgets = [];
                         $('.ui-selected').each(function () {
-                            if ($(this).attr('id')) newWidgets.push($(this).attr('id'));
+                            var id = $(this).attr('id');
+                            if (id && !$(this).hasClass('vis-widget-edit-locked')) {
+                                newWidgets.push(id);
+                            }
                         });
                         that.inspectWidgets(newWidgets);
                     }
                     //$('#allwidgets_helper').hide();
                 },
                 selecting: function (e, ui) {
-                    if (ui.selecting.id && that.activeWidgets.indexOf(ui.selecting.id) === -1) {
+                    if (ui.selecting.id &&
+                        that.activeWidgets.indexOf(ui.selecting.id) === -1 &&
+                        !that.views[that.activeView].widgets[ui.selecting.id].data.locked) {
                         that.activeWidgets.push(ui.selecting.id);
                         that.showWidgetHelper(ui.selecting.id, true);
                     }
@@ -4330,12 +4403,19 @@ vis = $.extend(true, vis, {
                         that.showWidgetHelper(ui.unselecting.id, false);
                     }
                     /*if ($('#widget_helper_' + ui.unselecting.id).html()) {
-                        $("#widget_helper_" + ui.unselecting.id).remove();
-                        that.activeWidgets.splice(that.activeWidgets.indexOf(ui.unselecting.id), 1);
-                    }*/
+                     $("#widget_helper_" + ui.unselecting.id).remove();
+                     that.activeWidgets.splice(that.activeWidgets.indexOf(ui.unselecting.id), 1);
+                     }*/
                 }
             });
+
+            $('.vis-widget-edit-locked').removeClass('ui-selectee');
         }
+    },
+    // Init all edit fields for one view
+    changeViewEdit: function (view, noChange) {
+        var that = this;
+        this.installSelectable(view, true);
 
         if (!noChange) {
             this.undoHistory = [$.extend(true, {}, this.views[view])];
@@ -4492,6 +4572,7 @@ vis = $.extend(true, vis, {
         var draggableOptions = {
             cancel: false,
             start:  function (event, ui) {
+                $('#context_menu').hide();
                 that.dragging = true;
                 origX = ui.position.left;
                 origY = ui.position.top;
@@ -4649,8 +4730,8 @@ vis = $.extend(true, vis, {
                 },
                 resize: function (event, ui) {
                     $('.widget-helper').css({
-                        width: parseInt( ui.element.outerWidth()) + 2 +'px',
-                        height:  parseInt(ui.element.outerHeight()) + 2 +'px'
+                        width:  parseInt(ui.element.outerWidth())  + 2 +'px',
+                        height: parseInt(ui.element.outerHeight()) + 2 +'px'
                     });
                 }
             }, resizableOptions));
@@ -4676,9 +4757,9 @@ vis = $.extend(true, vis, {
                 var $tpl = $('#' + tpl);
                 var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                // Widget attributs default values
+                // Widget attributes default values
                 var attrs = $tpl.attr('data-vis-attrs');
-                // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
                 var t = 0;
                 var attr;
                 while (attr = $tpl.attr('data-vis-attrs' + t)) {
@@ -5132,16 +5213,15 @@ vis = $.extend(true, vis, {
         var $focused = $(':focus');
         if (!$focused.length) {
             if (this.clipboard && this.clipboard.length) {
-                var widgets = [];
                 this.dupWidgets(this.clipboard);
                 this.save();                // Select main widget and add to selection the secondary ones
                 this.inspectWidgets();
             }
         }
     },
-    copy: function (isCut) {
+    copy: function (isCut, widgets) {
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.length) {
+        if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
                 $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');
@@ -5150,11 +5230,12 @@ vis = $.extend(true, vis, {
 
             this.clipboard = [];
             var widgetNames = '';
-            if (this.activeWidgets.length) {
-                for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
-                    widgetNames += (widgetNames ? ', ' : '') + this.activeWidgets[i];
+            widgets = widgets || this.activeWidgets;
+            if (widgets.length) {
+                for (var i = 0, len = widgets.length; i < len; i++) {
+                    widgetNames += (widgetNames ? ', ' : '') + widgets[i];
                     this.clipboard.push({
-                        widget: $.extend(true, {}, this.views[this.activeView].widgets[this.activeWidgets[i]]),
+                        widget: $.extend(true, {}, this.views[this.activeView].widgets[widgets[i]]),
                         view: (!isCut) ? this.activeView : '---copied---'
                     });
                 }
@@ -5173,16 +5254,16 @@ vis = $.extend(true, vis, {
 
             var that = this;
             if (typeof html2canvas != "undefined") {
-                this.getWidgetThumbnail(this.activeWidgets[0], 0, 0, function (canvas) {
+                this.getWidgetThumbnail(widgets[0], 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                     if (isCut) {
-                        that.delWidgets();
+                        that.delWidgets(widgets);
                         that.inspectWidgets([]);
                     }
                 });
             } else {
                 if (isCut) {
-                    this.delWidgets();
+                    this.delWidgets(widgets);
                     this.inspectWidgets([]);
                 }
             }
@@ -5196,16 +5277,17 @@ vis = $.extend(true, vis, {
             $('#clipboard_content').remove();
         }
     },
-    onButtonDelete: function () {
+    onButtonDelete: function (widgets) {
         var $focused = $(':focus');
-        if (!$focused.length && this.activeWidgets.length) {
+        if (widgets || (!$focused.length && this.activeWidgets.length)) {
+            widgets = widgets || this.activeWidgets;
             var isHideDialog = this.config['dialog/delete_is_show'] || false;
 
             if (!isHideDialog) {
-                if (this.activeWidgets.length > 1) {
-                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', this.activeWidgets.length + 1));
+                if (widgets.length > 1) {
+                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length + 1));
                 } else {
-                    $('#dialog_delete_content').html(_('Do you want delete widget %s?', this.activeWidgets[0]));
+                    $('#dialog_delete_content').html(_('Do you want delete widget %s?', widgets[0]));
                 }
 
                 var dialog_buttons = {};
@@ -5217,7 +5299,7 @@ vis = $.extend(true, vis, {
                         that.editSaveConfig('dialog/delete_is_show', true);
                     }
                     $(this).dialog('close');
-                    that.delWidgets();
+                    that.delWidgets(widgets);
                     that.inspectWidgets([]);
                 };
                 dialog_buttons[_('Cancel')] = function () {
@@ -5237,7 +5319,7 @@ vis = $.extend(true, vis, {
                     buttons: dialog_buttons
                 });
             } else {
-                this.delWidgets();
+                this.delWidgets(widgets);
                 this.inspectWidgets([]);
             }
             return true;
@@ -5366,6 +5448,404 @@ vis = $.extend(true, vis, {
             that.instance = $(this).val();
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
+    },
+    lockWidgets: function (view, widgets) {
+        view = view || this.activeView;
+        // Disable selecte for all widgets
+        var activeWidgets = $('#context_menu_paste').data('old-widgets');
+        if (activeWidgets) activeWidgets = activeWidgets.split(' ');
+        for (var w = 0; w < widgets.length; w++) {
+            $('#' + widgets[w]).addClass('vis-widget-edit-locked').removeClass('ui-selectee ui-selected').unbind('click');
+            this.views[view].widgets[widgets[w]].data.locked = true;
+            if (activeWidgets && activeWidgets.indexOf(widgets[w]) != -1) {
+                activeWidgets.splice(activeWidgets.indexOf(widgets[w]), 1);
+            }
+        }
+        if (activeWidgets) $('#context_menu_paste').data('old-widgets', activeWidgets.join(' '));
+    },
+    unlockWidgets: function (view, widgets) {
+        view = view || this.activeView;
+        // Enable selecte for all widgets
+        for (var w = 0; w < widgets.length; w++) {
+            $('#' + widgets[w]).removeClass('vis-widget-edit-locked').addClass('ui-selectee');
+            if (this.views[view].widgets[widgets[w]].data.locked !== undefined) {
+                delete this.views[view].widgets[widgets[w]].data.locked;
+            }
+            this.bindWidgetClick(view, widgets[w]);
+        }
+    },
+    bringTo: function (widgets, isToFront) {
+        widgets = widgets || this.activeWidgets;
+        var x = {min: 10000, max: -10000};
+        var y = {min: 10000, max: -10000};
+        var z = {min: 10000, max: -10000};
+
+        // Calculate biggest square
+        for (var w = 0; w < widgets.length; w++) {
+            var $wid = $('#' + widgets[w]);
+            var offset = $wid.position();
+            var width  = $wid.outerWidth();
+            var height = $wid.outerHeight();
+            var zindex = parseInt($wid.css('z-index'), 10) || 0;
+            if (offset.left < x.min) x.min = offset.left;
+            if (offset.left + width > x.max) x.max = offset.left + width;
+            if (offset.top  < y.min) y.min = offset.top;
+            if (offset.top  + height > y.max) y.max = offset.top + height;
+            if (zindex < z.min) z.min = zindex;
+            if (zindex > z.max) z.max = zindex;
+        }
+        var minZ = 10000;
+        var maxZ = -10000;
+
+        console.log('Square (x.min ' + x.min + ', y.min ' +  y.min + '; x.max ' + x.max + ', y.max ' + y.max + ') z.min: '+ z.min + ', z.max: ' + z.max);
+
+        // Find all widgets in this square
+        var $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+            if (widgets.indexOf($(this).attr('id')) != -1) return false;
+            var offset = $(this).position();
+            var tl = {x: offset.left, y: offset.top}; // top left
+            var br = {x: offset.left + $(this).outerWidth(), y: offset.top + $(this).outerHeight()};  // bottom right
+
+            var isInside = false;
+            if ((x.min <= tl.x  && tl.x <= x.max) &&
+                (y.min <= tl.y  && tl.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= br.x  && br.x <= x.max) &&
+                (y.min <= tl.y  && tl.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= tl.x  && tl.x <= x.max) &&
+                (y.min <= br.y  && br.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((x.min <= br.x  && br.x <= x.max) &&
+                (y.min <= br.y  && br.y <= y.max)) {
+                isInside = true;
+            } else
+            if ((tl.x <= x.min  && x.max <= br.x) &&
+                (tl.y <= y.min  && y.max <= br.y)) {
+                isInside = true;
+            }
+
+            if (isInside) {
+                var z = parseInt($(this).css('z-index'), 10) || 0;
+                if (minZ > z) minZ = z;
+                if (maxZ < z) maxZ = z;
+                console.log('Widget in square: ' + $(this).attr('id') + ', zindex ' + z);
+            }
+
+            return isInside;
+        });
+
+        if (!$list.length) return;
+        var that = this;
+        // Move all widgets
+        if (isToFront) {
+            // If z-index will be over 900
+            if (z.max - z.min >= 900 - maxZ) {
+                var offset = z.max - z.min - (900 - maxZ) + 1;
+                // Move all widgets to let place under them
+                $list.each(function () {
+                    var zindex = parseInt($(this).css('z-index'), 10) || 0;
+                    zindex = zindex - offset < 0 ? 0 : zindex - offset;
+                    $(this).css('z-index', zindex);
+                    that.views[that.activeView].widgets[$(this).attr('id')].style['z-index'] = zindex;
+                });
+                maxZ -= offset;
+            }
+
+            // If everything is OK
+            if (maxZ < z.min) return;
+            if (maxZ == z.min) maxZ++;
+            for (var w = 0; w < widgets.length; w++) {
+                var $wid = $('#' + widgets[w]);
+                var zindex = parseInt($wid.css('z-index'), 10) || 0;
+                console.log('Move ' + widgets[w] + ' from ' + zindex  + ' to ' + (maxZ + zindex - z.min));
+                zindex = maxZ + zindex - z.min + 1;
+                $wid.css('z-index', zindex);
+                this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
+            }
+        } else {
+            // If z-index will be negative
+            if (z.max - z.min >= minZ) {
+                var offset = z.max - z.min - minZ + 1;
+                // Move all widgets to let place under them
+                $list.each(function () {
+                    var zindex = parseInt($(this).css('z-index'), 10) || 0;
+                    zindex = zindex + offset > 900 ? 900 : zindex + offset;
+                    $(this).css('z-index', zindex);
+                    that.views[that.activeView].widgets[$(this).attr('id')].style['z-index'] = zindex;
+                });
+                minZ += offset;
+            }
+            if (z.max < minZ) return;
+            if (minZ == z.max) minZ--;
+
+            for (var w = 0; w < widgets.length; w++) {
+                var $wid = $('#' + widgets[w]);
+                var zindex = parseInt($wid.css('z-index'), 10) || 0;
+                console.log('Move ' + widgets[w] + ' from ' + zindex  + ' to ' + (maxZ + zindex - z.min));
+                zindex = minZ - zindex + z.max - 1;
+                $wid.css('z-index', zindex);
+                this.views[this.activeView].widgets[widgets[w]].style['z-index'] = zindex;
+            }
+        }
+    },
+    hideContextMenu: function (e) {
+        if (e) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+        }
+        var that = this;
+        setTimeout(function () {
+            var oldWidgets = $('#context_menu_paste').data('old-widgets');
+            if (oldWidgets == 'null') return;
+
+            oldWidgets = oldWidgets.split(' ');
+
+            that.inspectWidgets(oldWidgets);
+        }, 200);
+        $('#context_menu').hide();
+    },
+    showContextMenu: function (options) {
+        var that = this;
+        var offset;
+        var range;
+        var $list = [];
+
+        // Remove selectable to prevent widgets selection after click
+        //if (this.selectable) $('#visview_' + this.activeView).selectable('destroy');
+        $('#context_menu_paste').data('old-widgets', this.activeWidgets.join(' '));
+
+        $('#context_menu_paste').data('posX', options.left);
+        $('#context_menu_paste').data('posY', options.top);
+
+        if (!$('#context_menu_paste').data('inited')) {
+            $('#context_menu_paste').data('inited', true);
+            $('#context_menu_paste').click(function (e) {
+                that.hideContextMenu(e);
+                var x = $('#context_menu_paste').data('posX');
+                var y = $('#context_menu_paste').data('posY');
+                // modify position of widget
+                that.dupWidgets(that.clipboard, that.activeView, x, y);
+                that.save();                // Select main widget and add to selection the secondary ones
+                that.inspectWidgets();
+            });
+            $('#context_menu').blur(function () {
+                $('#context_menu').hide();
+            });
+            $('#context_menu_import').click(function (e) {
+                that.hideContextMenu(e);
+                that.importWidgets();
+            });
+        }
+
+        $('.context-menu-ul').remove();
+        $('.context-menu-wid').remove();
+        $('.context-submenu').unbind('click');
+        $('#context_menu_wid').html('').hide();
+
+        // If some widgets selected => find out if click on some widget
+        if (this.activeWidgets && this.activeWidgets.length) {
+            var isHit = false;
+            // Find all widgets under the cursor
+            for (var w = 0; w < this.activeWidgets.length; w++) {
+                var $wid = $('#' + this.activeWidgets[w]);
+                if (!$wid.length) continue;
+                offset = $wid.position();
+                range = {
+                    x: [ offset.left, offset.left + $wid.outerWidth()  ],
+                    y: [ offset.top,  offset.top  + $wid.outerHeight() ]
+                };
+                if ((options.left >= range.x[0] && options.left <= range.x[1]) &&
+                    (options.top  >= range.y[0] && options.top  <= range.y[1])) {
+                    isHit = true;
+                    break;
+                }
+            }
+            if (isHit) {
+                $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+                    return that.activeWidgets.indexOf($(this).attr('id')) != -1;
+                });
+            } else {
+                // Remove selection
+                this.inspectWidgets([]);
+            }
+        }
+
+        if (!$list.length) {
+            // Find all widgets under the cursor
+            $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
+                offset = $(this).position();
+                if (!$(this).length) return false;
+                range = {
+                    x: [ offset.left, offset.left + $(this).outerWidth() ],
+                    y: [ offset.top,  offset.top  + $(this).outerHeight()]
+                };
+                return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1])
+            });
+        }
+
+        if ($list.length == 1) {
+            var wid = $($list[0]).attr('id');
+            $('#context_menu_paste').data('widgets', wid);
+            if (this.activeWidgets.length == 1 && wid == this.activeWidgets[0]) {
+                $('#context_menu_select').hide();
+            } else {
+                $('#context_menu_select').show();
+            }
+            wid = that.getWidgetName(that.activeView, wid);
+            $('#context_menu_wid').append(wid).show();
+
+        } else if ($list.length > 1) {
+            var widgets = [];
+            var text = '<li data-wid="">' +  _('all') + '</li>';
+            $list.each(function () {
+                var wid = $(this).attr('id');
+                text += '<li data-wid="' + wid + '" class="context-menu-common-item">' +  that.getWidgetName(that.activeView, wid) + '</li>';
+                widgets.push(wid);
+            });
+            $('#context_menu_paste').data('widgets', widgets.join(' '));
+            $('#context_menu_select').show();
+
+            $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width:300px">'   + text + '</ul>');
+        } else {
+            $('#context_menu_paste').data('widgets', '');
+            $('.context-submenu').hide();
+        }
+        if ($list.length > 0) {
+            $('.context-submenu').removeClass('ui-state-disabled');
+
+            /*$('#context_menu_copy li, #context_menu_copy').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.copy(false, widgets);
+            });
+
+            $('#context_menu_delete li, #context_menu_delete').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.onButtonDelete(widgets);
+            });
+
+            $('#context_menu_select li, #context_menu_select').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.inspectWidgets(widgets);
+            });
+
+            $('#context_menu_cut li, #context_menu_cut').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.copy(true, widgets);
+            });
+
+            $('#context_menu_front li, #context_menu_front').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.bringTo(widgets, true);
+            });
+
+            $('#context_menu_back li, #context_menu_back').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                that.bringTo(widgets, false);
+            });*/
+
+            /*$('#context_menu_export li, #context_menu_export')*/
+            $('.context-menu-common-item').click(function (e) {
+                that.hideContextMenu(e);
+                var widgets = [$(this).data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                var action = $(this).data('action');
+                if (!action) action = $(this).parent().parent().data('action');
+                switch(action) {
+                    case 'lock':
+                        that.lockWidgets(null, widgets);
+                        break;
+                    case 'unlock':
+                        that.unlockWidgets(null, widgets);
+                        break;
+                    case 'export':
+                        that.exportWidgets(widgets);
+                        break;
+                    case 'bringToBack':
+                        that.bringTo(widgets, false);
+                        break;
+                    case 'bringToFront':
+                        that.bringTo(widgets, true);
+                        break;
+                    case 'copy':
+                        that.copy(false, widgets);
+                        break;
+                    case 'select':
+                        $('#context_menu_paste').data('old-widgets', 'null');
+                        that.inspectWidgets(widgets);
+                        break;
+                    case 'delete':
+                        that.onButtonDelete(widgets);
+                        break;
+                    case 'cut':
+                        that.copy(true, widgets);
+                        break;
+                }
+            });
+        }
+
+        // Enable paste if something in clipboard
+        if (this.clipboard && this.clipboard.length) {
+            $('#context_menu_paste').removeClass('ui-state-disabled');
+        } else {
+            $('#context_menu_paste').addClass('ui-state-disabled');
+        }
+        if (!$("#context_menu").data('inited')) {
+            $("#context_menu").data('inited', true);
+        } else {
+            $("#context_menu").menu('destroy');
+        }
+
+        $("#context_menu").css(options)
+            .appendTo('#visview_' + this.activeView)
+            .show()
+            .focus()
+            .menu({
+            focus: function (event, ui) {
+                var widgets = [ui.item.data('wid')];
+                if (!widgets[0]) {
+                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                }
+                for (var i = 0; i < widgets.length; i++) {
+                    $('#' + widgets[i]).addClass('vis-widgets-highlight');
+                }
+            },
+            blur: function (event, ui) {
+                var widgets = $('#context_menu_paste').data('widgets').split(' ');
+                for (var i = 0; i < widgets.length; i++) {
+                    $('#' + widgets[i]).removeClass('vis-widgets-highlight');
+                }
+            }
+        });
     }
 });
 
@@ -5485,7 +5965,7 @@ $(document).keydown(function (e) {
 $(window).on('paste', function (e) {
     vis.paste();
 }).on('copy cut', function (e) {
-    vis.copy(e.type == "cut");
+    vis.copy(e.type == 'cut');
 });
 
 window.onbeforeunload = function () {

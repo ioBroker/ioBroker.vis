@@ -443,7 +443,7 @@ body{
     width: calc(100% - 3px);
     height: -webkit-calc(100% - 3px);
     height: calc(100% - 3px);
-    z-index: 999;
+    z-index: 998;
 }
 
 .vis-widget_prev {
@@ -771,4 +771,42 @@ td > .select_active_widget :nth-child(2) {
 .custom-vis-menu {
     height: 300px !important;
     overflow-y: scroll;
+}
+
+.vis-widget-edit-locked:after {
+    content: 'locked';
+    background: repeating-linear-gradient(
+            45deg,
+            #606dbc,
+            #606dbc 10px,
+            #465298 10px,
+            #465298 20px
+    );
+    z-index:  901;
+    width:    100%;
+    height:   100%;
+    position: absolute;
+    top:      0;
+    left:     0;
+    opacity:  0.1;
+}
+
+.vis-widgets-highlight:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: -webkit-calc(100% - 3px);
+    width: calc(100% - 3px);
+    height: -webkit-calc(100% - 3px);
+    height: calc(100% - 3px);
+    z-index: 997;
+    opacity: 0.3;
+    background: repeating-linear-gradient(
+            135deg,
+            #FFFFFF,
+            #FFFFFF 20px,
+            #000000 20px,
+            #000000 40px
+    );
 }

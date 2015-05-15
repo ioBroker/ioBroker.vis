@@ -4295,4 +4295,3 @@ define('can/view/ejs/ejs', [
 	window.define = window.define.orig;
 	window.System = window.System.orig;
 })();
-//# sourceMappingURL=construct.js.map

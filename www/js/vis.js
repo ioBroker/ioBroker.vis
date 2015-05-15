@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.4.1',
+    version:                '0.5.0',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -452,7 +452,7 @@ var vis = {
     },
     initNext: function () {
         this.showWaitScreen(false);
-
+        var that = this;
         // First start.
         if (!this.views) {
             this.initViewObject();
@@ -510,19 +510,21 @@ var vis = {
 
         // Navigation
         $(window).bind('hashchange', function (e) {
-            this.changeView(window.location.hash.slice(1));
+            that.changeView(window.location.hash.slice(1));
         });
 
         this.bindInstance();
 
         // EDIT mode
         if (this.editMode) {
-                this.editInitNext();
-            }
+            this.editInitNext();
+        }
+
         this.initialized = true;
+
         // If this function called earlier, it makes problems under FireFox.
-        if(this.views["_project"]){
-            this.renderView("_project",false,true);
+        if (this.views["_project"]) {
+            this.renderView("_project", false, true);
         }
 
         this.changeView(this.activeView);
@@ -832,6 +834,10 @@ var vis = {
                 }));
             }
 
+            if (widget.style && !widgetData._no_style) {
+                $("#" + id).css(widget.style);
+            }
+
             if (!this.editMode) {
                 if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
@@ -844,13 +850,11 @@ var vis = {
                 }
             }
 
-            if (widget.style && !widgetData._no_style) {
-                $("#" + id).css(widget.style);
-            }
+
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
-                this.bindWidgetClick(id);
+                this.bindWidgetClick(view, id);
 
                 // @SJ cannot select menu and dialogs if it is enabled
                 /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
@@ -858,7 +862,7 @@ var vis = {
                 }*/
             }
 
-            $(document).trigger("wid_added",id)
+            $(document).trigger('wid_added', id);
         } catch (e) {
            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
