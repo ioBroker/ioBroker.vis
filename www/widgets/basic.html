@@ -949,8 +949,8 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
-        data-vis-name="HTML"
         data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
+        data-vis-name="HTML"
         data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
@@ -1031,56 +1031,11 @@
     </div>
 </script>
 
-<!-- basic Container -->
-<script id="tplContainerView"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="container"
-        data-vis-name="view in widget"
-        data-vis-attrs="contains_view/views">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-            <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
-            <% } %>
-            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
-        </div>
-    </div>
-</script>
-
-<!-- Stateful Widgets -->
-<script id="tplStatefulContainerView8"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="stateful,container"
-        data-vis-name="view in widget 8"
-        data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
-        <% } %>
-        <%
-            var viewArr = [];
-            var i = 0;
-            while(data.attr("contains_view_" + i) !== undefined) {
-                viewArr.push(data.attr("contains_view_" + i));
-                i++;
-            }
-        %>
-        <div class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
-        </div>
-        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
-        </div-->
-    </div>
-</script>
-
 <script id="tplStatefulIFrame8"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_StatefulIFrame8.png.png"></img>'
         data-vis-type="stateful"
         data-vis-name="iFrame 8"
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;src_(0-7)">
@@ -1103,6 +1058,54 @@
             <iframe class="vis-widget-element" data-oid="<%= this.data.attr('oid') %>" src="<%== vis.binds.stateful.value(srcArr, data.attr('oid')) %>" style="position: absolute; border: 0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
+    </div>
+</script>
+
+<!-- basic Container -->
+<script id="tplContainerView"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ContainerView.png"></img>'
+        data-vis-type="container"
+        data-vis-name="view in widget"
+        data-vis-attrs="contains_view/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
+        </div>
+    </div>
+</script>
+
+<!-- Stateful Widgets -->
+<script id="tplStatefulContainerView8"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_StatefulContainerView8.png"></img>'
+        data-vis-type="stateful,container"
+        data-vis-name="view in widget 8"
+        data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
+        <%
+            var viewArr = [];
+            var i = 0;
+            while(data.attr("contains_view_" + i) !== undefined) {
+                viewArr.push(data.attr("contains_view_" + i));
+                i++;
+            }
+        %>
+        <div class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div>
+        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div-->
     </div>
 </script>
 
