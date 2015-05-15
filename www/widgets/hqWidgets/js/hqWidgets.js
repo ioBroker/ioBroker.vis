@@ -716,7 +716,7 @@ vis.binds.hqWidgets = {
         draw: function ($div) {
             var data = $div.data('data');
             data.state = data.state || 'normal';
-            var radius = $div.css('borderRadius');
+            var radius = $div.css('borderRadius') || vis.views[data.view].widgets[data.wid].style['border-radius'];
 
             // place left-info, right-info, caption and image
             if (!$div.find('.vis-hq-main').length) {

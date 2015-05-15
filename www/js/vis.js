@@ -834,6 +834,10 @@ var vis = {
                 }));
             }
 
+            if (widget.style && !widgetData._no_style) {
+                $("#" + id).css(widget.style);
+            }
+
             if (!this.editMode) {
                 if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
@@ -846,9 +850,7 @@ var vis = {
                 }
             }
 
-            if (widget.style && !widgetData._no_style) {
-                $("#" + id).css(widget.style);
-            }
+
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
