@@ -694,7 +694,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
                 $(this).removeClass("ui-state-focus");
             });
-        
+
         if (config.all) {
             $("#fm_bar_all").addClass("ui-state-error");
         }

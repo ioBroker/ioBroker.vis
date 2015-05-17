@@ -5286,7 +5286,7 @@ vis = $.extend(true, vis, {
     onButtonDelete: function (widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
-            widgets = widgets || this.activeWidgets;
+            widgets = widgets || JSON.parse(JSON.stringify(this.activeWidgets));
             var isHideDialog = this.config['dialog/delete_is_show'] || false;
 
             if (!isHideDialog) {
