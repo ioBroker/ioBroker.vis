@@ -1,7 +1,8 @@
 /**
- * Copyright (c) 2014 Steffen Schorling http://github.com/smiling-Jack
+ * Copyright (c) 2014-2015 Steffen Schorling http://github.com/smiling-Jack
  * Lizenz: [CC BY-NC 3.0](http://creativecommons.org/licenses/by-nc/3.0/de/)
  */
+/* global storage */
 
 var fmScriptEls =    document.getElementsByTagName('script');
 var fmThisScriptEl = fmScriptEls[fmScriptEls.length - 1];
@@ -17,7 +18,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
     $.fm = function (options, callback) {
         var fmConn;
         if (typeof SGI != 'undefined') {
-            // TO DO wraper must be created. Direct using of socket is not convenient.
+            // TO DO wrapper must be created. Direct using of socket is not convenient.
             fmConn = SGI.socket;
         } else if (options.conn) {
             fmConn = options.conn;
@@ -26,15 +27,16 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         jQuery.event.props.push('dataTransfer');
 
         var o = {
-            lang:         options.lang || 'en',                              // de, en , ru
+            defaultPath:  options.defaultPath  || '',
+            lang:         options.lang         || 'en',      // de, en , ru
             // File position by socket connection
-            root:         options.root || '',                                // zb. 'www/'
-            path:         options.path || '/',                               // zb. 'www/dashui/'
-            uploadDir:    options.uploadDir || '',
-            fileFilter:   options.fileFilter || [],
+            root:         options.root         || '',        // zb. 'www/'
+            path:         options.path         || '/',       // zb. 'www/dashui/'
+            uploadDir:    options.uploadDir    || '',
+            fileFilter:   options.fileFilter   || [],
             folderFilter: options.folderFilter || false,
-            view:         options.view || 'table',                           // table , list
-            mode:         options.mode || 'show',                            // open , save ,show
+            view:         options.view         || 'table',   // table, list
+            mode:         options.mode         || 'show',    // open, save, show
             data:         '1',
             audio:        ['mp3', 'wav', 'ogg'],
             img:          ['gif','png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
@@ -45,9 +47,31 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 //            save_mime : options.save_mime
         };
         var uploadArray = [];
-        var selFile = '';
-        var selType = '';
-        //Analyse path, if it is a file name
+        var selFile     = '';
+        var selType     = '';
+        var config      = {};
+
+        if (typeof storage != 'undefined') {
+            try {
+                config = storage.get('visFM');
+                if (config) {
+                    config = JSON.parse(config);
+                } else {
+                    config = {};
+                }
+            } catch (e) {
+                console.log('Cannot load FM config');
+                config = {};
+            }
+        }
+        o.view = config.view || o.view;
+        if (o.defaultPath == o.path) {
+            o.path = config.path || o.path;
+        } else {
+            config.path = o.path;
+        }
+
+        // Analyse path, if it is a file name
         if (o.path && o.path[o.path.length - 1] != '/') {
             var parts = o.path.split('/');
             o.currentFile = parts.pop();
@@ -126,13 +150,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             reader.onload = function () {
                 uploadArray.push({name: files[0].name, value: reader.result});
 
-
                 var type = files[0].name.split(".").pop();
                 var icon = "undef";
                 var class_name = files[0].name.split(".")[0].replace(" ", "_");
 
                 if (o.img.indexOf(type) > -1) {
-
 
                     $("#fm_add_dropzone").append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
@@ -142,9 +164,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         '</div>');
 
                 } else {
-                    if (o.icons.indexOf(type) > -1) {
-                        icon = type;
-                    }
+                    if (o.icons.indexOf(type) > -1) icon = type;
 
                     $("#fm_add_dropzone").append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
@@ -521,8 +541,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             if (o.view == "prev" && $("#fm_bar_all").hasClass("ui-state-error")) {
                 $(".fm_fileFilter").css({display: "inline-table"});
             }
-
-            if (o.path == o.root) {
+            // BF: Workaround against wrong path
+            if (o.path == o.root ||
+                o.path == '/') {
 
                 $("#fm_bar_back").trigger("mouseleave");
                 $("#fm_bar_back").button("option", "disabled", true);
@@ -607,16 +628,18 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         $("#fm_bar_back")
             .button()
             .click(function () {
-                var path_arry = o.path.split("/");
+                var path_arry = o.path.split('/');
                 path_arry.pop();
                 path_arry.pop();
+
                 if (path_arry.length === 0) {
                     o.path = '';
                 } else {
                     o.path = path_arry.join('/') + '/';
                 }
-
-                if (o.path == o.root) {
+                // Workaround for wrong path
+                if (o.path == o.root ||
+                    o.path == '/') {
                     $("#fm_bar_back").trigger('mouseleave');
                     $("#fm_bar_back").button("option", "disabled", true);
                 }
@@ -671,6 +694,10 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
                 $(this).removeClass("ui-state-focus");
             });
+        
+        if (config.all) {
+            $("#fm_bar_all").addClass("ui-state-error");
+        }
 
         $(".fm_bar_icon")
             .mouseenter(function () {
@@ -909,11 +936,26 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
 
         $("#fm_btn_cancel").button().click(function () {
+            config.path = o.path;
+            config.view = o.view;
+            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+
+            if (typeof storage != 'undefined') {
+                storage.set('visFM', JSON.stringify(config));
+            }
             $("#dialog_fm").remove();
         });
 
         $("#fm_btn_open").button().click(function () {
             $("#dialog_fm").remove();
+
+            config.path = o.path;
+            config.view = o.view;
+            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+            if (typeof storage != 'undefined') {
+                storage.set('visFM', JSON.stringify(config));
+            }
+
             return callback({
                 path: o.path,
                 file: selFile
@@ -922,6 +964,15 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         $("#fm_btn_save").button().click(function () {
             var file = $("#fm_inp_save").val();
             $("#dialog_fm").remove();
+
+            config.path = o.path;
+            config.view = o.view;
+            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+
+            if (typeof storage != 'undefined') {
+                storage.set('visFM', JSON.stringify(config));
+            }
+
             return callback({
                 path: o.path,
                 file: file
@@ -969,5 +1020,3 @@ jQuery.fn.sortElements = (function () {
         });
     };
 })();
-
-

@@ -3035,18 +3035,20 @@ vis = $.extend(true, vis, {
                 title: _('Select image'),
                 click: function (/*event*/) {
                     var wdata = $(this).data('data-wdata');
+                    var defPath = ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/');
 
                     $.fm({
-                        lang:       that.language,
-                        path:       that.widgets[wdata.widgets[0]].data[wdata.attr] || ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/'),
-                        uploadDir:  '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
-                        fileFilter: filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
+                        lang:         that.language,
+                        defaultPath:  defPath,
+                        path:         that.widgets[wdata.widgets[0]].data[wdata.attr] || defPath,
+                        uploadDir:    '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
+                        fileFilter:   filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,
-                        mode:       'open',
-                        view:       'prev',
-                        userArg:    wdata,
-                        conn:       that.conn,
-                        zindex:     1001
+                        mode:         'open',
+                        view:         'prev',
+                        userArg:      wdata,
+                        conn:         that.conn,
+                        zindex:       1001
                     }, function (_data, userData) {
                         var src = _data.path + _data.file;
                         $('#inspect_' + wdata.attr).val(src).trigger('change');
@@ -5075,6 +5077,10 @@ vis = $.extend(true, vis, {
         this.saveRemote(function () {
             that._saveTimer = null;
             $('#saving_progress').hide();
+
+            for (var v in vis.views) {
+                console.log('View: ' + v + ' ' + vis.views[v].settings.useAsDefault);
+            }
         });
     },
     save: function (cb) {

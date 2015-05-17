@@ -1015,7 +1015,8 @@ vis.binds.hqWidgets = {
             $scalaInput.attr('data-linecap',     (settings.linecap === 'true' || settings.linecap === true) ? 'round' : 'butt');
             $scalaInput.show();
             var $knobDiv = $scalaInput.knob({
-                width:   $div.width(),
+                width:   parseInt($div.width(),  10),
+                height:  parseInt($div.height(), 10),
                 release: function () {
                     // remove unit
                     var oldValue = $scalaInput.data('oldValue');
