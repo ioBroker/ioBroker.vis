@@ -76,6 +76,7 @@ vis = $.extend(true, vis, {
         this.editInitDialogs();
         this.editInitMenu();
         this.editInitCSSEditor();
+
         $('#pan_attr').tabs({
             //activate: function(event, ui) {
             //    // Find out index
@@ -1247,8 +1248,11 @@ vis = $.extend(true, vis, {
             $(this).trigger('change');
         })
 
-        $('#vis_container').on('contextmenu', function (e) {
-            if (!e.shiftKey && !e.ctrlKey) {
+        $('#vis_container').on('contextmenu click', function (e) {
+            // Workaround for OSX. Ignore clicks without ctrl
+            if (!e.button && !e.ctrlKey && !e.metaKey) return;
+
+            if (!e.shiftKey && !e.altKey) {
                 var parentOffset = $(this).offset();
                 //or $(this).offset(); if you really just want the current element's offset
                 var relX = e.pageX - parentOffset.left;
@@ -1509,44 +1513,84 @@ vis = $.extend(true, vis, {
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
     },
     editInitCSSEditor:function(){
-        var that = this;
+        var that      = this;
 
-        var file = "vis-common-user";
-        var editor  = ace.edit("css_editor");
+        var file      = 'vis-common-user';
+        var editor    = ace.edit("css_editor");
+        var timer     = null;
+        var selecting = false;
 
         //editor.setTheme("ace/theme/monokai");
         editor.getSession().setMode("ace/mode/css");
         editor.setOptions({
             enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true
+            enableLiveAutocompletion:  true
         });
         editor.$blockScrolling = Infinity;
         editor.getSession().setUseWrapMode(true);
 
-        editor.getSession().on('change', function(e) {
-            $("#" + file).text(editor.getValue());
-            $("#css_file_save").button('enable');
-        });
-
-
-        if (that.config['select/select_css_file']) $("#select_css_file").val(that.config['select/select_css_file']);
+        if (that.config['select/select_css_file']) {
+            file = that.config['select/select_css_file'];
+            $("#select_css_file").val(file);
+        }
 
         $("#select_css_file").selectmenu({
             change: function (event, ui) {
+                // Save file
+                if (file == 'vis-user') {
+                    that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
+                        $("#css_file_save").button('disable');
+                    });
+                } else if (file == 'vis-common-user') {
+                    that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
+                        $("#css_file_save").button('disable');
+                    });
+                }
                 file = $(this).val();
+                // Ignore next onchange
+                selecting = true;
                 editor.setValue($("#" + file).text());
                 editor.navigateFileEnd();
                 editor.focus();
                 that.editSaveConfig('select/select_css_file', file);
+                // enable flag again in 500 ms
+                setTimeout(function () {
+                    selecting = false;
+                }, 500);
             }
         });
 
-        editor.setValue($("#"+ file).text());
-        $(document).bind("vis-common-user", function(e){
-            editor.setValue($("#"+ file).text());
-            editor.navigateFileEnd();
+        editor.setValue($('#' + file).text());
+
+        editor.getSession().on('change', function(e) {
+            if (selecting) {
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+                return;
+            }
+            if (timer !== null) return;
+            timer = setTimeout(function () {
+                timer = null;
+                $("." + file).text(editor.getValue());
+                $("#css_file_save").button('enable');
+
+                // Trigger autosave after 2 seconds
+                setTimeout(function () {
+                    $("#css_file_save").trigger('click');
+                }, 2000)
+            }, 400);
         });
 
+        $(document).bind('vis-common-user', function (e) {
+            editor.setValue($('#vis-common-user').text());
+            editor.navigateFileEnd();
+        })
+        .bind('vis-user', function (e) {
+            editor.setValue($('#vis-user').text());
+            editor.navigateFileEnd();
+        });
 
         $("#cssEditor_tab").click(function(){
             editor.focus();
@@ -1592,7 +1636,7 @@ vis = $.extend(true, vis, {
             text: false
         }).click(function() {
             if ($("#select_css_file").val() == 'vis-user') {
-                that.conn.writeFile(vis.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
+                that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
                     $("#css_file_save").button('disable');
                 });
             }
@@ -4390,6 +4434,9 @@ vis = $.extend(true, vis, {
                     }
                     //$('#allwidgets_helper').hide();
                 },
+                start: function (e, ui) {
+                    console.log('Start');
+                },
                 selecting: function (e, ui) {
                     if (ui.selecting.id &&
                         that.activeWidgets.indexOf(ui.selecting.id) === -1 &&
@@ -5089,7 +5136,7 @@ vis = $.extend(true, vis, {
             this._saveTimer = null;
         }
         var that = this;
-        // Store the changes if nothing changed for 2 seconds
+        // Store the changes if nothing changed during next 2 seconds
         this._saveTimer = setTimeout(function () {
             that._saveToServer();
         }, 2000);
@@ -5428,7 +5475,7 @@ vis = $.extend(true, vis, {
     },
     onPageClosing: function () {
         // If not saved
-        if (this._saveTimer) {
+        if (this._saveTimer || !$("#css_file_save").prop('disabled')) {
             if (window.confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {

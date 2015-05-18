@@ -579,8 +579,7 @@ var vis = {
         var that = this;
 
         if (!this.editMode && !$('#commonTheme').length) {
-            console.log('Set common theme ' + this.calcCommonStyle());
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.calcCommonStyle() + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
         }
 
         if (!this.views[view] || !this.views[view].settings) {
@@ -686,13 +685,19 @@ var vis = {
             url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
-                console.log('Add theme ' + theme + ' for ' + view);
                 $('#' + view + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
                 data = data.replace(/images/g, "lib/css/themes/jquery-ui/" + theme + "/images/");
                 $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
+
+                $('#' + view + '_style_common_user').remove();
+                $('#' + _view).append('<style id="' + view + '_style_common_user" class="vis-common-user">' + $('#vis-common-user').html() + '</style>');
+
+                $('#' + view + '_style_user').remove();
+                $('#' + _view).append('<style id="' + view + '_style_user" class="vis-user">' + $('#vis-user').html() + '</style>');
+
             }
         });
     },
@@ -1834,12 +1839,12 @@ window.onpopstate();
             dataType: 'html',
             cache:    this.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-common-user">' + data + '</style>');
+                $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
                 $(document).trigger('vis-common-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 vis.conn.logError('Cannot load vis-common-user.css - ' + errorThrown);
-                $('head').append('<style id="vis-common-user"></style>');
+                $('head').append('<style id="vis-common-user" class="vis-common-user"></style>');
                 $(document).trigger('vis-common-user');
             }
         });
@@ -1850,12 +1855,12 @@ window.onpopstate();
             dataType: 'html',
             cache:    this.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-user">' + data + '</style>');
+                $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
                 $(document).trigger('vis-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css - ' + errorThrown);
-                $('head').append('<style id="vis-user"></style>');
+                $('head').append('<style id="vis-user" class="vis-user"></style>');
                 $(document).trigger('vis-user');
             }
         });
