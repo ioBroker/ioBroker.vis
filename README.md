@@ -142,6 +142,14 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 ### 0.5.0 (2015-05-16)
+- (bluefox) fix german attribute name for RGraph.html
+- (bluefox) store css after edit, enable edition of jquery ui CSS in editor
+- (bluefox) fix error if all views have the same jquery style
+- (bluefox) fix delete more than one widget
+- (bluefox) try to fix fileManager
+- (bluefox) fix hqWidgets/Circle if greater than 200px
+
+### 0.5.0 (2015-05-16)
 - (bluefox) context menu
 - (bluefox) lock widgets
 - (bluefox) fix metro 
