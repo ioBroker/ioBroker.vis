@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" href="widgets/basic/css/table.css" />
+<script type="text/javascript" src="widgets/basic/js/table.js"></script>
+
 <script type="text/javascript">
     "use strict";
 
@@ -156,10 +159,10 @@
     }
 
     $.extend(true, systemDictionary, {
-        "Edit note": {"en": "Edit note", "de": "Meldung eingeben", "ru": "Сообщение"},
-        "Clear": {"en": "Clear", "de": "Löschen", "ru": "Очистить"},
-        "Ok": {"en": "Ok", "de": "Ok", "ru": "Ok"},
-        "Cancel": {"en": "Cancel", "de": "Abbrechen", "ru": "Отмена"}
+        "Edit note":    {"en": "Edit note",     "de": "Meldung eingeben",   "ru": "Сообщение"},
+        "Clear":        {"en": "Clear",         "de": "Löschen",            "ru": "Очистить"},
+        "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
+        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"}
     });
 
     vis.binds.stateful = {
@@ -1671,6 +1674,49 @@
 			<%== this.data.attr("html_prepend") %><%= (this.data.test_text && vis.editMode) ? this.data.test_text : (vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
 		</div>
     </div>
+</script>
+
+<script id="tplTableBody"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="json,table"
+        data-vis-name="Table"
+        data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
+        data-vis-attrs="table_oid/id;"
+        data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]];"
+        data-vis-attrs1="event_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
+        data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
+        data-vis-attrs-not-used="new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
+       <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
+    </div>
+</script>
+
+<!--script id="tplDialog"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="table"
+        data-vis-name="Dialog"
+        data-vis-attrs="show/checkbox;trigger_id/id;button(1-3);title;text;image/image;width[400]/slider,50,1000,10;height[200]/slider,50,1000,10;modal/checkbox;_no_style[true]/hidden;_no_move[true]/hidden;_no_resize[true]/hidden;margin_left[0]/slider,0,200,1;margin_top[0]/slider,0,200,1"
+        >
+    <%
+        var options =  {
+            trigger_id:  this.data.attr('trigger_id'),
+            buttons:     [this.data.attr('button1'), this.data.attr('button2'), this.data.attr('button3')],
+            image:       this.data.attr('image'),
+            title:       this.data.attr('title'),
+            text:        this.data.attr('text'),
+            width:       this.data.attr('width'),
+            height:      this.data.attr('height'),
+            show:        this.data.attr('show'),
+            modal:       this.data.attr('modal'),
+            margin_left: this.data.attr('margin_left'),
+            margin_top:  this.data.attr('margin_top')
+        };
+        vis.binds.table.showDialog(this.view, this.data.attr('wid'), options);
+    %>
 </script>
 
 <script id="tplScreenResolution"

@@ -3430,9 +3430,11 @@ vis = $.extend(true, vis, {
     },
     getWidgetName: function (view, widget) {
         var widgetData = this.views[view].widgets[widget];
-        var name = (widgetData.data ? widgetData.data.name : '');
+        var name = (widgetData && widgetData.data ? widgetData.data.name : '');
         name = name ? (name + '[' + widget + ']') : widget;
-        name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+        if (widgetData) {
+            name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+        }
         return name;
     },
     // Render edit panel
@@ -3770,6 +3772,8 @@ vis = $.extend(true, vis, {
         //     end number can be other attribute, e.g (1-count)
         // defaultValue: If defaultValue has ';' it must be replaced by §
         // defaultValue: If defaultValue has '/' it must be replaced by ~
+        // defaultValue: If defaultValue has '"' it must be replaced by ^
+        // defaultValue: If defaultValue has '^' it must be replaced by ^^
         // Type format: id - Object ID Dialog
         //              checkbox
         //              image - image
@@ -3855,6 +3859,8 @@ vis = $.extend(true, vis, {
             wid_default = wid_default.substring(1, wid_default.length - 1);
             wid_default = wid_default.replace(/§/g, ';');
             wid_default = wid_default.replace(/~/g, '/');
+            wid_default = wid_default.replace(/\^/g, '"');
+            wid_default = wid_default.replace(/\^\^/g, '^');
         } else {
             wid_default = undefined;
         }
@@ -4433,9 +4439,6 @@ vis = $.extend(true, vis, {
                         that.inspectWidgets(newWidgets);
                     }
                     //$('#allwidgets_helper').hide();
-                },
-                start: function (e, ui) {
-                    console.log('Start');
                 },
                 selecting: function (e, ui) {
                     if (ui.selecting.id &&

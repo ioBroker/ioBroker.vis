@@ -16,7 +16,6 @@ var visConfig = {
         "bars",
         {name: "lcars",       depends: ["basic"]}
         //"vkb"
-        //"table"
         /*
          "bars",
          "colorpicker",

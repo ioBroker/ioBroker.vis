@@ -3,7 +3,7 @@
     overflow-y: auto;
 }
 .tclass {
-    border: 1px solid black;
+    border: 0px solid black;
     width: 100%;
     table-layout: fixed;
     font-family: Arial;
@@ -50,7 +50,7 @@
     cursor: pointer;
 }
 .tclass-tr-selected {
-    background-color: green;
+    background-color: lightblue;
     /*    color: white;*/
 }
 .tclass-detail {

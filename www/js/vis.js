@@ -1364,6 +1364,8 @@ var vis = {
         if (oid) {
             for (var p = 0; p < oid.length; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
+                // If first symbol '"' => it is JSON
+                if (_oid && _oid[0] == '"') continue;
                 var parts = _oid.split(';');
                 result = result || [];
                 var systemOid = parts[0].trim();

@@ -930,14 +930,14 @@ vis.binds.hqWidgets = {
                 }, 100);
                 return;
             } else {
-                var timer = $('#' + wid).data('timer');
+                /*var timer = $('#' + wid).data('timer');
                 if (!timer) {
                     $('#' + wid).data('timer', function () {
                         vis.binds.hqWidgets.button.init(wid, view, data, style, wType);
                     });
                 } else {
                     $('#' + wid).data('timer', null);
-                }
+                }*/
             }
             var _data = {wid: wid, view: view, wType: wType};
             for (var a in data) {
@@ -973,45 +973,47 @@ vis.binds.hqWidgets = {
     },
     circle: {
         init: function (wid, view, data) {
-            var $div = $('#' + wid).addClass('hq-button-base');
+            var $div = $('#' + wid);
             if (!$div.length) {
                 setTimeout(function () {
                     vis.binds.hqWidgets.circle.init(wid, view, data);
                 }, 100);
                 return;
             } else {
-                var timer = $('#' + wid).data('timer');
+                /*var timer = $('#' + wid).data('timer');
                 if (!timer) {
                     $('#' + wid).data('timer', function () {
                         vis.binds.hqWidgets.circle.init(wid, view, data);
                     });
+                    return;
                 } else {
                     $('#' + wid).data('timer', null);
-                }
+                }*/
             }
             var settings = data;
             var $scalaInput = $div.find('input');
+            $div.addClass('hq-button-base')
 
             if (settings.oid) {
                 $scalaInput.val(vis.states.attr(settings.oid + '.val'));
                 if (1 || !vis.editMode) {
                     vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
-                        data.value = newVal;
-                        $scalaInput.val(data.value).trigger('change');
+                        settings.value = newVal;
+                        $scalaInput.val(settings.value).trigger('change');
                     });
                 }
             } else {
                 $scalaInput.val(settings.min);
             }
 
-            var offset = data.angleOffset;
-            if (data.angleArc !== undefined && !offset && offset !== 0 && offset !== '0') {
-                offset = 180 + (360 - parseInt(data.angleArc, 10)) / 2;
+            var offset = settings.angleOffset;
+            if (settings.angleArc !== undefined && !offset && offset !== 0 && offset !== '0') {
+                offset = 180 + (360 - parseInt(settings.angleArc, 10)) / 2;
             }
 
             $scalaInput.attr('data-angleOffset', offset);
-            $scalaInput.attr('data-angleArc',    data.angleArc);
-            $scalaInput.attr('data-thickness',   data.thickness);
+            $scalaInput.attr('data-angleArc',    settings.angleArc);
+            $scalaInput.attr('data-thickness',   settings.thickness);
             $scalaInput.attr('data-linecap',     (settings.linecap === 'true' || settings.linecap === true) ? 'round' : 'butt');
             $scalaInput.show();
             var $knobDiv = $scalaInput.knob({
