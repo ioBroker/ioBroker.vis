@@ -2074,6 +2074,7 @@ window.onpopstate();
                     for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
                         vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
                     }
+                    if (vis.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
                 }, 0, id, state);
             },
             onAuth:       function (message, salt) {
@@ -2208,8 +2209,18 @@ window.onpopstate();
                 }
 
                 return true;
+            },
+            onObjectChange: function(id, obj) {
+                if (!vis.objects || !vis.editMode) return;
+                if (obj) {
+                    vis.objects[id] = obj;
+                } else {
+                    if (vis.objects[id]) delete vis.objects[id];
+                }
+
+                if ($.fn.selectId) $.fn.selectId('objectAll', id, obj);
             }
-        });
+        }, vis.editMode);
 
         if (!vis.editMode) {
             // Listen for resize changes
