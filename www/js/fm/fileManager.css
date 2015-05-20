@@ -113,15 +113,26 @@
     right: -1px;
     top: 1px;
 }
-
+#fm_bar_background {
+    height: 27px;
+    width: 37px;
+    position: absolute;
+    right: 40px;
+    top: 1px;
+}
 #fm_bar_folder {
     height: 28px;
     position: absolute;
     right: 40px;
     width: 33px;
-
 }
 
+.fm-dark-background {
+    background: grey !important;
+}
+.fm-light-background {
+    background: lightgrey !important;
+}
 .fm_bar_all {
 
 }

@@ -68,7 +68,7 @@ var servConn = {
         }
         return true;
     },
-    init:             function (connOptions, connCallbacks) {
+    init:             function (connOptions, connCallbacks, objectsRequired) {
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
         // - do not create "_socket/info.js" file in "www" directory
@@ -132,6 +132,7 @@ var servConn = {
 
             that._socket.on('connect', function () {
                 this.emit('subscribe', '*');
+                if (objectsRequired) this.emit('subscribeObjects', '*');
                 this.emit('name', connOptions.name);
 
                 if (that._disconnectTimeout) {

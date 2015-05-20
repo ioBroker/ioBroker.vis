@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.5.1',
+    version:                '0.5.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -1364,6 +1364,8 @@ var vis = {
         if (oid) {
             for (var p = 0; p < oid.length; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
+                // If first symbol '"' => it is JSON
+                if (_oid && _oid[0] == '"') continue;
                 var parts = _oid.split(';');
                 result = result || [];
                 var systemOid = parts[0].trim();
@@ -2072,6 +2074,7 @@ window.onpopstate();
                     for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
                         vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
                     }
+                    if (vis.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
                 }, 0, id, state);
             },
             onAuth:       function (message, salt) {
@@ -2206,8 +2209,18 @@ window.onpopstate();
                 }
 
                 return true;
+            },
+            onObjectChange: function(id, obj) {
+                if (!vis.objects || !vis.editMode) return;
+                if (obj) {
+                    vis.objects[id] = obj;
+                } else {
+                    if (vis.objects[id]) delete vis.objects[id];
+                }
+
+                if ($.fn.selectId) $.fn.selectId('objectAll', id, obj);
             }
-        });
+        }, vis.editMode);
 
         if (!vis.editMode) {
             // Listen for resize changes

@@ -1255,6 +1255,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
+                $dlg.addClass('select-id-dialog-marker');
                 if (!data) continue;
                 if (data.inited) {
                     // Re-init tree if filter or selectedID changed
@@ -1530,6 +1531,12 @@
                 }
             }
             return this;
+        },
+        "objectAll": function (id, obj) {
+            $('.select-id-dialog-marker').selectId('object', id, obj);
+        },
+        "stateAll": function (id, state) {
+            $('.select-id-dialog-marker').selectId('state', id, state);
         },
         "getFilteredIds": function () {
             for (var k = 0; k < this.length; k++) {
