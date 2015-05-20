@@ -1,5 +1,5 @@
 "use strict";
-// Following classes shoud be used if variable table_class="tclass"
+// Following classes should be used if variable table_class="tclass"
 // <table class="tclass">
 //    <tr class="tclass-th">
 //       <th class="tclass-th1">Time</th>
@@ -21,8 +21,8 @@
 //
 // following json string or object is expected:
 //    '[\
-//       {"Time": "12:34:34", "Event": "Door opened", "_data":{"Type": "1", "Event" : "SomeEvent1"}, "_class" : "selected"},\
-//       {"Time": "12:34:35", "Event": "Door closed", "_data":{"Type": "2", "Event" : "SomeEvent2"}, "_class": "red" },\
+//       {"Time": "12:34:34", "Event": "Door opened",   "_data":{"Type": "1", "Event" : "SomeEvent1"}, "_class": "selected"},\
+//       {"Time": "12:34:35", "Event": "Door closed",   "_data":{"Type": "2", "Event" : "SomeEvent2"}, "_class": "red" },\
 //       {"Time": "12:34:36", "Event": "Window opened", "_data":{"Type": "3", "Event" : "SomeEvent3"}}\
 //     ]'
 //
@@ -42,30 +42,22 @@
 if (vis.editMode) {
     // Add words for basic widgets
     $.extend(true, systemDictionary, {
-        "table_oid":        {"en": "Table Object ID",   "de": "Table Object ID", "ru": "table_oid"},
-        "static_value":     {"en": "Static JSON(If no ID)   ",       "de": "Static JSON(If no ID)", "ru": "static_value"},
-        "event_oid":        {"en": "Event ID",          "de": "event_oid", "ru": "event_oid"},
-        "hide_header":      {"en": "Hide header",       "de": "hide_header", "ru": "hide_header"},
-        "show_scroll":      {"en": "Show scroll",       "de": "show_scroll", "ru": "show_scroll"},
-        "detailed_wid":     {"en": "Detailed widget",   "de": "detailed_wid", "ru": "detailed_wid"},
-        "colCount":         {"en": "Column count",      "de": "colCount", "ru": "colCount"},
-        "group_header":     {"en": "Headers",           "de": "group_header", "ru": "group_header"},
-        "colName":          {"en": "Name",              "de": "colName", "ru": "colName"},
-        "colWidth":         {"en": "Width",             "de": "colWidth", "ru": "colWidth"},
-        "colAttr":          {"en": "Attribute in JSON", "de": "colAttr", "ru": "colAttr"}
+        "table_oid":        {"en": "Table Object ID",           "de": "Table Object ID",        "ru": "ID таблицы"},
+        "static_value":     {"en": "Static JSON(If no ID)",     "de": "Static JSON(If no ID)",  "ru": "Значение, если нет ID таблицы"},
+        "event_oid":        {"en": "Event ID",                  "de": "Ereigniss ID",           "ru": "ID события"},
+        "hide_header":      {"en": "Hide header",               "de": "Kein Header",            "ru": "Скрыть заголовок"},
+        "show_scroll":      {"en": "Show scroll",               "de": "Zeige Scrollbar",        "ru": "Показать прокрутку"},
+        "detailed_wid":     {"en": "Detailed widget",           "de": "Detailed widget",        "ru": "Виджет детализации"},
+        "colCount":         {"en": "Column count",              "de": "Kolumnanzahl",           "ru": "Кол-во колонок"},
+        "group_header":     {"en": "Headers",                   "de": "Headers",                "ru": "Заголовок"},
+        "colName":          {"en": "Name",                      "de": "Name",                   "ru": "Имя"},
+        "colWidth":         {"en": "Width",                     "de": "Width",                  "ru": "Ширина"},
+        "colAttr":          {"en": "Attribute in JSON",         "de": "Attribut in JSON",       "ru": "Атрибут в JSON"},
+        "ack_oid":          {"en": "Acknowledge ID",            "de": "Bestätigung ID",         "ru": "ID для подтверждения"}
     });
 }
 
 vis.binds.table = {
-    // Register callback in dashUI
-    /*initTable: function () {
-     if (!vis.binds.table.regElements) {
-     vis.binds.table.regElements = [];
-     //vis.registerOnChange (vis.binds.table.onchange, null);
-     vis.binds.table.scrollSize = vis.binds.table.getBrowserScrollSize();
-     }
-     },*/
-
     getBrowserScrollSize: function (){
         var css = {
             "border":  "none",
@@ -94,47 +86,10 @@ vis.binds.table = {
         return scrollSize;
     },
 
-    /*registerIds: function (wid, objId) {
-     if (typeof objId == "object" || typeof objId == "array") {
-     for (var i = 0, len = objId.length; i < len; i++)
-     if (objId[i] && (!vis.binds.table.regElements[objId[i]] || vis.binds.table.regElements[objId[i]].indexOf (wid) == -1)) {
-     if (!vis.binds.table.regElements[objId[i]]) {
-     vis.binds.table.regElements[objId[i]] = [wid];
-     }
-     else {
-     vis.binds.table.regElements[objId[i]].push (wid);
-     }
-     }
-     }
-     else
-     if (!vis.binds.table.regElements[objId] || vis.binds.table.regElements[objId].indexOf (wid) == -1) {
-     if (!vis.binds.table.regElements[objId]) {
-     vis.binds.table.regElements[objId] = [wid];
-     }
-     else {
-     vis.binds.table.regElements[objId].push (wid);
-     }
-     }
-     },
-
-     onchange: function  (arg, objId, newEvent) {
-     if (vis.binds.table.regElements[objId]) {
-     for (var i = 0, len = vis.binds.table.regElements[objId].length; i < len; i++) {
-     var elem = document.getElementById (vis.binds.table.regElements[objId][i]);
-     if (elem) {
-     if (elem.triggered) {
-     elem.triggered (objId, newEvent);
-     }
-     }
-     }
-     }
-     },*/
-
     // Show detailed information
     onRowClick: function  () {
         var $this = $(this);
         var data = $this.data('options');
-
 
         // Deselect all rows
         $('#' + data.wid + ' .vis-table-row').removeClass(data.tClass + '-tr-selected');
@@ -233,9 +188,8 @@ vis.binds.table = {
 
     onAckButton: function () {
         var data = $(this).data('options');
-        var parentData = $(data.parent).data('options');
-        if (parentData.options.ack_oid) {
-            vis.setValue(parentData.options.ack_oid, data.ack_id);
+        if (data.ack_oid) {
+            vis.setValue(data.ack_oid, data.ack_id);
         }
     },
 
@@ -259,30 +213,38 @@ vis.binds.table = {
         }
         var k = 1;
         for (var obj in rowData) {
-            if(obj.substring(0, 6) == 'jQuery') continue;
+            if(obj.match(/^jQuery/)) continue;
 
-            if (obj.length > 0 && obj[0] == '_') {
-                if (obj.length > 4 && obj.substring(0, 4) == '_btn') {
+            var attr = options['colAttr' + k] || obj;
+
+            if (attr && attr[0] == '_') {
+                if (attr.match(/^_btn/) || options['colAttr' + k]) {
                     var btnText  = '';
                     var btnClass = '';
-                    if (typeof rowData[obj] == 'string') {
-                        btnText  = rowData[obj];
+                    text += '<td class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>';
+                    if (attr.match(/^_btn/)){
+                        if (typeof rowData[attr] == 'string') {
+                            btnText  = rowData[attr];
+                        } else {
+                            btnText  = rowData[attr].caption;
+                            btnClass = rowData[attr]._class;
+                        }
+                        if (btnText) {
+                            text += '<button data-index="' + index + '" data-server-id="' + serverID + '" class="vis-table-ack-button ' + tClass + '-ack-button ' + (btnClass ? ('-' + btnClass) : '') + '">' + btnText + '</button>';
+                        }
                     } else {
-                        btnText  = rowData[obj].caption;
-                        btnClass = rowData[obj]._class;
+                        text += rowData[attr];
                     }
-                    if (btnText) {
-                        text += '<td class="' + tClass + '-th' + k + '"><button data-index="' + index + '" data-server-id="' + serverID + '" class="vis-table-ack-button ' + tClass + '-ack-button ' + (btnClass ? ('-' + btnClass) : '') + '">' + btnText + '</button></td>';
-                    }
-                    else {
-                        text += '<td class="' + tClass + '-th' + k + '"></td>';
-                    }
+
+                    text += '</td>';
                     k++;
                 }
+
                 continue;
             }
-            if (!options.colCount || k < options.colCount) {
-                text += '<td class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + rowData[obj] + '</td>';
+
+            if (!options.colCount || k <= options.colCount) {
+                text += '<td class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + rowData[attr] + '</td>';
             }
             k++;
         }
@@ -354,17 +316,19 @@ vis.binds.table = {
                 var k = 1;
 
                 for (var obj in table[ii]) {
-                    if (obj.substring(0, 6) == 'jQuery') continue;
+                    if (obj.match(/^jQuery/)) continue;
 
-                    if (obj.length > 0 && obj[0] == '_') {
-                        if (obj.length > 4 && obj.substring(0, 4) == '_btn') {
-                            header += '<th class="' + tClass + '-th' + k + '"></th>';
+                    var attr = options['colAttr' + k] || obj;
+
+                    if (attr && attr[0] == '_') {
+                        if (attr.match(/^_btn/) || options['colAttr' + k]) {
+                            header += '<th class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + (options['colName' + k] || '') + '</th>';
                             k++;
                         }
                         continue;
                     }
-                    if (!options.colCount || k < options.colCount) {
-                        header += '<th class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + (options['colName' + k] || obj) + '</th>';
+                    if (!options.colCount || k <= options.colCount) {
+                        header += '<th class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + (options['colName' + k] || attr) + '</th>';
                     }
                     k++;
                 }
@@ -400,7 +364,10 @@ vis.binds.table = {
             if (!table[i]) continue;
 
             $elem.find('.vis-table-ack-button[data-index="' + i + '"]')
-            .data('ack_id', table[i]._ack_id || JSON.stringify(table[i]));
+            .data('options', {
+                    ack_id: table[i]._ack_id || JSON.stringify(table[i]),
+                    ack_oid: options.ack_oid
+                });
         }
         // If detailed information desired
         if (options.detailed_wid) {
