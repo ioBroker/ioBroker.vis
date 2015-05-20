@@ -141,7 +141,13 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
-### 0.5.0 (2015-05-16)
+### 0.5.2 (2015-05-21)
+- (bluefox) add "change background" in image dialog
+- (bluefox) new widget - basic-table
+- (bluefox) update objects in selectID dialog
+- (bluefox) fix CSS editor
+
+### 0.5.1 (2015-05-19)
 - (bluefox) fix german attribute name for RGraph.html
 - (bluefox) store css after edit, enable edition of jquery ui CSS in editor
 - (bluefox) fix error if all views have the same jquery style

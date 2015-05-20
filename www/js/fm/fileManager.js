@@ -112,7 +112,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             'Type'                              : {'de': 'Typ',                            'en': 'Type',                        'ru': 'Тип'},
             'Size'                              : {'de': 'Größe',                          'en': 'Size',                        'ru': 'Размер'},
             'Date'                              : {'de': 'Datum',                          'en': 'Date',                        'ru': 'Дата'},
-            'Upload possible only to '          : {'de': 'Kann laden nur in ',             'en': 'Upload possible only to ',    'ru': 'Загрузка возможна только в '}
+            'Upload possible only to '          : {'de': 'Kann laden nur in ',             'en': 'Upload possible only to ',    'ru': 'Загрузка возможна только в '},
+            'Change background'                 : {'de': 'Dialog-Hintergrund ändern',      'en': 'Change dialog background',    'ru': 'Сменить фон окна'}
 
         };
 
@@ -342,7 +343,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $(".fm_table_selected").addClass("ui-state-default no_background");
                     $(".fm_table_selected").removeClass("fm_table_selected ui-state-highlight");
                     if ($(e.target).hasClass("fm_tr")) {
-                        $(this).addClass("fm_table_selected ui-state-highlightt");
+                        $(this).addClass("fm_table_selected ui-state-highlight");
                         $(this).removeClass("ui-state-default no_background");
                     } else {
                         $(this).parent(".fm_tr").addClass("fm_table_selected ui-state-highlight");
@@ -537,6 +538,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $(".fm_folderFilter").hide();
                 }
             }
+            if ($("#fm_bar_background").hasClass("ui-state-error")) {
+                $(".fm_files").removeClass('fm-dark-background').addClass('fm-light-background');
+            } else if ($("#fm_bar_background").hasClass("ui-state-highlight ")) {
+                $(".fm_files").removeClass('fm-light-background').addClass('fm-dark-background');
+            }
 
             if (o.view == "prev" && $("#fm_bar_all").hasClass("ui-state-error")) {
                 $(".fm_fileFilter").css({display: "inline-table"});
@@ -578,7 +584,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '<img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
                 '<img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
                 '<img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
-                '<button  id="fm_bar_all" class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
+                '<button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
+                '<button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
                 '</div>' +
                 '<div class="fm_path ui-state-default no_background">' +
                 '</div>' +
@@ -694,6 +701,32 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
                 $(this).removeClass("ui-state-focus");
             });
+
+        $("#fm_bar_background")
+            .button({
+                icons: {
+                    primary: "ui-icon-alert"
+                }
+            })
+            .click(function () {
+                if ($(this).hasClass('ui-state-error')) {
+                    $(".fm_files").removeClass('fm-dark-background no_background').addClass('fm-light-background');
+                    $(this).removeClass('ui-state-error').addClass('ui-state-highlight');
+                } else if ($(this).hasClass('ui-state-highlight')) {
+                    $(this).removeClass('ui-state-error ui-state-highlight');
+                    $(".fm_files").removeClass('fm-light-background fm-dark-background').addClass('no_background');
+                } else {
+                    $(this).removeClass('ui-state-highlight').addClass('ui-state-error');
+                    $(".fm_files").removeClass('no_background fm-light-background').addClass('fm-dark-background');
+                }
+            });
+        if (config.background == 'fm-dark-background') {
+            $("#fm_bar_background").addClass('ui-state-error');
+            $(".fm_files").addClass(config.background).removeClass('no_background');
+        } else if (config.background == 'fm-light-background') {
+            $("#fm_bar_background").addClass('ui-state-highlight');
+            $(".fm_files").addClass(config.background).removeClass('no_background');
+        }
 
         if (config.all) {
             $("#fm_bar_all").addClass("ui-state-error");
@@ -926,7 +959,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     document.getElementById('fm_sound_play').play();
 
                 }
-                if (id == "fm_bar_stop") {
+                if (id == 'fm_bar_stop') {
                     document.getElementById('fm_sound_play').remove();
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -939,6 +972,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             config.path = o.path;
             config.view = o.view;
             config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
             if (typeof storage != 'undefined') {
                 storage.set('visFM', JSON.stringify(config));
@@ -952,6 +986,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             config.path = o.path;
             config.view = o.view;
             config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
             if (typeof storage != 'undefined') {
                 storage.set('visFM', JSON.stringify(config));
             }
@@ -968,6 +1003,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             config.path = o.path;
             config.view = o.view;
             config.all  = $("#fm_bar_all").hasClass("ui-state-error");
+            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
             if (typeof storage != 'undefined') {
                 storage.set('visFM', JSON.stringify(config));
