@@ -5341,7 +5341,7 @@ vis = $.extend(true, vis, {
 
             if (!isHideDialog) {
                 if (widgets.length > 1) {
-                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length + 1));
+                    $('#dialog_delete_content').html(_('Do you want delete %s widgets?', widgets.length));
                 } else {
                     $('#dialog_delete_content').html(_('Do you want delete widget %s?', widgets[0]));
                 }

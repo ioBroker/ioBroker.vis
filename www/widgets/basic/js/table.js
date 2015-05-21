@@ -78,8 +78,8 @@ vis.binds.table = {
             .scrollTop(1000);
 
         var scrollSize = {
-            "height": (outer.offset().top - inner.offset().top) || 0,
-            "width": (outer.offset().left - inner.offset().left) || 0
+            height: (outer.offset().top - inner.offset().top) || 0,
+            width: (outer.offset().left - inner.offset().left) || 0
         };
 
         outer.remove();
@@ -332,7 +332,10 @@ vis.binds.table = {
                     }
                     k++;
                 }
-                if (options.show_scroll !== 'false' && options.show_scroll !== 'false' && options.show_scroll !== undefined){
+                if (options.show_scroll !== 'false' && options.show_scroll !== false && options.show_scroll !== undefined){
+                    // Get the scroll width once
+                    if (!vis.binds.table.scrollSize) vis.binds.table.scrollSize = vis.binds.table.getBrowserScrollSize();
+
                     header += '<td style="width:' + (vis.binds.table.scrollSize.width - 6) + 'px"></td></tr>';
                 }
                 //header += '</tr>';
