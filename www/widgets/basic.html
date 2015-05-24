@@ -322,11 +322,11 @@
                     var step = parseFloat($this.attr('data-vis-step'));
                     var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
-                        if (tmp >= minmax) {
+                        if (minmax === undefined || tmp >= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     } else {
-                        if (tmp <= minmax) {
+                        if (minmax === undefined || tmp <= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
