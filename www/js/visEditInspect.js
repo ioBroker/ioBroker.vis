@@ -706,11 +706,11 @@ vis = $.extend(true, vis, {
                         }
                         $('#dialog-edit-text').find('textarea').val($('#inspect_' + wdata.attr).val()).unbind('keyup').keyup(function () {
                             var timer = $('#dialog-edit-text').data('timer');
-                            if (!timer) {
-                                $('#dialog-edit-text').data('timer', setTimeout(function () {
-                                    $('#inspect_' + wdata.attr).val($('#dialog-edit-text').find('textarea').val()).trigger('change');
-                                }, 500));
-                            }
+                            if (timer) clearTimeout(timer);
+                            $('#dialog-edit-text').data('timer', setTimeout(function () {
+                                $('#dialog-edit-text').data('timer', null);
+                                $('#inspect_' + wdata.attr).val($('#dialog-edit-text').find('textarea').val()).trigger('change');
+                            }, 500));
                         });
                     },
                     beforeClose: function () {

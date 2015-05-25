@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.5.2',
+    version:                '0.5.3',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
