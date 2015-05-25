@@ -374,7 +374,7 @@ vis.binds.bars = {
         }
 
         if (!$div.find('.vis-widget-body').length) {
-            $div.append('<div class="vis-widget-body" style="overflow: hidden"></div>');
+            $div.append('<div class="vis-widget-body" style="overflow: visible"></div>');
         }
         $div = $('#' + wid + ' .vis-widget-body');
 
