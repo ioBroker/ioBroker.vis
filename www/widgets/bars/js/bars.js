@@ -21,9 +21,7 @@ if (vis.editMode) {
         "bImageAlign":      {"en": "Image align",       "de": "Bildposition",       "ru": "Позиция картинки"},
         "bOnlyOneSelected": {"en": "Selected only one", "de": "Nur eine auswahlbar", "ru": "Только один фильтр"},
         "bStyleNormal":     {"en": "Normal",            "de": "Normal",             "ru": "Нормальное"},
-        "bStyleNormalHover": {"en": "Normal hover",     "de": "Normal(hover)",      "ru": "Нормальное(hover)"},
         "bStyleActive":     {"en": "Active",            "de": "Aktiv",              "ru": "Активное"},
-        "bStyleActiveHover": {"en": "Active hover",     "de": "Aktiv(hover)",       "ru": "Активное(hover)"},
         "bShowEffect":      {"en": "Show",              "de": "Anzeigen",           "ru": "Показать"},
         "bShowEffectMs":    {"en": "Show in ms",        "de": "Anzeigen in ms",     "ru": "Показ в мс"},
         "bHideEffect":      {"en": "Hide",              "de": "Verbergen",          "ru": "Скрыть"},
@@ -146,55 +144,6 @@ vis.binds.bars = {
 
             $htmlBtn.css({borderRadius: barsOptions.bRadius + 'px'});
 
-            $htmlBtn.hover(function () {
-                var div__ = $(this).data('ctrl').div;
-                var barsOptions = $(div__).data('barsOptions');
-                if ($(this).data('state') === 1) {
-                    if (barsOptions.bStyleActiveHover) {
-                        $(this).removeClass(barsOptions.bStyleActive).
-                            removeClass(barsOptions.bStyleNormal).
-                            addClass(barsOptions.bStyleActiveHover);
-                    } else if (barsOptions.bStyleNormalHover) {
-                        $(this).removeClass(barsOptions.bStyleActive).
-                            removeClass(barsOptions.bStyleNormal).
-                            addClass(barsOptions.bStyleNormalHover);
-                    } else {
-                        $(this).addClass('ui-state-hover');
-                    }
-                } else {
-                    if (barsOptions.bStyleNormalHover) {
-                        $(this).removeClass(barsOptions.bStyleActive).
-                            removeClass(barsOptions.bStyleNormal).
-                            addClass(barsOptions.bStyleNormalHover);
-                    } else {
-                        $(this).addClass('ui-state-hover');
-                    }
-                }
-            },
-            function () {
-                var div__ = $(this).data('ctrl').div;
-                var barsOptions = $(div__).data('barsOptions');
-
-                $(this).removeClass('ui-state-hover').
-                    removeClass(barsOptions.bStyleActiveHover).
-                    removeClass(barsOptions.bStyleNormalHover);
-
-                if ($(this).data('state') === 1) {
-                    if (barsOptions.bStyleActive) {
-                        $(this).removeClass(barsOptions.bStyleNormalHover).
-                            removeClass(barsOptions.bStyleActiveHover).
-                            removeClass(barsOptions.bStyleNormal).
-                            addClass(barsOptions.bStyleActive);
-                    }
-                }else  {
-                    if (barsOptions.bStyleNormal) {
-                        $(this).removeClass(barsOptions.bStyleActiveHover).
-                            removeClass(barsOptions.bStyleNormalHover).
-                            addClass(barsOptions.bStyleNormal);
-                    }
-                }
-            });
-
             $htmlBtn.click(function () {
                 var div__ = $(this).data('ctrl').div;
                 var onClick = $(div__).data('onClick');
@@ -293,7 +242,7 @@ vis.binds.bars = {
                         vis.changeView (v,
                             {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
                             {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
-                        vis.inspectWidgets(barsIntern.wid);
+                        vis.inspectWidgets([barsIntern.wid]);
                     }, 500 + parseInt (barsOptions.bShowEffectMs, 10));
                 }
             }
@@ -581,7 +530,7 @@ vis.binds.bars = {
                 $div.data('onClick', function (htmlBtn, div, r) {
                     var barsIntern = $(div).data('barsIntern');
                     var barsOptions = $(div).data('barsOptions');
-                    vis.inspectWidgets(barsIntern.wid);
+                    vis.inspectWidgets([barsIntern.wid]);
                     //$htmlBtn = $('#' + barsIntern.wid + '_btn' + r);
                 });
             }
