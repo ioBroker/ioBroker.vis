@@ -68,6 +68,29 @@ var servConn = {
         }
         return true;
     },
+    _onAuth:          function (objectsRequired, isSecure) {
+        var that = this;
+        this._socket.emit('subscribe', '*');
+        if (objectsRequired) this._socket.emit('subscribeObjects', '*');
+
+        if (this._disconnectTimeout) {
+            clearTimeout(this._disconnectTimeout);
+            this._disconnectTimeout = null;
+        }
+        //console.log("socket.io connect");
+        if (this._isConnected === true) {
+            // This seems to be a reconnect because we're already connected!
+            // -> prevent firing onConnChange twice
+            return;
+        }
+        this._isConnected = true;
+        if (this._connCallbacks.onConnChange) {
+            setTimeout(function () {
+                that._connCallbacks.onConnChange(that._isConnected, isSecure);
+            }, 0);
+        }
+        //this._myParent._autoReconnect();
+    },
     init:             function (connOptions, connCallbacks, objectsRequired) {
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
@@ -99,7 +122,7 @@ var servConn = {
 
         that._connCallbacks = connCallbacks;
 
-        var connLink = connOptions.connLink || window.localStorage.getItem("connLink");
+        var connLink = connOptions.connLink || window.localStorage.getItem('connLink');
 
         // Connection data from "/_socket/info.js"
         if (!connLink && typeof socketUrl != 'undefined') connLink = socketUrl;
@@ -131,27 +154,16 @@ var servConn = {
             });
 
             that._socket.on('connect', function () {
-                this.emit('subscribe', '*');
-                if (objectsRequired) this.emit('subscribeObjects', '*');
-                this.emit('name', connOptions.name);
-
-                if (that._disconnectTimeout) {
-                    clearTimeout(that._disconnectTimeout);
-                    that._disconnectTimeout = null;
-                }
-                //console.log("socket.io connect");
-                if (that._isConnected === true) {
-                    // This seems to be a reconnect because we're already connected!
-                    // -> prevent firing onConnChange twice
-                    return;
-                }
-                that._isConnected = true;
-                if (that._connCallbacks.onConnChange) {
-                    setTimeout(function () {
-                        that._connCallbacks.onConnChange(that._isConnected);
-                    }, 0);
-                }
-                //this._myParent._autoReconnect();
+                that._socket.emit('name', connOptions.name);
+				console.log('Connected => authenticate');
+                that._socket.emit('authenticate', function (isOk, isSecure) {
+					console.log('Authenticated: ' + isOk);
+                    if (isOk) {
+                        that._onAuth(objectsRequired, isSecure);
+                    } else {
+                        console.log('no permission');
+                    }
+                });
             });
 
             that._socket.on('disconnect', function () {
@@ -219,6 +231,14 @@ var servConn = {
                 }
             });
         }
+    },
+    logout:           function (callback) {
+        if (!this._isConnected) {
+            console.log("No connection!");
+            return;
+        }
+
+        this._socket.emit('logout', callback);
     },
     getVersion:       function (callback) {
         if (!this._checkConnection('getVersion', arguments)) return;

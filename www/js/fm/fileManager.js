@@ -135,10 +135,28 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         function load(path) {
             try {
                 fmConn.readDir(path, function (err, data) {
-                    o.data = data;
-                    var p = path.replace(o.root, '');
-                    $('.fm_path').text(fmTranslate('Path:') + ' ' + p);
-                    build(o);
+                    if (!err && data) {
+                        o.data = data;
+                        var p = path.replace(o.root, '');
+
+                        $('.fm-path').val(p).unbind('change').unbind('keyup').change(function () {
+                            var timer = $(this).data('timer');
+                            if (timer) clearTimeout(timer);
+                            $(this).data('timer', setTimeout(function () {
+                                $(this).data('timer', null);
+                                load($('.fm-path').val());
+                            }, 500));
+
+
+                        }).keyup(function () {
+                            $(this).trigger('change');
+                        })
+                        build(o);
+                    } else {
+                        o.data = [];
+                        build(o, err);
+                        $('.fm-files').html('<span class="fm-error">' + err + '</span>');
+                    }
                 });
             } catch (err) {
                 alert(fmTranslate('No connection to server'));
@@ -184,9 +202,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             reader.readAsDataURL(files[0]);
         }
 
-        function build(o) {
+        function build(o, err) {
 
-            $(".fm_files").empty();
+            $(".fm-files").empty();
             $("#fm_table_head").remove();
             $("#fm_bar_play, #fm_bar_stop, #fm_bar_down, #fm_bar_del").button('disable');
 
@@ -197,7 +215,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     ' <button id="fm_table_head_type" >'  + fmTranslate('Type') + '</button>' +
                     ' <button id="fm_table_head_size" >'  + fmTranslate('Size') + '</button>' +
                     ' <button id="fm_table_head_datum" >' + fmTranslate('Date') + '</button>' +
-                    '</div>').insertAfter(".fm_path");
+                    '</div>').insertAfter('.fm-path-div');
 
                 $("#fm_table_head_name").button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
                     $("#fm_th_name").trigger("click");
@@ -212,7 +230,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $("#fm_th_datum").trigger("click");
                 });
 
-                $(".fm_files").append(
+                $(".fm-files").append(
                         '<table id="fm_table"  width="560px">' +
                         ' <tbody width="560px" class="fm_file_table">' +
                         '  <tr id="fm_tr_head" class="ui-state-default ui-corner-top">' +
@@ -228,7 +246,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         '</table>');
 
                 $.each(o.data, function () {
-
+                    if (this.file == '..') return;
                     function formatBytes(bytes) {
                         if (bytes < 1024) {
                             return bytes + " B";
@@ -380,7 +398,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 });
 
                 if (document.getElementById("script_scrollbar")) {
-                    $(".fm_files").css({
+                    $(".fm-files").css({
                         height: "auto",
                         overflow: "visible"
                     });
@@ -392,7 +410,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $('#fm_scroll_pane').perfectScrollbar('update');
 
                 } else {
-                    $(".fm_files").css({
+                    $(".fm-files").css({
                         height: "calc(100% - 188px) "
                     });
                 }
@@ -410,10 +428,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
 
                 $.each(o.data, function () {
+                    if (this.file == '..') return;
 
                     if (this.stats.nlink > 1 || this.isDir) {
                         var type = "_";
-                        $(".fm_files").append(
+                        $(".fm-files").append(
                                 '<div class="fm_prev_container fm_folderFilter" data-sort="' + type + '">' +
                                 '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/folder-brown.png"/></div>' +
                                 '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -433,7 +452,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             // if image
                             if (o.img.indexOf(_type) > -1) {
 
-                                $(".fm_files").append(
+                                $(".fm-files").append(
                                     '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                     '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + path + this.file + '"/></div>' +
                                     '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -445,7 +464,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     icon = _type;
                                 }
 
-                                $(".fm_files").append(
+                                $(".fm-files").append(
                                         '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                         '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
                                         '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -456,7 +475,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     }
                 });
 
-                var div = $('.fm_files');
+                var div = $('.fm-files');
                 var listitems = div.children('.fm_prev_container').get();
                 listitems.sort(function (a, b) {
 
@@ -471,7 +490,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 if (document.getElementById("script_scrollbar")) {
 
-                    $(".fm_files").css({
+                    $(".fm-files").css({
                         height: "auto",
                         overflow: "visible"
                     });
@@ -483,7 +502,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $('#fm_scroll_pane').perfectScrollbar('update');
 
                 } else {
-                    $(".fm_files").css({
+                    $(".fm-files").css({
                         height: "calc(100% - 151px)"
                     });
                 }
@@ -539,9 +558,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
             }
             if ($("#fm_bar_background").hasClass("ui-state-error")) {
-                $(".fm_files").removeClass('fm-dark-background').addClass('fm-light-background');
+                $(".fm-files").removeClass('fm-dark-background').addClass('fm-light-background');
             } else if ($("#fm_bar_background").hasClass("ui-state-highlight ")) {
-                $(".fm_files").removeClass('fm-light-background').addClass('fm-dark-background');
+                $(".fm-files").removeClass('fm-light-background').addClass('fm-dark-background');
             }
 
             if (o.view == "prev" && $("#fm_bar_all").hasClass("ui-state-error")) {
@@ -570,38 +589,36 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
         $("body").append(
                 '<div id="dialog_fm" class="fm_dialog" style="text-align: center" title="' + fmTranslate('File manager') + '">' +
-                '<input class="focus_dummy" style="border:none;height: 1px;padding: 1px;width: 1px;background: transparent; display: flex;" type="button"/>' +
-                '<div class="fm_iconbar ui-state-default ui-corner-all">' +
-                '<div class="fm_bar_back_behind"></div>' +
-                '<button id="fm_bar_back"    style="background-image: url(' + fmFolder + 'icon/circleLeftIcon.png)"                                                                     title="' + fmTranslate('Back') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/refresh.png"       id="fm_bar_refresh"          style="margin-left:40px"   class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Refresh') + '" />' +
-                '<img src="' + fmFolder + 'icon/actions/folder-new-7.png"  id="fm_bar_addfolder"        style="margin-left:20px"   class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('New folder') + '" />' +
-                '<img src="' + fmFolder + 'icon/actions/up.png"            id="fm_bar_add"              style=""                    class="fm_bar_icon ui-corner-all ui-state-default" title="' + fmTranslate('Upload') + '" />' +
-                '<img src="' + fmFolder + 'icon/actions/down.png"          id="fm_bar_down"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Download') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/edit-rename.png"   id="fm_bar_rename"                                      class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Rename') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/delete.png"        id="fm_bar_del"                                         class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Delete') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/list.png"          id="fm_bar_list"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('List view') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
-                '<img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
-                '<button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
-                '<button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
-                '</div>' +
-                '<div class="fm_path ui-state-default no_background">' +
-                '</div>' +
-                '<div class="fm_files ui-state-default no_background">' +
-                '</div>' +
-                '<div class="fm_buttonbar">' +
-                '<div id="fm_save_wrap">' +
-                '<div>' + fmTranslate('File name:') + '</div>' +
-                '<input type="text" id="fm_inp_save">' +
-                '</div>' +
-                '<div id="fm_btn_wrap">' +
-                '<button id="fm_btn_save" >' + fmTranslate('Save') + '</button>' +
-                '<button id="fm_btn_open" >' + fmTranslate('Open') + '</button>' +
-                '<button id="fm_btn_cancel" >' + fmTranslate('Cancel') + '</button>' +
-                '</div>' +
-                '</div>' +
+                '    <input class="focus_dummy" style="border:none;height: 1px;padding: 1px;width: 1px;background: transparent; display: flex;" type="button"/>' +
+                '    <div class="fm_iconbar ui-state-default ui-corner-all">' +
+                '        <div class="fm_bar_back_behind"></div>' +
+                '        <button id="fm_bar_back"    style="background-image: url(' + fmFolder + 'icon/circleLeftIcon.png)"                                                                     title="' + fmTranslate('Back') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/refresh.png"       id="fm_bar_refresh"          style="margin-left:40px"   class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Refresh') + '" />' +
+                '        <img src="' + fmFolder + 'icon/actions/folder-new-7.png"  id="fm_bar_addfolder"        style="margin-left:20px"   class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('New folder') + '" />' +
+                '        <img src="' + fmFolder + 'icon/actions/up.png"            id="fm_bar_add"              style=""                    class="fm_bar_icon ui-corner-all ui-state-default" title="' + fmTranslate('Upload') + '" />' +
+                '        <img src="' + fmFolder + 'icon/actions/down.png"          id="fm_bar_down"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Download') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/edit-rename.png"   id="fm_bar_rename"                                      class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Rename') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/delete.png"        id="fm_bar_del"                                         class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Delete') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/list.png"          id="fm_bar_list"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('List view') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
+                '        <img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
+                '        <button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
+                '        <button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
+                '    </div>' +
+                '    <div class="fm-path-div" ui-state-default no_background">' + fmTranslate('Path:') + '<input class="fm-path" type="text" style="width: calc(100% - 80px);"></div>' +
+                '    <div class="fm-files ui-state-default no_background"></div>' +
+                '    <div class="fm-buttonbar">' +
+                '        <div id="fm_save_wrap">' +
+                '            <div>' + fmTranslate('File name:') + '</div>' +
+                '            <input type="text" id="fm_inp_save">' +
+                '        </div>' +
+                '        <div id="fm_btn_wrap">' +
+                '            <button id="fm_btn_save" >'   + fmTranslate('Save')   + '</button>' +
+                '            <button id="fm_btn_open" >'   + fmTranslate('Open')   + '</button>' +
+                '            <button id="fm_btn_cancel" >' + fmTranslate('Cancel') + '</button>' +
+                '       </div>' +
+                '    </div>' +
                 '</div>');
 
         $("#dialog_fm").dialog({
@@ -621,7 +638,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         }
 
         if (o.mode == "show") {
-            $(".fm_buttonbar").hide();
+            $(".fm-buttonbar").hide();
         }
         if (o.mode == "save") {
             $("#fm_btn_open").hide();
@@ -657,9 +674,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 //        $("#fm_bar_play, #fm_bar_stop, #fm_bar_down").button('disable');
 
         if (document.getElementById("script_scrollbar")) {
-            $(".fm_files").wrap('<div id="fm_scroll_pane" class="ui-state-default no_background"></div>');
+            $(".fm-files").wrap('<div id="fm_scroll_pane" class="ui-state-default no_background"></div>');
 
-            $(".fm_files").css({
+            $(".fm-files").css({
                 minHeight: "100%",
                 height: "auto",
                 width: "calc(100% - 4px)",
@@ -710,22 +727,22 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             })
             .click(function () {
                 if ($(this).hasClass('ui-state-error')) {
-                    $(".fm_files").removeClass('fm-dark-background no_background').addClass('fm-light-background');
+                    $(".fm-files").removeClass('fm-dark-background no_background').addClass('fm-light-background');
                     $(this).removeClass('ui-state-error').addClass('ui-state-highlight');
                 } else if ($(this).hasClass('ui-state-highlight')) {
                     $(this).removeClass('ui-state-error ui-state-highlight');
-                    $(".fm_files").removeClass('fm-light-background fm-dark-background').addClass('no_background');
+                    $(".fm-files").removeClass('fm-light-background fm-dark-background').addClass('no_background');
                 } else {
                     $(this).removeClass('ui-state-highlight').addClass('ui-state-error');
-                    $(".fm_files").removeClass('no_background fm-light-background').addClass('fm-dark-background');
+                    $(".fm-files").removeClass('no_background fm-light-background').addClass('fm-dark-background');
                 }
             });
         if (config.background == 'fm-dark-background') {
             $("#fm_bar_background").addClass('ui-state-error');
-            $(".fm_files").addClass(config.background).removeClass('no_background');
+            $(".fm-files").addClass(config.background).removeClass('no_background');
         } else if (config.background == 'fm-light-background') {
             $("#fm_bar_background").addClass('ui-state-highlight');
-            $(".fm_files").addClass(config.background).removeClass('no_background');
+            $(".fm-files").addClass(config.background).removeClass('no_background');
         }
 
         if (config.all) {
@@ -751,7 +768,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 if (id == "fm_bar_add") {
 
                     $('#dialog_fm').append(
-                            '<div id="dialog_fm_add" title="' + fmTranslate("Upload to") + ' ' + $(".fm_path").text() + '">' +
+                            '<div id="dialog_fm_add" title="' + fmTranslate('Upload to') + ' ' + $('.fm-path').val() + '">' +
                             '<div id="fm_add_dropzone" ondragover="return false" class="dropzone ui-corner-all ui-state-highlight">' +
                             '<p class="fm_dropbox_text">' + fmTranslate('Dropbox') + '<br>' + fmTranslate('Drop the files here') + ' </p>' +
                             '</div>' +

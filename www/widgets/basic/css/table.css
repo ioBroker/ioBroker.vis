@@ -16,6 +16,7 @@
 }
 .tclass-inner-overflow {
     overflow-y: auto;
+    height: calc(100% - 30px);
 }
 .tclass-th {
     background-color: black;

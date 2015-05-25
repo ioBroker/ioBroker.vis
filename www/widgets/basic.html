@@ -35,7 +35,7 @@
                 "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
                 "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
             },
-            "stretch":         {"en": "Stretch",               "de": "Streken",            "ru": "Растянуть"},
+            "stretch":         {"en": "Stretch",               "de": "Strecken",           "ru": "Растянуть"},
             "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
             "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
@@ -322,11 +322,11 @@
                     var step = parseFloat($this.attr('data-vis-step'));
                     var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
-                        if (tmp >= minmax) {
+                        if (minmax === undefined || tmp >= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     } else {
-                        if (tmp <= minmax) {
+                        if (minmax === undefined || tmp <= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
@@ -954,7 +954,7 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
         data-vis-name="HTML"
-        data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
+        data-vis-attrs="html/text;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
@@ -1684,7 +1684,7 @@
         data-vis-name="Table"
         data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
         data-vis-attrs="table_oid/id;"
-        data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]];"
+        data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
         data-vis-attrs1="event_oid/id;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
         data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
         data-vis-attrs-not-used="new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"

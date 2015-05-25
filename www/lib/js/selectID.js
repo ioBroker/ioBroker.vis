@@ -403,7 +403,7 @@
         var text = '<div id="' + data.instance + '-div" style="width:100%; height:100%"><table id="selectID_header_' + data.instance + '" style="width: 100%;padding:0; height: 50" cellspacing="0" cellpadding="0">';
         text += '<colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="400px"/>';
+        text += '            <col width="350px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {
@@ -485,7 +485,7 @@
         text +=' <table id="selectID_' + data.instance + '" style="width: 100%;padding:0;table-layout:fixed; overflow:hidden;white-space:nowrap" cellspacing="0" cellpadding="0">';
         text += '        <colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="400px"/>';
+        text += '            <col width="350px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {

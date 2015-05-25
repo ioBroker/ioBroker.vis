@@ -654,9 +654,9 @@ vis.binds.hqWidgets = {
             if (value !== null && value !== undefined) {
                 $div.find('.vis-hq-nodata').remove();
             }
-
             switch (data.state) {
                 case 'normal':
+                    console.log(data.styleNormal);
                     $('#' + data.wid + ' .vis-hq-main')
                         .removeClass(data.styleActive)
                         .addClass(data.styleNormal);
@@ -666,6 +666,7 @@ vis.binds.hqWidgets = {
                     }
                     break;
                 case 'active':
+                    console.log(data.styleActive);
                     $('#' + data.wid + ' .vis-hq-main')
                         .removeClass(data.styleNormal)
                         .addClass(data.styleActive);

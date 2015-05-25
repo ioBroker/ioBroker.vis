@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.5.2 -->
+    <!-- ioBroker.vis Version 0.5.3 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -63,6 +63,7 @@
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
     <script type="text/javascript" src="js/visEdit.js"></script>
     <script type="text/javascript" src="js/visEditExt.js"></script>
+    <script type="text/javascript" src="js/visEditInspect.js"></script>
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
 
     <!-- widgets ->
@@ -171,7 +172,7 @@
 <div style="height: 34px; width: 100%; position: absolute; top: 0;left:0" class="ui-widget-header ">
 
 </div>
-<div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
+<div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
     <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
 
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
@@ -952,7 +953,7 @@
                     <input id="css_find"/>
                     <button id="css_find_prev" class="translateT" title="Find previous"></button>
                     <button id="css_find_next" class="translateT" title="Find next"></button>
-                    <button id="css_file_save" class="translateT" title="Save CSS"></button>
+                    <button id="css_file_save" class="translateT" disabled title="Save CSS"></button>
                 </div>
                 <div id="css_editor"></div>
 
@@ -971,6 +972,9 @@
         <span id="dialog-confirm-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
         <span id="dialog-confirm-text"></span>
     </p>
+</div>
+<div id="dialog-edit-text" title="Edit text" style="display: none">
+    <textarea style="width: 98%; height: 96%;resize: none;"></textarea>
 </div>
 
 <div style="display: none" id="uploadPreview"></div>
