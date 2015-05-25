@@ -821,7 +821,7 @@ var vis = {
 
         var widgetData = this.widgets[id].data;
 
-        try {
+        //try {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
@@ -868,9 +868,9 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
-        } catch (e) {
-           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        }
+        //} catch (e) {
+        //   this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        //}
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
