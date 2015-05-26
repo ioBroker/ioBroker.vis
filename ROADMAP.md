@@ -5,3 +5,5 @@
 
 * Special "_project" view: Widgets
    for example: popups, soundplay,.....
+   
+* Write the instruction: how create previews and developing generally

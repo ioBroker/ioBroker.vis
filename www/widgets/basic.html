@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" href="widgets/basic/css/table.css" />
+<script type="text/javascript" src="widgets/basic/js/table.js"></script>
+
 <script type="text/javascript">
     "use strict";
 
@@ -7,7 +10,7 @@
             // Bars
             "src":             {"en": "Source",               "de": "Quelle",              "ru": "Адрес"},
             "refreshInterval": {"en": "Refresh interval(ms)", "de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
-            "is_comma":        {"en": "Divider comma",        "de": "Kamme als Trennung",  "ru": "Запятая-разделитель"},
+            "is_comma":        {"en": "Divider comma",        "de": "Komme als Trennung",  "ru": "Запятая-разделитель"},
             "digits":          {"en": "Digits after comma",   "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"},
             "oid":             {"en": "Object ID",            "de": "Object ID",           "ru": "ID Объекта"},
             "html_prepend":    {"en": "Prepend value",        "de": "Voranstellen HTML",   "ru": "Префикс значения"},
@@ -32,7 +35,7 @@
                 "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
                 "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
             },
-            "stretch":         {"en": "Stretch",               "de": "Streken",            "ru": "Растянуть"},
+            "stretch":         {"en": "Stretch",               "de": "Strecken",           "ru": "Растянуть"},
             "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
             "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
             "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
@@ -60,10 +63,10 @@
             "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
             "src_":            {"en": "URL, by value=",        "de": "URL falls Wert=",     "ru": "Адрес при значении "},
             "nav_view":        {"en": "View to navigate",      "de": "View zum Navigieren", "ru": "Перейти на страницу"},
-            "group_effects":   {"en": "Show/Hide Effects",     "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезнования"},
+            "group_effects":   {"en": "Show/Hide Effects",     "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезновения"},
             "group_extended":  {"en": "Extended settings",     "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
             "body-background": {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
-            "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезнование вместе"},
+            "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
             // Effects
             "show":            {"en": "show", "de": "show", "ru": "show"},
             "blind":           {"en": "blind", "de": "blind", "ru": "blind"},
@@ -156,10 +159,10 @@
     }
 
     $.extend(true, systemDictionary, {
-        "Edit note": {"en": "Edit note", "de": "Meldung eingeben", "ru": "Сообщение"},
-        "Clear": {"en": "Clear", "de": "Löschen", "ru": "Очистить"},
-        "Ok": {"en": "Ok", "de": "Ok", "ru": "Ok"},
-        "Cancel": {"en": "Cancel", "de": "Abbrechen", "ru": "Отмена"}
+        "Edit note":    {"en": "Edit note",     "de": "Meldung eingeben",   "ru": "Сообщение"},
+        "Clear":        {"en": "Clear",         "de": "Löschen",            "ru": "Очистить"},
+        "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
+        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"}
     });
 
     vis.binds.stateful = {
@@ -319,11 +322,11 @@
                     var step = parseFloat($this.attr('data-vis-step'));
                     var tmp  = parseFloat(vis.states[oid + '.val']) + step;
                     if (step < 0) {
-                        if (tmp >= minmax) {
+                        if (minmax === undefined || tmp >= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     } else {
-                        if (tmp <= minmax) {
+                        if (minmax === undefined || tmp <= minmax) {
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
@@ -810,6 +813,8 @@
                 isSeconds = false;
             }
 
+            if (format == 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
+
             var format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
@@ -899,6 +904,34 @@
                 format = format.replace('с', v);
             }
             return format;
+        },
+        detectScreen: function (el) {
+            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) == -1) {
+                vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
+            }
+
+            setTimeout(function () {
+                $(window).bind('resize', function () {
+                    if (vis.editMode) {
+                        $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+                        $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+                        $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+                    } else {
+                        $('.vis-resolution-width').html($(window).width());
+                        $('.vis-resolution-height').html($(window).height());
+                        $('.vis-resolution-default-view').html(vis.findNearestResolution());
+                    }
+                });
+                if (vis.editMode) {
+                    $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+                    $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+                } else {
+                    $('.vis-resolution-width').html($(window).width());
+                    $('.vis-resolution-height').html($(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution());
+                }
+            }, 100);
         }
     };
 
@@ -919,9 +952,9 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
-        data-vis-name="HTML"
         data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
-        data-vis-attrs="html;refreshInterval[0]/slider,0,180000,100">
+        data-vis-name="HTML"
+        data-vis-attrs="html/text;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
@@ -1001,56 +1034,11 @@
     </div>
 </script>
 
-<!-- basic Container -->
-<script id="tplContainerView"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="container"
-        data-vis-name="view in widget"
-        data-vis-attrs="contains_view/views">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-            <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
-            <% } %>
-            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
-        </div>
-    </div>
-</script>
-
-<!-- Stateful Widgets -->
-<script id="tplStatefulContainerView8"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="stateful/container"
-        data-vis-name="view in widget 8"
-        data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-        <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
-        <% } %>
-        <%
-            var viewArr = [];
-            var i = 0;
-            while(data.attr("contains_view_" + i) !== undefined) {
-                viewArr.push(data.attr("contains_view_" + i));
-                i++;
-            }
-        %>
-        <div class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
-        </div>
-        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
-        </div-->
-    </div>
-</script>
-
 <script id="tplStatefulIFrame8"
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_StatefulIFrame8.png"></img>'
         data-vis-type="stateful"
         data-vis-name="iFrame 8"
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;src_(0-7)">
@@ -1073,6 +1061,54 @@
             <iframe class="vis-widget-element" data-oid="<%= this.data.attr('oid') %>" src="<%== vis.binds.stateful.value(srcArr, data.attr('oid')) %>" style="position: absolute; border: 0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
             <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
         </div>
+    </div>
+</script>
+
+<!-- basic Container -->
+<script id="tplContainerView"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ContainerView.png"></img>'
+        data-vis-type="container"
+        data-vis-name="view in widget"
+        data-vis-attrs="contains_view/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+            <% if (vis.editMode) { %>
+                <div class="editmode-helper" />
+            <% } %>
+            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
+        </div>
+    </div>
+</script>
+
+<!-- Stateful Widgets -->
+<script id="tplStatefulContainerView8"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_StatefulContainerView8.png"></img>'
+        data-vis-type="stateful,container"
+        data-vis-name="view in widget 8"
+        data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper" />
+        <% } %>
+        <%
+            var viewArr = [];
+            var i = 0;
+            while(data.attr("contains_view_" + i) !== undefined) {
+                viewArr.push(data.attr("contains_view_" + i));
+                i++;
+            }
+        %>
+        <div class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div>
+        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
+            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+        </div-->
     </div>
 </script>
 
@@ -1133,7 +1169,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="navigation"
+        data-vis-type="static,navigation"
         data-vis-name="HTML"
         data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;hide_options/effect-options;show_effect/effect;show_duration/slider,0,10000,100;show_options/effect-options">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
@@ -1270,11 +1306,11 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList Text"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/-,0,1,2,3,4,5,6,7,8,9,10,11,12">
+        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_html')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"))] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1286,11 +1322,11 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList HTML"
-        data-vis-attrs="oid;html_prepend;html_append;valuelist">
+        data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.vallist ? data.vallist.split(';') : []); %><%== list[parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1302,13 +1338,27 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="ValueList HTML Style"
-        data-vis-attrs="oid;html_prepend;html_append;count[2];value(0-count);style(0-count)">
+        data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<% var slist = []; var i = 0; while (data['style' + i] !== undefined) {slist[i] = data['style' + i]; i++;} %><%== slist[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10)] %>">
-        <div data-oid="<%= this.data.attr('oid') %>">
-           <%== this.data.attr("html_prepend") %><% var list = []; var j = 0; while (data['value' + j] !== undefined) {list[j] = data['value' + j]; j++;}; %><%== list[parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))),10)] %><%== this.data.attr("html_append") %>
+        <%
+            var slist = [];
+            var i = 0;
+            while (data['style' + i] !== undefined) {
+                slist[i] = data['style' + i]; i++;
+            }
+            console.log(slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))]);
+        %>
+        <div class="vis-widget-body" style="<%== slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
+            <div data-oid="<%= this.data.attr('oid') %>">
+               <%== this.data.attr("html_prepend") %><%
+                   var list = [];
+                   var j = 0;
+                   while (data['value' + j] !== undefined) {
+                        list[j] = data['value' + j]; j++;
+                   }
+                   %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
+            </div>
         </div>
-    </div>
     </div>
 </script>
 
@@ -1428,7 +1478,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="ctrl"
+        data-vis-type="ctrl,bool"
         data-vis-name="Bool SVG"
         data-vis-attrs="oid;svg_false;svg_true;opacity/slider,0,1,0.05">
     <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'),this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
@@ -1516,9 +1566,9 @@
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
             <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
-            <img src="img/bulb_off.png" width="100%"/>
+                <img src="img/bulb_off.png" width="100%"/>
             <% break; default: %>
-            <img src="img/bulb_on.png" width="100%"/>
+                <img src="img/bulb_on.png" width="100%"/>
             <% } %>
         </div>
     </div>
@@ -1623,6 +1673,65 @@
 		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
 			<%== this.data.attr("html_prepend") %><%= (this.data.test_text && vis.editMode) ? this.data.test_text : (vis.states.attr(this.data.oid + ".val") == null ? "" : vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
 		</div>
+    </div>
+</script>
+
+<script id="tplTableBody"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="json,table"
+        data-vis-name="Table"
+        data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
+        data-vis-attrs="table_oid/id;"
+        data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
+        data-vis-attrs1="event_oid/id;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
+        data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
+        data-vis-attrs-not-used="new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
+       <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
+    </div>
+</script>
+
+<!--script id="tplDialog"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="table"
+        data-vis-name="Dialog"
+        data-vis-attrs="show/checkbox;trigger_id/id;button(1-3);title;text;image/image;width[400]/slider,50,1000,10;height[200]/slider,50,1000,10;modal/checkbox;_no_style[true]/hidden;_no_move[true]/hidden;_no_resize[true]/hidden;margin_left[0]/slider,0,200,1;margin_top[0]/slider,0,200,1"
+        >
+    <%
+        var options =  {
+            trigger_id:  this.data.attr('trigger_id'),
+            buttons:     [this.data.attr('button1'), this.data.attr('button2'), this.data.attr('button3')],
+            image:       this.data.attr('image'),
+            title:       this.data.attr('title'),
+            text:        this.data.attr('text'),
+            width:       this.data.attr('width'),
+            height:      this.data.attr('height'),
+            show:        this.data.attr('show'),
+            modal:       this.data.attr('modal'),
+            margin_left: this.data.attr('margin_left'),
+            margin_top:  this.data.attr('margin_top')
+        };
+        vis.binds.table.showDialog(this.view, this.data.attr('wid'), options);
+    %>
+</script>
+
+<script id="tplScreenResolution"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplScreenResolution" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-draggable-handle " style="width: 120px; height: 54px; border: 1px solid rgb(136, 136, 136); font-size: 12px; opacity: 0.8;" > <div style="padding: 10px"> Width: <span>640</span><br>Height: <span>360</span><br>Default view:<span></span> </div> </div></div>'
+        data-vis-set="basic"
+        data-vis-type="tools"
+        data-vis-name="Screen Resolution"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:150px; height:60px; border: 1px solid #888; font-size: 12px; opacity: 0.8" id="<%= this.data.attr('wid') %>">
+		<div id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
+			Default view: <span class='vis-resolution-default-view'></span><br>Width: <span class='vis-resolution-width'></span><br>Height: <span class='vis-resolution-height'></span>
+		</div>
+		<%= vis.binds.basic.detectScreen() %>
     </div>
 </script>
 

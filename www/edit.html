@@ -2,19 +2,19 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.2.10 -->
+    <!-- ioBroker.vis Version 0.5.3 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
 		Before you start Chrome anew all other instances should be closed.
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
-    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="editorTheme">
+    <link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="commonTheme">
 
     <meta charset="utf-8"/>
 
     <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
 
     <link href="img/faviconEdit.png" rel="shortcut icon" type="image/x-icon"/>
 
@@ -33,7 +33,7 @@
 
 
     <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
-    <script type="text/javascript" src="lib/js/jquery-ui-1.11.3.full.min.js"></script>
+    <script type="text/javascript" src="lib/js/jquery-ui-1.11.4.full.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
     <script type="text/javascript" src="lib/js/selectID.js"></script>
     <script type="text/javascript" src="lib/js/socket.io.js"></script>
@@ -43,7 +43,7 @@
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="lib/js/dropzone.js"></script>
-    <script type="text/javascript" src="lib/js/canjs.2.1.3.min.js"></script>
+    <script type="text/javascript" src="lib/js/can.2.2.4.custom.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
@@ -57,18 +57,22 @@
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
 
     <script type="text/javascript" src="js/visLang.js"></script>
-    <script type="text/javascript" src="/_socket/info.js"></script>
+    <script type="text/javascript" src="_socket/info.js"></script>
     <script type="text/javascript" src="js/conn.js"></script>
     <script type="text/javascript" src="js/vis.js"></script>
     <script type="text/javascript" src="js/visEditWelcome.js"></script>
     <script type="text/javascript" src="js/visEdit.js"></script>
     <script type="text/javascript" src="js/visEditExt.js"></script>
+    <script type="text/javascript" src="js/visEditInspect.js"></script>
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
 
-    <!--- widgets -->
-    <!--- widgetsStop -->
+    <!-- widgets ->
+    <script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
+    <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
+    <-- widgetsStop -->
+
 </head>
-<body class="ui-widget-content">
+<body >
 
 <!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->
 <!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->
@@ -97,9 +101,8 @@
 <div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT">
 
     <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
-        <li><a href="http://hobbyquaker.github.io/DashUI/" target="_blank" class="translate">Web</a></li>
-        <li><a href="http://homematic-forum.de/forum/viewforum.php?f=48" target="_blank"
-               class="translate">Community</a></li>
+        <li><a href="http://ioBroker.net/" target="_blank" class="translate">Web</a></li>
+        <li><a href="http://forum.iobroker.net" target="_blank" class="translate">Community</a></li>
         <li><a href="https://github.com/ioBroker/ioBroker.vis/blob/master/README.md" target="_blank" class="translate">Change log</a>
         </li>
     </ul>
@@ -114,14 +117,13 @@
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
-<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
+<div style="display: none;" id="dialog_export_view" title="export" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
     <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
               id="textarea_import_view"></textarea>
-    <br/>
     <input type="text" id="name_import_view">
     <button id="start_import_view" class="translateB">import</button>
 </div>
@@ -170,7 +172,7 @@
 <div style="height: 34px; width: 100%; position: absolute; top: 0;left:0" class="ui-widget-header ">
 
 </div>
-<div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 100 ">
+<div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
     <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
 
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
@@ -209,17 +211,12 @@
                             <li class="ui-state-default menu-item" data-theme="blitzer">
                                 <a data-info="blitzer">blitzer</a>
                             </li>
-                            <li class="ui-state-default menu-item" data-theme="swanky-purse">
-                                <a data-info="swanky-purse">Swanky Purse</a>
-                            </li>
                             <li class="ui-state-default menu-item" data-theme="black-tie">
                                 <a data-info="black-tie">BlackTie</a>
                             </li>
                             <li class="ui-state-default menu-item" data-theme="cupertino">
                                 <a data-info="cupertino">Cupertino</a>
                             </li>
-                            <!--<li class="ui-state-default  menu-item">
-                            <a  data-info="dot-lov">Dot Lov</a></li>-->
                             <li class="ui-state-default menu-item" data-theme="eggplant">
                                 <a data-info="eggplant">Eggplant</a>
                             </li>
@@ -450,11 +447,24 @@
                     </tr>
                 </table>
             </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_widgets">export widgets</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_widgets">import widgets</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
         </div>
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
         <div class="ribbon_tab_content ui-widget-content" >
-            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 350px">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 450px">
                 <table style="border-spacing: 0px; width: 100%">
                     <colgroup>
                         <col width="80px" style="text-align:left"/>
@@ -473,6 +483,11 @@
                         <td>
                             <div class="rib_tool_resolution_toggle"></div>
                         </td>
+                        <td>
+                            <table style="border: 0px"><tr>
+                                <td><label for="screen_default_man" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td></tr>
+                            </table>
+                        </td>
                     </tr>
                     <tr id="rib_tools_resolution_fix">
                         <td class="translate">Resolution:</td>
@@ -486,22 +501,20 @@
                                 <option value="568x300">iPhone 5, 5S - Landscape</option>
                                 <option value="768x1004">iPad - Portrait</option>
                                 <option value="1024x748">iPad - Landscape</option>
-                                <option value="480x800">Samsung S2 - Portrait</option>
-                                <option value="800x480">Samsung S2 - Landscape</option>
-                                <option value="720x1280">Samsung S3, Note 2 - Portrait</option>
-                                <option value="1280x720">Samsung S3, Note 2 - Landscape</option>
-                                <option value="1080x1920">Samsung S4, S5, Note 3 - Portrait</option>
-                                <option value="1920x1080">Samsung S4, S5, Note 3 - Landscape</option>
-                                <option value="768x1280">Nexus 4 - Portrait</option>
-                                <option value="1280x768">Nexus 4 - Landscape</option>
-                                <option value="328x581">Nexus 5 - Portrait</option>
-                                <option value="581x328">Nexus 5 - Landscape</option>
-                                <option value="800x1280">Nexus 7 (2012) - Portrait</option>
-                                <option value="1280x800">Nexus 7 (2012) - Landscape</option>
-                                <option value="1200x1920">Nexus 7 (2013) - Portrait</option>
-                                <option value="1920x1200">Nexus 7 (2013) - Landscape</option>
-                                <option value="1600x2560">Nexus 10 - Portrait</option>
-                                <option value="2560x1600">Nexus 10 - Landscape</option>
+                                <option value="320x533">Samsung S2 - Portrait</option>
+                                <option value="533x320">Samsung S2 - Landscape</option>
+                                <option value="360x640">Samsung S3, Note 2 - Portrait</option>
+                                <option value="640x360">Samsung S3, Note 2 - Landscape</option>
+                                <option value="360x640">Samsung S4, S5, Note 3 - Portrait</option>
+                                <option value="640x360">Samsung S4, S5, Note 3 - Landscape</option>
+                                <option value="384x640">Nexus 4 - Portrait</option>
+                                <option value="640x384">Nexus 4 - Landscape</option>
+                                <option value="360x640">Nexus 5 - Portrait</option>
+                                <option value="640x360">Nexus 5 - Landscape</option>
+                                <option value="604x966">Nexus 7 (2012) - Portrait</option>
+                                <option value="966x604">Nexus 7 (2012) - Landscape</option>
+                                <option value="800x1280">Nexus 10 - Portrait</option>
+                                <option value="1280x800">Nexus 10 - Landscape</option>
                                 <option value="720x1280">HD - Portrait</option>
                                 <option value="1280x720">HD - Landscape</option>
                                 <option value="1080x1920">Full HD - Portrait</option>
@@ -510,6 +523,11 @@
                         </td>
                         <td>
                             <div class="rib_tool_resolution_toggle"></div>
+                        </td>
+                        <td>
+                            <table style="border: 0px"><tr>
+                                <td><label for="screen_default_fix" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_fix" type="checkbox"/></td></tr>
+                            </table>
                         </td>
                     </tr>
                 </table>
@@ -610,6 +628,7 @@
                     <td class="translate">dev3</td>
                     <td class="translate">dev4</td>
                     <td class="translate">dev5</td>
+                    <td class="translate">dev6</td>
                 </tr>
                 <tr>
                     <td>
@@ -627,6 +646,9 @@
                     <td>
                         <input type="number" value="1" step="1" class="vis-editor oid-dev" id="oid_dev5"/>
                     </td>
+                    <td>
+                        <input type="text" value="string" class="vis-editor oid-dev" id="oid_dev6"/>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -641,6 +663,7 @@
             <div id="btn_prev_type" title="Show type of widgets" class="translateT"><span class="ui-icon ui-icon-tag"></span></div>
             <div id="btn_prev_zoom" title="Small widgets" class="translateT"><span class="ui-icon ui-icon-zoomout"></span></div>
         </div>
+        <input id="filter_set" value="*" type="text" style="width: 100%" class="translateT" title="Widgets filter. Double click to clear."/>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
         <div id="toolbox" class="toolbox"></div>
@@ -653,16 +676,66 @@
             </div>
             <button id="view_select_right"></button>
         </div>
-        <div id="vis_container" style="width: 100%; height: 100%; overflow: hidden" class="ui-widget-content" caption="Views">
+        <div id="vis_container" style="width: 100%; height: 100%; overflow: auto" class="ui-widget-content vis_container_edit vis_container " caption="Views">
             <div id="size_x"
                  style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
             <div id="size_y"
                  style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+            <ul id="context_menu" style="position: absolute;display:none;z-index:999; min-width:300px">
+                <li id="context_menu_wid" class="ui-state-disabled"></li>
+                <li id="context_menu_select" class="context-submenu context-menu-common-item" data-action="select">
+                    <span class="translate">Select</span>
+                </li>
+                <li id="context_menu_copy" class="ui-state-disabled context-submenu context-menu-common-item" data-action="copy">
+                    <span class="ui-icon ui-icon-copy"></span>
+                    <span class="translate">Copy</span>
+                </li>
+                <li id="context_menu_cut" class="ui-state-disabled context-submenu context-menu-common-item" data-action="cut">
+                    <span class="ui-icon ui-icon-scissors"></span>
+                    <span class="translate">Cut</span>
+                </li>
+                <li id="context_menu_paste" class="ui-state-disabled context-submenu context-menu-common-item" data-action="paste">
+                    <span class="ui-icon ui-icon-document"></span>
+                    <span class="translate">Paste</span>
+                </li>
+                <li id="context_menu_delete" class="ui-state-disabled context-submenu context-menu-common-item" data-action="delete">
+                    <span class="ui-icon ui-icon-trash"></span>
+                    <span class="translate">Delete</span>
+                </li>
+                <li id="context_menu_more"><span class="translate">More</span>
+                    <ul style="min-width:250px">
+                        <li id="context_menu_lock" class="ui-state-disabled context-submenu context-menu-common-item" data-action="lock">
+                            <span class="ui-icon ui-icon-locked"></span>
+                            <span class="translate">Lock</span>
+                        </li>
+                        <li id="context_menu_unlock" class="ui-state-disabled context-submenu context-menu-common-item" data-action="unlock">
+                            <span class="ui-icon ui-icon-unlocked"></span>
+                            <span class="translate">Unlock</span>
+                        </li>
+                        <li id="context_menu_front" class="ui-state-disabled context-submenu context-menu-common-item" data-action="bringToFront">
+                            <span class="ui-icon ui-icon-arrowthick-1-n"></span>
+                            <span class="translate">Bring to front</span>
+                        </li>
+                        <li id="context_menu_back" class="ui-state-disabled context-submenu context-menu-common-item" data-action="bringToBack">
+                            <span class="ui-icon ui-icon-arrowthick-1-s"></span>
+                            <span class="translate">Move to back</span>
+                        </li>
+                        <li id="context_menu_export" class="ui-state-disabled context-submenu context-menu-common-item" data-action="export">
+                            <span class="ui-icon ui-icon-arrowthickstop-1-e"></span>
+                            <span class="translate">export widgets</span>
+                        </li>
+                        <li id="context_menu_import">
+                            <span class="ui-icon ui-icon-arrowthickstop-1-w"></span>
+                            <span class="translate">import widgets</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
     <div id="attr_wrap">
         <div id="pan_attr">
-            <div class="ui-state-default translate" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;">Attributes</div>
+            <div class="ui-state-default" style="height: 16px;font-size: 16px;padding: 5px;font-weight: bolder;"><span class="translate">Attributes</span><button id="btn_accordeon" style="float: right;"></button></div>
             <ul style="border-radius: 0; display: inline-block; background: transparent; border: none; margin-bottom: -2px">
                 <li>
                     <a href="#tab_view_attr" style="padding: 2px 4px 2px 4px" class="translate">View</a>
@@ -734,7 +807,7 @@
                                 <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
                             </tr>
                             <tr class="group-view-css-background">
-                                <td colspan="3" id="inspect_view_bkg_parent"></td>
+                                <td colspan="3" id="inspect_view_bkg_parent"><input id="inspect_view_bkg_def" type="text"/></td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>background</td>
@@ -880,7 +953,7 @@
                     <input id="css_find"/>
                     <button id="css_find_prev" class="translateT" title="Find previous"></button>
                     <button id="css_find_next" class="translateT" title="Find next"></button>
-                    <button id="css_file_save" class="translateT" title="Save CSS"></button>
+                    <button id="css_file_save" class="translateT" disabled title="Save CSS"></button>
                 </div>
                 <div id="css_editor"></div>
 
@@ -899,6 +972,9 @@
         <span id="dialog-confirm-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
         <span id="dialog-confirm-text"></span>
     </p>
+</div>
+<div id="dialog-edit-text" title="Edit text" style="display: none">
+    <textarea style="width: 98%; height: 96%;resize: none;"></textarea>
 </div>
 
 <div style="display: none" id="uploadPreview"></div>

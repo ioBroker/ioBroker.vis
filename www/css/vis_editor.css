@@ -1,5 +1,6 @@
 html{
-    -webkit-user-select: none;
+    /* use this tag locally, where it is really required */
+    /*-webkit-user-select: none;*/
     user-select: none;
     overflow: hidden!important;
     position: absolute!important;
@@ -24,11 +25,11 @@ body{
     outline: none;
 }
 
-div#vis_container {
-    width: -webkit-calc(100% - 5px);
-    width: calc(100% - 2px);
-    height: -webkit-calc(100% - 30px);
-    height: calc(100% - 30px);
+.vis_container_edit {
+    width: -webkit-calc(100% - 5px)!important;
+    width: calc(100% - 2px)!important;
+    height: -webkit-calc(100% - 30px)!important;
+    height: calc(100% - 30px)!important;
     position: relative;
     overflow: auto;
     border-bottom-width: 0px;
@@ -343,8 +344,8 @@ div#vis_container {
 
 .toolbox {
     text-align: center;
-    height: -webkit-calc(100% - 60px);
-    height: calc(100% - 60px);
+    height: -webkit-calc(100% - 83px);
+    height: calc(100% - 83px);
     overflow: auto;
     border-color: inherit;
     margin: 0;
@@ -438,11 +439,11 @@ div#vis_container {
     position: absolute;
     top: 0;
     left: 0;
-    width: -webkit-calc(100% - 4px);
-    width: calc(100% - 4px);
-    height: -webkit-calc(100% - 4px);
-    height: calc(100% - 4px);
-    z-index: 1000;
+    width: -webkit-calc(100% - 3px);
+    width: calc(100% - 3px);
+    height: -webkit-calc(100% - 3px);
+    height: calc(100% - 3px);
+    z-index: 998;
 }
 
 .vis-widget_prev {
@@ -467,7 +468,7 @@ div#vis_container {
     display: inline-block;
     height: 100%;
     /* border-right-width: 0;*/
-    border-bottom-width: 0; 
+    border-bottom-width: 0;
     border-top-width: 0;
     border-left-width: 0;
     /* display: inline-block; */
@@ -526,19 +527,18 @@ div#vis_container {
     margin: 0;
 }
 
-#view-select-tabs_wrap {
+#view_select_tabs_wrap {
     height: 27px;
     max-width: -webkit-calc(100% - 54px);
     max-width: calc(100% - 54px);
     overflow: hidden;
 }
 
-#view-select-tabs {
-    width: auto;
-    display: -webkit-inline-box;
-    display: inline-flex;
-    left: 0;
+#view_select_tabs {
+    display: inline-block;
     position: relative;
+    height: 25px;
+    padding-top: 3px;
 }
 
 #view_select_right {
@@ -550,7 +550,7 @@ div#vis_container {
 }
 
 .view-select-tab {
-    display: inline-block;
+    display: inline;
     margin-left: 1px;
     margin-right: 1px;
     padding: 2px 6px 3px 6px;
@@ -572,8 +572,8 @@ div#vis_container {
     border-width: 1px 0 0 0 !important;
     font-size: 12px;
     font-weight: normal !important;
-    height: -webkit-calc(100% - 50px);
-    height: calc(100% - 50px);
+    height: -webkit-calc(100% - 70px);
+    height: calc(100% - 70px);
     overflow: auto;
 }
 
@@ -712,8 +712,8 @@ td > .select_active_widget :nth-child(2) {
 .widget_inner_helper {
     border: 1px dashed black;
     pointer-events: none;
-    width: 100%;
-    height: 100%;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
 }
 
 .oid-dev {
@@ -759,11 +759,54 @@ td > .select_active_widget :nth-child(2) {
     width: calc(100% - 210px);
 }
 #css_file_save{
-margin-left: 10px;
+    margin-left: 10px;
 }
 
 .view-select-menu {
     height: calc(100% - 100px);
     overflow-y: scroll;
     overflow-x: hidden;
+}
+
+.custom-vis-menu {
+    height: 300px !important;
+    overflow-y: scroll;
+}
+
+.vis-widget-edit-locked:after {
+    content: 'locked';
+    background: repeating-linear-gradient(
+            45deg,
+            #606dbc,
+            #606dbc 10px,
+            #465298 10px,
+            #465298 20px
+    );
+    z-index:  901;
+    width:    100%;
+    height:   100%;
+    position: absolute;
+    top:      0;
+    left:     0;
+    opacity:  0.1;
+}
+
+.vis-widgets-highlight:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: -webkit-calc(100% - 3px);
+    width: calc(100% - 3px);
+    height: -webkit-calc(100% - 3px);
+    height: calc(100% - 3px);
+    z-index: 997;
+    opacity: 0.3;
+    background: repeating-linear-gradient(
+            135deg,
+            #FFFFFF,
+            #FFFFFF 20px,
+            #000000 20px,
+            #000000 40px
+    );
 }

@@ -12,6 +12,12 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
+/* jshint browser:true */
+/* global _ */
+/* global $ */
+/* global systemDictionary */
+/* global vis:true */
+/* jshint -W097 */// jshint strict:false
 
 'use strict';
 
@@ -29,6 +35,7 @@ $.extend(systemDictionary, {
     }
 });
 vis.createDemoView = function () {
+
     var obj =
     {
         "settings" : {

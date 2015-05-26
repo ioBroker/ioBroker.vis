@@ -1,70 +1,70 @@
 // Init words
+/* jshint -W097 */// jshint strict:false
+/* jshint browser:true */
 
 "use strict";
 
-vis.translate("");
 // Add words for bars
-jQuery.extend(true, systemDictionary, {
-	// Bars
-	"One at time:"     : {"en" : "One at time:",  "de": "Nur eine auswahlbar:","ru": "Только один фильтр:"},
-	"Geometry..."      : {"en" : "Geometry...",   "de": "Geometrie...",        "ru": "Позиция и размер..."},
-	"Show"             : {"en" : "Show",          "de": "Zeigen",              "ru": "Показать"},
-	"Bar type:"        : {"en" : "Bar type:",     "de": "Bartyp:",             "ru": "Тип:"},
-	"Button width:"    : {"en" : "Button width:", "de": "Knopfbreite:",        "ru": "Ширина кнопок:"},
-	"Button height:"   : {"en" : "Button height:","de": "Knopfh&ouml;he:",     "ru": "Высота кнопок:"},
-	"Button space:"    : {"en" : "Button space:", "de": "Zwischenplatz:",      "ru": "Промежуток:"},
-	"Border radius:"   : {"en" : "Border radius:","de": "Randradius:",         "ru": "Радиус закруглений:"},
-	"Text offset %:"   : {"en" : "Text offset %:","de": "Textoffset in %:",    "ru": "Смещение текста в %:"},
-	"Text align:"      : {"en" : "Text align:",   "de": "Textausrichtung:",    "ru": "Позиция текста:"},
-	"Image align:"     : {"en" : "Image align:",  "de": "Bildausrichtung:",    "ru": "Позиция миниатюры:"},
-	"Effects..."       : {"en" : "Effects...",    "de": "Effekte...",          "ru": "Эффекты..."},
-	"Hide effect:"     : {"en" : "Hide effect:",  "de": "Verbergeneffekt:",    "ru": "Исчезновение:"},
-	"Show effect:"     : {"en" : "Show effect:",  "de": "Anzeigeeffekt:",      "ru": "Появление:"},
-	"Test"             : {"en" : "Test",          "de": "Test",                "ru": "Тест"},
-	"Buttons..."       : {"en" : "Buttons...",    "de": "Kn&ouml;pfe",         "ru": "Кнопки..."},
-	"Icon:"            : {"en" : "Icon:",         "de": "Bildchen:",           "ru": "Миниатюра:"},
-	"Caption:"         : {"en" : "Caption:",      "de": "Beschriftung:",       "ru": "Подпись:"},
-	"Filter key:"      : {"en" : "Filter key:",   "de": "Filterwort:",         "ru": "Значение фильтра:"},
-	"Add"              : {"en" : "Add",           "de": "Neu",                 "ru": "Добавить"},
-	"Up"               : {"en" : "Up",            "de": "Nach oben",           "ru": "На верх"},
-	"Down"             : {"en" : "Down",          "de": "Nach unten",          "ru": "Вниз"},
-	"Delete"           : {"en" : "Delete",        "de": "L&ouml;schen",        "ru": "Удалить"},
-	"Horizontal"       : {"en" : "Horizontal",    "de": "Horizontal",          "ru": "Горизонтально"},
-	"Vertical"         : {"en" : "Vertical",      "de": "Senkrecht",           "ru": "Вертикально"},
-	"Docked at top"    : {"en" : "Docked at top", "de": "Angedockt oben",      "ru": "Панель сверху"},
-	"Docked at bottom" : {"en" : "Docked at bottom", "de": "Angedockt unten",  "ru": "Панель снизу"},
-	"Docked at left"   : {"en" : "Docked at left","de": "Angedockt links",     "ru": "Панель слева"},
-	"Docked at right"  : {"en" : "Docked at right","de": "Angedockt rechts",   "ru": "Панель справа"},
-	"Center"           : {"en" : "Center",        "de": "In der MItte",        "ru": "В середине"},
-	"Left"             : {"en" : "Left",          "de": "Links",               "ru": "Слева"},
-	"Right"            : {"en" : "Right",         "de": "Rechts",              "ru": "Справа"}
-});
+if (vis.editMode) {
+    $.extend(true, systemDictionary, {
+        // Bars
+        "bSpace":           {"en": "Button space",      "de": "Zwischenplatz",      "ru": "Промежуток"},
+        "bPosition":        {"en": "Position",          "de": "Position",           "ru": "Расположeние"},
+        "floatHorizontal":  {"en": "Horizontal",        "de": "Horizontal",         "ru": "горизонтально"},
+        "floatVertical":    {"en": "Vertical",          "de": "Senkrecht",          "ru": "вертикально"},
+        "dockTop":          {"en": "Dock at top",       "de": "Angedockt oben",     "ru": "панель сверху"},
+        "dockBottom":       {"en": "Dock at bottom",    "de": "Angedockt unten",    "ru": "панель снизу"},
+        "dockLeft":         {"en": "Dock at left",      "de": "Angedockt links",    "ru": "панель слева"},
+        "dockRight":        {"en": "Dock at right",     "de": "Angedockt rechts",   "ru": "панель справа"},
+        "center":           {"en": "Center",            "de": "In der Mitte",       "ru": "по центру"},
+        "bTheme":           {"en": "Theme",             "de": "Thema",              "ru": "Тема"},
+        "bImageAlign":      {"en": "Image align",       "de": "Bildposition",       "ru": "Позиция картинки"},
+        "bOnlyOneSelected": {"en": "Selected only one", "de": "Nur eine auswahlbar", "ru": "Только один фильтр"},
+        "bStyleNormal":     {"en": "Normal",            "de": "Normal",             "ru": "Нормальное"},
+        "bStyleActive":     {"en": "Active",            "de": "Aktiv",              "ru": "Активное"},
+        "bShowEffect":      {"en": "Show",              "de": "Anzeigen",           "ru": "Показать"},
+        "bShowEffectMs":    {"en": "Show in ms",        "de": "Anzeigen in ms",     "ru": "Показ в мс"},
+        "bHideEffect":      {"en": "Hide",              "de": "Verbergen",          "ru": "Скрыть"},
+        "bHideEffectMs":    {"en": "Hide in ms",        "de": "Verbergen in ms",    "ru": "Скрытие в мс"},
+        "fixed":            {"en": "fixed",             "de": "fest",               "ru": "фиксировано"},
+        "bTest":            {"en": "Test",              "de": "Test",               "ru": "Тест"},
+        "bOpen":            {"en": "Open",              "de": "Open",               "ru": "Открыть"},
+        "bOffset":          {"en": "Text offset %",     "de": "Textabsetzung %",    "ru": "Отступ текста в %"},
+        "bValue":           {"en": "Default value",     "de": "Startwert",          "ru": "Начальное значение"},
+        "bLayout":          {"en": "Layout",            "de": "Layout",             "ru": "Размещение"},
+        "bCount":           {"en": "Buttons count",     "de": "Knopfanzahl",        "ru": "Количество кнопок"},
+        "group_buttons":    {"en": "Button",            "de": "Knopf",              "ru": "Кнопка"},
+        "buttonsImage":     {"en": "Image",             "de": "Bild",               "ru": "Картинка"},
+        "buttonsText":      {"en": "Text",              "de": "Text",               "ru": "Текст"},
+        "buttonsOption":    {"en": "Value",             "de": "Wert",               "ru": "Значение"},
+        "bRadius":          {"en": "Button radius",     "de": "Knopfradius",        "ru": "Радиус закругления"},
+        "bTextAlign":       {"en": "Text align",        "de": "Textposition",       "ru": "Позиция текста"},
+        "group_button_options": {"en": "Button options", "de": "Knopfeinstellungen", "ru": "Опции кнопки"},
+        "group_style":      {"en": "Style",             "de": "Stil",               "ru": "Стиль"},
+        "group_test":       {"en": "Test",              "de": "Test",               "ru": "Тест"},
+        "alwaysOpened":     {"en": "Always opened",     "de": "Immer auf",          "ru": "Всегда открыта"}
+    });
+}
+
 vis.binds.bars = {
-    position : {
-        floatHorizontal: 0,
-        floatVertical:   1,
-        dockTop:         2,
-        dockBottom:      3,
-        dockLeft:        4,
-        dockRight:       5
-    },
     bType : {
         filters:    0,
         navigation: 1
     },
     width: 308, // width of edit fields
     created: [],
-    themes: [{css_class: 'sidebar-dark', name: 'Dark glass'},
-             {css_class: 'sidebar-blue', name: 'Blue glass'},
-             {css_class: 'sidebar-red',  name: 'Red glass'}
+    themes: [{cssClass: 'sidebar-dark', name: 'Dark glass'},
+             {cssClass: 'sidebar-blue', name: 'Blue glass'},
+             {cssClass: 'sidebar-red',  name: 'Red glass'}
              ],
+    
     // Return widget for hqWidgets Button
     getWidgetByObj: function (div) {
-        var visWidget = vis.views[vis.activeView].widgets[div.barsIntern.wid];
+        var visWidget = vis.views[vis.activeView].widgets[barsIntern.wid];
         if (visWidget === undefined) {
             for (var view in vis.views) {
-                if (vis.views[view].widgets[div.barsIntern.wid]) {
-                    visWidget = vis.views[view].widgets[div.barsIntern.wid];
+                if (vis.views[view].widgets[barsIntern.wid]) {
+                    visWidget = vis.views[view].widgets[barsIntern.wid];
                     break;
                 }
             }
@@ -72,311 +72,27 @@ vis.binds.bars = {
 
         return visWidget;
     },
-    // Save settings of this widgets
-    editSave: function (div) {
-        if (div !== undefined) {
-            // Save settings of one widget
-            var newOpt = JSON.stringify(div.barsOptions);
-            //var newOpt = div.barsOptions; TODO
-            var visWidget = vis.binds.bars.getWidgetByObj (div);
-
-            if (visWidget) {
-                visWidget.data['baroptions'] = newOpt;
-                //$(div).attr ('baroptions', newOpt);
-            } else {
-                if (!vis.views[vis.activeView].widgets) {
-                    vis.views[vis.activeView].widgets = {};
-                }
-                if (!vis.views[vis.activeView].widgets[div.barsIntern.wid]) {
-                    vis.views[vis.activeView].widgets[div.barsIntern.wid] = {};
-                }
-                if (!vis.views[vis.activeView].widgets[div.barsIntern.wid].data) {
-                    vis.views[vis.activeView].widgets[div.barsIntern.wid].data = {};
-                }
-                vis.views[vis.activeView].widgets[div.barsIntern.wid].data['baroptions'] = newOpt;
-                //$(div).attr ('baroptions', newOpt);
-            }
-        }
-
-        if (vis.binds.bars.editSaveTimer != null) {
-            clearTimeout(vis.binds.bars.editSaveTimer);
-        }
-
-        vis.binds.bars.editSaveTimer = setTimeout (function () {
-            vis.saveRemote ();
-            console.log ("Saved!");
-            vis.binds.bars.editSaveTimer = null;
-        }, 2000);
-    },
-    _editSliderHandler: function (attr_name, div, min, max) {
-        var elem = document.getElementById ('inspect_' + attr_name);
-        if (elem == null) {
-        } else {
-            elem.ctrlAttr = attr_name;
-            elem.parent   = div;
-            var parent = $('#inspect_' + attr_name);
-            parent.html("<table style='dashui-dashui-no-spaces'><tr style='dashui-dashui-no-spaces'><td style='dashui-dashui-no-spaces'><input type='text' size='3' value='" + div.barsOptions[attr_name] + "' id='inspect_" + attr_name + "_text'></td><td style='dashui-dashui-no-spaces'><div style='width: " + (vis.binds.bars.width - 40) + "px' id='inspect_" + attr_name + "_slider'></div></td></tr></table>");
-
-            var slider = document.getElementById ("inspect_" + attr_name+ "_slider");
-            var text   = document.getElementById ("inspect_" + attr_name+ "_text");
-            slider.jText     = text;
-            slider.ctrl      = div;
-            slider.attr_name = attr_name;
-            text.slider      = slider;
-            text.ctrl        = div;
-            text.attr_name   = attr_name;
-
-            $("#inspect_" + attr_name + "_slider").slider({
-                min: min,
-                max: max,
-                range: "min",
-                value: div.barsOptions[attr_name],
-                slide: function (event, ui) {
-                    var div = this.ctrl;
-                    var attr_name = this.attr_name;
-                    $(this.jText).val(ui.value);
-                    if (div.barsOptions[attr_name] != ui.value) {
-                        div.barsOptions[attr_name] = ui.value;
-                        if (!isNaN(div.barsOptions[attr_name])) {
-                            vis.binds.bars.init(div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                        }
-                    }
-                }
-            });
-            $("#inspect_" + attr_name + "_text").change(function () {
-                this.slider.slider("value", $(this).val());
-            });
-        }
-    },
-    _editSelectHandler: function (attr_name, div, _onPreChange, _onPostChange) {
-        var elem;
-        if ((elem = document.getElementById ('inspect_'+attr_name)) != null) {
-            // Set actual value
-            for (var i = 0; i < elem.options.length; i++)
-                if (elem.options[i].value == div.barsOptions[attr_name]) {
-                    elem.options[i].selected = true;
-                    break;
-                }
-
-            elem.parent   = div;
-            elem.ctrlAttr = attr_name;
-            elem._onPreChange = _onPreChange;
-            elem._onPostChange = _onPostChange;
-            $(elem).change (function () {
-                var div = this.parent;
-                div.barsOptions[this.ctrlAttr] = $(this).prop('value');
-                if (this._onPreChange)
-                    this._onPreChange (div, this.ctrlAttr, div.barsOptions[this.ctrlAttr]);
-                vis.binds.bars.init (div.barsIntern.wid);
-                vis.binds.bars.editSave(div);
-                if (this._onPostChange)
-                    this._onPostChange (div, this.ctrlAttr, div.barsOptions[this.ctrlAttr]);
-            });
-        }
-    },
-    _editTextHandler: function (attr_name, div, i) {
-        var elem;
-        if (((elem = document.getElementById ('inspect_' + attr_name + "" + i)) != null) ||
-            ((elem = document.getElementById ('inspect_' + attr_name)) != null)){
-            elem.parent   = div;
-            elem.ctrlAttr = attr_name;
-            elem.ctrlId   = i;
-            var jeee = $(elem).change (function () {
-                // If really changed
-                var div = this.parent;
-                if (this.ctrlId != -1) {
-                    div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
-                    vis.binds.bars.init (div.barsIntern.wid);
-                }
-                else{
-                    div.barsOptions[this.ctrlAttr] = $(this).prop('value');
-                    vis.binds.bars.init (div.barsIntern.wid);
-                }
-                vis.binds.bars.editSave(div);
-            });
-
-            jeee.keyup (function () {
-                if (this.parent.timer)
-                    clearTimeout (this.parent.timer);
-
-                this.parent.timer = _setTimeout (function(elem_) {
-                    $(elem_).trigger('change');
-                    elem_.parent.timer=null;
-                }, 200, this);
-            });
-
-            var btn = document.getElementById ('inspect_' + attr_name + "" + i + 'Btn');
-            if (btn) {
-                btn.parent   = div;
-                btn.ctrlAttr = attr_name;
-                btn.ctrlId   = i;
-                $(btn).bind("click", {msg: div}, function (event) {
-                    var attr =  this.ctrlAttr+this.ctrlId;
-                    $.fm({
-                        root: "www/",
-                        lang: vis.language ,
-                        path: "www/dashui/img/",
-                        file_filter: ["gif","png", "bmp", "jpg", "jpeg", "tif", "svg"],
-                        folder_filter: false,
-                        mode: "open",
-                        view:"prev"
-                    },function(_data){
-                        var src = _data.path.split("www")[1] + _data.file;
-                        $('#inspect_'+attr).val(src).trigger("change");
-                    });
-                });
-            }
-        }
-    },
-    _editTextAutoCompleteHandler: function (attr_name, div, _sourceFnc) {
-            // auto complete for class key
-            var elem = document.getElementById ('inspect_' + attr_name);
-            if (elem) {
-                elem.ctrlAttr = attr_name;
-                elem.ctrl = div;
-
-                elem._save = function () {
-                    if (this.timer)
-                        clearTimeout (this.timer);
-
-                    this.timer = _setTimeout (function(elem_) {
-                        var div = elem_.ctrl;
-                         // If really changed
-                        div._oldAttr = div.barsOptions[elem_.ctrlAttr];
-                        div.barsOptions[elem_.ctrlAttr] = $(elem_).prop('value');
-                        vis.binds.bars.init (div.barsIntern.wid);
-                        vis.binds.bars.editSave(div);
-                    }, 200, this);
-                };
-
-                $(elem).autocomplete({
-                    minLength: 0,
-                    source: _sourceFnc,
-                    select: function (event, ui){
-                        this._save();
-                    },
-                    change: function (event, ui) {
-                        this._save();
-                    }
-                }).focus(function () {
-                    $(this).autocomplete("search", "");
-                }).keyup (function () {
-                    this._save();
-                });
-            }
-    },
-    _editCheckboxHandler: function (attr_name, div) {
-        var elem;
-        if ((elem = document.getElementById ('inspect_'+attr_name)) != null) {
-            elem.ctrl     = div;
-            elem.ctrlAttr = attr_name;
-
-            $(elem).change (function () {
-                var div = this.ctrl;
-                div.barsOptions[this.ctrlAttr] = $(this).prop('checked');
-                vis.binds.bars.init (div.barsIntern.wid);
-                vis.binds.bars.editSave(div);
-            });
-        }
-    },
-    _editStyleHandler: function (attr_name, div, filterFile, filterName, filterAttrs) {
-        var elem;
-        if ((elem = document.getElementById ('inspect_'+attr_name+'Parent')) != null) {
-            elem.ctrl     = div;
-            elem.ctrlAttr = attr_name;
-            if (vis.styleSelect) {
-                vis.styleSelect.Show ({ width: 180,
-                    name:          'inspect__'+attr_name,
-                    style:         div.barsOptions[elem.ctrlAttr],
-                    parent:        $('#inspect_'+attr_name+'Parent'),
-                    filterFile:    filterFile,
-                    filterName:    filterName,
-                    filterAttrs:   filterAttrs,
-                    onchangeParam: elem,
-                    onchange: function (newStyle, obj) {
-                        var div_ = obj.ctrl;
-                        // If really changed
-                        if (div_.barsOptions[obj.ctrlAttr] != newStyle) {
-                            div_.barsOptions[obj.ctrlAttr] = newStyle;
-
-                            if (div_.barsOptions[obj.ctrlAttr] == "")
-                                div_.barsOptions[obj.ctrlAttr] = null;
-
-                            vis.binds.bars.init (div_.barsIntern.wid);
-                            vis.binds.bars.editSave(div_);
-                        }
-                    }
-                });
-            }
-            else {
-                // set here just textbox to input desired style
-            }
-        }
-    },
-    _showGroupButton: function (groupName, div) {
-        var advBtn = document.getElementById (groupName + '_BtnGroup');
-        advBtn.obj       = div;
-        advBtn.groupName = groupName;
-        advBtn.state = (vis.visibility) ? vis.visibility[groupName] : false;
-
-        $(advBtn).button({icons: {primary: (!advBtn.state) ?  "ui-icon-carat-1-s" : "ui-icon-carat-1-n"}}).click(function( event ) {
-            this.state = !(this.state);
-            if (!vis.visibility) {
-                vis.visibility = {};
-            }
-            vis.visibility[this.groupName] = this.state;
-            if (this.state) {
-                $(this).button("option", {icons: { primary: "ui-icon-carat-1-n" }});
-                var i = 0;
-                var btn_;
-                while (btn_ = document.getElementById (this.groupName + "" + i)) {
-                    $(btn_).show();
-                    i++;
-                }
-            }
-            else {
-                $(this).button("option", {icons: { primary: "ui-icon-carat-1-s" }});
-                var i = 0;
-                var btn__;
-                while (btn__ = document.getElementById (this.groupName + "" + i)) {
-                    $(btn__).hide();
-                    i++;
-                }
-            }
-        });
-        if (!advBtn.state) {
-            // Hide all
-            var i = 0;
-            var btn___;
-            while (btn___ = document.getElementById (groupName + "" + i)) {
-                $(btn___).hide();
-                i++;
-            }
-        }
-    },
     drawButton: function (wid, i, opt) {
-        var style="style='"+(opt.bWidth ? ("width:"+opt.bWidth+"px;") : "")+(opt.bHeight ? ("height:"+opt.bHeight+"px;") : "") + "'";
+        //var style = "style='" + (opt.bWidth ? ("width:" + opt.bWidth + "px;") : "") + (opt.bHeight ? ("height:" + opt.bHeight + "px;") : "") + "'";
+        var style = 'style="height:100%"';//'style="height:100%; width: 100%"';
         var cssClass = opt.bStyleNormal;
-        if (!cssClass || cssClass == "") {
-            cssClass = 'ui-state-default ui-button ui-widget';
-        }
+        cssClass = cssClass || 'ui-state-default ui-button ui-widget';
 
-
-        var text = "<div id='"+wid+"_btn"+i+"' "+style+" class='"+cssClass+"'>\n";
-        var isTable = true || (opt.buttons[i].image && opt.buttons[i].text);
+        var text = "<div id='" + wid + "_btn" + i + "' " + style + " class='" + cssClass + "'>\n";
+        var isTable = true || (opt['buttonsImage' + i] && opt['buttonsText' + i]);
         if (isTable) {
-            text += "<table "+style+" class='dashui-no-spaces'><tr style='width:100%;height:100%' class='dashui-no-spaces'>\n";
-            text += "<td class='dashui-no-spaces' style='width:"+opt.bOffset+"%; vertical-align: bottom; text-align: "+opt.bImageAlign+"'>\n";
+            text += '<table style="height:100%;width:100%" class="vis-no-spaces"><tr style="width:100%;height:100%" class="vis-no-spaces">\n';
+            text += "<td class='vis-no-spaces' style='width:" + opt.bOffset + "%; vertical-align: middle; text-align: " + opt.bImageAlign + "'>\n";
         }
-        if (opt.buttons[i].image) {
-            text += "<img class='dashui-no-spaces' src='"+((opt.buttons[i].image.indexOf("/") != -1) ? opt.buttons[i].image : "img/" + opt.buttons[i].image) +"' style='"+(opt.bWidth ? ("max-width:"+(opt.bWidth - 5)+"px;") : "")+(opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
+        if (opt['buttonsImage' + i]) {
+            text += "<img class='vis-no-spaces' src='" + ((opt['buttonsImage' + i].indexOf("/") !== -1) ?
+                    opt['buttonsImage' + i] : "img/" + opt['buttonsImage' + i]) +"' style='" + (opt.bWidth ? ("max-width:" + (opt.bWidth - 5) + "px;") : "") + (opt.bHeight ? ("max-height:"+(opt.bHeight - 5)+"px;") : "") + "' />\n";
         }
         if (isTable) {
-            text += "</td><td class='dashui-no-spaces' style='width:"+(100 - opt.bOffset)+"%; text-align: "+opt.bTextAlign+"'>\n";
+            text += "</td><td class='vis-no-spaces' style='width:" + (100 - opt.bOffset) + "%; text-align: " + opt.bTextAlign+"'>\n";
         }
-        if (opt.buttons[i].text) {
-            text += "<span style='text-align: "+opt.bTextAlign+"'>" + opt.buttons[i].text + "</span>\n";
+        if (opt['buttonsText' + i]) {
+            text += "<span style='text-align: " + opt.bTextAlign + "'>" + opt['buttonsText' + i] + "</span>\n";
         }
         if (isTable) {
             text += "</td></tr></table>\n";
@@ -384,152 +100,75 @@ vis.binds.bars = {
         text += "</div>\n";
         return text;
     },
-    draw: function(div, jDiv) {
-        var isHorizontal = (div.barsOptions.position == vis.binds.bars.position.floatHorizontal ||
-            div.barsOptions.position == vis.binds.bars.position.dockTop ||
-            div.barsOptions.position == vis.binds.bars.position.dockBottom);
+    draw: function($div) {
+        var barsOptions = $div.data('barsOptions');
+        var barsIntern  = $div.data('barsIntern');
 
-        var w,h,text="";
-        if (isHorizontal) {
-            w = div.barsOptions.bWidth * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1);
-            h = div.barsOptions.bHeight + 4;
-        }
-        else  {
-            h = div.barsOptions.bHeight * div.barsOptions.buttons.length + div.barsOptions.bSpace * (div.barsOptions.buttons.length - 1) + 15;
-            w = div.barsOptions.bWidth + 4;
-        }
+        var isHorizontal = (barsOptions.bPosition === 'floatHorizontal' ||
+                            barsOptions.bPosition === 'dockTop' ||
+                            barsOptions.bPosition === 'dockBottom');
 
-        text += '<table style="width:' + w + 'px; height:' + h + 'px" class="dashui-no-spaces">';
+        $('#jquerySideBar_' + barsIntern.wid).remove();
+
+        var text = '';
+        var calc = (barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
+        text += '<table style="width:' + calc + '; height: ' + calc + '; ' + (barsOptions.bLayout === 'fixed' ? 'table-layout: fixed' : '') + '" class="vis-no-spaces">';
         if (isHorizontal) {
-            text += "<tr class='dashui-no-spaces' style='height:" + div.barsOptions.bHeight + "px'>";
-            for (var d = 0; d < div.barsOptions.buttons.length; d++) {
-                text += "<td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, d, div.barsOptions) + "</td>";
-                                   if (div.barsOptions.bSpace && d != div.barsOptions.buttons.length - 1)
-                                       text += "<td class='dashui-no-spaces' style='width:"+div.barsOptions.bSpace+"px'></td>";
+            text += '<tr class="vis-no-spaces">';
+            for (var d = 1; d <= barsOptions.bCount; d++) {
+               text += '<td class="vis-no-spaces">' + this.drawButton(barsIntern.wid, d, barsOptions) + '</td>';
+
+                if (barsOptions.bSpace && d != barsOptions.bCount){
+                   text += '<td class="vis-no-spaces" style="width:' + barsOptions.bSpace + 'px"></td>';
+               }
             }
-            text += "</tr>";
+            text += '</tr>';
         }
         else { // vertical
-            for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-                text += "<tr class='dashui-no-spaces'  style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bHeight+"px;width:"+div.barsOptions.bWidth+"px'>" + this.drawButton (div.barsIntern.wid, i, div.barsOptions) + "</td></tr>";
-                if (div.barsOptions.bSpace && i != div.barsOptions.buttons.length - 1)
-                    text += "<tr class='dashui-no-spaces'><td class='dashui-no-spaces' style='height:"+div.barsOptions.bSpace+"px'></td></tr>";
+            for (var i = 1; i <= barsOptions.bCount; i++) {
+                text += "<tr class='vis-no-spaces'><td class='vis-no-spaces'>" +
+                    this.drawButton(barsIntern.wid, i, barsOptions) + "</td></tr>";
+
+                if (barsOptions.bSpace && i != barsOptions.bCount) {
+                    text += "<tr class='vis-no-spaces'><td class='vis-no-spaces' style='height:" + barsOptions.bSpace + "px'></td></tr>";
+                }
             }
         }
         text += "</table>";
 
-        jDiv.html (text);
-        jDiv.css ({width: w, height: h});
-        var elem = document.getElementById (div.barsIntern.wid+"_button");
-        if (elem) {
-            elem.ctrlId = div.barsIntern.wid;
-            $('#'+div.barsIntern.wid+"_button").button ({
-              icons: {
-                primary: "ui-icon-carat-1-n"
-              },
-              text: false
-            }).click (function () {
-                var j = $("#"+this.ctrlId+"_content");
-                if (j.css ('display') == 'none') {
-                    $('#'+this.ctrlId+"_button").button ('option', {icons: {primary: "ui-icon-carat-1-s"}});
-                } else {
-                    $('#'+this.ctrlId+"_button").button ('option', {icons: {primary: "ui-icon-carat-1-n"}});
-                }
-                j.slideToggle("slow");
+        $div.html(text).css({'border-radius': 0, padding: 0});
+
+        for (var u = 1; u <= barsOptions.bCount; u++) {
+            var $htmlBtn = $('#' + barsIntern.wid + '_btn' + u);
+            $htmlBtn.data('ctrl', {div: $div[0], id: u});
+
+            $htmlBtn.css({borderRadius: barsOptions.bRadius + 'px'});
+
+            $htmlBtn.click(function () {
+                var div__ = $(this).data('ctrl').div;
+                var onClick = $(div__).data('onClick');
+                if (onClick) onClick(this, div__, $(this).data('ctrl').id);
             });
         }
 
-        var hMax = 0;
-        var wMax = 0;
-        for (var b = 0; b < div.barsOptions.buttons.length; b++) {
-            var btn = $('#'+div.barsIntern.wid+"_btn"+b);
-            //btn.button();
-            if (hMax < btn.height()) {
-                hMax = btn.height();
-            }
-            if (wMax < btn.width()) {
-                wMax = btn.width();
-            }
-        }
-        if (wMax != 0 && hMax != 0) {
-            for (var u = 0; u < div.barsOptions.buttons.length; u++) {
-                var html_btn = document.getElementById (div.barsIntern.wid+"_btn"+u);
-                html_btn.ctrl = div;
-                html_btn.ctrlId = u;
-                var btn_ = $(html_btn);
-                btn_.width(wMax);
-                btn_.height(hMax);
-                btn_.css ({'border-radius': div.barsOptions.bRadius});
-                btn_.hover (function () {
-                    var div__ = this.ctrl;
-                    if (this._state === 1) {
-                        if (div__.barsOptions.bStyleActiveHover) {
-                            $(this).removeClass (div__.barsOptions.bStyleActive);
-                            $(this).removeClass (div__.barsOptions.bStyleNormal);
-                            $(this).addClass (div__.barsOptions.bStyleActiveHover);
-                        } else if (div__.barsOptions.bStyleNormalHover) {
-                            $(this).removeClass (div__.barsOptions.bStyleActive);
-                            $(this).removeClass (div__.barsOptions.bNormalActive);
-                            $(this).addClass (div__.barsOptions.bStyleNormalHover);
-                        } else {
-                            $(this).addClass ('ui-state-hover');
-                        }
-                    }else  {
-                        if (div__.barsOptions.bStyleNormalHover) {
-                            $(this).removeClass (div__.barsOptions.bStyleActive);
-                            $(this).removeClass (div__.barsOptions.bStyleNormal);
-                            $(this).addClass (div__.barsOptions.bStyleNormalHover);
-                        } else {
-                            $(this).addClass ('ui-state-hover');
-                        }
-                    }
-                },
-                function () {
-                    var div__ = this.ctrl;
-                    $(this).removeClass ('ui-state-hover');
-                    $(this).removeClass (div__.barsOptions.bStyleActiveHover);
-                    $(this).removeClass (div__.barsOptions.bStyleNormalHover);
-
-                    if (this._state === 1) {
-                        if (div__.barsOptions.bStyleActive) {
-                            $(this).removeClass (div__.barsOptions.bStyleNormalHover);
-                            $(this).removeClass (div__.barsOptions.bStyleActiveHover);
-                            $(this).removeClass (div__.barsOptions.bStyleNormal);
-                            $(this).addClass (div__.barsOptions.bStyleActive);
-                        }
-                    }else  {
-                        if (div__.barsOptions.bStyleNormal) {
-                            $(this).removeClass (div__.barsOptions.bStyleActiveHover);
-                            $(this).removeClass (div__.barsOptions.bStyleNormalHover);
-                            $(this).addClass (div__.barsOptions.bStyleNormal);
-                        }
-                    }
-                });
-                btn_.click (function () {
-                    if (this.ctrl._onClick)
-                        this.ctrl._onClick (this, this.ctrl, this.ctrlId)
-                });
-            }
-        }
-
-        jDiv.css ({'border-radius': 0, padding: 0});
-
         // Remove previous class
-        if (div._oldAttr)
-            jDiv.removeClass(div._oldAttr);
+        //if (div._oldAttr) $div.removeClass(div._oldAttr);
 
-        if (div.barsOptions.position == vis.binds.bars.position.floatHorizontal ||
-            div.barsOptions.position == vis.binds.bars.position.floatVertical) {
-            jDiv.css ({'position':'absolute'});
+        if (barsOptions.bPosition === 'floatHorizontal' ||
+            barsOptions.bPosition === 'floatVertical') {
+            $('#' + barsIntern.wid).show();
+            $div.css({'position': 'absolute'});
 
             for (var q = 0; q < vis.binds.bars.themes.length; q++) {
-                jDiv.removeClass(vis.binds.bars.themes[q].css_class);
+                $div.removeClass(vis.binds.bars.themes[q].cssClass);
             }
-            if (div.barsOptions.bTheme != "") {
-                jDiv.addClass(div.barsOptions.bTheme);
-                jDiv.css ({'border-radius': 10, padding: 15});
+            if (barsOptions.bTheme) {
+                $div.addClass(barsOptions.bTheme);
+                $div.css({'border-radius': 10, padding: barsOptions.bSpace});
+                $div.parent().css({'border-radius': 10});
             }
-            else {
+            if (vis.editMode && vis.activeWidgets.indexOf(barsIntern.wid) !== -1) {
+                vis.showWidgetHelper(barsIntern.wid, true);
             }
         }
         else {
@@ -538,607 +177,214 @@ vis.binds.bars = {
                 return;
             }
 
-            jDiv.css ({left: 'auto', top: 'auto'});
-            var position = "bottom";
-            if (div.barsOptions.position == vis.binds.bars.position.dockTop) position = "top";
-            else
-            if (div.barsOptions.position == vis.binds.bars.position.dockLeft) position = "left";
-            else
-            if (div.barsOptions.position == vis.binds.bars.position.dockRight) position = "right";
+            $div.css({left: 'auto', top: 'auto'});
+            var position;
 
-            div.sidebar = jDiv.sidebar({position: position, width: jDiv.width() + 20, height: jDiv.height() + 20, open:"click", id: div.barsIntern.wid, root: $('#visview_' + div.barsIntern.view)});
-            $('#jquerySideBar_'+div.barsIntern.wid).addClass(div.barsOptions.bTheme);
-        }
-    },
-    editButton: function (div, i, isInit) {
-        var sText = "";
-        var iBtnCount = 0;
-        if (!isInit) {
-            sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td colspan=2 class='bars_line'></td></tr>";
-            // Image
-            sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Icon:")+"</td><td>";
-            sText += "<input id='inspect_image"+i+"' style='width: "+(vis.binds.bars.width - 30)+"px' type='text' value='"+(div.barsOptions.buttons[i].image || "")+"'>";
-            sText += "<input id='inspect_image"+i+"Btn' style='width: 30px' type='button' value='...'>";
-            sText += "</td></tr>";
-
-            // Name
-            sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Caption:") +"</td><td><input style='width: "+vis.binds.bars.width+"px' id='inspect_text"+i+"' type='text' value='"+(div.barsOptions.buttons[i].text || "")+"'></td></tr>";
-
-            // option
-            if (div.barsIntern.wType == 'tplBarFilter') {
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Filter key:") +"</td><td><input style='width: "+vis.binds.bars.width+"px' id='inspect_option"+i+"' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
+            switch(barsOptions.bPosition) {
+                case 'dockTop':
+                    position = "top";
+                    break;
+                case 'dockLeft':
+                    position = "left";
+                    break;
+                case 'dockRight':
+                    position = "right";
+                    break;
+                default:
+                    position = "bottom";
+                    break;
             }
-            else
-            if (div.barsIntern.wType == 'tplBarNavigator') {
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td>"+ vis.translate("View name:") +"</td><td><input style='width: "+vis.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
-            }
-            else{
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Option:") +"</td><td><input style='width: "+vis.binds.bars.width+"px' id='inspect_option"+i+"' type='text' value='"+(div.barsOptions.buttons[i].option || "")+"'></td></tr>";
-            }
+            var w = $div.width();
+            var h = $div.height();
+            $div.css({width: w, height: h});
 
-            if (div.barsOptions.buttons.length > 1) {
-                sText += "<tr id='idButtons"+(i*5+(iBtnCount++))+"'><td class='dashui-edit-td-caption'></td><td>";
-                sText += "<table class='no-space'><tr class='no-space'>";
-                sText +="<td style='width:90px' class='no-space'><button id='barsDel"+i+"' style='height: 30px'>"+vis.translate('Delete')+"</button></td>";
-                if (i > 0) {
-                    sText +="<td style='width:90px;text-align: center' class='no-space'><button id='barsUp" +i+"' style='height: 30px'>"+/*vis.translate('Up')*/""+"</button></td>";
-                }else {
-                    sText +="<td style='width:90px' class='no-space'></td><td style='width:90px' class='no-space'></td>";
-                }
-
-                sText +="<td style='width:90px' class='no-space'>";
-                if (i != div.barsOptions.buttons.length - 1) {
-                    sText +="<button id='barsDown" +i+"' style='height: 30px'>"+/*vis.translate('Down')*/""+"</button>";
-                }
-                sText +="</td>";
-
-
-                sText += "</tr></table></td></tr>";
-            }
-
-        }
-        else {
-            vis.binds.bars._editTextHandler ("image",  div, i);
-            vis.binds.bars._editTextHandler ("text",   div, i);
-            if (div.barsIntern.wType == 'tplBarFilter') {
-                var elem = document.getElementById ('inspect_option'+i);
-                if (elem) {
-                    elem.parent   = div;
-                    elem.ctrlAttr = 'option';
-                    elem.ctrlId   = i;
-
-                    $(elem).autocomplete({
-                        minLength: 0,
-                        source: function(request, response) {
-                            var data = $.grep(vis.views[vis.activeView].filterList, function(value) {
-                                return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                            });
-
-                            response(data);
-                        },
-                        select: function (event, ui){
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = ui.item.value;
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                        },
-                        change: function (event, ui) {
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                        }
-                    }).focus(function () {
-                        $(this).autocomplete("search", "");
-                    }).keyup (function () {
-                        if (this.parent.timer)
-                            clearTimeout (this.parent.timer);
-
-                        this.parent.timer = _setTimeout (function(elem_) {
-                             // If really changed
-                            var div = elem_.parent;
-                            div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                            elem_.parent.timer=null;
-                        }, 200, this);
-                    });
-                }
-            }
-            else
-            if (div.barsIntern.wType == 'tplBarNavigator') {
-                var elem = document.getElementById ('inspect_option'+i);
-                if (elem) {
-                    elem.parent   = div;
-                    elem.ctrlAttr = 'option';
-                    elem.ctrlId   = i;
-
-                    $(elem).autocomplete({
-                        minLength: 0,
-                        source: function(request, response) {
-                            var views = [];
-                            for (var v in vis.views) {
-                                views[views.length] = v;
-                            }
-                            var data = $.grep(views, function(value) {
-                                return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                            });
-
-                            response(data);
-                        },
-                        select: function (event, ui){
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = ui.item.value;
-                            if (!div.barsOptions.buttons[this.ctrlId]['text']) {
-                                var s = div.barsOptions.buttons[this.ctrlId][this.ctrlAttr];
-                                div.barsOptions.buttons[this.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-                                $("#inspect_text"+this.ctrlId).val(div.barsOptions.buttons[this.ctrlId]['text']).trigger("change");
-                            }
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                        },
-                        change: function (event, ui) {
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions.buttons[this.ctrlId][this.ctrlAttr] = $(this).prop('value');
-                            if (!div.barsOptions.buttons[this.ctrlId]['text']) {
-                                var s = div.barsOptions.buttons[this.ctrlId][this.ctrlAttr];
-                                div.barsOptions.buttons[this.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-                                $("#inspect_text"+this.ctrlId).val(div.barsOptions.buttons[this.ctrlId]['text']).trigger("change");
-                            }
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                        }
-                    }).focus(function () {
-                        $(this).autocomplete("search", "");
-                    }).keyup (function () {
-                        if (this.parent.timer)
-                            clearTimeout (this.parent.timer);
-
-                        this.parent.timer = _setTimeout (function(elem_) {
-                             // If really changed
-                            var div = elem_.parent;
-                            div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr] = $(elem_).prop('value');
-                            if (!div.barsOptions.buttons[elem_.ctrlId]['text']) {
-                                var s = div.barsOptions.buttons[elem_.ctrlId][elem_.ctrlAttr];
-                                div.barsOptions.buttons[elem_.ctrlId]['text'] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-                                $("#inspect_text"+elem_.ctrlId).val(div.barsOptions.buttons[elem_.ctrlId]['text']).trigger("change");
-                            }
-                            vis.binds.bars.init (div.barsIntern.wid);
-                            vis.binds.bars.editSave(div);
-                            elem_.parent.timer=null;
-                        }, 200, this);
-                    });
-                }
-            }
-            else {
-                vis.binds.bars._editTextHandler ("option", div, i);
-            }
-
-            // Use delete button
-            var btn = $('#barsDel'+i);
-            if (btn) {
-                btn.button({icons: {primary: "ui-icon ui-icon-circle-close"}});
-                var htmlbtn4 = document.getElementById ('barsDel'+i);
-                if (htmlbtn4) {
-                    htmlbtn4.parent = div;
-                    htmlbtn4.ctrlId = i;
-                }
-                btn.click (function () {
-                    var div = this.parent;
-                    for (var i = this.ctrlId; i < div.barsOptions.buttons.length - 1; i++){
-                        div.barsOptions.buttons[i] = div.barsOptions.buttons[i + 1];
-                    }
-                    div.barsOptions.buttons.length = div.barsOptions.buttons.length - 1;
-                    vis.binds.bars.init (div.barsIntern.wid);
-                    vis.binds.bars.edit (div.barsIntern.wid, div.barsIntern.editParent);
-                    vis.binds.bars.editSave(div);
-                    vis.inspectWidget (div.barsIntern.wid);
-                });
-            }
-            btn = $('#barsUp'+i);
-            if (btn) {
-                btn.button( {icons: {primary: "ui-icon-arrowthick-1-n"}});
-                var htmlbtn_ = document.getElementById ('barsUp'+i);
-                if (htmlbtn_) {
-                    htmlbtn_.parent = div;
-                    htmlbtn_.ctrlId = i;
-                }
-                btn.click (function () {
-                    var div = this.parent;
-                    var temp = div.barsOptions.buttons[i - 1];
-                    div.barsOptions.buttons[i - 1] = div.barsOptions.buttons[i];
-                    div.barsOptions.buttons[i] = temp;
-                    vis.binds.bars.init (div.barsIntern.wid);
-                    vis.binds.bars.edit (div.barsIntern.wid, div.barsIntern.editParent);
-                    vis.binds.bars.editSave(div);
-                });
-            }
-            btn = $('#barsDown'+i);
-            if (btn) {
-                btn.button({icons: {primary: "ui-icon-arrowthick-1-s"}});
-                var htmlbtn = document.getElementById ('barsDown'+i);
-                if (htmlbtn) {
-                    htmlbtn.parent = div;
-                    htmlbtn.ctrlId = i;
-                }
-                btn.click (function () {
-                    var div = this.parent;
-                    var temp = div.barsOptions.buttons[i + 1];
-                    div.barsOptions.buttons[i + 1] = div.barsOptions.buttons[i];
-                    div.barsOptions.buttons[i] = temp;
-                    vis.binds.bars.init (div.barsIntern.wid);
-                    vis.binds.bars.edit (div.barsIntern.wid, div.barsIntern.editParent);
-                    vis.binds.bars.editSave(div);
-                });
-            }
-        }
-        return sText;
-    },
-    edit: function (wid, jParent) {
-        var div  = document.getElementById (wid);
-        if (div.barsOptions) {
-            div.barsIntern.editParent = jParent;
-            var sText = "<table id='barsEditElements' style='width:100%'>";
-            sText += "<tr><td class='dashui-edit-td-caption'>"+vis.translate("Theme:")+"</td><td class='dashui-edit-td-field'><input type='text' id='inspect_bTheme' value='"+(div.barsOptions.bTheme || "") + "' size='44' /></td></tr>";
-
-            if (div.barsIntern.wType == 'tplBarFilter') {
-                sText += "<tr><td class='dashui-edit-td-caption'>"+ vis.translate("One at time:")+"</td><td class='dashui-edit-td-field'><input id='inspect_bOnlyOneSelected' type='checkbox' "+((div.barsOptions.bOnlyOneSelected ) ? "checked" : "")+"></td></tr>";
-                sText += "<tr><td class='dashui-edit-td-caption'>"+ vis.translate("Initial filter:")+"</td><td class='dashui-edit-td-field'><input id='inspect_bValue' type='text' size='44' value='"+(div.barsOptions.bValue || "") + "'></td></tr>";
-            }
-
-            var iGeomCount = 0;
-            sText += "<tr><td colspan=2><button id='idGeometry_BtnGroup' class='dashui-group-button-width'>"+vis.translate("Geometry...")+"</button></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Bar type:")+"</td><td class='dashui-edit-td-field'><select id='inspect_position' style='width: "+vis.binds.bars.width+"px'>";
-            sText += "<option value='0'>" +vis.translate("Horizontal")+"</option>";
-            sText += "<option value='1'>" +vis.translate("Vertical")+"</option>";
-            sText += "<option value='2'>" +vis.translate("Docked at top")+"</option>";
-            sText += "<option value='3'>" +vis.translate("Docked at bottom")+"</option>";
-            sText += "<option value='4'>" +vis.translate("Docked at left")+"</option>";
-            sText += "<option value='5'>" +vis.translate("Docked at right")+"</option>";
-            sText += "</select></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'></td><td class='dashui-edit-td-field'><input id='inspect_barShow' type='button' value='"+vis.translate("Show")+"'></td></tr>";
-
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Button width:")+"</td><td id='inspect_bWidth' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Button height:")+"</td><td id='inspect_bHeight' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Button space:")+"</td><td id='inspect_bSpace' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Border radius:")+"</td><td id='inspect_bRadius' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Text offset %:")+"</td><td id='inspect_bOffset' class='dashui-edit-td-field dashui-no-spaces'></td></tr>";
-
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Image align:")+"</td><td><select id='inspect_bImageAlign' style='width: "+vis.binds.bars.width+"px'>";
-            sText += "<option value='center'>" +vis.translate("Center")+"</option>";
-            sText += "<option value='left'>"   +vis.translate("Left")+"</option>";
-            sText += "<option value='right'>"  +vis.translate("Right")+"</option>";
-            sText += "</select></td></tr>";
-
-            sText += "<tr id='idGeometry"+(iGeomCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Text align:")+"</td><td><select id='inspect_bTextAlign' style='width: "+vis.binds.bars.width+"px'>";
-            sText += "<option value='center'>" +vis.translate("Center")+"</option>";
-            sText += "<option value='left'>"   +vis.translate("Left")+"</option>";
-            sText += "<option value='right'>"  +vis.translate("Right")+"</option>";
-            sText += "</select></td></tr>";
-
-            // Styles
-            var iStyleCount = 0;
-            sText += "<tr><td colspan=2><button id='idStyle_BtnGroup' class='dashui-group-button-width'>"+vis.translate("Styles...")+"</button></td></tr>";
-            sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Normal:")+"</td><td id='inspect_bStyleNormalParent' ></td></tr>";
-            sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Normal hover:")+"</td><td id='inspect_bStyleNormalHoverParent' ></td></tr>";
-            sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Active:")+"</td><td id='inspect_bStyleActiveParent'></td></tr>";
-            sText += "<tr id='idStyle"+(iStyleCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Active hover:")+"</td><td id='inspect_bStyleActiveHoverParent' ></td></tr>";
-
-
-            // Add effects for filters
-            if (div.barsIntern.wType == 'tplBarFilter' ||
-                div.barsIntern.wType == 'tplBarNavigator') {
-                var iEffectsCount = 0;
-                vis.updateFilter();
-                sText += "<tr><td colspan=2><button id='idEffect_BtnGroup' class='dashui-group-button-width'>"+vis.translate("Effects...")+"</button></td></tr>";
-                sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Hide effect:")+"</td><td><select id='inspect_bHideEffect' style='width: "+(vis.binds.bars.width - 40)+"px'>";
-                var sEffects = "";
-                sEffects += "<option value=''>Show/Hide</option>";
-                //sEffects += "<option value='show'>Show/Hide</option>";
-                sEffects += "<option value='blind'>Blind</option>";
-                sEffects += "<option value='bounce'>Bounce</option>";
-                sEffects += "<option value='clip'>Clip</option>";
-                sEffects += "<option value='drop'>Drop</option>";
-                sEffects += "<option value='explode'>Explode</option>";
-                sEffects += "<option value='fade'>Fade</option>";
-                sEffects += "<option value='fold'>Fold</option>";
-                sEffects += "<option value='highlight'>Highlight</option>";
-                sEffects += "<option value='puff'>Puff</option>";
-                sEffects += "<option value='pulsate'>Pulsate</option>";
-                sEffects += "<option value='scale'>Scale</option>";
-                sEffects += "<option value='shake'>Shake</option>";
-                sEffects += "<option value='size'>Size</option>";
-                sEffects += "<option value='slide'>Slide</option>";
-                //sEffects += "<option value='transfer'>Transfer</option>";
-                sText += sEffects + "</select><input id='inspect_bHideEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";
-
-                sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'>"+ vis.translate("Show effect:")+"</td><td><select id='inspect_bShowEffect' style='width: "+(vis.binds.bars.width - 40)+"px'>";
-                sText += sEffects + "</select><input id='inspect_bShowEffectMs' value='"+div.barsOptions.bShowEffectMs+"' style='width:40px'></td></tr>";
-
-                sText += "<tr id='idEffect"+(iEffectsCount++)+"'><td class='dashui-edit-td-caption'></td><td><input id='inspect_test' type='button' value='"+vis.translate("Test")+"'></td></tr>";
-
-            }
-
-
-            sText += "<tr><td colspan=2><button id='idButtons_BtnGroup' class='dashui-group-button-width'>"+vis.translate("Buttons...")+"</button></td></tr>";
-
-            for (var m = 0; m < div.barsOptions.buttons.length; m++) {
-                sText += vis.binds.bars.editButton (div, m);
-            }
-            sText += "<tr id='idButtons"+(div.barsOptions.buttons.length*5)+"'><td class='dashui-edit-td-caption'><button id='barsAdd' >"+vis.translate("Add")+"</button></td></tr></table>";
-            $('#barsEditElements').remove ();
-            jParent.append (sText);
-
-            for (var n = 0; n < div.barsOptions.buttons.length; n++) {
-                sText += vis.binds.bars.editButton (div, n, true);
-            }
-            vis.binds.bars._editSelectHandler ('position', div, function (div, ctrlAttr, val) {
-                if (val > 1) {
-                    $('#inspect_css_left').val("auto").trigger("change");
-                    $('#inspect_css_top').val("auto").trigger("change");
-                }
-                $('#inspect_barShow').button((div.barsOptions.position == vis.binds.bars.position.floatHorizontal ||
-                                              div.barsOptions.position == vis.binds.bars.position.floatVertical) ? "disable" : "enable");
-            },
-            function (div, ctrlAttr, val) {
-                vis.inspectWidget (div.barsIntern.wid);
+            $div.sidebar({
+                position: position,
+                width:    $div.width()  + ((position == 'top' || position == 'bottom') ? 20 : 10),
+                height:   $div.height() + ((position == 'top' || position == 'bottom') ? 10 : 20),
+                open:     'click',
+                close:    (barsOptions.alwaysOpened) ? 'none': undefined,
+                id:       barsIntern.wid,
+                root:     $('#visview_' + barsIntern.view)
             });
 
-            document.getElementById ('barsAdd').parent = div;
-            $('#barsAdd').button({icons : {primary :'ui-icon-circle-plus'}}).click (function () {
-                var div = this.parent;
-                div.barsOptions.buttons[div.barsOptions.buttons.length] = {"image": "", "text": "Caption", "option": ""};
-                vis.binds.bars.init (div.barsIntern.wid);
-                vis.binds.bars.edit (div.barsIntern.wid, div.barsIntern.editParent);
-                vis.binds.bars.editSave(div);
-                vis.inspectWidget (div.barsIntern.wid);
-            });
+            if (barsOptions.alwaysOpened) $div.sidebar('open');
 
-            // autocomplete for class key
-            vis.binds.bars._editTextAutoCompleteHandler ('bTheme', div, function(request, response) {
-                var classes = [];
-                for (var i = 0; i < vis.binds.bars.themes.length; i++){
-                    classes[i] = vis.binds.bars.themes[i].css_class;
+            if (0 && barsOptions.bTest && vis.editMode) {
+
+                // Remove test flag
+                vis.widgets[barsIntern.wid].data['bTest'] = false;
+                vis.view[barsIntern.view].widgets[barsIntern.wid].data['bTest'] = false;
+
+                if (barsIntern.wType === 'tplBarFilter') {
+                    // Hide all
+                    vis.changeFilter("$", barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
+
+                    // Show all
+                    setTimeout (function () {
+                        vis.changeFilter ("", barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
+                    }, 500 + parseInt(barsOptions.bShowEffectMs, 10));
                 }
+                else
+                if (barsIntern.wType === 'tplBarNavigator'){
+                    var v = vis.activeView;
+                    // find other view
+                    for (var t in vis.views) {
+                        if (t != v) break;
+                    }
 
-                var data = $.grep(classes, function(value) {
-                    return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                });
+                    vis.changeView (t,
+                        {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
+                        {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
 
-                response(data);
-            });
+                    // Show all
+                    setTimeout (function () {
+                        vis.changeView (v,
+                            {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
+                            {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
+                        vis.inspectWidgets([barsIntern.wid]);
+                    }, 500 + parseInt (barsOptions.bShowEffectMs, 10));
+                }
+            }
+            $('#jquerySideBar_' + barsIntern.wid).addClass(barsOptions.bTheme + ' vis-widget');
 
-            // Style button
-            vis.binds.bars._showGroupButton ('idStyle',    div);
-            vis.binds.bars._showGroupButton ('idGeometry', div);
-            vis.binds.bars._showGroupButton ('idEffect',   div);
-            vis.binds.bars._showGroupButton ('idButtons',  div);
-
-            vis.binds.bars._editSliderHandler ("bWidth",  div, 10, 300);
-            vis.binds.bars._editSliderHandler ("bHeight", div, 10, 300);
-            vis.binds.bars._editSliderHandler ("bSpace",  div, 0,  50);
-            vis.binds.bars._editSliderHandler ("bRadius", div, 0,  150);
-            vis.binds.bars._editSliderHandler ("bOffset", div, 0,  100);
-            vis.binds.bars._editSelectHandler ("bTextAlign",  div, null, null);
-            vis.binds.bars._editSelectHandler ("bImageAlign", div, null, null);
-            vis.binds.bars._editCheckboxHandler ("bOnlyOneSelected", div);
-
-            vis.binds.bars._editStyleHandler ('bStyleNormal',      div, null, '-button', 'background');
-            vis.binds.bars._editStyleHandler ('bStyleNormalHover', div, null, '-button', 'background');
-            vis.binds.bars._editStyleHandler ('bStyleActive',      div, null, '-button', 'background');
-            vis.binds.bars._editStyleHandler ('bStyleActiveHover', div, null, '-button', 'background');
-
-            // Create autocomplete for initial value
-            if (div.barsIntern.wType == 'tplBarFilter') {
-                var elem = document.getElementById ('inspect_bValue');
-                if (elem) {
-                    elem.parent   = div;
-                    elem.ctrlAttr = 'bValue';
-
-                    $(elem).autocomplete({
-                        minLength: 0,
-                        source: function(request, response) {
-                            var data = $.grep(vis.views[vis.activeView].filterList, function(value) {
-                                return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                            });
-
-                            response(data);
-                        },
-                        select: function (event, ui){
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions[this.ctrlAttr] = ui.item.value;
-                            vis.binds.bars.editSave(div);
-                        },
-                        change: function (event, ui) {
-                            // If really changed
-                            var div = this.parent;
-                            div.barsOptions[this.ctrlAttr] = ui.item.value;
-                            vis.binds.bars.editSave(div);
-                        }
-                    }).focus(function () {
-                        $(this).autocomplete("search", "");
-                    }).keyup (function () {
-                        if (this.parent.timer)
-                            clearTimeout (this.parent.timer);
-
-                        this.parent.timer = _setTimeout (function(elem_) {
-                             // If really changed
-                            var div = elem_.parent;
-                            div.barsOptions[elem_.ctrlAttr] = $(elem_).prop('value');
-                            vis.binds.bars.editSave(div);
-                            elem_.parent.timer=null;
-                        }, 200, this);
-                    });
+            $('#' + barsIntern.wid).hide();
+            if (vis.editMode) {
+                if (vis.activeWidgets.indexOf(barsIntern.wid) != -1) {
+                    vis.showWidgetHelper(barsIntern.wid, true);
                 }
             }
 
-
-            if (div.barsIntern.wType == 'tplBarFilter' ||
-                div.barsIntern.wType == 'tplBarNavigator') {
-                vis.binds.bars._editSelectHandler ("bShowEffect", div, null, null);
-                vis.binds.bars._editSelectHandler ("bHideEffect", div, null, null);
-                vis.binds.bars._editTextHandler ("bShowEffectMs", div, -1);
-                vis.binds.bars._editTextHandler ("bHideEffectMs", div, -1);
-                $('#inspect_test').button().click (function () {
-                    if (div.barsIntern.wType == 'tplBarFilter') {
-                        // Hide all
-                        vis.changeFilter ("$", div.barsOptions.bShowEffect, div.barsOptions.bShowEffectMs, div.barsOptions.bHideEffect, div.barsOptions.bHideEffectMs);
-
-                        // Show all
-                        setTimeout (function () {
-                            vis.changeFilter ("", div.barsOptions.bShowEffect, div.barsOptions.bShowEffectMs, div.barsOptions.bHideEffect, div.barsOptions.bHideEffectMs);
-                        }, 500 + parseInt (div.barsOptions.bShowEffectMs));
-                    }
-                    else
-                    if (div.barsIntern.wType == 'tplBarNavigator'){
-                        var v = vis.activeView;
-                        // find other view
-                        for (var t in vis.views) {
-                            if (t != v)
-                                break;
-                        }
-
-                        vis.changeView (t,
-                            {effect:div.barsOptions.bHideEffect, duration:div.barsOptions.bHideEffectMs},
-                            {effect:div.barsOptions.bShowEffect, duration:div.barsOptions.bShowEffectMs});
-
-                        // Show all
-                        setTimeout (function () {
-                            vis.changeView (v,
-                                {effect:div.barsOptions.bHideEffect, duration:div.barsOptions.bHideEffectMs},
-                                {effect:div.barsOptions.bShowEffect, duration:div.barsOptions.bShowEffectMs});
-                            vis.inspectWidget (div.barsIntern.wid);
-                        }, 500 + parseInt (div.barsOptions.bShowEffectMs));
-
-                    }
-                });
-            }
-            document.getElementById ('inspect_barShow').parent = div;
-            $('#inspect_barShow').button().click (function () {
-                if (this.parent.barsOptions.position != vis.binds.bars.position.floatHorizontal &&
-                    this.parent.barsOptions.position != vis.binds.bars.position.floatVertical) {
-                    if ($().sidebar) {
-                        $(this.parent).sidebar("open");
-                    } else {
-                        console.log("Sidebar is not included.");
-                    }
-
-                }
-            }).button((div.barsOptions.position == vis.binds.bars.position.floatHorizontal ||
-                       div.barsOptions.position == vis.binds.bars.position.floatVertical) ? "disable" : "enable");
-
-        }
-    },
-    editDelete: function (wid) {
-        var div = document.getElementById (wid);
-        if (div) {
-            $('#jquerySideBar_'+div.barsIntern.wid).remove ();
-            $('#'+div.barsIntern.wid).remove ();
-            vis.binds.bars.created[div.barsIntern.wid] = undefined;
-            var createdOld = vis.binds.bars.created;
-            vis.binds.bars.created = [];
-            for (var i = 0; i < createdOld.length; i++) {
-                if (createdOld[i] != wid) {
-                    vis.binds.bars.created[vis.binds.bars.created.length] = createdOld[i];
-                }
+            for (var k = 1; k <= barsOptions.bCount; k++) {
+                $('#' + barsIntern.wid + '_btn' + k).css({borderRadius: barsOptions.bRadius + 'px'});
             }
         }
     },
     setState: function (div, newFilter) {
-        var newFilters = (newFilter !== undefined && newFilter != null && newFilter != "") ? newFilter.split(',') : [];
-        for (var i = 0; i < div.barsOptions.buttons.length; i++) {
-            var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+i);
+        var newFilters = (newFilter || newFilter === 0) ? newFilter.split(',') : [];
+        var $div = $(div);
+        var barsOptions = $div.data('barsOptions');
+        var barsIntern  = $div.data('barsIntern');
+
+        for (var i = 1; i <= barsOptions.bCount; i++) {
+            var $htmlBtn = $('#' + barsIntern.wid + '_btn' + i);
             var isFound = false;
             for (var z = 0; z < newFilters.length; z++) {
-                if (div.barsOptions.buttons[i].option == newFilters[z]) {
+                if (barsOptions['buttonsOption' + i] == newFilters[z]) {
                     isFound = true;
                     break;
                 }
             }
             if (isFound) {
-                htmlBtn._state = 1;
-                if (div.barsOptions.bStyleActive) {
-                    $(htmlBtn).addClass (div.barsOptions.bStyleActive);
-                    $(htmlBtn).removeClass (div.barsOptions.bStyleNormal);
+                $htmlBtn.data(state, true);
+                if (barsOptions.bStyleActive) {
+                    $htmlBtn.addClass (barsOptions.bStyleActive).
+                        removeClass (barsOptions.bStyleNormal);
                 } else {
-                    $(htmlBtn).addClass ('ui-state-active');
+                    $htmlBtn.addClass ('ui-state-active');
                 }
             }
             else {
-                htmlBtn._state = 0;
-                $(htmlBtn).removeClass ('ui-state-active');
-                $(htmlBtn).removeClass (div.barsOptions.bStyleActive);
-                if (div.barsOptions.bStyleNormal) {
-                    $(htmlBtn).addClass (div.barsOptions.bStyleNormal);
-                }
+                $htmlBtn.data(state, false);
+                $htmlBtn.removeClass ('ui-state-active').
+                    removeClass (barsOptions.bStyleActive);
+
+                if (barsOptions.bStyleNormal) $htmlBtn.addClass(barsOptions.bStyleNormal);
             }
         }
     },
     filterChanged: function (view, newFilter) {
         for (var i = 0; i < vis.binds.bars.created.length; i++) {
-            var div = document.getElementById (vis.binds.bars.created[i]);
-            if (div && div.barsIntern && div.barsIntern.view == view && div.barsIntern.wType == 'tplBarFilter') {
-                vis.binds.bars.setState (div, newFilter);
+            var $div = $('#' + vis.binds.bars.created[i]);
+
+            if ($div.length) {
+                var barsIntern = $div.data('barsIntern');
+                if (barsIntern && barsIntern.view == view && barsIntern.wType == 'tplBarFilter') {
+                    vis.binds.bars.setState(div, newFilter);
+                }
             }
         }
     },
-    init: function(wid, options, view, wType) {
-        var settings = {
-            position:          0,
-            bWidth:            100,  // Width of the button. 0 - every button has own width
-            bHeight:           50,   // Height of the button. 0 - every button has own height
-            bSpace:            5,    // Between buttons
-            bRadius:           5,    // Button radius
-            bOffset:           0,    // 0% Image, 70% Text
-            bTextAlign:        'center',
-            bImageAlign:       'right',
-            bValue:            '',   // start value
-            bShowEffect:       'show',
-            bHideEffect:       'show',
-            bShowEffectMs:     100,
-            bHideEffectMs:     100,
-            bStyleNormal:      null,
-            bStyleNormalHover: null,
-            bStyleActive:      null,
-            bStyleActiveHover: null,
-            buttons:           [],
-            bOnlyOneSelected:  false, // If only one element can be selected
-            bTheme:            "sidebar-dark"
-        };
+    initOptions: function (tpl, barsOptions) {
+        var $tpl = $('#' + tpl);
 
-        if (document.getElementById (wid) == null) {
-            $('#visview_' + view).append ('<div id="' + wid + '" class="dashui-widget"></div>');
-        }
-        var div = document.getElementById (wid);
-        var barsIntern = null;
-        var barsOptions = null;
-
-        if (div.barsIntern) {
-            barsIntern  = div.barsIntern;
-            barsOptions = div.barsOptions;
-        }
-
-        if (document.getElementById ('jquerySideBar_'+wid)) {
-            $('#jquerySideBar_'+div.barsIntern.wid).remove ();
-
-            if (document.getElementById(wid) != null) {
-            } else {
-                $('#visview_' + barsIntern.view).append("<div id='" + wid + "'></div>");
+        if ($tpl.attr('id') === 'tplBarFilter') {
+            var filter = vis.updateFilter();
+            if (filter.length > 0) {
+                barsOptions.buttonsImage1  = '';
+                barsOptions.buttonsText1   = _('All');
+                barsOptions.buttonsOption1 = '';
+                for (var x = 0; x < filter.length; x++) {
+                    barsOptions['buttonsImage'  + (x + 2)] = "";
+                    barsOptions['buttonsText'   + (x + 2)] = filter[x].charAt(0).toUpperCase() + filter[x].slice(1).toLowerCase();
+                    barsOptions['buttonsOption' + (x + 2)] = filter[x];
+                }
+                barsOptions.bCount = 1 + filter.length;
             }
-            div = document.getElementById (wid);
-            div.barsOptions = barsOptions;
-            div.barsIntern  = barsIntern;
+            else {
+                barsOptions.buttonsImage1  = '';
+                barsOptions.buttonsText1   = _('Caption');
+                barsOptions.buttonsOption1 = '';
+                barsOptions.bCount = 1;
+            }
+        }
+        else
+        if ($tpl.attr('id') === 'tplBarNavigator') {
+            var cnt = 0;
+            for (var s in vis.views) {
+                cnt++;
+                barsOptions['buttonsImage'  + cnt] = "";
+                barsOptions['buttonsText'   + cnt] = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+                barsOptions['buttonsOption' + cnt] = s;
+            }
+            barsOptions.bCount = cnt;
+        }
+    },
+    init: function(wid, options, view, wType) {
+        var $div = $('#' + wid);
+        if (!$div.length) {
+            setTimeout(function () {
+                vis.binds.bars.init(wid, options, view, wType);
+            }, 100);
+            return;
+        } else {
+            var timer = $('#' + wid).data('timer');
+            if (timer) clearTimeout(timer);
+            $('#' + wid).data('timer', setTimeout(function () {
+                vis.binds.bars._init(wid, options, view, wType);
+            }, 100));
+        }
+    },
+    _init: function(wid, options, view, wType) {
+        var $div = $('#' + wid);
+        if (!$div.length) {
+            setTimeout(function () {
+                vis.binds.bars.init(wid, options, view, wType);
+            }, 100);
+            return;
+        } else {
+            var timer = $('#' + wid).data('timer');
+            if (!timer) {
+                $('#' + wid).data('timer', function () {
+                    vis.binds.bars.init(wid, options, view, wType);
+                });
+            } else {
+                $('#' + wid).data('timer', null);
+            }
         }
 
-        var jDiv = $(div);
+        if (!$div.find('.vis-widget-body').length) {
+            $div.append('<div class="vis-widget-body" style="overflow: visible"></div>');
+        }
+        $div = $('#' + wid + ' .vis-widget-body');
 
-        if (div.barsOptions === undefined)
-            div.barsOptions = {};
+        var barsIntern = {
+            wid:        wid,
+            wType:      wType,
+            view:       view
+            //editParent: null
+        };
+        var barsOptions = options;
 
         var isFound = false;
         for (var g = 0; g < vis.binds.bars.created.length; g++) {
@@ -1147,98 +393,53 @@ vis.binds.bars = {
                 break;
             }
         }
-        if (!isFound) {
-            vis.binds.bars.created[vis.binds.bars.created.length] = wid;
-        }
 
-        if (wType !== undefined) {
-            if (options !== undefined) {
-                if (typeof options == "string") {
-                    div.barsOptions = $.parseJSON(options);
-                } else {
-                    div.barsOptions = options;
-                }
-            }
-            div.barsOptions = $.extend(settings, div.barsOptions, true);
-            div.barsIntern = {
-                wid:   wid,
-                wType: wType,
-                view:  view,
-                editParent: null
-            };
-            if (vis.editMode) {
-                if (div.barsOptions.buttons.length == 0) {
-                    if (div.barsIntern.wType == 'tplBarFilter') {
-                        var filter = vis.updateFilter();
-                        if (filter.length > 0) {
-                            div.barsOptions.buttons[0] = {'image': "", "text" : vis.translate("All"), "option": ""};
-                            for (var x = 0; x < filter.length; x++) {
-                                div.barsOptions.buttons[x + 1] = {'image': "", "text" : filter[x].charAt(0).toUpperCase() + filter[x].slice(1).toLowerCase(), "option": filter[x]};
-                            }
-                        }
-                        else
-                            div.barsOptions.buttons[0] = {'image': "", "text" : "Caption", "option": ""};
-                    }
-                    else
-                    if (div.barsIntern.wType == 'tplBarNavigator') {
-                        for (var s in vis.views) {
-                            div.barsOptions.buttons[div.barsOptions.buttons.length] = {'image': "", "text" : s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(), "option": s};
-                        }
-                    }
-                    // Save default configuration
-                    vis.binds.bars.editSave(div);
-                }
-            }
-        }
+        if (!isFound) vis.binds.bars.created[vis.binds.bars.created.length] = wid;
 
-        this.draw(div, jDiv);
+        $div.data('barsIntern',  barsIntern);
+        $div.data('barsOptions', barsOptions);
+
+        this.draw($div);
 
         // non edit mode
         if (!vis.editMode) {
             // Select by default buttons
-            if (div.barsIntern.wType == 'tplBarFilter') {
-                if (div.barsOptions.bValue != "") {
-                    var values = div.barsOptions.bValue.split(",");
-                    for (var p = 0; p < div.barsOptions.buttons.length; p++) {
+            if (barsIntern.wType === 'tplBarFilter') {
+                if (barsOptions.bValue) {
+                    var values = barsOptions.bValue.split(",");
+                    for (var p = 1; p <= barsOptions.bCount; p++) {
                         var isFound2 = false;
-                        for(var j = 0; j < values.length; j++) {
-                            if(values[j] === div.barsOptions.buttons[p].option) {
+                        for (var j = 0; j < values.length; j++) {
+                            if(values[j] === barsOptions.buttons[p].option) {
                                 isFound2 = true;
                                 break;
                             }
                         }
                         if (isFound2) {
-                            var htmlBtn2 = document.getElementById (div.barsIntern.wid+"_btn"+p);
-                            if (htmlBtn2) {
-                                htmlBtn2._state = 1;
-                                if (div.barsOptions.bStyleActive) {
-                                    $(htmlBtn2).addClass (div.barsOptions.bStyleActive);
-                                    $(htmlBtn2).removeClass (div.barsOptions.bStyleNormal);
+                            var $htmlBtn2 = $('#' + barsIntern.wid + '_btn' + p);
+                            if ($htmlBtn2.length) {
+                                $htmlBtn2.data('state', true);
+                                if (barsOptions.bStyleActive) {
+                                    $htmlBtn2.addClass(barsOptions.bStyleActive).
+                                        removeClass(barsOptions.bStyleNormal);
                                 } else {
-                                    $(htmlBtn2).addClass ('ui-state-active');
+                                    $htmlBtn2.addClass('ui-state-active');
                                 }
                             }
                         }
                     }
                     // Set active filter
-                    vis.changeFilter (div.barsOptions.bValue, div.barsOptions.bShowEffect, div.barsOptions.bShowEffectMs, div.barsOptions.bHideEffect, div.barsOptions.bHideEffectMs);
-
+                    vis.changeFilter(barsOptions.bValue, barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
                 }
             }
             else
-            if (div.barsIntern.wType == 'tplBarNavigator') {
-                var v = null;//vis.activeView;
-                if (!v) v =  div.barsIntern.view;
-                for (var u = 0; u < div.barsOptions.buttons.length; u++) {
-                    if(v === div.barsOptions.buttons[u].option) {
-                        var htmlBtn = document.getElementById (div.barsIntern.wid+"_btn"+u);
-                        if (htmlBtn) {
-                            htmlBtn._state = 1;
-                            if (div.barsOptions.bStyleActive) {
-                                $(htmlBtn).addClass (div.barsOptions.bStyleActive);
-                            } else {
-                                $(htmlBtn).addClass ('ui-state-active');
-                            }
+            if (barsIntern.wType === 'tplBarNavigator') {
+                for (var u = 1; u <= barsOptions.bCount; u++) {
+                    if (barsIntern.view === barsOptions['buttonsOption' + u]) {
+                        var $htmlBtn = $('#' + barsIntern.wid + '_btn' + u);
+                        if ($htmlBtn.length) {
+                            $htmlBtn.data('state', true);
+                            $htmlBtn.addClass(barsOptions.bStyleActive || 'ui-state-active');
                         }
                         break;
                     }
@@ -1246,95 +447,157 @@ vis.binds.bars = {
             }
 
             // Install on click function
-            if (div._onClick === undefined) {
-                div._onClick = function (htmlBtn, div, r) {
-                    if (div.barsIntern.wType == 'tplBarNavigator') {
-                        vis.changeView (div.barsOptions.buttons[r].option,
-                            {effect:div.barsOptions.bHideEffect, duration:div.barsOptions.bHideEffectMs},
-                            {effect:div.barsOptions.bShowEffect, duration:div.barsOptions.bShowEffectMs});
+            if (!$div.data('onClick')) {
+                $div.data('onClick', function (htmlBtn, div, r) {
+                    var barsIntern =  $(div).data('barsIntern');
+                    var barsOptions = $(div).data('barsOptions');
+
+                    $htmlBtn = $('#' + barsIntern.wid + '_btn' + r);
+
+                    if (barsIntern.wType === 'tplBarNavigator') {
+                        vis.changeView(barsOptions['buttonsOption' + r],
+                            {effect: barsOptions.bHideEffect, duration: barsOptions.bHideEffectMs},
+                            {effect: barsOptions.bShowEffect, duration: barsOptions.bShowEffectMs});
                     }
                     else
                     {
                         // Save actual state
-                        var actState = (htmlBtn._state === 1) ? 1 : 0;
+                        var actState = $htmlBtn.data('state') || false;
 
-                        if (!div.barsOptions.bOnlyOneSelected) {
-                        } else {
-                            for (var f = 0; f < div.barsOptions.buttons.length; f++) {
-                                var btn3 = document.getElementById(div.barsIntern.wid + "_btn" + f);
-                                btn3._state = 0;
-                                $(btn3).removeClass('ui-state-active');
-                                $(btn3).removeClass(div.barsOptions.bStyleActive);
+                        if (barsOptions.bOnlyOneSelected) {
+                            for (var f = 1; f <= barsOptions.bCount; f++) {
+                                var $htmlBtn3 = $('#' + barsIntern.wid + '_btn' + f);
+                                $htmlBtn3.data('state', false);
+                                $htmlBtn3.removeClass('ui-state-active').
+                                    removeClass(barsOptions.bStyleActive);
 
-                                if (div.barsOptions.bStyleNormal) {
-                                    $(btn3).addClass (div.barsOptions.bStyleNormal);
-                                }
+                                if (barsOptions.bStyleNormal) $htmlBtn3.addClass (barsOptions.bStyleNormal);
                             }
                             // Restore state
-                            htmlBtn._state = actState;
+                            $htmlBtn.data('state', actState);
                         }
 
-                        if (htmlBtn._state === 1) {
-                            htmlBtn._state = 0;
-                            $(htmlBtn).removeClass('ui-state-active');
-                            $(htmlBtn).removeClass(div.barsOptions.bStyleActive);
+                        if ($htmlBtn.data('state')) {
+                            $htmlBtn.data('state', false);
+                            $htmlBtn.removeClass('ui-state-active').
+                                removeClass(barsOptions.bStyleActive);
 
-                            if (div.barsOptions.bStyleNormal) {
-                                $(htmlBtn).addClass (div.barsOptions.bStyleNormal);
-                            }
+                            if (barsOptions.bStyleNormal) $htmlBtn.addClass (barsOptions.bStyleNormal);
                         }
                         else {
-                            htmlBtn._state = 1;
-                            $(htmlBtn).removeClass(div.barsOptions.bStyleNormal);
-                            if (div.barsOptions.bStyleActive) {
-                                $(htmlBtn).addClass (div.barsOptions.bStyleActive);
+                            $htmlBtn.data('state', true);
+                            $htmlBtn.removeClass(barsOptions.bStyleNormal);
+                            if (barsOptions.bStyleActive) {
+                                $htmlBtn.addClass (barsOptions.bStyleActive);
                             } else {
-                                $(htmlBtn).addClass ('ui-state-active');
+                                $htmlBtn.addClass ('ui-state-active');
                             }
                         }
-                        // install filters handler
-                        if (div.barsIntern.wType == 'tplBarFilter') {
-                            var filter = "";
-                            for (var w = 0; w < div.barsOptions.buttons.length; w++) {
-                                if (document.getElementById (div.barsIntern.wid+"_btn"+w)._state === 1) {
-                                    if (div.barsOptions.buttons[w].option != "") {
-                                        filter += (filter == "" ? "" : ",") + div.barsOptions.buttons[w].option;
-                                    }
-                                    // If disable all filters
-                                    else {
-                                        filter = "";
-                                        for (var q = 0; q < div.barsOptions.buttons.length; q++) {
-                                            var btn = document.getElementById (div.barsIntern.wid+"_btn"+q);
-                                            btn._state = 0;
-                                            $(btn).removeClass('ui-state-active');
-                                            $(btn).removeClass(div.barsOptions.bStyleActive);
 
-                                            if (div.barsOptions.bStyleNormal) {
-                                                $(btn).addClass(div.barsOptions.bStyleNormal);
-                                            }
+                        // install filters handler
+                        if (barsIntern.wType == 'tplBarFilter') {
+                            var filter = "";
+                            for (var w = 1; w <= barsOptions.bCount; w++) {
+                                var $btn = $('#' + barsIntern.wid + '_btn' + w);
+                                if ($btn.length && $btn.data('state')) {
+                                    if (barsOptions['buttonsOption' + w]) {
+                                        filter += (!filter ? '' : ',') + barsOptions['buttonsOption' + w];
+                                    } else {
+                                        // If disable all filters
+                                        filter = "";
+                                        for (var q = 1; q <= barsOptions.bCount; q++) {
+                                            $btn = $('#' + barsIntern.wid + '_btn' + q);
+                                            $btn.data('state', false);
+                                            $btn.removeClass('ui-state-active').
+                                                removeClass(barsOptions.bStyleActive);
+
+                                            if (barsOptions.bStyleNormal) $btn.addClass(barsOptions.bStyleNormal);
                                         }
                                         break;
                                     }
                                 }
                             }
 
-                            vis.changeFilter (filter, div.barsOptions.bShowEffect, div.barsOptions.bShowEffectMs, div.barsOptions.bHideEffect, div.barsOptions.bHideEffectMs);
+                            vis.changeFilter(filter, barsOptions.bShowEffect, barsOptions.bShowEffectMs, barsOptions.bHideEffect, barsOptions.bHideEffectMs);
                         }
                     }
-                };
+                });
             }
         }
         else {
-            jDiv.attr('data-dashui-resizable', '{"disabled":true}');
-            div.dashuiCustomEdit = {'baroptions': vis.binds.bars.edit, 'delete': vis.binds.bars.editDelete};
             // Install on click function
-            if (div._onClick === undefined) {
-                console.log('bar');
-                div._onClick = function (htmlBtn, div, r) {
-                    vis.inspectWidget(div.barsIntern.wid);
-                };
+            if (!$div.data('onClick')) {
+                $div.data('onClick', function (htmlBtn, div, r) {
+                    var barsIntern = $(div).data('barsIntern');
+                    var barsOptions = $(div).data('barsOptions');
+                    vis.inspectWidgets([barsIntern.wid]);
+                    //$htmlBtn = $('#' + barsIntern.wid + '_btn' + r);
+                });
             }
         }
     }
 };
-
+if (vis.editMode) {
+    vis.binds.bars.convertOldBars = function (widget) {
+        if (widget.data && widget.data.baroptions) {
+            try {
+                var baroptions = JSON.parse(widget.data.baroptions);
+                for (var opt in baroptions) {
+                    if (opt == 'position') {
+                        switch (baroptions[opt]) {
+                            case '0':
+                            case 0:
+                                widget.data.bPosition = 'floatHorizontal';
+                                widget.style.height = baroptions.bHeight + 10;
+                                widget.style.width  = ((baroptions.bWidth + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                            case '1':
+                            case 1:
+                                widget.data.bPosition = 'floatVertical';
+                                widget.style.width = baroptions.bWidth + 10;
+                                widget.style.height  = ((baroptions.bHeight + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                            case '2':
+                            case 2:
+                                widget.data.bPosition = 'dockTop';
+                                widget.style.height = baroptions.bHeight + 10;
+                                widget.style.width  = ((baroptions.bWidth + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                            case '3':
+                            case 3:
+                                widget.data.bPosition = 'dockBottom';
+                                widget.style.height = baroptions.bHeight + 10;
+                                widget.style.width  = ((baroptions.bWidth + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                            case '4':
+                            case 4:
+                                widget.data.bPosition = 'dockLeft';
+                                widget.style.width = baroptions.bWidth + 10;
+                                widget.style.height  = ((baroptions.bHeight + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                            case '5':
+                            case 5:
+                                widget.data.bPosition = 'dockRight';
+                                widget.style.width = baroptions.bWidth + 10;
+                                widget.style.height  = ((baroptions.bHeight + baroptions.bSpace) * baroptions.buttons.length) + 10;
+                                break;
+                        }
+                    } else if (opt === 'buttons') {
+                        widget.data.bCount = baroptions.buttons.length;
+                        for (var button = 0; button < baroptions.buttons.length; button++) {
+                            widget.data['buttonsText'   + (button + 1)] = baroptions.buttons[button].text;
+                            widget.data['buttonsImage'  + (button + 1)] = baroptions.buttons[button].image;
+                            widget.data['buttonsOption' + (button + 1)] = baroptions.buttons[button].option;
+                        }
+                    } else {
+                        widget.data[opt] = baroptions[opt];
+                    }
+                }
+            } catch (e) {
+                console.log('Cannot convert. Invalid JSON in baroptions: ' + widget.data.baroptions);
+            }
+            delete widget.data.baroptions;
+        }
+        return widget;
+    };
+}

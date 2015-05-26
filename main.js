@@ -1,12 +1,15 @@
 /**
  *
- *      ioBroker mqtt Adapter
+ *      ioBroker vis Adapter
  *
- *      (c) 2014 bluefox
+ *      (c) 2014-2015 bluefox
  *
  *      MIT License
  *
  */
+/* jshint -W097 */// jshint strict:false
+/*jslint node: true */
+"use strict";
 
 var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
 var adapter = utils.adapter('vis');
@@ -40,8 +43,8 @@ function writeFile(fileName, callback) {
         var start = index.substring(0, pos + begin.length);
         pos = index.indexOf(end);
         if (pos != -1) {
-            var end = index.substring(pos);
-            index = start + '\n' + bigInsert + '\n' + end;
+            var _end = index.substring(pos);
+            index = start + '\n' + bigInsert + '\n' + _end;
             adapter.readFile('vis', fileName, function (err, data) {
                 if (data && data != index) {
                     adapter.writeFile('vis', fileName, index);
@@ -59,7 +62,9 @@ function writeFile(fileName, callback) {
 }
 
 function main() {
+    var count = 0;
     // Update index.html
+    count++;
     writeFile('index.html', function (isChanged1) {
         // Update edit.html
         writeFile('edit.html', function (isChanged2) {
@@ -70,32 +75,48 @@ function main() {
                     data = data.toString();
                     var build = data.match(/# dev build ([0-9]+)/);
                     data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
-                    adapter.writeFile('vis', 'cache.manifest', data);
+                    adapter.writeFile('vis', 'cache.manifest', data, function () {
+                        if (!(--count)) adapter.stop();
+                    });
                 });
+            } else {
+                if (!(--count)) adapter.stop();
             }
         });
     });
 
     // create command variable
+    count++;
     adapter.getObject('command', function (err, obj) {
         if (!obj) {
             adapter.setObject('command', {
                 common: {
                     name: 'Command interface for vis',
                     type: 'object',
-                    desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view'
+                    desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view',
+                    role: 'command'
                 },
-                type: 'state'
+                type: 'state',
+                native: {}
+            }, function () {
+                if (!(--count)) adapter.stop();
             }) ;
+        } else {
+            if (!(--count)) adapter.stop();
         }
     });
 
     // Create common user CSS file
+    count++;
     adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
-        if (err || !data) {
-            adapter.writeFile('vis', 'css/vis-common-user.css', '');
+        if (err || data === null || data === undefined) {
+            adapter.writeFile('vis', 'css/vis-common-user.css', '', function () {
+                if (!(--count)) adapter.stop();
+            });
+        } else {
+            if (!(--count)) adapter.stop();
         }
     });
 
-    adapter.stop();
+
 }

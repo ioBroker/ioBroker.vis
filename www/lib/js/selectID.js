@@ -403,7 +403,7 @@
         var text = '<div id="' + data.instance + '-div" style="width:100%; height:100%"><table id="selectID_header_' + data.instance + '" style="width: 100%;padding:0; height: 50" cellspacing="0" cellpadding="0">';
         text += '<colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="400px"/>';
+        text += '            <col width="350px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {
@@ -485,7 +485,7 @@
         text +=' <table id="selectID_' + data.instance + '" style="width: 100%;padding:0;table-layout:fixed; overflow:hidden;white-space:nowrap" cellspacing="0" cellpadding="0">';
         text += '        <colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="400px"/>';
+        text += '            <col width="350px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {
@@ -571,7 +571,7 @@
                 var $tdList = $(node.tr).find(">td");
 
                 var isCommon = data.objects[node.key] && data.objects[node.key].common;
-
+                $tdList.eq(1).css({'overflow': 'hidden'});
                 var base = 2;
 
                 for (var c = 0; c < data.columns.length; c++) {
@@ -1255,6 +1255,7 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
+                $dlg.addClass('select-id-dialog-marker');
                 if (!data) continue;
                 if (data.inited) {
                     // Re-init tree if filter or selectedID changed
@@ -1418,7 +1419,7 @@
         // update states
         "state": function (id, state) {
             for (var i = 0; i < this.length; i++) {
-                var dlg = this[i];
+                var dlg  = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
                 if (!data || !data.states || !data.$tree) continue;
@@ -1530,6 +1531,12 @@
                 }
             }
             return this;
+        },
+        "objectAll": function (id, obj) {
+            $('.select-id-dialog-marker').selectId('object', id, obj);
+        },
+        "stateAll": function (id, state) {
+            $('.select-id-dialog-marker').selectId('state', id, state);
         },
         "getFilteredIds": function () {
             for (var k = 0; k < this.length; k++) {
