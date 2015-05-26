@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgets.css" />
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgetsButtons.css"/>
+<link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/checkbox.css" />
 <script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
 
@@ -259,6 +260,23 @@
     }
     %>
 </script-->
+
+<script type="text/ejs"
+        id="tplHqCheckbox"
+        class="vis-tpl"
+        data-vis-set="hqWidgets"
+        data-vis-name="Checkbox"
+        data-vis-beta="true"
+        data-vis-type="ctrl,checkbox"
+        data-vis-prev='<img src="widgets/hqWidgets/img/prev/Prev_hqWidgetsDimmer.png"></img>'
+        data-vis-update-style="true"
+        data-vis-attrs="oid[nothing_selected]/id;staticValue;"
+        data-vis-attrs0="checkboxSize[small]/select,big,small;checkboxColor[orange]/select,orange;readOnly/checkbox"
+    >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 216px; height: 68px" id="<%= this.data.attr('wid') %>"  data-vis-resizable='{"disabled":true, "handles":"e"}'><%
+            vis.binds.hqWidgets.checkbox.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
 
 <script type="text/ejs"
         id="tplHqCircle"

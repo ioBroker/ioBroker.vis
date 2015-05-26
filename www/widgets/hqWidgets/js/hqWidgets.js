@@ -233,6 +233,64 @@
         });
     };
 
+    $.fn.shineCheckbox = function (options, arg) {
+        if (typeof options == 'string') {
+            if (options == 'value') {
+                return this.each(function () {
+                    var $this = $(this);
+                    var f = parseFloat(arg);
+                    if (f.toString() == arg) {
+                        $this.prop('checked', f > 0).trigger('change');
+                    } else {
+                        $this.prop('checked', arg === 'true' || arg === true).trigger('change');
+                    }
+                });
+            }
+            return;
+        }
+
+        if (!options) options = {};
+
+        var settings = {
+            backgroundCheckbox: "-webkit-linear-gradient(top, #fe9810 0%,#e75400 61%,#e75400 91%,#ea8810 100%)",
+            backgroundButton: "-webkit-linear-gradient(top, #efeeee 0%,#bcb9b8 100%);",
+            checkboxSize:  options.checkboxSize || 'big',
+            checkboxColor: options.checkboxColor || 'orange',
+            readOnly: options.readOnly || false
+        };
+
+        return this.each(function () {
+            // Do something to each element here.
+            var $this = $(this);
+            if ($this.data('shineCheckbox')) return;
+            $this.data('shineCheckbox', true);
+            $this.hide();
+            var checkboxStyle = 'background: ' + settings.backgroundCheckbox;
+            var buttonStyle   = 'background: ' + settings.backgroundButton;
+
+            $this.wrap('<div class="checkbox-' + settings.checkboxSize + '-' + settings.checkboxColor + '-wrap" style="' + checkboxStyle + '"><div class="checkbox-' + settings.checkboxSize + '-' + settings.checkboxColor + '-button" style="' + buttonStyle + '"></div></div>');
+            $this.change(function () {
+                console.log('change ' + $this.prop('checked'));
+                if ($this.prop('checked')) {
+                    setTimeout(function () {
+                        $this.parent().addClass('checkbox-' + settings.checkboxSize + '-' + settings.checkboxColor + '-button-active');
+                    }, 100);
+                } else {
+                    $this.parent().removeClass('checkbox-' + settings.checkboxSize + '-' + settings.checkboxColor + '-button-active');
+                }
+            });
+
+            if (!settings.readOnly) {
+                $this.parent().parent().click(function () {
+                    console.log($this.prop('checked'));
+                    $this.prop('checked', !$this.prop('checked')).trigger('change');
+                });
+            }
+
+            if ($this.prop('checked')) $this.parent().addClass('checkbox-' + settings.checkboxSize + '-' + settings.checkboxColor + '-button-active');
+        });
+    };
+
     // possible options: waves wobble tada swing shake rubberBand pulse flash bounce
     $.fn.animateDiv = function (effect, options) {
         return this.each(function () {
@@ -980,17 +1038,8 @@ vis.binds.hqWidgets = {
                     vis.binds.hqWidgets.circle.init(wid, view, data);
                 }, 100);
                 return;
-            } else {
-                /*var timer = $('#' + wid).data('timer');
-                if (!timer) {
-                    $('#' + wid).data('timer', function () {
-                        vis.binds.hqWidgets.circle.init(wid, view, data);
-                    });
-                    return;
-                } else {
-                    $('#' + wid).data('timer', null);
-                }*/
             }
+
             var settings = data;
             var $scalaInput = $div.find('input');
             $div.addClass('hq-button-base')
@@ -1075,6 +1124,41 @@ vis.binds.hqWidgets = {
             parentFont = $div.parent().css('font-variant');
             font       = $div.css('font-variant');
             if (font != parentFont) $scalaInput.css('font-variant', font);
+        }
+    },
+    checkbox: {
+        init: function (wid, view, data) {
+            var $div = $('#' + wid);
+            if (!$div.length) {
+                setTimeout(function () {
+                    vis.binds.hqWidgets.checkbox.init(wid, view, data);
+                }, 100);
+                return;
+            }
+
+            var settings = {
+                checkboxSize:  data.checkboxSize  || 'big',
+                checkboxColor: data.checkboxColor || 'orange',
+                readOnly:      vis.editMode || data.readOnly      || false
+            };
+            if (settings.checkboxSize == 'small') {
+                $div.css({width: '108px', height: '34px'});
+            }
+
+            if (!$div.find('input').length) $div.append('<input type="checkbox"/>');
+            var $input = $div.find('input');
+
+            var $shineCheckbox = $input.shineCheckbox(settings);
+            if (settings.oid) {
+                $shineCheckbox.shineCheckbox('value', vis.states.attr(settings.oid + '.val'));
+
+                vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
+                    $shineCheckbox.shineCheckbox(value, newVal);
+                });
+
+            } else {
+                $shineCheckbox.shineCheckbox(value, settings.staticValue);
+            }
         }
     }
 };
