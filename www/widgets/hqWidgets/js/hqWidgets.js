@@ -43,7 +43,7 @@
             onshow:     function (isShow) {},
             onhide:     function (isShow) {},
             click:      function () {
-                console.log('click');
+                //console.log('click');
             },
             colorize: function (color, value) {
                 return h2rgba(color, (value - settings.min) / (settings.max - settings.min) + 0.5)
