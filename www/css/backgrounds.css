@@ -468,7 +468,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d6dbbf', end
     background-blend-mode: screen;
 }
 /* by Atle Mo (design), Lea Verou */
-.hq-background-carbon-fibre {
+.hq-background-carbon-fibre1 {
     background:
         radial-gradient(black 15%, transparent 16%) 0 0,
         radial-gradient(black 15%, transparent 16%) 8px 8px,

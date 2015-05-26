@@ -86,7 +86,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.5.4',
+    version:                '0.5.5',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -804,24 +804,24 @@ var vis = {
 
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
-        //try {
+        try {
             this.widgets[id] = {
                 wid: id,
                 data: new can.Map($.extend({
                     "wid": id
                 }, widget.data))
             };
-        //} catch (e) {
-        //    console.log('Cannot bind data of widget widget:' + id);
-        //    return;
-        //}
+        } catch (e) {
+            console.log('Cannot bind data of widget widget:' + id);
+            return;
+        }
         // Register oid to detect changes
         // if (widget.data.oid != 'nothing_selected')
         //   $.homematic("advisState", widget.data.oid, widget.data.hm_wid);
 
         var widgetData = this.widgets[id].data;
 
-        //try {
+        try {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
@@ -868,9 +868,9 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
-        //} catch (e) {
-        //   this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        //}
+        } catch (e) {
+           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
