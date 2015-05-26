@@ -452,7 +452,6 @@ vis = $.extend(true, vis, {
 
                 var xid =  (new Date).valueOf().toString(32);
 
-
                 var $target = $('#' + widID);
                 var $clone = $target.clone();
                 $clone.wrap('<div>');
@@ -461,6 +460,9 @@ vis = $.extend(true, vis, {
                 html = html
                     .replace('vis-widget ', 'vis-widget_prev ')
                     .replace('vis-widget-body', 'vis-widget-prev-body')
+                    .replace('vis-widget-lock', ' ')
+                    .replace('ui-selectee', ' ')
+                    .replace('ui-draggable-handle', ' ')
                     .replace('ui-draggable', ' ')
                     .replace('ui-resizable', ' ')
                     .replace('<div class="editmode-helper"></div>', '')

@@ -111,8 +111,14 @@ vis.binds.bars = {
         $('#jquerySideBar_' + barsIntern.wid).remove();
 
         var text = '';
-        var calc = (barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
-        text += '<table style="width:' + calc + '; height: ' + calc + '; ' + (barsOptions.bLayout === 'fixed' ? 'table-layout: fixed' : '') + '" class="vis-no-spaces">';
+        var calcH = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
+        var calcW = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
+        if (barsOptions.bPosition == 'dockTop' || barsOptions.bPosition == 'dockBottom') {
+            calcH = 'calc(100% - 10px)';
+        } else if (barsOptions.bPosition == 'dockLeft' || barsOptions.bPosition == 'dockRight') {
+            calcW = 'calc(100% - 10px)';
+        }
+        text += '<table style="width:' + calcW + '; height: ' + calcH + '; ' + (barsOptions.bLayout === 'fixed' ? 'table-layout: fixed' : '') + '" class="vis-no-spaces">';
         if (isHorizontal) {
             text += '<tr class="vis-no-spaces">';
             for (var d = 1; d <= barsOptions.bCount; d++) {
