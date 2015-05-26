@@ -1,6 +1,7 @@
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgets.css" />
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/hqWidgetsButtons.css"/>
 <link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/checkbox.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqWidgets/css/glossy.css" />
 <script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
 <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
 
@@ -17,7 +18,7 @@
         data-vis-attrs0="group.value;min[false];max[true];"
         data-vis-attrs1="group.center;caption;iconName[img~bulb_off.png]/image;iconOn/image;btIconWidth[56]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[15]/slider,0,100,1;topOffset[55]/slider,0,100,1;"
         data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoRight;infoFontRightSize[12]/slider,6,50,1;"
-        data-vis-attrs3="group.styles;styleNormal/style,hqWidgetsButtons,-button,background;styleActive/style,hqWidgetsButtons,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox"
+        data-vis-attrs3="group.styles;styleNormal/style,hqWidgetsButtons glossy,-button,background;styleActive/style,hqWidgetsButtons glossy,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox"
         data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
             vis.binds.hqWidgets.button.init(this.data.wid, this.view, this.data, this.style);
@@ -36,7 +37,7 @@
         data-vis-attrs0="group.value;unit[%];min[0];max[100];digits[0];is_comma[true]/checkbox;"
         data-vis-attrs1="group.center;caption;iconName[img~bulb_off.png]/image;iconOn/image;btIconWidth[56]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[15]/slider,0,100,1;topOffset[55]/slider,0,100,1;circleWidth[50]/slider,1,200,1;showValue[true]/checkbox;alwaysShow/checkbox;"
         data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoFontRightSize[12]/slider,6,50,1;"
-        data-vis-attrs3="group.styles;styleNormal/style,hqWidgetsButtons,-button,background;styleActive/style,hqWidgetsButtons,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox"
+        data-vis-attrs3="group.styles;styleNormal/style,hqWidgetsButtons glossy,-button,background;styleActive/style,hqWidgetsButtons glossy,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox"
         data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
             vis.binds.hqWidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
@@ -268,10 +269,10 @@
         data-vis-name="Checkbox"
         data-vis-beta="true"
         data-vis-type="ctrl,checkbox"
-        data-vis-prev='<img src="widgets/hqWidgets/img/prev/Prev_hqWidgetsDimmer.png"></img>'
+        data-vis-prev='<div id="prev_tplHqCheckbox" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="overflow: visible; width: 108px; height: 35px"><div class="checkbox-small-orange-wrap"><div class="checkbox-small-orange-button"><input type="checkbox" style="display: none;"></div></div></div></div>'
         data-vis-update-style="true"
         data-vis-attrs="oid[nothing_selected]/id;staticValue;"
-        data-vis-attrs0="checkboxSize[small]/select,big,small;checkboxColor[orange]/select,orange;readOnly/checkbox"
+        data-vis-attrs0="checkboxSize[big]/select,big,small;checkboxColor[orange]/select,orange;readOnly/checkbox"
     >
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 216px; height: 68px" id="<%= this.data.attr('wid') %>"  data-vis-resizable='{"disabled":true, "handles":"e"}'><%
             vis.binds.hqWidgets.checkbox.init(this.data.wid, this.view, this.data, this.style);

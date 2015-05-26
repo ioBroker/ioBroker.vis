@@ -252,8 +252,8 @@
         if (!options) options = {};
 
         var settings = {
-            backgroundCheckbox: "-webkit-linear-gradient(top, #fe9810 0%,#e75400 61%,#e75400 91%,#ea8810 100%)",
-            backgroundButton: "-webkit-linear-gradient(top, #efeeee 0%,#bcb9b8 100%);",
+            backgroundCheckbox: '',//-webkit-linear-gradient(top, #fe9810 0%,#e75400 61%,#e75400 91%,#ea8810 100%)",
+            backgroundButton: '',//"-webkit-linear-gradient(top, #efeeee 0%,#bcb9b8 100%);",
             checkboxSize:  options.checkboxSize || 'big',
             checkboxColor: options.checkboxColor || 'orange',
             readOnly: options.readOnly || false
@@ -714,7 +714,6 @@ vis.binds.hqWidgets = {
             }
             switch (data.state) {
                 case 'normal':
-                    console.log(data.styleNormal);
                     $('#' + data.wid + ' .vis-hq-main')
                         .removeClass(data.styleActive)
                         .addClass(data.styleNormal);
@@ -724,7 +723,6 @@ vis.binds.hqWidgets = {
                     }
                     break;
                 case 'active':
-                    console.log(data.styleActive);
                     $('#' + data.wid + ' .vis-hq-main')
                         .removeClass(data.styleNormal)
                         .addClass(data.styleActive);
@@ -1137,9 +1135,11 @@ vis.binds.hqWidgets = {
             }
 
             var settings = {
+                oid:           data.oid           || null,
+                staticValue:   data.staticValue,
                 checkboxSize:  data.checkboxSize  || 'big',
                 checkboxColor: data.checkboxColor || 'orange',
-                readOnly:      vis.editMode || data.readOnly      || false
+                readOnly:      vis.editMode       || data.readOnly || false
             };
             if (settings.checkboxSize == 'small') {
                 $div.css({width: '108px', height: '34px'});
@@ -1147,17 +1147,16 @@ vis.binds.hqWidgets = {
 
             if (!$div.find('input').length) $div.append('<input type="checkbox"/>');
             var $input = $div.find('input');
-
+            console.log('A');
             var $shineCheckbox = $input.shineCheckbox(settings);
-            if (settings.oid) {
+            if (settings.oid && settings.oid != 'nothing_selected') {
                 $shineCheckbox.shineCheckbox('value', vis.states.attr(settings.oid + '.val'));
 
                 vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
-                    $shineCheckbox.shineCheckbox(value, newVal);
+                    $shineCheckbox.shineCheckbox('value', newVal);
                 });
-
             } else {
-                $shineCheckbox.shineCheckbox(value, settings.staticValue);
+                $shineCheckbox.shineCheckbox('value', settings.staticValue);
             }
         }
     }

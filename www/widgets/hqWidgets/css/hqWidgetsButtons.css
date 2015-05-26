@@ -389,9 +389,6 @@
 }
 
 /* ---------------- Nice buttons ---------------------------------- */
-.hq-button-nice-blue, .hq-button-nice-red, .hq-button-nice-green, .hq-button-nice-yellow, .hq-button-nice-grey {
-    border: 3px solid #fff;
-}
 .hq-button-nice-blue {
     background: #108FE8;
     box-shadow: 0 -2px 0 3px #0d72b8 inset, 0 5px 5px rgba(3, 25, 41, 0.17), 0 15px rgba(255, 255, 255, 0.25) inset;
@@ -408,7 +405,6 @@
     background: #333;
     box-shadow: 0 -2px 0 3px #1a1a1a inset, 0 5px 5px rgba(0, 0, 0, 0.17), 0 15px rgba(255, 255, 255, 0.32) inset;
 }
-
 .hq-button-nice-green {
     background: #0EC518;
     box-shadow: 0 -2px 0 3px #0b9512 inset, 0 5px 5px rgba(0, 7, 1, 0.17), 0 15px rgba(255, 255, 255, 0.25) inset;
@@ -417,7 +413,6 @@
     background: #333;
     box-shadow: 0 -2px 0 3px #1a1a1a inset, 0 5px 5px rgba(0, 0, 0, 0.17), 0 15px rgba(255, 255, 255, 0.32) inset;
 }
-
 .hq-button-nice-yellow {
     background: #FFC334;
     box-shadow: 0 -2px 0 3px #ffb401 inset, 0 5px 5px rgba(103, 73, 0, 0.17), 0 15px rgba(255, 255, 255, 0.25) inset;
@@ -433,6 +428,9 @@
 .hq-button-nice-grey:hover {
     background: #333;
     box-shadow: 0 -2px 0 3px #1a1a1a inset, 0 5px 5px rgba(0, 0, 0, 0.17), 0 15px rgba(255, 255, 255, 0.32) inset;
+}
+.hq-button-nice-blue, .hq-button-nice-red, .hq-button-nice-green, .hq-button-nice-yellow, .hq-button-nice-grey {
+    border: 3px solid #fff;
 }
 
 /* ------------------------- Push butons ------------------------------------- */
@@ -532,13 +530,6 @@
     background-image:linear-gradient(top, #3EACBA, #48C6D4);
 }
 
-.hq-button-glossy-blue,
-.hq-button-glossy-green,
-.hq-button-nice-blue,
-.hq-button-nice-red,
-.hq-button-nice-green,
-.hq-button-nice-yellow,
-.hq-button-nice-grey,
 .hq-button-base-normal:active,
 .hq-button-base-on:active,
 .hq-button-base-outtemp:active,

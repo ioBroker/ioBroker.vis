@@ -1,0 +1,202 @@
+
+/* -------------------------------------- COMBINED STYLES ---------------------------------------------------*/
+.glossy-button-grey,
+.glossy-button-blue,
+.glossy-button-green,
+.glossy-button-pink,
+.glossy-button-orange,
+.glossy-button-grey-active,
+.glossy-button-blue-active,
+.glossy-button-green-active,
+.glossy-button-pink-active,
+.glossy-button-orange-active
+{
+    background:            #777777;
+    cursor:                pointer;
+    /* text */
+    text-decoration: 		none;
+    font: 					24px/1em 'Droid Sans', sans-serif;
+    font-weight: 			bold;
+    text-shadow: 			rgba(255,255,255,.5) 0 1px 0;
+    -webkit-user-select: 	none;
+    -moz-user-select: 		none;
+    user-select: 			none;
+
+    /* layout */
+    /*padding: 				.5em .6em .4em .6em;
+    margin: 				.5em;*/
+    display: 				inline-block;
+
+    /* effects */
+    border-top: 		1px solid rgba(255,255,255,0.8);
+    border-bottom: 		1px solid rgba(0,0,0,0.1);
+
+    background-image: 	-webkit-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0.7) )), url(../img/noise.png);
+    background-image: 	-moz-radial-gradient(top, ellipse cover, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%), url(../img/noise.png);
+    background-image: 	gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0.7) )), url(../img/noise.png);
+
+    -webkit-transition: background .2s ease-in-out;
+    -moz-transition: 	background .2s ease-in-out;
+    transition: 		background .2s ease-in-out;
+
+}
+.glossy-button-grey:active,
+.glossy-button-blue:active,
+.glossy-button-green:active,
+.glossy-button-pink:active,
+.glossy-button-orange:active,
+.glossy-button-grey-active:active,
+.glossy-button-blue-active:active,
+.glossy-button-green-active:active,
+.glossy-button-pink-active:active,
+.glossy-button-orange-active:active
+{
+    background-image: 	-webkit-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(noise.png);
+    background-image: 	-moz-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(noise.png);
+    background-image: 	gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(noise.png);
+
+    -webkit-box-shadow: inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em,
+    rgba(0,0,0,0.4) 0 .1em 1px,
+    rgba(0,0,0,0.2) 0 .2em 6px;
+    -moz-box-shadow: 	inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em,
+    rgba(0,0,0,0.4) 0 .1em 1px,
+    rgba(0,0,0,0.2) 0 .2em 6px;
+    box-shadow: 		inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em,
+    rgba(0,0,0,0.4) 0 .1em 1px,
+    rgba(0,0,0,0.2) 0 .2em 6px;
+
+    -webkit-transform: 	translateY(.2em);
+    -moz-transform: 	translateY(.2em);
+    transform: 			translateY(.2em);
+}
+
+.glossy-button-grey,
+.glossy-button-grey-active
+{
+    /* color */
+    color: 				hsl(0, 0%, 40%) !important;
+    background-color: 	hsl(0, 0%, 75%);
+
+    -webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+
+.glossy-button-grey:hover,
+.glossy-button-grey-active:hover
+{ 	background-color: 	hsl(0, 0%, 83%); }
+
+/* -------------- colours -------------- */
+.glossy-button-orange,
+.glossy-button-orange-active
+{
+    color: 				hsl(39, 100%, 30%) !important;
+    background-color: 	hsl(39, 100%, 50%);
+
+    -webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(39, 100%, 40%) 0 .1em 3px, hsl(39, 100%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(39, 100%, 40%) 0 .1em 3px, hsl(39, 100%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(39, 100%, 40%) 0 .1em 3px, hsl(39, 100%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+
+.glossy-button-orange:hover,
+.glossy-button-orange-active:hover
+{ 	background-color: hsl(39, 100%, 65%); }
+
+
+.glossy-button-blue,
+.glossy-button-blue-active
+{
+    color: 				hsl(208, 50%, 40%) !important;
+    background-color: 	hsl(208, 100%, 75%);
+
+    -webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(208, 50%, 55%) 0 .1em 3px, hsl(208, 50%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px;	/* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(208, 50%, 55%) 0 .1em 3px, hsl(208, 50%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px;	/* drop shadow */
+    box-shadow: 		inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(208, 50%, 55%) 0 .1em 3px, hsl(208, 50%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px;	/* drop shadow */
+}
+.glossy-button-blue:hover,
+.glossy-button-blue-active:hover
+{ 	background-color: hsl(208, 100%, 83%); }
+
+.glossy-button-green,
+.glossy-button-green-active
+{
+    color: 				hsl(88, 70%, 30%) !important;
+    background-color: 	hsl(88, 70%, 60%);
+    -webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(88, 70%, 40%) 0 .1em 3px, hsl(88, 70%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(88, 70%, 40%) 0 .1em 3px, hsl(88, 70%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(88, 70%, 40%) 0 .1em 3px, hsl(88, 70%, 30%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+
+.glossy-button-green:hover,
+.glossy-button-green-active:hover
+{ 	background-color: hsl(88, 70%, 75%); }
+
+
+.glossy-button-pink,
+.glossy-button-pink-active
+{
+    color: 				hsl(340, 100%, 30%) !important;
+    background-color: 	hsl(340, 100%, 75%);
+    -webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(340, 70%, 50%) 0 .1em 3px, hsl(340, 80%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(340, 70%, 50%) 0 .1em 3px, hsl(340, 80%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+    box-shadow: 		inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */
+    hsl(340, 70%, 50%) 0 .1em 3px, hsl(340, 80%, 40%) 0 .3em 1px, /* color border */
+    rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+
+.glossy-button-pink:hover,
+.glossy-button-pink-active:hover
+{ 	background-color: hsl(340, 100%, 83%); }
+
+.glossy-button-grey-active,
+.glossy-button-blue-active,
+.glossy-button-green-active,
+.glossy-button-pink-active,
+.glossy-button-orange-active
+{
+    background-image: 	-webkit-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(../img/noise.png);
+    background-image: 	-moz-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(../img/noise.png);
+    background-image: 	gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(../img/noise.png);
+
+    -webkit-box-shadow: inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */
+    rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+    rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+    -moz-box-shadow: 	inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */
+    rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+    rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+    box-shadow: 		inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */
+    rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+    rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+
+    -webkit-transform: 	translateY(.2em);
+    -moz-transform: 	translateY(.2em);
+    transform: 			translateY(.2em);
+}
