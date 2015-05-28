@@ -1694,6 +1694,21 @@
     </div>
 </script>
 
+<script id="tplHtmlLogout"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="logout,html"
+        data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
+        data-vis-name="HTML"
+        data-vis-attrs="html[Logout]/text">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.conn.logout(function(){location.reload()})">
+        <div class="vis-widget-body">
+            <%== this.data.attr('html') %>
+        </div>
+    </div>
+</script>
+
 <!--script id="tplDialog"
         type="text/ejs"
         class="vis-tpl"
