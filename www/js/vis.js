@@ -1868,7 +1868,8 @@ window.onpopstate();
         });
 
         vis.conn.init(null, {
-            onConnChange: function (isConnected) {
+            onConnChange: function (isConnected, isSecure) {
+
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
                     $("#server-disconnect").dialog("close");

@@ -810,3 +810,4 @@ td > .select_active_widget :nth-child(2) {
             #000000 40px
     );
 }
+.ui-icon-logout { background-image: url(../lib/img/logout.png) !important;}

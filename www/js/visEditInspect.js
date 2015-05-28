@@ -652,7 +652,6 @@ vis = $.extend(true, vis, {
     },
     editCssShadowPadding: function () {
         var group = 'css_shadow_padding';
-        var line;
         this.groups[group] = this.groups[group] || {};
 
         this.groups[group].css_padding           = {input: '<input type="text" id="inspect_css_padding"/>'};
@@ -661,6 +660,23 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_padding-right']  = {input: '<input type="text" id="inspect_css_padding-right"/>'};
         this.groups[group]['css_padding-bottom'] = {input: '<input type="text" id="inspect_css_padding-bottom"/>'};
         this.groups[group]['css_box-shadow']     = {input: '<input type="text" id="inspect_css_box-shadow"/>'};
+        this.groups[group]['css_margin-left']    = {input: '<input type="text" id="inspect_css_margin-left"/>'};
+        this.groups[group]['css_margin-top']     = {input: '<input type="text" id="inspect_css_margin-top"/>'};
+        this.groups[group]['css_margin-right']   = {input: '<input type="text" id="inspect_css_margin-right"/>'};
+        this.groups[group]['css_margin-bottom']  = {input: '<input type="text" id="inspect_css_margin-bottom"/>'};
+
+        for(var attr in this.groups[group]) {
+            this.groups[group][attr].css = true;
+            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].attrIndex = '';
+        }
+    },
+    editCssAnimation: function () {
+        var group = 'css_animation';
+        this.groups[group] = this.groups[group] || {};
+
+        this.groups[group]['css_animation-name']     = {input: '<input type="text" id="inspect_css_animation-name"/>'};
+        this.groups[group]['css_animation-duration'] = {input: '<input type="text" id="inspect_css_animation-duration"/>'};
 
         for(var attr in this.groups[group]) {
             this.groups[group][attr].css = true;
@@ -1686,6 +1702,7 @@ vis = $.extend(true, vis, {
         this.editCssBackground();
         this.editCssBorder();
         this.editCssShadowPadding();
+        //this.editCssAnimation();
 
         // Rerender all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {

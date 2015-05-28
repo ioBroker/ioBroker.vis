@@ -388,12 +388,16 @@ $.extend(systemDictionary, {
     "css_border-color": {"en": "-color", "de": "-color", "ru": "-color"},
     "css_border-radius": {"en": "-radius", "de": "-radius", "ru": "-radius"},
     "group_css_shadow_padding": {"en": "CSS padding & shadow", "de": "CSS Schatten und Abstand", "ru": "CSS Тень и отступы"},
-    "css_padding": {"en": "padding", "de": "padding", "ru": "padding"},
-    "css_padding-left": {"en": "padding-left", "de": "padding-left", "ru": "padding-left"},
-    "css_padding-top": {"en": "padding-top", "de": "padding-top", "ru": "padding-top"},
-    "css_padding-right": {"en": "padding-right", "de": "padding-right", "ru": "padding-right"},
-    "css_padding-bottom": {"en": "padding-bottom", "de": "padding-bottom", "ru": "padding-bottom"},
-    "css_box-shadow": {"en": "box-shadow", "de": "box-shadow", "ru": "box-shadow"},
+    "css_padding":          {"en": "padding",           "de": "padding",            "ru": "padding"},
+    "css_padding-left":     {"en": "padding-left",      "de": "padding-left",       "ru": "padding-left"},
+    "css_padding-top":      {"en": "padding-top",       "de": "padding-top",        "ru": "padding-top"},
+    "css_padding-right":    {"en": "padding-right",     "de": "padding-right",      "ru": "padding-right"},
+    "css_padding-bottom":   {"en": "padding-bottom",    "de": "padding-bottom",     "ru": "padding-bottom"},
+    "css_margin-left":      {"en": "margin-left",       "de": "margin-left",        "ru": "margin-left"},
+    "css_margin-top":       {"en": "margin-top",        "de": "margin-top",         "ru": "margin-top"},
+    "css_margin-right":     {"en": "margin-right",      "de": "margin-right",       "ru": "margin-right"},
+    "css_margin-bottom":    {"en": "margin-bottom",     "de": "margin-bottom",      "ru": "margin-bottom"},
+    "css_box-shadow":       {"en": "box-shadow",        "de": "box-shadow",         "ru": "box-shadow"},
     "css_box-shadow_tooltip": {
         "en": "h-shadow v-shadow blur spread color\x0A" +
               "h-shadow: Required. The position of the horizontal shadow. Negative values are allowed\x0A" +
@@ -415,7 +419,10 @@ $.extend(systemDictionary, {
               "радиус размытия: Задает радиус размытия тени. Чем больше это значение, тем сильнее тень сглаживается, становится шире и светлее. Если этот параметр не задан, по умолчанию устанавливается равным 0, тень при этом будет четкой, а не размытой.\x0A" +
               "растяжение: Положительное значение растягивает тень, отрицательное, наоборот, ее сжимает. Если этот параметр не задан, по умолчанию устанавливается 0, при этом тень будет того же размера, что и элемент.\x0A" +
               "цвет: Цвет тени в любом доступном CSS формате, по умолчанию тень черная. Необязательный параметр."
-    }
+    },
+    "group_css_animation":      {"en": "CSS Animation",         "de": "CSS Animation",          "ru": "CSS Анимация"},
+    "css_animation-name":       {"en": "animation-name",        "de": "animation-name",         "ru": "animation-name"},
+    "css_animation-duration":   {"en": "animation-duration",    "de": "animation-duration",     "ru": "animation-duration"}
 
 });
 

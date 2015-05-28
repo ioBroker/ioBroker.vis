@@ -1237,6 +1237,24 @@ vis = $.extend(true, vis, {
             });
         });
 
+        if (this.conn.getIsLoginRequired()) {
+            $('#logout_button').button({
+                text:  false,
+                icons: {primary: 'ui-icon-logout'}
+            }).click(function () {
+                that.saveRemote(function () {
+                    if (that._saveTimer) {
+                        $('#saving_progress').hide();
+                        clearTimeout(that._saveTimer);
+                        that._saveTimer = null;
+                    }
+                    that.conn.logout(function () {
+                        location.reload();
+                    });
+                });
+            }).show().css({width: '26px', height: '26px'});
+        }
+
         // Dev ----------------------------------------------------------------
         $(".oid-dev").change(function () {
             var val = $(this).val();
