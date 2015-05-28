@@ -2175,7 +2175,11 @@ window.onpopstate();
                             }, 1);
                             break;
                         case 'dialog':
+                        case 'dialogOpen':
                             $('#' + data + '_dialog').dialog('open');
+                            break;
+                        case 'dialogClose':
+                            $('#' + data + '_dialog').dialog('close');
                             break;
                         case 'popup':
                             window.open(data);

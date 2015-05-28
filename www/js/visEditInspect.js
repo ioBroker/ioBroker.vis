@@ -419,7 +419,8 @@ vis = $.extend(true, vis, {
                 }
                 // Allow only numbers
                 $(this).on('keypress', function(e) {
-                    return (e.keyCode >= 48 && e.keyCode <= 57) || (e.keyCode == 45);
+                    var code = e.keyCode || e.charCode;
+                    return (code >= 48 && code <= 57) || (code == 45);
                 });
             }
         };
