@@ -185,6 +185,10 @@
                     } else {
                         $dlg.dialog($.extend({
                             autoOpen: true,
+                            open: function () {
+                                console.log('Z');
+                                $(this).parent().css('z-index', 998);
+                            },
                             close: function () {
                                 $dlg.dialog('destroy');
                                 // Destroy content if not preloaded

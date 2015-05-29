@@ -53,7 +53,8 @@ if (vis.editMode) {
         "colName":          {"en": "Name",                      "de": "Name",                   "ru": "Имя"},
         "colWidth":         {"en": "Width",                     "de": "Width",                  "ru": "Ширина"},
         "colAttr":          {"en": "Attribute in JSON",         "de": "Attribut in JSON",       "ru": "Атрибут в JSON"},
-        "ack_oid":          {"en": "Acknowledge ID",            "de": "Bestätigung ID",         "ru": "ID для подтверждения"}
+        "ack_oid":          {"en": "Acknowledge ID",            "de": "Bestätigung ID",         "ru": "ID для подтверждения"},
+        "new_on_top":       {"en": "New event on top",          "de": "Neus Ereignis am Anfang", "ru": "Новые события сначала"}
     });
 }
 
@@ -386,7 +387,7 @@ vis.binds.table = {
         }
 
         // Remember index to calculate even or odd
-        data.rowNum = options.new_on_top ? 0 : j;
+        data.rowNum = options.new_on_top ? 0 : ((j - 1) >= 0 ? j - 1 : 0);
 
         function cbNewTable (e, newVal, oldVal) {
             $elem.trigger('newTable', newVal);

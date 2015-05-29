@@ -485,6 +485,9 @@ vis = $.extend(true, vis, {
             $('#dec_html_code').dialog({
                 width: 800,
                 height: 600,
+                open: function () {
+                    $(this).parent().css({'z-index': 1001});
+                },
                 close: function () {
                     $('#dec_html_code').remove();
                 }
