@@ -173,6 +173,14 @@ var servConn = {
                 });
             });
 
+            that._socket.on('reauthenticate', function () {
+                if (that._connCallbacks.onReAuth) {
+                    that._connCallbacks.onConnChange(this._isSecure);
+                } else {
+                    location.reload();
+                }
+            });
+
             that._socket.on('disconnect', function () {
                 //console.log("socket.io disconnect");
                 that._disconnectedSince = (new Date()).getTime();

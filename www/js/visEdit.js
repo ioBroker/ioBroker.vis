@@ -1257,17 +1257,23 @@ vis = $.extend(true, vis, {
 
         // Dev ----------------------------------------------------------------
         $(".oid-dev").change(function () {
-            var val = $(this).val();
-            if ($(this).attr('type') == 'number') {
-                if ($(this).attr('step') == '0.1') {
-                    val = val.replace(',', '.');
-                    that.setValue($(this).attr("id").split("_")[1], parseFloat(val, 10));
+            var timer = $(this).data('timer');
+            if (timer) clearTimeout(timer);
+            var $that = $(this);
+            $that.data('timer', setTimeout(function () {
+                $that.data('timer', null);
+                var val = $that.val();
+                if ($that.attr('type') == 'number') {
+                    if ($that.attr('step') == '0.1') {
+                        val = val.replace(',', '.');
+                        that.setValue($that.attr("id").split("_")[1], parseFloat(val, 10));
+                    } else {
+                        that.setValue($that.attr("id").split("_")[1], parseInt(val, 10));
+                    }
                 } else {
-                    that.setValue($(this).attr("id").split("_")[1], parseInt(val, 10));
+                    that.setValue($that.attr("id").split("_")[1], $that.val());
                 }
-            } else {
-                that.setValue($(this).attr("id").split("_")[1], $(this).val());
-            }
+            }, 500));
         }).keyup(function () {
             $(this).trigger('change');
         })
