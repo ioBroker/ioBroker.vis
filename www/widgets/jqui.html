@@ -174,12 +174,15 @@
         },
         dialog: function (el, options, persistent, preload, html, closeOnClick) {
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
+            $dlg.data('preload', (!preload || preload == 'false') && !$dlg.html().replace(/\s/g, ''));
+            $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
+
+            console.log('dialog');
 
             if (1 || !vis.editMode) {
-                $(el).parent().find("div.vis-widget-body").click(function () {
-                    if ((!preload || preload == 'false') && $dlg.html().replace(/\s/g, '') == "") {
-                        $dlg.html(html);
-                    }
+                $(el).parent().find('div.vis-widget-body').click(function () {
+                    if ($dlg.data('preload')) $dlg.html(html);
+
                     if (persistent) {
                         $dlg.dialog('open');
                     } else {
@@ -192,9 +195,11 @@
                             close: function () {
                                 $dlg.dialog('destroy');
                                 // Destroy content if not preloaded
-                                if (!preload) $dlg.html('');
+                                if ($dlg.data('preload')) $dlg.html('');
                             }
                         }, options));
+
+                        $dlg.data('inited', true);
 
                         if (closeOnClick) {
                             $dlg.unbind('click').click(function () {
@@ -208,15 +213,17 @@
                 $dlg.dialog($.extend({
                     autoOpen: false,
                     open: function () {
-                        if ((!preload || preload == 'false') && $dlg.html().replace(/\s/g, '') == "") {
-                            $dlg.html(html);
-                        }
+                        $dlg.parent().css({'z-index': 1000});
+                        if ($dlg.data('preload')) $dlg.html(html);
                     },
                     close: function () {
                         // Destroy content if not preloaded
-                        if (!preload) $dlg.html('');
+                        if ($dlg.data('preload')) $dlg.html('');
                     }
                 }, options));
+
+                $dlg.data('inited', true);
+
                 if (closeOnClick) {
                     $dlg.unbind('click').click(function () {
                         $dlg.dialog('close');
@@ -256,11 +263,11 @@
             }
         },
         dialogAutoClose: function (el) {
-            var dialog = $('#' + $(el).parent().attr("id") + "_dialog");
+            var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
             // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
-            dialog.on( "dialogopen", function () {
-                dialog.one("click", function () {
-                    dialog.dialog("close");
+            $dialog.on('dialogopen', function () {
+                $dialog.one('click', function () {
+                    $dialog.dialog("close");
                 });
             });
         },
@@ -510,6 +517,12 @@
             var settings = $.extend({}, options);
             var $this = $(el);
             var oid = $this.attr('data-oid');
+            var id = $this.attr('id');
+            if ($('.' + id) > 1) {
+                console.log('many');
+            }
+            console.log('radio');
+
             // Observable -> Buttonset
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 $this.find('input').removeAttr('checked');
@@ -521,7 +534,7 @@
 
                 $this.find('input[value="' + newVal + '"]').prop('checked', true);
                 $this.find('input').each(function () {
-                    $(this).button('refresh');
+                    if ($(this).buttonset('instance')) $(this).button('refresh');
                 });
             });
 
@@ -536,7 +549,7 @@
                 $this.buttonset(settings);
 
                 $this.find('input').each(function () {
-                    $(this).button('refresh');
+                    if ($(this).buttonset('instance')) $(this).button('refresh');
                 });
                 // Buttonset -> Observable
                 $this.find('input').click(function () {
