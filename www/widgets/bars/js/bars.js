@@ -313,6 +313,7 @@ vis.binds.bars = {
     },
     initOptions: function (tpl, barsOptions) {
         var $tpl = $('#' + tpl);
+        console.log('init');
 
         if ($tpl.attr('id') === 'tplBarFilter') {
             var filter = vis.updateFilter();

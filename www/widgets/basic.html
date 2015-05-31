@@ -1415,7 +1415,7 @@
 <script id="tplValueBoolCheckbox"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-selected" style="left: 232px; top: 312px;" > <div class="vis-widget-prev-body"><input type="checkbox" name="w00004_checkbox"></div> </div>'
+        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-selected" style="left: 232px; top: 312px;" > <div class="vis-widget-prev-body"><input type="checkbox"></div> </div>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bool Checkbox"
@@ -1685,12 +1685,27 @@
         data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
         data-vis-attrs="table_oid/id;"
         data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
-        data-vis-attrs1="event_oid/id;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
+        data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
         data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
-        data-vis-attrs-not-used="new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"
+        data-vis-attrs-not-used="btn_print;view_for_print/views"
         >
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
        <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
+    </div>
+</script>
+
+<script id="tplHtmlLogout"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="logout,html"
+        data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
+        data-vis-name="HTML logout"
+        data-vis-attrs="html[Logout]/text">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.conn.logout(function(){location.reload()})">
+        <div class="vis-widget-body">
+            <%== this.data.attr('html') %>
+        </div>
     </div>
 </script>
 

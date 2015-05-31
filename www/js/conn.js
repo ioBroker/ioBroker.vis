@@ -46,12 +46,16 @@ var servConn = {
     _subscribes:        [],
     _cmdData:           null,
     _cmdInstance:       null,
+    _isSecure:          false,
     namespace:          'vis.0',
     getType:          function () {
         return this._type;
     },
     getIsConnected:   function () {
         return this._isConnected;
+    },
+    getIsLoginRequired: function () {
+        return this._isSecure;
     },
     _checkConnection: function (func, _arguments) {
         if (!this._isConnected) {
@@ -70,6 +74,9 @@ var servConn = {
     },
     _onAuth:          function (objectsRequired, isSecure) {
         var that = this;
+
+        this._isSecure = isSecure;
+
         this._socket.emit('subscribe', '*');
         if (objectsRequired) this._socket.emit('subscribeObjects', '*');
 
@@ -164,6 +171,14 @@ var servConn = {
                         console.log('no permission');
                     }
                 });
+            });
+
+            that._socket.on('reauthenticate', function () {
+                if (that._connCallbacks.onReAuth) {
+                    that._connCallbacks.onConnChange(this._isSecure);
+                } else {
+                    location.reload();
+                }
             });
 
             that._socket.on('disconnect', function () {

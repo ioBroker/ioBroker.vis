@@ -53,7 +53,8 @@ if (vis.editMode) {
         "colName":          {"en": "Name",                      "de": "Name",                   "ru": "Имя"},
         "colWidth":         {"en": "Width",                     "de": "Width",                  "ru": "Ширина"},
         "colAttr":          {"en": "Attribute in JSON",         "de": "Attribut in JSON",       "ru": "Атрибут в JSON"},
-        "ack_oid":          {"en": "Acknowledge ID",            "de": "Bestätigung ID",         "ru": "ID для подтверждения"}
+        "ack_oid":          {"en": "Acknowledge ID",            "de": "Bestätigung ID",         "ru": "ID для подтверждения"},
+        "new_on_top":       {"en": "New event on top",          "de": "Neus Ereignis am Anfang", "ru": "Новые события сначала"}
     });
 }
 
@@ -262,18 +263,7 @@ vis.binds.table = {
                 vis.binds.table.showTable(view, wid, options);
             }, 100);
             return;
-        } else {
-            /*var timer = $('#' + wid).data('timer');
-             if (!timer) {
-             $('#' + wid).data('timer', function () {
-             vis.binds.table.showTable(view, wid, options);
-             });
-             return;
-             } else {
-             $('#' + wid).data('timer', null);
-             }*/
         }
-
         //vis.binds.table.initTable();
         var tClass = options['class'] || 'tclass';
 
@@ -299,7 +289,7 @@ vis.binds.table = {
 
         // Start creation of table
         var header = '<table class="vis-table-header ' + tClass + '">';
-        var text   = '<div class="vis-table-div ' + tClass + '-inner' + ((options.show_scroll) ? ' tclass-inner-overflow' : '') + '"><table id="vis-table-body" class="' + tClass + '">';
+        var text   = '<div class="vis-table-div ' + tClass + '-inner' + ((options.show_scroll) ? ' tclass-inner-overflow' : '') + '"><table class="vis-table-body ' + tClass + '">';
         var headerDone = false;
         var j = 0;
         var selectedId = null;
@@ -360,7 +350,7 @@ vis.binds.table = {
             view:    view
         };
 
-        $elem.find('.vis-table-ack-button').bind('click', vis.binds.table.onAckButton);
+        $elem.find('.vis-table-ack-button').unbind('click').bind('click', vis.binds.table.onAckButton);
 
         // Set additional data for every row
         for (var i = 0, len = table.length; i < len; i++) {
@@ -375,17 +365,17 @@ vis.binds.table = {
         // If detailed information desired
         if (options.detailed_wid) {
             // Bind on click event for every row
-            $elem.find('.vis-table-row').bind('click', vis.binds.table.onRowClick);
+            $elem.find('.vis-table-row').unbind('click').bind('click', vis.binds.table.onRowClick);
 
             // Set additional data for every row
             for (i = 0, len = table.length; i < len; i++) {
                 if (!table[i]) continue;
                 $elem.find('.vis-table-row[data-index="' + i + '"]')
                 .data('options', {
-                    content: table[i],
+                    content:      table[i],
                     detailed_wid: options.detailed_wid,
-                    tClass: tClass,
-                    wid: wid
+                    tClass:       tClass,
+                    wid:          wid
                 });
             }
 
@@ -397,85 +387,98 @@ vis.binds.table = {
         }
 
         // Remember index to calculate even or odd
-        data.rowNum = options.new_on_top ? 0 : j;
+        data.rowNum = options.new_on_top ? 0 : ((j - 1) >= 0 ? j - 1 : 0);
 
-        // New event coming
-        $elem.on('newEvent', function (newVal) {
-            var newEvent;
-            var data = $(this).data('options');
-            // Convert event to json
-            if (newVal) {
-                if (typeof newVal == 'string') {
-                    try {
-                        newEvent = JSON.parse(newVal);
+        function cbNewTable (e, newVal, oldVal) {
+            $elem.trigger('newTable', newVal);
+        }
+        function cbNewEvent (e, newVal, oldVal) {
+            $elem.trigger('newEvent', newVal);
+        }
+
+        if (!$('#' + wid).data('inited')) {
+            $('#' + wid).data('inited', true);
+            // New event coming
+            $elem.on('newEvent', function (e, newVal) {
+                if (e.handled) return;
+                e.handled = true;
+                var newEvent;
+                var data = $(this).data('options');
+                // Convert event to json
+                if (newVal) {
+                    if (typeof newVal == 'string') {
+                        try {
+                            newEvent = JSON.parse(newVal);
+                        }
+                        catch (e)
+                        {
+                            console.log('elem.triggered: Cannot parse json new event ' + newVal);
+                            return;
+                        }
+                    } else {
+                        newEvent = newVal;
                     }
-                    catch (e)
-                    {
-                        console.log('elem.triggered: Cannot parse json new event ' + newVal);
-                        return;
+                }
+                else {
+                    return;
+                }
+
+                // Try to find, if this event yet exists
+                var $row = (newEvent._id !== undefined) ? $(this).find('tr[data-index="' + newEvent._id + '"]') : [];
+
+                // get next row number for new line
+                if (!$row.length) data.rowNum++;
+
+                var text = vis.binds.table.createRow(newEvent, data.wid, data.options, data.rowNum, ($row.length > 0), (newEvent._id === undefined) ? data.rowNum : newEvent._id);
+
+                if ($row.length) {
+                    $row.html(text).addClass(newEvent._class || '');
+                } else {
+                    // If add to the top of table
+                    if (data.options.new_on_top) {
+                        $('#' + this.id).find('.vis-table-body').prepend(text);
+                    } else {
+                        // Add to the bottom of table
+                        $('#' + this.id).find('.vis-table-body').append(text);
                     }
-                } else {
-                    newEvent = newVal;
                 }
-            }
-            else {
-                return;
-            }
-
-            // Try to find, if this event yet exists
-            var $row = (newEvent._id !== undefined) ? $(this).find('tr[data-index="' + newEvent._id + '"]') : [];
-
-            // get next row number for new line
-            if (!$row.length) data.rowNum++;
-
-            var text = vis.binds.table.createRow(newEvent, data.wid, data.options, data.rowNum, ($row.length > 0), (newEvent._id === undefined) ? data.rowNum : newEvent._id);
-            console.log('AAA');
-
-            if ($row.length) {
-                $row.html(text).addClass(newEvent._class || '');
-            } else {
-                // If add to the top of table
-                if (data.options.new_on_top) {
-                    $('#t' + this.id).prepend(text);
-                } else {
-                    // Add to the bottom of table
-                    $('#t' + this.id).append(text);
+                var $el;
+                // If detailed widget desired
+                if (data.options.detailed_wid) {
+                    $el = $('#' + this.id).find('.vis-table-row[data-index="' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id) + '"]')
+                        .data('options', {
+                            content:      newEvent,
+                            detailed_wid: options.detailed_wid,
+                            tClass:       tClass,
+                            wid:          wid
+                        }).unbind('click').bind('click', vis.binds.table.onRowClick);
+                    $el = $(this).find('.tr_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id));
                 }
-            }
-            var $el;
-            // If detailed widget desired
-            if (data.options.detailed_wid) {
-                $el = $(this).find('.tr_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id));
-                if ($el.length) {
-                    $el.data('options', {data: newEvent, parent: this});
-                    $el.bind('click', vis.binds.table.onRowClick);
-                }
-            }
 
-            $el = $(this).find('.ack_button_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id));
-            if ($el.length) {
-                $el.data('options', {data: newEvent, parent: this, ack_id: newEvent._ack_id || JSON.stringify(newEvent)});
-                $el.bind('click', vis.binds.table.onAckButton);
-            }
-        })
-        .on('newTable', function (newVal) {
+                $('#' + this.id).find('.ack_button_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id))
+                    .data('options', {data: newEvent, parent: this, ack_id: newEvent._ack_id || JSON.stringify(newEvent)})
+                    .unbind('click').bind('click', vis.binds.table.onAckButton);
+            })
+            .on('newTable', function (e, newVal) {
+                if (e.handled) return;
+                e.handled = true;
                 var data = $(this).data('options');
                 // Update whole table
                 _setTimeout(vis.binds.table.showTable, 50, data.view, data.wid, data.options);
-            })
-        .data('options', data);
-
+            });
+        }
+        $('#' + wid).data('options', data);
 
         if (options.event_oid) {
-            //vis.binds.table.registerIds(wid, options.event_oid);
-            vis.states.bind(options.event_oid + '.val', function (e, newVal, oldVal) {
-                $elem.trigger('newEvent', newVal);
-            });
+            if ($('#' + wid).data('binded') != options.event_oid) {
+                $('#' + wid).data('binded', options.event_oid);
+                vis.states.bind(options.event_oid + '.val', cbNewEvent);
+            }
         } else {
-            //vis.binds.table.registerIds(wid, options.table_oid);
-            vis.states.bind(options.table_oid + '.val', function (e, newVal, oldVal) {
-                $elem.triggered('newTable', newVal);
-            });
+            if ($('#' + wid).data('binded') != options.table_oid) {
+                $('#' + wid).data('binded', options.table_oid);
+                vis.states.bind(options.table_oid + '.val', cbNewTable);
+            }
         }
     },
 

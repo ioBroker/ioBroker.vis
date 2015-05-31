@@ -6,16 +6,31 @@
 
     if (vis.editMode) {
         $.extend(systemDictionary, {
-            "buttontext":   {"en": "Button text",   "de": "Knopftext", "ru": "Надпись на кнопке"},
-            "href":         {"en": "Link",          "de": "Link", "ru": "Ссылка"},
-            "href_tooltip": {"en": "Like 'http://google.com'", "de": "Wie 'http://google.com'", "ru": "Например 'http://google.com'"},
-            "target":       {"en": "target",        "de": "target", "ru": "target"},
-            "alt":          {"en": "Tooltip (alt)", "de": "Tooltip (alt)", "ru": "Всплывающая подсказка (alt)"},
-            "text":         {"en": "Text",          "de": "Text", "ru": "Текст"},
-            "invert_icon":  {"en": "Invert image",  "de": "Invertiere das Bild", "ru": "Инвертировать картинку"}
+            "buttontext":       {"en": "Button text",       "de": "Knopftext",              "ru": "Надпись на кнопке"},
+            "href":             {"en": "Link",              "de": "Link",                   "ru": "Ссылка"},
+            "href_tooltip":     {"en": "Like 'http://google.com'", "de": "Wie 'http://google.com'", "ru": "Например 'http://google.com'"},
+            "target":           {"en": "target",            "de": "target",                 "ru": "target"},
+            "dialog_height":    {"en": "Dialog height",     "de": "Dialoghöhe",             "ru": "Высота окна"},
+            "dialog_width":     {"en": "Dialog width",      "de": "Dialogbreite",           "ru": "Ширина окна"},
+            "alt":              {"en": "Tooltip (alt)",     "de": "Tooltip (alt)",          "ru": "Всплывающая подсказка (alt)"},
+            "text":             {"en": "Text",              "de": "Text",                   "ru": "Текст"},
+            "invert_icon":      {"en": "Invert image",      "de": "Invertiere das Bild",    "ru": "Инвертировать картинку"},
+            "html_dialog":      {"en": "HTML in dialog",    "de": "HTML im Dialog",         "ru": "HTML в диалоговом окне"},
+            "preload":          {"en": "Prerender dialog",  "de": "Prerender Dialog",       "ru": "Рендер содержания в начале"},
+            "closeOnClick":     {"en": "Close by click on dialog",  "de": "Zumachen beim Anklicken",       "ru": "Закрыть по нажатию в любом месте"},
+            "preload_tooltip":  {
+                "en": "If true, the content of dialog will be created at start of view.\x0AIf false, the content will be created during opening of dialog.\x0AWebcams or dynamic content require 'prerender'=false",
+                "de": "Falls true, dann wird Inhalt vom Dialog sofort am Anfang gerendert.\x0AFalls false, dann beim Anzeigen vom Dialog.\x0AWebcams oder dynamischer Inhalt müssen prerender auf false haben",
+                "ru": "Если да, то рендер содержания будет в самом начале.\x0AЕсли нет, то при показе диалога.\x0AWebCams или динамическое содержание требуют значение false."
+            },
+            "persistent":       {"en": "Persistent",        "de": "Dauernd",                "ru": "Существует постоянно"},
+            "persistent_tooltip":  {
+                "en": "If true, the dialog will be created at start and can\x0Abe shown by external command 'dialogOpen'.",
+                "de": "Falls true, dann wird der Dialog sofort am Anfang erzeugtx0Aund mit dem Befehl 'dialogOpen' angezeigt werden konnte.",
+                "ru": "Если да, то диалог будет создан в самом начале и\x0Aможет быть вызван внешней командой 'dialogOpen'."
+            }
         });
     }
-
 
     vis.navChangeCallbacks.push(function (view) {
         $(".jqui-nav-state").each(function () {
@@ -157,34 +172,61 @@
             $this.css({position: 'absolute'});
             vis.binds.jqueryui.active(el, reverse, _value);
         },
-        dialog: function (el, options, persistent, preload, html) {
-            var dlg = $(el).parent().find("div.vis-widget-dialog");
-            if (!vis.editMode) {
-                $(el).parent().find("div.vis-widget-body").click(function () {
-                    var id = $(this).parent().attr("id") + "_dialog";
-                    if ((!preload || preload == 'false') && $("#" + id).html().replace(/\s/g, '') == "") {
-                        //console.log("dialog "+id+" inserting html");
-                        $("#" + id).html(html);
-                    }
+        dialog: function (el, options, persistent, preload, html, closeOnClick) {
+            var $dlg = $(el).parent().find('div.vis-widget-dialog');
+            $dlg.data('preload', (!preload || preload == 'false') && !$dlg.html().replace(/\s/g, ''));
+            $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
+            // Show dialog in edit mode too
+            if (1 || !vis.editMode) {
+                $(el).parent().find('div.vis-widget-body').click(function () {
+                    if ($dlg.data('preload')) $dlg.html(html);
+
                     if (persistent) {
-                        $("#" + id).dialog('open');
+                        $dlg.dialog('open');
                     } else {
-                        dlg.dialog($.extend({
+                        $dlg.dialog($.extend({
                             autoOpen: true,
+                            open: function () {
+                                console.log('Z');
+                                $(this).parent().css('z-index', 998);
+                            },
                             close: function () {
-                                dlg.dialog("destroy");
-                                if (!preload) {
-                                    $("#" + id).html("");
-                                }
+                                $dlg.dialog('destroy');
+                                // Destroy content if not preloaded
+                                if ($dlg.data('preload')) $dlg.html('');
                             }
                         }, options));
+
+                        $dlg.data('inited', true);
+
+                        if (closeOnClick) {
+                            $dlg.unbind('click').click(function () {
+                                $dlg.dialog('close');
+                            });
+                        }
                     }
                 });
             }
             if (persistent) {
-                dlg.dialog($.extend({
-                    autoOpen: false
+                $dlg.dialog($.extend({
+                    autoOpen: false,
+                    open: function () {
+                        $dlg.parent().css({'z-index': 1000});
+                        if ($dlg.data('preload')) $dlg.html(html);
+                    },
+                    close: function () {
+                        // Destroy content if not preloaded
+                        if ($dlg.data('preload')) $dlg.html('');
+                    }
                 }, options));
+
+                $dlg.data('inited', true);
+
+                if (closeOnClick) {
+                    $dlg.unbind('click').click(function () {
+                        $dlg.dialog('close');
+                    });
+                }
             }
         },
         dialogContainer: function (el, options, persistent, preload) {
@@ -212,18 +254,18 @@
                     });
 
                     var id = $(this).parent().attr("id") + "_dialog";
-                    $("#" + id).dialog('open');
+                    $('#' + id).dialog('open');
                 });
             } else {
                 $(el).parent().find("div.vis-widget-body").show();
             }
         },
         dialogAutoClose: function (el) {
-            var dialog = $("#" + $(el).parent().attr("id") + "_dialog");
+            var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
             // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
-            dialog.on( "dialogopen", function () {
-                dialog.one("click", function () {
-                    dialog.dialog("close");
+            $dialog.on('dialogopen', function () {
+                $dialog.one('click', function () {
+                    $dialog.dialog("close");
                 });
             });
         },
@@ -350,7 +392,7 @@
         inputset: function (el, options) {
             var digits = options;
             var $this = $(el);
-            var input = "#" + $this.attr("id").slice(0, -3) + 'input';
+            var input = '#' + $this.attr("id").slice(0, -3) + 'input';
 
             var oid = $this.attr('data-oid');
 
@@ -469,22 +511,30 @@
                 if (!vis.editMode && href) window.open(href);
             });
         },
-        radio: function (el, options) {
+        radio: function (el, options, process) {
+            if (!process) {
+                setTimeout(function () {
+                    vis.binds.jqueryui.radio(el, process, true);
+                }, 50);
+                return;
+            }
             var settings = $.extend({}, options);
             var $this = $(el);
             var oid = $this.attr('data-oid');
+
             // Observable -> Buttonset
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 $this.find('input').removeAttr('checked');
                 if (newVal === true || newVal === 'true') {
                     newVal = 1;
-                } else if (newVal === false || newVal === 'false') {
+                } else
+                if (newVal === false || newVal === 'false') {
                     newVal = 0;
                 }
 
                 $this.find('input[value="' + newVal + '"]').prop('checked', true);
                 $this.find('input').each(function () {
-                    $(this).button('refresh');
+                    if ($(this).button('instance')) $(this).button('refresh');
                 });
             });
 
@@ -499,7 +549,7 @@
                 $this.buttonset(settings);
 
                 $this.find('input').each(function () {
-                    $(this).button('refresh');
+                     if ($this.button('instance')) $(this).button('refresh');
                 });
                 // Buttonset -> Observable
                 $this.find('input').click(function () {
@@ -630,7 +680,7 @@
 <script id="tplJquiButtonLinkBlank" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div  style="height: 30px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00003_button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div  style="height: 30px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link _blank"
@@ -682,7 +732,7 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div class="vis-widget-body">
-            <a class="widget-link" href="#" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href='#' style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
             <div <%= (el) -> vis.binds.jqueryui.iconHttpGet(el, data.attr('url')) %> />
         </div>
     </div>
@@ -692,9 +742,10 @@
         type="text/ejs" 
         class="vis-tpl" 
         data-vis-set="jqui"
-        data-vis-type="static"
+        data-vis-type="static,dialog"
         data-vis-name="HTML - Dialog"
-        data-vis-attrs="html;html_dialog;title;modal/checkbox;width;height;persistent/checkbox;preload/checkbox">
+        data-vis-attrs="html/text;"
+        data-vis-attrs0="group.dialog;html_dialog/text;title;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox">
 
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -703,16 +754,18 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog')) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
     </div>
 </script>
 
 <script id="tplJquiIconDialog" 
         type="text/ejs" 
         class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="static - Icon - Dialog" 
-        data-vis-attrs="src;alt;text;html_dialog;title;modal/checkbox;width;height;persistent/checkbox;preload/checkbox;invert_icon/checkbox">
+        data-vis-set="jqui"
+        data-vis-type="static,dialog"
+        data-vis-name="static - Icon - Dialog"
+        data-vis-attrs="src/image;alt;text;invert_icon/checkbox;"
+        data-vis-attrs0="group.dialog;html_dialog/text;title;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -721,12 +774,12 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog')) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
     </div>
 </script>
 
@@ -735,7 +788,8 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - HTML - view in jqui Dialog" 
-        data-vis-attrs="html;contains_view;title;modal/checkbox;width;height">
+        data-vis-attrs="html/text;contains_view;"
+        data-vis-attrs0="group.dialog;title;modal/checkbox;dialog_width;dialog_height">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff;" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html") %>
@@ -744,7 +798,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}) %> />
     </div>
 </script>
 
@@ -753,7 +807,8 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - ext cmd - view in jqui Dialog" 
-        data-vis-attrs="html;contains_view;title;modal/checkbox;width;height">
+        data-vis-attrs="html/text;contains_view/view;"
+        data-vis-attrs0="group.dialog;title;modal/checkbox;dialog_width;dialog_height">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;">
             <b>External Container Dialog</b><br/>
@@ -764,7 +819,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}) %> />
     </div>
 </script>
 
@@ -773,7 +828,8 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Icon - view in jqui Dialog" 
-        data-vis-attrs="src/image;alt;text;contains_view;title;modal/checkbox;width;height;invert_icon/checkbox">
+        data-vis-attrs="src/image;alt;text;"
+        data-vis-attrs0="group.dialog;contains_view/view;title;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -786,10 +842,9 @@
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
-            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
-            </div>
+            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}) %> />
     </div>
 </script>
 
@@ -798,7 +853,8 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
-        data-vis-attrs="html_prepend;html_append;buttontext[Text];contains_view;title;modal/checkbox;width;height;padding[5]/slider,0,100,1">
+        data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];"
+        data-vis-attrs0="group.dialog;contains_view/view;title;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
@@ -806,17 +862,16 @@
             <%== this.data.attr("html_append") %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
-            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
-            </div>
+            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('width'),height:data.attr('height'),modal:data.attr('modal')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal')}) %> />
     </div>
 </script>
 
 <script id="tplJquiButtonNav" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" name="w00006_button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
+        data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
         data-vis-set="jqui"
         data-vis-type="navigation"
         data-vis-name="Button"
@@ -847,7 +902,7 @@
 <script id="tplJquiInput" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 30px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label for="w00005_input" style=" display: none;">Input</label><input type="text" name="w00005_input" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
+        data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 30px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label style=" display: none;">Input</label><input type="text" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
         data-vis-set="jqui" 
         data-vis-type="ctrl"
         data-vis-name="Input"
@@ -960,7 +1015,7 @@
 <script id="tplJquiButtonState" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px; height: 30px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px; height: 30px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Button State"
@@ -977,7 +1032,7 @@
 <script id="tplJquiRadio" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00005_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00005_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00005_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00005_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons on/off"
@@ -996,7 +1051,7 @@
 <script id="tplJquiRadioList" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 228px; left: 83px; font-size: 8px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00004_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00004_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00004_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00004_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 228px; left: 83px; font-size: 8px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons ValueList"
@@ -1051,7 +1106,7 @@
 <script id="tplJquiRadioSteps" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00006_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00006_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" name="w00006_radio" value="0.25" class="ui-helper-hidden-accessible"><label for="w00006_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" name="w00006_radio" value="0.5" class="ui-helper-hidden-accessible"><label for="w00006_radio2" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" name="w00006_radio" value="0.75" class="ui-helper-hidden-accessible"><label for="w00006_radio3" class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" name="w00006_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00006_radio4" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" value="0.25" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" value="0.5" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" value="0.75" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons 25%"
