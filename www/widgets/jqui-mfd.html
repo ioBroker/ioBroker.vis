@@ -335,7 +335,8 @@
         data-vis-set="jqui-mfd"
         data-vis-type="state,shutter"
         data-vis-name="Shutter"
-        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox">
+        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'
+        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>><div class="vis-widget-body">
     <%
         var styles = "";
@@ -380,8 +381,7 @@
         data-vis-type="ctrl,shutter,dialog"
         data-vis-name="Shutter + jqui Dialog"
         data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'
-        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox">
-        data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox"
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
     <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
@@ -393,6 +393,8 @@
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
             var val = max - parseFloat(vis.states.attr(this.data.oid + '.val'));
+
+            if (this.data.attr('invert_value')) val = max - val + min;
 
             if (val >= max) {
         %>
@@ -419,20 +421,20 @@
             <img style="<%= styles %>" width="100%" src="img/mfd/fts_window_2w.png"/>
         <% } %>
         </div>
-        <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
+        <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
                 <%
                     var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                     var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
                 %>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.5 %>"  checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= max %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('open') %></label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="<%=                                   min + (max - min) * 0.5                             %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.75 : min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? max : min                                           %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('open') %></label>
             </div>
             <br/>
-            <div class="sliderJQUI" style="width: 90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: min, max: max, step: (max - min) / 100}) %> />
+            <div class="sliderJQUI" style="width: 90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: min, max: max, step: (max - min) / 100, inverted: this.data.attr('invert_value')}) %> />
             <br/>
             <%= vis.states.attr(this.data.oid + '.val') ? vis.states.attr(this.data.oid + '.val').toFixed(0) : 0 %>%
         </div>
