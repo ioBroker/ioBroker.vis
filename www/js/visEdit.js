@@ -1415,7 +1415,7 @@ vis = $.extend(true, vis, {
                     }
                     if (renderVisible) data.renderVisible = true;
 
-                    var widgetId = that.addWidget(tpl, data);
+                    var widgetId = that.addWidget({tpl: tpl, data: data});
 
                     that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                         .multiselect('refresh');
@@ -2183,8 +2183,14 @@ vis = $.extend(true, vis, {
                         if (vis.binds.bars && vis.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
                             importObject[widget] = that.binds.bars.convertOldBars(importObject[widget]);
                         }
-                        //(tpl, data, style, wid, view, hidden, noSave, no_animate)
-                        activeWidgets.push(that.addWidget(importObject[widget].tpl, importObject[widget].data, importObject[widget].style, null, that.activeView, false, true, true));
+                        //(tpl, data, style, wid, view, noSave, noAnimate)
+                        activeWidgets.push(that.addWidget({
+                            tpl:        importObject[widget].tpl,
+                            data:       importObject[widget].data,
+                            style:      importObject[widget].style,
+                            noSave:     true,
+                            noAnimate: true
+                        }));
                     }
 
                     that.saveRemote(function () {
@@ -2433,28 +2439,29 @@ vis = $.extend(true, vis, {
             $wid.addClass('vis-widget-edit-locked').removeClass('ui-selectee').unbind('click');
         }
     },
-    addWidget: function (tpl, data, style, wid, view, hidden, noSave, no_animate) {
-        if (!view) view = this.activeView;
+    addWidget: function (options) {
+        // tpl, data, style, wid, view, noSave, noAnimate
+        if (!options.view) options.view = this.activeView;
 
-        var isSelectWidget = (wid === undefined);
-        var isViewExist    = (document.getElementById('visview_' + view) !== null);
-        var renderVisible  = data.renderVisible;
+        var isSelectWidget = (options.wid === undefined);
+        var isViewExist    = (document.getElementById('visview_' + options.view) !== null);
+        var renderVisible  = options.data.renderVisible;
 
-        if (renderVisible) delete data.renderVisible;
+        if (renderVisible) delete options.data.renderVisible;
 
         if (isSelectWidget && !isViewExist) {
-            this.renderView(view, true, false);
+            this.renderView(options.view, true, false);
             isViewExist = true;
         }
 
-        var widgetId = wid || this.nextWidget();
-        var $tpl = $('#' + tpl);
+        var widgetId = options.wid || this.nextWidget();
+        var $tpl = $('#' + options.tpl);
 
         // call custom init function
-        if (!noSave && $tpl.attr('data-vis-init')) {
+        if (!options.noSave && options.noInit && $tpl.attr('data-vis-init')) {
             var init = $tpl.attr('data-vis-init');
             if (this.binds[$tpl.attr('data-vis-set')][init]) {
-                this.binds[$tpl.attr('data-vis-set')][init](tpl, data);
+                this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
             }
         }
 
@@ -2462,55 +2469,55 @@ vis = $.extend(true, vis, {
             wid: widgetId,
             data: new can.Map($.extend({
                 'wid': widgetId
-            }, data))
+            }, options.data))
         };
 
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
-        this.views[view].widgets = this.views[view].widgets || {};
-        this.views[view].widgets[widgetId] = this.views[view].widgets[widgetId] || {};
+        this.views[options.view].widgets = this.views[options.view].widgets || {};
+        this.views[options.view].widgets[widgetId] = this.views[options.view].widgets[widgetId] || {};
 
         if (isViewExist) {
-            $('#visview_' + view).append(can.view(tpl, {
+            $('#visview_' + options.view).append(can.view(options.tpl, {
                 val:  this.states.attr(this.widgets[widgetId].data.oid + '.val'),
                 /*ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
                 ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
                 lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),*/
                 data: this.widgets[widgetId].data,
-                view: view
+                view: options.view
             }));
         }
 
         var $jWidget = $('#' + widgetId);
-        style = style || this.findFreePosition(view, widgetId, null, $jWidget.width(), $jWidget.height());
+        options.style = options.style || this.findFreePosition(options.view, widgetId, null, $jWidget.width(), $jWidget.height());
 
-        if (this.views[view].widgets[widgetId].data !== undefined) {
-            data = $.extend(data, this.views[view].widgets[widgetId].data, true);
+        if (this.views[options.view].widgets[widgetId].data !== undefined) {
+            options.data = $.extend(options.data, this.views[options.view].widgets[widgetId].data, true);
         }
 
-        this.views[view].widgets[widgetId] = {
-            tpl:       tpl,
-            data:      data,
-            style:     style,
-            widgetSet: $('#' + tpl).attr('data-vis-set')
+        this.views[options.view].widgets[widgetId] = {
+            tpl:       options.tpl,
+            data:      options.data,
+            style:     options.style,
+            widgetSet: $('#' + options.tpl).attr('data-vis-set')
         };
 
         if (renderVisible) this.views[view].widgets[widgetId].renderVisible = true;
 
-        if (style) $jWidget.css(style);
+        if (options.style) $jWidget.css(options.style);
 
         //if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
 
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
-            if (!no_animate) {
+            if (!options.noAnimate) {
                 this.actionHighlighWidget(widgetId);
             }
         }
 
-        if (!noSave) this.save();
+        if (!options.noSave) this.save();
 
-        this.bindWidgetClick(view, widgetId);
+        this.bindWidgetClick(options.view, widgetId);
 
         if ($('#wid_all_lock_function').prop('checked')) {
             $jWidget.addClass('vis-widget-lock');
@@ -2580,8 +2587,13 @@ vis = $.extend(true, vis, {
                     widgets[i].widget = $.extend(true, {}, objWidget);
                 }
 
-                // addWidget Params: tpl, data, style, wid, view, hidden, noSave
-                newWidgets.push(this.addWidget(tpl, data, style, undefined, undefined, undefined, true));
+                // addWidget Params: tpl, data, style, wid, view, noSave
+                newWidgets.push(this.addWidget({
+                    tpl:    tpl, 
+                    data:   data, 
+                    style:  style, 
+                    noSave: true
+                }));
 
                 this.$selectActiveWidgets
                     .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
@@ -2590,7 +2602,14 @@ vis = $.extend(true, vis, {
                 if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
                     this.renderView(targetView, true, true);
                 }
-                newWidgets.push(this.addWidget(tpl, data, style, this.nextWidget(), targetView, true));
+                newWidgets.push(this.addWidget({
+                    tpl:    tpl, 
+                    data:   data, 
+                    style:  style, 
+                    wid:    this.nextWidget(), 
+                    view:   targetView, 
+                    noSave: true
+                }));
             }
         }
         if (!widgets[0].widget) {
@@ -2612,7 +2631,13 @@ vis = $.extend(true, vis, {
         // create new widget with the same properties
         if (view) {
             var widgetData = this.views[view].widgets[oldId];
-            this.addWidget(widgetData.tpl, widgetData.data, widgetData.style, newId, view);
+            this.addWidget({
+                tpl:    widgetData.tpl, 
+                data:   widgetData.data, 
+                style:  widgetData.style, 
+                wid:    newId, 
+                view:   view
+            });
             this.$selectActiveWidgets
                 .append('<option value=' + newId + '">' + this.getWidgetName(view, newId) + '</option>')
                 .multiselect('refresh');
@@ -2693,7 +2718,14 @@ vis = $.extend(true, vis, {
 
                     if (isFound) {
                         // Create
-                        this.addWidget(this.views[view].widgets[widgets[i]].tpl, this.views[view].widgets[widgets[i]].data, this.views[view].widgets[widgets[i]].style, wid + '_' + v_, v_);
+                        this.addWidget({
+                            tpl:    this.views[view].widgets[widgets[i]].tpl, 
+                            data:   this.views[view].widgets[widgets[i]].data, 
+                            style:  this.views[view].widgets[widgets[i]].style, 
+                            wid:    wid + '_' + v_, 
+                            view:   v_,
+                            noSave: true
+                        });
                     }
                 }
 
@@ -3164,8 +3196,13 @@ vis = $.extend(true, vis, {
                     if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
                 }
                 if (renderVisible) data.renderVisible = true;
-                //tpl, data, style, wid, view, hidden, noSave,no_animate
-                var widgetId = that.addWidget(tpl, data, addPos,undefined,undefined,undefined,undefined,true);
+                //tpl, data, style, wid, view, noSave, noAnimate
+                var widgetId = that.addWidget({
+                    tpl:        tpl, 
+                    data:       data, 
+                    style:      addPos,
+                    noAnimate:  true
+                });
 
                 that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
                     .multiselect('refresh');

@@ -1036,7 +1036,7 @@ var vis = {
             setTimeout(function () {
                 that.saveRemote(callback);
             }, 1000);
-        }else {
+        } else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
             if (this.saveRemoteActive == 10) {
                 console.log('possible no connection');
@@ -1060,8 +1060,10 @@ var vis = {
                     viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
                 }
             }
-
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(viewsToSave, null, 2), function () {
+            viewsToSave = JSON.stringify(viewsToSave, null, 2)
+            if (this.lastSave == viewsToSave) return;
+            this.lastSave = viewsToSave;
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function () {
                 that.saveRemoteActive = 0;
                 if (callback) callback();
 

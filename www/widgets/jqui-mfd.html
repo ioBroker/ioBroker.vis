@@ -191,7 +191,7 @@
                     var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                     var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
                 %>
-                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('off') %></label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><% _('off') %> <%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= max %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('on') %></label>
             </div>
         </div>
@@ -379,6 +379,8 @@
         data-vis-set="jqui-mfd"
         data-vis-type="ctrl,shutter,dialog"
         data-vis-name="Shutter + jqui Dialog"
+        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'
+        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox">
         data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
     <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px" <%= (el) -> vis.binds.jqueryui.classes(el, true) %>>
@@ -443,6 +445,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui-mfd"
+        data-vis-prev='<div id="prev_tplMfdHeating" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body" style="width:100%; height:100%"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="img/mfd/sani_heating_temp.png" width="100%"> </div></div>'
         data-vis-set="ctrl,heating,dialog"
         data-vis-name="ctrl - Heating + jqui Dialog"
         data-vis-attrs="oid;oid-working;invert_icon/checkbox;asButton[true]/checkbox;"
@@ -460,22 +463,22 @@
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="6" /><label for="<%= this.data.attr('wid') %>_radio1">6°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="12"/><label for="<%= this.data.attr('wid') %>_radio2">12°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="16"/><label for="<%= this.data.attr('wid') %>_radio3">16°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio5" name="<%= this.data.attr('wid') %>_radio" value="18"/><label for="<%= this.data.attr('wid') %>_radio5">18°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio6" name="<%= this.data.attr('wid') %>_radio" value="19"/><label for="<%= this.data.attr('wid') %>_radio6">19°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio7" name="<%= this.data.attr('wid') %>_radio" value="20"/><label for="<%= this.data.attr('wid') %>_radio7">20°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio8" name="<%= this.data.attr('wid') %>_radio" value="21"/><label for="<%= this.data.attr('wid') %>_radio8">21°</label>
-        <input type="radio" id="<%= this.data.attr('wid') %>_radio9" name="<%= this.data.attr('wid') %>_radio" value="22"/><label for="<%= this.data.attr('wid') %>_radio9">22°</label>
-    </div>
-    <br/>
-    <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:6,max:30,step:0.1}) %> />
-    <br/>
-    <%= (parseFloat(vis.states.attr(this.data.oid + '.val'))).toFixed(1) %>°C
-    </div>
-    <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el,{width: this.data.attr('dialog_width') || 600, height: this.data.attr('dialog_height') || 200, modal: data.attr("modal")},true) %> />
-    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { vis.binds.jqueryui.dialogAutoClose(el) } %> />
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="6" /><label for="<%= this.data.attr('wid') %>_radio1">6°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="12"/><label for="<%= this.data.attr('wid') %>_radio2">12°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="16"/><label for="<%= this.data.attr('wid') %>_radio3">16°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio5" name="<%= this.data.attr('wid') %>_radio" value="18"/><label for="<%= this.data.attr('wid') %>_radio5">18°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio6" name="<%= this.data.attr('wid') %>_radio" value="19"/><label for="<%= this.data.attr('wid') %>_radio6">19°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio7" name="<%= this.data.attr('wid') %>_radio" value="20"/><label for="<%= this.data.attr('wid') %>_radio7">20°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio8" name="<%= this.data.attr('wid') %>_radio" value="21"/><label for="<%= this.data.attr('wid') %>_radio8">21°</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio9" name="<%= this.data.attr('wid') %>_radio" value="22"/><label for="<%= this.data.attr('wid') %>_radio9">22°</label>
+        </div>
+        <br/>
+        <div class="sliderJQUI" style="width:90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: 6, max: 30,step: 0.1}) %> />
+            <br/>
+            <%= (parseFloat(vis.states.attr(this.data.oid + '.val'))).toFixed(1) %>°C
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el,{width: this.data.attr('dialog_width') || 600, height: this.data.attr('dialog_height') || 200, modal: data.attr("modal")},true) %> />
+        <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { vis.binds.jqueryui.dialogAutoClose(el) } %> />
     </div>
 </script>
 

@@ -176,9 +176,7 @@
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
             $dlg.data('preload', (!preload || preload == 'false') && !$dlg.html().replace(/\s/g, ''));
             $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
-
-            console.log('dialog');
-
+            // Show dialog in edit mode too
             if (1 || !vis.editMode) {
                 $(el).parent().find('div.vis-widget-body').click(function () {
                     if ($dlg.data('preload')) $dlg.html(html);
@@ -513,28 +511,30 @@
                 if (!vis.editMode && href) window.open(href);
             });
         },
-        radio: function (el, options) {
+        radio: function (el, options, process) {
+            if (!process) {
+                setTimeout(function () {
+                    vis.binds.jqueryui.radio(el, process, true);
+                }, 50);
+                return;
+            }
             var settings = $.extend({}, options);
             var $this = $(el);
             var oid = $this.attr('data-oid');
-            var id = $this.attr('id');
-            if ($('.' + id) > 1) {
-                console.log('many');
-            }
-            console.log('radio');
 
             // Observable -> Buttonset
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 $this.find('input').removeAttr('checked');
                 if (newVal === true || newVal === 'true') {
                     newVal = 1;
-                } else if (newVal === false || newVal === 'false') {
+                } else
+                if (newVal === false || newVal === 'false') {
                     newVal = 0;
                 }
 
                 $this.find('input[value="' + newVal + '"]').prop('checked', true);
                 $this.find('input').each(function () {
-                    if ($(this).buttonset('instance')) $(this).button('refresh');
+                    if ($(this).button('instance')) $(this).button('refresh');
                 });
             });
 
@@ -549,7 +549,7 @@
                 $this.buttonset(settings);
 
                 $this.find('input').each(function () {
-                    if ($(this).buttonset('instance')) $(this).button('refresh');
+                     if ($this.button('instance')) $(this).button('refresh');
                 });
                 // Buttonset -> Observable
                 $this.find('input').click(function () {
@@ -680,7 +680,7 @@
 <script id="tplJquiButtonLinkBlank" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div  style="height: 30px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00003_button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div  style="height: 30px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="static"
         data-vis-name="Button Link _blank"
@@ -871,7 +871,7 @@
 <script id="tplJquiButtonNav" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" name="w00006_button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
+        data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
         data-vis-set="jqui"
         data-vis-type="navigation"
         data-vis-name="Button"
@@ -902,7 +902,7 @@
 <script id="tplJquiInput" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 30px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label for="w00005_input" style=" display: none;">Input</label><input type="text" name="w00005_input" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
+        data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 30px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label style=" display: none;">Input</label><input type="text" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
         data-vis-set="jqui" 
         data-vis-type="ctrl"
         data-vis-name="Input"
@@ -1015,7 +1015,7 @@
 <script id="tplJquiButtonState" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px; height: 30px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" name="w00001_button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px; height: 30px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Button State"
@@ -1032,7 +1032,7 @@
 <script id="tplJquiRadio" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00005_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00005_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00005_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00005_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons on/off"
@@ -1051,7 +1051,7 @@
 <script id="tplJquiRadioList" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 228px; left: 83px; font-size: 8px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00004_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00004_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" name="w00004_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00004_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="top: 228px; left: 83px; font-size: 8px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons ValueList"
@@ -1106,7 +1106,7 @@
 <script id="tplJquiRadioSteps" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" name="w00006_radio" value="0" class="ui-helper-hidden-accessible"><label for="w00006_radio0" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" name="w00006_radio" value="0.25" class="ui-helper-hidden-accessible"><label for="w00006_radio1" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" name="w00006_radio" value="0.5" class="ui-helper-hidden-accessible"><label for="w00006_radio2" class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" name="w00006_radio" value="0.75" class="ui-helper-hidden-accessible"><label for="w00006_radio3" class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" name="w00006_radio" value="1" class="ui-helper-hidden-accessible"><label for="w00006_radio4" class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
+        data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" value="0.25" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" value="0.5" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" value="0.75" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Radiobuttons 25%"
