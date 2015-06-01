@@ -1240,7 +1240,7 @@ vis = $.extend(true, vis, {
             });
         });
 
-        if (this.conn.getIsLoginRequired()) {
+        if (this.conn.getIsLoginRequired && this.conn.getIsLoginRequired()) {
             $('#logout_button').button({
                 text:  false,
                 icons: {primary: 'ui-icon-logout'}
