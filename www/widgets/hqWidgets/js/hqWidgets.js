@@ -1147,13 +1147,16 @@ vis.binds.hqWidgets = {
 
             if (!$div.find('input').length) $div.append('<input type="checkbox"/>');
             var $input = $div.find('input');
-            console.log('A');
+
             var $shineCheckbox = $input.shineCheckbox(settings);
             if (settings.oid && settings.oid != 'nothing_selected') {
                 $shineCheckbox.shineCheckbox('value', vis.states.attr(settings.oid + '.val'));
 
                 vis.states.bind(settings.oid + '.val', function (e, newVal, oldVal) {
                     $shineCheckbox.shineCheckbox('value', newVal);
+                });
+                $div.find('input').change(function () {
+                    vis.setValue(settings.oid, $(this).prop('checked'));
                 });
             } else {
                 $shineCheckbox.shineCheckbox('value', settings.staticValue);

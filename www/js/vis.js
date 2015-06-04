@@ -821,7 +821,7 @@ var vis = {
 
         var widgetData = this.widgets[id].data;
 
-        try {
+        //try {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
@@ -868,9 +868,9 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
-        } catch (e) {
-           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        }
+        //} catch (e) {
+        //   this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        //}
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
@@ -1061,11 +1061,19 @@ var vis = {
                 }
             }
             viewsToSave = JSON.stringify(viewsToSave, null, 2)
-            if (this.lastSave == viewsToSave) return;
-            this.lastSave = viewsToSave;
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function () {
+            if (this.lastSave == viewsToSave) {
+                if (callback) callback(null);
+                return;
+            }
+
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
+                if (err) {
+                    that.showMessage(err, _('Error'), 'alert');
+                } else {
+                    that.lastSave = viewsToSave;
+                }
                 that.saveRemoteActive = 0;
-                if (callback) callback();
+                if (callback) callback(err);
 
                 // If not yet checked => check if project css file exists
                 if (!that.cssChecked) {
@@ -1074,7 +1082,11 @@ var vis = {
                         // Create vis-user.css file if not exist
                         if (err || data === null || data === undefined) {
                             // Create empty css file
-                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (err) {
+                                if (err) {
+                                    that.showMessage(err, _('Error'), 'alert');
+                                }
+                            });
                         }
                     });
                 }

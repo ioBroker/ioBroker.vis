@@ -2458,7 +2458,7 @@ vis = $.extend(true, vis, {
         var $tpl = $('#' + options.tpl);
 
         // call custom init function
-        if (!options.noSave && options.noInit && $tpl.attr('data-vis-init')) {
+        if (!options.noSave && $tpl.attr('data-vis-init')) {
             var init = $tpl.attr('data-vis-init');
             if (this.binds[$tpl.attr('data-vis-set')][init]) {
                 this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
