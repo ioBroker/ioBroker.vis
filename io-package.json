@@ -24,7 +24,7 @@
         "dependencies":             ["web"],
         "onlyWWW":                  true,
         "singleton":                true,
-        "type":                     "visualisation"
+        "type":                     "vis"
     },
     "native": {
     },
