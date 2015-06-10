@@ -457,10 +457,16 @@ vis = $.extend(true, vis, {
                     var wdata = $(this).data('data-wdata');
                     var defPath = ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/');
 
+                    var current = that.widgets[wdata.widgets[0]].data[wdata.attr];
+                    //workaround, that some widgets calling direct the img/picure.png without /vis/
+                    if (current && current.substring(0, 4) == 'img/') {
+                        current = '/vis/' + current;
+                    }
+
                     $.fm({
                         lang:         that.language,
                         defaultPath:  defPath,
-                        path:         that.widgets[wdata.widgets[0]].data[wdata.attr] || defPath,
+                        path:         current || defPath,
                         uploadDir:    '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
                         fileFilter:   filter || ['gif', 'png', 'bmp', 'jpg', 'jpeg', 'tif', 'svg'],
                         folderFilter: false,

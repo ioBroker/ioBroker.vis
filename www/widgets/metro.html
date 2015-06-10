@@ -89,9 +89,9 @@
             "dialog_height":    {"en": "Dialog height",     "de": "Dialoghöhe",             "ru": "Высота"},
             "dialog_title":     {"en": "Title",             "de": "Titel",                  "ru": "Надпись"},
             "dialog_flat":      {"en": "Flat Design",       "de": "Flaches Design",         "ru": "Плоский дизайн"},
-            "dialog_shadow":    {"en": "dialog_shadow",     "de": "dialog_shadow",          "ru": "Показать тень"},
-            "dialog_draggable": {"en": "dialog_draggable",  "de": "dialog_draggable",       "ru": "Можно двигать"},
-            "dialog_modal":     {"en": "dialog_modal",      "de": "Modaldialog",            "ru": "Модальное окно"},
+            "dialog_shadow":    {"en": "Shadow",            "de": "Fensterschatten",        "ru": "Показать тень"},
+            "dialog_draggable": {"en": "Draggable",         "de": "Konnte verschoben werden", "ru": "Можно двигать"},
+            "dialog_modal":     {"en": "Modal",             "de": "Modaldialog",            "ru": "Модальное окно"},
             "dialog_icon_src":  {"en": "Icon URL",          "de": "Ikone URL",              "ru": "URL иконки"},
             "dialog_icon_class": {"en": "Icon class",       "de": "Ikoneklasse",            "ru": "Класс иконки"},
             "Select ID":        {"en": "Select ID",         "de": "Select ID",              "ru": "Select ID"},
@@ -377,7 +377,7 @@
         tileDialogSlider: function (el, wid, level_id, working_id, options, sliderOptions) {
             var $this = $(el).parent().find('.tile');
 
-            var width =  parseInt(options.width, 10);
+            var width  = parseInt(options.width, 10);
             var height = parseInt(options.height, 10);
 
             if (isNaN(width))  width  = undefined;
@@ -1014,7 +1014,7 @@
                 </div>
             </div>
             <div
-                <%= (el) -> vis.binds.metro.tileDialogSlider(el, data.wid, data.oid, data['oid-working'], {title:data.label, flat:data.dialog_flat, shadow:data.dialog_shadow, overlay:data.dialog_modal, icon:data.dialog_icon_src, icon_class: data.dialog_icon_class, draggable: data.dialog_draggable,width:300,height:180},{min:data.min,max:data.max,color:data.sliderColor,completeColor:data.sliderCompleteColor,markerColor:data.sliderMarkerColor}) %> style="padding: 42px 10px 10px;">
+                <%= (el) -> vis.binds.metro.tileDialogSlider(el, data.wid, data.oid, data['oid-working'], {title:data.label, flat:data.dialog_flat, shadow:data.dialog_shadow, overlay:data.dialog_modal, icon:data.dialog_icon_src, icon_class: data.dialog_icon_class, draggable: data.dialog_draggable, width: 300, height: 180}, {min: data.min, max: data.max, color: data.sliderColor, completeColor: data.sliderCompleteColor, markerColor: data.sliderMarkerColor}) %> style="padding: 42px 10px 10px;">
             </div>
             <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
         </div>
