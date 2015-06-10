@@ -19,12 +19,12 @@
         "authors": [
             "bluefox <bluefox@ccu.io>"
         ],
-        "localLink":                "http://%ip%:%web_port%/vis/edit.html",
+        "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
         "dependencies":             ["web"],
         "onlyWWW":                  true,
         "singleton":                true,
-        "type":                     "visualisation"
+        "type":                     "vis"
     },
     "native": {
     },

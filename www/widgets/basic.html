@@ -579,26 +579,39 @@
         toggle: function (el, oid) {
             var $this = $(el);
             var oid = oid || $this.attr('data-oid');
-
+            var min = $this.attr('data-min');
+            var max = $this.attr('data-max');
+            if (min === '') min = undefined;
+            if (max === '') max = undefined;
             if (oid && !vis.editMode) {
-                // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
                 //$this.on('touchend', function () { $(this).trigger('click'); });
-
                 $this.on('click', function () {
                     var _oid = $(this).attr('data-oid');
                     var val = vis.states[oid + '.val'];
-                    if (val === null || val === '' || val === undefined || val === false || val === 'false') {
-                        vis.setValue(oid, true);
-                    } else if (val === true || val === 'true') {
-                        vis.setValue(oid, false);
+                    if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+                        (min !== undefined && min == val)) {
+                        vis.setValue(oid, max !== undefined ? max : true);
+                    } else
+                    if ((max === undefined && (val === true || val === 'true')) ||
+                        (max !== undefined && val == max))
+                    {
+                        vis.setValue(oid, min !== undefined ? min : false);
                     } else {
                         val = parseFloat(val);
-                        if (val >= 0.5) {
-                            val = 1;
+                        if (min !== undefined && max !== undefined) {
+                            if (val >= (max - min) / 2) {
+                                val = min;
+                            } else {
+                                val = max;
+                            }
                         } else {
-                            val = 0;
+                            if (val >= 0.5) {
+                                val = 0;
+                            } else {
+                                val = 1;
+                            }
                         }
-                        vis.setValue(oid, 1 - val);
+                        vis.setValue(oid, val);
                     }
                 });
             }
@@ -713,11 +726,11 @@
                     }
                     var el = $('#'+obj.wid);
                     this._obj.style = {
-                        "position":'absolute',
-                        top:    el.position().top,
-                        width:  el.width(),
-                        left:   el.position().left,
-                        height: el.height()
+                        position: 'absolute',
+                        top:      el.position().top,
+                        width:    el.width(),
+                        left:     el.position().left,
+                        height:   el.height()
                     };
                     _setTimeout(function (obj) {
                         vis.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.oid, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
@@ -1027,7 +1040,7 @@
         <% if (this.data.attr('header_height')) { %>
 	    <div style="width:100%;height:<%= this.data.attr('header_height') %>px;background-color:<%= this.data.attr('header_color') %>">
 		<% } %>
-        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+        <div style="position: absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
         <% if (this.data.attr('header_height')) { %>
         </div>
 		<% } %>

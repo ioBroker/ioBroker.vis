@@ -1030,6 +1030,13 @@ var vis = {
     saveRemoteActive: 0,
     saveRemote: function (callback) {
         var that = this;
+        if (this.permissionDenied) {
+            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permission denied'),
+            5000, 'ui-state-error');
+            if (callback) callback();
+            return;
+        }
+
 
         if (this.saveRemoteActive % 10) {
             this.saveRemoteActive--;
@@ -1061,20 +1068,35 @@ var vis = {
                 }
             }
             viewsToSave = JSON.stringify(viewsToSave, null, 2)
-            if (this.lastSave == viewsToSave) return;
-            this.lastSave = viewsToSave;
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function () {
+            if (this.lastSave == viewsToSave) {
+                if (callback) callback(null);
+                return;
+            }
+
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
+                if (err) {
+                    if (err == 'permission denied') {
+                        that.permissionDenied = true;
+                    }
+                    that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
+                } else {
+                    that.lastSave = viewsToSave;
+                }
                 that.saveRemoteActive = 0;
-                if (callback) callback();
+                if (callback) callback(err);
 
                 // If not yet checked => check if project css file exists
                 if (!that.cssChecked) {
-                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
                         that.cssChecked = true;
                         // Create vis-user.css file if not exist
-                        if (err || data === null || data === undefined) {
+                        if (err != 'permission denied' && (_err || data === null || data === undefined)) {
                             // Create empty css file
-                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
+                                if (___err) {
+                                    that.showMessage(_('Cannot create file %s: ', 'vis-user.css') + _(___err), _('Error'), 'alert');
+                                }
+                            });
                         }
                     });
                 }

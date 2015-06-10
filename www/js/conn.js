@@ -72,19 +72,34 @@ var servConn = {
         }
         return true;
     },
+    _monitor:         function () {
+        if (this._timer) return;
+        var ts = (new Date()).getTime();
+        if (ts - this._lastTimer > 30000) {
+            // It seems, that PC was in a sleep => Reload page to request authentication anew
+            location.reload();
+        } else {
+            this._lastTimer = ts;
+        }
+        var that = this;
+        this._timer = setTimeout(function () {
+            that._timer = null;
+            that._monitor();
+        }, 10000);
+    },
     _onAuth:          function (objectsRequired, isSecure) {
         var that = this;
 
         this._isSecure = isSecure;
 
+        if (this._isSecure) {
+            that._lastTimer = (new Date()).getTime();
+            this._monitor();
+        }
+
         this._socket.emit('subscribe', '*');
         if (objectsRequired) this._socket.emit('subscribeObjects', '*');
 
-        if (this._disconnectTimeout) {
-            clearTimeout(this._disconnectTimeout);
-            this._disconnectTimeout = null;
-        }
-        //console.log("socket.io connect");
         if (this._isConnected === true) {
             // This seems to be a reconnect because we're already connected!
             // -> prevent firing onConnChange twice
@@ -96,7 +111,6 @@ var servConn = {
                 that._connCallbacks.onConnChange(that._isConnected, isSecure);
             }, 0);
         }
-        //this._myParent._autoReconnect();
     },
     init:             function (connOptions, connCallbacks, objectsRequired) {
         // To start vis as local use one of:
