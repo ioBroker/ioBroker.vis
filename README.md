@@ -141,6 +141,12 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.5.9 (2015-06-10)
+- (bluefox) fix jqui-mfd
+- (bluefox) change adapter type from "visualisation" to "vis"
+- (bluefox) enable zoom on chrome
+- (bluefox) fix close button
+
 ### 0.5.8 (2015-06-01)
 - (bluefox) add forgotten noise.png for hqWidgets buttons
 - (bluefox) jqui dialog fixed
