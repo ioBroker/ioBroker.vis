@@ -1256,6 +1256,11 @@ vis = $.extend(true, vis, {
                     });
                 });
             }).show().css({width: '26px', height: '26px'});
+
+            if (this.conn.getUser) {
+                var user = this.conn.getUser();
+                $('#current-user').html(user ? user[0].toUpperCase() + user.substring(1).toLowerCase() : '');
+            }
         }
 
         // Dev ----------------------------------------------------------------

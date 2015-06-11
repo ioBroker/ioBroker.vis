@@ -224,7 +224,7 @@
             var $this = $(el).parent().find('.slider');
             var oid     = $this.attr('data-oid');
             var wid     = $this.attr('data-oid-working');
-
+            console.log('slider');
             if (!oid && options.hideIfNoOid) {
                 $this.hide(); return;
             }
@@ -232,26 +232,33 @@
             var min = (options.min === undefined || options.min == null || options.min == '') ? 0.00 : parseFloat(options.min);
             var max = (options.max === undefined || options.min == null || options.max == '') ? 1.00 : parseFloat(options.max);
 
-            var range =  max - min;
-            var factor = 100 / range;
+            //var range =  max - min;
+            //var factor = 100 / range;
 
             var val = vis.states.attr(oid + '.val');
             if (val === true || val === 'true') val = max;
             val = parseFloat(val);
             if (isNaN(val)) val = min;
 
-            val = Math.floor((val  - min) * factor);
+            //val = Math.floor((val - min) * factor);
 
             $this.metroSlider({
-                min:           0,
-                max:           100,
-                color:         options.color || undefined,
+                min:           min,
+                max:           max,
+                accuracy:      options.accuracy      || 0,
+                color:         options.color         || undefined,
                 completeColor: options.completeColor || undefined,
-                markerColor:   options.markerColor || undefined,
+                markerColor:   options.markerColor   || undefined,
                 position:      val,
                 animate:       true,
                 change:        function (val) {
-                    vis.setValue(oid, (parseFloat(val) / factor) + min);
+                    if (options.digits !== undefined && options.digits !== null && options.digits !== '') {
+                        //vis.setValue(oid, ((parseFloat(val) / factor) + min).toFixed(options.digits));
+                        vis.setValue(oid, parseFloat(val).toFixed(options.digits));
+                    } else {
+                        //vis.setValue(oid, (parseFloat(val) / factor) + min);
+                        vis.setValue(oid, parseFloat(val));
+                    }
                 },
                 changed:       function (val) {
 
@@ -260,12 +267,13 @@
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 var val = vis.states.attr(oid + '.val');
 
-                if (val === true || val === 'true') val = max;
+                if (val === true  || val === 'true')  val = max;
+                if (val === false || val === 'false') val = min;
 
                 val = parseFloat(val);
                 if (isNaN(val)) val = min;
 
-                val = Math.floor((val - min) * factor);
+                //val = Math.floor((val - min) * factor);
 
                 try {
                     $this.metroSlider('value', val);
@@ -946,7 +954,7 @@
 <script id="tplMetroTileDimmerDialog"
         type="text/ejs"
         data-vis-prev='<div id="prev_tplMetroTileDimmerDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"><div class="tile-content" style="text-align: center"><img width="90%" src="img/mfd/light_light_dim.png"></div> <div class="brand ribbed-steel"><span class="label fg-white">Dimmer Dialog</span></div> </div><div style="padding: 42px 10px 10px;"></div></div></div></div>'
-        data-vis-attrs="oid;oid-working;min;max;hover[true]/checkbox;transform[true]/checkbox;label;"
+        data-vis-attrs="oid;oid-working;min;max;digits/number;hover[true]/checkbox;transform[true]/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs2="group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color;"
@@ -1014,7 +1022,7 @@
                 </div>
             </div>
             <div
-                <%= (el) -> vis.binds.metro.tileDialogSlider(el, data.wid, data.oid, data['oid-working'], {title:data.label, flat:data.dialog_flat, shadow:data.dialog_shadow, overlay:data.dialog_modal, icon:data.dialog_icon_src, icon_class: data.dialog_icon_class, draggable: data.dialog_draggable, width: 300, height: 180}, {min: data.min, max: data.max, color: data.sliderColor, completeColor: data.sliderCompleteColor, markerColor: data.sliderMarkerColor}) %> style="padding: 42px 10px 10px;">
+                <%= (el) -> vis.binds.metro.tileDialogSlider(el, data.wid, data.oid, data['oid-working'], {title: data.label, flat: data.dialog_flat, shadow: data.dialog_shadow, overlay: data.dialog_modal, icon: data.dialog_icon_src, icon_class: data.dialog_icon_class, draggable: data.dialog_draggable, width: 300, height: 180}, {min: data.min, max: data.max, color: data.sliderColor, completeColor: data.sliderCompleteColor, markerColor: data.sliderMarkerColor, digits: data.digits}) %> style="padding: 42px 10px 10px;">
             </div>
             <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
         </div>
