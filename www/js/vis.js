@@ -1585,7 +1585,7 @@ var vis = {
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';
-                        try{
+                        try {
                             value = new Function(string)();
                         } catch(e)
                         {

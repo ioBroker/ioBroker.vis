@@ -461,7 +461,7 @@
             <br/>
             <div class="sliderJQUI" style="width: 90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: min, max: max, step: (max - min) / 100, inverted: this.data.attr('invert_value')}) %> />
             <br/>
-            <%= vis.states.attr(this.data.oid + '.val') ? vis.states.attr(this.data.oid + '.val').toFixed(0) : 0 %>%
+            <%= vis.states.attr(this.data.oid + '.val') ? parseFloat(vis.states.attr(this.data.oid + '.val')).toFixed(0) : 0 %>%
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: this.data.attr('dialog_width') || 440, height: this.data.attr('dialog_height') || 200, modal: data.attr('modal')}, true) %> />
         <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { vis.binds.jqueryui.dialogAutoClose(el) } %> />
@@ -575,14 +575,16 @@
             var closed = this.data.attr('closed_value');
 
             var val = vis.states.attr(this.data.oid + '.val');
-            if (val === 'true'  || val === true)  val = opened;
-            if (val === 'false' || val === false) val = closed;
 
-            var val = vis.states.attr(this.data.oid + '.val');
-            if (opened === undefined || opened === '') {
+            if (opened === undefined || opened === '' || opened === null) {
                 opened = 1;
                 closed = 0;
-                val = (val === 'false' || val === false || val === 0 || val === '0' || val === '' || val === null || val === undefined) ? closed : opened;
+
+                if (val === 'true'  || val === true)  val = opened;
+                if (val === 'false' || val === false) val = closed;
+
+                val = parseFloat(val) || 0;
+                val = (val > closed) ? opened : closed;
             }
             if (this.data.invert_state) {
                 if (val == opened) {
@@ -592,10 +594,10 @@
                 }
             }
 
-            if (val != closed) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_1w_open.png"/>
-            <% } else { %>
+            if (val != opened) { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_1w.png"/>
+            <% } else { %>
+                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_1w_open.png"/>
             <% } %>
         </div>
     </div>
@@ -622,14 +624,16 @@
             var closed = this.data.attr('closed_value');
 
             var val = vis.states.attr(this.data.oid + '.val');
-            if (val === 'true'  || val === true)  val = opened;
-            if (val === 'false' || val === false) val = closed;
 
-            var val = vis.states.attr(this.data.oid + '.val');
-            if (opened === undefined || opened === '') {
+            if (opened === undefined || opened === '' || opened === null) {
                 opened = 1;
                 closed = 0;
-                val = (val === 'false' || val === false || val === 0 || val === '0' || val === '' || val === null || val === undefined) ? closed : opened;
+
+                if (val === 'true'  || val === true)  val = opened;
+                if (val === 'false' || val === false) val = closed;
+
+                val = parseFloat(val) || 0;
+                val = (val > closed) ? opened : closed;
             }
             if (this.data.invert_state) {
                 if (val == opened) {
@@ -638,7 +642,7 @@
                     val = opened;
                 }
             }
-            if (val != closed) { %>
+            if (val != opened) { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_roof.png"/>
             <% } else { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_roof_open_2.png"/>
@@ -667,14 +671,16 @@
             var closed = this.data.attr('closed_value');
 
             var val = vis.states.attr(this.data.oid + '.val');
-            if (val === 'true'  || val === true)  val = opened;
-            if (val === 'false' || val === false) val = closed;
 
-            var val = vis.states.attr(this.data.oid + '.val');
-            if (opened === undefined || opened === '') {
+            if (opened === undefined || opened === '' || opened === null) {
                 opened = 1;
                 closed = 0;
-                val = (val === 'false' || val === false || val === 0 || val === '0' || val === '' || val === null || val === undefined) ? closed : opened;
+
+                if (val === 'true'  || val === true)  val = opened;
+                if (val === 'false' || val === false) val = closed;
+
+                val = parseFloat(val) || 0;
+                val = (val > closed) ? opened : closed;
             }
             if (this.data.invert_state) {
                 if (val == opened) {
@@ -683,7 +689,7 @@
                     val = opened;
                 }
             }
-            if (val != closed) { %>
+            if (val != opened) { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_door.png"/>
             <% } else { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_door_open.png"/>
@@ -713,14 +719,16 @@
             var closed = this.data.attr('closed_value');
 
             var val = vis.states.attr(this.data.oid + '.val');
-            if (val === 'true'  || val === true)  val = opened;
-            if (val === 'false' || val === false) val = closed;
 
-            var val = vis.states.attr(this.data.oid + '.val');
-            if (opened === undefined || opened === '') {
+            if (opened === undefined || opened === '' || opened === null) {
                 opened = 1;
                 closed = 0;
-                val = (val === 'false' || val === false || val === 0 || val === '0' || val === '' || val === null || val === undefined) ? closed : opened;
+
+                if (val === 'true'  || val === true)  val = opened;
+                if (val === 'false' || val === false) val = closed;
+
+                val = parseFloat(val) || 0;
+                val = (val > closed) ? opened : closed;
             }
             if (this.data.invert_state) {
                 if (val == opened) {
@@ -730,10 +738,10 @@
                 }
             }
 
-            if (val != closed) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_garage_door_10.png"/>
-            <% } else { %>
+            if (val != opened) { %>
                 <img style="<%= styles %>" height="100%" src="img/mfd/fts_garage_door_100.png"/>
+            <% } else { %>
+                <img style="<%= styles %>" height="100%" src="img/mfd/fts_garage_door_10.png"/>
             <% } %>
         </div>
     </div>
@@ -1153,7 +1161,7 @@
         data-vis-prev='<div id="prev_tplMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox;"
         data-vis-attrs0="group.dialog;src_url;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
@@ -1161,7 +1169,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<video id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></video>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1181,7 +1189,7 @@
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox"
+        data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox"
         data-vis-attrs0="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
@@ -1189,7 +1197,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<video id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></video>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1201,4 +1209,3 @@
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: (parseInt(data.attr('dialog_height'), 10) + 60), modal:data.attr('modal')}, false, false, html) %> />
     </div>
 </script>
-

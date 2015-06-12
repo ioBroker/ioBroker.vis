@@ -1359,7 +1359,6 @@
             while (data['style' + i] !== undefined) {
                 slist[i] = data['style' + i]; i++;
             }
-            console.log(slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))]);
         %>
         <div class="vis-widget-body" style="<%== slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -1745,7 +1744,7 @@
         };
         vis.binds.table.showDialog(this.view, this.data.attr('wid'), options);
     %>
-</script>
+</script-->
 
 <script id="tplScreenResolution"
         type="text/ejs"
