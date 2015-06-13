@@ -1097,7 +1097,7 @@ var vis = {
 
             this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
                 if (err) {
-                    if (err == 'permission denied') {
+                    if (err == 'permission denied' || err == 'permissionError') {
                         that.permissionDenied = true;
                     }
                     that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);

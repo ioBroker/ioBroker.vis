@@ -131,8 +131,9 @@ vis.binds.bars = {
             text += '</tr>';
         }
         else { // vertical
+            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
             for (var i = 1; i <= barsOptions.bCount; i++) {
-                text += '<tr class="vis-no-spaces"><td class="vis-no-spaces" ' + (barsOptions.bLayout === 'fixed' ? 'style="height:' + (100 / barsOptions.bCount).toFixed(2) : '') + '%">' +
+                text += '<tr class="vis-no-spaces"><td class="vis-no-spaces" ' + (isFirefox && barsOptions.bLayout === 'fixed' ? 'style="height:' + (100 / barsOptions.bCount).toFixed(2) : '') + '%">' +
                     this.drawButton(barsIntern.wid, i, barsOptions, true) + '</td></tr>';
 
                 if (barsOptions.bSpace && i != barsOptions.bCount) {
