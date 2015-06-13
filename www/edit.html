@@ -173,7 +173,7 @@
 
 </div>
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
-    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
+    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span class="ui-widget-header"  style="border: 0">vis </span><span id="vis-version" class="ui-widget-header" style="border: 0"></span></div>
 
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
         <li id="ribbon_tab_datei" style="display: none">
@@ -280,6 +280,12 @@
                     <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none; display: none">
                         <div style="display: inline-block" class="translate">Hide widget description</div>
                         <input id="screen_hide_description" type="checkbox"/>
+                    </li>
+                    <li id="li_menu_projects" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">Projects</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <ul id="menu_projects">
+                            <li class="ui-state-default project-select menu-item" data-language="de"><a>Main</a></li>
+                        </ul>
                     </li>
                 </ul>
             </li>

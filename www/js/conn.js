@@ -425,7 +425,7 @@ var servConn = {
         var adapter = parts[1];
         parts.splice(0, 2);
 
-        this._socket.emit('readDir', adapter, parts.join('/'), function (err, data) {
+        this._socket.emit('readDir', adapter, parts.join('/'), {filter: true}, function (err, data) {
             if (callback) callback(err, data);
         });
     },
@@ -661,5 +661,33 @@ var servConn = {
         this.setState(this.namespace + '.control.instance', {val: instance || 'notdefined', ack: true});
         this.setState(this.namespace + '.control.data',     {val: data,    ack: true});
         this.setState(this.namespace + '.control.command',  {val: command, ack: true});
+    },
+    _detectViews:     function (projectDir, callback) {
+        this.readDir('/' + this.namespace + '/' + projectDir, function (err, dirs) {
+            // find vis-views.json
+            for (var f = 0; f < dirs.length; f++) {
+                if (dirs[f].file == 'vis-views.json' && dirs[f].acl.read) {
+                    return callback(err, {name: projectDir, readOnly: !dirs[f].acl.write});
+                }
+            }
+            callback(err);
+        });
+    },
+    readProjects:     function (callback) {
+        this.readDir('/' + this.namespace, function (err, dirs) {
+            var result = [];
+            var count = 0;
+            for (var d = 0; d < dirs.length; d++) {
+                if (dirs[d].isDir) {
+                    count++;
+                    this._detectViews(dirs[d].file, function (subErr, project) {
+                        if (project) result.push(project);
+
+                        err = err || subErr;
+                        if (!(--count)) callback(err, result);
+                    });
+                }
+            }
+        }.bind(this));
     }
 };

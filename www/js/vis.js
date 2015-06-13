@@ -494,11 +494,11 @@ var vis = {
             if (typeof io == 'undefined') {
                 if (!this.activeView) {
                     if (!this.editMode) {
-                        window.alert(_("error - View doesn't exist"));
-                        window.location.href = "./edit.html";
+                        window.alert(_('error - View doesn\'t exist'));
+                        window.location.href = './edit.html';
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = "DemoView";
+                        this.activeView = 'DemoView';
                         //vis.showWaitScreen(false);
                     }
                 }

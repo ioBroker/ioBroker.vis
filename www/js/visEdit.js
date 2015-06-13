@@ -696,7 +696,6 @@ vis = $.extend(true, vis, {
         });
 
 
-
         //language
         $('[data-language=' + ((typeof this.language === 'undefined') ? 'en' : (this.language || 'en')) + ']').addClass('ui-state-active');
 
@@ -721,6 +720,24 @@ vis = $.extend(true, vis, {
         //$("#m_setup").click(function () {
         //    $("#dialog_setup").dialog("open");
         //});
+
+
+        // fill projects
+        this.conn.readProjects(function (err, projects){
+            var text = '';
+            if (projects.length) {
+                for (var d = 0; d < projects.length; d++) {
+                    text += '<li class="ui-state-default project-select ' + (projects[d].name + '/' == this.projectPrefix ? 'ui-state-active' : '') +
+                        ' menu-item" data-project="' + projects[d].name + '"><a>' + projects[d].name + (projects[d].readOnly ? ' (' + _('readOnly') + ')' : '') + '</a></li>\n';
+                }
+                $('#menu_projects').html(text);
+                $('.project-select').unbind('click').click(function () {
+                    window.location.href = 'edit.html?' + $(this).attr('data-project');
+                });
+            } else {
+                $('#li_menu_projects').hide();
+            }
+        }.bind(this));
 
         // Ribbon icons Golbal
 

@@ -296,6 +296,11 @@ $.extend(systemDictionary, {
         "de": "keine Zulassung",
         "ru": "отказано в доступе"
     },
+    "permissionError": {
+        "en": "permission denied",
+        "de": "keine Zulassung",
+        "ru": "отказано в доступе"
+    },
     "Logout":               {"en": "Logout", "de": "Logout", "ru": "Выйти"},
     "Error":                {"en": "Error", "de": "Fehler", "ru": "Ошибка"},
     "dev1":                 {"en": "dev 1", "de": "dev 1", "ru": "dev 1"},
