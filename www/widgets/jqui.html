@@ -110,18 +110,29 @@
         activeHelper: function ($this, val, min, max, value, reverse) {
             if (val === true  || val === 'true')  { val = max; }
             if (val === false || val === 'false') { val = min; }
+
+            if (max === undefined || max === '' || max === null) {
+                max = 1;
+                min = 0;
+                val = (val === 'false' || val === false || val === 0 || val === '0' || val === '' || val === null || val === undefined) ? min : max;
+            }
+
             if (reverse) {
-                if ((value === undefined && val < max) || (value !== undefined && val != value)) {
-                    $this.removeClass('ui-state-active');
+                if (val == max) {
+                    val = min;
                 } else {
-                    $this.addClass('ui-state-active');
+                    val = max;
                 }
+            }
+
+            if (value === undefined && val > min) {
+                val = parseFloat(val) || 0;
+            }
+
+            if ((value === undefined && val > min) || (value !== undefined && val == value)) {
+                $this.addClass('ui-state-active');
             } else {
-                if ((value === undefined && val > min) || (value !== undefined && val == value)) {
-                    $this.addClass('ui-state-active');
-                } else {
-                    $this.removeClass('ui-state-active');
-                }
+                $this.removeClass('ui-state-active');
             }
         },
         active: function (el, reverse, _value) {
@@ -453,6 +464,10 @@
             if (isNaN(settings.max))   settings.max   = 100;
             if (isNaN(settings.step))  settings.step  = (settings.max - settings.min) / 100;
 
+            settings.min   = parseFloat(settings.min);
+            settings.max   = parseFloat(settings.max);
+            settings.value = parseFloat(settings.value);
+
             if (settings.inverted) settings.value = (settings.max - settings.value) + settings.min;
 
             $this.slider(settings);
@@ -531,7 +546,7 @@
                         if (f.toString() == val.toString()) {
                             vis.setValue(oid, f);
                         } else {
-                            vis.setValue(oid, v);
+                            vis.setValue(oid, val);
                         }
                     }
                 });

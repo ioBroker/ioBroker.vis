@@ -78,7 +78,17 @@ if (typeof systemDictionary !== 'undefined') {
             'en': 'Error: view container recursion',
             'de': 'Fehler: View ist rekursiv',
             'ru': 'Ошибка: Страница вызывет саму себя'
-        }
+        },
+        "Cannot execute %s for %s, because of insufficient permissions": {
+            "en": "Cannot execute %s for %s, because of insufficient permissions.",
+            "de": "Kann das Kommando \"%s\" für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden.",
+            "ru": "Не могу выполнить \"%s\" для %s, так как недостаточно прав."
+        },
+        "Insufficient permissions": {
+            "en": "Insufficient permissions",
+            "de": "Nicht genügend Zugriffsrechte",
+            "ru": "Недостаточно прав"
+        },
     });
 }
 
@@ -120,16 +130,28 @@ var vis = {
     bindingsCache:          {},
     commonStyle:            null,
     _setValue: function (id, state) {
-        this.conn.setState(id, state[id + '.val']);
-
-        if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
-            this.states.attr(state);
-
-            // Inform other widgets, that does not support canJS
-            for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+        var oldValue = this.states.attr(id + '.val');
+        this.conn.setState(id, state[id + '.val'], function (err) {
+            if (err) {
+                //state[id + '.val'] = oldValue;
+                this.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
-        }
+
+            if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
+                this.states.attr(state);
+
+                // If error set value back, but we need generate the edge
+                if (err) {
+                    state[id + '.val'] = oldValue;
+                    this.states.attr(state);
+                }
+
+                // Inform other widgets, that does not support canJS
+                for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+                    this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+                }
+            }
+        }.bind(this));
     },
     setValue: function (id, val) {
         if (!id) {
@@ -472,11 +494,11 @@ var vis = {
             if (typeof io == 'undefined') {
                 if (!this.activeView) {
                     if (!this.editMode) {
-                        window.alert(_("error - View doesn't exist"));
-                        window.location.href = "./edit.html";
+                        window.alert(_('error - View doesn\'t exist'));
+                        window.location.href = './edit.html';
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = "DemoView";
+                        this.activeView = 'DemoView';
                         //vis.showWaitScreen(false);
                     }
                 }
@@ -1075,7 +1097,7 @@ var vis = {
 
             this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
                 if (err) {
-                    if (err == 'permission denied') {
+                    if (err == 'permission denied' || err == 'permissionError') {
                         that.permissionDenied = true;
                     }
                     that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
@@ -1563,7 +1585,7 @@ var vis = {
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';
-                        try{
+                        try {
                             value = new Function(string)();
                         } catch(e)
                         {
@@ -1892,7 +1914,7 @@ window.onpopstate();
         });
 
         vis.conn.init(null, {
-            onConnChange: function (isConnected, isSecure) {
+            onConnChange: function (isConnected) {
 
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
@@ -2248,6 +2270,13 @@ window.onpopstate();
                 }
 
                 if ($.fn.selectId) $.fn.selectId('objectAll', id, obj);
+            },
+            onError:      function (err) {
+                if (err.arg == 'vis.0.control.instance' || err.arg == 'vis.0.control.data' || err.arg == 'vis.0.control.command') {
+                    console.warn('Cannot set ' + err.arg + ', because of insufficient permissions');
+                } else {
+                    vis.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
+                }
             }
         }, vis.editMode);
 

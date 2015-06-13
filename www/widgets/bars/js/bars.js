@@ -74,7 +74,7 @@ vis.binds.bars = {
     },
     drawButton: function (wid, i, opt) {
         //var style = "style='" + (opt.bWidth ? ("width:" + opt.bWidth + "px;") : "") + (opt.bHeight ? ("height:" + opt.bHeight + "px;") : "") + "'";
-        var style = 'style="height:100%"';//'style="height:100%; width: 100%"';
+        var style = 'style="height:100%;width: 100%"';//'style="height:100%; width: 100%"';
         var cssClass = opt.bStyleNormal;
         cssClass = cssClass || 'ui-state-default ui-button ui-widget';
 
@@ -122,7 +122,7 @@ vis.binds.bars = {
         if (isHorizontal) {
             text += '<tr class="vis-no-spaces">';
             for (var d = 1; d <= barsOptions.bCount; d++) {
-               text += '<td class="vis-no-spaces">' + this.drawButton(barsIntern.wid, d, barsOptions) + '</td>';
+               text += '<td class="vis-no-spaces" style="height:100%">' + this.drawButton(barsIntern.wid, d, barsOptions, false) + '</td>';
 
                 if (barsOptions.bSpace && d != barsOptions.bCount){
                    text += '<td class="vis-no-spaces" style="width:' + barsOptions.bSpace + 'px"></td>';
@@ -131,12 +131,13 @@ vis.binds.bars = {
             text += '</tr>';
         }
         else { // vertical
+            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
             for (var i = 1; i <= barsOptions.bCount; i++) {
-                text += "<tr class='vis-no-spaces'><td class='vis-no-spaces'>" +
-                    this.drawButton(barsIntern.wid, i, barsOptions) + "</td></tr>";
+                text += '<tr class="vis-no-spaces"><td class="vis-no-spaces" ' + (isFirefox && barsOptions.bLayout === 'fixed' ? 'style="height:' + (100 / barsOptions.bCount).toFixed(2) : '') + '%">' +
+                    this.drawButton(barsIntern.wid, i, barsOptions, true) + '</td></tr>';
 
                 if (barsOptions.bSpace && i != barsOptions.bCount) {
-                    text += "<tr class='vis-no-spaces'><td class='vis-no-spaces' style='height:" + barsOptions.bSpace + "px'></td></tr>";
+                    text += '<tr class="vis-no-spaces"><td class="vis-no-spaces" style="height:' + barsOptions.bSpace + 'px"></td></tr>';
                 }
             }
         }
@@ -313,7 +314,6 @@ vis.binds.bars = {
     },
     initOptions: function (tpl, barsOptions) {
         var $tpl = $('#' + tpl);
-        console.log('init');
 
         if ($tpl.attr('id') === 'tplBarFilter') {
             var filter = vis.updateFilter();
