@@ -1273,11 +1273,11 @@ vis = $.extend(true, vis, {
                     });
                 });
             }).show().css({width: '26px', height: '26px'});
+        }
 
-            if (this.conn.getUser) {
-                var user = this.conn.getUser();
-                $('#current-user').html(user ? user[0].toUpperCase() + user.substring(1).toLowerCase() : '');
-            }
+        if (this.conn.getUser) {
+            var user = this.conn.getUser();
+            $('#current-user').html(user ? user[0].toUpperCase() + user.substring(1).toLowerCase() : '');
         }
 
         // Dev ----------------------------------------------------------------
@@ -1543,7 +1543,10 @@ vis = $.extend(true, vis, {
         var i;
         var k;
 
-        keys.sort();
+        // case insensitive sorting
+        keys.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
 
         $('#view_select_tabs').on('click', ".view-select-tab", function () {
             var view = $(this).attr('id').replace('view_tab_', "");
@@ -1552,12 +1555,10 @@ vis = $.extend(true, vis, {
             that.changeView(view);
         });
 
-
         for (i = 0; i < len; i++) {
             k = keys[i];
 
             if (k == this.activeView) {
-
                 sel = " selected";
             } else {
                 sel = '';
