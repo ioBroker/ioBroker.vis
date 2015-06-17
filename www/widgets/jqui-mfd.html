@@ -1217,14 +1217,14 @@
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (Object) - Dialog"
         data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
-        data-vis-attrs0="group.dialog;qtsrc_url;poster_url;title;modal/checkbox;width[640];height[480]"
+        data-vis-attrs0="group.dialog;src_url;qtsrc_url;title;modal/checkbox;width[640];height[480];type_application[video/quicktime];plugin;autoplay[true]"
         >
     <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<object id="' + this.data.wid + '_video" width="' + this.data.width + 'px" height="'+ this.data.height + 'px"  codebase="http://www.apple.com/qtactivex/qtplugin.cab"><embed src="' + this.data.poster_url + '" width="' + this.data.width + 'px" height="'+ this.data.height + 'px" controller="false" qtsrc="' + this.data.src_url + '" loop="false" scale="tofit" wmode="Transparent" autoplay="true" kioskmode="true" enablejavasript="true" href="javaScript:void(0)" target="Myself" allowfullscreen="true" bgcolor="black" plugin="quicktimeplugin" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/"></object>';
+        var html = '<object id="' + this.data.wid + '_video" width="' + this.data.width + 'px" height="'+ this.data.height + 'px"><embed type="' +this.data.type_application +'"  width="' + this.data.width + 'px" height="'+ this.data.height + 'px" src="' + this.data.src_url + '" qtsrc="' + this.data.qtsrc_url + '" autoplay="'+ this.data.autoplay + '" enablejavasript="true" href="javaScript:void(0)" plugin="'+ this.data.plugin + '" ></object>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
