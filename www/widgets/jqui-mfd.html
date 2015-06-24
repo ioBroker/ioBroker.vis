@@ -1169,7 +1169,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1197,7 +1197,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
