@@ -56,7 +56,7 @@
 //              select,value1,value2,... - dropdown select
 //              nselect,value1,value2,... - same as select, but without translation of items
 //              style,fileFilter,nameFilter,attrFilter
-//              custom,functionName,options,... - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
+//              custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
 //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
 //              text - dialog box with textarea
 
@@ -765,6 +765,60 @@ vis = $.extend(true, vis, {
         };
         return line;
     },
+    // find states with requested roles of device
+    findRoles: function (stateId, roles) {
+        if (typeof roles != 'object') {
+            roles = [roles];
+        } else {
+            roles = JSON.parse(JSON.stringify(roles));
+        }
+        var result = {};
+        // try to detect other values
+
+        // Go trough all channels of this device
+        var parts = stateId.split('.');
+        parts.pop(); // remove state
+        var channel = parts.join('.');
+        var reg = new RegExp("^" + channel.replace(/\./g, '\\.') + '\\.');
+
+        // channels
+        for (var id in this.objects) {
+            if (reg.test(id) &&
+                this.objects[id].common &&
+                this.objects[id].type == 'state') {
+                for (var r = 0; r < roles.length; r++) {
+                    if (this.objects[id].common.role == roles[r]) {
+                        result[roles[r]] = id;
+                        roles.splice(r, 1);
+                        break;
+                    }
+                    if (!roles.length) break;
+                }
+            }
+        }
+        // try to search in channels
+        if (roles.length) {
+            parts.pop(); // remove channel
+            var device = parts.join('.');
+            var reg = new RegExp("^" + device.replace(/\./g, '\\.') + '\\.');
+            for (var id in vis.objects) {
+                if (reg.test(id) &&
+                    vis.objects[id].common &&
+                    vis.objects[id].type == 'state') {
+
+                    for (var r = 0; r < roles.length; r++) {
+                        if (this.objects[id].common.role == roles[r]) {
+                            result[roles[r]] = id;
+                            roles.splice(r, 1);
+                            break;
+                        }
+                    }
+                    if (!roles.length) break;
+                }
+            }
+        }
+        return result;
+    },
     hideShowAttr: function (widAttr, isShow) {
         if (isShow) {
             $('#td_' + widAttr).show();
@@ -1134,14 +1188,15 @@ vis = $.extend(true, vis, {
                         wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]);
                     }
                 }
+                var changed = false;
                 if (wdata.onChangeWidget) {
                     var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-set');
                     if (that.binds[widgetSet] && that.binds[widgetSet][wdata.onChangeWidget]) {
                         if (wdata.css) {
                             var css = wdata.attr.substring(4);
-                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true);
+                            changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true);
                         } else {
-                            that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false);
+                            changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false);
                         }
                     }
                 }
@@ -1150,7 +1205,7 @@ vis = $.extend(true, vis, {
                 if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
 
                 // Rebuild attr list
-                if (depends && depends.indexOf(wdata.attr) != -1) that.inspectWidgets();
+                if (changed || (depends && depends.indexOf(wdata.attr) != -1)) that.inspectWidgets();
             }
 
             //Update containers

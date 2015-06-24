@@ -478,7 +478,6 @@ var vis = {
         // First start.
         if (!this.views) {
             this.initViewObject();
-            return false;
         } else {
             this.showWaitScreen(false);
         }
@@ -555,7 +554,7 @@ var vis = {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
         } else {
-            if (window.confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
+            if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                 this.saveRemote(function () {
@@ -1053,7 +1052,7 @@ var vis = {
     saveRemote: function (callback) {
         var that = this;
         if (this.permissionDenied) {
-            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permission denied'),
+            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
             5000, 'ui-state-error');
             if (callback) callback();
             return;
@@ -1097,7 +1096,7 @@ var vis = {
 
             this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
                 if (err) {
-                    if (err == 'permission denied' || err == 'permissionError') {
+                    if (err == 'permissionError') {
                         that.permissionDenied = true;
                     }
                     that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
@@ -1112,7 +1111,7 @@ var vis = {
                     that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
                         that.cssChecked = true;
                         // Create vis-user.css file if not exist
-                        if (err != 'permission denied' && (_err || data === null || data === undefined)) {
+                        if (err != 'permissionError' && (_err || data === null || data === undefined)) {
                             // Create empty css file
                             that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
                                 if (___err) {
@@ -1188,6 +1187,9 @@ var vis = {
             $('#dialog-message-icon').hide();
         }
         this.$dialogMessage.dialog('open');
+    },
+    showError: function (error) {
+        this.showMessage(error, _('Error'), 'alert', 400);
     },
     waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
@@ -1938,6 +1940,9 @@ window.onpopstate();
                     vis.loadRemote(function () {
                         // Read all states from server
                         vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                            if (error) {
+                                vis.showError(error);
+                            }
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];

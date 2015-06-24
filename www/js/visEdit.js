@@ -2164,7 +2164,7 @@ vis = $.extend(true, vis, {
             exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
-        $('#textarea_export_view').html(JSON.stringify(exportW, null, '  '));
+        $('#textarea_export_view').html(JSON.stringify(exportW));
         document.getElementById("textarea_export_view").select();
         $('#dialog_export_view').dialog({
             autoOpen: true,

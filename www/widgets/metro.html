@@ -224,7 +224,6 @@
             var $this = $(el).parent().find('.slider');
             var oid     = $this.attr('data-oid');
             var wid     = $this.attr('data-oid-working');
-            console.log('slider');
             if (!oid && options.hideIfNoOid) {
                 $this.hide(); return;
             }
@@ -517,6 +516,32 @@
                     }
                 });
             });
+        },
+        onHeatingOid: function (widgetID, view, value, attr, isCss) {
+            var obj = vis.objects[value];
+            var changed = [];
+            // If it is real object and SETPOINT
+            if (obj && obj.common && obj.common.role == 'level.temperature') {
+                var roles = [];
+                // If some attributes are not set
+                if (!vis.views[view].widgets[widgetID].data.temp_oid) {
+                    roles.push('value.temperature');
+                }
+                if (roles.length) {
+                    var result = vis.findRoles(value, roles);
+                    if (result) {
+                        for (var r in result) {
+                            if (r == 'value.temperature') {
+                                changed.push('temp_oid'); // remember attr to update it
+                                vis.views[view].widgets[widgetID].data.temp_oid = result[r];
+                                vis.widgets[widgetID].data.temp_oid = result[r];
+                            }
+                        }
+                    }
+                }
+            }
+
+            return changed.length ? changed : null;
         }
     };
 
@@ -1194,7 +1219,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplMetroTileHeating" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 250px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/sani_heating_temp.png"> </div> <div style="float: right; padding-top: 16px; padding-right: 12px;"> <table style="color:white;font-size:11px;display:inline-block;"> <tr><td>Set temperature:</td><td>0%</td></tr> <tr><td>Actual temperature:</td><td>0.0°C</td></tr> <tr><td>Drive position:</td><td>0</td></tr> </table> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"></div>  </div> <div class="brand ribbed-steel"> <span class="label fg-white">Heating</span> </div> </div> <div></div> </div> </div></div>'
-        data-vis-attrs="set_oid/id;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
+        data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs2="label_set;label_temp;label_drive;"
@@ -1239,7 +1264,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplMetroTileHeatingDialog" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="105px" src="img/mfd/sani_heating_temp.png"> </div> <div style="color:white; font-size:11px; margin-top: 84px; padding-left: 12px;"> Target: °C, Actual: °C </div> <div class="brand "> <span class="label fg-white"></span> </div> </div> <div></div> <div></div> </div> </div>'
-        data-vis-attrs="set_oid/id;temp_oid/id;drive_oid/id;hover[true]/checkbox;transform[true]/checkbox;label;;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
+        data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hover[true]/checkbox;transform[true]/checkbox;label;;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs2="label_short_set;label_short_temp;label_short_drive;label_set;label_temp;label_drive;"
