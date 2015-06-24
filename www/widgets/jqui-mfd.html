@@ -1054,7 +1054,7 @@
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
-            <img id="<%= this.data.wid %>_img" alt="<%= this.data.text %>" style="width:<%= this.data.width %>px; height:<%= this.data.height %>px; border:none;" src="<%= this.data.url %>"/>
+            <img id="<%= this.data.wid %>_img" alt="<%= this.data.text %>" style="width:<%= this.data.dialog_width %>px; height:<%= this.data.dialog_height %>px; border:none;" src="<%= this.data.url %>"/>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr('url'), data.attr('interval')) %>></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: (parseInt(data.attr('dialog_height'), 10) + 60), modal:data.attr('modal')}, true, true) %> />
@@ -1084,7 +1084,7 @@
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
-            <img id="<%= this.data.wid %>_img" alt="<%= this.data.text %>" style="width:<%= this.data.width %>px; height:<%= this.data.height %>px; border:none;" src="<%= vis.states.attr(this.data.oid + '.val' )  %>"/>
+            <img id="<%= this.data.wid %>_img" alt="<%= this.data.text %>" style="width:<%= this.data.dialog_width %>px; height:<%= this.data.dialog_height %>px; border:none;" src="<%= vis.states.attr(this.data.oid + '.val' )  %>"/>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + '.val' ) , data.attr('interval')) %>></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: (parseInt(data.attr('dialog_height'), 10) + 60), modal:data.attr('modal')}, true, true) %> />
@@ -1105,7 +1105,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<img id="' + this.data.wid + '_img" alt="' + this.data.text + '" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.url + '"/>';
+        var html = '<img id="' + this.data.wid + '_img" alt="' + this.data.text + '" style="width:' + this.data.dialog_width + 'px; height:' + this.data.dialog_height + 'px; border:none;" src="' + this.data.url + '"/>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1137,7 +1137,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<img id="' + this.data.wid + '_img" alt="' + this.data.text + '" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '"/>';
+        var html = '<img id="' + this.data.wid + '_img" alt="' + this.data.text + '" style="width:' + this.data.dialog_width + 'px; height:' + this.data.dialog_height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '"/>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1169,7 +1169,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.dialog_width + 'px; height:' + this.data.dialog_height + 'px; border:none;" src="' + this.data.src_url + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1197,7 +1197,7 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.width + 'px; height:' + this.data.height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? object' : 'video') + '>';
+        var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.dialog_width + 'px; height:' + this.data.dialog_height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + '>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">

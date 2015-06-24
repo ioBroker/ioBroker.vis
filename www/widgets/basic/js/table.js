@@ -257,7 +257,6 @@ vis.binds.table = {
 
     showTable: function  (view, wid, options) {
         var $div = $('#' + wid);
-        console.log('A');
         if (!$div.length) {
             setTimeout(function () {
                 vis.binds.table.showTable(view, wid, options);
@@ -293,6 +292,8 @@ vis.binds.table = {
         var headerDone = false;
         var j = 0;
         var selectedId = null;
+
+        if (options.max_rows) options.max_rows = parseInt(options.max_rows);
 
         // Go through all lines
         for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
@@ -336,6 +337,7 @@ vis.binds.table = {
 
             text += vis.binds.table.createRow(table[ii], wid, options, j, false, ii, table[ii]._id);
             j++;
+            if (options.max_rows && j >= options.max_rows) break;
         }
         text += '</table></div>\n';
         header += '</table>\n';

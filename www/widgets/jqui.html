@@ -28,7 +28,11 @@
                 "en": "If true, the dialog will be created at start and can\x0Abe shown by external command 'dialogOpen'.",
                 "de": "Falls true, dann wird der Dialog sofort am Anfang erzeugtx0Aund mit dem Befehl 'dialogOpen' angezeigt werden konnte.",
                 "ru": "Если да, то диалог будет создан в самом начале и\x0Aможет быть вызван внешней командой 'dialogOpen'."
-            }
+            },
+            "src_true":         {"en": "Icon by ON",         "de": "Ikon bei AN",           "ru": "Иконка при ВКЛ"},
+            "alt_true":         {"en": "Tooltip by ON",      "de": "Tooltip bei AN",        "ru": "Подсказка при ВКЛ"},
+            "src_false":        {"en": "Icon by OFF",        "de": "Ikon bei AUS",          "ru": "Иконка при ВЫКЛ"},
+            "alt_false":        {"en": "Tooltip by OFF",     "de": "Tooltip bei AUS",       "ru": "Подсказка при ВЫКЛ"}
         });
     }
 
@@ -932,9 +936,11 @@
 
 <script id="tplJquiToogle" 
         type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Icon Toggle"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplJquiToogle" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev" style="width: 90px; height: 19px; padding: 10px;"> <div class="vis-widget-prev-body"><label>Toggle Icon</label><img class="imgToggleFalse" src="/vis/icon/add.png" style=" vertical-align:middle; height:100%"></div></div></div>'
+        data-vis-set="jqui"
+        data-vis-type="ctrl,state"
+        data-vis-name="Icon Toggle"
         data-vis-attrs="label;oid;src_true/image;alt_true;src_false/image;alt_false;invert_icon/checkbox">
 
     <div class="ui-widget ui-corner-all ui-state-default vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
@@ -945,6 +951,7 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             %>
+            <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('label') %></label>
             <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%"               alt="<%== this.data.attr('alt_false') %>" />
             <img class="imgToggleTrue"  <%= this.data.attr('src_true')  ? 'src="' +  this.data.attr('src_true')  + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%; display:none" alt="<%== this.data.attr('alt_true')  %>" />
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
