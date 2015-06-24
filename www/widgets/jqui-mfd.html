@@ -1190,7 +1190,7 @@
         data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (html5) - Dialog"
         data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox"
-        data-vis-attrs0="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs0="group.dialog;poster_url;title;modal/checkbox;width[640];height[480]"
         >
     <%
         var styles = "";
@@ -1198,6 +1198,33 @@
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
         var html = '<' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + ' id="' + this.data.wid + '_video" style="width:' + this.data.dialog_width + 'px; height:' + this.data.dialog_height + 'px; border:none;" src="' + vis.states.attr(this.data.oid + '.val' ) + '" poster="' + this.data.poster_url + '" autoplay="autoplay"></' + ((this.data.use_object === 'true' || this.data.use_object === true) ? 'object' : 'video') + '>';
+    %>
+    <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <%= this.data.attr('text') %>
+        </div>
+        <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: (parseInt(data.attr('dialog_height'), 10) + 60), modal:data.attr('modal')}, false, false, html) %> />
+    </div>
+</script>
+<script id="tplMfdCamVideoObject"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="jqui-mfd"
+        data-vis-prev='<div id="prev_tplMfdCamVideoObject" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-type="static,camera,dialog"
+        data-vis-name="Cam/Video (Object) - Dialog"
+        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs0="group.dialog;src_url;qtsrc_url;title;modal/checkbox;width[640];height[480];type_application[video/quicktime];plugin;autoplay[true]"
+        >
+    <%
+        var styles = "";
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        }
+        var html = '<object id="' + this.data.wid + '_video" width="' + this.data.width + 'px" height="'+ this.data.height + 'px"><embed type="' +this.data.type_application +'"  width="' + this.data.width + 'px" height="'+ this.data.height + 'px" src="' + this.data.src_url + '" qtsrc="' + this.data.qtsrc_url + '" autoplay="'+ this.data.autoplay + '" enablejavasript="true" href="javaScript:void(0)" plugin="'+ this.data.plugin + '" ></object>';
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
