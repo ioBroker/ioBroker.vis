@@ -15,17 +15,23 @@
 
     if (vis.editMode) {
         $.extend(systemDictionary, {
-            "autoclose":    {"en": "Auto close",        "de": "Auto-zu",                "ru": "Автозакрытие"},
-            "modal":        {"en": "Modal",             "de": "Modal",                  "ru": "Модальное"},
-            "invert_state": {"en": "Invert state",      "de": "Invertiere Zustand",     "ru": "Инвертировать состояние"},
-            "asButton":     {"en": "Button rectangle",  "de": "Knopf-Viereck",          "ru": "Фон кнопки"},
-            "icon_off":     {"en": "Icon for OFF",      "de": "Ikon für AUS",           "ru": "Иконка для ВЫКЛ"},
-            "icon_on":      {"en": "Icon for ON",       "de": "Ikon für AN",            "ru": "Иконка для ВКЛ"},
-            "closed_value": {"en": "Value for CLOSED",  "de": "Wert für ZU",            "ru": "Значение для ЗАКРЫТО"},
-            "tilted_value": {"en": "Value for TILTED",  "de": "Wert für GEKIPPT",       "ru": "Значение для ОТКИНУТО"},
-            "opened_value": {"en": "Value for OPENED",  "de": "Wert für AUF",           "ru": "Значение для ОТКРЫТО"},
-            "invert_value": {"en": "Invert value",      "de": "Invertiere Wert",        "ru": "Инвертировать значение"},
+            "autoclose":    {"en": "Auto close",            "de": "Auto-zu",                "ru": "Автозакрытие"},
+            "modal":        {"en": "Modal",                 "de": "Modal",                  "ru": "Модальное"},
+            "invert_state": {"en": "Invert state",          "de": "Invertiere Zustand",     "ru": "Инвертировать состояние"},
+            "asButton":     {"en": "Button rectangle",      "de": "Knopf-Viereck",          "ru": "Фон кнопки"},
+            "icon_off":     {"en": "Icon for OFF",          "de": "Ikon für AUS",           "ru": "Иконка для ВЫКЛ"},
+            "icon_on":      {"en": "Icon for ON",           "de": "Ikon für AN",            "ru": "Иконка для ВКЛ"},
+            "closed_value": {"en": "Value for CLOSED",      "de": "Wert für ZU",            "ru": "Значение для ЗАКРЫТО"},
+            "tilted_value": {"en": "Value for TILTED",      "de": "Wert für GEKIPPT",       "ru": "Значение для ОТКИНУТО"},
+            "opened_value": {"en": "Value for OPENED",      "de": "Wert für AUF",           "ru": "Значение для ОТКРЫТО"},
+            "invert_value": {"en": "Invert value",          "de": "Invertiere Wert",        "ru": "Инвертировать значение"},
             "show_active":  {"en": "Show active background", "de": "Zeige aktieven Hintergrund", "ru": "Показать активный фон"},
+            "set_oid":      {"en": "Set temperature ID",    "de": "Soll-Temperature ID",    "ru": "ID задаваемой температуры"},
+            "temp_oid":     {"en": "Actual temperature ID", "de": "Ist-Temperature ID",     "ru": "ID актуальной температуры"},
+            "drive_oid":    {"en": "Valve position ID",     "de": "VentilID",               "ru": "ID Положения вентиля"},
+            "label_set":    {"en": "Label for 'set'",       "de": "Beschriftung für 'Soll'", "ru": "Надпись для 'задаваемой'"},
+            "label_temp":   {"en": "Label for 'actual'",    "de": "Beschriftung für 'Ist'",  "ru": "Надпись для 'актуальной'"},
+            "label_drive":  {"en": "Label for position",    "de": "Beschriftung für Ventil", "ru": "Надпись для вентиля"}
         });
     }
 
@@ -42,11 +48,11 @@
         class="vis-tpl" 
         data-vis-set="jqui-mfd"
         data-vis-type="val;light;state"
-        data-vis-prev='<div id="prev_tplMfdLight" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/light_light_dim.png"> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdLight" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"> </div> </div></div>'
         data-vis-name="Light/Dimmer"
         data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default ui-state-active' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" data-min="<%= this.data.attr('min') %>" data-max="<%= this.data.attr('max') %>" <%= (el) -> vis.binds.jqueryui.active(el) %> >
-        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
+        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']);  %>>
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -61,29 +67,29 @@
             if (str === false || str === 'false') { val = min; }
             if (val >= max) {
             %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
             <% } else if (val >= min + (max - min) * 0.9) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
             <% } else if (val >= min + (max - min) * 0.8) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
             <% } else if (val >= min + (max - min) * 0.7) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
             <% } else if (val >= min + (max - min) * 0.6) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
             <% } else if (val >= min + (max - min) * 0.5) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
             <% } else if (val >= min + (max - min) * 0.4) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
             <% } else if (val >= min + (max - min) * 0.3) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
             <% } else if (val >= min + (max - min) * 0.2) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
             <% } else if (val >= min + (max - min) * 0.1) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
             <% } else if (val >= min + (max - min) * 0.01) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
             <% } else { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
             <% } %>
         </div>
     </div>
@@ -92,13 +98,13 @@
 <script id="tplMfdLightCtrl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMfdLight" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev  vis-widget ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/light_light_dim.png"> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdLight" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev  vis-widget ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"> </div> </div></div>'
         data-vis-set="jqui-mfd"
         data-vis-type="light;ctrl"
         data-vis-name="ctrl - Light"
         data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" data-min="<%= this.data.attr('min') %>" data-max="<%= this.data.attr('max') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
-        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']);  %>>
+        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']);  %>>
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -112,29 +118,29 @@
             if (str === false || str === 'false') { val = min; }
             if (val >= max) {
             %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
             <% } else if (val >= min + (max - min) * 0.9) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
             <% } else if (val >= min + (max - min) * 0.8) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
             <% } else if (val >= min + (max - min) * 0.7) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
             <% } else if (val >= min + (max - min) * 0.6) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
             <% } else if (val >= min + (max - min) * 0.5) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
             <% } else if (val >= min + (max - min) * 0.4) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
             <% } else if (val >= min + (max - min) * 0.3) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
             <% } else if (val >= min + (max - min) * 0.2) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
             <% } else if (val >= min + (max - min) * 0.1) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
             <% } else if (val >= min + (max - min) * 0.01) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
             <% } else { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
             <% } %>
         </div>
     </div>
@@ -151,7 +157,7 @@
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height"
         >
     <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -166,29 +172,29 @@
             if (str === false || str === 'false') { val = min; }
             if (val >= max) {
             %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
             <% } else if (val >= min + (max - min) * 0.9) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
             <% } else if (val >= min + (max - min) * 0.8) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
             <% } else if (val >= min + (max - min) * 0.7) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
             <% } else if (val >= min + (max - min) * 0.6) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
             <% } else if (val >= min + (max - min) * 0.5) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
             <% } else if (val >= min + (max - min) * 0.4) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
             <% } else if (val >= min + (max - min) * 0.3) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
             <% } else if (val >= min + (max - min) * 0.2) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
             <% } else if (val >= min + (max - min) * 0.1) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
             <% } else if (val >= min + (max - min) * 0.01) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
             <% } else { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
             <% } %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
@@ -216,7 +222,7 @@
         data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
             <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -231,29 +237,29 @@
             if (str === false || str === 'false') { val = min; }
             if (val >= max) {
             %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
             <% } else if (val >= min + (max - min) * 0.9) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
             <% } else if (val >= min + (max - min) * 0.8) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
             <% } else if (val >= min + (max - min) * 0.7) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
             <% } else if (val >= min + (max - min) * 0.6) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
             <% } else if (val >= min + (max - min) * 0.5) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
             <% } else if (val >= min + (max - min) * 0.4) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
             <% } else if (val >= min + (max - min) * 0.3) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
             <% } else if (val >= min + (max - min) * 0.2) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
             <% } else if (val >= min + (max - min) * 0.1) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
             <% } else if (val >= min + (max - min) * 0.01) { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
             <% } else { %>
-                <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
             <% } %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
@@ -281,12 +287,12 @@
 <script id="tplMfdSocket" 
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMfdSocket" style="position: relative; text-align: initial; padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="img/mfd/message_socket_on.png"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdSocket" style="position: relative; text-align: initial; padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/message_socket_on.png"></div></div></div>'
         data-vis-set="jqui-mfd"
         data-vis-name="value - Socket" 
         data-vis-attrs="oid;min;max;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;icon_off/image;icon_on/image">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute"  <%= (el) -> vis.binds.jqueryui.active(el, this.data.invert_state) %> >
-        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
+        <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/message_socket_on.png','widgets/jqui-mfd/img/message_socket_off.png']);  %>>
         <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -308,9 +314,9 @@
         }
         if (val != min) {
         %>
-            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_on')  ? this.data.attr('icon_on')  : 'img/mfd/message_socket_on.png'  %>"/>
+            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_on')  ? this.data.attr('icon_on')  : 'widgets/jqui-mfd/img/message_socket_on.png'  %>"/>
         <% } else { %>
-            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/mfd/message_socket_off.png' %>"/>
+            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_off') ? this.data.attr('icon_off') : 'widgets/jqui-mfd/img/message_socket_off.png' %>"/>
         <% } %>
     </div>
     </div>
@@ -321,10 +327,10 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-name="ctrl - Socket"
-        data-vis-prev='<div id="prev_tplMfdSocketCtrl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="img/mfd/message_socket_on.png"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdSocketCtrl" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/message_socket_on.png"></div></div></div>'
         data-vis-attrs="oid;min;max;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;icon_off/image;icon_on/image">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" data-min="<%= this.data.attr('min') %>" data-max="<%= this.data.attr('max') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %> >
-    <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['img/mfd/message_socket_on.png','img/mfd/message_socket_off.png']);  %>>
+    <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/message_socket_on.png','widgets/jqui-mfd/img/message_socket_off.png']);  %>>
         <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -346,9 +352,9 @@
         }
         if (val != min) {
         %>
-            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_on')  ? this.data.attr('icon_on')  : 'img/mfd/message_socket_on.png'  %>"/>
+            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_on')  ? this.data.attr('icon_on')  : 'widgets/jqui-mfd/img/message_socket_on.png'  %>"/>
         <% } else { %>
-            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/mfd/message_socket_off.png' %>"/>
+            <img style="<%= styles %>" width="100%" src="<%= this.data.attr('icon_off') ? this.data.attr('icon_off') : 'widgets/jqui-mfd/img/message_socket_off.png' %>"/>
         <% } %>
     </div>
     </div>
@@ -360,7 +366,7 @@
         data-vis-set="jqui-mfd"
         data-vis-type="state,shutter"
         data-vis-name="Shutter"
-        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"> </div></div></div>'
         data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>><div class="vis-widget-body">
     <%
@@ -374,27 +380,27 @@
         var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
         if (this.data.invert_value) val = max - val + min;
     if (val >= max) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_100.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
     <% } else if (val >= min + (max - min) * 0.9) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_90.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
     <% } else if (val >= min + (max - min) * 0.8) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_80.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
     <% } else if (val >= min + (max - min) * 0.7) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_70.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
     <% } else if (val >= min + (max - min) * 0.6) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_60.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
     <% } else if (val >= min + (max - min) * 0.5) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_50.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
     <% } else if (val >= min + (max - min) * 0.4) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_40.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
     <% } else if (val >= min + (max - min) * 0.3) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_30.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
     <% } else if (val >= min + (max - min) * 0.2) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_20.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
     <% } else if (val >= min + (max - min) * 0.1) { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_10.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
     <% } else { %>
-        <img style="<%= styles %>" width="100%" src="img/mfd/fts_window_2w.png"/>
+        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_window_2w.png"/>
     <% } %>
 </div></div>
 </script>
@@ -405,11 +411,11 @@
         data-vis-set="jqui-mfd"
         data-vis-type="ctrl,shutter,dialog"
         data-vis-name="Shutter + jqui Dialog"
-        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="img/mfd/fts_shutter_30.png"> </div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"> </div></div></div>'
         data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox;"
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
     <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>>
-        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <%
             var styles = "";
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -423,27 +429,27 @@
 
             if (val >= max) {
         %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_100.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
         <% } else if (val >= min + (max - min) * 0.9) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_90.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
         <% } else if (val >= min + (max - min) * 0.8) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_80.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
         <% } else if (val >= min + (max - min) * 0.7) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_70.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
         <% } else if (val >= min + (max - min) * 0.6) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_60.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
         <% } else if (val >= min + (max - min) * 0.5) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_50.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
         <% } else if (val >= min + (max - min) * 0.4) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_40.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
         <% } else if (val >= min + (max - min) * 0.3) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_30.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
         <% } else if (val >= min + (max - min) * 0.2) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_20.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
         <% } else if (val >= min + (max - min) * 0.1) { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_shutter_10.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
         <% } else { %>
-            <img style="<%= styles %>" width="100%" src="img/mfd/fts_window_2w.png"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_window_2w.png"/>
         <% } %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
@@ -472,7 +478,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui-mfd"
-        data-vis-prev='<div id="prev_tplMfdHeating" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body" style="width:100%; height:100%"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="img/mfd/sani_heating_temp.png" width="100%"> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdHeating" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body" style="width:100%; height:100%"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/sani_heating_temp.png" width="100%"> </div></div>'
         data-vis-set="ctrl,heating,dialog"
         data-vis-name="ctrl - Heating + jqui Dialog"
         data-vis-attrs="oid;oid-working;invert_icon/checkbox;asButton[true]/checkbox;"
@@ -486,7 +492,7 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
         %>
-        <img style="<%= styles %>" src="img/mfd/sani_heating_temp.png" width="100%"/>
+        <img style="<%= styles %>" src="widgets/jqui-mfd/img/sani_heating_temp.png" width="100%"/>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
@@ -515,7 +521,7 @@
         data-vis-set="jqui-mfd"
         data-vis-type="val,window"
         data-vis-name="Window Rotate Handle"
-        data-vis-prev='<div id="prev_tplMfdWindow" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="img/mfd/fts_window_1w_open.png"> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdWindow" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"> </div> </div></div>'
         data-vis-attrs="oid;invert_icon/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.values;closed_value;tilted_value;opened_value;"
         data-vis-attrs1="group.icons;closed_icon;tilted_icon;opened_icon;"
@@ -543,11 +549,11 @@
 
             if (val == closed) {
             %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'img/mfd/fts_window_1w.png' %>"/>
+                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_window_1w.png' %>"/>
             <% } else if (val == tilted) { %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'img/mfd/fts_window_1w_tilt.png' %>"/>
+                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_tilt.png' %>"/>
             <% } else { %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'img/mfd/fts_window_1w_open.png' %>"/>
+                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_open.png' %>"/>
             <% } %>
         </div>
     </div>
@@ -559,7 +565,7 @@
         data-vis-set="jqui-mfd"
         data-vis-type="val,window"
         data-vis-name="Window"
-        data-vis-prev='<div id="prev_tplMfdWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="img/mfd/fts_window_1w_open.png"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"></div></div></div>'
         data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
@@ -595,9 +601,9 @@
             }
 
             if (val != opened) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_1w.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
             <% } else { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_1w_open.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
             <% } %>
         </div>
     </div>
@@ -608,7 +614,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="val,window"
-        data-vis-prev='<div id="prev_tplMfdRoofWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="img/mfd/fts_window_roof.png"> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdRoofWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"> </div> </div></div>'
         data-vis-name="Roof window"
         data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
@@ -643,9 +649,9 @@
                 }
             }
             if (val != opened) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_roof.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"/>
             <% } else { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_window_roof_open_2.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof_open_2.png"/>
             <% } %>
         </div>
     </div>
@@ -656,7 +662,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-name="val - Door"
-        data-vis-prev='<div id="prev_tplMfdDoor" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="img/mfd/fts_door.png"> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMfdDoor" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_door.png"> </div> </div></div>'
         data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
@@ -690,9 +696,9 @@
                 }
             }
             if (val != opened) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_door.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door.png"/>
             <% } else { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_door_open.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door_open.png"/>
             <% } %>
         </div>
     </div>
@@ -703,7 +709,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-name="val - Garage"
-        data-vis-prev='<div id="prev_tplMfdGarage" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px;"><div class="vis-widget-prev-body"><img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="img/mfd/fts_garage_door_100.png"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdGarage" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px;"><div class="vis-widget-prev-body"><img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"></div></div></div>'
         data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
@@ -739,9 +745,9 @@
             }
 
             if (val != opened) { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_garage_door_100.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"/>
             <% } else { %>
-                <img style="<%= styles %>" height="100%" src="img/mfd/fts_garage_door_10.png"/>
+                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_10.png"/>
             <% } %>
         </div>
     </div>
@@ -778,36 +784,36 @@
 
     %>
     <div data-oid="<%= hueIDs.STATE %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr(hueIDs.LEVEL + '.val');
     var val = (parseFloat(str) + 1) / 255;
 
     if (val == 1) {
     %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
@@ -864,36 +870,36 @@
     }
     %>
     <div data-oid="<%= hueIDs.STATE %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr(hueIDs.LEVEL + '.val');
     var val = (parseFloat(str) + 1) / 255;
 
     if (val == 1) {
     %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
@@ -963,36 +969,36 @@
     }
     %>
     <div data-oid="<%= hueIDs.STATE %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
     <%
     var str = vis.states.attr(hueIDs.LEVEL + '.val');
     var val = (parseFloat(str) + 1) / 255;
 
     if (val == 1) {
     %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_100.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
     <% } else if (val >= 0.9) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_90.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
     <% } else if (val >= 0.8) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_80.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
     <% } else if (val >= 0.7) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_70.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
     <% } else if (val >= 0.6) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_60.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
     <% } else if (val >= 0.5) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_50.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
     <% } else if (val >= 0.4) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_40.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
     <% } else if (val >= 0.3) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_30.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
     <% } else if (val >= 0.2) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_20.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
     <% } else if (val >= 0.1) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_10.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
     <% } else if (val >= 0.01) { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim_00.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
     <% } else { %>
-    <img style="<%= styles %>" width="100%" src="img/mfd/light_light_dim.png"/>
+    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
     <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
@@ -1036,7 +1042,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="static,camera,dialog"
-        data-vis-prev='<div id="prev_tplMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
         data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
@@ -1050,7 +1056,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1066,7 +1072,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="val,camera,dialog"
-        data-vis-prev='<div id="prev_tplValMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplValMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
         data-vis-attrs="oid;alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
@@ -1080,7 +1086,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1095,7 +1101,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui-mfd"
-        data-vis-prev='<div id="prev_tplMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (img) - Dialog"
         data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
@@ -1109,7 +1115,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div>
@@ -1127,7 +1133,7 @@
         class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="val,camera,dialog"
-        data-vis-prev='<div id="prev_tplValMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplValMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (img) - Dialog"
         data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox"
         data-vis-attrs0="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
@@ -1141,7 +1147,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div>
@@ -1158,7 +1164,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui-mfd"
-        data-vis-prev='<div id="prev_tplMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (html5) - Dialog"
         data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox;"
@@ -1173,7 +1179,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1187,7 +1193,7 @@
         class="vis-tpl" 
         data-vis-set="jqui-mfd"
         data-vis-type="val,camera,dialog"
-        data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="img/mfd/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+        data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (html5) - Dialog"
         data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox"
         data-vis-attrs0="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
@@ -1201,7 +1207,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'img/mfd/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">

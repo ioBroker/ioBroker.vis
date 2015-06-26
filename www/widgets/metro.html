@@ -893,7 +893,7 @@
 <script id="tplMetroTileDimmer"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileDimmer" style=" position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 122px; height: 77px; padding: 3px;"><div style="width:100%; height:100%" class="metro vis-widget-prev-body "><div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content" style=" zoom: 0.5;"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/light_light_dim.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="w00004_checkbox" data-o> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div> <div></div> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Dimmer</span> </div> </div> <div></div> </div> </div>'
+        data-vis-prev='<div id="prev_tplMetroTileDimmer" style=" position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 122px; height: 77px; padding: 3px;"><div style="width:100%; height:100%" class="metro vis-widget-prev-body "><div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content" style=" zoom: 0.5;"> <div style="float:left; height: 90px;"> <img width="90px" src="widgets/jqui-mfd/img/light_light_dim.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="w00004_checkbox" data-o> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div> <div></div> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Dimmer</span> </div> </div> <div></div> </div> </div>'
         data-vis-attrs="oid;oid-working;min;max;hover/checkbox;transform/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -901,7 +901,7 @@
         data-vis-set="metro"
         data-vis-type="ctrl,dimmer"
         data-vis-name="Tile Dimmer">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
@@ -931,29 +931,29 @@
 				
                 if (val == 1) {
                 %>
-                <img width="90px" src="img/mfd/light_light_dim_100.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
                 <% } else if (val >= 0.9) { %>
-                <img width="90px" src="img/mfd/light_light_dim_90.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
                 <% } else if (val >= 0.8) { %>
-                <img width="90px" src="img/mfd/light_light_dim_80.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
                 <% } else if (val >= 0.7) { %>
-                <img width="90px" src="img/mfd/light_light_dim_70.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
                 <% } else if (val >= 0.6) { %>
-                <img width="90px" src="img/mfd/light_light_dim_60.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
                 <% } else if (val >= 0.5) { %>
-                <img width="90px" src="img/mfd/light_light_dim_50.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
                 <% } else if (val >= 0.4) { %>
-                <img width="90px" src="img/mfd/light_light_dim_40.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
                 <% } else if (val >= 0.3) { %>
-                <img width="90px" src="img/mfd/light_light_dim_30.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
                 <% } else if (val >= 0.2) { %>
-                <img width="90px" src="img/mfd/light_light_dim_20.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
                 <% } else if (val >= 0.1) { %>
-                <img width="90px" src="img/mfd/light_light_dim_10.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
                 <% } else if (val >= 0.01) { %>
-                <img width="90px" src="img/mfd/light_light_dim_00.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
                 <% } else { %>
-                <img width="90px" src="img/mfd/light_light_dim.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/light_light_dim.png"/>
                 <% } %>
                 </div>
                 <div style="margin: 30px 70px 0px 0px; float:right">
@@ -978,7 +978,7 @@
 
 <script id="tplMetroTileDimmerDialog"
         type="text/ejs"
-        data-vis-prev='<div id="prev_tplMetroTileDimmerDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"><div class="tile-content" style="text-align: center"><img width="90%" src="img/mfd/light_light_dim.png"></div> <div class="brand ribbed-steel"><span class="label fg-white">Dimmer Dialog</span></div> </div><div style="padding: 42px 10px 10px;"></div></div></div></div>'
+        data-vis-prev='<div id="prev_tplMetroTileDimmerDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"><div class="tile-content" style="text-align: center"><img width="90%" src="widgets/jqui-mfd/img/light_light_dim.png"></div> <div class="brand ribbed-steel"><span class="label fg-white">Dimmer Dialog</span></div> </div><div style="padding: 42px 10px 10px;"></div></div></div></div>'
         data-vis-attrs="oid;oid-working;min;max;digits/number;hover[true]/checkbox;transform[true]/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -988,7 +988,7 @@
         data-vis-set="metro"
         data-vis-type="ctrl,dimmer,dialog"
         data-vis-name="Tile Dimmer Dialog">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
@@ -1017,29 +1017,29 @@
 
                 if (val == 1) {
                 %>
-                <img width="90%" src="img/mfd/light_light_dim_100.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_100.png"/>
                 <% } else if (val >= 0.9) { %>
-                <img width="90%" src="img/mfd/light_light_dim_90.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_90.png"/>
                 <% } else if (val >= 0.8) { %>
-                <img width="90%" src="img/mfd/light_light_dim_80.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_80.png"/>
                 <% } else if (val >= 0.7) { %>
-                <img width="90%" src="img/mfd/light_light_dim_70.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_70.png"/>
                 <% } else if (val >= 0.6) { %>
-                <img width="90%" src="img/mfd/light_light_dim_60.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_60.png"/>
                 <% } else if (val >= 0.5) { %>
-                <img width="90%" src="img/mfd/light_light_dim_50.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_50.png"/>
                 <% } else if (val >= 0.4) { %>
-                <img width="90%" src="img/mfd/light_light_dim_40.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_40.png"/>
                 <% } else if (val >= 0.3) { %>
-                <img width="90%" src="img/mfd/light_light_dim_30.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_30.png"/>
                 <% } else if (val >= 0.2) { %>
-                <img width="90%" src="img/mfd/light_light_dim_20.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_20.png"/>
                 <% } else if (val >= 0.1) { %>
-                <img width="90%" src="img/mfd/light_light_dim_10.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_10.png"/>
                 <% } else if (val >= 0.01) { %>
-                <img width="90%" src="img/mfd/light_light_dim_00.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim_00.png"/>
                 <% } else { %>
-                <img width="90%" src="img/mfd/light_light_dim.png"/>
+                <img width="90%" src="widgets/jqui-mfd/img/light_light_dim.png"/>
                 <% } %>
                 </div>
                 <div class="brand <%= this.data.attr("brand_bg_class") %>">
@@ -1057,7 +1057,7 @@
 <script id="tplMetroTileShutter"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileShutter" style="position: relative; text-align: initial;padding: 4px "><div id="19l1ml014" class="vis-widget_prev  vis-widget-lock " style="width: 287px; height: 120px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" id="metroTile_19l1ml014" class="tile hover bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/fts_shutter_100.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="19l1ml014_checkbox" id="19l1ml014_checkbox" data-oid="nothing_selected" data-oid-working=""> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" data-oid="nothing_selected" data-oid-working="" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div>  </div> <div class="brand ribbed-steel"><span class="label fg-white">Shutter</span></div></div><div></div> </div></div></div>'
+        data-vis-prev='<div id="prev_tplMetroTileShutter" style="position: relative; text-align: initial;padding: 4px "><div id="19l1ml014" class="vis-widget_prev  vis-widget-lock " style="width: 287px; height: 120px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" id="metroTile_19l1ml014" class="tile hover bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_100.png"> </div> <div style="margin: 30px 70px 0px 0px; float:right"> <div class="input-control switch"> <label> <input type="checkbox" name="19l1ml014_checkbox" id="19l1ml014_checkbox" data-oid="nothing_selected" data-oid-working=""> <span class="check"></span> </label> </div> </div> <div style="clear: both; margin: 0px 12px;" data-oid="nothing_selected" data-oid-working="" class="slider" data-role="slider"><div class="complete" style="width: 0px;"></div><a class="marker" style="left: 0px;"></a></div>  </div> <div class="brand ribbed-steel"><span class="label fg-white">Shutter</span></div></div><div></div> </div></div></div>'
         data-vis-attrs="oid;oid-working;min;max;hover/checkbox;transform/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -1065,7 +1065,7 @@
         data-vis-set="metro"
         data-vis-type="ctrl,shutter"
         data-vis-name="Tile Shutter">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
@@ -1094,27 +1094,27 @@
                     val = (val - min) / (max - min);
                     val = 1 - val;
                     if (val == 1) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_100.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
                     <% } else if (val >= 0.9) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_90.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
                     <% } else if (val >= 0.8) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_80.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
                     <% } else if (val >= 0.7) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_70.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
                     <% } else if (val >= 0.6) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_60.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
                     <% } else if (val >= 0.5) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_50.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
                     <% } else if (val >= 0.4) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_40.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
                     <% } else if (val >= 0.3) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_30.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
                     <% } else if (val >= 0.2) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_20.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
                     <% } else if (val >= 0.1) { %>
-                    <img width="90px" src="img/mfd/fts_shutter_10.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
                     <% } else { %>
-                    <img width="90px" src="img/mfd/fts_window_2w.png"/>
+                    <img width="90px" src="widgets/jqui-mfd/img/fts_window_2w.png"/>
                     <% } %>
                     </div>
                     <div style="margin: 30px 70px 0px 0px; float:right">
@@ -1142,7 +1142,7 @@
 <script id="tplMetroTileShutterDialog"
         type="text/ejs"        
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileShutterDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="90px" src="img/mfd/fts_shutter_100.png"> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Shutter dialog</span> </div> </div> <div style="padding: 42px 10px 10px;"> </div>  </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMetroTileShutterDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_100.png"> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Shutter dialog</span> </div> </div> <div style="padding: 42px 10px 10px;"> </div>  </div> </div></div>'
         data-vis-attrs="oid;oid-working;min;max;hover[true]/checkbox;transform[true]/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -1151,7 +1151,7 @@
         data-vis-set="metro"
         data-vis-type="ctrl,shutter,dialog"
         data-vis-name="Tile Shutter Dialog">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
@@ -1180,27 +1180,27 @@
                 val = 1 - val;
 
                 if (val == 1) { %>
-                <img width="90px" src="img/mfd/fts_shutter_100.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
                 <% } else if (val >= 0.9) { %>
-                <img width="90px" src="img/mfd/fts_shutter_90.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
                 <% } else if (val >= 0.8) { %>
-                <img width="90px" src="img/mfd/fts_shutter_80.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
                 <% } else if (val >= 0.7) { %>
-                <img width="90px" src="img/mfd/fts_shutter_70.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
                 <% } else if (val >= 0.6) { %>
-                <img width="90px" src="img/mfd/fts_shutter_60.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
                 <% } else if (val >= 0.5) { %>
-                <img width="90px" src="img/mfd/fts_shutter_50.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
                 <% } else if (val >= 0.4) { %>
-                <img width="90px" src="img/mfd/fts_shutter_40.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
                 <% } else if (val >= 0.3) { %>
-                <img width="90px" src="img/mfd/fts_shutter_30.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
                 <% } else if (val >= 0.2) { %>
-                <img width="90px" src="img/mfd/fts_shutter_20.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
                 <% } else if (val >= 0.1) { %>
-                <img width="90px" src="img/mfd/fts_shutter_10.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
                 <% } else { %>
-                <img width="90px" src="img/mfd/fts_window_2w.png"/>
+                <img width="90px" src="widgets/jqui-mfd/img/fts_window_2w.png"/>
                 <% } %>
                 </div>
                 <div class="brand <%= this.data.attr("brand_bg_class") %>">
@@ -1218,7 +1218,7 @@
 <script id="tplMetroTileHeating"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileHeating" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 250px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/sani_heating_temp.png"> </div> <div style="float: right; padding-top: 16px; padding-right: 12px;"> <table style="color:white;font-size:11px;display:inline-block;"> <tr><td>Set temperature:</td><td>0%</td></tr> <tr><td>Actual temperature:</td><td>0.0°C</td></tr> <tr><td>Drive position:</td><td>0</td></tr> </table> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"></div>  </div> <div class="brand ribbed-steel"> <span class="label fg-white">Heating</span> </div> </div> <div></div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplMetroTileHeating" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 250px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="widgets/jqui-mfd/img/sani_heating_temp.png"> </div> <div style="float: right; padding-top: 16px; padding-right: 12px;"> <table style="color:white;font-size:11px;display:inline-block;"> <tr><td>Set temperature:</td><td>0%</td></tr> <tr><td>Actual temperature:</td><td>0.0°C</td></tr> <tr><td>Drive position:</td><td>0</td></tr> </table> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"></div>  </div> <div class="brand ribbed-steel"> <span class="label fg-white">Heating</span> </div> </div> <div></div> </div> </div></div>'
         data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -1227,13 +1227,13 @@
         data-vis-set="metro"
         data-vis-type="ctrl,heating"
         data-vis-name="Tile Heating">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
                 <div class="tile-content">
                     <div style="float:left; height: 90px;">
-                        <img width="90px" src="img/mfd/sani_heating_temp.png"/>
+                        <img width="90px" src="widgets/jqui-mfd/img/sani_heating_temp.png"/>
                     </div>
                     <div style="float: right; padding-top: 16px; padding-right: 12px;">
                         <table style="color:white;font-size:11px;display:inline-block;">
@@ -1263,7 +1263,7 @@
 <script id="tplMetroTileHeatingDialog"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileHeatingDialog" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="105px" src="img/mfd/sani_heating_temp.png"> </div> <div style="color:white; font-size:11px; margin-top: 84px; padding-left: 12px;"> Target: °C, Actual: °C </div> <div class="brand "> <span class="label fg-white"></span> </div> </div> <div></div> <div></div> </div> </div>'
+        data-vis-prev='<div id="prev_tplMetroTileHeatingDialog" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="105px" src="widgets/jqui-mfd/img/sani_heating_temp.png"> </div> <div style="color:white; font-size:11px; margin-top: 84px; padding-left: 12px;"> Target: °C, Actual: °C </div> <div class="brand "> <span class="label fg-white"></span> </div> </div> <div></div> <div></div> </div> </div>'
         data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hover[true]/checkbox;transform[true]/checkbox;label;;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
@@ -1273,12 +1273,12 @@
         data-vis-set="metro"
         data-vis-type="ctrl,heating,dialog"
         data-vis-name="Tile Heating Dialog">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:136px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
                 <div class="tile-content" style="text-align: center">
-                     <img width="105px" src="img/mfd/sani_heating_temp.png"/>
+                     <img width="105px" src="widgets/jqui-mfd/img/sani_heating_temp.png"/>
                 </div>
                 <div style="color:white; font-size:11px; margin-top: 84px; padding-left: 12px;">
                     <%== this.data.attr('set_oid')   ? (      (this.data.attr('label_short_set')   ? this.data.attr('label_short_set')   : _('Target'))         + ': ' + vis.binds.metro.format(vis.states.attr(this.data.attr('set_oid')   + '.val'), '°')) : '' %>
