@@ -40,7 +40,7 @@ $.extend(systemDictionary, {
     'Screensize':           {'en': 'Screensize:', 'de': 'Bildschirmgröße', 'ru': 'Размер экрана'},
     'Width':                {'en': 'Width (px)', 'de': 'Breite (px)', 'ru': 'Ширина'},
     'Height':               {'en': 'Height (px)', 'de': 'Höhe (px)', 'ru': 'Высота'},
-    'comment':              {'en': 'Comment:', 'de': 'Kommentar:', 'ru': 'Комментарий'},
+    'comment':              {'en': 'Comment', 'de': 'Kommentar', 'ru': 'Комментарий'},
     'Room:':                {'en': 'Room:', 'de': 'Raum:', 'ru': 'Комната:'},
     'Function:':            {'en': 'Function:', 'de': 'Gewerk:', 'ru': 'Функциональность:'},
     'Widget:':              {'en': 'Widget:', 'de': 'Widget:', 'ru': 'Элемент:'},
