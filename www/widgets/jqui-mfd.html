@@ -30,8 +30,13 @@
             "temp_oid":     {"en": "Actual temperature ID", "de": "Ist-Temperature ID",     "ru": "ID актуальной температуры"},
             "drive_oid":    {"en": "Valve position ID",     "de": "VentilID",               "ru": "ID Положения вентиля"},
             "label_set":    {"en": "Label for 'set'",       "de": "Beschriftung für 'Soll'", "ru": "Надпись для 'задаваемой'"},
-            "label_temp":   {"en": "Label for 'actual'",    "de": "Beschriftung für 'Ist'",  "ru": "Надпись для 'актуальной'"},
-            "label_drive":  {"en": "Label for position",    "de": "Beschriftung für Ventil", "ru": "Надпись для вентиля"}
+            "label_temp":   {"en": "Label for 'actual'",    "de": "Beschriftung für 'Ist'", "ru": "Надпись для 'актуальной'"},
+            "label_drive":  {"en": "Label for position",    "de": "Beschriftung für Ventil", "ru": "Надпись для вентиля"},
+            "src_url":      {"en": "Stream URL",            "de": "Stream URL",             "ru": "URL потока"},
+            "qtsrc_url":    {"en": "Stream URL (qtsrc)",    "de": "Stream URL (qtsrc)",     "ru": "URL потока (qtsrc)"},
+            "type_application": {"en": "Application mime-type", "de": "Applikationstyp (mime)",   "ru": "Тип приложения (mime)"},
+            "plugin":       {"en": "Plug-in",               "de": "Plugin",                 "ru": "Плагин"},
+            "autoplay":     {"en": "Auto-play",             "de": "Automatisch abspielen",  "ru": "Автостарт"}
         });
     }
 
@@ -284,12 +289,12 @@
     </div>
 </script>
 
-<script id="tplMfdSocket" 
+<script id="tplMfdSocket"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplMfdSocket" style="position: relative; text-align: initial; padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/message_socket_on.png"></div></div></div>'
         data-vis-set="jqui-mfd"
-        data-vis-name="value - Socket" 
+        data-vis-name="value - Socket"
         data-vis-attrs="oid;min;max;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;icon_off/image;icon_on/image">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute"  <%= (el) -> vis.binds.jqueryui.active(el, this.data.invert_state) %> >
         <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/message_socket_on.png','widgets/jqui-mfd/img/message_socket_off.png']);  %>>
@@ -407,7 +412,7 @@
 
 <script id="tplMfdShutterDialog"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="ctrl,shutter,dialog"
         data-vis-name="Shutter + jqui Dialog"
@@ -1190,7 +1195,7 @@
 
 <script id="tplValMfdCamVideo"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="jqui-mfd"
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
@@ -1208,6 +1213,34 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <%= this.data.attr('text') %>
+        </div>
+        <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
+        </div>
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: (parseInt(data.attr('dialog_height'), 10) + 60), modal:data.attr('modal')}, false, false, html) %> />
+    </div>
+</script>
+
+<script id="tplMfdCamVideoObject"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-set="jqui-mfd"
+    data-vis-prev='<div id="prev_tplMfdCamVideoObject" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
+    data-vis-type="static,camera,dialog"
+    data-vis-name="Cam/Video (Object) - Dialog"
+    data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
+    data-vis-attrs0="group.dialog;src_url;qtsrc_url;title;modal/checkbox;dialog_width[640];dialog_height[480];type_application[video~quicktime]/auto,video~mpeg,video~mp4,video~ogg,video~quicktime,video~webm,video~x-ms-wmv,video~x-flv;plugin;autoplay[true]"
+    >
+    <%
+        var styles = "";
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        }
+        var html = '<object id="' + this.data.wid + '_video" width="' + this.data.dialog_width + 'px" height="'+ this.data.dialog_height + 'px"><embed type="' +this.data.type_application +'"  width="' + this.data.dialog_width + 'px" height="'+ this.data.dialog_height + 'px" src="' + this.data.src_url + '" qtsrc="' + this.data.qtsrc_url + '" autoplay="'+ this.data.autoplay + '" enablejavasript="true" href="javaScript:void(0)" plugin="'+ this.data.plugin + '" ></object>';
+    %>
+    <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
+        <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
+            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" />
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">

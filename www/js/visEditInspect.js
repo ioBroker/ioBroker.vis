@@ -1264,7 +1264,7 @@ vis = $.extend(true, vis, {
          Result: array of oneAttr
          */
 
-        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,\s:\/\.a-zA-Z0-9]+)?/;
+        if (!this.regexAttr) this.regexAttr = /([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:\/\.a-zA-Z0-9]+)?/;
         var match = this.regexAttr.exec(_wid_attr);
 
         var widAttr       = match[1];
@@ -1285,6 +1285,11 @@ vis = $.extend(true, vis, {
             var _parts = wid_type.split('/');
             wid_type = _parts[0];
             wid_on_change =  _parts[1];
+
+            wid_type = wid_type.replace(/§/g, ';');
+            wid_type = wid_type.replace(/~/g, '/');
+            wid_type = wid_type.replace(/\^/g, '"');
+            wid_type = wid_type.replace(/\^\^/g, '^');
 
             parts = wid_type.split(',');
             // extract min,max,step or select values
