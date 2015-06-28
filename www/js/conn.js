@@ -666,8 +666,8 @@ var servConn = {
         this.readDir('/' + this.namespace + '/' + projectDir, function (err, dirs) {
             // find vis-views.json
             for (var f = 0; f < dirs.length; f++) {
-                if (dirs[f].file == 'vis-views.json' && dirs[f].acl.read) {
-                    return callback(err, {name: projectDir, readOnly: !dirs[f].acl.write});
+                if (dirs[f].file == 'vis-views.json' && (!dirs[f].acl || dirs[f].acl.read)) {
+                    return callback(err, {name: projectDir, readOnly: (dirs[f].acl && !dirs[f].acl.write)});
                 }
             }
             callback(err);
