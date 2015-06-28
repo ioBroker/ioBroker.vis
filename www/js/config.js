@@ -1,4 +1,3 @@
-
 var visConfig = {
     widgetSets: [
         "basic",
