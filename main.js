@@ -125,6 +125,7 @@ var generic = [
     'jqplot',
     'jqui',
     'jqui-mfd',
+    'homematic',
     'knob',
     'lcars',
     'plumb',
@@ -147,21 +148,21 @@ var widgetSetsDependencies = {
 
 function syncWidgetSets() {
     // find all installed widget sets
-    var dirs = fs.readdirSync(__dirname + '../');
+    var dirs = fs.readdirSync(__dirname + '/../');
     var sets = [];
     for (var d = 0; d < dirs.length; d++) {
         if (dirs[d].match(/^iobroker\.vis\-/i)) {
             var pack = null;
             try {
-                pack = JSON.parse(fs.readFileSync(__dirname + '../' + dirs[d] + '/io-package.json').toString());
+                pack = JSON.parse(fs.readFileSync(__dirname + '/../' + dirs[d] + '/io-package.json').toString());
             } catch (e) {
-                adapter.log.warn('Cannot parse "' + __dirname + '../' + dirs[d] + '/io-package.json": ' + e);
+                adapter.log.warn('Cannot parse "' + __dirname + '/../' + dirs[d] + '/io-package.json": ' + e);
             }
-            sets.push({path: __dirname + '../' + dirs[d], name: dirs[d].toLowerCase(), pack: pack});
+            sets.push({path: __dirname + '/../' + dirs[d], name: dirs[d].toLowerCase(), pack: pack});
         }
     }
     try {
-        dirs = fs.readdirSync(__dirname + '../../../');
+        dirs = fs.readdirSync(__dirname + '/../../../');
         for (d = 0; d < dirs.length; d++) {
             if (dirs[d].match(/^iobroker\.vis\-/i)) {
                 var found = false;
@@ -175,11 +176,11 @@ function syncWidgetSets() {
                 if (!found) {
                     var pack = null;
                     try {
-                        pack = JSON.parse(fs.readFileSync(__dirname + '../../../' + dirs[d] + '/io-package.json').toString());
+                        pack = JSON.parse(fs.readFileSync(__dirname + '/../../../' + dirs[d] + '/io-package.json').toString());
                     } catch (e) {
-                        adapter.log.warn('Cannot parse "' + __dirname + '../../../' + dirs[d] + '/io-package.json": ' + e);
+                        adapter.log.warn('Cannot parse "' + __dirname + '/../../../' + dirs[d] + '/io-package.json": ' + e);
                     }
-                    sets.push({path: __dirname + '../../../' + dirs[d], name: dirs[d].toLowerCase()});
+                    sets.push({path: __dirname + '/../../../' + dirs[d], name: dirs[d].toLowerCase()});
                 }
             }
         }
@@ -189,12 +190,12 @@ function syncWidgetSets() {
 
     // Now we have the list of widgets => copy them all to widgets directory
     for (d = 0; d < sets.length; d++) {
-        copyFolderRecursiveSync(sets[d].path + '/www/widgets/', __dirname + '/widgets/');
+        copyFolderRecursiveSync(sets[d].path + '/widgets/', __dirname + '/www/widgets/');
     }
     var widgetSets = [];
 
     // Read the list of installed widgets
-    var installed = fs.readdir(__dirname + '/www/widgets/');
+    var installed = fs.readdirSync(__dirname + '/www/widgets/');
     for (d = 0; d < installed.length; d++) {
         if (installed[d].match(/\.html$/)) {
             var name = installed[d].replace('.html', '');
@@ -227,10 +228,8 @@ function syncWidgetSets() {
                 } else {
                     for (var g = 0; g < sets.length; g++) {
                         if (sets[d].name == name){
-                            if (sets[d].pack && sets[d].pack.common && sets[d].pack.common.dependencies) {
-                                var vis = sets[d].pack.common.dependencies.indexOf('vis');
-                                if (vis != -1) sets[d].pack.common.dependencies.splice(vis, 1);
-                                widgetSets.push({name: name, depends: sets[d].pack.common.dependencies});
+                            if (sets[d].pack && sets[d].pack.native && sets[d].pack.native.dependencies) {
+                                widgetSets.push({name: name, depends: sets[d].pack.native.dependencies});
                             } else {
                                 widgetSets.push(name);
                             }
@@ -241,6 +240,7 @@ function syncWidgetSets() {
             }
         }
     }
+
     // build config file
     var visConfig = {
         widgetSets: widgetSets
