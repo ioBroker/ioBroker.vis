@@ -2659,7 +2659,8 @@ vis = $.extend(true, vis, {
                 data:   widgetData.data, 
                 style:  widgetData.style, 
                 wid:    newId, 
-                view:   view
+                view:   view,
+                noSave: true
             });
             this.$selectActiveWidgets
                 .append('<option value=' + newId + '">' + this.getWidgetName(view, newId) + '</option>')

@@ -2,18 +2,20 @@
  *
  *      ioBroker vis Adapter
  *
- *      (c) 2014-2015 bluefox
+ *      (c) 2014-2015 bluefox, hobbyquaker
  *
- *      MIT License
+ *      CC-NC-BY 4.0 License
  *
  */
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
 "use strict";
 
-var utils =   require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter = utils.adapter('vis');
-var fs =      require('fs');
+var utils          = require(__dirname + '/lib/utils'); // Get common adapter utils
+var adapter        = utils.adapter('vis');
+var fs             = require('fs');
+var path           = require('path');
+var syncWidgetSets = require(__dirname + '/lib/install.js');
 
 adapter.on('ready', function () {
     main();
@@ -62,6 +64,8 @@ function writeFile(fileName, callback) {
 }
 
 function main() {
+    syncWidgetSets();
+
     var count = 0;
     // Update index.html
     count++;
@@ -117,6 +121,4 @@ function main() {
             if (!(--count)) adapter.stop();
         }
     });
-
-
 }
