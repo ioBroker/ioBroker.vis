@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.6.0",
+        "version": "0.6.1",
         "title":                    "ioBroker Visualisation",
         "desc": {
             "en":                   "Graphical user interface for ioBroker.",
@@ -22,7 +22,6 @@
         "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
         "dependencies":             ["web"],
-        "onlyWWW":                  true,
         "singleton":                true,
         "type":                     "vis"
     },

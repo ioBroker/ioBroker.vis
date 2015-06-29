@@ -141,12 +141,19 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
-### 0.6.0 (2015-06-xx)
+### 0.6.1 (2015-06-28)
 - (bluefox) fix jqui-mfd
 - (bluefox) add prev for "jqui-mfd" dimmer dialog
 - (bluefox) fix bars in firefox
 - (bluefox) add permissions check
 - (bluefox) fix problem with hqWidgets and image selector
+* (bluefox) implement list of projects
+* (bluefox) case insensitive sorting of views
+* (bluefox) set automatically temperature ID of metro Heating
+* (bluefox) add max_rows for basic-table
+* (bluefox) show label on jqui-toggle
+* (bluefox) fix cameras jqui-mfd
+* (bluefox) jqui-mfd - remove most of all mfd icons
 
 ### 0.5.9 (2015-06-10)
 - (bluefox) fix jqui-mfd

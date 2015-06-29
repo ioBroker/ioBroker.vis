@@ -110,6 +110,8 @@ vis.binds.bars = {
 
         $('#jquerySideBar_' + barsIntern.wid).remove();
 
+        console.log('a');
+
         var text = '';
         var calcH = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
         var calcW = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
