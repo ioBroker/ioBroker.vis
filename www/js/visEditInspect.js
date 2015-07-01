@@ -766,7 +766,7 @@ vis = $.extend(true, vis, {
         return line;
     },
     // find states with requested roles of device
-    findRoles: function (stateId, roles) {
+    findByRoles: function (stateId, roles) {
         if (typeof roles != 'object') {
             roles = [roles];
         } else {
@@ -818,6 +818,39 @@ vis = $.extend(true, vis, {
             }
         }
         return result;
+    },
+    // find states with requested name of object
+    findByName: function (stateId, objname) {
+        var result = {};
+        // try to detect other values
+
+        // Go trough all channels of this device
+        var parts = stateId.split('.');
+        parts.pop(); // remove state
+        var channel = parts.join('.');
+
+        // check same channel
+        var id = channel + '.' +objname;
+        if ((id in this.objects) &&
+            this.objects[id].common &&
+            this.objects[id].type == 'state') {
+
+            return id;
+        }
+
+        // try to search in channels
+        parts.pop(); // remove channel
+        var device = parts.join('.');
+        var reg = new RegExp("^" + device.replace(/\./g, '\\.') + '\\.' + '.*\\.' + objname);
+        for (var id in vis.objects) {
+            if (reg.test(id) &&
+                vis.objects[id].common &&
+                vis.objects[id].type == 'state') {
+
+                return id;
+            }
+        }
+        return false;
     },
     hideShowAttr: function (widAttr, isShow) {
         if (isShow) {

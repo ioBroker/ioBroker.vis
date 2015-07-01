@@ -161,11 +161,19 @@
     }
 
     $.extend(true, systemDictionary, {
-        "Set temperature": {"en": "Set temperature", "de": "Soll-Temperatur", "ru": "Выставленная темп."},
-        "Actual temp.": {"en": "Actual temp.", "de": "Ist-Temperatur", "ru": "Актуальная темп."},
-        "Valve position": {"en": "Valve position", "de": "Ventilstellung", "ru": "Позиция вентиля"},
-        "Target": {"en": "Target", "de": "Soll", "ru": "Должно"},
-        "Actual": {"en": "Now",    "de": "Ist",  "ru": "Сейчас"}
+        "Set temperature":      {"en": "Set temperature",   "de": "Soll-Temperatur",    "ru": "Выставленная темп."},
+        "Actual temp.":         {"en": "Actual temp.",      "de": "Ist-Temperatur",     "ru": "Актуальная темп."},
+        "Valve position":       {"en": "Valve position",    "de": "Ventilstellung",     "ru": "Позиция вентиля"},
+        "Humidity":             {"en": "Humidity",          "de": "Luftfeuchtigkeit",   "ru": "влажность"},
+        "Target":               {"en": "Target",            "de": "Soll",               "ru": "Должно"},
+        "Actual":               {"en": "Now",               "de": "Ist",                "ru": "Сейчас"},
+        "group_service":        {"en": "Service",           "de": "Service",            "ru": "услуги"},
+        "icon_lowbat":          {"en": "Icon low battery",  "de": "Icon Batterie leer", "ru": "Иконка низкого заряда батареи"},
+        "icon_control_mode_0":  {"en": "Icon auto mode",    "de": "Icon Auto Modus",    "ru": "Иконка для автоматического режима"},
+        "icon_control_mode_1":  {"en": "Icon manual mode",  "de": "Icon man. Modus",    "ru": "Иконка для ручного режима"},
+        "icon_control_mode_2":  {"en": "Icon party mode",   "de": "Icon Party Modus",   "ru": "Иконка для режима вечеринки"},
+        "icon_control_mode_3":  {"en": "Icon boost mode",   "de": "Icon Boost Modus",   "ru": "Иконка для режима наддува"},
+        "icon_windowopen":      {"en": "Icon window open",  "de": "Icon Fenster offen", "ru": "Иконка открытым окно"},
     });
 
     vis.navChangeCallbacks.push(function (view) {
@@ -389,7 +397,7 @@
 
             if (isNaN(width))  width  = undefined;
             if (isNaN(height)) height = undefined;
-            
+
             level_id   = level_id   || '';
             working_id = working_id || '';
 
@@ -527,16 +535,66 @@
                 if (!vis.views[view].widgets[widgetID].data.temp_oid) {
                     roles.push('value.temperature');
                 }
+                if (!vis.views[view].widgets[widgetID].data.drive_oid) {
+                    roles.push('value.valve');
+                }
+                if (!vis.views[view].widgets[widgetID].data.hum_oid) {
+                    roles.push('value.humidity');
+                }
+                if (!vis.views[view].widgets[widgetID].data.lowbat_oid) {
+                    roles.push('indicator.battery');
+                }
                 if (roles.length) {
-                    var result = vis.findRoles(value, roles);
+                    var result = vis.findByRoles(value, roles);
                     if (result) {
                         for (var r in result) {
-                            if (r == 'value.temperature') {
-                                changed.push('temp_oid'); // remember attr to update it
-                                vis.views[view].widgets[widgetID].data.temp_oid = result[r];
-                                vis.widgets[widgetID].data.temp_oid = result[r];
+                            switch (r) {
+                                case 'value.temperature':
+                                    changed.push('temp_oid'); // remember attr to update it
+                                    vis.views[view].widgets[widgetID].data.temp_oid = result[r];
+                                    vis.widgets[widgetID].data.temp_oid = result[r];
+                                    break;
+                                case 'value.valve':
+                                    changed.push('drive_oid'); // remember attr to update it
+                                    vis.views[view].widgets[widgetID].data.drive_oid = result[r];
+                                    vis.widgets[widgetID].data.drive_oid = result[r];
+                                    break;
+                                case  'value.humidity':
+                                    changed.push('hum_oid');
+                                    vis.views[view].widgets[widgetID].data.hum_oid = result[r];
+                                    vis.widgets[widgetID].data.hum_oid = result[r];
+                                    break;
+                                case  'indicator.battery':
+                                    changed.push('lowbat_oid');
+                                    vis.views[view].widgets[widgetID].data.lowbat_oid = result[r];
+                                    vis.widgets[widgetID].data.lowbat_oid = result[r];
+                                    break;
                             }
                         }
+                    }
+                }
+                if (!vis.views[view].widgets[widgetID].data.controlmode_oid) {
+                    var result = vis.findByName(value, 'CONTROL_MODE');
+                    if (result) {
+                        changed.push('controlmode_oid');
+                        vis.views[view].widgets[widgetID].data.controlmode_oid = result;
+                        vis.widgets[widgetID].data.controlmode_oid = result;
+                    }
+                }
+                if (!vis.views[view].widgets[widgetID].data.windowopen_oid) {
+                    var result = vis.findByName(value, 'WINDOW_STATE');
+                    if (result) {
+                        changed.push('windowopen_oid');
+                        vis.views[view].widgets[widgetID].data.windowopen_oid = result;
+                        vis.widgets[widgetID].data.windowopen_oid = result;
+                    }
+                }
+                if (!vis.views[view].widgets[widgetID].data.windowopen_oid) {
+                    var result = vis.findByName(value, 'WINDOW_OPEN_REPORTING');
+                    if (result) {
+                        changed.push('windowopen_oid');
+                        vis.views[view].widgets[widgetID].data.windowopen_oid = result;
+                        vis.widgets[widgetID].data.windowopen_oid = result;
                     }
                 }
             }
@@ -1140,7 +1198,7 @@
 </script>
 
 <script id="tplMetroTileShutterDialog"
-        type="text/ejs"        
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplMetroTileShutterDialog" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 120px; height: 120px; padding: 3px;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body"> <div style="width:100%; height:100%;" class="tile hover bg-indigo"> <div class="tile-content" style="text-align: center"> <img width="90px" src="widgets/jqui-mfd/img/fts_shutter_100.png"> </div> <div class="brand ribbed-steel"> <span class="label fg-white">Shutter dialog</span> </div> </div> <div style="padding: 42px 10px 10px;"> </div>  </div> </div></div>'
         data-vis-attrs="oid;oid-working;min;max;hover[true]/checkbox;transform[true]/checkbox;label;"
@@ -1218,16 +1276,36 @@
 <script id="tplMetroTileHeating"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplMetroTileHeating" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 250px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="widgets/jqui-mfd/img/sani_heating_temp.png"> </div> <div style="float: right; padding-top: 16px; padding-right: 12px;"> <table style="color:white;font-size:11px;display:inline-block;"> <tr><td>Set temperature:</td><td>0%</td></tr> <tr><td>Actual temperature:</td><td>0.0°C</td></tr> <tr><td>Drive position:</td><td>0</td></tr> </table> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"></div>  </div> <div class="brand ribbed-steel"> <span class="label fg-white">Heating</span> </div> </div> <div></div> </div> </div></div>'
-        data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hover/checkbox;transform/checkbox;label;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
+        data-vis-prev='<div id="prev_tplMetroTileHeating" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock " style="width: 250px; height: 136px; padding: 3px; zoom: 0.5;"> <div style="width:100%; height:100%" class="metro vis-widget-prev-body "> <div style="width:100%; height:100%;" class="tile bg-indigo"> <div class="tile-content"> <div style="float:left; height: 90px;"> <img width="90px" src="img/mfd/sani_heating_temp.png"> </div> <div style="float: right; padding-top: 16px; padding-right: 12px;"> <table style="color:white;font-size:11px;display:inline-block;"> <tr><td>Set temperature:</td><td>0%</td></tr> <tr><td>Actual temperature:</td><td>0.0°C</td></tr> <tr><td>Drive position:</td><td>0</td></tr> </table> </div> <div style="clear: both; margin: 0px 12px;" class="slider" data-role="slider"></div>  </div> <div class="brand ribbed-steel"> <span class="label fg-white">Heating</span> </div> </div> <div></div> </div> </div></div>'
+        data-vis-attrs="set_oid/id/onHeatingOid;temp_oid/id;drive_oid/id;hum_oid/id;hover/checkbox;transform/checkbox;label;min[6]/slider,-20,40,1;max[30]/slider,-20,40,1;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
-        data-vis-attrs2="label_set;label_temp;label_drive;"
-        data-vis-attrs3="group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color"
+        data-vis-attrs2="label_set;label_temp;label_drive;label_humidity;"
+        data-vis-attrs3="group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color;"
+        data-vis-attrs4="group.service;lowbat_oid/id;icon_lowbat[icon-battery]/style,iconFont,icon-,,Icon;controlmode_oid/id;icon_control_mode_0[icon-clock]/style,iconFont,icon-,,Icon;icon_control_mode_1[icon-radio-unchecked]/style,iconFont,icon-,,Icon;icon_control_mode_2[icon-briefcase]/style,iconFont,icon-,,Icon;windowopen_oid/id;icon_windowopen[icon-enter]/style,iconFont,icon-,,Icon;badge_bg_class[]/style,metro-,bg-;"
         data-vis-set="metro"
         data-vis-type="ctrl,heating"
         data-vis-name="Tile Heating">
-    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
+    <% // some data processing to prepare the data
+
+    if (this.data.attr('set_oid')) {
+        var control_mode    = vis.states.attr(this.data.attr('controlmode_oid') + '.val');
+
+        var window_open     = vis.states.attr(this.data.attr('windowopen_oid') + '.val');
+        var lowbat          = vis.states.attr(this.data.attr('lowbat_oid') + '.val');
+        var size_badge      = 0;
+        if (typeof control_mode != "undefined") size_badge++;
+        if (typeof window_open != "undefined" && window_open === true) {
+            size_badge++;
+        } else {
+            window_open = false;
+        }
+
+        if (lowbat === true) size_badge++;
+
+    }
+    %>
+    <div id="<%= this.data.attr('wid') %>" class="vis-widget" style="width:287px; height:136px; padding: 3px;" <%= (el) -> vis.preloadImages(['img/mfd/light_light_dim_100.png','img/mfd/light_light_dim_90.png','img/mfd/light_light_dim_80.png','img/mfd/light_light_dim_70.png','img/mfd/light_light_dim_60.png','img/mfd/light_light_dim_50.png','img/mfd/light_light_dim_40.png','img/mfd/light_light_dim_30.png','img/mfd/light_light_dim_20.png','img/mfd/light_light_dim_10.png','img/mfd/light_light_dim.png']); %>>
         <div style="width:100%; height:100%" class="metro vis-widget-body <%== this.data.attr('class') %>" >
 
             <div style="width:100%; height:100%;" id="metroTile_<%= this.data.attr('wid') %>" class="tile <%= this.data.attr('hover') ? 'hover ' : '' %><%= this.data.attr('bg_class') %>">
@@ -1246,6 +1324,9 @@
                             <% if (this.data.attr('drive_oid')) { %>
                                 <tr><td><%== this.data.attr('label_drive') ? this.data.attr('label_drive') : _('Valve position') %>:</td><td><%=  vis.binds.metro.format(vis.states.attr(this.data.attr('drive_oid') + '.val'), '%') %></td></tr>
                             <% } %>
+                            <% if (this.data.attr('hum_oid')) { %>
+                                <tr><td><%== this.data.attr('label_humitdy') ? this.data.attr('label_humitdy') : _('Humidity') %>:</td><td><%=  vis.binds.metro.format(vis.states.attr(this.data.attr('hum_oid') + '.val'), '%') %></td></tr>
+                            <% } %>
                         </table>
                     </div>
                     <div style="clear: both; margin: 0px 12px;" data-oid="<%= this.data.attr('set_oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" id="metroSlider_<%= this.data.attr('wid') %>" class="slider" data-role="slider"></div>
@@ -1253,6 +1334,19 @@
                 </div>
                 <div class="brand <%= this.data.attr("brand_bg_class") %>">
                     <span class="label fg-white"><%= this.data.attr("label") %></span>
+                    <% if (size_badge > 0) { %>
+                        <div class="badge <%= this.data.attr('badge_bg_class') %>" style="width: <%= size_badge*19 %>px">
+                        <% if (typeof control_mode != "undefined") { %>
+                            <i class="<%= this.data.attr('icon_control_mode_' + control_mode) %>" style="padding: 0px 1px;"></i>
+                        <% } %>
+                        <% if (lowbat === true) { %>
+                            <i class="<%= this.data.attr('icon_lowbat') %>" style="padding: 0px 1px;"></i>
+                        <% } %>
+                        <% if (window_open === true) { %>
+                            <i class="<%= this.data.attr('icon_windowopen') %>" style="padding: 0px 1px;"></i>
+                        <% } %>
+                        </div>
+                    <% } %>
                 </div>
             </div>
             <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %><%= (el) -> vis.binds.metro.inputControl(el) %>></div>
@@ -1535,4 +1629,3 @@
         <div <%= (el) -> vis.binds.metro.tile(el, data.transform) %>></div>
     </div>
 </script>
-
