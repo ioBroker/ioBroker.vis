@@ -766,7 +766,7 @@ vis = $.extend(true, vis, {
         return line;
     },
     // find states with requested roles of device
-    findRoles: function (stateId, roles) {
+    findByRoles: function (stateId, roles) {
         if (typeof roles != 'object') {
             roles = [roles];
         } else {
@@ -801,10 +801,10 @@ vis = $.extend(true, vis, {
             parts.pop(); // remove channel
             var device = parts.join('.');
             var reg = new RegExp("^" + device.replace(/\./g, '\\.') + '\\.');
-            for (var id in vis.objects) {
+            for (var id in this.objects) {
                 if (reg.test(id) &&
-                    vis.objects[id].common &&
-                    vis.objects[id].type == 'state') {
+                    this.objects[id].common &&
+                    this.objects[id].type == 'state') {
 
                     for (var r = 0; r < roles.length; r++) {
                         if (this.objects[id].common.role == roles[r]) {
@@ -818,6 +818,38 @@ vis = $.extend(true, vis, {
             }
         }
         return result;
+    },
+    findByName: function (stateId, objName) {
+        var result = {};
+        // try to detect other values
+
+        // Go trough all channels of this device
+        var parts = stateId.split('.');
+        parts.pop(); // remove state
+        var channel = parts.join('.');
+
+        // check same channel
+        var id = channel + '.' + objName;
+        if ((id in this.objects) &&
+            this.objects[id].common &&
+            this.objects[id].type == 'state') {
+
+            return id;
+        }
+
+        // try to search in channels
+        parts.pop(); // remove channel
+        var device = parts.join('.');
+        var reg = new RegExp('^' + device.replace(/\./g, '\\.') + '\\.' + '.*\\.' + objName);
+        for (var id in this.objects) {
+            if (reg.test(id) &&
+                this.objects[id].common &&
+                this.objects[id].type == 'state') {
+
+                return id;
+            }
+        }
+        return false;
     },
     hideShowAttr: function (widAttr, isShow) {
         if (isShow) {
