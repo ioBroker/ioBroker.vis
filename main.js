@@ -62,13 +62,19 @@ function writeFile(fileName, callback) {
         callback(false);
     }
 }
+function upload(callback) {
+    adapter.log.info('Upload ' + adapter.name + ' anew, while changes detected...');
+    var cp = require('child_process');
+    var file = utils.controllerDir + '/lib/setup.js';
+    var pid = cp.fork(file, 'upload ' + adapter.name);
+    pid.on('exit', function () {
+        adapter.log.info('Uploaded.');
+        if (callback) callback();
+    });
+}
 
-function main() {
-    syncWidgetSets();
-
-    var count = 0;
-    // Update index.html
-    count++;
+// Update index.html
+function checkFiles(changed) {
     writeFile('index.html', function (isChanged1) {
         // Update edit.html
         writeFile('edit.html', function (isChanged2) {
@@ -80,15 +86,26 @@ function main() {
                     var build = data.match(/# dev build ([0-9]+)/);
                     data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
                     adapter.writeFile('vis', 'cache.manifest', data, function () {
-                        if (!(--count)) adapter.stop();
+                        upload(function () {
+                            adapter.stop();
+                        });
                     });
                 });
+            } else if (changed) {
+                upload(function () {
+                    adapter.stop();
+                });
             } else {
-                if (!(--count)) adapter.stop();
+                adapter.stop();
             }
         });
     });
+}
 
+function main() {
+    var changed = syncWidgetSets();
+
+    var count = 0;
     // create command variable
     count++;
     adapter.getObject('command', function (err, obj) {
@@ -103,10 +120,10 @@ function main() {
                 type: 'state',
                 native: {}
             }, function () {
-                if (!(--count)) adapter.stop();
+                if (!(--count)) checkFiles(changed);
             }) ;
         } else {
-            if (!(--count)) adapter.stop();
+            if (!(--count)) checkFiles(changed);
         }
     });
 
@@ -115,10 +132,10 @@ function main() {
     adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
         if (err || data === null || data === undefined) {
             adapter.writeFile('vis', 'css/vis-common-user.css', '', function () {
-                if (!(--count)) adapter.stop();
+                if (!(--count)) checkFiles(changed);
             });
         } else {
-            if (!(--count)) adapter.stop();
+            if (!(--count)) checkFiles(changed);
         }
     });
 }
