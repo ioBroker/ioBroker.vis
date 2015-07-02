@@ -109,9 +109,7 @@ vis.binds.bars = {
                             barsOptions.bPosition === 'dockBottom');
 
         $('#jquerySideBar_' + barsIntern.wid).remove();
-
-        console.log('a');
-
+        
         var text = '';
         var calcH = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
         var calcW = '100%';//(barsOptions.bTheme && barsOptions.bSpace) ? 'calc(100% - ' + (barsOptions.bSpace * 2) + 'px)' : '100%';
@@ -415,11 +413,11 @@ vis.binds.bars = {
             // Select by default buttons
             if (barsIntern.wType === 'tplBarFilter') {
                 if (barsOptions.bValue) {
-                    var values = barsOptions.bValue.split(",");
+                    var values = barsOptions.bValue.split(',');
                     for (var p = 1; p <= barsOptions.bCount; p++) {
                         var isFound2 = false;
                         for (var j = 0; j < values.length; j++) {
-                            if(values[j] === barsOptions.buttons[p].option) {
+                            if(values[j] === barsOptions['buttonsOption' + p]) {
                                 isFound2 = true;
                                 break;
                             }

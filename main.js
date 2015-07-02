@@ -64,12 +64,21 @@ function writeFile(fileName, callback) {
 }
 function upload(callback) {
     adapter.log.info('Upload ' + adapter.name + ' anew, while changes detected...');
-    var cp = require('child_process');
     var file = utils.controllerDir + '/lib/setup.js';
-    var pid = cp.fork(file, 'upload ' + adapter.name);
-    pid.on('exit', function () {
+
+    var child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
+    var count = 0;
+    child.stdout.on('data', function (data) {
+        count++;
+        adapter.log.debug(data.toString().replace('\n', ''));
+        if (!(count % 200)) adapter.log.info(count + ' files uploaded...');
+    });
+    child.stderr.on('data', function (data) {
+        adapter.log.error(data.toString().replace('\n', ''));
+    });
+    child.on('exit', function (exitCode) {
         adapter.log.info('Uploaded.');
-        if (callback) callback();
+        callback(exitCode);
     });
 }
 
