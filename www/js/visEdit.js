@@ -263,6 +263,15 @@ vis = $.extend(true, vis, {
 
         $('#create_instance').button({icons: {primary: 'ui-icon-plus'}}).click(this.generateInstance);
 
+        $('#vis_access_mode').change(function () {
+            that.conn.chmodProject(that.projectPrefix, $(this).prop('checked') ? 0x644 : 0x600, function (err, files) {
+                if (err) {
+                    that.showError(err);
+                    $('#vis_access_mode').prop('checked', !$('#vis_access_mode').prop('checked')).prop('disabled');
+                }
+            });
+        });
+
         this.initStealHandlers();
 
         $('.vis-inspect-view-css').change(function () {
@@ -729,6 +738,9 @@ vis = $.extend(true, vis, {
                 for (var d = 0; d < projects.length; d++) {
                     text += '<li class="ui-state-default project-select ' + (projects[d].name + '/' == this.projectPrefix ? 'ui-state-active' : '') +
                         ' menu-item" data-project="' + projects[d].name + '"><a>' + projects[d].name + (projects[d].readOnly ? ' (' + _('readOnly') + ')' : '') + '</a></li>\n';
+                    if (projects[d].name + '/' == that.projectPrefix) {
+                        $('#vis_access_mode').prop('checked', projects[d].mode & 0x60);
+                    }
                 }
                 $('#menu_projects').html(text);
                 $('.project-select').unbind('click').click(function () {

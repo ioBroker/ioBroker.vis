@@ -711,11 +711,11 @@
 
             var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
 
-            t.Set ("oid",   data.attr('oid'));
-            t.Set ("oid_2", data.attr('oid_2'));
-            t.Set ("oid_3", data.attr('oid_3'));
-            t.Set ("factor", factor);
-            t.Set ("value_offset", offset);
+            t.Set("oid",   data.attr('oid'));
+            t.Set("oid_2", data.attr('oid_2'));
+            t.Set("oid_3", data.attr('oid_3'));
+            t.Set("factor", factor);
+            t.Set("value_offset", offset);
 
             if (data.attr("control") !== "" && data.attr("control") !== null && data.attr("control") !== undefined) {
                 if ((data.attr("control") == "true" || data.attr("control") == true)) {
@@ -873,7 +873,7 @@
                 t.Set('labels.offset', f);
             }
             if (data.attr("labels_color") !== "") {
-                t.Set('text.color', data.attr("labels_color"));
+                t.Set('text.color', data.attr(""));
             }
             if (data.attr("labels_font") !== "") {
                 t.Set('text.font', data.attr("labels_font"));
@@ -1079,19 +1079,18 @@
             vis.binds.RGraph.createCanvas(view, wid, data.attr('class'), IDs, 200, 200);
 
             var elem = document.getElementById(wid);
-            var can  = document.getElementById('c'+wid);
+            var can  = document.getElementById('c' + wid);
 
-            var t = new RGraph.Bar ("c"+wid, values);
+            var t = new RGraph.Bar ('c' + wid, values);
 
-            t.Set ("my_options", options);
-            t.Set ("my_values",  values);
+            t.Set('my_options', options);
+            t.Set('my_values',  values);
 
             t.set('grouping', 'stacked');
             t.set('labels', options.names);
             t.set('labels.above.angle', options.labels_above_angle ? 45 : 0);
             t.set('labels.above', options.labels_above);
             t.set('labels.above.size', parseInt(options.label_size) || 12);
-            //t.set('labels.above.color', options.label_color);
             t.set('labels.above.decimals', options.decimals);
             t.set('linewidth', 1);
             t.set('strokestyle', 'black');
@@ -1269,6 +1268,7 @@
         vis.binds.RGraph.tplRLiveChart(this.view, this.data);
     %>
 </script>
+
 <script id="tplRBarChart"
         type="text/ejs"
         class="vis-tpl"
@@ -1277,10 +1277,12 @@
         data-vis-set="RGraph"
         data-vis-name="BarChart"
         data-vis-attrs="oid(1-8)/id;name(1-8);"
-        data-vis-attrs0="group.colors;filled_color[black]/color;empty_color[white]/color;label_color[black]/color;"
+        data-vis-attrs0="group.colors;filled_color[black]/color;empty_color[white]/color;"
         data-vis-attrs1="group.max_values;max_value(1-8);"
-        data-vis-attrs2="group.settings;factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;title;legend/checkbox;filled_text[Level];empty_text[Empty];labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;decimals[2]/slider,0,10,1;show_shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;num_hlines/slider,0,20,1;"
-        data-vis-attrs3="bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox">
+        data-vis-attrs2="group.settings;factor[1];value_offset[0];update_interval[0]/slider,0,20000,100;legend/checkbox;filled_text[Level];empty_text[Empty];"
+        data-vis-attrs3="decimals[2]/slider,0,10,1;show_shadow/checkbox;gutter_left[45]/slider,0,200,1;horz_margin[15]/slider,0,200,1;num_hlines/slider,0,20,1;"
+        data-vis-attrs4="group.labels;title;label_color[black]/color;labels_above[true]/checkbox;label_size[12]/slider,1,40,1;labels_above_angle/checkbox;labels_color[#000000]/color;bar_labels_color[black]/color;bar_labels_bold/checkbox;bar_labels_center/checkbox;"
+        >
     <%
         vis.binds.RGraph.tplRBarChart(this.view, this.data);
     %>

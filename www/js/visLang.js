@@ -285,6 +285,13 @@ $.extend(systemDictionary, {
     "All widgets:":         {"en": "All widgets:",      "de": "Alle Widgets:",          "ru": "Все элементы:"},
     "Grid":                 {"en": "Grid",              "de": "Gitter",                 "ru": "Сетка"},
     "Lock all Widgets":     {"en": "Lock all Widgets",  "de": "Alle Widgets fixieren",  "ru": "Блокировать все элементы"},
+    "Available for all:":   {"en": "Available for all:", "de": "Für alle Anwender:",    "ru": "Доступно для всех:"},
+    "readOnly":             {"en": "read only",         "de": "nur lesend",             "ru": "только для чтения"},
+    "Loading stopped": {
+        "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
+        "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie erneut.",
+        "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз.",
+    },
     "Widgets filter. Double click to clear.": {
         "en": "Widgets filter. Double click to clear.",
         "de": "Widgets-Filter. Double click um Field zu löschen.",
