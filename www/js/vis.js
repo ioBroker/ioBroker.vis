@@ -96,7 +96,7 @@ if (typeof systemLang !== 'undefined') systemLang = visConfig.language || system
 
 var vis = {
 
-    version:                '0.6.2',
+    version:                '0.6.3',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -1026,7 +1026,14 @@ var vis = {
     loadRemote: function (callback, callbackArg) {
         var that = this;
         this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-            if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
+            if (err) {
+                window.alert(that.projectPrefix + 'vis-views.json ' + err);
+                if (err == 'permissionError') {
+                    that.showWaitScreen(true, '', _('Loading stopped', location.protocol + '//' + location.host, location.protocol + '//' + location.host), 0);
+                    // do nothing any more
+                    return;
+                }
+            }
 
             if (data) {
                 if (typeof data == 'string') {

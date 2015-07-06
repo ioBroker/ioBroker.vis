@@ -667,7 +667,7 @@ var servConn = {
             // find vis-views.json
             for (var f = 0; f < dirs.length; f++) {
                 if (dirs[f].file == 'vis-views.json' && (!dirs[f].acl || dirs[f].acl.read)) {
-                    return callback(err, {name: projectDir, readOnly: (dirs[f].acl && !dirs[f].acl.write)});
+                    return callback(err, {name: projectDir, readOnly: (dirs[f].acl && !dirs[f].acl.write), mode: dirs[f].acl ? dirs[f].acl.permissions : 0});
                 }
             }
             callback(err);
@@ -689,5 +689,15 @@ var servConn = {
                 }
             }
         }.bind(this));
+    },
+    chmodProject:     function (projectDir, mode, callback) {
+        //socket.io
+        if (this._socket === null) {
+            console.log('socket.io not initialized');
+            return;
+        }
+        this._socket.emit('chmodFile', this.namespace, projectDir + '*', {mode: mode}, function (err, data) {
+            if (callback) callback(err, data);
+        });
     }
 };
