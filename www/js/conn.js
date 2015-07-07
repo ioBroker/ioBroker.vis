@@ -48,6 +48,7 @@ var servConn = {
     _cmdData:           null,
     _cmdInstance:       null,
     _isSecure:          false,
+    _defaultMode:       0x644,
     namespace:          'vis.0',
     getType:          function () {
         return this._type;
@@ -390,7 +391,11 @@ var servConn = {
             }
         });
     },
-    writeFile:        function (filename, data, callback) {
+    writeFile:        function (filename, data, mode, callback) {
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = null;
+        }
         var that = this;
         if (this._type === 'local') {
             storage.set(filename, JSON.stringify(data));
@@ -400,7 +405,7 @@ var servConn = {
 
             if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-            this._socket.emit('writeFile', this.namespace, filename, data, callback);
+            this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
         }
     },
     // Write file base 64
@@ -412,7 +417,7 @@ var servConn = {
         var adapter = parts[1];
         parts.splice(0, 2);
 
-        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), callback);
+        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), {mode: this._defaultMode}, callback);
     },
     readDir:          function (dirname, callback) {
         //socket.io
@@ -515,6 +520,12 @@ var servConn = {
                     var result = {};
                     for (var i = 0; i < res.rows.length; i++) {
                         data[res.rows[i].id] = res.rows[i].value;
+                    }
+                    // find out default file mode
+                    if (data['system.adapter.' + that.namespace] &&
+                        data['system.adapter.' + that.namespace].native &&
+                        data['system.adapter.' + that.namespace].native.defaultFileMode) {
+                        that._defaultMode = data['system.adapter.' + that.namespace].native.defaultFileMode;
                     }
 
                     // Read all channels for images
