@@ -557,7 +557,7 @@ var vis = {
             if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                this.saveRemote(function () {
+                this.saveRemote(true, function () {
                     //window.location.reload();
                 });
             } else {
@@ -1056,12 +1056,17 @@ var vis = {
         });
     },
     saveRemoteActive: 0,
-    saveRemote: function (callback) {
+    saveRemote: function (mode, callback) {
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = null;
+        }
+
         var that = this;
         if (this.permissionDenied) {
             if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
             5000, 'ui-state-error');
-            if (callback) callback();
+            if (typeof callback == 'function') callback();
             return;
         }
 
@@ -1069,7 +1074,7 @@ var vis = {
         if (this.saveRemoteActive % 10) {
             this.saveRemoteActive--;
             setTimeout(function () {
-                that.saveRemote(callback);
+                that.saveRemote(mode, callback);
             }, 1000);
         } else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
@@ -1097,11 +1102,11 @@ var vis = {
             }
             viewsToSave = JSON.stringify(viewsToSave, null, 2)
             if (this.lastSave == viewsToSave) {
-                if (callback) callback(null);
+                if (typeof callback == 'function') callback(null);
                 return;
             }
 
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, function (err) {
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, mode, function (err) {
                 if (err) {
                     if (err == 'permissionError') {
                         that.permissionDenied = true;
@@ -1111,7 +1116,7 @@ var vis = {
                     that.lastSave = viewsToSave;
                 }
                 that.saveRemoteActive = 0;
-                if (callback) callback(err);
+                if (typeof callback == 'function') callback(err);
 
                 // If not yet checked => check if project css file exists
                 if (!that.cssChecked) {

@@ -391,7 +391,11 @@ var servConn = {
             }
         });
     },
-    writeFile:        function (filename, data, callback) {
+    writeFile:        function (filename, data, mode, callback) {
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = null;
+        }
         var that = this;
         if (this._type === 'local') {
             storage.set(filename, JSON.stringify(data));
@@ -401,7 +405,7 @@ var servConn = {
 
             if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-            this._socket.emit('writeFile', this.namespace, filename, data, {mode: this._defaultMode}, callback);
+            this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
         }
     },
     // Write file base 64
