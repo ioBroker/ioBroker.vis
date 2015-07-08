@@ -25,6 +25,11 @@ function writeFile(fileName, callback) {
     var config = require(__dirname + '/www/js/config.js').config;
 
     var index = fs.readFileSync(__dirname + '/www/' + fileName).toString();
+    
+    // enable cache
+    index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->',
+        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
+
     var begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
     var end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
     var bigInsert = '';
