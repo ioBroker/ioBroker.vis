@@ -1589,7 +1589,12 @@ var vis = {
     formatBinding: function (format) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
-            var value = this.states.attr(oids[t].visOid);
+            var value;
+            if (oids[t].visOid == 'username.val') {
+                value = this.conn.getUser();
+            } else {
+                value = this.states.attr(oids[t].visOid);
+            }
             if (oids[t].operations) {
                 for (var k = 0; k < oids[t].operations.length; k++) {
                     if (oids[t].operations[k].op === 'eval') {
