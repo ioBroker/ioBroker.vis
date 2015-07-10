@@ -11,8 +11,7 @@ var visConfig = {
         "RGraph",
         "hqWidgets",
         "plumb",
-        "bars",
-        {name: "lcars",       depends: ["basic"]}
+        "bars"
     ]
 };
 
