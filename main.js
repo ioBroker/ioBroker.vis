@@ -76,7 +76,7 @@ function upload(callback) {
     child.stdout.on('data', function (data) {
         count++;
         adapter.log.debug(data.toString().replace('\n', ''));
-        if (!(count % 200)) adapter.log.info(count + ' files uploaded...');
+        if (!(count % 100)) adapter.log.info(count + ' files uploaded...');
     });
     child.stderr.on('data', function (data) {
         adapter.log.error(data.toString().replace('\n', ''));
@@ -118,8 +118,25 @@ function checkFiles(changed) {
 
 function main() {
     var changed = syncWidgetSets();
-
     var count = 0;
+
+    if (changed) {
+        // upload config.js
+        count++;
+        var config = changed;
+        adapter.readFile('vis', 'js/config.js', function (err, data) {
+            if (data && data != config) {
+                adapter.log.info('config.js changed. Upload.');
+                adapter.writeFile('vis', 'js/config.js', config, function () {
+                    if (!(--count)) checkFiles(changed);
+                });
+            } else {
+                if (!(--count)) checkFiles(changed);
+            }
+        });
+        changed = true;
+    }
+
     // create command variable
     count++;
     adapter.getObject('command', function (err, obj) {
