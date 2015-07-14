@@ -288,6 +288,10 @@ var vis = {
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
+                // rename hqWidgets => hqwidgets
+                if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
+                    this.views[view].widgets[id].widgetSet = 'hqwidgets';
+                }
                 for (var attr in data) {
 
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */

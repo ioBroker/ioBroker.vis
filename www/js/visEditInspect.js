@@ -1548,6 +1548,8 @@ vis = $.extend(true, vis, {
                     minLength: 0,
                     source: function (request, response) {
                         var data = $.grep(this.element.data('value').values, function (value) {
+                            if (value === undefined || value === null) return false;
+                            value = value.toString();
                             return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
                         });
                         response(data);
