@@ -3541,9 +3541,9 @@ vis = $.extend(true, vis, {
             that._saveTimer = null;
             $('#saving_progress').hide();
 
-            for (var v in vis.views) {
+            /*for (var v in vis.views) {
                 console.log('View: ' + v + ' ' + vis.views[v].settings.useAsDefault);
-            }
+            }*/
         });
     },
     save: function (cb) {
