@@ -287,6 +287,9 @@
                             <li class="ui-state-default project-select menu-item" data-language="de"><a>Main</a></li>
                         </ul>
                     </li>
+                    <li id="li_menu_new_project" class="ui-state-default project-new" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">New project...</span></a>
+                    </li>
                 </ul>
             </li>
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
@@ -995,6 +998,9 @@
 </div>
 <div id="dialog-edit-text" title="Edit text" style="display: none">
     <textarea style="width: 98%; height: 96%;resize: none;"></textarea>
+</div>
+<div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden;">
+    <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width:250px" /></td></tr></table>
 </div>
 
 <div style="display: none" id="uploadPreview"></div>

@@ -716,7 +716,6 @@ vis = $.extend(true, vis, {
             setTimeout(function () {
                 translateAll();
             }, 0);
-
         });
 
 
@@ -750,6 +749,56 @@ vis = $.extend(true, vis, {
                 $('#li_menu_projects').hide();
             }
         }.bind(this));
+
+        $('#new-project-name').keypress(function(e) {
+            if (e.which == 13) {
+                $('#dialog-new-project').parent().find('#ok').trigger('click');
+            }
+        });
+        $('.project-new').click(function () {
+            $('#dialog-new-project').dialog({
+                autoPen: true,
+                width:   400,
+                height:  190,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                open:    function () {
+                    $('[aria-describedby="dialog-new-project"]').css('z-index', 1002);
+                    //$('.ui-widget-overlay').css('z-index', 1001);
+                },
+                buttons: [
+                    {
+                        id: 'ok',
+                        text: _('Ok'),
+                        click: function () {
+                            var name = $('#new-project-name').val();
+                            if (!name) {
+                                alert(_('Empty name is not allowed!'));
+                                return;
+                            }
+                            var found = false;
+                            $('.project-select').each(function () {
+                                if ($(this).data('project') == name) {
+                                    alert(_('Project yet exists!'));
+                                    return;
+                                }
+                            });
+
+                            window.location.href = 'edit.html?' + name;
+
+                            $('#dialog-new-project').dialog('close');
+                        }
+                    },
+                    {
+                        text: _('Cancel'),
+                        click: function () {
+                            $('#dialog-new-project').dialog('close');
+                        }
+                    }
+                ]
+            });
+        });
 
         // Ribbon icons Golbal
 
@@ -3541,9 +3590,9 @@ vis = $.extend(true, vis, {
             that._saveTimer = null;
             $('#saving_progress').hide();
 
-            for (var v in vis.views) {
+            /*for (var v in vis.views) {
                 console.log('View: ' + v + ' ' + vis.views[v].settings.useAsDefault);
-            }
+            }*/
         });
     },
     save: function (cb) {

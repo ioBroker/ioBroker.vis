@@ -288,6 +288,10 @@ var vis = {
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
+                // rename hqWidgets => hqwidgets
+                if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
+                    this.views[view].widgets[id].widgetSet = 'hqwidgets';
+                }
                 for (var attr in data) {
 
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
@@ -1447,7 +1451,7 @@ var vis = {
                     systemOid = systemOid.substring(0, systemOid.length - 3);
                 }
                 var operations = null;
-                var isEval = visOid.indexOf(':') != -1;
+                var isEval = (visOid.indexOf(':') != -1) && (visOid.indexOf('::') == -1);
 
                 if (isEval) {
                     var xx = visOid.split(':', 2);
@@ -1469,7 +1473,7 @@ var vis = {
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
-                        if (parts[u].indexOf(':') != -1) {
+                        if (parts[u].indexOf(':') != -1 && parts[u].indexOf('::') == -1) {
                             var _systemOid = parts[u].trim();
                             var _visOid    = _systemOid;
 
@@ -1494,6 +1498,7 @@ var vis = {
                                     systemOid: yy[1]
                                 });
                         } else {
+                            parts[u] = parts[u].replace(/::/g, ':');
                             if (operations[0].formula) {
                                 var n = JSON.parse(JSON.stringify(operations[0]));
                                 n.formula = parts[u];
@@ -1589,13 +1594,27 @@ var vis = {
     formatBinding: function (format) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
-            var value = this.states.attr(oids[t].visOid);
+            var value;
+            if (oids[t].visOid == 'username.val') {
+                value = this.conn.getUser();
+            } else if (oids[t].visOid == 'language.val') {
+                value = this.language;
+            } else {
+                value = this.states.attr(oids[t].visOid);
+            }
             if (oids[t].operations) {
                 for (var k = 0; k < oids[t].operations.length; k++) {
                     if (oids[t].operations[k].op === 'eval') {
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + this.states.attr(oids[t].operations[k].arg[a].visOid) + '";';
+                            if (oids[t].operations[k].arg[a].visOid == 'username.val') {
+                                value = this.conn.getUser();
+                            } else if (oids[t].operations[k].arg[a].visOid == 'language.val') {
+                                value = this.language;
+                            } else {
+                                value = this.states.attr(oids[t].operations[k].arg[a].visOid);
+                            }
+                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';

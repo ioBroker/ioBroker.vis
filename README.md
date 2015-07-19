@@ -88,6 +88,9 @@ Take care about types. All of them defined as strings. To be sure, that value wi
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
+Note: there is a special object ID - "username". It shows logged in user. And there is a "language" object id: can be "de", "en" or "ru".
+Note: to use ":" in calculatinos (e.g. in string formula) use "::" instead.
+
 ## Filters
 To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
  
@@ -141,8 +144,12 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
-### 0.6.3 (2015-07-xx)
-- (bluefox) add permissions
+### 0.6.4 (2015-07-19)
+* (bluefox) add permissions
+* (bluefox) upload config.js to fix error with vis-metro
+* (bluefox) remove hqWidgets and colorpicker
+* (bluefox) add jqui-mfd translations
+* (bluefox) add "new project" menu
 
 ### 0.6.2 (2015-07-01)
 - (bluefox) fix metro widgets
