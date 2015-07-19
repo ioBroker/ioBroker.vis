@@ -53,11 +53,15 @@ function writeFile(fileName, callback) {
             var _end = index.substring(pos);
             index    = start + '\n' + bigInsert + '\n' + _end;
             var original = start + '\n' + _end;
+            original = original.replace('<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
+                '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->');
             adapter.readFile('vis', fileName, function (err, data) {
                 if (data && data != index) {
                     fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
-                    if (callback) callback(true);
+                    adapter.writeFile('vis', filename, index, function () {
+                        if (callback) callback(true);
+                    });
                 } else {
                     if (callback) callback(false);
                 }
@@ -102,8 +106,10 @@ function checkFiles(configChanged) {
                 data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
                 fs.writeFileSync(__dirname + '/www/cache.manifest', data);
 
-                upload(function () {
-                    adapter.stop();
+                adapter.writeFile('vis', 'cache.manifest', data, function () {
+                    upload(function () {
+                        adapter.stop();
+                    });
                 });
             } else {
                 adapter.stop();
