@@ -2492,6 +2492,10 @@ vis = $.extend(true, vis, {
     bindWidgetClick: function (view, id) {
         var that = this;
         var $wid = $('#' + id);
+        if (!this.views[view] || !this.views[view].widgets[id]) {
+            console.warn('View:' + view + ', id: ' + id + ' not found');
+            return;
+        }
         if (!this.views[view].widgets[id].data.locked) {
             $('#' + id).unbind('click').click(function (e) {
                 if (that.dragging) return;

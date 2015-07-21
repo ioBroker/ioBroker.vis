@@ -1236,8 +1236,8 @@
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
+            <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
+                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + ".val"))) : (vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1323,7 +1323,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1339,7 +1339,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1360,7 +1360,7 @@
                 slist[i] = data['style' + i]; i++;
             }
         %>
-        <div class="vis-widget-body" style="<%== slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
+        <div class="vis-widget-body" style="<%== slist[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
             <div data-oid="<%= this.data.attr('oid') %>">
                <%== this.data.attr("html_prepend") %><%
                    var list = [];
@@ -1368,7 +1368,7 @@
                    while (data['value' + j] !== undefined) {
                         list[j] = data['value' + j]; j++;
                    }
-                   %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
+                   %><%== list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>

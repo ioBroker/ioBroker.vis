@@ -24,7 +24,7 @@ adapter.on('ready', function () {
 function writeFile(fileName, callback) {
     var config = require(__dirname + '/www/js/config.js').config;
 
-    var index = fs.readFileSync(__dirname + '/www/' + fileName).toString();
+    var index    = fs.readFileSync(__dirname + '/www/' + fileName).toString();
 
     // enable cache
     index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->',
@@ -51,11 +51,17 @@ function writeFile(fileName, callback) {
         pos = index.indexOf(end);
         if (pos != -1) {
             var _end = index.substring(pos);
-            index = start + '\n' + bigInsert + '\n' + _end;
+            index    = start + '\n' + bigInsert + '\n' + _end;
+            var original = start + '\n' + _end;
+            original = original.replace('<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
+                '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->');
             adapter.readFile('vis', fileName, function (err, data) {
                 if (data && data != index) {
-                    adapter.writeFile('vis', fileName, index);
-                    if (callback) callback(true);
+                    fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
+                    fs.writeFileSync(__dirname + '/www/' + fileName, index);
+                    adapter.writeFile('vis', filename, index, function () {
+                        if (callback) callback(true);
+                    });
                 } else {
                     if (callback) callback(false);
                 }
@@ -67,6 +73,7 @@ function writeFile(fileName, callback) {
         callback(false);
     }
 }
+
 function upload(callback) {
     adapter.log.info('Upload ' + adapter.name + ' anew, while changes detected...');
     var file = utils.controllerDir + '/lib/setup.js';
@@ -88,26 +95,21 @@ function upload(callback) {
 }
 
 // Update index.html
-function checkFiles(changed) {
-    writeFile('index.html', function (isChanged1) {
+function checkFiles(configChanged) {
+    writeFile('index.html', function (indexChanged) {
         // Update edit.html
-        writeFile('edit.html', function (isChanged2) {
-            if (isChanged1 || isChanged2) {
+        writeFile('edit.html', function (editChanged) {
+            if (indexChanged || editChanged || configChanged) {
                 adapter.log.info('Changes in index.html detected => update cache.manifest');
-                // update cache.manifest if changes detected
-                adapter.readFile('vis', 'cache.manifest', function (err, data) {
-                    data = data.toString();
-                    var build = data.match(/# dev build ([0-9]+)/);
-                    data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
-                    adapter.writeFile('vis', 'cache.manifest', data, function () {
-                        upload(function () {
-                            adapter.stop();
-                        });
+                var data = fs.readFileSync(__dirname + '/www/cache.manifest');
+                var build = data.match(/# dev build ([0-9]+)/);
+                data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
+                fs.writeFileSync(__dirname + '/www/cache.manifest', data);
+
+                adapter.writeFile('vis', 'cache.manifest', data, function () {
+                    upload(function () {
+                        adapter.stop();
                     });
-                });
-            } else if (changed) {
-                upload(function () {
-                    adapter.stop();
                 });
             } else {
                 adapter.stop();

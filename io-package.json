@@ -22,6 +22,7 @@
         "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
         "dependencies":             ["web"],
+        "restartAdapters":          ["vis"],
         "singleton":                true,
         "type":                     "vis"
     },
