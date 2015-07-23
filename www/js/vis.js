@@ -1006,6 +1006,7 @@ var vis = {
 
         if (!this.editMode) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
+            $(window).trigger('viewChanged', view);
         }
 
         if (window.location.hash.slice(1) != view) {
