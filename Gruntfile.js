@@ -29,8 +29,27 @@ module.exports = function (grunt) {
                             replacement: "var version = '" + version + "';"
                         },
                         {
-                            match: /"version"\: *"[\.0-9]*",/g,
+                            match: /"version": *"[\.0-9]*",/g,
                             replacement: '"version": "' + version + '",'
+                        },
+                        {
+                            match: /version: *"[\.0-9]*",/,
+                            replacement: 'version: "' + version + '",'
+                        },
+                        {
+                            match: /version: *'[\.0-9]*',/,
+                            replacement: "version: '" + version + "',"
+                        },                        {
+                            match: /<!-- ioBroker\.vis Version [\.0-9]+ -->/,
+                            replacement: '<!-- ioBroker.vis Version ' + version + ' -->'
+                        },
+                        {
+                            match: /# ioBroker\.vis Version [\.0-9]+/,
+                            replacement: '# ioBroker.vis Version ' + version
+                        },
+                        {
+                            match: /# dev build [\.0-9]+/g,
+                            replacement: '# dev build 0'
                         }
                     ]
                 },
@@ -44,6 +63,24 @@ module.exports = function (grunt) {
                                 srcDir + 'io-package.json'
                         ],
                         dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/cache.manifest',
+                            srcDir + 'www/edit.html',
+                            srcDir + 'www/index.html'
+                        ],
+                        dest:    srcDir + '/www'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/js/vis.js'
+                        ],
+                        dest:    srcDir + '/www/js'
                     }
                 ]
             }
