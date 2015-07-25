@@ -59,7 +59,7 @@ function writeFile(fileName, callback) {
                 if (data && data != index) {
                     fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
-                    adapter.writeFile('vis', filename, index, function () {
+                    adapter.writeFile('vis', fileName, index, function () {
                         if (callback) callback(true);
                     });
                 } else {
@@ -101,7 +101,7 @@ function checkFiles(configChanged) {
         writeFile('edit.html', function (editChanged) {
             if (indexChanged || editChanged || configChanged) {
                 adapter.log.info('Changes in index.html detected => update cache.manifest');
-                var data = fs.readFileSync(__dirname + '/www/cache.manifest');
+                var data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
                 var build = data.match(/# dev build ([0-9]+)/);
                 data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
                 fs.writeFileSync(__dirname + '/www/cache.manifest', data);

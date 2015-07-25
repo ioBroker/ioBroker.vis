@@ -3395,8 +3395,12 @@ vis = $.extend(true, vis, {
             borderRadius: 15
         };
 
+        var $action1 = $('#' + id + '__action1');
+        if (!$action1.length) {
         var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
         $('#visview_' + this.activeView).append(text);
+            $action1 = $('#' + id + '__action1');
+        }
         var _css2 = {
             left:         s.left - 4 - s.width,
             top:          s.top - 4 - s.height,
@@ -3406,8 +3410,7 @@ vis = $.extend(true, vis, {
             //borderWidth: 1,
             borderRadius: s.radius + (s.height > s.width) ? s.width : s.height
         };
-
-        $('#' + id + '__action1').
+        $action1.
             addClass('vis-show-new').
             css(_css2).
             animate(_css1, 1500, 'swing', function () {
@@ -3416,9 +3419,13 @@ vis = $.extend(true, vis, {
                 $(this).stop().remove();
             });
 
+        var $action2 = $('#' + id + '__action2');
+        if (!$action2.length) {
         text = text.replace('action1', 'action2');
         $('#visview_' + this.activeView).append(text);
-        $('#' + id + '__action2').
+            $action2 = $('#' + id + '__action2');
+        }
+        $action2.
             addClass('vis-show-new').
             css(_css2).
             animate(_css1, 3000, 'swing', function () {

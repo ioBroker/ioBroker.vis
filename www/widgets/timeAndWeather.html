@@ -65,6 +65,8 @@
             if (!hl) {
                 $('#visview_'+view).append('<div class="vis-widget'+ (noClass ? '' : ' clock') + '" id="' + elem + '" ></div>');
                 hl = document.getElementById(elem);
+                // View deleted
+                if (!hl) return;
                 hl.dashId = today.getTime();
             }
             if (hl && (timerId === undefined || hl.dashId == timerId)) {
