@@ -260,6 +260,13 @@ body{
 
 }
 
+.table-no-space {
+    border: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+/*    padding: 0;*/
+    margin: 0;
+}
 .fullscreen {
     position: absolute !important;
     z-index: 10000;

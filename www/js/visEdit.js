@@ -1515,6 +1515,23 @@ vis = $.extend(true, vis, {
 
         if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
+    editBuildSelectView: function () {
+        var keys = Object.keys(this.views);
+
+        // case insensitive sorting
+        keys.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
+        var text = '<table class="table-no-space"><tr class="table-no-space">';
+        for (var view = 0; view < keys.length; view++) {
+            text += '<td class="table-no-space">'
+            //$('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
+            text += '<div id="view_tab_' + keys[view] + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + keys[view] + '">' + keys[view] + '</div>';
+        }
+        text += '</tr></table>';
+        $('#view_select_tabs').html(text);
+        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
+    },
     editInitSelectView: function () {
         var that = this;
         $('#view_select_tabs_wrap').resize(function () {
@@ -1596,38 +1613,13 @@ vis = $.extend(true, vis, {
             }
         });
 
-
-        var sel;
-
-        var keys = Object.keys(this.views);
-        var len = keys.length;
-        var i;
-        var k;
-
-        // case insensitive sorting
-        keys.sort(function (a, b) {
-            return a.toLowerCase().localeCompare(b.toLowerCase());
-        });
-
-        $('#view_select_tabs').on('click', ".view-select-tab", function () {
-            var view = $(this).attr('id').replace('view_tab_', "");
+        $('#view_select_tabs').on('click', '.view-select-tab', function () {
+            var view = $(this).attr('id').replace('view_tab_', '');
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
             $(this).addClass('ui-tabs-active ui-state-active');
             that.changeView(view);
         });
-
-        for (i = 0; i < len; i++) {
-            k = keys[i];
-
-            if (k == this.activeView) {
-                sel = " selected";
-            } else {
-                sel = '';
-            }
-            $('#view_select_tabs').append('<div id="view_tab_' + k + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
-        }
-
-        $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
+        this.editBuildSelectView();
     },
     editInitCSSEditor:function(){
         var that      = this;
@@ -1770,8 +1762,6 @@ vis = $.extend(true, vis, {
         var that = this;
 
         this.editInitSelectView();
-        // todo Remove the old select view
-        var sel;
 
         var keys = Object.keys(this.views);
         var len = keys.length;
@@ -2106,7 +2096,7 @@ vis = $.extend(true, vis, {
             $('#view_tab_' + that.activeView).removeClass('ui-tabs-active ui-state-active');
             that.changeView(_view);
 
-            $('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
+            that.editBuildSelectView();//$('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
             $('#view_tab_' + that.activeView).addClass('ui-tabs-active ui-state-active');
 
             that.$selectView.append('<option value="' + _view + '">' + _view + '</option>');
@@ -2187,7 +2177,7 @@ vis = $.extend(true, vis, {
             that.changeView(_dest);
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
-            $('#view_select_tabs').append('<div id="view_tab_' + _dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + _dest + '">' + dest + '</div>');
+            that.editBuildSelectView();//$('#view_select_tabs').append('<div id="view_tab_' + _dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + _dest + '">' + dest + '</div>');
             $('#view_tab_' + _dest).addClass('ui-tabs-active ui-state-active');
 
             that.$selectView.append('<option value="' + _dest + '">' + dest + '</option>');
