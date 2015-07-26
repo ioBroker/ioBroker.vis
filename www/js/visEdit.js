@@ -2096,7 +2096,7 @@ vis = $.extend(true, vis, {
             $('#view_tab_' + that.activeView).removeClass('ui-tabs-active ui-state-active');
             that.changeView(_view);
 
-            that.editBuildSelectView();//$('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + view + '">' + view + '</div>');
+            that.editBuildSelectView();
             $('#view_tab_' + that.activeView).addClass('ui-tabs-active ui-state-active');
 
             that.$selectView.append('<option value="' + _view + '">' + _view + '</option>');
@@ -2177,7 +2177,7 @@ vis = $.extend(true, vis, {
             that.changeView(_dest);
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
-            that.editBuildSelectView();//$('#view_select_tabs').append('<div id="view_tab_' + _dest + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + _dest + '">' + dest + '</div>');
+            that.editBuildSelectView();
             $('#view_tab_' + _dest).addClass('ui-tabs-active ui-state-active');
 
             that.$selectView.append('<option value="' + _dest + '">' + dest + '</option>');

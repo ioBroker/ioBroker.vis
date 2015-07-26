@@ -1313,6 +1313,7 @@ var vis = {
             }
             var styles = {};
             for (var view in this.views) {
+                if (!this.views[view] || !this.views[view].settings.theme) continue;
                 if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
                     styles[this.views[view].settings.theme]++;
                 } else {
