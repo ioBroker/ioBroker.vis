@@ -58,6 +58,7 @@
 //              style,fileFilter,nameFilter,attrFilter
 //              custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
 //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
+//              group.name/byindex - like group, but all following attributes will be grouped by ID. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
 //              text - dialog box with textarea
 
 'use strict';
