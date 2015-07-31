@@ -1051,8 +1051,9 @@
         data-vis-type="static,camera,dialog"
         data-vis-prev='<div id="prev_tplMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
-        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
-        data-vis-attrs0="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs="alt;text;asButton[true]/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
         var styles = "";
@@ -1064,6 +1065,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1081,8 +1083,9 @@
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
-        data-vis-attrs="oid;alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
-        data-vis-attrs0="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs="oid;alt;text;asButton[true]/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
         var styles = "";
@@ -1094,6 +1097,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1111,8 +1115,9 @@
         data-vis-prev='<div id="prev_tplMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (img) - Dialog"
-        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
-        data-vis-attrs0="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]">
+        data-vis-attrs="alt;text;asButton[true]/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]">
     <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -1123,6 +1128,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div>
@@ -1142,8 +1148,9 @@
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (img) - Dialog"
-        data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox"
-        data-vis-attrs0="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs="oid;alt;asButton[true]/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
         var styles = "";
@@ -1155,6 +1162,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div>
@@ -1174,8 +1182,9 @@
         data-vis-prev='<div id="prev_tplMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox;"
-        data-vis-attrs0="group.dialog;src_url;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs="alt;text;asButton[true]/checkbox;use_object/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;src_url;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
         var styles = "";
@@ -1187,6 +1196,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1202,8 +1212,9 @@
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="oid;alt;icon/image;text;invert_icon/checkbox;asButton[true]/checkbox;use_object/checkbox"
-        data-vis-attrs0="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
+        data-vis-attrs="oid;alt;asButton[true]/checkbox;use_object/checkbox;"
+        data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+        data-vis-attrs1="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
     <%
         var styles = "";
@@ -1215,6 +1226,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
@@ -1230,8 +1242,9 @@
     data-vis-prev='<div id="prev_tplMfdCamVideoObject" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
     data-vis-type="static,camera,dialog"
     data-vis-name="Cam/Video (Object) - Dialog"
-    data-vis-attrs="alt;text;icon/image;invert_icon/checkbox;asButton[true]/checkbox;"
-    data-vis-attrs0="group.dialog;src_url;qtsrc_url;title;modal/checkbox;dialog_width[640];dialog_height[480];type_application[video~quicktime]/auto,video~mpeg,video~mp4,video~ogg,video~quicktime,video~webm,video~x-ms-wmv,video~x-flv;plugin;autoplay[true]"
+    data-vis-attrs="alt;text;asButton[true]/checkbox;"
+    data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
+    data-vis-attrs1="group.dialog;src_url;qtsrc_url;title;modal/checkbox;dialog_width[640];dialog_height[480];type_application[video~quicktime]/auto,video~mpeg,video~mp4,video~ogg,video~quicktime,video~webm,video~x-ms-wmv,video~x-flv;plugin;autoplay[true]"
     >
     <%
         var styles = "";
@@ -1243,6 +1256,7 @@
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
         <div style="overflow-y: hidden !important;" id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.attr('title') %>">
