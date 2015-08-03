@@ -1779,9 +1779,9 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'name',      group);
         this.addToInspect(this.activeWidgets, 'comment',   group);
         this.addToInspect(this.activeWidgets, 'class',     group);
-        this.addToInspect(this.activeWidgets, 'filterkey', group);
-        this.addToInspect(this.activeWidgets, {name: 'views',  type: 'select-views'}, group);
-        this.addToInspect(this.activeWidgets, {name: 'locked', type: 'checkbox'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'filterkey', type: 'auto', options: this.updateFilter()}, group);
+        this.addToInspect(this.activeWidgets, {name: 'views',     type: 'select-views'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'locked',    type: 'checkbox'}, group);
 
         group = 'visibility';
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
@@ -1814,46 +1814,7 @@ vis = $.extend(true, vis, {
         }
 
         this.showInspect(view, this.activeWidgets);
-
-        // autocomplete for filter key
-        var $elem = $('#inspect_filterkey');
-        if ($elem.length) {
-            this.updateFilter();
-            $elem.data('save', function () {
-                var $this = $(this);
-                if ($this.data('timer')) clearTimeout($this.data('timer'));
-
-                $this.data('timer', setTimeout(function () {
-                    // If really changed
-                    var attr = $this.attr('id').slice(8);
-                    for (var i = 0; i < that.activeWidgets.length; i++) {
-                        that.views[that.activeView].widgets[that.activeWidgets[i]].data[attr] = $this.val();
-                    }
-                    that.save();
-                }, 200));
-            });
-
-            $elem.autocomplete({
-                minLength: 0,
-                source: function (request, response) {
-                    var data = $.grep(that.views[that.activeView].filterList, function (value) {
-                        return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
-                    });
-                    response(data);
-                },
-                select: function (event, ui) {
-                    $(this).data('save')();
-                },
-                change: function (event, ui) {
-                    $(this).data('save')();
-                }
-            }).focus(function () {
-                $(this).autocomplete('search', '');
-            }).keyup(function () {
-                $(this).data('save')();
-            });
-        }
-
+        
         // snap objects to the grid, elsewise cannot move
         if (this.views[view].settings.snapType == 2) {
             this.gridWidth = parseInt(this.views[view].settings.gridSize);
