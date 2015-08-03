@@ -359,7 +359,8 @@ vis = $.extend(true, vis, {
         var filters = vis.updateFilter();
         filters.unshift('');
 
-        return this.editSelect(widAttr, filters, true);
+        //return this.editSelect(widAttr, filters, true);
+        return this.editAutoComplete(widAttr, filters);
     },
     editEffect: function (widAttr) {
         var that = this;
@@ -1814,7 +1815,7 @@ vis = $.extend(true, vis, {
         }
 
         this.showInspect(view, this.activeWidgets);
-        
+
         // snap objects to the grid, elsewise cannot move
         if (this.views[view].settings.snapType == 2) {
             this.gridWidth = parseInt(this.views[view].settings.gridSize);
@@ -1850,7 +1851,6 @@ vis = $.extend(true, vis, {
                 $('#inspect_views').append('<option value=\'' + v + "' " + selected + ">" + v + "</option>");
             }
         }
-
 
         $('#inspect_views').multiselect({
             maxWidth: 180,
