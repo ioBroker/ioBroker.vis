@@ -95,11 +95,11 @@ var jdigiclockCounter = 0;
                             if (i == 0) {
                                 $(this).appendTo('#plugin_cAntainer'+this.o.curID).css({'left':panel_pos + 'px'});
                             }
-                            //$('#right_arrow').bind('click', next);
+                            //$('#right_arrow').bind('click touchstart', next);
                         });                        
                     });
                 };
-                $('#right_arrow'+o.curID).bind('click', next);
+                $('#right_arrow' + o.curID).bind('click touchstart', next);
 
                 var prev = function() {
                     //$('#left_arrow').unbind('click', prev);
@@ -114,7 +114,7 @@ var jdigiclockCounter = 0;
                 document.getElementById ('right_arrow'+o.curID).o = o;
                 document.getElementById ('digital_cAntainer'+o.curID).o = o;
                 document.getElementById ('forecast_cAntainer'+o.curID).o = o;
-                $('#left_arrow'+o.curID).bind('click', prev);
+                $('#left_arrow' + o.curID).bind('click touchstart', prev);
             });
         }
     });  
@@ -345,11 +345,11 @@ var jdigiclockCounter = 0;
 			el.find('#forecast'+el.o.curID).append(forecast);
 		}
 
-		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update'+el.o.curID+'" class="dc_update" style="position: absolute; top:365px; left:200px"><img src="'+el.clockImagesPath+'../refresh_01.png" alt="reload" title="reload" id="reload'+el.o.curID+'" />' + el.timeUpdate + '</div>');
+		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update' + el.o.curID + '" class="dc_update" style="position: absolute; top:365px; left:200px"><img src="' + el.clockImagesPath + '../refresh_01.png" alt="reload" title="reload" id="reload' + el.o.curID + '" />' + el.timeUpdate + '</div>');
 
-		$('#reload'+el.o.curID+'').click(function() {
-			el.find('#weather'+el.o.curID).html('');
-			el.find('#forecast_cAntainer'+el.o.curID).html('');
+		$('#reload' + el.o.curID).on('click touchstart', function() {
+			el.find('#weather' + el.o.curID).html('');
+			el.find('#forecast_cAntainer' + el.o.curID).html('');
 			$.fn.getWeather(el);
 		});
 	}

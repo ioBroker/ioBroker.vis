@@ -71,21 +71,21 @@ dui.binds.plumb = {
 
             $('<style id="plumb_z">._jsPlumb_endpoint {z-index: ' + duiWidget.data["Z-high"] + 1 + '}._jsPlumb_connector{z-index:' + duiWidget.data["Z-high"] + '}.plumb_wg{z-index:' + duiWidget.data["Z-high"] + '} </style>').appendTo('head');
 
-            $($this).on("click", "#clear", function () {
+            $($this).on("click touchstart", "#clear", function () {
                 dui.plumb_inst[dui.activeView].detachEveryConnection();
                 duiWidget.data.opt = {};
                 dui.saveRemote();
             });
-            $($this).on("click", "#repaint", function () {
+            $($this).on("click touchstart", "#repaint", function () {
                 dui.plumb_inst[dui.activeView].repaintEverything()
             });
-            $($this).on("click", "#front", function () {
+            $($this).on("click touchstart", "#front", function () {
                 $("#plumb_z").remove();
                 $('<style id="plumb_z">._jsPlumb_endpoint {z-index: ' + duiWidget.data["Z-high"] + '}._jsPlumb_connector{z-index:' + duiWidget.data["Z-high"] + '}.plumb_wg{z-index:' + duiWidget.data["Z-high"] + '} </style>').appendTo('head');
 
                 dui.plumb_inst[dui.activeView].repaintEverything()
             });
-            $($this).on("click", "#back", function () {
+            $($this).on("click touchstart", "#back", function () {
 
 
                 $("#plumb_z").remove();
@@ -728,9 +728,8 @@ dui.binds.plumb = {
 
         function set_opt() {
             if (data.ctrl) {
-                $("#" + id + "_img").unbind("click");
-                $("#" + id + "_img").bind("click", function () {
-                    console.log("click")
+                $("#" + id + "_img").unbind("click touchstart").bind("click touchstart", function () {
+                    console.log("click");
                     var num = parseFloat(state, 10);
                     if (num > 0 || state === "true" || state === true) {
                         localData.setValue(data.hm_id, 0);
@@ -739,15 +738,15 @@ dui.binds.plumb = {
                     }
                 });
             } else {
-                $("#" + id + "_img").unbind("click")
+                $("#" + id + "_img").unbind("click touchstart")
             }
             if (data.vertical) {
-                ep_left.setAnchor("Top")
-                ep_right.setAnchor("Bottom")
+                ep_left.setAnchor("Top");
+                ep_right.setAnchor("Bottom");
                 $("#" + id + "_img").css("transform", "rotate(90deg)");
             }else{
-                ep_left.setAnchor("Left")
-                ep_right.setAnchor("Right")
+                ep_left.setAnchor("Left");
+                ep_right.setAnchor("Right");
                 $("#" + id + "_img").css("transform", "rotate(0deg)");
             }
         }

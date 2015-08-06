@@ -1441,7 +1441,7 @@
 
             vis.binds.plumb.plumb_drop($this);
 
-            $(el).click(function () {
+            $(el).on('click touchstart', function () {
                 if (data.ctrl) {
                     if (vis.states[data.oid + '.val'] >= 1) {
                         vis.setValue(data.oid, 0);
@@ -1582,7 +1582,7 @@
 
             vis.binds.plumb.plumb_drop($this);
 
-            $(el).click(function () {
+            $(el).on('click touchstart', function () {
                 if (data.ctrl) {
                     if (vis.states[data.oid + '.val'] >= 1) {
                         vis.setValue(data.oid, 0);

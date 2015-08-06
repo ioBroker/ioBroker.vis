@@ -151,7 +151,7 @@ vis.binds.bars = {
 
             $htmlBtn.css({borderRadius: barsOptions.bRadius + 'px'});
 
-            $htmlBtn.click(function () {
+            $htmlBtn.on('click touchstart', function () {
                 var div__ = $(this).data('ctrl').div;
                 var onClick = $(div__).data('onClick');
                 if (onClick) onClick(this, div__, $(this).data('ctrl').id);

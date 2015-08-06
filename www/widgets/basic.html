@@ -268,7 +268,7 @@
             if (val === 'false') val = false;
 
             if (!vis.editMode) {
-                $this.on('click', function (e) {
+                $this.on('click touchstart', function (e) {
                     vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
                 });
                 // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
@@ -311,7 +311,7 @@
             }
 
             if (!vis.editMode) {
-                $(el).click(function (e) {
+                $(el).on('click touchstart', function (e) {
                     clearTimeout(vis.binds.basic.pressed);
                     if (vis.binds.basic.pressedNext) {
                         vis.binds.basic.pressedNext = false;
@@ -346,7 +346,7 @@
         },
         navigation: function (el, options) {
             var $this = $(el);
-            $this.click(function (e) {
+            $this.on('click touchstart', function (e) {
                 if (!vis.editMode) {
                     if (options.background) {
                         $('body').css({background: options.background});
@@ -585,7 +585,7 @@
             if (max === '') max = undefined;
             if (oid && !vis.editMode) {
                 //$this.on('touchend', function () { $(this).trigger('click'); });
-                $this.on('click', function () {
+                $this.on('click touchstart', function () {
                     var _oid = $(this).attr('data-oid');
                     var val = vis.states[oid + '.val'];
                     if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
@@ -707,7 +707,7 @@
             }
 
             if (!vis.editMode) {
-                $('#'+wid).children().click(function () {
+                $('#' + wid).children().on('click touchstart', function () {
                     var $this = $(this);
                     var id = $this.attr('data-oid');
                     var val = vis.states[id + '.val'];
@@ -724,7 +724,7 @@
                         }
                         vis.setValue(id, 1 - val);
                     }
-                    var el = $('#'+obj.wid);
+                    var el = $('#' + obj.wid);
                     this._obj.style = {
                         position: 'absolute',
                         top:      el.position().top,
