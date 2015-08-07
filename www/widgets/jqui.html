@@ -482,7 +482,9 @@
                 if (!vis.states.attr(wid + '.val')) {
                     var value = parseFloat(newVal);
                     if (settings.inverted) value = (settings.max - value) + settings.min;
-                    $this.slider('value', value);
+                    if ($this.slider('instance')) {
+                        $this.slider('value', value);
+                    }
                 }
             });
         },
@@ -590,7 +592,9 @@
         
         _disable: function () {
             $("div#vis_container").find(".ui-slider").each(function () {
-                $(this).slider('disable').removeClass("ui-state-disabled");
+                if ($(this).slider('instance')) {
+                    $(this).slider('disable').removeClass("ui-state-disabled");
+                }
             });
 
             setTimeout(function () {
