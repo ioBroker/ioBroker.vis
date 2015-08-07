@@ -120,12 +120,13 @@ $.extend(systemDictionary, {
     'Änderungs-Historie':   {'en': 'Change log',        'de': 'Änderungs-Historie:', 'ru': 'Список изменений'},
     'invalid JSON':         {'en': 'Invalid JSON',      'de': 'Invalid JSON', 'ru': 'Неправильный формат'},
     'Do not ask again':     {'en': 'Don\'t ask again',  'de': 'Nicht mehr fragen', 'ru': 'Больше не спрашивать'},
-    'import':               {'en': 'Import',            'de': 'Importieren', 'ru': 'Импорт'},
-    'export view':          {'en': 'Export view',       'de': 'Exportieren', 'ru': 'Экспорт'},
-    'export':               {'en': 'Export (Ctrl+A, Ctrl+C)', 'de': 'Exportieren (Strg+A, Strg+C)', 'ru': 'Экспорт (Ctrl+A, Ctrl+C)'},
-    'import view':          {'en': 'Import view',       'de': 'Importieren', 'ru': 'Импорт'},
-    'export views':         {'en': 'Export views',      'de': 'Exportieren', 'ru': 'Экспорт'},
-    'import views':         {'en': 'Import views',      'de': 'Importieren', 'ru': 'Импорт'},
+    'import':               {'en': 'Import view',       'de': 'View importieren', 'ru': 'Импорт страницы'},
+    'export view':          {'en': 'Export view',       'de': 'View exportieren', 'ru': 'Экспорт страницы'},
+    'export':               {'en': 'Export view (Ctrl+A, Ctrl+C)', 'de': 'View exportieren (Strg+A, Strg+C)', 'ru': 'Экспорт страницы (Ctrl+A, Ctrl+C)'},
+    'export widgets title': {'en': 'Export widgets (Ctrl+A, Ctrl+C)', 'de': 'Widgets exportieren (Strg+A, Strg+C)', 'ru': 'Экспорт элементов (Ctrl+A, Ctrl+C)'},
+    'import view':          {'en': 'Import view',       'de': 'View importieren', 'ru': 'Импорт страницы'},
+    'export views':         {'en': 'Export views',      'de': 'View exportieren', 'ru': 'Экспорт страницы'},
+    'import views':         {'en': 'Import views',      'de': 'View importieren', 'ru': 'Импорт страницы'},
     "export widgets":       {"en": "Export widgets",    "de": "Widgets Exportieren", "ru": "Экспорт элементов"},
     "import widgets":       {"en": "Import widgets",    "de": "Widgets Importieren", "ru": "Импорт элементов"},
     "More":                 {"en": "More...",           "de": "Mehr...",                "ru": "Дальше..."},
@@ -172,6 +173,11 @@ $.extend(systemDictionary, {
         'en': 'Local Views (cached)',
         'de': 'Lokal gespeicherte Views',
         'ru': 'Страницы в кеше броузера'
+    },
+    'View yet exists or name of view is empty': {
+        'en': 'View yet exists or name of view is empty.',
+        'de': 'View existiert schon oder Name ist nicht eingegeben.',
+        'ru': 'Страница уже существует или имя страницы на задано.'
     },
     'please use /dashui/edit.html instead of /dashui/?edit': {
         'en': 'Please use /dashui/edit.html instead of /dashui/?edit',

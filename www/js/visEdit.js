@@ -233,22 +233,33 @@ vis = $.extend(true, vis, {
         }
 
         $('#start_import_view').button();
+        $('#start_import_widgets').button();
 
-        $('#name_import_view').keydown(function (e) {
+        $('#name_import_view').keyup(function (e) {
             if (e.which === 13 && $(this).val()) {
                 $('#start_import_view').trigger('click');
             }
-            $('#start_import_view').prop('disabled', !$(this).val());
-        })
+            $(this).trigger('change');
+        }).change(function () {
+            if ($(this).val()) {
+                $('#start_import_view').button('enable');
+            } else {
+                $('#start_import_view').button('disable');
+            }
+        });
+
         $('#import_view').click(function () {
             $('#textarea_import_view').val('');
-            $('#name_import_view').show();
-            $('#start_import_view').prop('disabled', !$('#name_import_view').val());
+            if ($('#name_import_view').val()) {
+                $('#start_import_view').button('enable');
+            } else {
+                $('#start_import_view').button('disable');
+            }
             $('#dialog_import_view').dialog({
                 autoOpen: true,
-                width: 800,
-                height: 600,
-                modal: true,
+                width:    800,
+                height:   600,
+                modal:    true,
                 open: function (event, ui) {
                     $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
@@ -2215,38 +2226,36 @@ vis = $.extend(true, vis, {
             exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
-        $('#textarea_export_view').html(JSON.stringify(exportW));
-        document.getElementById("textarea_export_view").select();
-        $('#dialog_export_view').dialog({
+        $('#textarea_export_widgets').html(JSON.stringify(exportW));
+        document.getElementById("textarea_export_widgets").select();
+        $('#dialog_export_widgets').dialog({
             autoOpen: true,
             width:    800,
             height:   600,
             modal:    true,
             open:     function (/*event, ui*/) {
-                $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
+                $('[aria-describedby="dialog_export_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             }
         });
     },
     importWidgets: function () {
-        $('#textarea_import_view').val('');
-        $('#start_import_view').prop('disabled', false);
-        $('#name_import_view').hide();
+        $('#textarea_import_widgets').val('');
         var that = this;
 
-        $('#dialog_import_view').dialog({
+        $('#dialog_import_widgets').dialog({
             autoOpen: true,
             width:    800,
             height:   600,
             modal:    true,
             open:     function (event, ui) {
-                $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
+                $('[aria-describedby="dialog_import_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
-                $('#start_import_view').unbind('click').click(function () {
-                    $('#dialog_import_view').dialog('close');
+                $('#start_import_widgets').unbind('click').click(function () {
+                    $('#dialog_import_widgets').dialog('close');
                     var importObject;
                     try {
-                        var text = $('#textarea_import_view').val();
+                        var text = $('#textarea_import_widgets').val();
                         importObject = JSON.parse(text);
                     } catch (e) {
                         that.showMessage(_('invalid JSON') + "\n\n" + e, _('Error'));
@@ -2307,12 +2316,15 @@ vis = $.extend(true, vis, {
         var that = this;
         var name = this.checkNewViewName($('#name_import_view').val());
         var importObject;
-        if (name === false) return;
+        if (name === false) {
+            that.showMessage(_('View yet exists or name of view is empty'));
+            return;
+        }
         try {
             var text = $('#textarea_import_view').val();
             importObject = JSON.parse(text);
         } catch (e) {
-            window.alert(_('invalid JSON') + "\n\n" + e);
+            that.showMessage(_('invalid JSON') + "\n\n" + e, _('Error'), 'alert');
             return;
         }
         if (isAll) {
