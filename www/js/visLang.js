@@ -129,6 +129,7 @@ $.extend(systemDictionary, {
     'import views':         {'en': 'Import views',      'de': 'View importieren',       'ru': 'Импорт страницы'},
     "export widgets":       {"en": "Export widgets",    "de": "Widgets Exportieren",    "ru": "Экспорт элементов"},
     "import widgets":       {"en": "Import widgets",    "de": "Widgets Importieren",    "ru": "Импорт элементов"},
+    "View name: ":          {"en": "View name: ",       "de": "Viewname: ",             "ru": "Имя страницы: "},
     "More":                 {"en": "More...",           "de": "Mehr...",                "ru": "Дальше..."},
     "locked":               {
         "en": '<div class="ui-icon ui-icon-locked" style="width: 15px;height: 13px;display:inline-block"></div>Locked',
@@ -255,6 +256,7 @@ $.extend(systemDictionary, {
     "max_rows":             {"en": "Maximum rows",      "de": "Maximale Zeilenanzahl",  "ru": "Максимальное кол-во строк"},
     "CSS:":                 {"en": "CSS:",              "de": "CSS:",                   "ru": "CSS:"},
     "Web":                  {"en": "Web",               "de": "Web",                    "ru": "Веб"},
+    "Confirm":              {"en": "Confirm",           "de": "Bestätigen",             "ru": "Подтвердить"},
     "Community":            {"en": "Community",         "de": "Community",              "ru": "Разработка"},
     "Change log":           {"en": "Change log",        "de": "Änderungen",             "ru": "Изменения"},
     "CC BY-NC License 4.0": {"en": "CC BY-NC License 4.0", "de": "CC BY-NC Lizenz 4.0", "ru": "CC BY-NC лицензия 4.0"},

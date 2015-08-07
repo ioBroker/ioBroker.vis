@@ -171,6 +171,8 @@
             var oid   = $this.attr('data-oid');
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 var view = viewArr[newVal];
                 if (!persistent) {
                     $this.parent().find('div.vis-view').remove();
@@ -188,16 +190,23 @@
             var oid   = $this.attr('data-oid');
 
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
             });
 
             if (vis.states[oid + '.val'] !== undefined) {
-                $this.attr('src', srcArr[vis.states[oid + '.val']]);
+                var val = vis.states[oid + '.val'];
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                $this.attr('src', srcArr[val]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
                     var val = vis.states[oid + '.val'] || 0;
+                    if (val === 'true'  || val === true)  val = 1;
+                    if (val === 'false' || val === false) val = 0;
                     var src = srcArr[val];
                     $this.attr("src", src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -208,16 +217,24 @@
             var oid = $this.attr('data-oid');
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
             });
 
             if (vis.states[oid + '.val'] !== undefined) {
-                $this.attr('src', srcArr[vis.states[oid + '.val']]);
+                var val = vis.states[oid + '.val'];
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                $this.attr('src', srcArr[val]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
                     var val = vis.states[oid + '.val'] || 0;
+                    if (val === 'true'  || val === true)  val = 1;
+                    if (val === 'false' || val === false) val = 0;
+
                     var src = srcArr[val];
                     if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -225,7 +242,10 @@
         },
         value: function (values, oid) {
             if (oid != 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
-                return values[vis.states.attr(oid + '.val')];
+                var val = vis.states.attr(oid + '.val');
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                return values[val];
             } else {
                 return values[0];
             }
@@ -1184,7 +1204,8 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static,navigation"
-        data-vis-name="HTML"
+        data-vis-prev='<img src="widgets/basic/img/Prev_HTMLnavigation.png"></img>'
+        data-vis-name="HTML navigation"
         data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;hide_options/effect-options;show_effect/effect;show_duration/slider,0,10000,100;show_options/effect-options">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
         <div class="vis-widget-body">
