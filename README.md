@@ -144,6 +144,17 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+
+### 0.6.8 (2015-08-08)
+* (bluefox) all jqui-mfd widgets
+          do not background if active and no background desired
+          new widget jqui-mfd valve
+          change jqui-mfd window (close 0, opened 1, closed 2)
+* (bluefox) hide "Name: .." text that sometimes is shown
+* (bluefox) use "click touchstart" instead of "click" to enable mobile devices
+* (bluefox) fix export/import titles
+* (bluefox) add preview to stateful image
+
 ### 0.6.7 (2015-08-06)
 * (bluefox) fix scroll of view tabs
 * (bluefox) add comment about group/byindex
