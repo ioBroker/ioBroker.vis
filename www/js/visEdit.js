@@ -1068,7 +1068,6 @@ vis = $.extend(true, vis, {
 
             $.each(data, function(){
                 left = left + between;
-                console.log(left)
                 $("#" + this.wid).css("left", left + "px");
                 that.views[that.activeView].widgets[this.wid].style.left = left + "px";
                 left = left + $("#" + this.wid).width();
