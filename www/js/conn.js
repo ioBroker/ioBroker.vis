@@ -12,6 +12,7 @@
 /* global socketNamespace */
 /* global socketUrl */
 /* global socketSession */
+/* global storage */
 /* jshint -W097 */// jshint strict:false
 
 "use strict";
@@ -573,7 +574,7 @@ var servConn = {
 
         this._socket.emit('delObject', objId);
     },
-    getUrl:           function (url, callback) {
+    httpGet:          function (url, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
@@ -583,10 +584,8 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('getUrl', url, function (data) {
-            if (callback) {
-                callback(data);
-            }
+        this._socket.emit('httpGet', url, function (data) {
+            if (callback) callback(data);
         });
     },
     logError:         function (errorText) {

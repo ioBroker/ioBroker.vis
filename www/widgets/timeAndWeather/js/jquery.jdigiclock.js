@@ -101,10 +101,7 @@ var jdigiclockCounter = 0;
                 };
                 $('#right_arrow' + o.curID).bind('click touchstart', function (e) {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     next(e);
                 });
@@ -124,10 +121,7 @@ var jdigiclockCounter = 0;
                 document.getElementById ('forecast_cAntainer' + o.curID).o = o;
                 $('#left_arrow' + o.curID).bind('click touchstart', function (e) {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     prev(e);
                 });
@@ -365,10 +359,7 @@ var jdigiclockCounter = 0;
 
 		$('#reload' + el.o.curID).on('click touchstart', function() {
             // Protect against two events
-            var now = (new Date()).getTime();
-            var lastClick = $(this).data('lc');
-            if (lastClick && now - lastClick < 50) return;
-            $(this).data('lc', now);
+            if (vis.detectBounce(this)) return;
 
             el.find('#weather' + el.o.curID).html('');
 			el.find('#forecast_cAntainer' + el.o.curID).html('');

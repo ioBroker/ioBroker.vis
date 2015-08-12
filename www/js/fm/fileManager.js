@@ -150,7 +150,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                         }).keyup(function () {
                             $(this).trigger('change');
-                        })
+                        });
                         build(o);
                     } else {
                         o.data = [];

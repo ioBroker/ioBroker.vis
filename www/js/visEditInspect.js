@@ -1005,7 +1005,7 @@ vis = $.extend(true, vis, {
                 var m = groupName.match(/^([\w_]+)_§([0-9]+)/);
                 groupName = _('group_' + m[1]) + '[' + m[2] + ']';
             } else {
-                groupName = _('group_' + group)
+                groupName = _('group_' + group);
             }
             $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
 
@@ -1438,7 +1438,7 @@ vis = $.extend(true, vis, {
             // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
             var t = 0;
             var attr;
-            while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+            while ((attr = $widgetTpl.attr('data-vis-attrs' + t))) {
                 widgetAttrs += attr;
                 t++;
             }
@@ -1456,8 +1456,8 @@ vis = $.extend(true, vis, {
                     // extract group mode
                     if (group.indexOf('/') != -1) {
                         var parts = group.split('/');
-                        group  = parts[0];
-                        groupMode = parts[1]
+                        group     = parts[0];
+                        groupMode = parts[1];
                     } else {
                         groupMode = 'normal';
                     }
@@ -1758,7 +1758,7 @@ vis = $.extend(true, vis, {
         // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
         var t = 0;
         var attr;
-        while (attr = $widgetTpl.attr('data-vis-attrs' + t)) {
+        while ((attr = $widgetTpl.attr('data-vis-attrs' + t))) {
             widgetAttrs += attr;
             t++;
         }
@@ -1859,7 +1859,7 @@ vis = $.extend(true, vis, {
             selectedText: function (numChecked, numTotal, checkedItems) {
                 var text = '';
                 for (var i = 0; i < checkedItems.length; i++) {
-                    text += ((text == '') ? '' : ",") + checkedItems[i].title;
+                    text += (!text ? '' : ",") + checkedItems[i].title;
                 }
                 return text;
             },

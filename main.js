@@ -83,7 +83,7 @@ function upload(callback) {
     child.stdout.on('data', function (data) {
         count++;
         adapter.log.debug(data.toString().replace('\n', ''));
-        if (!(count % 100)) adapter.log.info(count + ' files uploaded...');
+        if ((count % 100) === 0) adapter.log.info(count + ' files uploaded...');
     });
     child.stderr.on('data', function (data) {
         adapter.log.error(data.toString().replace('\n', ''));
@@ -153,10 +153,10 @@ function main() {
                 type: 'state',
                 native: {}
             }, function () {
-                if (!(--count)) checkFiles(changed);
+                if (!--count) checkFiles(changed);
             }) ;
         } else {
-            if (!(--count)) checkFiles(changed);
+            if (!--count) checkFiles(changed);
         }
     });
 
@@ -165,10 +165,10 @@ function main() {
     adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
         if (err || data === null || data === undefined) {
             adapter.writeFile('vis', 'css/vis-common-user.css', '', function () {
-                if (!(--count)) checkFiles(changed);
+                if (!--count) checkFiles(changed);
             });
         } else {
-            if (!(--count)) checkFiles(changed);
+            if (!--count) checkFiles(changed);
         }
     });
 }

@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.6.8',
+    version: '0.6.10',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -547,7 +547,7 @@ var vis = {
         this.initialized = true;
 
         // If this function called earlier, it makes problems under FireFox.
-        if (this.views["_project"]) {
+        if (this.views._project) {
             this.renderView("_project", false, true);
         }
 
@@ -698,8 +698,8 @@ var vis = {
             }
         }
         setTimeout(function(){
-            $("#visview_"+view).trigger("rendered")
-        })
+            $("#visview_" + view).trigger("rendered");
+        });
 
     },
     addViewStyle: function (view, theme) {
@@ -1104,7 +1104,7 @@ var vis = {
                     viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
                 }
             }
-            viewsToSave = JSON.stringify(viewsToSave, null, 2)
+            viewsToSave = JSON.stringify(viewsToSave, null, 2);
             if (this.lastSave == viewsToSave) {
                 if (typeof callback == 'function') callback(null);
                 return;
@@ -1776,6 +1776,14 @@ var vis = {
                 that.changeView(view);
             }
         }, 200);
+    },
+    detectBounce: function (el) {
+        // Protect against two events
+        var now = (new Date()).getTime();
+        var lastClick = $(el).data('lc');
+        if (lastClick && now - lastClick < 150) return true;
+        $(el).data('lc', now);
+        return false;
     }
 };
 

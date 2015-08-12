@@ -874,14 +874,14 @@ var servConn = {
             this._socket.emit('programExecute', [objId]);
         }
     },
-    getUrl: function (url, callback) {
+    httpGet: function (url, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
         }
         if (this._type === 0) {
             //SignalR
-            this._hub.invoke('getUrl', url).done(function (jsonString) {
+            this._hub.invoke('httpGet', url).done(function (jsonString) {
                 if (callback) {
                     callback(jsonString);
                 }
@@ -892,7 +892,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getUrl', url, function (data) {
+            this._socket.emit('httpGet', url, function (data) {
                 if (callback) {
                     callback(data);
                 }

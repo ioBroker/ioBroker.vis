@@ -290,10 +290,7 @@
             if (!vis.editMode) {
                 $this.on('click touchstart', function (e) {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
                 });
@@ -333,10 +330,7 @@
             if (!vis.editMode) {
                 $(el).on('click touchstart', function (e) {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     clearTimeout(vis.binds.basic.pressed);
                     if (vis.binds.basic.pressedNext) {
@@ -375,10 +369,7 @@
                 var $this = $(el);
                 $this.on('click touchstart', function (e) {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     if (options.background) $('body').css({background: options.background});
 
@@ -608,45 +599,97 @@
         },
         toggle: function (el, oid) {
             var $this = $(el);
-            var oid = oid || $this.attr('data-oid');
-            var min = $this.attr('data-min');
-            var max = $this.attr('data-max');
+            var oid = oid || $this.data('oid');
+            var min = $this.data('min');
+            var max = $this.data('max');
+
+            var urlTrue  = $this.data('url-true');
+            var urlFalse = $this.data('url-false');
+            var oidTrue  = $this.data('oid-true');
+            var oidFalse = $this.data('oid-false');
+
             if (min === '') min = undefined;
             if (max === '') max = undefined;
-            if (oid && !vis.editMode) {
+
+            if ((oid || oidTrue || urlTrue) && !vis.editMode) {
                 $this.on('click touchstart', function () {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
+                    var val;
 
-                    var _oid = $(this).attr('data-oid');
-                    var val = vis.states[oid + '.val'];
-                    if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
-                        (min !== undefined && min == val)) {
-                        vis.setValue(oid, max !== undefined ? max : true);
-                    } else
-                    if ((max === undefined && (val === true || val === 'true')) ||
-                        (max !== undefined && val == max))
-                    {
-                        vis.setValue(oid, min !== undefined ? min : false);
-                    } else {
-                        val = parseFloat(val);
-                        if (min !== undefined && max !== undefined) {
-                            if (val >= (max - min) / 2) {
-                                val = min;
+                    if (oidTrue || urlTrue) {
+                        if (!oidFalse && oidTrue) oidFalse = oidTrue;
+                        if (!urlFalse && urlTrue) urlFalse = urlTrue;
+
+                        if (!oid || oid == 'nothing_selected') {
+                            val = !$(this).data('state');
+                            // remember state
+                            $(this).data('state', val);
+                        } else {
+                            val = vis.states[oid + '.val'];
+                            if (max !== undefined) {
+                                val = (val == max);
                             } else {
-                                val = max;
+                                val = (val === 1 || val === '1' || val === true || val === 'true');
+                            }
+                            val = !val; // invert
+                        }
+                        if (min === undefined || min === 'false' || min === null) min = false;
+                        if (max === undefined || max === 'true'  || max === null) max = true;
+
+                        if (oidTrue) {
+                            if (val) {
+                                vis.setValue(oidTrue,  max);
+                            } else {
+                                vis.setValue(oidFalse, min);
                             }
                         } else {
-                            if (val >= 0.5) {
-                                val = 0;
+                            if (val) {
+                                vis.conn.httpGet(urlTrue)
                             } else {
-                                val = 1;
+                                vis.conn.httpGet(urlFalse);
                             }
                         }
-                        vis.setValue(oid, val);
+
+                        // show new state
+                        if (!oid || oid == 'nothing_selected') {
+                            var img = $(this).data('img-class');
+                            if (val) {
+                                if ($(this).data('as-button')) $(this).addClass('ui-state-active');
+                                val = $(this).data('img-true');
+                            } else {
+                                val = $(this).data('img-false')
+                                if ($(this).data('as-button')) $(this).removeClass('ui-state-active');
+                            }
+                            $(this).find('.' + img).attr('src', val);
+                        }
+                    } else {
+                        var val = vis.states[oid + '.val'];
+                        if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+                                (min !== undefined && min == val)) {
+                            vis.setValue(oid, max !== undefined ? max : true);
+                        } else
+                        if ((max === undefined && (val === true || val === 'true')) ||
+                                (max !== undefined && val == max))
+                        {
+                            vis.setValue(oid, min !== undefined ? min : false);
+                        } else {
+                            val = parseFloat(val);
+                            if (min !== undefined && max !== undefined) {
+                                if (val >= (max - min) / 2) {
+                                    val = min;
+                                } else {
+                                    val = max;
+                                }
+                            } else {
+                                if (val >= 0.5) {
+                                    val = 0;
+                                } else {
+                                    val = 1;
+                                }
+                            }
+                            vis.setValue(oid, val);
+                        }
                     }
                 });
             }
@@ -744,11 +787,7 @@
             if (!vis.editMode) {
                 $('#' + wid).children().on('click touchstart', function () {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
-
+                    if (vis.detectBounce(this)) return;
 
                     var $this = $(this);
                     var id = $this.attr('data-oid');

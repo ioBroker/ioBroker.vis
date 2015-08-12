@@ -112,8 +112,8 @@
             "ru": 'Установите время'
         },
         activeHelper: function ($this, val, min, max, value, reverse) {
-            if (val === true  || val === 'true')  { val = max; }
-            if (val === false || val === 'false') { val = min; }
+            if (val === true  || val === 'true')  val = max;
+            if (val === false || val === 'false') val = min;
 
             if (max === undefined || max === '' || max === null) {
                 max = 1;
@@ -129,7 +129,7 @@
                 }
             }
 
-            if (value === undefined && val > min) {
+            if (value === undefined && val > min && val !== true) {
                 val = parseFloat(val) || 0;
             }
 
@@ -141,9 +141,9 @@
         },
         active: function (el, reverse, _value) {
             var $this = $(el);
-            var oid = $this.attr('data-oid');
-            var max = $this.attr('data-max') || 1;
-            var min = $this.attr('data-min') || 0;
+            var oid = $this.data('oid');
+            var max = $this.data('max') || 1;
+            var min = $this.data('min') || 0;
             if (oid) {
                 vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                     vis.binds.jqueryui.activeHelper($this, newVal, min, max, _value, reverse);
@@ -169,10 +169,7 @@
             if (1 || !vis.editMode) {
                 $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     if ($dlg.data('preload')) $dlg.html(html);
 
@@ -233,10 +230,7 @@
             if (!vis.editMode) {
                 $(el).parent().find("div.vis-widget-body").on('click touchstart', function () {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     dlg.find("div[id$='container']").each(function () {
                         var cview = $(this).attr("data-vis-contains");
@@ -399,10 +393,7 @@
             if (!vis.editMode) {
                 $this.button().on('click touchstart', function () {
                     // Protect against two events
-                    var now = (new Date()).getTime();
-                    var lastClick = $(this).data('lc');
-                    if (lastClick && now - lastClick < 50) return;
-                    $(this).data('lc', now);
+                    if (vis.detectBounce(this)) return;
 
                     vis.setValue(oid,  $(input).val());
                 });
@@ -566,10 +557,7 @@
                     // Buttonset -> Observable
                     $this.find('input').on('click touchstart', function () {
                         // Protect against two events
-                        var now = (new Date()).getTime();
-                        var lastClick = $(this).data('lc');
-                        if (lastClick && now - lastClick < 50) return;
-                        $(this).data('lc', now);
+                        if (vis.detectBounce(this)) return;
 
                         var val = $(this).val();
                         var f = parseFloat(val);
@@ -588,12 +576,9 @@
             var $this = $(el).parent();
             $this.on('click touchstart', function (e) {
                 // Protect against two events
-                var now = (new Date()).getTime();
-                var lastClick = $(this).data('lc');
-                if (lastClick && now - lastClick < 50) return;
-                $(this).data('lc', now);
+                if (vis.detectBounce(this)) return;
 
-                servConn.getUrl(url);
+                vis.conn.httpGet(url);
                 e.preventDefault();
             });
         },

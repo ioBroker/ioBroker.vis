@@ -145,6 +145,12 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.10 (2015-08-11)
+- (bluefox) protect against double event: click and touchstart
+- (bluefox) implement urlTrue/urlFalse and oidTrue/oirFalse by jqui-mfd/socket 
+- (bluefox) remove bars and plumbs
+- (bluefox) remove jshint warnings
+
 ### 0.6.9 (2015-08-11)
 - (bluefox) protect against double event: click and touchstart
 

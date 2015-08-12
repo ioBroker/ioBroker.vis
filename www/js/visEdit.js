@@ -22,6 +22,7 @@
 /* global location */
 /* global setTimeout */
 /* global clearTimeout */
+/* global systemLang:true */
 /* global io */
 /* global $ */
 /* global vis:true */
@@ -457,7 +458,7 @@ vis = $.extend(true, vis, {
             for (var i = 0; i < that.activeWidgets.length; i++) {
                 var widID = $('#' + that.activeWidgets[i]).attr('id');
 
-                var xid =  (new Date).valueOf().toString(32);
+                var xid =  (new Date()).valueOf().toString(32);
 
                 var $target = $('#' + widID);
                 var $clone = $target.clone();
@@ -772,13 +773,13 @@ vis = $.extend(true, vis, {
                         click: function () {
                             var name = $('#new-project-name').val();
                             if (!name) {
-                                alert(_('Empty name is not allowed!'));
+                                window.alert(_('Empty name is not allowed!'));
                                 return;
                             }
                             var found = false;
                             $('.project-select').each(function () {
                                 if ($(this).data('project') == name) {
-                                    alert(_('Project yet exists!'));
+                                    window.alert(_('Project yet exists!'));
                                     return;
                                 }
                             });
@@ -1359,7 +1360,7 @@ vis = $.extend(true, vis, {
             }, 500));
         }).keyup(function () {
             $(this).trigger('change');
-        })
+        });
 
         $('#vis_container').on('contextmenu click', function (e) {
             // Workaround for OSX. Ignore clicks without ctrl
@@ -1484,7 +1485,7 @@ vis = $.extend(true, vis, {
                     // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
                     var t = 0;
                     var attr;
-                    while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                    while ((attr = $tpl.attr('data-vis-attrs' + t))) {
                         attrs += attr;
                         t++;
                     }
@@ -1521,7 +1522,7 @@ vis = $.extend(true, vis, {
         });
         var text = '<table class="table-no-space"><tr class="table-no-space">';
         for (var view = 0; view < keys.length; view++) {
-            text += '<td class="table-no-space">'
+            text += '<td class="table-no-space">';
             //$('#view_select_tabs').append('<div id="view_tab_' + view + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + k + '">' + k + '</div>');
             text += '<div id="view_tab_' + keys[view] + '" class="view-select-tab ui-state-default ui-corner-top sel_opt_' + keys[view] + '">' + keys[view] + '</div>';
         }
@@ -1685,7 +1686,7 @@ vis = $.extend(true, vis, {
                 // Trigger autosave after 2 seconds
                 setTimeout(function () {
                     $("#css_file_save").trigger('click');
-                }, 2000)
+                }, 2000);
             }, 400);
         });
 
@@ -2578,7 +2579,7 @@ vis = $.extend(true, vis, {
             widgetSet: $('#' + options.tpl).attr('data-vis-set')
         };
 
-        if (renderVisible) this.views[view].widgets[widgetId].renderVisible = true;
+        if (renderVisible) this.views[options.view].widgets[widgetId].renderVisible = true;
 
         if (options.style) $jWidget.css(options.style);
 
@@ -2947,13 +2948,13 @@ vis = $.extend(true, vis, {
                 style: this.views[view].settings.style.background_class,
                 parent: $('#inspect_view_bkg_parent'),
                 onchange: function (newStyle) {
-                    if (that.views[view].settings.style['background_class']) {
-                        $('#visview_' + view).removeClass(that.views[view].settings.style['background_class']);
+                    if (that.views[view].settings.style.background_class) {
+                        $('#visview_' + view).removeClass(that.views[view].settings.style.background_class);
                     }
-                    that.views[view].settings.style['background_class'] = newStyle;
+                    that.views[view].settings.style.background_class = newStyle;
                     if (newStyle) $('#inspect_view_css_background').val('').trigger('change');
 
-                    $('#visview_' + view).addClass(that.views[view].settings.style['background_class']);
+                    $('#visview_' + view).addClass(that.views[view].settings.style.background_class);
                     that.save();
                 }
             });
@@ -3043,15 +3044,15 @@ vis = $.extend(true, vis, {
                 $('#' + $this.attr('id')).val(that.views[view].settings[attr]);
             });
 
-            this.views[view].settings['theme'] = this.views[view].settings['theme'] || 'redmond';
+            this.views[view].settings.theme = this.views[view].settings.theme || 'redmond';
 
             $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
 
-        if(view == "_project"){
+        /*if (view == "_project"){
             wid_prev
-        }
+        }*/
     },
     dragging: false,
     draggable: function (obj) {
@@ -3064,7 +3065,7 @@ vis = $.extend(true, vis, {
 
         if (draggableOptions.disabled) return;
 
-        var draggableOptions = {
+        draggableOptions = {
             cancel: false,
             start:  function (event, ui) {
                 $('#context_menu').hide();
@@ -3257,7 +3258,7 @@ vis = $.extend(true, vis, {
                 // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
                 var t = 0;
                 var attr;
-                while (attr = $tpl.attr('data-vis-attrs' + t)) {
+                while ((attr = $tpl.attr('data-vis-attrs' + t))) {
                     attrs += attr;
                     t++;
                 }
@@ -3378,9 +3379,10 @@ vis = $.extend(true, vis, {
         };
 
         var $action1 = $('#' + id + '__action1');
+        var text = '';
         if (!$action1.length) {
-        var text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
-        $('#visview_' + this.activeView).append(text);
+            text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
+            $('#visview_' + this.activeView).append(text);
             $action1 = $('#' + id + '__action1');
         }
         var _css2 = {
@@ -3403,8 +3405,8 @@ vis = $.extend(true, vis, {
 
         var $action2 = $('#' + id + '__action2');
         if (!$action2.length) {
-        text = text.replace('action1', 'action2');
-        $('#visview_' + this.activeView).append(text);
+            text = text.replace('action1', 'action2');
+            $('#visview_' + this.activeView).append(text);
             $action2 = $('#' + id + '__action2');
         }
         $action2.
@@ -3421,9 +3423,9 @@ vis = $.extend(true, vis, {
             this.views[this.activeView].filterList = [];
 
             for (var widget in widgets) {
-                if (widgets[widget] && widgets[widget].data &&
-                    widgets[widget].data.filterkey != '' &&
-                    widgets[widget].data.filterkey !== undefined) {
+                if (widgets[widget] &&
+                    widgets[widget].data &&
+                    widgets[widget].data.filterkey) {
                     var isFound = false;
                     for (var z = 0; z < this.views[this.activeView].filterList.length; z++) {
                         if (this.views[this.activeView].filterList[z] == widgets[widget].data.filterkey) {
@@ -3570,7 +3572,7 @@ vis = $.extend(true, vis, {
     },
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
-        if (!this.undoHistory || this.undoHistory.length == 0 ||
+        if (!this.undoHistory || !this.undoHistory.length ||
             (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
             this.undoHistory = this.undoHistory || [];
             $('#button_undo').removeClass('ui-state-disabled');
@@ -4194,7 +4196,7 @@ vis = $.extend(true, vis, {
                     x: [ offset.left, offset.left + $(this).outerWidth() ],
                     y: [ offset.top,  offset.top  + $(this).outerHeight()]
                 };
-                return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1])
+                return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1]);
             });
         }
 
@@ -4434,7 +4436,7 @@ $(document).keydown(function (e) {
         if ($container.hasClass('fullscreen')) {
             $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
             $("#pan_attr").show();
-            $container.addClass('vis_container')
+            $container.addClass('vis_container');
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
 

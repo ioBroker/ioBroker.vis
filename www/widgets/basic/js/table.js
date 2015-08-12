@@ -354,10 +354,7 @@ vis.binds.table = {
 
         $elem.find('.vis-table-ack-button').unbind('click touchstart').bind('click touchstart', function (e){
             // Protect against two events
-            var now = (new Date()).getTime();
-            var lastClick = $(this).data('lc');
-            if (lastClick && now - lastClick < 50) return;
-            $(this).data('lc', now);
+            if (vis.detectBounce(this)) return;
 
             vis.binds.table.onAckButton(e);
         });
@@ -377,10 +374,7 @@ vis.binds.table = {
             // Bind on click event for every row
             $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', function (e){
                 // Protect against two events
-                var now = (new Date()).getTime();
-                var lastClick = $(this).data('lc');
-                if (lastClick && now - lastClick < 50) return;
-                $(this).data('lc', now);
+                if (vis.detectBounce(this)) return;
 
                 vis.binds.table.onRowClick(e);
             });
@@ -471,10 +465,7 @@ vis.binds.table = {
                             wid:          wid
                         }).unbind('click touchstart').bind('click touchstart', function (e){
                             // Protect against two events
-                            var now = (new Date()).getTime();
-                            var lastClick = $(this).data('lc');
-                            if (lastClick && now - lastClick < 50) return;
-                            $(this).data('lc', now);
+                            if (vis.detectBounce(this)) return;
 
                             vis.binds.table.onRowClick(e);
                         });
@@ -485,10 +476,7 @@ vis.binds.table = {
                     .data('options', {data: newEvent, parent: this, ack_id: newEvent._ack_id || JSON.stringify(newEvent)})
                     .unbind('click touchstart').bind('click touchstart', function (e){
                         // Protect against two events
-                        var now = (new Date()).getTime();
-                        var lastClick = $(this).data('lc');
-                        if (lastClick && now - lastClick < 50) return;
-                        $(this).data('lc', now);
+                        if (vis.detectBounce(this)) return;
 
                         vis.binds.table.onAckButton(e);
                     });

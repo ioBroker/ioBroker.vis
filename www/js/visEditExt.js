@@ -18,6 +18,8 @@
 /* jshint browser:true */
 /* global _ */
 /* global $ */
+/* global jQuery */
+/* global console */
 /* global systemDictionary */
 /* global vis:true */
 /* jshint -W097 */// jshint strict:false
@@ -54,7 +56,7 @@ vis.styleSelect = {
     // Functions
     show: function (options) {
         // Fill the list of styles
-        if (this._internalList == null) {
+        if (!this._internalList) {
             this._internalList = {};
             var sSheetList = document.styleSheets;
             for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
@@ -63,14 +65,14 @@ vis.styleSelect = {
                     var bglen = "hq-background-".length;
                     for (var rule = 0; rule < ruleList.length; rule ++) {
                         if (!ruleList[rule].selectorText) continue;
-                        var styles = ruleList[rule].selectorText.split(',');
-                        for (var s = 0; s < styles.length; s++) {
-                            var substyles = styles[s].trim().split(' ');
-                            var style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
+                        var _styles = ruleList[rule].selectorText.split(',');
+                        for (var s = 0; s < _styles.length; s++) {
+                            var substyles = _styles[s].trim().split(' ');
+                            var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                            if (!style || style[0] != '.' || style.indexOf(':') != -1) continue;
+                            if (!_style || _style[0] != '.' || _style.indexOf(':') != -1) continue;
 
-                            var name = style;
+                            var name = _style;
                             name = name.replace(',', '');
                             name = name.replace(/^\./, '');
 
@@ -133,8 +135,8 @@ vis.styleSelect = {
                             if (isFound) {
                                 isFound = !attrs;
                                 if (!isFound) {
-                                    for (var k = 0; k < attrs.length; k++) {
-                                        var t = this._internalList[style].attrs[attrs[k]];
+                                    for (var u = 0; u < attrs.length; u++) {
+                                        var t = this._internalList[style].attrs[attrs[u]];
                                         if (t || t === 0) {
                                             isFound = true;
                                             break;
@@ -163,10 +165,11 @@ vis.styleSelect = {
             }
         }
 
+        var text = '';
         if (!$('#' + options.name + '_styles').length) {
-            var text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
-            for (var style in styles) {
-                text += '<option ' + ((options.style == style) ? 'selected' : '') + ' value="' + style + '" data-parent-style="' +  styles[style].parentClass + '">' + styles[style].name + '</option>\n';
+            text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
+            for (var style_ in styles) {
+                text += '<option ' + ((options.style == style_) ? 'selected' : '') + ' value="' + style_ + '" data-parent-style="' +  styles[style_].parentClass + '">' + styles[style_].name + '</option>\n';
             }
             text += '</select>';
         }
@@ -256,20 +259,20 @@ var colorSelect = {
     show:  function (options) {
         var i = 0;
         
-        if (this._selectText == "") {
+        if (!this._selectText) {
             this._selectText = _("Select");
             this._cancelText = _("Cancel");
             this._titleText  = _("Select color");
         }
            
-        if (!options.elemName || options.elemName == "") {
+        if (!options.elemName) {
             options.elemName = "idialog_";
         }
         if (!options.parent) {
             options.parent = $('body');
         }
         
-        if (document.getElementById(options.elemName) != undefined) {
+        if (document.getElementById(options.elemName) !== undefined) {
             $('#'+options.elemName).remove();
         }
         options.parent.append("<div class='dialog' id='colorSelect' title='" + this._titleText + "' style='text-align: center;' ><div style='display: inline-block;' id='colorpicker'></div><input type='text' id='colortext'/></div>");
@@ -328,7 +331,7 @@ if (!$().multiselect) {
                 }
                 var elem = this.element.hide();
                 var div = '<table class="ui-widget-content">';
-                div += '</table>'
+                div += '</table>';
                 this.table = $(div);
                 this.table.insertAfter(elem);
                 this._build();
