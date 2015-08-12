@@ -90,16 +90,24 @@ var jdigiclockCounter = 0;
                 var panel_pos = ($('#plugin_cAntainer'+o.curID+' > div').length - 1) * 500;
                 var next = function() {
                     //$('#right_arrow').unbind('click', next);
-                    $('#plugin_cAntainer'+this.o.curID+' > div').filter(function(i) {
+                    $('#plugin_cAntainer' + this.o.curID + ' > div').filter(function(i) {
                         $(this).animate({'left': (i * 500) - 500 + 'px'}, 400, function() {
                             if (i == 0) {
-                                $(this).appendTo('#plugin_cAntainer'+this.o.curID).css({'left':panel_pos + 'px'});
+                                $(this).appendTo('#plugin_cAntainer' + this.o.curID).css({'left':panel_pos + 'px'});
                             }
                             //$('#right_arrow').bind('click touchstart', next);
                         });                        
                     });
                 };
-                $('#right_arrow' + o.curID).bind('click touchstart', next);
+                $('#right_arrow' + o.curID).bind('click touchstart', function (e) {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
+                    next(e);
+                });
 
                 var prev = function() {
                     //$('#left_arrow').unbind('click', prev);
@@ -110,11 +118,19 @@ var jdigiclockCounter = 0;
                         });
                     });
                 };
-                document.getElementById ('left_arrow'+o.curID).o = o;
-                document.getElementById ('right_arrow'+o.curID).o = o;
-                document.getElementById ('digital_cAntainer'+o.curID).o = o;
-                document.getElementById ('forecast_cAntainer'+o.curID).o = o;
-                $('#left_arrow' + o.curID).bind('click touchstart', prev);
+                document.getElementById ('left_arrow' + o.curID).o = o;
+                document.getElementById ('right_arrow' + o.curID).o = o;
+                document.getElementById ('digital_cAntainer' + o.curID).o = o;
+                document.getElementById ('forecast_cAntainer' + o.curID).o = o;
+                $('#left_arrow' + o.curID).bind('click touchstart', function (e) {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
+                    prev(e);
+                });
             });
         }
     });  
@@ -348,7 +364,13 @@ var jdigiclockCounter = 0;
 		el.find('#forecast_cAntainer'+el.o.curID).append('<div id="update' + el.o.curID + '" class="dc_update" style="position: absolute; top:365px; left:200px"><img src="' + el.clockImagesPath + '../refresh_01.png" alt="reload" title="reload" id="reload' + el.o.curID + '" />' + el.timeUpdate + '</div>');
 
 		$('#reload' + el.o.curID).on('click touchstart', function() {
-			el.find('#weather' + el.o.curID).html('');
+            // Protect against two events
+            var now = (new Date()).getTime();
+            var lastClick = $(this).data('lc');
+            if (lastClick && now - lastClick < 50) return;
+            $(this).data('lc', now);
+
+            el.find('#weather' + el.o.curID).html('');
 			el.find('#forecast_cAntainer' + el.o.curID).html('');
 			$.fn.getWeather(el);
 		});

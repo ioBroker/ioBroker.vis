@@ -289,14 +289,14 @@
 
             if (!vis.editMode) {
                 $this.on('click touchstart', function (e) {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
                 });
-                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
-                /*
-                 $this.on('touchend',function (e) {
-                    $(this).trigger('click');
-                 });
-                */
             }
         },
         pressed: null,
@@ -332,6 +332,12 @@
 
             if (!vis.editMode) {
                 $(el).on('click touchstart', function (e) {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     clearTimeout(vis.binds.basic.pressed);
                     if (vis.binds.basic.pressedNext) {
                         vis.binds.basic.pressedNext = false;
@@ -365,18 +371,22 @@
             }
         },
         navigation: function (el, options) {
-            var $this = $(el);
-            $this.on('click touchstart', function (e) {
-                if (!vis.editMode) {
-                    if (options.background) {
-                        $('body').css({background: options.background});
-                    }
+            if (!vis.editMode) {
+                var $this = $(el);
+                $this.on('click touchstart', function (e) {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
+                    if (options.background) $('body').css({background: options.background});
+
                     vis.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
                     //e.preventDefault();
                     //return false;
-                }
-
-            });
+                });
+            }
         },
         hideOnFalse: function (el) {
             var $this = $(el);
@@ -604,8 +614,13 @@
             if (min === '') min = undefined;
             if (max === '') max = undefined;
             if (oid && !vis.editMode) {
-                //$this.on('touchend', function () { $(this).trigger('click'); });
                 $this.on('click touchstart', function () {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     var _oid = $(this).attr('data-oid');
                     var val = vis.states[oid + '.val'];
                     if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
@@ -728,6 +743,13 @@
 
             if (!vis.editMode) {
                 $('#' + wid).children().on('click touchstart', function () {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
+
                     var $this = $(this);
                     var id = $this.attr('data-oid');
                     var val = vis.states[id + '.val'];

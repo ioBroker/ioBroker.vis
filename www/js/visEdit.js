@@ -388,19 +388,6 @@ vis = $.extend(true, vis, {
             }
         });
 
-        $('#screen_hide_description').change(function () {
-            var val = $('#screen_hide_description')[0].checked;
-            if (that.views[that.activeView].settings.hideDescription != val) {
-                that.views[that.activeView].settings.hideDescription = val;
-                if (typeof hqWidgets != 'undefined') {
-                    hqWidgets.SetHideDescription(val);
-                }
-                that.save();
-            }
-        }).keyup(function () {
-            $(this).trigger('change');
-        });
-
         $('#screen_size_y').change(function () {
             var x = $('#screen_size_x').val();
             var y = $('#screen_size_y').val();
@@ -2999,12 +2986,6 @@ vis = $.extend(true, vis, {
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
             $('.rib_tool_resolution_toggle').button((res == 'x') ? 'disable' : 'enable');
-
-            $('#screen_hide_description').prop('checked', this.views[view].settings.hideDescription).trigger('change');
-
-            /*if (typeof hqWidgets != 'undefined') {
-             hqWidgets.SetHideDescription(this.views[view].settings.hideDescription);
-             }*/
 
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
             $('#snap_type').val(this.views[view].settings.snapType || 0).selectmenu('refresh');

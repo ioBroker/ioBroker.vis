@@ -352,7 +352,15 @@ vis.binds.table = {
             view:    view
         };
 
-        $elem.find('.vis-table-ack-button').unbind('click touchstart').bind('click touchstart', vis.binds.table.onAckButton);
+        $elem.find('.vis-table-ack-button').unbind('click touchstart').bind('click touchstart', function (e){
+            // Protect against two events
+            var now = (new Date()).getTime();
+            var lastClick = $(this).data('lc');
+            if (lastClick && now - lastClick < 50) return;
+            $(this).data('lc', now);
+
+            vis.binds.table.onAckButton(e);
+        });
 
         // Set additional data for every row
         for (var i = 0, len = table.length; i < len; i++) {
@@ -367,7 +375,15 @@ vis.binds.table = {
         // If detailed information desired
         if (options.detailed_wid) {
             // Bind on click event for every row
-            $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', vis.binds.table.onRowClick);
+            $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', function (e){
+                // Protect against two events
+                var now = (new Date()).getTime();
+                var lastClick = $(this).data('lc');
+                if (lastClick && now - lastClick < 50) return;
+                $(this).data('lc', now);
+
+                vis.binds.table.onRowClick(e);
+            });
 
             // Set additional data for every row
             for (i = 0, len = table.length; i < len; i++) {
@@ -453,13 +469,29 @@ vis.binds.table = {
                             detailed_wid: options.detailed_wid,
                             tClass:       tClass,
                             wid:          wid
-                        }).unbind('click touchstart').bind('click touchstart', vis.binds.table.onRowClick);
+                        }).unbind('click touchstart').bind('click touchstart', function (e){
+                            // Protect against two events
+                            var now = (new Date()).getTime();
+                            var lastClick = $(this).data('lc');
+                            if (lastClick && now - lastClick < 50) return;
+                            $(this).data('lc', now);
+
+                            vis.binds.table.onRowClick(e);
+                        });
                     $el = $(this).find('.tr_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id));
                 }
 
                 $('#' + this.id).find('.ack_button_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id))
                     .data('options', {data: newEvent, parent: this, ack_id: newEvent._ack_id || JSON.stringify(newEvent)})
-                    .unbind('click touchstart').bind('click touchstart', vis.binds.table.onAckButton);
+                    .unbind('click touchstart').bind('click touchstart', function (e){
+                        // Protect against two events
+                        var now = (new Date()).getTime();
+                        var lastClick = $(this).data('lc');
+                        if (lastClick && now - lastClick < 50) return;
+                        $(this).data('lc', now);
+
+                        vis.binds.table.onAckButton(e);
+                    });
             })
             .on('newTable', function (e, newVal) {
                 if (e.handled) return;

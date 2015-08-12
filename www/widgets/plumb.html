@@ -1442,6 +1442,12 @@
             vis.binds.plumb.plumb_drop($this);
 
             $(el).on('click touchstart', function () {
+                // Protect against two events
+                var now = (new Date()).getTime();
+                var lastClick = $(this).data('lc');
+                if (lastClick && now - lastClick < 50) return;
+                $(this).data('lc', now);
+
                 if (data.ctrl) {
                     if (vis.states[data.oid + '.val'] >= 1) {
                         vis.setValue(data.oid, 0);
@@ -1583,6 +1589,12 @@
             vis.binds.plumb.plumb_drop($this);
 
             $(el).on('click touchstart', function () {
+                // Protect against two events
+                var now = (new Date()).getTime();
+                var lastClick = $(this).data('lc');
+                if (lastClick && now - lastClick < 50) return;
+                $(this).data('lc', now);
+
                 if (data.ctrl) {
                     if (vis.states[data.oid + '.val'] >= 1) {
                         vis.setValue(data.oid, 0);

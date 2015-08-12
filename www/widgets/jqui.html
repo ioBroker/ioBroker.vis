@@ -168,6 +168,12 @@
             // Show dialog in edit mode too
             if (1 || !vis.editMode) {
                 $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     if ($dlg.data('preload')) $dlg.html(html);
 
                     if (persistent) {
@@ -226,6 +232,12 @@
             
             if (!vis.editMode) {
                 $(el).parent().find("div.vis-widget-body").on('click touchstart', function () {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     dlg.find("div[id$='container']").each(function () {
                         var cview = $(this).attr("data-vis-contains");
                         if (!vis.views[cview]) {
@@ -386,6 +398,12 @@
 
             if (!vis.editMode) {
                 $this.button().on('click touchstart', function () {
+                    // Protect against two events
+                    var now = (new Date()).getTime();
+                    var lastClick = $(this).data('lc');
+                    if (lastClick && now - lastClick < 50) return;
+                    $(this).data('lc', now);
+
                     vis.setValue(oid,  $(input).val());
                 });
             }
@@ -544,9 +562,15 @@
                 $this.find('input').each(function () {
                      if ($this.button('instance')) $(this).button('refresh');
                 });
-                // Buttonset -> Observable
-                $this.find('input').on('click touchstart', function () {
-                    if (!vis.editMode) {
+                if (!vis.editMode) {
+                    // Buttonset -> Observable
+                    $this.find('input').on('click touchstart', function () {
+                        // Protect against two events
+                        var now = (new Date()).getTime();
+                        var lastClick = $(this).data('lc');
+                        if (lastClick && now - lastClick < 50) return;
+                        $(this).data('lc', now);
+
                         var val = $(this).val();
                         var f = parseFloat(val);
                         if (f.toString() == val.toString()) {
@@ -554,8 +578,8 @@
                         } else {
                             vis.setValue(oid, val);
                         }
-                    }
-                });
+                    });
+                }
             }, 50);
         },
         iconHttpGet: function (el, url) {
@@ -563,6 +587,12 @@
             
             var $this = $(el).parent();
             $this.on('click touchstart', function (e) {
+                // Protect against two events
+                var now = (new Date()).getTime();
+                var lastClick = $(this).data('lc');
+                if (lastClick && now - lastClick < 50) return;
+                $(this).data('lc', now);
+
                 servConn.getUrl(url);
                 e.preventDefault();
             });
@@ -600,7 +630,7 @@
             setTimeout(function () {
                 $("div#vis_container").find("select[id$='_multiselect']").each(function () {
                     if ($(this).css("display") == "none") {
-                        $(this).multiselect('disable').next().removeClass("ui-state-disabled").unbind("click", false);
+                        $(this).multiselect('disable').next().removeClass("ui-state-disabled").unbind('click touchstart', false);
                     }
                 });
             }, 200);

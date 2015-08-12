@@ -139,7 +139,7 @@ vis.createDemoView = function () {
             //        "left" : 704,
             //        "top" : 346
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00007" : {
@@ -154,7 +154,7 @@ vis.createDemoView = function () {
             //        "width" : 54,
             //        "height" : 52
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00008" : {
@@ -169,7 +169,7 @@ vis.createDemoView = function () {
             //        "width" : 55,
             //        "height" : 118
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00009" : {
@@ -182,7 +182,7 @@ vis.createDemoView = function () {
             //        "left" : 484,
             //        "top" : 490
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00010" : {
@@ -195,7 +195,7 @@ vis.createDemoView = function () {
             //        "left" : 608,
             //        "top" : 617
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00011" : {
@@ -312,7 +312,7 @@ vis.createDemoView = function () {
             //        "left" : 582,
             //        "top" : 375
             //    },
-            //    "widgetSet" : "hqWidgets",
+            //    "widgetSet" : "hqwidgets",
             //    "renderVisible" : true
             //},
             //"w00018": {
