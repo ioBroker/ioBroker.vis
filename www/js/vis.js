@@ -115,7 +115,7 @@ var vis = {
     useCache:               false,
     authRunning:            false,
     cssChecked:             false,
-
+    isTouch:                'ontouchstart' in document.documentElement,
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
@@ -1778,10 +1778,13 @@ var vis = {
         }, 200);
     },
     detectBounce: function (el) {
+        if (!this.isTouch) return false;
+
         // Protect against two events
         var now = (new Date()).getTime();
         var lastClick = $(el).data('lc');
-        if (lastClick && now - lastClick < 150) return true;
+        $('.vis-resolution-default-view').html(now - lastClick);
+        if (lastClick && now - lastClick < 700) return true;
         $(el).data('lc', now);
         return false;
     }

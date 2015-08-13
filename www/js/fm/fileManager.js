@@ -70,6 +70,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         } else {
             config.path = o.path;
         }
+        o.filter = config.filter || '';
 
         // Analyse path, if it is a file name
         if (o.path && o.path[o.path.length - 1] != '/') {
@@ -113,8 +114,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             'Size'                              : {'de': 'Größe',                          'en': 'Size',                        'ru': 'Размер'},
             'Date'                              : {'de': 'Datum',                          'en': 'Date',                        'ru': 'Дата'},
             'Upload possible only to '          : {'de': 'Kann laden nur in ',             'en': 'Upload possible only to ',    'ru': 'Загрузка возможна только в '},
-            'Change background'                 : {'de': 'Dialog-Hintergrund ändern',      'en': 'Change dialog background',    'ru': 'Сменить фон окна'}
-
+            'Change background'                 : {'de': 'Dialog-Hintergrund ändern',      'en': 'Change dialog background',    'ru': 'Сменить фон окна'},
+            'Enter filter...'                   : {'de': 'Filter eingeben...',             'en': 'Enter filter...',             'ru': 'Задайте фильтр...'}
         };
 
         function fmTranslate(text) {
@@ -502,9 +503,16 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $('#fm_scroll_pane').perfectScrollbar('update');
 
                 } else {
-                    $(".fm-files").css({
-                        height: "calc(100% - 151px)"
-                    });
+                    if (o.mode == 'show') {
+                        $(".fm-files").css({
+                            height: "calc(100% - 80px)"
+                        });
+
+                    } else {
+                        $(".fm-files").css({
+                            height: "calc(100% - 151px)"
+                        });
+                    }
                 }
 
                 $(".fm_prev_overlay").click(function () {
@@ -585,6 +593,24 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 });
                 o.currentFile = null;
             }
+
+            filter(o);
+        }
+
+        function filter(o) {
+            $('.fm_prev_container').each(function () {
+                if (o.filter) {
+                    var filter = o.filter.toLowerCase();
+                    var filename = $(this).find('.fm_prev_name').text();
+                    if (filename.toLowerCase().indexOf(filter) == -1) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                } else {
+                    $(this).show();
+                }
+            });
         }
 
         $("body").append(
@@ -603,10 +629,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '        <img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
-                '        <button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
+                '        <input type="text" id="fm_bar_filter" style="width: calc(100% - 520px);" value="' + o.filter + '" placeholder="' + fmTranslate('Enter filter...') + '" />' +
                 '        <button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
+                '        <button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
                 '    </div>' +
-                '    <div class="fm-path-div" ui-state-default no_background">' + fmTranslate('Path:') + '<input class="fm-path" type="text" style="width: calc(100% - 80px);"></div>' +
+                '    <div class="fm-path-div" ui-state-default no_background">' + fmTranslate('Path:') + '<input class="fm-path" type="text" style="width: calc(100% - 150px);"></div>' +
                 '    <div class="fm-files ui-state-default no_background"></div>' +
                 '    <div class="fm-buttonbar">' +
                 '        <div id="fm_save_wrap">' +
@@ -621,6 +648,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '    </div>' +
                 '</div>');
 
+        // hide show all button if no filter set
+        if (!o.fileFilter.lenght) $('#fm_bar_all').hide();
+
         $("#dialog_fm").dialog({
             height:    $(window).height() - 100,
             width:     835,
@@ -632,6 +662,24 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 $("#dialog_fm").remove();
             }
         });
+
+        $('#fm_bar_filter').change(function () {
+            var timer = $(this).data('timer');
+            if (timer) clearTimeout(timer);
+
+            $(this).data('timer', setTimeout(function () {
+                o.filter = $('#fm_bar_filter').val();
+                config.filter = o.filter;
+
+                if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
+
+                // Use filter
+                filter(o);
+            }), 500);
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+
         // Set z-index of dialog
         if (o.zindex !== null) {
             $('div[aria-describedby="dialog_fm"]').css({'z-index': o.zindex});
@@ -736,6 +784,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $(this).removeClass('ui-state-highlight').addClass('ui-state-error');
                     $(".fm-files").removeClass('no_background fm-light-background').addClass('fm-dark-background');
                 }
+
+                config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
+                if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
             });
         if (config.background == 'fm-dark-background') {
             $("#fm_bar_background").addClass('ui-state-error');
@@ -991,9 +1042,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             config.all  = $("#fm_bar_all").hasClass("ui-state-error");
             config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
-            if (typeof storage != 'undefined') {
-                storage.set('visFM', JSON.stringify(config));
-            }
+            if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
+
             $("#dialog_fm").remove();
         });
 

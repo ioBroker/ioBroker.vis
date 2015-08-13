@@ -799,6 +799,29 @@ vis = $.extend(true, vis, {
             });
         });
 
+        if ($.fm) {
+            $('#li_menu_file_manager').click(function () {
+                var defPath = ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/');
+
+                $.fm({
+                    lang:         that.language,
+                    defaultPath:  defPath,
+                    path:         that.lastUserPath || defPath,
+                    uploadDir:    '/' + (that.conn.namespace ? that.conn.namespace + '/' : ''),
+                    fileFilter:   [],
+                    folderFilter: false,
+                    mode:         'show',
+                    view:         'prev',
+                    conn:         that.conn,
+                    zindex:       1001
+                }, function (_data) {
+                    that.lastUserPath = _data.path;
+                });
+            });
+        } else {
+            $('#li_menu_file_manager').hide();
+        }
+
         // Ribbon icons Golbal
 
         $('.icon-on-iconbar')
