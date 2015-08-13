@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.6.10',
+    version: '0.6.11',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -291,8 +291,53 @@ var vis = {
                 if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
                     this.views[view].widgets[id].widgetSet = 'hqwidgets';
                 }
-                for (var attr in data) {
 
+                // convert "Show on Value" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplShowValue') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = this.views[view].widgets[id].data.value;
+                    delete this.views[view].widgets[id].data.oid;
+                    delete this.views[view].widgets[id].data.value;
+                }
+
+                // convert "Hide on >0/True" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHideTrue') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-cond'] = '!=';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = true;
+                    delete this.views[view].widgets[id].data.oid;
+                }
+
+                // convert "Hide on 0/False" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHide') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-cond'] = '!=';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = false;
+                    delete this.views[view].widgets[id].data.oid;
+                }
+                // convert "Door/Window sensor" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHmWindow') {
+                    this.views[view].widgets[id].tpl = 'tplValueBool';
+                    this.views[view].widgets[id].data.html_false = this.views[view].widgets[id].data.html_closed;
+                    this.views[view].widgets[id].data.html_true  = this.views[view].widgets[id].data.html_open;
+                    delete this.views[view].widgets[id].data.html_closed;
+                    delete this.views[view].widgets[id].data.html_open;
+                }
+                // convert "Door/Window sensor" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHmWindowRotary') {
+                    this.views[view].widgets[id].tpl = 'tplValueListHtml8';
+                    this.views[view].widgets[id].data.count = 2;
+                    this.views[view].widgets[id].data.value0 = this.views[view].widgets[id].data.html_closed;
+                    this.views[view].widgets[id].data.value1 = this.views[view].widgets[id].data.html_open;
+                    this.views[view].widgets[id].data.value2 = this.views[view].widgets[id].data.html_tilt;
+                    delete this.views[view].widgets[id].data.html_closed;
+                    delete this.views[view].widgets[id].data.html_open;
+                    delete this.views[view].widgets[id].data.html_tilt;
+                }
+                for (var attr in data) {
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];

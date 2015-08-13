@@ -8,13 +8,13 @@
         // Add words for basic widgets
         $.extend(true, systemDictionary, {
             // Bars
-            "src":             {"en": "Source",                 "de": "Quelle",             "ru": "Адрес"},
-            "refreshInterval": {"en": "Refresh interval(ms)",   "de": "Updatezeit(ms)",     "ru": "Интервал обновления(ms)"},
-            "is_comma":        {"en": "Divider comma",          "de": "Komme als Trennung", "ru": "Запятая-разделитель"},
-            "digits":          {"en": "Digits after comma",     "de": "Zeichen nach Komma", "ru": "Знаков после запятой"},
-            "oid":             {"en": "Object ID",              "de": "Object ID",          "ru": "ID Объекта"},
-            "html_prepend":    {"en": "Prepend value",          "de": "Voranstellen HTML",  "ru": "Префикс значения"},
-            "html_append":     {"en": "Append to value",        "de": "HTML anhängen",      "ru": "Суффикс значения"},
+            "src":              {"en": "Source",                    "de": "Quelle",                 "ru": "Адрес"},
+            "refreshInterval":  {"en": "Refresh interval(ms)",      "de": "Updatezeit(ms)",         "ru": "Интервал обновления(ms)"},
+            "is_comma":         {"en": "Divider comma",             "de": "Komme als Trennung",     "ru": "Запятая-разделитель"},
+            "digits":           {"en": "Digits after comma",        "de": "Zeichen nach Komma",     "ru": "Знаков после запятой"},
+            "oid":              {"en": "Object ID",                 "de": "Object ID",              "ru": "ID Объекта"},
+            "html_prepend":     {"en": "Prepend value",             "de": "Voranstellen HTML",      "ru": "Префикс значения"},
+            "html_append":      {"en": "Append to value",           "de": "HTML anhängen",          "ru": "Суффикс значения"},
             "html_append_singular": {
                 "en" : "Append to value (Singular)",
                 "de": "HTML anhängen (Singulär)",
@@ -35,126 +35,128 @@
                 "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
                 "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
             },
-            "stretch":         {"en": "Stretch",                "de": "Strecken",           "ru": "Растянуть"},
-            "factor":          {"en": "Multiplex factor",       "de": "Multiplikation",     "ru": "Множитеть"},
-            "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-            "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
-            "test_html":       {"en": "Text for test",          "de": "Testtext",           "ru": "Тестовый текст"},
+            "stretch":          {"en": "Stretch",                   "de": "Strecken",               "ru": "Растянуть"},
+            "factor":           {"en": "Multiplex factor",          "de": "Multiplikation",         "ru": "Множитеть"},
+            "class_true":       {"en": "Class if quality 'true'",   "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
+            "class_false":      {"en": "Class if quality 'false'",  "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
+            "test_html":        {"en": "Text for test",             "de": "Testtext",               "ru": "Тестовый текст"},
             "test_html_tooltip": {
                 "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
                 "de": "Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.",
                 "ru": "Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования."
             },
-            "html":            {"en": "HTML",                   "de": "HTML",               "ru": "HTML"},
-            "oid-quality":     {"en": "Quality ID",             "de": "Qualität ID",        "ru": "ID-Качество"},
+            "html":             {"en": "HTML",                      "de": "HTML",                   "ru": "HTML"},
+            "oid-quality":      {"en": "Quality ID",                "de": "Qualität ID",            "ru": "ID-Качество"},
             "oid-quality_tooltip":     {
                 "en": "You can set additionally Quality ID to indicate if the value valid or not.",
                 "de": "Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.",
                 "ru": "Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет."},
-            "title":           {"en": "Title",                  "de": "Titel",              "ru": "Заголовок"},
-            "title_font":      {"en": "Title font name",        "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
-            "title_color":     {"en": "Title color",            "de": "Titelfarbe",         "ru": "Цвет заголовка"},
-            "title_back":      {"en": "Title backg. color",     "de": "Titelhintergrund",   "ru": "Цвет фона текста"},
-            "title_top":       {"en": "Title top padding",      "de": "Titel-Oben-Abstand", "ru": "Отступ заголовка сверху"},
-            "title_left":      {"en": "Title left padding",     "de": "Titel-Links-Abstand", "ru": "Отступ заголовка слева"},
-            "header_height":   {"en": "Header height",          "de": "Kopfhöhe",           "ru": "Высота заголовока"},
-            "header_color":    {"en": "Header color",           "de": "Kopffarbe",          "ru": "Цвет фона заголовка"},
-            "refreshOnWakeUp": {"en": "Refresh on wake up",     "de": "Update bei Aufwachen", "ru": "Обновлять при выходе из сна"},
+            "title":            {"en": "Title",                     "de": "Titel",                  "ru": "Заголовок"},
+            "title_font":       {"en": "Title font name",           "de": "Titelschriftname",       "ru": "Шрифт заголовка"},
+            "title_color":      {"en": "Title color",               "de": "Titelfarbe",             "ru": "Цвет заголовка"},
+            "title_back":       {"en": "Title backg. color",        "de": "Titelhintergrund",       "ru": "Цвет фона текста"},
+            "title_top":        {"en": "Title top padding",         "de": "Titel-Oben-Abstand",     "ru": "Отступ заголовка сверху"},
+            "title_left":       {"en": "Title left padding",        "de": "Titel-Links-Abstand",    "ru": "Отступ заголовка слева"},
+            "header_height":    {"en": "Header height",             "de": "Kopfhöhe",               "ru": "Высота заголовока"},
+            "header_color":     {"en": "Header color",              "de": "Kopffarbe",              "ru": "Цвет фона заголовка"},
+            "refreshOnWakeUp":  {"en": "Refresh on wake up",        "de": "Update bei Aufwachen",   "ru": "Обновлять при выходе из сна"},
             "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
-            "src_":            {"en": "URL, by value=",         "de": "URL falls Wert=",     "ru": "Адрес при значении "},
-            "nav_view":        {"en": "View to navigate",       "de": "View zum Navigieren", "ru": "Перейти на страницу"},
-            "group_effects":   {"en": "Show/Hide Effects",      "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезновения"},
-            "group_extended":  {"en": "Extended settings",      "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
-            "body-background": {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
-            "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
+            "src_":             {"en": "URL, by value=",            "de": "URL falls Wert=",        "ru": "Адрес при значении "},
+            "nav_view":         {"en": "View to navigate",          "de": "View zum Navigieren",    "ru": "Перейти на страницу"},
+            "group_effects":    {"en": "Show/Hide Effects",         "de": "Anzeige Effekte",        "ru": "Эффекты появления/исчезновения"},
+            "group_extended":   {"en": "Extended settings",         "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
+            "body-background":  {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
+            "sync":             {"en": "Hide and show together:",   "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
             // Effects
-            "show":            {"en": "show",                   "de": "show",               "ru": "show"},
-            "blind":           {"en": "blind",                  "de": "blind",              "ru": "blind"},
-            "bounce":          {"en": "bounce",                 "de": "bounce",             "ru": "bounce"},
-            "clip":            {"en": "clip",                   "de": "clip",               "ru": "clip"},
-            "drop":            {"en": "drop",                   "de": "drop",               "ru": "drop"},
-            "explode":         {"en": "explode",                "de": "explode",            "ru": "explode"},
-            "fade":            {"en": "fade",                   "de": "fade",               "ru": "fade"},
-            "fold":            {"en": "fold",                   "de": "fold",               "ru": "fold"},
-            "highlight":       {"en": "highlight",              "de": "highlight",          "ru": "highlight"},
-            "puff":            {"en": "puff",                   "de": "puff",               "ru": "puff"},
-            "pulsate":         {"en": "pulsate",                "de": "pulsate",            "ru": "pulsate"},
-            "scale":           {"en": "scale",                  "de": "scale",              "ru": "scale"},
-            "shake":           {"en": "shake",                  "de": "shake",              "ru": "shake"},
-            "size":            {"en": "size",                   "de": "size",               "ru": "size"},
-            "slide":           {"en": "slide",                  "de": "slide",              "ru": "slide"},
-            "is_milliseconds": {"en": "Milliseconds",           "de": "Millisekunden",      "ru": "Миллисекунды"},
+            "show":             {"en": "show",                      "de": "show",                   "ru": "show"},
+            "blind":            {"en": "blind",                     "de": "blind",                  "ru": "blind"},
+            "bounce":           {"en": "bounce",                    "de": "bounce",                 "ru": "bounce"},
+            "clip":             {"en": "clip",                      "de": "clip",                   "ru": "clip"},
+            "drop":             {"en": "drop",                      "de": "drop",                   "ru": "drop"},
+            "explode":          {"en": "explode",                   "de": "explode",                "ru": "explode"},
+            "fade":             {"en": "fade",                      "de": "fade",                   "ru": "fade"},
+            "fold":             {"en": "fold",                      "de": "fold",                   "ru": "fold"},
+            "highlight":        {"en": "highlight",                 "de": "highlight",              "ru": "highlight"},
+            "puff":             {"en": "puff",                      "de": "puff",                   "ru": "puff"},
+            "pulsate":          {"en": "pulsate",                   "de": "pulsate",                "ru": "pulsate"},
+            "scale":            {"en": "scale",                     "de": "scale",                  "ru": "scale"},
+            "shake":            {"en": "shake",                     "de": "shake",                  "ru": "shake"},
+            "size":             {"en": "size",                      "de": "size",                   "ru": "size"},
+            "slide":            {"en": "slide",                     "de": "slide",                  "ru": "slide"},
+            "is_milliseconds":  {"en": "Milliseconds",              "de": "Millisekunden",          "ru": "Миллисекунды"},
             "is_milliseconds_tooltip": {
                 "en": "Is object is milliseconds from 1970.01.01 00:00:00. Normally no.",
                 "de": "Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.",
                 "ru": "Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет."
             },
-            "format_date":     {"en": "Dateformat",             "de": "Datumformat",        "ru": "Формат даты"},
+            "format_date":      {"en": "Dateformat",                "de": "Datumformat",            "ru": "Формат даты"},
             "format_date_tooltip": {
                 "en": "Dateformat",
                 "de": "Datumformat",
                 "ru": "Формат даты"
             },
 
-            "hide_effect":     {"en": "Hide effect",            "de": "Verbergeneffekt",    "ru": "Эффект скрытия"},
-            "hide_duration":   {"en": "Hide duration(ms)",      "de": "Verbergendauer",     "ru": "Длительность скрытия(мс)"},
-            "hide_options":    {"en": "Hide options",           "de": "Verbergenoptionen",  "ru": "Опции скрытия"},
-            "show_effect":     {"en": "Show effect",            "de": "Anzeigeeffekt",      "ru": "Эффект появления"},
-            "show_duration":   {"en": "Show duration(ms)",      "de": "Anzeigedauer",       "ru": "Длительность появления(мс)"},
-            "show_options":    {"en": "Show options",           "de": "Anzeigeoptionen",    "ru": "Опции появления"},
-            "left":            {"en": "left",                   "de": "links",              "ru": "лево"},
-            "right":           {"en": "right",                  "de": "rechts",             "ru": "право"},
-            "top":             {"en": "top",                    "de": "oben",               "ru": "верх"},
-            "bottom":          {"en": "bottom",                 "de": "unten",              "ru": "низ"},
+            "hide_effect":      {"en": "Hide effect",               "de": "Verbergeneffekt",        "ru": "Эффект скрытия"},
+            "hide_duration":    {"en": "Hide duration(ms)",         "de": "Verbergendauer",         "ru": "Длительность скрытия(мс)"},
+            "hide_options":     {"en": "Hide options",              "de": "Verbergenoptionen",      "ru": "Опции скрытия"},
+            "show_effect":      {"en": "Show effect",               "de": "Anzeigeeffekt",          "ru": "Эффект появления"},
+            "show_duration":    {"en": "Show duration(ms)",         "de": "Anzeigedauer",           "ru": "Длительность появления(мс)"},
+            "show_options":     {"en": "Show options",              "de": "Anzeigeoptionen",        "ru": "Опции появления"},
+            "left":             {"en": "left",                      "de": "links",                  "ru": "лево"},
+            "right":            {"en": "right",                     "de": "rechts",                 "ru": "право"},
+            "top":              {"en": "top",                       "de": "oben",                   "ru": "верх"},
+            "bottom":           {"en": "bottom",                    "de": "unten",                  "ru": "низ"},
 
-            "contains_view":   {"en": "Contains view",          "de": "Viewname",           "ru": "Имя страницы"},
-            "persistent":      {"en": "Persistent",             "de": "Bleibend",           "ru": "Постоянно"},
+            "contains_view":    {"en": "Contains view",             "de": "Viewname",               "ru": "Имя страницы"},
+            "persistent":       {"en": "Persistent",                "de": "Bleibend",               "ru": "Постоянно"},
             "persistent_tooltip": {
                 "en": "If persistent the view will not be destroyed when inactive, just hide.\nElsewise the view will be destroyed, if inactive.",
                 "de": "Falls 'Bleibend', dann wird die View nicht zerstört, sondern nur versteckt wenn inaktive. Sonst wird die View immer wieder kreiert und zerstört.",
                 "ru": "Если выбранно 'Постоянно', то страница не будет уничтожаться, если она не активна. В противном случае страница будет создаваться и разрушаться."},
-            "valuelist":       {"en": "Values list",            "de": "Wertenliste",        "ru": "Список значений"},
+            "valuelist":        {"en": "Values list",               "de": "Wertenliste",            "ru": "Список значений"},
             "valuelist_tooltip": {
                 "en": "Divide values with semicolon, like 'ok;warning;alram'. Every text accordingly for value 0,1,2 and so on",
                 "de": "Die Werte mit Semikolon trennen, wie 'ok;Warnung;Alarm'. Jeder Text ist entsprechend für das Wert 0,1,2 usw.",
                 "ru": "Разделять значения точкой запятой, например 'ok;Внимание;Тревога'. Каждый текст соответственно для значения 0,1,2 итд."},
-            "html_false":      {"en": "HTML by 'false'",        "de": "HTML bei 'false'",   "ru": "HTML если 0"},
-            "html_true":       {"en": "HTML by 'true'",         "de": "HTML bei 'true'",    "ru": "HTML если 1"},
-            "text_false":      {"en": "Text by 'false'",        "de": "Text bei 'false'",   "ru": "Текст если 0"},
-            "text_true":       {"en": "Text by 'true'",         "de": "Text bei 'true'",    "ru": "Текст если 1"},
-            "svg_false":       {"en": "SVG by 'false'",         "de": "SVG bei 'false'",    "ru": "SVG если 0"},
-            "svg_true":        {"en": "SVG by 'true'",          "de": "SVG bei 'true'",     "ru": "SVG если 1"},
-            "svg_opacity":     {"en": "Opacity",                "de": "Durchsichtigkeit",   "ru": "Прозрачность"},
-            "html_closed":     {"en": "HTML by 'closed'",       "de": "HTML bei 'zu'",      "ru": "HTML если закрыто"},
-            "html_open":       {"en": "HTML by 'open'",         "de": "HTML bei 'auf'",     "ru": "HTML если открыто"},
-            "html_tilt":       {"en": "HTML by 'tilted'",       "de": "HTML bei 'gekippt'", "ru": "HTML если наклоненно"},
+            "html_false":       {"en": "HTML by 'false'",           "de": "HTML bei 'false'",       "ru": "HTML если 0"},
+            "html_true":        {"en": "HTML by 'true'",            "de": "HTML bei 'true'",        "ru": "HTML если 1"},
+            "text_false":       {"en": "Text by 'false'",           "de": "Text bei 'false'",       "ru": "Текст если 0"},
+            "text_true":        {"en": "Text by 'true'",            "de": "Text bei 'true'",        "ru": "Текст если 1"},
+            "svg_false":        {"en": "SVG by 'false'",            "de": "SVG bei 'false'",        "ru": "SVG если 0"},
+            "svg_true":         {"en": "SVG by 'true'",             "de": "SVG bei 'true'",         "ru": "SVG если 1"},
+            "svg_opacity":      {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Прозрачность"},
+            "html_closed":      {"en": "HTML by 'closed'",          "de": "HTML bei 'zu'",          "ru": "HTML если закрыто"},
+            "html_open":        {"en": "HTML by 'open'",            "de": "HTML bei 'auf'",         "ru": "HTML если открыто"},
+            "html_tilt":        {"en": "HTML by 'tilted'",          "de": "HTML bei 'gekippt'",     "ru": "HTML если наклоненно"},
             "html_tilt_tooltip": {
                 "en": "0 - Closed, 1 - tilt, 2 - open",
                 "de": "0- Zu, 1 - gekippt, 2 - auf",
                 "ru": "0 - закрыто, 1 - откинуто, 2 - открыто"
             },
-            "color":           {"en": "Color",                  "de": "Farbe",              "ru": "Цвет"},
-            "shadow":          {"en": "Opacity",                "de": "Durchsichtigkeit",   "ru": "Тень"},
-            "shadow_tooltip":  {
+            "color":            {"en": "Color",                     "de": "Farbe",                  "ru": "Цвет"},
+            "shadow":           {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Тень"},
+            "shadow_tooltip":   {
                 "en": "CSS Shadow, like '10px 10px 5px #888888'",
                 "de": "CSS Shatten, wie '10px 10px 5px #888888'",
                 "ru": "CSS Тень, как '10px 10px 5px #888888'"
             },
-            "reverse":         {"en": "Revers value",           "de": "Wert umkehren",      "ru": "Перевернуть значение"},
-            "border":          {"en": "Border",                 "de": "Rand",               "ru": "Окантовка"},
-            "border_tooltip":  {
+            "reverse":          {"en": "Revers value",              "de": "Wert umkehren",          "ru": "Перевернуть значение"},
+            "border":           {"en": "Border",                    "de": "Rand",                   "ru": "Окантовка"},
+            "border_tooltip":   {
                 "en": "CSS border, like 'green 5px solid'",
                 "de": "CSS Rand, wie 'green 5px solid'",
                 "ru": "CSS бордюр, как 'green 5px solid'"
             },
-            "test_text":       {"en": "Test text",              "de": "Testtext",           "ru": "Тестовый текст"},
-            "max_width":       {"en": "Max. width",             "de": "Maximale Breite",    "ru": "Максимальная ширина"},
-            "style":           {"en": "Style for ",             "de": "Stil für ",          "ru": "Стиль для "},
-            "style_tooltip":   {
+            "test_text":        {"en": "Test text",                 "de": "Testtext",               "ru": "Тестовый текст"},
+            "max_width":        {"en": "Max. width",                "de": "Maximale Breite",        "ru": "Максимальная ширина"},
+            "style":            {"en": "Style for ",                "de": "Stil für ",              "ru": "Стиль для "},
+            "style_tooltip":    {
                 "en": "Write here css style, like: 'color:red;background:white'",
                 "de": "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
                 "ru": "CSS Стиль, например: 'color:red;background:white'"},
-            "count":           {"en": "Values number to",       "de": "Wertsanzahl bis",    "ru": "Количество значений до"}
+            "count":            {"en": "Values number to",          "de": "Wertsanzahl bis",        "ru": "Количество значений до"},
+            "test_list":        {"en": "Test value",                "de": "Testwert",               "ru": "Тестовое значение"},
+            "urlValue":         {"en": "Call URL on click",         "de": "Rufe URL bei click",     "ru": "Вызвать URL при нажатии"}
         });
     }
 
@@ -292,7 +294,17 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
+                    var oid = $(this).attr('data-oid');
+
+                    if ($(this).attr('url-value')) {
+                        vis.conn.httpGet($(this).attr('url-value'));
+                    }
+
+                    if (oid) {
+                        var val = $(this).attr('data-val');
+                        if (val === undefined || val === null) val = false;
+                        if (oid) vis.setValue(oid, val);
+                    }
                 });
             }
         },
@@ -379,7 +391,7 @@
                 });
             }
         },
-        hideOnFalse: function (el) {
+        /*hideOnFalse: function (el) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
@@ -433,7 +445,7 @@
                     $this.hide();
                 }
             }
-        },
+        },*/
         _onChange: function (el, oid, wid) {
             var $this = $(el);
             // If still working
@@ -750,11 +762,9 @@
                 }
             }
         },
-        showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style) {
-            var obj = {myClass: myClass, view: view, wid: wid, oid: oid, opacity: opacity, svg_false: svg_false, svg_true: svg_true};
-            if (document.getElementById (wid)) {
-                $('#' + wid).remove ();
-            }
+        showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
+            if (document.getElementById (wid)) $('#' + wid).remove ();
+
             var str = vis.states.attr(oid + '.val');
             var val = parseFloat(str);
             var sText = '<svg class="vis-widget ' + (myClass || "") + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
@@ -766,56 +776,54 @@
             if (val === 0 || str === "false" || str === false || str === null) {
                 // try to analyse
                 sText += svg_false;
-            }
-            else {
+            } else {
                 sText += svg_true;
             }
             sText += '</svg>';
-            $('#visview_'+view).append (sText);
+            $('#visview_' + view).append (sText);
 
-            $('#' + wid).children().attr('data-wid', wid);
-            $('#' + wid).children().attr('data-oid', oid);
-            $('#' + wid).children().attr('opacity', opacity);
-            if ($('#' + wid).children()[0]) {
-                $('#' + wid).children()[0]._obj = obj;
-            }
+            if (style) $('#' + wid).css(style);
 
-            if (style) {
-                $('#' + wid).css(style);
-            }
+            function onSvgClick() {
+                // Protect against two events
+                if (vis.detectBounce(this)) return;
 
-            if (!vis.editMode) {
-                $('#' + wid).children().on('click touchstart', function () {
-                    // Protect against two events
-                    if (vis.detectBounce(this)) return;
-
-                    var $this = $(this);
-                    var id = $this.attr('data-oid');
-                    var val = vis.states[id + '.val'];
-                    if (val === null || val === '' || val === undefined || val === false || val === "false") {
-                        vis.setValue(id, true);
-                    } else if (val === true || val === "true") {
-                        vis.setValue(id, false);
+                var val = vis.states[oid + '.val'];
+                if (val === null || val === '' || val === undefined || val === false || val === "false") {
+                    vis.setValue(oid, true);
+                } else if (val === true || val === "true") {
+                    vis.setValue(oid, false);
+                } else {
+                    val = parseFloat(val);
+                    if (val >= 0.5) {
+                        val = 1;
                     } else {
-                        val = parseFloat(val);
-                        if (val >= 0.5) {
-                            val = 1;
-                        } else {
-                            val = 0;
-                        }
-                        vis.setValue(id, 1 - val);
+                        val = 0;
                     }
-                    var el = $('#' + obj.wid);
-                    this._obj.style = {
-                        position: 'absolute',
-                        top:      el.position().top,
-                        width:    el.width(),
-                        left:     el.position().left,
-                        height:   el.height()
-                    };
-                    _setTimeout(function (obj) {
-                        vis.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.oid, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
-                    }, 200, this._obj);
+                    vis.setValue(oid, 1 - val);
+                }
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', function (e, newVal) {
+                    if (newVal === 'true'  || newVal === true)  newVal = 1;
+                    if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
+                    $('#' + wid).html(newVal ? svg_true : svg_false);
+                    if (!vis.editMode && !no_control) {
+                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', onSvgClick);
+                    } else if (vis.editMode){
+                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                            vis.inspectWidgets([wid]);
+                        });
+                    }
+                });
+            }
+
+            if (!vis.editMode && !no_control) {
+                $('#' + wid).children().on('click touchstart', onSvgClick);
+            } else if (vis.editMode){
+                $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                    vis.inspectWidgets([wid]);
                 });
             }
         },
@@ -1381,6 +1389,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringImg.png"></img>'
         data-vis-type="val"
         data-vis-name="String img src"
         data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
@@ -1400,6 +1409,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueList.png"></img>'
         data-vis-type="val"
         data-vis-name="ValueList Text"
         data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
@@ -1433,10 +1443,11 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml8.png"></img>'
         data-vis-type="val"
         data-vis-name="ValueList HTML Style"
         data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px;" id="<%= this.data.attr('wid') %>">
         <%
             var slist = [];
             var i = 0;
@@ -1462,6 +1473,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBool.png"></img>'
         data-vis-type="val"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
@@ -1472,7 +1484,7 @@
             var str = vis.states.attr(this.data.oid + ".val");
             var val = parseFloat(str);
             var state;
-            if (str === false || str === "false" || val == 0) {
+            if (str === false || str === "false" || val == 0 || str === "" || str === null || str === undefined) {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
@@ -1487,6 +1499,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_AckBool.png"></img>'
         data-vis-type="val"
         data-vis-name="AckFlag HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
@@ -1529,11 +1542,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<div id="prev_tplValueBoolSelect" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 61px; height: 20px; position: absolute;"><div class="vis-widget-prev-body" style="overflow:false"><select><option value="1" selected>true</option></select></div></div></div>'
         data-vis-type="ctrl"
         data-vis-name="Bool Select"
         data-vis-attrs="oid;html_prepend;html_append;text_true;text_false">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
-        <div class="vis-widget-body">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:false" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body"  style="overflow:false">
 			<%== this.data.attr("html_prepend") %>
 			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>">
 				<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
@@ -1549,21 +1563,39 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCtrl.png"></img>'
         data-vis-type="ctrl"
         data-vis-name="Bool HTML"
-        data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+        data-vis-attrs="oid;min;max;html_prepend;html_append;html_false;html_true;"
+        data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;">
+    <div
+        class="vis-widget <%== this.data.attr('class') %>"
+        style="width:76px; height:76px;"
+        id="<%= this.data.attr('wid') %>"
+        data-oid="<%= this.data.attr('oid') %>"
+        data-min="<%= this.data.attr('min') %>"
+        data-max="<%= this.data.attr('max') %>"
+        data-as-button="<%= this.data.attr('asButton') %>"
+        data-url-true="<%=  this.data.attr('urlTrue') %>"
+        data-url-false="<%= this.data.attr('urlFalse') %>"
+        data-oid-true="<%=  this.data.attr('oidTrue') %>"
+        data-oid-false="<%= this.data.attr('oidFalse') %>"
+        <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
-			var str = vis.states.attr(this.data.oid + ".val");
-			var val = parseFloat(str);
-			var state;
-			if (val === 0 || str === "false" || str === false) {
+	        var str = (this.data.oid && this.data.oid != 'nothing_selected') ? vis.states.attr(this.data.oid + '.val') : false;
+            var val = parseFloat(str);
+            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
+            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            if (str === true  || str === 'true')  val = max;
+            if (str === false || str === 'false') val = min;
+
+			if (val != min) {
 			%>
-			    <%== this.data.attr("html_false") %>
-			<% } else { %>
 			    <%== this.data.attr("html_true") %>
+			<% } else { %>
+			    <%== this.data.attr("html_false") %>
 			<% } %>
 			<%== this.data.attr("html_append") %>
         </div>
@@ -1574,64 +1606,35 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<div id="prev_tplValueBoolCtrlSvg" style="position: relative; text-align: initial;padding: 4px "><svg class="vis-widget_prev " version="1.1" style="width: 80px; height: 80px; position: absolute;" xmlns="http://www.w3.org/2000/svg"><polygon points="100,10 40,198 190,78 10,78 160,198" style="fill:lime; stroke:purple; stroke-width:5; fill-rule:nonzero" transform="scale(0.3)"></polygon></svg></div>'
         data-vis-type="ctrl,bool"
         data-vis-name="Bool SVG"
-        data-vis-attrs="oid;svg_false;svg_true;svg_opacity/slider,0,1,0.05">
-    <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'),this.data.attr("svg_opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
+        data-vis-attrs="oid;no_control/checkbox;"
+        data-vis-attrs0="svg_false[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime§ stroke:purple§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
+        data-vis-attrs1="svg_true[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:yellow§ stroke:red§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
+        data-vis-attrs2="svg_opacity/slider,0,1,0.05">
+    <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'), this.data.attr('svg_opacity'), this.data.attr('svg_false'), this.data.attr('svg_true'), null, this.data.attr('no_control')) %>
 </script>
 
 <script id="tplBasicState"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets/basic/img/Prev_BasicState.png"></img>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="HTML State"
-        data-vis-attrs="html;oid;value">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
+        data-vis-attrs="oid;html;value;urlValue">
+    <div
+        class="vis-widget <%== this.data.attr('class') %>"
+        style="width:76px; height:76px;"
+        id="<%= this.data.attr('wid') %>"
+        data-oid="<%= this.data.attr('oid') %>"
+        data-url-value="<%= this.data.attr('urlValue') %>"
+        data-val="<%= this.data.attr('value') %>"
+        <%= (el) -> vis.binds.basic.state(el) %>
+        >
         <div class="vis-widget-body">
 			<%== this.data.attr("html") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHide"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Hide on 0/False"
-        data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHideTrue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Hide on >0/True"
-        data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnTrue(el) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplShowValue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Show on Value"
-        data-vis-attrs="oid;value;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.showOnValue(el, data.attr('value')) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -1686,46 +1689,6 @@
         <img src="img/bulb_on.png" width="100%"/>
         <% } %>
     </div>
-    </div>
-</script>
-
-<script id="tplHmWindowRotary"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Turning handle"
-        data-vis-attrs="oid;html_closed;html_tilt;html_open">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>">
-        <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "false": case false: %>
-            <%== this.data.attr("html_closed") %>
-            <% break; case 1: case true: %>
-            <%== this.data.attr("html_tilt") %>
-            <% break; case 2: %>
-            <%== this.data.attr("html_open") %>
-            <% break; default: %>
-            <%== this.data.attr("html_closed") %>
-            <% } %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHmWindow"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Door/Window sensor"
-        data-vis-attrs="oid;html_closed;html_open">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
-        <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + ".val")) { case "true": case true: %>
-            <%== this.data.attr("html_open") %>
-            <% break; default: %>
-            <%== this.data.attr("html_closed") %>
-            <% } %>
-        </div>
     </div>
 </script>
 
@@ -1798,7 +1761,7 @@
         data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
         data-vis-name="HTML logout"
         data-vis-attrs="html[Logout]/text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.conn.logout(function(){location.reload()})">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
         </div>
