@@ -214,7 +214,9 @@ vis.binds.table = {
         }
         var k = 1;
         for (var obj in rowData) {
-            if(obj.match(/^jQuery/)) continue;
+            if (obj.match(/^jQuery/) ||
+                typeof rowData[obj] == 'function' ||
+                !rowData.hasOwnProperty(obj)) continue;
 
             var attr = options['colAttr' + k] || obj;
 
@@ -294,6 +296,8 @@ vis.binds.table = {
         var selectedId = null;
 
         if (options.max_rows) options.max_rows = parseInt(options.max_rows);
+        debugger;
+
 
         // Go through all lines
         for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
@@ -305,9 +309,10 @@ vis.binds.table = {
             if (!headerDone) {
                 header += '<tr class="' + tClass + '-th">';
                 var k = 1;
-
                 for (var obj in table[ii]) {
-                    if (obj.match(/^jQuery/)) continue;
+                    if (obj.match(/^jQuery/) ||
+                        typeof table[ii][obj] == 'function' ||
+                        !table[ii].hasOwnProperty(obj)) continue;
 
                     var attr = options['colAttr' + k] || obj;
 
