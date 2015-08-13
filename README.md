@@ -145,6 +145,14 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.11 (2015-08-12)
+* (bluefox) improve click bounce detection
+* (bluefox) add filter to fileManager
+* (bluefox) add file manager to "setup" menu
+* (bluefox) fix SVG
+* (bluefox) remove: Hide on >0/True, Show on Value, Hide on 0/False, Turning handle, Door/Window sensor
+* (bluefox) add all previews in basic
+
 ### 0.6.10 (2015-08-11)
 - (bluefox) protect against double event: click and touchstart
 - (bluefox) implement urlTrue/urlFalse and oidTrue/oirFalse by jqui-mfd/socket 
