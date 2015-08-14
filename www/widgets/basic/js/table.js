@@ -296,8 +296,6 @@ vis.binds.table = {
         var selectedId = null;
 
         if (options.max_rows) options.max_rows = parseInt(options.max_rows);
-        debugger;
-
 
         // Go through all lines
         for (var ii = 0, ilen = table.length; ii < ilen; ii++) {
