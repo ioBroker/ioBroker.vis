@@ -156,7 +156,14 @@
                 "ru": "CSS Стиль, например: 'color:red;background:white'"},
             "count":            {"en": "Values number to",          "de": "Wertsanzahl bis",        "ru": "Количество значений до"},
             "test_list":        {"en": "Test value",                "de": "Testwert",               "ru": "Тестовое значение"},
-            "urlValue":         {"en": "Call URL on click",         "de": "Rufe URL bei click",     "ru": "Вызвать URL при нажатии"}
+            "urlValue":         {"en": "Call URL on click",         "de": "Rufe URL bei click",     "ru": "Вызвать URL при нажатии"},
+            "group_ccontrol":   {"en": "Advanced control",          "de": "Extrasteuerung",         "ru": "Продвинутое управление"},
+            "urlFalse":         {"en": "URL on false",              "de": "URL bei false",          "ru": "URL при false"},
+            "urlTrue":          {"en": "URL on true",               "de": "URL bei true",           "ru": "URL при true"},
+            "oidFalse":         {"en": "Object ID on false",        "de": "Objekt ID bei false",    "ru": "ID объекта при false"},
+            "oidTrue":          {"en": "Object ID on true",         "de": "Objekt ID bei true",     "ru": "ID объекта при true"},
+            "oidTrueValue":     {"en": "Value for OÍD on true",     "de": "Wert für ID bei false",  "ru": "Значение для ID при false"},
+            "oidFalseValue":    {"en": "Value for OÍD on false",    "de": "Wert für ID bei true",   "ru": "Значение для ID при true"}
         });
     }
 
@@ -615,10 +622,12 @@
             var min = $this.data('min');
             var max = $this.data('max');
 
-            var urlTrue  = $this.data('url-true');
-            var urlFalse = $this.data('url-false');
-            var oidTrue  = $this.data('oid-true');
-            var oidFalse = $this.data('oid-false');
+            var urlTrue     = $this.data('url-true');
+            var urlFalse    = $this.data('url-false');
+            var oidTrue     = $this.data('oid-true');
+            var oidFalse    = $this.data('oid-false');
+            var oidTrueVal  = $this.data('oid-true-value');
+            var oidFalseVal = $this.data('oid-false-value');
 
             if (min === '') min = undefined;
             if (max === '') max = undefined;
@@ -651,11 +660,23 @@
 
                         if (oidTrue) {
                             if (val) {
-                                vis.setValue(oidTrue,  max);
+                                if (oidTrueVal === undefined || oidTrueVal === null) oidTrueVal = max;
+                                if (oidTrueVal === 'false') oidTrueVal = false;
+                                if (oidTrueVal === 'true')  oidTrueVal = true;
+                                var f = parseFloat(oidTrueVal);
+                                if (f.toString() == oidTrueVal) oidTrueVal = f;
+                                vis.setValue(oidTrue,  oidTrueVal);
                             } else {
-                                vis.setValue(oidFalse, min);
+                                if (oidFalseVal === undefined || oidFalseVal === null) oidFalseVal = min;
+                                if (oidFalseVal === 'false') oidFalseVal = false;
+                                if (oidFalseVal === 'true')  oidFalseVal = true;
+                                var f = parseFloat(oidFalseVal);
+                                if (f.toString() == oidFalseVal) oidFalseVal = f;
+                                vis.setValue(oidFalse, oidFalseVal);
                             }
-                        } else {
+                        }
+
+                        if (urlTrue) {
                             if (val) {
                                 vis.conn.httpGet(urlTrue)
                             } else {
@@ -1034,6 +1055,16 @@
                     $('.vis-resolution-default-view').html(vis.findNearestResolution());
                 }
             }, 100);
+        },
+        isFalse: function (val, min) {
+            if (min !== undefined && min !== null) {
+                return val == min;
+            }
+            if (val === undefined || val === null || val === false || val === 'false' || val === '') return true;
+            if (val === '0' || val === 0) return true;
+            var f = parseFloat(val);
+            if (f.toString() !== 'NaN') return !f;
+            return true;
         }
     };
 
@@ -1680,15 +1711,31 @@
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
-    <div class="vis-widget-body">
-        <% switch (vis.states.attr(this.data.oid + ".val")) { case null: case '': case undefined: case 0: case "0": case "0.000000": case "false": case false: %>
-        <img src="img/bulb_off.png" width="100%"/>
-        <% break; default: %>
-        <img src="img/bulb_on.png" width="100%"/>
-        <% } %>
-    </div>
+        data-vis-attrs="oid;min;max;"
+        data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
+        >
+    <div
+        data-oid="<%= this.data.attr('oid') %>"
+        class="vis-widget <%== this.data.attr('class') %>"
+        id="<%= this.data.attr('wid') %>"
+        style="width: 44px; height: 59px"
+        data-min="<%= this.data.attr('min') %>"
+        data-max="<%= this.data.attr('max') %>"
+        data-url-true="<%=  this.data.attr('urlTrue') %>"
+        data-url-false="<%= this.data.attr('urlFalse') %>"
+        data-oid-true="<%=  this.data.attr('oidTrue') %>"
+        data-oid-false="<%= this.data.attr('oidFalse') %>"
+        data-oid-true-value="<%=  this.data.attr('oidTrueValue') %>"
+        data-oid-false-value="<%= this.data.attr('oidFalseValue') %>"
+        <%= (el) -> vis.binds.basic.toggle(el) %>
+        >
+        <div class="vis-widget-body">
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'))) { %>
+                <img src="img/bulb_off.png" width="100%"/>
+            <% } else { %>
+                <img src="img/bulb_on.png" width="100%"/>
+            <% } %>
+        </div>
     </div>
 </script>
 

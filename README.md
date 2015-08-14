@@ -145,6 +145,11 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.12 (2015-08-14)
+* (bluefox) update development packets
+* (bluefox) improve table widget (do not try to show functions)
+* (bluefox) support of custom set OIDs for metro/toggle, basic/BulbOnOff, jqui-mfd/socketCtrl
+
 ### 0.6.11 (2015-08-12)
 * (bluefox) improve click bounce detection
 * (bluefox) add filter to fileManager

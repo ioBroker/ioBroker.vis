@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.6.11",
+  "version": "0.6.12",
   "author": {
     "name": "bluefox",
     "email": "bluefox@ccu.io"
@@ -47,7 +47,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node main.js --install"
+    "install": "node main.js --install",
+    "prepublish": "node node_modules/grunt/lib/grunt prepublish"
   },
   "license": "CC-BY-NC-4.0"
 }

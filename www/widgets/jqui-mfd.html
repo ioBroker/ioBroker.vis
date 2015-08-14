@@ -43,12 +43,7 @@
             "url":          {"en": "URL",                   "de": "URL",                    "ru": "URL"},
             "interval":     {"en": "Update interval(ms)",   "de": "Update-Intervall(ms)",   "ru": "Интервал обновления (мс)"},
             "group_icons":  {"en": "Icons",                 "de": "Bilder",                 "ru": "Иконки"},
-            "group_values": {"en": "Values",                "de": "Werte",                  "ru": "Значения"},
-            "group_ccontrol": {"en": "Advanced control",    "de": "Extrasteuerung",         "ru": "Продвинутое управление"},
-            "urlFalse":     {"en": "URL on false",          "de": "URL bei false",          "ru": "URL при false"},
-            "urlTrue":      {"en": "URL on true",           "de": "URL bei true",           "ru": "URL при true"},
-            "oidFalse":     {"en": "Object ID on false",    "de": "Objekt ID bei false",    "ru": "ID объекта при false"},
-            "oidTrue":      {"en": "Object ID on true",     "de": "Objekt ID bei true",     "ru": "ID объекта при true"}
+            "group_values": {"en": "Values",                "de": "Werte",                  "ru": "Значения"}
         });
     }
 
@@ -119,7 +114,8 @@
         data-vis-set="jqui-mfd"
         data-vis-type="light;ctrl"
         data-vis-name="ctrl - Light"
-        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox">
+        data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;"
+        >
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" data-min="<%= this.data.attr('min') %>" data-max="<%= this.data.attr('max') %>" <%= (el) -> vis.binds.basic.toggle(el); this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div class="vis-widget-body" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']);  %>>
             <%
@@ -347,7 +343,8 @@
         data-vis-prev='<div id="prev_tplMfdSocketCtrl" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px"><div class="vis-widget-prev-body"><img width="100%" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/message_socket_on.png"></div></div></div>'
         data-vis-attrs="oid;min;max;invert_state/checkbox;asButton[true]/checkbox;"
         data-vis-attrs0="group.icon;invert_icon/checkbox;icon_off/image;icon_on/image;"
-        data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;">
+        data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
+        >
     <div
         data-oid="<%= this.data.attr('oid') %>"
         class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>"
@@ -360,6 +357,8 @@
         data-url-false="<%= this.data.attr('urlFalse') %>"
         data-oid-true="<%=  this.data.attr('oidTrue') %>"
         data-oid-false="<%= this.data.attr('oidFalse') %>"
+        data-oid-true-value="<%=  this.data.attr('oidTrueValue') %>"
+        data-oid-false-value="<%= this.data.attr('oidFalseValue') %>"
         data-img-class="toggle-image"
         data-img-true="<%=  this.data.attr('icon_on')  ? this.data.attr('icon_on')  : 'widgets/jqui-mfd/img/message_socket_on.png'  %>"
         data-img-false="<%= this.data.attr('icon_off') ? this.data.attr('icon_off') : 'widgets/jqui-mfd/img/message_socket_off.png' %>"

@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.6.11',
+    version: '0.6.12',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -412,7 +412,7 @@ var vis = {
                                     }
                                 }
                             }
-                        } else if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
+                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr])) {
                             if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
 
                             // Visibility binding
