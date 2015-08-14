@@ -190,6 +190,7 @@ vis = $.extend(true, vis, {
                         list: _('list'),
                         tree: _('tree')
                     },
+                    noMultiselect: true,
                     columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
                     imgPath: '/lib/css/fancytree/',
                     objects: this.objects,

@@ -204,7 +204,11 @@ var vis = {
             cache:    this.useCache,
             success:  function (data) {
                 setTimeout(function () {
-                    $('head').append(data);
+                    try{
+                        $('head').append(data);
+                    } catch (e) {
+                        console.error('Cannot load widget set "' + name + '": ' + e);
+                    }
                     that.toLoadSetsCount -= 1;
                     if (that.toLoadSetsCount <= 0) {
                         that.showWaitScreen(true, null, null, 100);
