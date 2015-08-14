@@ -251,4 +251,6 @@ module.exports = function (grunt) {
         'jshint',
         'jscs'
     ]);
+	
+	grunt.registerTask('prepublish', ['replace']);
 };
