@@ -2343,6 +2343,9 @@ vis = $.extend(true, vis, {
                     if (vis.binds.bars && vis.binds.bars.convertOldBars && importObject[v][w].data.baroptions) {
                         importObject[v][w] = vis.binds.bars.convertOldBars(importObject[v][w]);
                     }
+                    if (vis.binds.hqwidgets && vis.binds.hqwidgets.convertOldWidgets && importObject[v][w].data.hqoptions) {
+                        importObject[v][w] = vis.binds.hqwidgets.convertOldWidgets(importObject[v][w]);
+                    }
                 }
                 // Remove active widgets
                 if (importObject[v].activeWidgets) delete importObject[v].activeWidgets;
@@ -2362,6 +2365,9 @@ vis = $.extend(true, vis, {
             for (var widget in this.views[_name].widgets) {
                 if (this.binds.bars && this.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
                     this.views[_name].widgets[widget] = this.binds.bars.convertOldBars(this.views[_name].widgets[widget]);
+                }
+                if (vis.binds.hqwidgets && vis.binds.hqwidgets.convertOldWidgets && importObject[v][w].data.hqoptions) {
+                    importObject[v][w] = vis.binds.hqwidgets.convertOldWidgets(importObject[v][w]);
                 }
 
                 this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];

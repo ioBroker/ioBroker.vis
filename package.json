@@ -47,8 +47,7 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "install": "node main.js --install",
-    "prepublish": "node node_modules/grunt/lib/grunt prepublish"
+    "install": "node main.js --install"
   },
   "license": "CC-BY-NC-4.0"
 }

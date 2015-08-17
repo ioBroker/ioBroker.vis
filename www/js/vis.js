@@ -1327,8 +1327,20 @@ var vis = {
             // Take care: return true if widget is hidden!
             switch (condition) {
                 case '==':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
                     return value != val;
                 case '!=':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
                     return value == val;
                 case '>=':
                     return val < value;
@@ -1339,6 +1351,8 @@ var vis = {
                 case '<':
                     return val >= value;
                 case 'consist':
+                    value = value.toString();
+                    val   = val.toString();
                     return (val.toString().indexOf(value) === -1);
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);

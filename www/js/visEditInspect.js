@@ -167,28 +167,29 @@ vis = $.extend(true, vis, {
                 $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
                 $('#dialog-select-member-' + widAttr).selectId('init', {
                     texts: {
-                        select: _('Select'),
-                        cancel: _('Cancel'),
-                        all: _('All'),
-                        id: _('ID'),
-                        name: _('Name'),
-                        role: _('Role'),
-                        room: _('Room'),
-                        value: _('Value'),
-                        selectid: _('Select ID'),
-                        enum: _('Members'),
-                        from: _('from'),
-                        lc: _('lc'),
-                        ts: _('ts'),
-                        ack: _('ack'),
-                        expand: _('expand'),
-                        collapse: _('collapse'),
-                        refresh: _('refresh'),
-                        edit: _('edit'),
-                        ok: _('ok'),
-                        wait: _('wait'),
-                        list: _('list'),
-                        tree: _('tree')
+                        select:          _('Select'),
+                        cancel:          _('Cancel'),
+                        all:             _('All'),
+                        id:              _('ID'),
+                        name:            _('Name'),
+                        role:            _('Role'),
+                        room:            _('Room'),
+                        value:           _('Value'),
+                        selectid:        _('Select ID'),
+                        enum:            _('Members'),
+                        from:            _('from'),
+                        lc:              _('lc'),
+                        ts:              _('ts'),
+                        ack:             _('ack'),
+                        expand:          _('expand'),
+                        collapse:        _('collapse'),
+                        refresh:         _('refresh'),
+                        edit:            _('edit'),
+                        ok:              _('ok'),
+                        wait:            _('wait'),
+                        list:            _('list'),
+                        tree:            _('tree'),
+                        copyToClipboard: _('Copy to clipboard')
                     },
                     noMultiselect: true,
                     columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
@@ -604,13 +605,13 @@ vis = $.extend(true, vis, {
         var line;
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group].css_background               = {input: '<input type="text" id="inspect_css_background"/>'};
+        this.groups[group].css_background               = {input: '<input type="text" id="inspect_css_background" class="vis-edit-textbox vis-inspect-widget"/>'};
         this.groups[group]['css_background-color']      = this.editColor('css_background-color');
-        this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"/>'};
+        this.groups[group]['css_background-image']      = {input: '<input type="text" id="inspect_background-image"  class="vis-edit-textbox vis-inspect-widget"/>'};
         this.groups[group]['css_background-repeat']     = this.editSelect('css_background-repeat', ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'], true);
         this.groups[group]['css_background-attachment'] = this.editSelect('css_background-attachment', ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'], true);
-        this.groups[group]['css_background-position']   = {input: '<input type="text" id="inspect_background-position"/>'};
-        this.groups[group]['css_background-size']       = {input: '<input type="text" id="inspect_background-size"/>'};
+        this.groups[group]['css_background-position']   = {input: '<input type="text" id="inspect_background-position"  class="vis-edit-textbox vis-inspect-widget"/>'};
+        this.groups[group]['css_background-size']       = {input: '<input type="text" id="inspect_background-size"  class="vis-edit-textbox vis-inspect-widget"/>'};
         this.groups[group]['css_background-clip']       = this.editSelect('css_background-clip', ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'], true);
         this.groups[group]['css_background-origin']     = this.editSelect('css_background-origin', ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'], true);
 
