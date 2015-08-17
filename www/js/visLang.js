@@ -68,6 +68,7 @@ $.extend(systemDictionary, {
     "name":                 {"en": "Name",              "de": "Name",                   "ru": "Имя"},
     "Select color":         {"en": "Select color",      "de": "Farbe auswählen",        "ru": "Выбрать цвет"},
     "File manager...":      {"en": "File manager...",   "de": "Datei Manager",          "ru": 'Проводник...'},
+    "Copy to clipboard":    {"en": "Copy to clipboard", "de": "In den Zwischenpuffer kopieren",      "ru": "Копировать в буфер обмена"},
     'Confirm widget deletion': {
         'en': 'Confirm widget deletion',
         'de': 'Bestätigung',

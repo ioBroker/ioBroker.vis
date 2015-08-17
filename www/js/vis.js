@@ -1225,7 +1225,7 @@ var vis = {
                 autoOpen: false,
                 modal:    true,
                 open: function () {
-                    $(this).parent().css({'z-index': 1001});
+                    $(this).parent().css({'z-index': 1003});
                 },
                 buttons: [
                     {

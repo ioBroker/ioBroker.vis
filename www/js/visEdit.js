@@ -2366,8 +2366,8 @@ vis = $.extend(true, vis, {
                 if (this.binds.bars && this.binds.bars.convertOldBars && this.views[_name].widgets[widget].data.baroptions) {
                     this.views[_name].widgets[widget] = this.binds.bars.convertOldBars(this.views[_name].widgets[widget]);
                 }
-                if (vis.binds.hqwidgets && vis.binds.hqwidgets.convertOldWidgets && importObject[v][w].data.hqoptions) {
-                    importObject[v][w] = vis.binds.hqwidgets.convertOldWidgets(importObject[v][w]);
+                if (vis.binds.hqwidgets && vis.binds.hqwidgets.convertOldWidgets && this.views[_name].widgets[widget].data.hqoptions) {
+                    this.views[_name].widgets[widget] = vis.binds.hqwidgets.convertOldWidgets(this.views[_name].widgets[widget]);
                 }
 
                 this.views[_name].widgets[this.nextWidget()] = this.views[_name].widgets[widget];
