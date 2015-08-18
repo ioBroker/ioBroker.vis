@@ -1196,6 +1196,16 @@
 
         showActive($dlg);
         loadSettings(data);
+
+        // set preset filters
+        for (var field in data.filterPresets) {
+            if (!data.filterPresets[field]) continue;
+            if (typeof data.filterPresets[field] == 'object') {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field][0]).trigger('change');
+            } else {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field]).trigger('change');
+            }
+        }
     }
 
     function storeSettings(data) {
@@ -1223,13 +1233,6 @@
                 } catch(e) {
                     console.error('Cannot parse settings: ' + e);
                 }
-            }
-        }
-        for (var field in data.filterPresets) {
-            if (typeof data.filterPresets[field] == 'object') {
-                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field][0]).trigger('change');
-            } else {
-                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field]).trigger('change');
             }
         }
     }
