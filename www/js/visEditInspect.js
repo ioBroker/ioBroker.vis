@@ -191,6 +191,7 @@ vis = $.extend(true, vis, {
                         tree:            _('tree'),
                         copyToClipboard: _('Copy to clipboard')
                     },
+                    filterPresets:  {role: widgetFilter},
                     noMultiselect: true,
                     columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
                     imgPath: '/lib/css/fancytree/',
@@ -904,7 +905,7 @@ vis = $.extend(true, vis, {
         // Depends on attribute type
         switch (widAttr.type) {
             case 'id':
-                line = this.editObjectID(widAttr.name);
+                line = this.editObjectID(widAttr.name, widAttr.options);
                 break;
             case 'checkbox':
                 // All other attributes

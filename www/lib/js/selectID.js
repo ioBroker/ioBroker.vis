@@ -1217,12 +1217,19 @@
                     f = JSON.parse(f);
                     for (var field in f) {
                         if (field == 'length') continue;
+                        if (data.filterPresets[field]) continue;
                         $('#filter_' + field + '_' + data.instance).val(f[field]).trigger('change');
                     }
-
                 } catch(e) {
                     console.error('Cannot parse settings: ' + e);
                 }
+            }
+        }
+        for (var field in data.filterPresets) {
+            if (typeof data.filterPresets[field] == 'object') {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field][0]).trigger('change');
+            } else {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field]).trigger('change');
             }
         }
     }
