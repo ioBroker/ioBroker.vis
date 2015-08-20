@@ -199,6 +199,8 @@ vis = $.extend(true, vis, {
                     states:  this.states,
                     zindex:  1001
                 });
+            } else {
+                $('#dialog-select-member-' + widAttr).selectId('option', 'filterPresets',  {role: widgetFilter});
             }
         }
 

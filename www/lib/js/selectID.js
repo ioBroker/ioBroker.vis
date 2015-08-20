@@ -152,6 +152,7 @@
         var isRoom  = data.columns.indexOf('room') != -1;
         var isRole  = data.columns.indexOf('role') != -1;
         data.tree = {title: '', children: [], count: 0, root: true};
+        data.enums = [];
 
         for (var id in objects) {
             if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
@@ -1671,6 +1672,20 @@
                 }
             }
             return this;
+        },
+        "option": function (name, value) {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                if (!data) continue;
+
+                if (data[name] !== undefined) {
+                    data[name] = value;
+                } else {
+                    console.error('Unknown options for selectID: ' + name);
+                }
+            }
         },
         "objectAll": function (id, obj) {
             $('.select-id-dialog-marker').selectId('object', id, obj);
