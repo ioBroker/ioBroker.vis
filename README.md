@@ -145,6 +145,14 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.13 (2015-08-23)
+* (bluefox) update select ID dialog, support of role filter in selectId dialog
+* (bluefox) fix Gruntfile.js
+* (bluefox) call convertOldHqWidgets by import
+* (bluefox) remove prepublish script
+* (bluefox) allow for visibility false/0, true/1
+* (bluefox) support of import of old hqWidgets
+
 ### 0.6.12 (2015-08-14)
 * (bluefox) update development packets
 * (bluefox) improve table widget (do not try to show functions)
