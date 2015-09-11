@@ -682,14 +682,25 @@
                     $svg = $svg.attr('height', '100%');
                     $svg.find('path').each(function () {
                         var style = $(this).attr('style');
-                        style = style.replace(/#FFFFFF/g, color);
-                        $(this).attr('style', style);
+                        if (style) {
+                            style = style.replace(/#FFFFFF/g, color);
+                            $(this).attr('style', style);
+                        }
                     });
                     $svg.find('line').each(function () {
                         var style = $(this).attr('style');
-                        style = style.replace(/#FFFFFF/g, color);
-                        $(this).attr('style', style);
-                    })
+                        if (style) {
+                            style = style.replace(/#FFFFFF/g, color);
+                            $(this).attr('style', style);
+                        }
+                    });
+                    $svg.find('rect').each(function () {
+                        var style = $(this).attr('style');
+                        if (style) {
+                            style = style.replace(/#FFFFFF/g, color);
+                            $(this).attr('style', style);
+                        }
+                    });
 
 
                     // Replace image with new SVG

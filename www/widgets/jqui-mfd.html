@@ -43,7 +43,8 @@
             "url":          {"en": "URL",                   "de": "URL",                    "ru": "URL"},
             "interval":     {"en": "Update interval(ms)",   "de": "Update-Intervall(ms)",   "ru": "Интервал обновления (мс)"},
             "group_icons":  {"en": "Icons",                 "de": "Bilder",                 "ru": "Иконки"},
-            "group_values": {"en": "Values",                "de": "Werte",                  "ru": "Значения"}
+            "group_values": {"en": "Values",                "de": "Werte",                  "ru": "Значения"},
+            "iconColor":    {"en": "Icon color",            "de": "Ikonfarbe",              "ru": "Цвет иконки"}
         });
     }
 
@@ -513,41 +514,47 @@
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
     <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
-        <%
-            var styles = "";
-            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
-            }
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
-            var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
+            <%
+                var styles = "";
+                if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+                    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+                }
+                var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
+                var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
 
-            if (this.data.attr('invert_value')) val = max - val + min;
+                if (this.data.attr('invert_value')) val = max - val + min;
 
+                var image = '';
             if (val >= max) {
-        %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_100.png"/>
-        <% } else if (val >= min + (max - min) * 0.9) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_90.png"/>
-        <% } else if (val >= min + (max - min) * 0.8) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_80.png"/>
-        <% } else if (val >= min + (max - min) * 0.7) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_70.png"/>
-        <% } else if (val >= min + (max - min) * 0.6) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_60.png"/>
-        <% } else if (val >= min + (max - min) * 0.5) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_50.png"/>
-        <% } else if (val >= min + (max - min) * 0.4) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_40.png"/>
-        <% } else if (val >= min + (max - min) * 0.3) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"/>
-        <% } else if (val >= min + (max - min) * 0.2) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_20.png"/>
-        <% } else if (val >= min + (max - min) * 0.1) { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_shutter_10.png"/>
-        <% } else { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/fts_window_2w.png"/>
-        <% } %>
+                image = "fts_shutter_100";
+            } else if (val >= min + (max - min) * 0.9) {
+                image = "fts_shutter_90";
+            } else if (val >= min + (max - min) * 0.8) {
+                image = "fts_shutter_80";
+            } else if (val >= min + (max - min) * 0.7) {
+                image = "fts_shutter_70";
+            } else if (val >= min + (max - min) * 0.6) {
+                image = "fts_shutter_60";
+            } else if (val >= min + (max - min) * 0.5) {
+                image = "fts_shutter_50";
+            } else if (val >= min + (max - min) * 0.4) {
+                image = "fts_shutter_40";
+            } else if (val >= min + (max - min) * 0.3) {
+                image = "fts_shutter_30";
+            } else if (val >= min + (max - min) * 0.2) {
+                image = "fts_shutter_20";
+            } else if (val >= min + (max - min) * 0.1) {
+                image = "fts_shutter_10";
+            } else {
+                image = "fts_window_2w";
+            }
+            if (this.data.attr('iconColor')) {
+            %>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.png"/>
+            <% } %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
@@ -578,7 +585,7 @@
         data-vis-prev='<div id="prev_tplMfdHeating" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body" style="width:100%; height:100%"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" src="widgets/jqui-mfd/img/sani_heating_temp.png" width="100%"> </div></div>'
         data-vis-set="ctrl,heating,dialog"
         data-vis-name="ctrl - Heating + jqui Dialog"
-        data-vis-attrs="oid;oid-working;invert_icon/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;oid-working;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height"
         >
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" >
@@ -588,8 +595,12 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
+        if (this.data.attr('iconColor')) {
         %>
-        <img style="<%= styles %>" src="widgets/jqui-mfd/img/sani_heating_temp.png" width="100%"/>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_heating_temp.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+        <% } else { %>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_heating_temp.png"/>
+        <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
@@ -619,7 +630,7 @@
         data-vis-type="val,window"
         data-vis-name="Window Rotate Handle"
         data-vis-prev='<div id="prev_tplMfdWindow" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"> </div> </div></div>'
-        data-vis-attrs="oid;invert_icon/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.values;closed_value;tilted_value;opened_value;"
         data-vis-attrs1="group.icons;closed_icon;tilted_icon;opened_icon;"
         >
@@ -644,14 +655,23 @@
             if (val === 'true'  || val === true)  val = opened;
             if (val === 'false' || val === false) val = closed;
 
-            if (val == closed) {
-            %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_window_1w.png' %>"/>
-            <% } else if (val == tilted) { %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_tilt.png' %>"/>
-            <% } else { %>
-                <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_open.png' %>"/>
-            <% } %>
+            if (this.data.attr('iconColor')) {
+                if (val == closed) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_window_1w.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else if (val == tilted) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_tilt.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_open.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  }
+            } else {
+                if (val == closed) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_window_1w.png' %>"/>
+            <%  } else if (val == tilted) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_tilt.png' %>"/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_window_1w_open.png' %>"/>
+            <%  }
+            } %>
         </div>
     </div>
 </script>
