@@ -358,7 +358,7 @@ vis = $.extend(true, vis, {
             views.push(v);
         }
 
-        return this.editSelect(widAttr, views, true);
+        return this.editAutoComplete(widAttr, views);
     },
     editFilterName: function (widAttr) {
         var filters = vis.updateFilter();

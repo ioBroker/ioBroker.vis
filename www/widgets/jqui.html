@@ -666,6 +666,38 @@
             max = parseFloat(max);
             value = parseFloat(value);
             return min + value * (max - min);
+        },
+        setSvgColor: function (el, color) {
+            setTimeout(function () {
+                el.parent().find('svg').remove();
+                var $that = el;
+                var imgURL = $that.attr('src');
+                $.get(imgURL, function(data) {
+                    // Get the SVG tag, ignore the rest
+                    var $svg = jQuery(data).find('svg');
+
+                    // Remove any invalid XML tags as per http://validator.w3.org
+                    $svg = $svg.removeAttr('xmlns:a');
+                    $svg = $svg.attr('width', '100%');
+                    $svg = $svg.attr('height', '100%');
+                    $svg.find('path').each(function () {
+                        var style = $(this).attr('style');
+                        style = style.replace(/#FFFFFF/g, color);
+                        $(this).attr('style', style);
+                    });
+                    $svg.find('line').each(function () {
+                        var style = $(this).attr('style');
+                        style = style.replace(/#FFFFFF/g, color);
+                        $(this).attr('style', style);
+                    })
+
+
+                    // Replace image with new SVG
+                    $that.replaceWith($svg);
+
+                    }, 'xml');
+                console.log('SVG');
+            }, 0);
         }
     };
 </script>

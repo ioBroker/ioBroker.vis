@@ -1064,7 +1064,7 @@
             if (val === '0' || val === 0) return true;
             var f = parseFloat(val);
             if (f.toString() !== 'NaN') return !f;
-            return true;
+            return false;
         }
     };
 
@@ -1428,7 +1428,7 @@
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %>
-                <img <%= vis.states.attr(this.data.oid + ".val" ) ? "src='" +  vis.states.attr(this.data.oid + ".val" ) + "'" : "" %> width="100%"/>
+                <img src="<%= vis.states.attr(this.data.oid + '.val') || '' %>" width="100%"/>
                  <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
             </div>
@@ -1621,7 +1621,6 @@
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
             if (str === true  || str === 'true')  val = max;
             if (str === false || str === 'false') val = min;
-
 			if (val != min) {
 			%>
 			    <%== this.data.attr("html_true") %>
