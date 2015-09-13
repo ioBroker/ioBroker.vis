@@ -667,6 +667,38 @@
             value = parseFloat(value);
             return min + value * (max - min);
         },
+        calcImage: function (val, min, max, invert) {
+            var max = (max !== undefined) ? max : 100;
+            var min = (min !== undefined) ? min : 0;
+
+            val = parseFloat(val);
+            if (invert) val = max - val + min;
+            var image = '';
+            if (val >= max) {
+                image = 10;
+            } else if (val >= min + (max - min) * 0.9) {
+                image = 9;
+            } else if (val >= min + (max - min) * 0.8) {
+                image = 8;
+            } else if (val >= min + (max - min) * 0.7) {
+                image = 7;
+            } else if (val >= min + (max - min) * 0.6) {
+                image = 6;
+            } else if (val >= min + (max - min) * 0.5) {
+                image = 5;
+            } else if (val >= min + (max - min) * 0.4) {
+                image = 4;
+            } else if (val >= min + (max - min) * 0.3) {
+                image = 3;
+            } else if (val >= min + (max - min) * 0.2) {
+                image = 2;
+            } else if (val >= min + (max - min) * 0.1) {
+                image = 1;
+            } else {
+                image = 0;
+            }
+            return image;
+        },
         setSvgColor: function (el, color) {
             setTimeout(function () {
                 el.parent().find('svg').remove();

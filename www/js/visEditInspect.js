@@ -427,7 +427,7 @@ vis = $.extend(true, vis, {
                 // Allow only numbers
                 $(this).on('keypress', function(e) {
                     var code = e.keyCode || e.charCode;
-                    return (code >= 48 && code <= 57) || (code == 45);
+                    return (code >= 48 && code <= 57) || (code == 110);
                 });
             }
         };

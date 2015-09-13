@@ -44,7 +44,19 @@
             "interval":     {"en": "Update interval(ms)",   "de": "Update-Intervall(ms)",   "ru": "Интервал обновления (мс)"},
             "group_icons":  {"en": "Icons",                 "de": "Bilder",                 "ru": "Иконки"},
             "group_values": {"en": "Values",                "de": "Werte",                  "ru": "Значения"},
-            "iconColor":    {"en": "Icon color",            "de": "Ikonfarbe",              "ru": "Цвет иконки"}
+            "iconColor":    {"en": "Icon color",            "de": "Ikonfarbe",              "ru": "Цвет иконки"},
+            "group_images": {"en": "Icons",                 "de": "Bilder",                 "ru": "Картинки"},
+            "icon0":        {"en": "Icon 0%",               "de": "Bild bei 0%",            "ru": "Картинка 0%"},
+            "icon1":        {"en": "Icon 10%",              "de": "Bild bei 10%",           "ru": "Картинка 10%"},
+            "icon2":        {"en": "Icon 20%",              "de": "Bild bei 20%",           "ru": "Картинка 20%"},
+            "icon3":        {"en": "Icon 30%",              "de": "Bild bei 30%",           "ru": "Картинка 30%"},
+            "icon4":        {"en": "Icon 40%",              "de": "Bild bei 40%",           "ru": "Картинка 40%"},
+            "icon5":        {"en": "Icon 50%",              "de": "Bild bei 50%",           "ru": "Картинка 50%"},
+            "icon6":        {"en": "Icon 60%",              "de": "Bild bei 60%",           "ru": "Картинка 60%"},
+            "icon7":        {"en": "Icon 70%",              "de": "Bild bei 70%",           "ru": "Картинка 70%"},
+            "icon8":        {"en": "Icon 80%",              "de": "Bild bei 80%",           "ru": "Картинка 80%"},
+            "icon9":        {"en": "Icon 90%",              "de": "Bild bei 90%",           "ru": "Картинка 90%"},
+            "icon10":       {"en": "Icon 100%",             "de": "Bild bei 100%",          "ru": "Картинка 100%"}
         });
     }
 
@@ -974,11 +986,11 @@
      data-vis-set="jqui-mfd"
      data-vis-type="ctrl,valve,dialog"
      data-vis-name="Valve + jqui Dialog"
-     data-vis-prev='<div id="prev_tplMfdValve" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"> </div></div></div>'
+     data-vis-prev='<div id="prev_tplMfdValveDialog" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"> </div></div></div>'
      data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;invert_value/checkbox;show_active/checkbox;"
      data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
 <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>>
-    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/sani_valve_100.png','widgets/jqui-mfd/img/sani_valve_90.png','widgets/jqui-mfd/img/sani_valve_80.png','widgets/jqui-mfd/img/sani_valve_70.png','widgets/jqui-mfd/img/sani_valve_60.png','widgets/jqui-mfd/img/sani_valve_50.png','widgets/jqui-mfd/img/sani_valve_40.png','widgets/jqui-mfd/img/sani_valve_30.png','widgets/jqui-mfd/img/sani_valve_20.png','widgets/jqui-mfd/img/sani_valve_10.png','widgets/jqui-mfd/img/sani_valve_0.png']); %>>
     <%
         var styles = "";
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
@@ -990,7 +1002,7 @@
 
         if (this.data.attr('invert_value')) val = max - val + min;
 
-                var image = '';
+        var image = '';
         if (val >= max) {
             image = "sani_valve_100";
         } else if (val >= min + (max - min) * 0.9) {
@@ -1042,6 +1054,56 @@
 </div>
 </script>
 
+<script id="tplMfdCustom10"
+         type="text/ejs"
+         class="vis-tpl"
+         data-vis-set="jqui-mfd"
+         data-vis-type="state"
+         data-vis-name="Custom10"
+         data-vis-prev='<div id="prev_tplMfdCustom10" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_custom.svg"> </div></div></div>'
+         data-vis-attrs="oid;min;max;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox;"
+         data-vis-attrs0="group.images;icon0[widgets~jqui-mfd~img~sani_valve_0.png]/image;icon1[widgets~jqui-mfd~img~sani_valve_10.png]/image;icon2[widgets~jqui-mfd~img~sani_valve_20.png]/image;icon3[widgets~jqui-mfd~img~sani_valve_30.png]/image;icon4[widgets~jqui-mfd~img~sani_valve_40.png]/image;icon5[widgets~jqui-mfd~img~sani_valve_50.png]/image;icon6[widgets~jqui-mfd~img~sani_valve_60.png]/image;icon7[widgets~jqui-mfd~img~sani_valve_70.png]/image;icon8[widgets~jqui-mfd~img~sani_valve_80.png]/image;icon9[widgets~jqui-mfd~img~sani_valve_90.png]/image;icon10[widgets~jqui-mfd~img~sani_valve_100.png]/image;"
+         >
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>><div class="vis-widget-body">
+        <img width="100%" src="<%= this.data.attr('icon' + vis.binds.jqueryui.calcImage(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'), this.data.invert_value)) %>"/>
+    </div></div>
+</script>
+<script id="tplMfdCustom10Dialog"
+         type="text/ejs"
+         class="vis-tpl"
+         data-vis-set="jqui-mfd"
+         data-vis-type="ctrl,dialog"
+         data-vis-name="Custom10 + jqui Dialog"
+         data-vis-prev='<div id="prev_tplMfdCustom10Dialog" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_custom.svg"> </div></div></div>'
+         data-vis-attrs="oid;oid-working;min;max;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox;"
+         data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height"
+         data-vis-attrs1="group.images;icon0[widgets~jqui-mfd~img~sani_valve_0.png]/image;icon1[widgets~jqui-mfd~img~sani_valve_10.png]/image;icon2[widgets~jqui-mfd~img~sani_valve_20.png]/image;icon3[widgets~jqui-mfd~img~sani_valve_30.png]/image;icon4[widgets~jqui-mfd~img~sani_valve_40.png]/image;icon5[widgets~jqui-mfd~img~sani_valve_50.png]/image;icon6[widgets~jqui-mfd~img~sani_valve_60.png]/image;icon7[widgets~jqui-mfd~img~sani_valve_70.png]/image;icon8[widgets~jqui-mfd~img~sani_valve_80.png]/image;icon9[widgets~jqui-mfd~img~sani_valve_90.png]/image;icon10[widgets~jqui-mfd~img~sani_valve_100.png]/image;"
+         >
+ <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>>
+    <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%">
+        <img width="100%" src="<%= this.data.attr('icon' + vis.binds.jqueryui.calcImage(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'), this.data.invert_value)) %>"/>
+    </div>
+    <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
+        <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+            <%
+                var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
+                var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            %>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio2" name="<%= this.data.attr('wid') %>_radio" value="<%=                                   min + (max - min) * 0.5                             %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio2">50%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio3" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.75 : min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio3">75%</label>
+            <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? max : min                                           %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('open') %></label>
+        </div>
+        <br/>
+        <div class="sliderJQUI" style="width: 90%" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: min, max: max, step: (max - min) / 100, inverted: this.data.attr('invert_value')}) %> />
+        <br/>
+        <%= vis.states.attr(this.data.oid + '.val') ? parseFloat(vis.states.attr(this.data.oid + '.val')).toFixed(0) : 0 %>%
+    </div>
+    <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: this.data.attr('dialog_width') || 440, height: this.data.attr('dialog_height') || 200, modal: data.attr('modal')}, true) %> />
+    <div class="popup-helper" <%= (el) -> if (data.attr("autoclose") === 'true' || data.attr("autoclose") === true) { vis.binds.jqueryui.dialogAutoClose(el) } %> />
+</div>
+</script>
 
  <!--script id="tplMfdHueDimmerDialog"
          type="text/ejs"
