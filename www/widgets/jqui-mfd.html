@@ -683,7 +683,7 @@
         data-vis-type="val,window"
         data-vis-name="Window"
         data-vis-prev='<div id="prev_tplMfdWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"></div></div></div>'
-        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="height:76px; width:76px; position:absolute" data-min="<%= this.data.attr('closed_value') %>" data-max="<%= this.data.attr('opened_value') %>" <%= (el) -> this.data.attr('asButton') ?  vis.binds.jqueryui.active(el, this.data.invert_state) : '' %> >
@@ -717,11 +717,23 @@
                 }
             }
 
-            if (val != opened) { %>
+            if (this.data.attr('iconColor')) {
+                if (val != opened) {
+            %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%
+                }
+            } else {
+                if (val != opened) {
+            %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w.png"/>
-            <% } else { %>
+            <%  } else { %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_1w_open.png"/>
-            <% } %>
+            <%  }
+            } %>
+
         </div>
     </div>
 </script>
@@ -733,7 +745,7 @@
         data-vis-type="val,window"
         data-vis-prev='<div id="prev_tplMfdRoofWindowBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 70px; width: 70px;"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"> </div> </div></div>'
         data-vis-name="Roof window"
-        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="height:76px; width:76px; position:absolute" data-min="<%= this.data.attr('closed_value') %>" data-max="<%= this.data.attr('opened_value') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.active(el, this.data.invert_state) : '' %> >
@@ -765,11 +777,22 @@
                     val = opened;
                 }
             }
-            if (val != opened) { %>
+            if (this.data.attr('iconColor')) {
+                if (val != opened) {
+            %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof_open_2.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%
+                }
+            } else {
+                if (val != opened) {
+            %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof.png"/>
-            <% } else { %>
+            <%  } else { %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_window_roof_open_2.png"/>
-            <% } %>
+            <%  }
+            } %>
         </div>
     </div>
 </script>
@@ -780,7 +803,7 @@
         data-vis-set="jqui-mfd"
         data-vis-name="val - Door"
         data-vis-prev='<div id="prev_tplMfdDoor" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_door.png"> </div> </div></div>'
-        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px; position:absolute"  data-min="<%= this.data.attr('closed_value') %>" data-max="<%= this.data.attr('opened_value') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.active(el, this.data.invert_state) : '' %>>
@@ -812,11 +835,22 @@
                     val = opened;
                 }
             }
-            if (val != opened) { %>
+            if (this.data.attr('iconColor')) {
+                if (val != opened) {
+            %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door_open.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%
+                }
+            } else {
+                if (val != opened) {
+            %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door.png"/>
-            <% } else { %>
+            <%  } else { %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door_open.png"/>
-            <% } %>
+            <%  }
+            } %>
         </div>
     </div>
 </script>
@@ -827,7 +861,7 @@
         data-vis-set="jqui-mfd"
         data-vis-name="val - Garage"
         data-vis-prev='<div id="prev_tplMfdGarage" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px;"><div class="vis-widget-prev-body"><img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"></div></div></div>'
-        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;"
+        data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.values;closed_value;opened_value;"
         >
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px; position:absolute" data-min="<%= this.data.attr('closed_value') %>" data-max="<%= this.data.attr('opened_value') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.active(el, this.data.invert_state) : '' %>>
@@ -861,11 +895,23 @@
                 }
             }
 
-            if (val != opened) { %>
+            if (this.data.attr('iconColor')) {
+                if (val != opened) {
+            %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else { %>
+                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_10.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%
+                }
+            } else {
+                if (val != opened) {
+            %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_100.png"/>
-            <% } else { %>
+            <%  } else { %>
                 <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_garage_door_10.png"/>
-            <% } %>
+            <%  }
+            } %>
+
         </div>
     </div>
 </script>
@@ -877,43 +923,49 @@
      data-vis-type="state,valve"
      data-vis-name="Valve"
      data-vis-prev='<div id="prev_tplMfdValve" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"> </div></div></div>'
-     data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox">
-<div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>><div class="vis-widget-body">
-<%
-    var styles = "";
-    if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
-    }
+     data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;invert_value/checkbox;show_active/checkbox">
+    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>><div class="vis-widget-body">
+    <%
+        var styles = "";
+        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        }
 
-    var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-    var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+        var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
+        var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
 
-    var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
-    if (this.data.invert_value) val = max - val + min;
-if (val >= max) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_100.png"/>
-<% } else if (val >= min + (max - min) * 0.9) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_90.png"/>
-<% } else if (val >= min + (max - min) * 0.8) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_80.png"/>
-<% } else if (val >= min + (max - min) * 0.7) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_70.png"/>
-<% } else if (val >= min + (max - min) * 0.6) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_60.png"/>
-<% } else if (val >= min + (max - min) * 0.5) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_50.png"/>
-<% } else if (val >= min + (max - min) * 0.4) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_40.png"/>
-<% } else if (val >= min + (max - min) * 0.3) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"/>
-<% } else if (val >= min + (max - min) * 0.2) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_20.png"/>
-<% } else if (val >= min + (max - min) * 0.1) { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_10.png"/>
-<% } else { %>
-    <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_0.png"/>
-<% } %>
-</div></div>
+        var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
+        if (this.data.invert_value) val = max - val + min;
+        var image = '';
+        if (val >= max) {
+            image = "sani_valve_100";
+        } else if (val >= min + (max - min) * 0.9) {
+            image = "sani_valve_90";
+        } else if (val >= min + (max - min) * 0.8) {
+            image = "sani_valve_80";
+        } else if (val >= min + (max - min) * 0.7) {
+            image = "sani_valve_70";
+        } else if (val >= min + (max - min) * 0.6) {
+            image = "sani_valve_60";
+        } else if (val >= min + (max - min) * 0.5) {
+            image = "sani_valve_50";
+        } else if (val >= min + (max - min) * 0.4) {
+            image = "sani_valve_40";
+        } else if (val >= min + (max - min) * 0.3) {
+            image = "sani_valve_30";
+        } else if (val >= min + (max - min) * 0.2) {
+            image = "sani_valve_20";
+        } else if (val >= min + (max - min) * 0.1) {
+            image = "sani_valve_10";
+        } else {
+            image = "sani_valve_0";
+        }
+        if (this.data.attr('iconColor')) { %>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+        <% } else { %>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.png"/>
+        <% } %>
+    </div></div>
 </script>
 
 <script id="tplMfdValveDialog"
@@ -923,7 +975,7 @@ if (val >= max) { %>
      data-vis-type="ctrl,valve,dialog"
      data-vis-name="Valve + jqui Dialog"
      data-vis-prev='<div id="prev_tplMfdValve" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default  ui-state-active" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"> </div></div></div>'
-     data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;invert_value/checkbox;show_active/checkbox;"
+     data-vis-attrs="oid;oid-working;min;max;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;invert_value/checkbox;show_active/checkbox;"
      data-vis-attrs0="group.dialog;title;autoclose/checkbox;modal/checkbox;dialog_width;dialog_height" >
 <div data-oid="<%= this.data.attr('oid') %>" data-hm-wid="<%= this.data.attr('oid-working') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>>
     <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body" style="width:100%; height:100%" <%= (el) -> vis.preloadImages(['widgets/jqui-mfd/img/light_light_dim_100.png','widgets/jqui-mfd/img/light_light_dim_90.png','widgets/jqui-mfd/img/light_light_dim_80.png','widgets/jqui-mfd/img/light_light_dim_70.png','widgets/jqui-mfd/img/light_light_dim_60.png','widgets/jqui-mfd/img/light_light_dim_50.png','widgets/jqui-mfd/img/light_light_dim_40.png','widgets/jqui-mfd/img/light_light_dim_30.png','widgets/jqui-mfd/img/light_light_dim_20.png','widgets/jqui-mfd/img/light_light_dim_10.png','widgets/jqui-mfd/img/light_light_dim.png']); %>>
@@ -938,30 +990,35 @@ if (val >= max) { %>
 
         if (this.data.attr('invert_value')) val = max - val + min;
 
+                var image = '';
         if (val >= max) {
-    %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_100.png"/>
-    <% } else if (val >= min + (max - min) * 0.9) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_90.png"/>
-    <% } else if (val >= min + (max - min) * 0.8) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_80.png"/>
-    <% } else if (val >= min + (max - min) * 0.7) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_70.png"/>
-    <% } else if (val >= min + (max - min) * 0.6) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_60.png"/>
-    <% } else if (val >= min + (max - min) * 0.5) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_50.png"/>
-    <% } else if (val >= min + (max - min) * 0.4) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_40.png"/>
-    <% } else if (val >= min + (max - min) * 0.3) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_30.png"/>
-    <% } else if (val >= min + (max - min) * 0.2) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_20.png"/>
-    <% } else if (val >= min + (max - min) * 0.1) { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_10.png"/>
-    <% } else { %>
-        <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/sani_valve_0.png"/>
-    <% } %>
+            image = "sani_valve_100";
+        } else if (val >= min + (max - min) * 0.9) {
+            image = "sani_valve_90";
+        } else if (val >= min + (max - min) * 0.8) {
+            image = "sani_valve_80";
+        } else if (val >= min + (max - min) * 0.7) {
+            image = "sani_valve_70";
+        } else if (val >= min + (max - min) * 0.6) {
+            image = "sani_valve_60";
+        } else if (val >= min + (max - min) * 0.5) {
+            image = "sani_valve_50";
+        } else if (val >= min + (max - min) * 0.4) {
+            image = "sani_valve_40";
+        } else if (val >= min + (max - min) * 0.3) {
+            image = "sani_valve_30";
+        } else if (val >= min + (max - min) * 0.2) {
+            image = "sani_valve_20";
+        } else if (val >= min + (max - min) * 0.1) {
+            image = "sani_valve_10";
+        } else {
+            image = "sani_valve_0";
+        }
+        if (this.data.attr('iconColor')) { %>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+        <% } else { %>
+            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.png"/>
+        <% } %>
     </div>
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
@@ -1277,7 +1334,7 @@ if (val >= max) { %>
         data-vis-type="static,camera,dialog"
         data-vis-prev='<div id="prev_tplMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
-        data-vis-attrs="alt;text;asButton[true]/checkbox;"
+        data-vis-attrs="alt;text;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
@@ -1290,7 +1347,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1309,7 +1370,7 @@ if (val >= max) { %>
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamSnapshot" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Snapshot - Dialog"
-        data-vis-attrs="oid;alt;text;asButton[true]/checkbox;"
+        data-vis-attrs="oid;alt;text;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;url;interval[2000];title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
@@ -1322,7 +1383,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1341,7 +1406,7 @@ if (val >= max) { %>
         data-vis-prev='<div id="prev_tplMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (img) - Dialog"
-        data-vis-attrs="alt;text;asButton[true]/checkbox;"
+        data-vis-attrs="alt;text;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]">
     <%
@@ -1353,7 +1418,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1374,7 +1443,7 @@ if (val >= max) { %>
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamMjpg" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (img) - Dialog"
-        data-vis-attrs="oid;alt;asButton[true]/checkbox;"
+        data-vis-attrs="oid;alt;asButton[true]/checkbox;iconColor/color;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
@@ -1387,7 +1456,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1408,7 +1481,7 @@ if (val >= max) { %>
         data-vis-prev='<div id="prev_tplMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-type="static,camera,dialog"
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="alt;text;asButton[true]/checkbox;use_object/checkbox;"
+        data-vis-attrs="alt;text;asButton[true]/checkbox;iconColor/color;use_object/checkbox;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;src_url;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
@@ -1421,7 +1494,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1438,7 +1515,7 @@ if (val >= max) { %>
         data-vis-type="val,camera,dialog"
         data-vis-prev='<div id="prev_tplValMfdCamVideo" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
         data-vis-name="Cam/Video (html5) - Dialog"
-        data-vis-attrs="oid;alt;asButton[true]/checkbox;use_object/checkbox;"
+        data-vis-attrs="oid;alt;asButton[true]/checkbox;iconColor/color;use_object/checkbox;"
         data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
         data-vis-attrs1="group.dialog;poster_url;title;modal/checkbox;dialog_width[640];dialog_height[480]"
         >
@@ -1451,7 +1528,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
@@ -1468,7 +1549,7 @@ if (val >= max) { %>
     data-vis-prev='<div id="prev_tplMfdCamVideoObject" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui-mfd/img/it_camera.png" style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1); vertical-align:middle;height:100%;"></div></div></div>'
     data-vis-type="static,camera,dialog"
     data-vis-name="Cam/Video (Object) - Dialog"
-    data-vis-attrs="alt;text;asButton[true]/checkbox;"
+    data-vis-attrs="alt;text;asButton[true]/checkbox;iconColor/color;"
     data-vis-attrs0="group.icon;icon/image;invert_icon/checkbox;icon_interval;"
     data-vis-attrs1="group.dialog;src_url;qtsrc_url;title;modal/checkbox;dialog_width[640];dialog_height[480];type_application[video~quicktime]/auto,video~mpeg,video~mp4,video~ogg,video~quicktime,video~webm,video~x-ms-wmv,video~x-flv;plugin;autoplay[true]"
     >
@@ -1481,7 +1562,11 @@ if (val >= max) { %>
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" />
+            if (this.data.attr('iconColor')) { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
+            <% } %>
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, this.data.attr('icon'), data.attr('icon_interval')) %>></div>
             <%= this.data.attr('text') %>
         </div>
