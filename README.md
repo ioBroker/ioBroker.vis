@@ -145,6 +145,9 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.14 (2015-09-13)
+* (bluefox) allow change the color of jqui-mfd
+
 ### 0.6.13 (2015-08-23)
 * (bluefox) update select ID dialog, support of role filter in selectId dialog
 * (bluefox) fix Gruntfile.js
