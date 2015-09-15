@@ -84,8 +84,8 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
 
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -145,8 +145,8 @@
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -208,8 +208,8 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
 
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -254,8 +254,8 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
                 <%
-                    var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-                    var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                    var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+                    var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><% _('off') %> <%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= max %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('on') %></label>
@@ -283,8 +283,8 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
 
-            var max = (this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100;
-            var min = (this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0);
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -327,8 +327,8 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left:20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
                 <%
-                    var max = (this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100;
-                    var min = (this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0;
+                    var max = parseFloat((this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100);
+                    var min = parseFloat((this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0);
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -363,8 +363,8 @@
 
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 1);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             if (str === true  || str === 'true')  { val = max; }
             if (str === false || str === 'false') { val = min; }
             if (this.data.invert_state) {
@@ -431,8 +431,8 @@
             }
             var str = (this.data.oid && this.data.oid != 'nothing_selected') ? vis.states.attr(this.data.oid + '.val') : false;
             var val = parseFloat(str);
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 1);
+            var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             if (str === true  || str === 'true')  val = max;
             if (str === false || str === 'false') val = min;
             if (this.data.invert_state) {
@@ -477,8 +477,8 @@
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
 
-        var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-        var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+        var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+        var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
 
         var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
         if (this.data.invert_value) val = max - val + min;
@@ -531,8 +531,8 @@
                 if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
                     styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
                 }
-                var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-                var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+                var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
                 var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
 
                 if (this.data.attr('invert_value')) val = max - val + min;
@@ -571,8 +571,8 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
             <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
                 <%
-                    var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-                    var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                    var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+                    var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -943,8 +943,8 @@
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
 
-        var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-        var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+        var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+        var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
 
         var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
         if (this.data.invert_value) val = max - val + min;
@@ -996,8 +996,8 @@
         if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
             styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
         }
-        var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-        var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+        var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+        var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
         var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
 
         if (this.data.attr('invert_value')) val = max - val + min;
@@ -1035,8 +1035,8 @@
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
             <%
-                var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-                var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+                var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             %>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -1086,8 +1086,8 @@
     <div id="<%= this.data.attr('wid') %>_dialog" class="<%= this.data.attr('wid') %>_dialog vis-widget-dialog" title="<%== this.data.title || this.data.attr('oid') %>" style="padding-left: 20px;">
         <div id="<%= this.data.attr('wid') %>_radio"  class="<%= this.data.attr('wid') %>_radio" style="text-align: center" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
             <%
-                var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-                var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                var max = parseFloat((this.data.attr('max') !== undefined) ? this.data.attr('max') : 100);
+                var min = parseFloat((this.data.attr('min') !== undefined) ? this.data.attr('min') : 0);
             %>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
