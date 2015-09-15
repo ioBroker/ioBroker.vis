@@ -1034,6 +1034,9 @@ var vis = {
                 $("#visview_" + view).show();
                 $("#visview_" + this.activeView).hide();
             }
+            // remember last click for debounce
+            this.lastChange = (new Date()).getTime();
+            console.log('lastChange: ' + this.lastChange);
 
         } else {
             this.renderView(view);
@@ -1070,9 +1073,6 @@ var vis = {
 
         // --------- Editor -----------------
         if (this.editMode) this.changeViewEdit(view);
-
-
-        // update resolution tool widget
 
         return;
     },
@@ -1845,9 +1845,18 @@ var vis = {
 
         // Protect against two events
         var now = (new Date()).getTime();
+        //console.log('gclick: ' + this.lastChange + ' ' + (now - this.lastChange));
+        if (this.lastChange && now - this.lastChange < 400) {
+            //console.log('gclick: filtered');
+            return true;
+        }
+
         var lastClick = $(el).data('lc');
-        $('.vis-resolution-default-view').html(now - lastClick);
-        if (lastClick && now - lastClick < 700) return true;
+        //console.log('click: ' + lastClick + ' ' + (now - lastClick));
+        if (lastClick && now - lastClick < 700) {
+            //console.log('click: filtered');
+            return true;
+        }
         $(el).data('lc', now);
         return false;
     }
