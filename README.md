@@ -145,6 +145,10 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.15 (2015-09-15)
+* (bluefox) add Custom10 to jqui-mfd
+* (bluefox) ignore "touch" event exactly after the view change
+
 ### 0.6.14 (2015-09-13)
 * (bluefox) allow change the color of jqui-mfd
 
