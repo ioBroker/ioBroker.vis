@@ -1112,12 +1112,11 @@
         data-vis-attrs="off_text[OFF];on_text[ON];oid;padding[5]/slider,0,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
-            <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
-
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio0" style="padding: <%= this.data.attr('padding') %>px"><%= this.data.off_text %></label>
-            <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio1" style="padding: <%= this.data.attr('padding') %>px"><%= this.data.on_text %></label>
+            <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" style="display: flex" <%= (el) -> vis.binds.jqueryui.radio(el); %> >
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="0" checked='checked'/><label for="<%= this.data.attr('wid') %>_radio0" style="padding: <%= this.data.attr('padding') %>px"><%= this.data.off_text %></label>
+                <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="1"/><label for="<%= this.data.attr('wid') %>_radio1" style="padding: <%= this.data.attr('padding') %>px"><%= this.data.on_text %></label>
+            </div>
         </div>
-    </div>
     </div>
 </script>
 
@@ -1131,20 +1130,19 @@
         data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO]">
     <div style=" width:250px; height:41px;" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
-            <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)},100) %> >
-            <%
-            var values = (data.attr('values') ? data.attr('values').split(';') : []);
-            var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
-            var wid = data.attr('wid');
-            for (var val in values) {
-
-            %>
-            <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
-            <%
-            }
-            %>
+            <div id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" style="display: flex" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)},100) %> >
+                <%
+                var values = (data.attr('values') ? data.attr('values').split(';') : []);
+                var texts = (data.attr('texts') ? data.attr('texts').split(';'): []);
+                var wid = data.attr('wid');
+                for (var val in values) {
+                %>
+                    <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
+                <%
+                }
+                %>
+            </div>
         </div>
-    </div>
     </div>
 </script>
 

@@ -86,6 +86,10 @@
 
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+            
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -147,6 +151,10 @@
             }
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -210,6 +218,10 @@
 
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -256,6 +268,13 @@
                 <%
                     var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                     var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+                    if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                    if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+                    if (max === 'true')  max = true;
+                    if (max === 'false') max = false;
+                    if (min === 'true')  min = true;
+                    if (min === 'false') min = false;
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><% _('off') %> <%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio4" name="<%= this.data.attr('wid') %>_radio" value="<%= max %>"/><label for="<%= this.data.attr('wid') %>_radio4"><%= _('on') %></label>
@@ -285,6 +304,10 @@
 
             var max = (this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100;
             var min = (this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0;
+
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
             var str = vis.states.attr(this.data.oid + '.val');
             var val = parseFloat(str);
             if (str === true  || str === 'true')  { val = max; }
@@ -365,6 +388,14 @@
             var val = parseFloat(str);
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+            if (max === 'true')  max = true;
+            if (max === 'false') max = false;
+            if (min === 'true')  min = true;
+            if (min === 'false') min = false;
+
             if (str === true  || str === 'true')  { val = max; }
             if (str === false || str === 'false') { val = min; }
             if (this.data.invert_state) {
@@ -433,6 +464,14 @@
             var val = parseFloat(str);
             var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
             var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+            if (max === 'true')  max = true;
+            if (max === 'false') max = false;
+            if (min === 'true')  min = true;
+            if (min === 'false') min = false;
+
             if (str === true  || str === 'true')  val = max;
             if (str === false || str === 'false') val = min;
             if (this.data.invert_state) {
@@ -471,48 +510,51 @@
         data-vis-prev='<div id="prev_tplMfdShutter" style="position: relative; text-align: initial;padding: 4px "><div data-oid="dev1" class="vis-widget_prev vis-widget ui-widget ui-button ui-corner-all ui-state-default" style="width: 70px; height: 70px;"><div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" width="100%" src="widgets/jqui-mfd/img/fts_shutter_30.png"> </div></div></div>'
         data-vis-attrs="oid;min;max;invert_icon/checkbox;asButton[true]/checkbox;iconColor/color;invert_value/checkbox;show_active/checkbox">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width:76px; height:76px; position:absolute" <%= (el) -> this.data.attr('show_active') ? vis.binds.jqueryui.classes(el, true) : '' %>><div class="vis-widget-body">
-    <%
-        var styles = "";
-        if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
-            styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
-        }
+        <%
+            var styles = "";
+            if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
+                styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+            }
 
-        var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
-        var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
+            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
 
-        var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
-        if (this.data.invert_value) val = max - val + min;
-        var image = '';
-        if (val >= max) {
-            image = "fts_shutter_100";
-        } else if (val >= min + (max - min) * 0.9) {
-            image = "fts_shutter_90";
-        } else if (val >= min + (max - min) * 0.8) {
-            image = "fts_shutter_80";
-        } else if (val >= min + (max - min) * 0.7) {
-            image = "fts_shutter_70";
-        } else if (val >= min + (max - min) * 0.6) {
-            image = "fts_shutter_60";
-        } else if (val >= min + (max - min) * 0.5) {
-            image = "fts_shutter_50";
-        } else if (val >= min + (max - min) * 0.4) {
-            image = "fts_shutter_40";
-        } else if (val >= min + (max - min) * 0.3) {
-            image = "fts_shutter_30";
-        } else if (val >= min + (max - min) * 0.2) {
-            image = "fts_shutter_20";
-        } else if (val >= min + (max - min) * 0.1) {
-            image = "fts_shutter_10";
-        } else {
-            image = "fts_window_2w";
-        }
-        if (this.data.attr('iconColor')) {
-        %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
-        <% } else { %>
-            <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.png"/>
-        <% } %>
-</div></div>
+            if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+            if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
+            var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
+            if (this.data.invert_value) val = max - val + min;
+            var image = '';
+            if (val >= max) {
+                image = "fts_shutter_100";
+            } else if (val >= min + (max - min) * 0.9) {
+                image = "fts_shutter_90";
+            } else if (val >= min + (max - min) * 0.8) {
+                image = "fts_shutter_80";
+            } else if (val >= min + (max - min) * 0.7) {
+                image = "fts_shutter_70";
+            } else if (val >= min + (max - min) * 0.6) {
+                image = "fts_shutter_60";
+            } else if (val >= min + (max - min) * 0.5) {
+                image = "fts_shutter_50";
+            } else if (val >= min + (max - min) * 0.4) {
+                image = "fts_shutter_40";
+            } else if (val >= min + (max - min) * 0.3) {
+                image = "fts_shutter_30";
+            } else if (val >= min + (max - min) * 0.2) {
+                image = "fts_shutter_20";
+            } else if (val >= min + (max - min) * 0.1) {
+                image = "fts_shutter_10";
+            } else {
+                image = "fts_window_2w";
+            }
+            if (this.data.attr('iconColor')) {
+            %>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <% } else { %>
+                <img style="<%= styles %>" width="100%" src="widgets/jqui-mfd/img/<%= image %>.png"/>
+            <% } %>
+    </div></div>
 </script>
 
 <script id="tplMfdShutterDialog"
@@ -533,6 +575,10 @@
                 }
                 var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                 var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+                if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
                 var val = max - parseFloat(vis.states.attr(this.data.oid + '.val')) + min;
 
                 if (this.data.attr('invert_value')) val = max - val + min;
@@ -573,6 +619,10 @@
                 <%
                     var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                     var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+                    if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                    if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -946,6 +996,9 @@
         var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
         var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
 
+        if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+        if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
         var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
         if (this.data.invert_value) val = max - val + min;
         var image = '';
@@ -998,6 +1051,10 @@
         }
         var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
         var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+        if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+        if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
+
         var val = parseFloat(vis.states.attr(this.data.oid + '.val'));
 
         if (this.data.attr('invert_value')) val = max - val + min;
@@ -1088,6 +1145,9 @@
             <%
                 var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                 var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+                if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
             %>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
