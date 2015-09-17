@@ -145,6 +145,10 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.16 (2015-09-17)
+* (bluefox) add to fancyswitch custom values and light style to german switch
+* (bluefox) try to accept for visibility true and false
+
 ### 0.6.15 (2015-09-15)
 * (bluefox) add Custom10 to jqui-mfd
 * (bluefox) ignore "touch" event exactly after the view change

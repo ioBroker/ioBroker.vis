@@ -88,14 +88,14 @@ if (typeof systemDictionary !== 'undefined') {
             "en": "Insufficient permissions",
             "de": "Nicht genügend Zugriffsrechte",
             "ru": "Недостаточно прав"
-        },
+        }
     });
 }
 
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.6.15',
+    version: '0.6.16',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -1316,8 +1316,8 @@ var vis = {
             if (!condition || value === undefined) return false;
 
             var t = typeof val;
-            if (t == 'boolean') {
-                value = (value === 'true' || value === true || value === 1);
+            if (t == 'boolean' || val === 'false' || val === 'true') {
+                value = (value === 'true' || value === true || value === 1 || value === '1');
             } else if (t == 'number') {
                 value = parseFloat(value);
             }  else if (t == 'object') {
