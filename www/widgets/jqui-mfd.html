@@ -352,6 +352,9 @@
                 <%
                     var max = (this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100;
                     var min = (this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0;
+                    
+                    if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                    if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -1094,6 +1097,9 @@
             <%
                 var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                 var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+                
+                if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
             %>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
