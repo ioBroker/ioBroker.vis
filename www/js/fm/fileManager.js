@@ -14,6 +14,34 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
 (function ($) {
     "use strict";
+    $.fn.cursorPosition = function(position) {
+        var input = this.get(0);
+        if (!input) return; // No (input) element found
+        if (position !== undefined) {
+            if(input.createTextRange) {
+                var range = input.createTextRange();
+                range.move('character', position);
+                range.select();
+            } else if(input.selectionStart) {
+                    input.focus();
+                    input.setSelectionRange(position, position);
+            } else {
+                input.focus();
+            }
+        } else {
+            if ('selectionStart' in input) {
+                // Standard-compliant browsers
+                return input.selectionStart;
+            } else if (document.selection) {
+                // IE
+                input.focus();
+                var sel = document.selection.createRange();
+                var selLen = document.selection.createRange().text.length;
+                sel.moveStart('character', -input.value.length);
+                return sel.text.length - selLen;
+            }
+        }
+    };
 
     $.fm = function (options, callback) {
         var fmConn;
@@ -64,6 +92,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 config = {};
             }
         }
+
         o.view = config.view || o.view;
         if (o.defaultPath == o.path) {
             o.path = config.path || o.path;
@@ -77,6 +106,10 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             var parts = o.path.split('/');
             o.currentFile = parts.pop();
             o.path = parts.join('/') + '/';
+        }
+
+        if (o.path.substring(0, 'widgets/'.length) == 'widgets/' || o.path.substring(0, 'img/'.length) == 'img/') {
+            o.path = '/vis/' + o.path;
         }
 
         var fmWord = {
@@ -134,30 +167,54 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         }
 
         function load(path) {
+            if (!path) {
+                path = '/';
+                $('.fm-path').val(path);
+                $('.fm-path').cursorPosition(1);
+                o.path = o.root + path;
+            }
+
             try {
                 fmConn.readDir(path, function (err, data) {
                     if (!err && data) {
                         o.data = data;
                         var p = path.replace(o.root, '');
 
+                        $('.fm-path').data('old', p);
                         $('.fm-path').val(p).unbind('change').unbind('keyup').change(function () {
                             var timer = $(this).data('timer');
                             if (timer) clearTimeout(timer);
-                            $(this).data('timer', setTimeout(function () {
-                                $(this).data('timer', null);
-                                load($('.fm-path').val());
-                            }, 500));
 
+                            $(this).data('timer', setTimeout(function () {
+                                var val = $('.fm-path').val();
+                                if (!val) {
+                                    val = '/';
+                                    $('.fm-path').val(val);
+                                    $('.fm-path').cursorPosition(1);
+                                }
+                                o.path = o.root + val;
+
+
+                                if ($('.fm-path').data('old') != val) {
+                                    o.cursorPosition = $('.fm-path').cursorPosition();
+                                    $('.fm-path').data('timer', null);
+                                    load(val);
+                                    $('.fm-path').data('old', val);
+                                }
+                            }, 500));
 
                         }).keyup(function () {
                             $(this).trigger('change');
                         });
+
                         build(o);
                     } else {
                         o.data = [];
                         build(o, err);
                         $('.fm-files').html('<span class="fm-error">' + err + '</span>');
                     }
+                    $('.fm-path').cursorPosition(o.cursorPosition);
+                    o.cursorPosition = undefined;
                 });
             } catch (err) {
                 alert(fmTranslate('No connection to server'));
@@ -291,12 +348,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         type = this.file.split(".").pop() || "";
                         filter = '';
 
-                        if (icons.indexOf(type) > -1) {
-                            icon = type;
-                        }
-                        if (o.fileFilter.indexOf(type) == -1) {
-                            filter = 'fm_fileFilter';
-                        }
+                        if (icons.indexOf(type) > -1) icon = type;
+
+                        if (o.fileFilter.indexOf(type) == -1) filter = 'fm_fileFilter';
 
                         $('.fm_file_table').append(
                             '<tr class="fm_tr_file ' + filter + ' fm_tr ui-state-default no_background">' +
@@ -588,6 +642,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 $('.fm_prev_name').each(function () {
                     if ($(this).html() == o.currentFile) {
                         $(this).parent().find('.fm_prev_overlay').trigger('click');
+                        $(this).parent()[0].scrollIntoView( true );
                         return false;
                     }
                 });
@@ -598,17 +653,27 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         }
 
         function filter(o) {
+            var isAll = $("#fm_bar_all").hasClass("ui-state-error");
             $('.fm_prev_container').each(function () {
                 if (o.filter) {
                     var filter = o.filter.toLowerCase();
                     var filename = $(this).find('.fm_prev_name').text();
+
                     if (filename.toLowerCase().indexOf(filter) == -1) {
                         $(this).hide();
                     } else {
-                        $(this).show();
+                        if (isAll || !$(this).hasClass('fm_fileFilter')) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
                     }
                 } else {
-                    $(this).show();
+                    if (isAll || !$(this).hasClass('fm_fileFilter')) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
                 }
             });
         }
@@ -649,7 +714,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '</div>');
 
         // hide show all button if no filter set
-        if (!o.fileFilter.lenght) $('#fm_bar_all').hide();
+        if (!o.fileFilter.length) $('#fm_bar_all').hide();
 
         $("#dialog_fm").dialog({
             height:    $(window).height() - 100,

@@ -905,11 +905,14 @@ var vis = {
                     data: widgetData,
                     view: view
                 }));
-            } else {
+            } else if (widget.tpl) {
                 $view.append(can.view(widget.tpl, {
                     data: widgetData,
                     view: view
                 }));
+            } else {
+                console.error('Widget "' + id + '" is invalid. Please delete it.');
+                return;
             }
 
             if (widget.style && !widgetData._no_style) {
@@ -1002,6 +1005,11 @@ var vis = {
                             if (that.views[view].rerender) {
                                 that.views[view].rerender = false;
                                 for (var id in that.views[view].widgets) {
+                                    if (!that.views[view].widgets[id] && !that.views[view].widgets[id].tpl) {
+                                        console.error('Widget "' + id + '" is invalid. Please delete it.');
+                                        continue;
+                                    }
+
                                     if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                         that.views[view].widgets[id].renderVisible)
                                         that.renderWidget(view, id);
@@ -1036,8 +1044,6 @@ var vis = {
             }
             // remember last click for debounce
             this.lastChange = (new Date()).getTime();
-            console.log('lastChange: ' + this.lastChange);
-
         } else {
             this.renderView(view);
 
