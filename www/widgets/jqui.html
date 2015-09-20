@@ -1030,7 +1030,7 @@
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
             %>
-            <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('label') %></label>
+            <label style="margin: 0" for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('label') %></label>
             <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%"               alt="<%== this.data.attr('alt_false') %>" />
             <img class="imgToggleTrue"  <%= this.data.attr('src_true')  ? 'src="' +  this.data.attr('src_true')  + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%; display:none" alt="<%== this.data.attr('alt_true')  %>" />
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
