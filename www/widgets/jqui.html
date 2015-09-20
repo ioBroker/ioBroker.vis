@@ -1137,7 +1137,7 @@
                 var wid = data.attr('wid');
                 for (var val in values) {
                 %>
-                    <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label>
+                    <input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label for="<%= wid %>_radio<%= val %>" style="float: left"><%= texts[val] %></label>
                 <%
                 }
                 %>
