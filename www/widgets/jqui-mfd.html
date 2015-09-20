@@ -1125,6 +1125,7 @@
         <img width="100%" src="<%= this.data.attr('icon' + vis.binds.jqueryui.calcImage(vis.states.attr(this.data.oid + '.val'), this.data.attr('min'), this.data.attr('max'), this.data.invert_value)) %>"/>
     </div></div>
 </script>
+
 <script id="tplMfdCustom10Dialog"
          type="text/ejs"
          class="vis-tpl"
@@ -1469,7 +1470,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+            <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1505,7 +1506,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1540,7 +1541,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1578,7 +1579,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1616,7 +1617,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1650,7 +1651,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
@@ -1684,7 +1685,7 @@
     %>
     <div class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.classes(el) : '' %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            if (this.data.attr('iconColor')) { %>
+           <% if (this.data.attr('iconColor')) { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.svg' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <% } else { %>
                 <img src="<%= this.data.attr('icon') ? this.data.attr('icon') : 'widgets/jqui-mfd/img/it_camera.png' %>" style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" />
