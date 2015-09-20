@@ -1056,9 +1056,13 @@
                 }
             }, 100);
         },
-        isFalse: function (val, min) {
-            if (min !== undefined && min !== null) {
-                return val == min;
+        isFalse: function (val, min, max) {
+            if (min !== undefined && min !== null && min !== '') {
+                if (max !== undefined && max !== null && max !== '') {
+                    return val != max;
+                } else {
+                    return val == min;
+                }
             }
             if (val === undefined || val === null || val === false || val === 'false' || val === '') return true;
             if (val === '0' || val === 0) return true;
@@ -1691,13 +1695,13 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid">
+        data-vis-attrs="oid;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
-                <img src="img/bulb_off.png" width="100%"/>
-            <% break; default: %>
-                <img src="img/bulb_on.png" width="100%"/>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val")))  { %>
+                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
+            <% } else { %>
+                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
             <% } %>
         </div>
     </div>
@@ -1710,7 +1714,7 @@
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid;min;max;"
+        data-vis-attrs="oid;min;max;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;"
         data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
         >
     <div
@@ -1729,10 +1733,10 @@
         <%= (el) -> vis.binds.basic.toggle(el) %>
         >
         <div class="vis-widget-body">
-            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'))) { %>
-                <img src="img/bulb_off.png" width="100%"/>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
+                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" height="100%"/>
             <% } else { %>
-                <img src="img/bulb_on.png" width="100%"/>
+                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" height="100%"/>
             <% } %>
         </div>
     </div>

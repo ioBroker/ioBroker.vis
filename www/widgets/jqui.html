@@ -34,6 +34,15 @@
             "src_false":        {"en": "Icon by OFF",        "de": "Ikon bei AUS",          "ru": "Иконка при ВЫКЛ"},
             "alt_false":        {"en": "Tooltip by OFF",     "de": "Tooltip bei AUS",       "ru": "Подсказка при ВЫКЛ"},
             "timeOnly":         {"en": "Time only",          "de": "Nur Zeit",              "ru": "Только время"},
+            "inverted":         {"en": "Inverted value",     "de": "Wert invertiert",       "ru": "Иневртировать значение"},
+            "click_id":         {"en": "Control ID",         "de": "Steuer-ID",             "ru": "Контроль-ID"},
+            "click_value":      {"en": "Control value",      "de": "Steuerwert",            "ru": "Контроль-значение"},
+            "false_text":       {"en": "Text inactive",      "de": "Inaktiv-Text",          "ru": "Неактивный текст"},
+            "true_text":        {"en": "Text active",        "de": "Aktiv-Text",            "ru": "Активный текст"},
+            "false_src":        {"en": "Icon inactive",      "de": "Inaktiv-Bild",          "ru": "Неактивная картинка"},
+            "true_src":         {"en": "Icon active",        "de": "Aktiv-Bild",            "ru": "Активный картинка"},
+            "false_alt":        {"en": "Tooltip inactive",   "de": "Inaktiv-Tooltip",       "ru": "Неактивная подсказка"},
+            "true_alt":         {"en": "Tooltip active",     "de": "Aktiv-Tooltip",         "ru": "Активная подсказка"}
         });
     }
 
@@ -633,32 +642,52 @@
             var $this = $(el).parent();
             var oid = $this.parent().attr('data-oid') + '.val';
             var val = vis.states.attr(oid);
+            var activeVal = $this.parent().data('val');
+            if (activeVal === '' || activeVal === undefined) activeVal = null;
 
-            if (val === 'false') {
-                val = false;
-            } else if (val === 'true') {
-                val = true;
-            } else if (typeof val == "string") {
-                var f = parseFloat(val);
-                if (f == val) {
-                    val = f;
-                } else if (val !== '') {
-                    val = true;
-                } else {
-                    val = false;
-                }
-            }
-            if (val > 0) {
-                $this.find(".imgToggleFalse").hide();
-                $this.find(".imgToggleTrue").show();
-            }
-            vis.states.bind(oid, function (e, val) {
-                if (val === true || val === 'true' || parseFloat(val) > 0) {
+            if (activeVal !== null) {
+                if (activeVal.toString() == val.toString()) {
                     $this.find(".imgToggleFalse").hide();
                     $this.find(".imgToggleTrue").show();
+                }
+            } else {
+                if (val === 'false') val = false;
+                if (val === 'true')  val = true;
+
+                if (typeof val == 'string') {
+                    var f = parseFloat(val);
+                    if (f == val) {
+                        val = f;
+                    } else if (val !== '') {
+                        val = true;
+                    } else {
+                        val = false;
+                    }
+
+                }
+                if (val > 0) {
+                    $this.find(".imgToggleFalse").hide();
+                    $this.find(".imgToggleTrue").show();
+                }
+            }
+
+            vis.states.bind(oid, function (e, val) {
+                if (activeVal !== null) {
+                    if (activeVal.toString() == val.toString()) {
+                        $this.find(".imgToggleFalse").hide();
+                        $this.find(".imgToggleTrue").show();
+                    } else {
+                        $this.find(".imgToggleTrue").hide();
+                        $this.find(".imgToggleFalse").show();
+                    }
                 } else {
-                    $this.find(".imgToggleTrue").hide();
-                    $this.find(".imgToggleFalse").show();
+                    if (val === true || val === 'true' || parseFloat(val) > 0) {
+                        $this.find(".imgToggleFalse").hide();
+                        $this.find(".imgToggleTrue").show();
+                    } else {
+                        $this.find(".imgToggleTrue").hide();
+                        $this.find(".imgToggleFalse").show();
+                    }
                 }
             });
         },
@@ -1257,19 +1286,20 @@
 <script id="tplIconStateBool" 
         type="text/ejs" 
         class="vis-tpl"
-        data-vis-set="jqui" 
+        data-vis-set="jqui"
+        data-vis-prev='<div id="prev_tplIconStateBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 100px; height: 25px;" > <div class="vis-widget-prev-body"> <img class="tplImgFalse" src="/vis/img/bulb_on.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
         data-vis-name="ctrl - Icon State / val - Icon Bool" 
-        data-vis-attrs="click_id;click_value;oid;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
+        data-vis-attrs="oid;click_id/id;click_value;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
-    styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('click_value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
         <div class="vis-widget-body">
-            <img class="tplImgFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>" /><%= this.data.attr('false_text') %>
-            <img class="tplImgTrue" <%= this.data.attr('true_src') ? 'src="' +  this.data.attr('true_src') + '"' : '' %> style="display: hidden; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt') %>" /><%= this.data.attr('true_text') %>
+            <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="                 <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
+            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display:none"><%= this.data.attr('true_text')  %></span>
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>
@@ -1278,6 +1308,7 @@
 <script id="tplIconInc" 
         type="text/ejs" 
         class="vis-tpl"
+        data-vis-prev='<div id="prev_tplIconInc" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active " style="width: 44px; height: 20px;" data-vis-step="1" data-val=""> <div class="vis-widget-prev-body"> <img style=" vertical-align:middle;height:100%;">+1 </div> </div></div>'
         data-vis-set="jqui"
         data-vis-name="ctrl - Icon Increment" 
         data-vis-attrs="oid;step;minmax;text;src/image;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
