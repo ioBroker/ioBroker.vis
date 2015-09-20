@@ -145,6 +145,14 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog
 
+### 0.6.17 (2015-09-20)
+* (bluefox) add fancyswitch-6.png
+* (bluefox) add icons for some jqui widgets
+* (bluefox) fix some errors in qui and jqui-mfd
+* (bluefox) add to Bulb on/off image selector
+* (bluefox) fix "ctrl - Icon State / val - Icon Bool"
+* (bluefox) fix fileManager.js
+
 ### 0.6.16 (2015-09-17)
 * (bluefox) add to fancyswitch custom values and light style to german switch
 * (bluefox) try to accept for visibility true and false
