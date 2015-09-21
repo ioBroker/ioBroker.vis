@@ -1734,9 +1734,9 @@
         >
         <div class="vis-widget-body">
             <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
-                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" height="100%"/>
+                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
             <% } else { %>
-                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" height="100%"/>
+                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
             <% } %>
         </div>
     </div>

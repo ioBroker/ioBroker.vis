@@ -1870,12 +1870,21 @@ vis = $.extend(true, vis, {
             },
             multiple: true,
             checkAllText: _('Check all'),
-            uncheckAllText: _('Uncheck all')
+            uncheckAllText: _('Uncheck all'),
+            close: function () {
+                if ($('#inspect_views').data('changed')) {
+                    $('#inspect_views').data('changed', false);
+                    that.syncWidgets(that.activeWidgets, $(this).val());
+                    that.save();
+                }
+            }
             //noneSelectedText: _("Select options")
         }).change(function () {
-            that.syncWidgets(that.activeWidgets, $(this).val());
-            that.save();
-        });
+            $('#inspect_views').data('changed', true);
+            //that.syncWidgets(that.activeWidgets, $(this).val());
+            //that.save();
+        }).data('changed', false);
+
         $("#inspect_views").next().css('width', '100%');
 
         // If tab Widget is not selected => select it

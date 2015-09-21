@@ -17,40 +17,51 @@
 	// Add words for bars
     if (vis.editMode) {
         $.extend(systemDictionary, {
-            "hideSeconds"      : {"en": "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
-            "blink"            : {"en": "Blink",         "de": "Blinken",             "ru": "Мигать"},
+            "hideSeconds"      : {"en": "Hide seconds",         "de": "Zeige keine Sekunden",   "ru": "Скрыть секунды"},
+            "blink"            : {"en": "Blink",                "de": "Blinken",                "ru": "Мигать"},
             "blink_tooltip"    : {
                 "en" : "Used only if no seconds shown",
                 "de":  "Wird nur aktiv, falls keine Sekunden angezeigt sind",
                 "ru":  "Активно только если секунды не показываются"},
-            "showWeekDay"      : {"en": "Show day of week", "de": "Wochentag",        "ru": "День недели"},
-            "noClass"          : {"en": "No style",      "de": "Kein Stil",           "ru": "Без стиля"},
+            "showWeekDay"      : {"en": "Show day of week",     "de": "Wochentag",              "ru": "День недели"},
+            "noClass"          : {"en": "No style",             "de": "Kein Stil",              "ru": "Без стиля"},
             "noClass_tooltip"  : {
                 "en" : "Activate it if you want to set own class or own style for clock with css settings",
                 "de":  "Aktiviere es, falls eigenen Stil oder Klasse wird angeandt",
                 "ru":  "Если установлены пользовательский класс или CSS свойства,\x0Aто нужно активировать, что бы они стали активными"
             },
-            "weoid"            : {"en": "City",          "de": "Stadt",               "ru": "Город"},
-            "shortWeekDay"     : {"en": "Short week day","de": "Kurzer Wochentag",    "ru": "Короткий день недели"},
-            "shortYear"        : {"en": "Short year",    "de": "Kurzes Jahr",         "ru": "Короткий год"},
-            "prependZero"      : {"en": "Prepend zero",  "de": "Null vorne",          "ru": "Ноль в начале"},
-            "monthWord"        : {"en": "Month as word", "de": "Monat als text",      "ru": "Месяц словом"},
-            "shortMonth"       : {"en": "Short month",   "de": "Kurzer Monat",        "ru": "Короткий месяц"},
-            "americanOrder"    : {"en": "American format","de": "USA-Format",         "ru": "Формат USA"},
-            "City:"            : {"en": "City:",         "de": "Stadt:",              "ru": "Город:"},
-            "noSeconds"        : {"en": "Hide seconds",  "de": "Zeige keine Sekunden","ru": "Скрыть секунды"},
-            "showDigital"      : {"en": "Digital clock", "de": "Digitaluhr",          "ru": "Цифровые часы"},
-            "Select city"      : {"en": "Select city",   "de": "Stadt wählen",        "ru": "Выбрать город"},
-            "showAmPm"         : {"en": "Show am/pm",    "de": "Zeige am/pm",         "ru": "Показать am/pm"}
+            "weoid"            : {"en": "City",                 "de": "Stadt",                  "ru": "Город"},
+            "shortWeekDay"     : {"en": "Short week day",       "de": "Kurzer Wochentag",       "ru": "Короткий день недели"},
+            "shortYear"        : {"en": "Short year",           "de": "Kurzes Jahr",            "ru": "Короткий год"},
+            "prependZero"      : {"en": "Prepend zero",         "de": "Null vorne",             "ru": "Ноль в начале"},
+            "monthWord"        : {"en": "Month as word",        "de": "Monat als text",         "ru": "Месяц словом"},
+            "shortMonth"       : {"en": "Short month",          "de": "Kurzer Monat",           "ru": "Короткий месяц"},
+            "americanOrder"    : {"en": "American format",      "de": "USA-Format",             "ru": "Формат USA"},
+            "City:"            : {"en": "City:",                "de": "Stadt:",                 "ru": "Город:"},
+            "noSeconds"        : {"en": "Hide seconds",         "de": "Zeige keine Sekunden",   "ru": "Скрыть секунды"},
+            "showDigital"      : {"en": "Digital clock",        "de": "Digitaluhr",             "ru": "Цифровые часы"},
+            "Select city"      : {"en": "Select city",          "de": "Stadt wählen",           "ru": "Выбрать город"},
+            "showAmPm"         : {"en": "Show am/pm",           "de": "Zeige am/pm",            "ru": "Показать am/pm"},
+            "quadSize"         : {"en": "Quarter text size",    "de": "Viertel-Text-Größe",     "ru": "Размер чисел часа"},
+            "quadColor"        : {"en": "Quarter text color",   "de": "Viertel-Text-Farbe",     "ru": "Цвет чисел часа"},
+            "quadTickColor"    : {"en": "Quarter tick color",   "de": "Viertel-Tickfarbe",      "ru": "Цвет часовых штрихов"},
+            "textSize"         : {"en": "Minutes text size",    "de": "Minutentextgroße",       "ru": "Размер минутных чисел"},
+            "textColor"        : {"en": "Minutes text color",   "de": "Minutentextfarbe",       "ru": "Цвет минутных чисел"},
+            "tickColor"        : {"en": "Small tick color",     "de": "Klein-Tickfarbe",        "ru": "Цвет минутных штрихов"},
+            "isSeconds"        : {"en": "Show second hand",     "de": "Zeige Sekunden",         "ru": "Показать секунды"},
+            "handsColor"       : {"en": "Hands color",          "de": "Zeigerfarbe",            "ru": "Цвет стрелок"},
+            "handsColorLine"   : {"en": "Hands color bulge",    "de": "Zeigerbeulefarbe",       "ru": "Цвет выемок на стрелках"},
+            "handsSecColor"    : {"en": "Seconds hand color",   "de": "Skeundenzeigerfarbe",    "ru": "Цвет секундной стрелки"},
+            "textFont"         : {"en": "Text font",            "de": "Textschrift",            "ru": "Шрифт"}
         });
     }
 
     vis.binds.timeAndWeather = {
         startTime: function (view, elem, hideSeconds, blink, noClass, timerId) {
             var today = new Date();
-            var h =     today.getHours();
-            var m =     today.getMinutes();
-            var s =     today.getSeconds();
+            var h = today.getHours();
+            var m = today.getMinutes();
+            var s = today.getSeconds();
 
             // add a zero in front of numbers<10
             m = (m < 10) ? ("0" + m) : m;
@@ -63,7 +74,7 @@
                 hideSeconds = false;
             }
             if (!hl) {
-                $('#visview_'+view).append('<div class="vis-widget'+ (noClass ? '' : ' clock') + '" id="' + elem + '" ></div>');
+                $('#visview_' + view).append('<div class="vis-widget' + (noClass ? '' : ' clock') + '" id="' + elem + '" ></div>');
                 hl = document.getElementById(elem);
                 // View deleted
                 if (!hl) return;
@@ -84,7 +95,7 @@
                 hl.dashTimer = _setTimeout(vis.binds.timeAndWeather.startTime, 1000, view, elem, hideSeconds, blink, noClass, hl.dashId);
             }
         },
-        weekdays:{
+        weekdays: {
             0: {"en": "Sunday",   "de": "Sonntag",    "ru": "Воскресенье"},
             1: {"en": "Monday",   "de": "Montag",     "ru": "Понедельник"},
             2: {"en": "Tuesday",  "de": "Dienstag",   "ru": "Вторник"},
@@ -93,7 +104,7 @@
             5: {"en": "Friday",   "de": "Freitag",    "ru": "Пятница"},
             6: {"en": "Saturday", "de": "Samstag",    "ru": "Суббота"}
         },
-        weekdaysShort:{
+        weekdaysShort: {
             0: {"en": "Sun", "de": "So", "ru": "Вс"},
             1: {"en": "Mon", "de": "Mo", "ru": "Пн"},
             2: {"en": "Tue", "de": "Di", "ru": "Вт"},
@@ -102,7 +113,7 @@
             5: {"en": "Fri", "de": "Fr", "ru": "Пт"},
             6: {"en": "Sat", "de": "Sa", "ru": "Сб"}
         },
-        months:{
+        months: {
             1: {"en": "January",    "de": "Januar",     "ru": "Январь"},
             2: {"en": "February",   "de": "Dienstag",   "ru": "Февраль"},
             3: {"en": "March",      "de": "März",       "ru": "Март"},
@@ -118,10 +129,10 @@
         },
         startDate: function (view, elem, showWeekDay, noClass, timerId, shortWeekDay, shortYear, prependZero, monthWord, shortMonth, american) {
             var today = new Date();
-            var d =     today.getDate();
-            var dow =   today.getDay();
-            var m =     today.getMonth() + 1;
-            var y =     today.getFullYear();
+            var d = today.getDate();
+            var dow = today.getDay();
+            var m = today.getMonth() + 1;
+            var y = today.getFullYear();
 
             var monthString = vis.binds.timeAndWeather.months[m][vis.language];
             if (shortMonth) monthString = monthString.slice(0, 3);
@@ -154,16 +165,16 @@
                         case "en":
                             switch (d) {
                                 case 1:
-                                    d +=  'st';
+                                    d += 'st';
                                     break;
                                 case 2:
-                                    d +=  'nd';
+                                    d += 'nd';
                                     break;
                                 case 3:
-                                    d +=  'rd';
+                                    d += 'rd';
                                     break;
                                 default:
-                                    d +=  'th';
+                                    d += 'th';
                             }
 
                             if (american) {
@@ -199,15 +210,14 @@
             var style;
             var wid = data.attr('wid');
             if (vis.views[view] &&
-                vis.views[view].widgets[wid] &&
-                vis.views[view].widgets[wid].style) {
+                    vis.views[view].widgets[wid] &&
+                    vis.views[view].widgets[wid].style) {
                 style = vis.views[view].widgets[wid].style;
             }
-            var radius = 85;
             style = style || {};
-            style.width  = parseInt(style.width)  || 85;
+            style.width = parseInt(style.width) || 85;
             style.height = parseInt(style.height) || 85;
-            radius = parseInt(style.width) || 85;
+            var radius = parseInt(style.width) || 85;
             if (vis.views[view].widgets[wid]) {
                 vis.views[view].widgets[wid].style = style;
             }
@@ -223,7 +233,7 @@
             if (vis.editMode) {
                 $('#' + data.attr('wid')).bind('resize', function () {
                     var t = $(this);
-                    var myClass   = t.attr('data-myclass');
+                    var myClass = t.attr('data-myclass');
                     var myClasses = myClass.split(':');
                     myClasses[2] = t.width();
 
@@ -238,20 +248,20 @@
             CoolClock.findAndCreateClocks();
         },
         tplTwFlipClock: function (view, data) {
-            var text = '<div class="vis-widget" style="width:500px; height: 110px" id="'+data.attr('wid')+'" data-vis-resizable=';
+            var text = '<div class="vis-widget" style="width:500px; height: 110px" id="' + data.attr('wid') + '" data-vis-resizable=';
             text += "'" + '{"disabled":true}' + "'></div>";
-            $('#visview_'+view).append(text);
-            var clock = $('#'+data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
+            $('#visview_' + view).append(text);
+            var clock = $('#' + data.attr('wid')).FlipClock({clockFace: 'TwentyFourHourClock'});
         },
         tplTwHtcWeather: function (view, data) {
-            var text = '<div class="vis-widget" style="width:500px; height: 420px" id="'+data.attr('wid')+'" data-vis-resizable=';
+            var text = '<div class="vis-widget" style="width:500px; height: 420px" id="' + data.attr('wid') + '" data-vis-resizable=';
             text += "'" + '{"disabled":true}' + "'></div>";
-            $('#visview_'+view).append(text);
+            $('#visview_' + view).append(text);
             var weoid = data.attr('weoid');
             if (weoid !== undefined && weoid !== null) {
                 var i = weoid.indexOf('[');
                 if (i != -1) {
-                    weoid = weoid.substring(i+1);
+                    weoid = weoid.substring(i + 1);
                     i = weoid.indexOf(']');
                     weoid = weoid.substring(0, i);
                 }
@@ -259,7 +269,7 @@
             else
                 weoid = '664942';
 
-            var clock = $('#'+data.attr('wid')).jdigiclock({
+            var clock = $('#' + data.attr('wid')).jdigiclock({
                 weatherLocationCode: weoid,
                 weatherUpdate: 5,
                 lang: vis.language,
@@ -273,7 +283,7 @@
             if (weoid !== undefined && weoid !== null) {
                 var i = weoid.indexOf('[');
                 if (i != -1) {
-                    weoid = weoid.substring(i+1);
+                    weoid = weoid.substring(i + 1);
                     i = weoid.indexOf(']');
                     weoid = weoid.substring(0, i);
                 }
@@ -283,13 +293,13 @@
             }
 
             $('#' + data.attr('wid')).weatherfeed([weoid], {
-                lang:      vis.language,
-                woeid:     true,
-                humidity:  true,
-                forecast:  true,
-                link:      false,
+                lang: vis.language,
+                woeid: true,
+                humidity: true,
+                forecast: true,
+                link: false,
                 resizable: false,
-                rendered:  function () {
+                rendered: function () {
                     if (vis.editMode && vis.activeWidgets.indexOf(data.attr('wid')) != -1) {
                         vis.resizable($('#' + data.attr('wid')).resizable('destroy'));
                     }
@@ -298,22 +308,22 @@
         },
         editWeather: function (wid_attr, options) {
             var line = {
-                input:  '<input type="text" id="inspect_' + wid_attr + '"/>',
+                input: '<input type="text" id="inspect_' + wid_attr + '"/>',
                 init: function (_wid_attr, data) {
                     $('#inspect_' + _wid_attr).autocomplete({
                         source: function (req, callback) {
                             console.log(req.term);
 
-                            var query = 'select * from geo.places where text="' + req.term +'"';
+                            var query = 'select * from geo.places where text="' + req.term + '"';
                             var api = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(query) + '&format=json&callback=?';
 
                             // Send request
                             $.ajax({
-                                type:     'GET',
-                                url:      api,
+                                type: 'GET',
+                                url: api,
                                 dataType: 'json',
-                                success:  function(data) {
-                                    if (data.query.count > 0 ) {
+                                success: function (data) {
+                                    if (data.query.count > 0) {
                                         var arr = [];
                                         for (var i = 0; i < data.query.count; i++) {
                                             arr.push({
@@ -326,7 +336,7 @@
                                         callback([]);
                                     }
                                 },
-                                error:    function(data) {
+                                error: function (data) {
                                     callback([]);
                                 }
                             });
@@ -339,6 +349,198 @@
                 }
             };
             return line;
+        },
+        createSvgClock: function (options, el) {
+
+            var quadSize = options.quadSize || 60;
+            var quadColor = options.quadColor || '#333';
+            var quadTickColor = options.quadTickColor || '#333';
+            var textSize = options.textSize || 30;
+            var textColor = options.textColor || '#555';
+            var tickColor = options.tickColor || '#555';
+            var isSeconds = options.isSeconds || false;
+            var handsColor = options.handsColor || '#111';
+            var handsColorLine = options.handsColorLine || '#666';
+            var handsSecColor = options.handsSecColor || '#be5639';
+            var textFont = options.textFont || 'verdana, sans-serif';
+            var $el = $(el);
+
+            var html = '<svg viewbox="-450 -450 900 900" class="svg--clock" style="display: block;min-width: 5em;min-height: 5em;width: 100%;height: 100%;">';
+            html += '  <defs>';
+            html += '    <line  vector-effect="non-scaling-stroke" id="mark--major" y1="28.8" style="stroke-width: 7;stroke: ' + quadTickColor + '"></line>';
+            html += '    <line  vector-effect="non-scaling-stroke" id="mark--minor" y1="14.4" style="stroke-width: 2;stroke: ' + tickColor + '"></line>';
+            html += '    <circle  vector-effect="non-scaling-stroke" class="svg--cc" r="360"></circle>';
+            html += '  </defs>';
+            html += '  <g class="svg--ticks"  vector-effect="non-scaling-stroke"></g>';
+            html += '  <g id="hands">';
+            html += '    <g class="hand--h" style="stroke-linecap: round;stroke-width: 7;stroke: ' + handsColor + '">';
+            html += '      <line vector-effect="non-scaling-stroke" y2="-234"></line>';
+            html += '      <line vector-effect="non-scaling-stroke" y1="-136.8" y2="-205.2" style="stroke-width: 3;stroke: ' + handsColorLine + '"></line>';
+            html += '    </g>';
+            html += '    <g transform="rotate(25)" class="hand--m" style="stroke-linecap: round;stroke-width: 5;stroke: ' + handsColor + '">';
+            html += '      <line vector-effect="non-scaling-stroke" y2="-298.8"></line>';
+            html += '      <line vector-effect="non-scaling-stroke" y1="-201.60000000000002" y2="-270" style="stroke-width: 3;stroke: ' + handsColorLine + '"></line>';
+            html += '    </g>';
+            html += '    <g transform="rotate(60)" class="hand--s" style="stroke-width: 2;stroke: ' + handsSecColor + '">';
+            html += '      <line vector-effect="non-scaling-stroke" y1="36" y2="-342"></line>';
+            html += '    </g>';
+            html += '    <g>';
+            html += '      <circle vector-effect="non-scaling-stroke" r="14.4" style="fill: #e18728;"></circle>';
+            html += '      <circle vector-effect="non-scaling-stroke" r="7.2"  style="fill: #e0a197;"></circle>';
+            html += '    </g>';
+            html += '  </g>';
+            html += '</svg>';
+
+            $el.find('svg').remove();
+
+            if (!$el.find('svg').length) $el.append(html);
+
+            /* because IE */
+            Math.sign = Math.sign || function (x) {
+                x = +x; // convert to a number
+                if (x === 0 || isNaN(x)) {
+                    return x;
+                }
+                return x > 0 ? 1 : -1;
+            };
+
+            /* because me lazy */
+            Object.getOwnPropertyNames(Math).map(function (p) {
+                window[p] = Math[p];
+            });
+
+            Node.prototype.setAttrs = function (attr_obj) {
+                for (var prop in attr_obj) {
+                    this.setAttribute(prop, attr_obj[prop]);
+                }
+            };
+
+            var NS_URI = 'http://www.w3.org/2000/svg',
+                    XLink_NS = 'http://www.w3.org/1999/xlink',
+
+                    ns = 60,
+                    mi = 5,
+                    qi = .25 * ns,
+                    r = ~~$el.find('.svg--cc')[0].getAttribute('r'),
+                    svg = $el.find('svg')[0],
+                    wrap = $el.find('.svg--ticks')[0],
+                    h_el = $el.find('.hand--h')[0],
+                    m_el = $el.find('.hand--m')[0],
+                    s_el = $el.find('.hand--s')[0],
+                    h_max = 12, h_deg = 360 / h_max,
+                    m_max = 60, m_deg = 360 / m_max,
+                    s_max = 60, s_deg = 360 / s_max,
+                    prev_s;
+
+            var init = function () {
+                var frag = document.createDocumentFragment(),
+                        curr_tick_group, curr_tick, text1, text2,
+                        is_major, is_quad, ref,
+                        curr_angle, base_angle = 360 / ns;
+
+                if (!isSeconds) s_el.setAttribute('style', 'display: none');
+                for (var i = 0; i < ns; i++) {
+                    is_major = (i % mi === 0);
+                    is_quad = (i % qi === 0);
+
+                    ref = '#mark--' + (is_major ? 'major' : 'minor');
+                    curr_angle = i * base_angle;
+
+                    curr_tick_group = document.createElementNS(NS_URI, 'g');
+                    curr_tick = document.createElementNS(NS_URI, 'use');
+                    curr_tick.setAttributeNS(XLink_NS, 'xlink:href', ref);
+
+                    curr_tick.setAttribute(
+                            'transform',
+                                    'rotate(' + curr_angle + ')' +
+                                    'translate(0 -' + r + ')'
+                    );
+
+                    if (is_major) {
+                        curr_tick.setAttribute('class', 'major');
+
+                        text1 = document.createElementNS(NS_URI, 'text');
+                        text1.textContent = i;
+
+                        text1.setAttribute(
+                                'transform',
+                                        'rotate(' + curr_angle + ')' +
+                                        'translate(0 -' + 1.05 * r + ')' +
+                                        'rotate(' + -curr_angle + ')'
+                        );
+                        curr_tick_group.appendChild(text1);
+                        text1.setAttribute('style', 'dominant-baseline: middle;text-anchor: middle;fill: ' + textColor + '; font: ' + textSize + 'px ' + textFont);
+
+                        if (is_quad) {
+                            curr_tick.setAttribute('class', 'major quad');
+
+                            text2 = document.createElementNS(NS_URI, 'text');
+                            text2.textContent = (i / mi) || 12;
+
+                            text2.setAttrs({
+                                'class': 'quad',
+                                'transform': 'rotate(' + curr_angle + ')' +
+                                        'translate(0 -' + .8 * r + ')' +
+                                        'rotate(' + -curr_angle + ')'
+                            });
+                            text2.setAttribute('style', 'dominant-baseline: middle;text-anchor: middle;fill: ' + quadColor + '; font: 700 ' + quadSize + 'px ' + textFont);
+                            curr_tick_group.appendChild(text2);
+                        }
+                    }
+
+                    curr_tick_group.appendChild(curr_tick);
+                    frag.appendChild(curr_tick_group);
+                }
+
+                wrap.appendChild(frag);
+
+                run();
+                setInterval(function () {
+                    requestAnimationFrame(run);
+                }, 500);
+
+            };
+
+            var run = function () {
+                var t = new Date(),
+                        h = t.getHours(), curr_s_deg,
+                        m = t.getMinutes(), curr_m_deg,
+                        s = t.getSeconds(), curr_h_deg;
+
+                curr_s_deg = (s % s_max) * s_deg;
+
+                if (s != prev_s) {
+                    curr_s_deg = (s % s_max) * s_deg;
+                    if (isSeconds) {
+                        s_el.setAttribute(
+                                'transform',
+                                        'rotate(' + curr_s_deg + ')'
+                        );
+                    }
+
+                    curr_m_deg = ((m % m_max) + s / s_max) * m_deg;
+                    m_el.setAttribute(
+                            'transform',
+                                    'rotate(' + curr_m_deg + ')'
+                    );
+
+                    curr_h_deg = ((h % h_max) + m / m_max) * h_deg;
+                    h_el.setAttribute(
+                            'transform',
+                                    'rotate(' + curr_h_deg + ')'
+                    );
+                }
+
+                prev_s = s;
+
+            };
+
+            init();
+        },
+        tplSvgClock: function (el, data) {
+            setTimeout(function () {
+                vis.binds.timeAndWeather.createSvgClock(data, el[0]);
+            }, 100);
         }
     };
 
@@ -415,5 +617,18 @@
     <% 
         vis.binds.timeAndWeather.tplTwYahooWeather(this.view, this.data);
     %>
+</script>
+<script id="tplSvgClock"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<img src="widgets/timeAndWeather/img/Prev_tplSvgClock.png"></img>'
+        data-vis-set="timeAndWeather"
+        data-vis-name="Svg Clock"
+        data-vis-update-style="true"
+        data-vis-attrs="quadSize/slider,10,200,1;quadColor/color;quadTickColor/color;textSize/slider,10,200,1;textColor/color;tickColor/color;isSeconds/checkbox;handsColor/color;handsColorLine/color;handsSecColor/color;textFont/fontname"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.timeAndWeather.tplSvgClock(el, this.data) %> />
+    </div>
 </script>
 
