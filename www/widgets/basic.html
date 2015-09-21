@@ -163,7 +163,17 @@
             "oidFalse":         {"en": "Object ID on false",        "de": "Objekt ID bei false",    "ru": "ID объекта при false"},
             "oidTrue":          {"en": "Object ID on true",         "de": "Objekt ID bei true",     "ru": "ID объекта при true"},
             "oidTrueValue":     {"en": "Value for OÍD on true",     "de": "Wert für ID bei false",  "ru": "Значение для ID при false"},
-            "oidFalseValue":    {"en": "Value for OÍD on false",    "de": "Wert für ID bei true",   "ru": "Значение для ID при true"}
+            "oidFalseValue":    {"en": "Value for OÍD on false",    "de": "Wert für ID bei true",   "ru": "Значение для ID при true"},
+            "square":           {"en": "square",                    "de": "square",                 "ru": "квадрат"},
+            "pentagone":        {"en": "pentagone",                 "de": "pentagone",              "ru": "Пятиуголник"},
+            "hexagone":         {"en": "hexagone",                  "de": "hexagone",               "ru": "Шестиугольник"},
+            "octagone":         {"en": "octagone",                  "de": "octagone",               "ru": "Восьмиугольник"},
+            "circle":           {"en": "circle",                    "de": "Kreis",                  "ru": "Круг"},
+            "svgType":          {"en": "Type",                      "de": "Typ",                    "ru": "Тип"},
+            "strokeColor":      {"en": "Stroke color",              "de": "Liniefarbe",             "ru": "Цвет линии"},
+            "fill":             {"en": "Fill color",                "de": "Füllfarbe",              "ru": "Цвет заливки"},
+            "strokeWidth":      {"en": "Stroke width",              "de": "Liniebreite",            "ru": "Ширина линии"},
+            "rotate":           {"en": "Rotate",                    "de": "Drehen",                 "ru": "Повернуть на"}
         });
     }
 
@@ -1095,6 +1105,39 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
+        </div>
+    </div>
+</script>
+
+<script id="tplShapes"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="static"
+        data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
+        data-vis-name="Svg shapes"
+        data-vis-attrs="svgType/select,line,triangle,square,pentagone,hexagone,octagone,circle;strokeColor/color;fill/color;strokeWidth[0]/slider,0,100,1;rotate/slider,0,180,1">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="0 0 100 100" style="display: block;width:100%; height:100%;fill:<%== this.data.attr('fill') %>;stroke:<%== this.data.attr('strokeColor')%>;stroke-width: <%== this.data.attr('strokeWidth') %>">
+                <%
+                var svg = '';
+                if (this.data.svgType == 'triangle') {
+                    svg = '<polygon transform="rotate(' + this.data.attr('rotate') + ', 50, 60) scale(0.7) translate(25,25) " ' +
+                        'points="91.6,86 8.43,86 50,14"/>';
+                } else if (this.data.svgType == 'line') {
+                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + this.data.attr('rotate') + ', 50, 50)" x1="0" y1="50" x2="100" y2="50"/>';
+                } else if (this.data.svgType == 'circle') {
+                    svg = '<circle cx="50" cy="50" r="' + (50 - parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" />';
+                } else if (this.data.svgType == 'pentagone') {
+                    svg = '<polygon transform="scale(0.5) rotate(' + this.data.attr('rotate') + ', 100, 100)" ' +
+                    'points="156.427384220077,186.832815729997 43.5726157799226,186.832815729997 8.69857443566525,79.5015528100076 100,13.1671842700025 191.301425564335,79.5015528100076" />';
+                } else if (this.data.svgType == 'square') {
+                    svg = '<rect transform="rotate(' + this.data.attr('rotate') + ', 50, 50)" x="' + (15 + parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" y="' + (15 + parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" width="' + (70 - parseInt(this.data.attr('strokeWidth'), 10)) + '" height="' + (70 - parseInt(this.data.attr('strokeWidth'), 10)) + '" />';
+                }
+                %>
+                <%== svg %>
+            </svg>
         </div>
     </div>
 </script>
