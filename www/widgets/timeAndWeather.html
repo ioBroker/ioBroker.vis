@@ -559,23 +559,91 @@
                     display.setValue(time);
                 }
             }
+            function runText(_el, _display, interval) {
+                var $display = $('#' + _display.displayId);
+
+                var val = _el.data('value');
+                var len = val.length;
+                if (!val) return;
+                var step = _el.data('step') || 0;
+
+                if (step < 0) {
+                    val = new Array(-step + 1).join(' ') + val.substring(0, _display.pattern.length + step);
+                } else {
+                    val = val.substring(step);
+                }
+                if (step >= len) {
+                    step = -(_display.pattern.length - 1);
+                } else {
+                    step++;
+                }
+                _el.data('step', step);
+                _display.setValue(val);
+
+                if (!_el.data('timerId')) {
+                    var timerId = Math.round(Math.random() * 100000) + 1;
+                    var timer = setInterval(function () {
+                        if (_el.data('timerId') != timerId) {
+                            clearInterval(timer);
+                            return;
+                        }
+                        runText(_el, _display, interval);
+                    }, interval)
+                    _el.data('timerId', timerId);
+                }
+            }
             setTimeout(function () {
                 el.append('<canvas id="' + data.attr('wid') + '_clock" width="'  + el.width() + '" height="'  + el.height() + '"></canvas>');
                 var display = new SegmentDisplay(data.attr('wid') + '_clock');
                 display.pattern         = data.pattern || "##:##:##";
                 if (display.pattern == "##:##:##" && (!data.seconds || data.seconds === 'false')) display.pattern = "##:##";
-                console.log(display.pattern);
-                display.cornerType      = 2;
-                display.displayType     = 7;
-                display.displayAngle    = 9;
-                display.digitHeight     = 20;
-                display.digitWidth      = 12;
-                display.digitDistance   = 2;
-                display.segmentWidth    = 3;
-                display.segmentDistance = 0.5;
+                display.segmentCount    = parseInt(data.segmentCount, 10) || 7;
+                display.displayAngle    = (data.displayAngle    === '' || data.displayAngle    === null || data.displayAngle === undefined) ? 9 : (parseInt(data.displayAngle, 10) || 0);
+                display.digitHeight     = parseInt(data.digitHeight, 10) || 20;
+                display.digitWidth      = parseInt(data.digitWidth, 10)  || 12;
+                display.digitDistance   = (data.digitDistance   === '' || data.digitDistance   === null || data.digitDistance === undefined) ? 2 : (parseInt(data.digitDistance, 10) || 0);
+                display.segmentWidth    = parseInt(data.segmentWidth, 10) || 3;
+                display.segmentDistance = (data.segmentDistance === '' || data.segmentDistance === null || data.segmentDistance === undefined) ? 0.5 : (parseFloat(data.segmentDistance) || 0);
+                switch (data.cornerType) {
+                    case 'SymmetricCorner':
+                        display.cornerType = 0;
+                        break;
+                    case 'FlattenedCorner':
+                        display.cornerType = 1;
+                        break;
+                    case 'PointedCorner':
+                        display.cornerType = 2;
+                        break;
+                    case 'RoundedCorner':
+                        display.cornerType = 0;
+                        break;
+                    default:
+                        display.cornerType = 0;
+                    break;
+                }
                 display.colorOn         = data.colorOn  || 'rgba(0, 0, 0, 0.9)';
                 display.colorOff        = data.colorOff || 'rgba(0, 0, 0, 0.1)';
-                if (data.clock) {
+                data.runStepInterval    = parseInt(data.runStepInterval, 10) || 0;
+
+                if (data.oid) {
+                    var value = vis.states.attr(data.oid + '.val');
+                    value = value.toString();
+                    display.setValue(value);
+                    el.data('value', value).data('step', 0);
+                    vis.states.bind(data.oid + '.val', function (e, newVal) {
+                        el.data('value', newVal).data('step', 0);
+                        display.setValue(newVal.toString());
+                    });
+                    if (data.runStepInterval) {
+                        runText(el, display, data.runStepInterval);
+                    }
+                } else if (data.text) {
+                    el.data('value', data.text).data('step', 0);
+                    display.setValue(data.text.toString());
+                    if (data.runStepInterval) {
+                        runText(el, display, data.runStepInterval);
+                    }
+                } else if (data.clock) {
                     var timerId = Math.round(Math.random() * 1000000);
                     el.data('timer', timerId);
                     writeTime(el, display);
@@ -585,8 +653,9 @@
                         }
                         writeTime(el, display);
                     }, 1000);
+                } else {
+                    display.setValue('no oid, no text, no clock');
                 }
-
             });
         }
     };
@@ -687,7 +756,9 @@
         data-vis-set="timeAndWeather"
         data-vis-name="Segment Clock"
         data-vis-update-style="true"
-        data-vis-attrs="clock[true]/checkbox;seconds[true]/checkbox;pattern[##:##:##];colorOn[rgba(0, 0, 0, 1)]/color;colorOff[rgba(0, 0, 0, 0.9)]/color"
+        data-vis-attrs="oid;text;"
+        data-vis-attrs0="group.clock;clock[true]/checkbox;seconds[true]/checkbox;"
+        data-vis-attrs1="group.style;pattern[##:##:##];colorOn[rgba(0, 0, 0, 1)]/color;colorOff[rgba(0, 0, 0, 0.9)]/color;runStepInterval[0]/slider,0,5000,100;segmentCount[7]/nselect,7,14,16;displayAngle[9]/slider,0,30,1;digitHeight[20]/slider,0,60,1;digitWidth[12]/slider,0,60,1;digitDistance[2]/slider,0,60,1;segmentWidth[3]/slider,0,60,1;segmentDistance[0.5]/slider,0,5,0.1;cornerType[PointedCorner]/select,SymmetricCorner,FlattenedCorner,PointedCorner,RoundedCorner"
         >
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.timeAndWeather.tplSegmentClock(el, this.data) %> />
