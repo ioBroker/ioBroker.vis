@@ -44,9 +44,15 @@
             "highlight_switch": {"en": "Highlight switch",           "de": "Highlight Schalter", "ru": "Подсветить выключатель"},
             "invert":           {"en": "Invert state",               "de": "Zustand invertieren", "ru": "Инвертировать состояние"},
             "test":             {"en": "Test",                       "de": "Testen",             "ru": "Тест"},
-            "valFalse":         {"en": "False value",                "de": "Flash-Wert",         "ru": "False-значение"},
+            "valFalse":         {"en": "False value",                "de": "Falsch-Wert",        "ru": "False-значение"},
             "valTrue":          {"en": "True value",                 "de": "Wahr-Wert",          "ru": "True-значение"},
-            "lightStyle":       {"en": "Light style",                "de": "Hellstil",           "ru": "Светлый стиль"}
+            "lightStyle":       {"en": "Light style",                "de": "Hellstil",           "ru": "Светлый стиль"},
+            "autoOff":          {"en": "Auto OFF in (ms)",           "de": "Auto AUS(ms)",       "ru": "Авто Выкл.(мс)"},
+            "autoOff_tooltip":  {
+                "en": "Chnage to previous state after given interval automatically",
+                "de": "Ändert Zustand auf vorheriger nach eingegebenem Intervall",
+                "ru": "Меняет состояние на обратное по истечении указанного времени"
+            }
         });
     }
 
@@ -86,6 +92,8 @@
             }
 
             if (!vis.editMode && oid && oid != 'nothing_selected') {
+                options.autoOff = parseInt(options.autoOff, 10) || 0;
+
                 $this.find("input.fancy-on_off").change(function() {
                     var newVal = $(this).val();
                     var num = parseFloat(newVal);
@@ -102,10 +110,18 @@
                     if (parseFloat(num).toString() == num) num = parseFloat(num);
 
                     vis.setValue(oid, num);
+                    if (options.autoOff) {
+                        setTimeout(function () {
+                            num = num ? (options.valFalse || 0) : ((options.valTrue === null) ? 1 : options.valTrue);
+
+                            if (num === 'true')  num = true;
+                            if (num === 'false') num = false;
+                            if (parseFloat(num).toString() == num) num = parseFloat(num);
+
+                            vis.setValue(oid, num);
+                        }, options.autoOff);
+                    }
                 });
-                /*$this.click(function() {
-                   console.log('click');
-                });*/
             }
         },
         toggleSwitch: function (el, options) {
@@ -169,14 +185,14 @@
         data-vis-set="fancyswitch"
         data-vis-type="ctrl - Bool"
         data-vis-name="Switch light Off/On"
-        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1]">
+        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];autoOff/slider,0,5000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= this.data.attr('valFalse') || 0 %>"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= (this.data.attr('valTrue') === '' || this.data.attr('valTrue') === null || this.data.attr('valTrue') === undefined) ? 1 : this.data.attr('valTrue') %>"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-1.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse')}) %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-1.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse'), autoOff: this.data.attr('autoOff')}) %>></div>
         </div>
     </div>
 </script>
@@ -188,7 +204,7 @@
         data-vis-set="fancyswitch"
         data-vis-type="ctrl - Bool"
         data-vis-name="Slider dark Off/On"
-        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1]">
+        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];autoOff/slider,0,5000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
@@ -208,14 +224,14 @@
         data-vis-set="fancyswitch"
         data-vis-type="ctrl - Bool"
         data-vis-name="Schieber dunkel Ein/Aus"
-        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1]">
+        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];autoOff/slider,0,5000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= this.data.attr('valFalse') || 0 %>"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= (this.data.attr('valTrue') === '' || this.data.attr('valTrue') === null || this.data.attr('valTrue') === undefined) ? 1 : this.data.attr('valTrue') %>"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-3.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse')}) %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-3.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse'), autoOff: this.data.attr('autoOff')}) %>></div>
         </div>
     </div>
 </script>
@@ -227,14 +243,14 @@
         data-vis-set="fancyswitch"
         data-vis-type="ctrl - Bool"
         data-vis-name="Schieber dunkel Aus/Ein"
-        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1]">
+        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];autoOff/slider,0,5000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= this.data.attr('valFalse') || 0 %>"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= (this.data.attr('valTrue') === '' || this.data.attr('valTrue') === null || this.data.attr('valTrue') === undefined) ? 1 : this.data.attr('valTrue') %>"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-4.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse')}) %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-4.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse'), autoOff: this.data.attr('autoOff')}) %>></div>
         </div>
     </div>
 </script>
@@ -247,14 +263,14 @@
         data-vis-set="fancyswitch"
         data-vis-type="ctrl - Bool"
         data-vis-name="Wippe dunkel Aus/Ein"
-        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];lightStyle/checkbox">
+        data-vis-attrs="oid;invert/checkbox;valFalse[0];valTrue[1];autoOff/slider,0,5000,100;lightStyle/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:105px; height:46px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <fieldset id="<%= this.data.attr('wid') %>_fancy" class="fancy-switch" data-oid="<%= this.data.attr('oid') %>">
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= this.data.attr('valFalse') || 0 %>"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= (this.data.attr('valTrue') === '' || this.data.attr('valTrue') === null || this.data.attr('valTrue') === undefined) ? 1 : this.data.attr('valTrue') %>"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: data.attr('lightStyle') ? "widgets/fancyswitch/img/fancyswitch-6.png" : "widgets/fancyswitch/img/fancyswitch-5.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse')}) %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: data.attr('lightStyle') ? "widgets/fancyswitch/img/fancyswitch-6.png" : "widgets/fancyswitch/img/fancyswitch-5.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse'), autoOff: this.data.attr('autoOff')}) %>></div>
         </div>
     </div>
 </script>

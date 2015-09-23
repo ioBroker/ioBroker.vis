@@ -94,7 +94,10 @@ vis = $.extend(true, vis, {
         $('#pan_add_wid').resizable({
             handles:  'e',
             maxWidth: 570,
-            minWidth: 190
+            minWidth: 190,
+            resize: function () {
+                $('#filter_set').clearSearch('update');
+            }
         });
         $('#pan_attr').resizable({
             handles: 'w',
@@ -1887,6 +1890,7 @@ vis = $.extend(true, vis, {
                 });
             }, 400));
         }
+
         $filter_set.autocomplete({
             minLength: 0,
             source: function (request, response) {
@@ -1912,7 +1916,7 @@ vis = $.extend(true, vis, {
                 $filter_set.parent().find("span").find("input").val(textToShow);
                 filterWidgets();
             }
-        });
+        }).clearSearch();
 
         if (this.config['select/select_set'] != "all" && this.config['select/select_set']) {
             $('.wid_prev').hide();
@@ -2035,6 +2039,8 @@ vis = $.extend(true, vis, {
         $('#menu_body').show();
         $('#panel_body').show();
         $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
+
+        $('#filter_set').clearSearch('update');
 
     },
     editLoadConfig: function () {
