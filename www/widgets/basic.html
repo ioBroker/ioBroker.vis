@@ -1079,6 +1079,23 @@
             var f = parseFloat(val);
             if (f.toString() !== 'NaN') return !f;
             return false;
+        },
+        circlePoints: function (radius, num, step) {
+            var isArray = false;
+            if (step === true) {
+                isArray = true;
+                step = 0;
+            }
+            step = step || 360 / num;
+            var points = [];
+            var text = '';
+            for (var i = 0; i < num; i++) {
+                var point = {x:Math.sin(Math.PI / 180 * (i * step - 180)) * radius, y:Math.cos(Math.PI / 180 * (i * step - 180)) * radius};
+                points.push(point);
+                text += point.x + ', ' + point.y + ' ';
+            }
+            if (isArray) return points;
+            return text;
         }
     };
 
@@ -1116,24 +1133,47 @@
         data-vis-type="static"
         data-vis-name="Svg shape"
         data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 56px; height: 60px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"> <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block; width: 100%; height: 100%; fill: rgb(0, 179, 172); stroke: rgb(0, 156, 179); stroke-width: 6px;"> <circle cx="50" cy="50" r="47"></circle> </svg> </div> </div></div>'
-        data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,180,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
+        data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle,star,arrow;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,360,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="-50 -50 100 100" style="display: block;width:100%; height:100%;fill:<%== this.data.attr('fill') %>;stroke:<%== this.data.attr('strokeColor')%>;stroke-width: <%== this.data.attr('strokeWidth') %>">
                 <%
                 var svg = '';
+                var rotate = this.data.attr('rotate');
+                rotate = parseInt(rotate, 10) || 0;
                 if (this.data.svgType == 'triangle') {
-                    svg = '<polygon transform="scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') rotate(' + this.data.attr('rotate') + ', 50, 60) scale(0.7) translate(25,25) " ' +
-                        'points="91.6,86 8.43,86 50,14"/>';
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 3) + '"/>';
                 } else if (this.data.svgType == 'line') {
-                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + this.data.attr('rotate') + ')" x1="-50" y1="0" x2="50" y2="0"/>';
+                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
                 } else if (this.data.svgType == 'circle') {
-                    svg = '<circle transform="scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') rotate(' + this.data.attr('rotate') + ')" cx="0" cy="0" r="' + (50 - parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" />';
+                    svg = '<circle transform="scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') rotate(' + rotate + ')" cx="0" cy="0" r="' + (50 - parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" />';
                 } else if (this.data.svgType == 'pentagone') {
-                    svg = '<polygon transform="scale(0.5) rotate(' + this.data.attr('rotate') + ', 100, 100)" ' +
-                    'points="156.427384220077,186.832815729997 43.5726157799226,186.832815729997 8.69857443566525,79.5015528100076 100,13.1671842700025 191.301425564335,79.5015528100076" />';
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 5) + '"/>';
                 } else if (this.data.svgType == 'square') {
-                    svg = '<rect transform="rotate(' + this.data.attr('rotate') + ')" x="' + (15 + parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" y="' + (15 + parseInt(this.data.attr('strokeWidth'), 10) / 2) + '" width="' + (70 - parseInt(this.data.attr('strokeWidth'), 10)) + '" height="' + (70 - parseInt(this.data.attr('strokeWidth'), 10)) + '" />';
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 4) + '"/>';
+                } else if (this.data.svgType == 'hexagone') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 6) + '"/>';
+                } else if (this.data.svgType == 'octagone') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 8) + '"/>';
+                } else if (this.data.svgType == 'star') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth'), 5, 144) + '"/>';
+                } else if (this.data.svgType == 'arrow') {
+                    var points = vis.binds.basic.circlePoints(50 - this.data.attr('strokeWidth') * 4, 3, true);
+                    var text = '';
+                    for (var p = 0; p < points.length; p++) {
+                        text += points.x + ',' + points.y;
+                        if (points.length == p - 2) {
+                            text += '0,0';
+                        }
+                    }
+                    svg = '<polygon transform="rotate(' + rotate + ') translate(0,10)  scale(' + this.data.attr('scaleWidth') + ', ' + this.data.attr('scaleHeight') + ') " ' +
+                        'points="0, -50 -43.3, 25 0,0 43.3, 25"/>';
                 }
                 %>
                 <%== svg %>
