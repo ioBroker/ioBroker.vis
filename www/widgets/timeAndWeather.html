@@ -624,9 +624,9 @@
                 display.colorOn         = data.colorOn  || 'rgba(0, 0, 0, 0.9)';
                 display.colorOff        = data.colorOff || 'rgba(0, 0, 0, 0.1)';
                 data.runStepInterval    = parseInt(data.runStepInterval, 10) || 0;
-
-                if (data.oid) {
+                if (data.oid && data.oid != 'nothing_selected') {
                     var value = vis.states.attr(data.oid + '.val');
+                    if (value === null || value === undefined) value = '';
                     value = value.toString();
                     display.setValue(value);
                     el.data('value', value).data('step', 0);
@@ -638,7 +638,7 @@
                         runText(el, display, data.runStepInterval);
                     }
                 } else if (data.text) {
-                    el.data('value', data.text).data('step', 0);
+                    el.data('value', data.text.toString()).data('step', 0);
                     display.setValue(data.text.toString());
                     if (data.runStepInterval) {
                         runText(el, display, data.runStepInterval);
@@ -752,15 +752,15 @@
 <script id="tplSegmentClock"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<img src="widgets/timeAndWeather/img/Prev_tplSvgClock.png"></img>'
+        data-vis-prev='<img src="widgets/timeAndWeather/img/Prev_tplSegmentClock.png"></img>'
         data-vis-set="timeAndWeather"
         data-vis-name="Segment Clock"
         data-vis-update-style="true"
         data-vis-attrs="oid;text;"
         data-vis-attrs0="group.clock;clock[true]/checkbox;seconds[true]/checkbox;"
-        data-vis-attrs1="group.style;pattern[##:##:##];colorOn[rgba(0, 0, 0, 1)]/color;colorOff[rgba(0, 0, 0, 0.9)]/color;runStepInterval[0]/slider,0,5000,100;segmentCount[7]/nselect,7,14,16;displayAngle[9]/slider,0,30,1;digitHeight[20]/slider,0,60,1;digitWidth[12]/slider,0,60,1;digitDistance[2]/slider,0,60,1;segmentWidth[3]/slider,0,60,1;segmentDistance[0.5]/slider,0,5,0.1;cornerType[PointedCorner]/select,SymmetricCorner,FlattenedCorner,PointedCorner,RoundedCorner"
+        data-vis-attrs1="group.style;pattern[##:##:##];colorOn[rgba(0, 0, 0, 1)]/color;colorOff[rgba(0, 0, 0, 0.1)]/color;runStepInterval[0]/slider,0,5000,100;segmentCount[7]/nselect,7,14,16;displayAngle[9]/slider,0,30,1;digitHeight[20]/slider,0,60,1;digitWidth[12]/slider,0,60,1;digitDistance[2]/slider,0,60,1;segmentWidth[3]/slider,0,60,1;segmentDistance[0.5]/slider,0,5,0.1;cornerType[PointedCorner]/select,SymmetricCorner,FlattenedCorner,PointedCorner,RoundedCorner"
         >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.timeAndWeather.tplSegmentClock(el, this.data) %> />
     </div>
 </script>
