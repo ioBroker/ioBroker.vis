@@ -144,6 +144,13 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.6.18 (2015-09-24)
+(bluefox) add segment clock widget
+(bluefox) clear filter button in File Manager
+(bluefox) add to fancy switch "autoOff" property
+(bluefox) add svg shapes
+(bluefox) fix problem with view selection for widget
+(bluefox) add new widget "Svg clock"
 
 ### 0.6.17 (2015-09-20)
 * (bluefox) add fancyswitch-6.png
