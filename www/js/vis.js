@@ -1846,7 +1846,7 @@ var vis = {
             }
         }, 200);
     },
-    detectBounce: function (el) {
+    detectBounce: function (el, isUp) {
         if (!this.isTouch) return false;
 
         // Protect against two events
@@ -1857,13 +1857,13 @@ var vis = {
             return true;
         }
 
-        var lastClick = $(el).data('lc');
+        var lastClick = $(el).data(isUp ? 'lcu' : 'lc');
         //console.log('click: ' + lastClick + ' ' + (now - lastClick));
         if (lastClick && now - lastClick < 700) {
             //console.log('click: filtered');
             return true;
         }
-        $(el).data('lc', now);
+        $(el).data(isUp ? 'lcu' : 'lc', now);
         return false;
     }
 };

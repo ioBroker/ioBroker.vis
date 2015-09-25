@@ -1380,7 +1380,7 @@ vis = $.extend(true, vis, {
         /*if (widAttr.match(/src$/)) {
          wid_type = 'image';
          } else*/
-        if (widAttr == 'url' || widAttr == 'sound') {
+        if (widAttr == 'sound') {
             wid_type = 'sound';
         } else if (widAttr.indexOf('_effect') != -1) {
             wid_type = 'effect';
