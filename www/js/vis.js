@@ -579,8 +579,6 @@ var vis = {
         }
 
 
-        $('#active_view').html(this.activeView);
-
         // Navigation
         $(window).bind('hashchange', function (e) {
             that.changeView(window.location.hash.slice(1));
@@ -1661,7 +1659,7 @@ var vis = {
 
         return result;
     },
-    formatBinding: function (format) {
+    formatBinding: function (format, view, wid) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
@@ -1669,6 +1667,10 @@ var vis = {
                 value = this.conn.getUser();
             } else if (oids[t].visOid == 'language.val') {
                 value = this.language;
+            } else if (oids[t].visOid == 'wid.val') {
+                value = wid;
+            } else if (oids[t].visOid == 'view.val') {
+                value = view;
             } else {
                 value = this.states.attr(oids[t].visOid);
             }
@@ -1677,7 +1679,11 @@ var vis = {
                     if (oids[t].operations[k].op === 'eval') {
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            if (oids[t].operations[k].arg[a].visOid == 'username.val') {
+                            if (oids[t].operations[k].arg[a].visOid == 'wid.val') {
+                                value = wid;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'view.val') {
+                                value = view;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'username.val') {
                                 value = this.conn.getUser();
                             } else if (oids[t].operations[k].arg[a].visOid == 'language.val') {
                                 value = this.language;
@@ -2088,7 +2094,7 @@ window.onpopstate();
 
                                     if (!vis.editMode && vis.bindings[id]) {
                                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
                                         }
                                     }
                                 }
@@ -2123,7 +2129,7 @@ window.onpopstate();
 
                                         if (!vis.editMode && vis.bindings[id]) {
                                             for (var i = 0; i < vis.bindings[id].length; i++) {
-                                                vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                                vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
                                             }
                                         }
                                     }
@@ -2233,7 +2239,7 @@ window.onpopstate();
                     // Bindings on every element
                     if (!vis.editMode && vis.bindings[id]) {
                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                            var value = vis.formatBinding(vis.bindings[id][i].format);
+                            var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
 
                             vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
                             if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
