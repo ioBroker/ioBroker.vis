@@ -1659,7 +1659,7 @@ var vis = {
 
         return result;
     },
-    formatBinding: function (format, view, wid) {
+    formatBinding: function (format, view, wid, widget) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
@@ -1669,6 +1669,8 @@ var vis = {
                 value = this.language;
             } else if (oids[t].visOid == 'wid.val') {
                 value = wid;
+            } else if (oids[t].visOid == 'wname.val') {
+                value = widget.data.name || wid;
             } else if (oids[t].visOid == 'view.val') {
                 value = view;
             } else {
@@ -1687,6 +1689,8 @@ var vis = {
                                 value = this.conn.getUser();
                             } else if (oids[t].operations[k].arg[a].visOid == 'language.val') {
                                 value = this.language;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'wname.val') {
+                                value = widget.data.name || wid;
                             } else {
                                 value = this.states.attr(oids[t].operations[k].arg[a].visOid);
                             }
@@ -1696,9 +1700,10 @@ var vis = {
                         //string += '}())';
                         try {
                             value = new Function(string)();
-                        } catch(e)
-                        {
-                            console.log('Error in eval: ' + string);
+                        } catch(e) {
+                            console.error('Error in eval[value]     : ' + format);
+                            console.error('Error in eval[script]: ' + string);
+                            console.error('Error in eval[error] : ' + e);
                             value = 0;
                         }
                     } else
@@ -2094,7 +2099,8 @@ window.onpopstate();
 
                                     if (!vis.editMode && vis.bindings[id]) {
                                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
+                                            var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                                            widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
                                         }
                                     }
                                 }
@@ -2129,7 +2135,8 @@ window.onpopstate();
 
                                         if (!vis.editMode && vis.bindings[id]) {
                                             for (var i = 0; i < vis.bindings[id].length; i++) {
-                                                vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
+                                                var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                                                widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
                                             }
                                         }
                                     }
@@ -2239,9 +2246,10 @@ window.onpopstate();
                     // Bindings on every element
                     if (!vis.editMode && vis.bindings[id]) {
                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                            var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget);
+                            var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                            var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
 
-                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
+                            widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
                             if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
                                 vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
                             }

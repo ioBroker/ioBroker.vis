@@ -92,6 +92,7 @@ Note: there is a special object ID - "username". It shows logged in user.
       And there is a "language" object id: can be "de", "en" or "ru".
       "view" - has a name of actual view
       "wid" - has a name of actual widget
+      "wname" - widget name
 Note: to use ":" in calculatinos (e.g. in string formula) use "::" instead.
 
 ## Filters
