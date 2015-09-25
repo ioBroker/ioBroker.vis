@@ -177,9 +177,8 @@
     };
 </script>
 
-
-<script type="text/ejs"
-        id="tplFancySwitch1"
+<script id="tplFancySwitch1"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancySwitch1" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 104px; height: 40px; left: 179.5px; top: 46px; position: absolute;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-1.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00004_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00004_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -197,8 +196,8 @@
     </div>
 </script>
 
-<script type="text/ejs"
-        id="tplFancySwitch2"
+<script id="tplFancySwitch2"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancySwitch2" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="width: 105px; height: 46px; left: 408px; top: 404px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-2.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00005_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00005_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -211,14 +210,13 @@
                 <label class="fancy-off">Off<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= this.data.attr('valFalse') || 0 %>"/></label>
                 <label class="fancy-on">On<input type="radio" class="fancy-on_off" name="<%= this.data.attr('wid') %>_on_off" value="<%= (this.data.attr('valTrue') === '' || this.data.attr('valTrue') === null || this.data.attr('valTrue') === undefined) ? 1 : this.data.attr('valTrue') %>"/></label>
             </fieldset>
-            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-2.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse')}) %>></div>
+            <div <%= (el) -> vis.binds.fancyswitch.fancyswitch(el, {src: "widgets/fancyswitch/img/fancyswitch-2.png", invert: data.attr('invert'), valTrue: this.data.attr('valTrue'), valFalse: this.data.attr('valFalse'), autoOff: this.data.attr('autoOff')}) %>></div>
         </div>
     </div>
 </script>
 
-
-<script type="text/ejs"
-        id="tplFancyDarkAnAus"
+<script id="tplFancyDarkAnAus"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancyDarkAnAus" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 105px; height: 46px; left: 136px; top: 613px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-3.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00006_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00006_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -236,8 +234,8 @@
     </div>
 </script>
 
-
-<script type="text/ejs" id="tplFancyDarkAnAusRev"
+<script id="tplFancyDarkAnAusRev"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancyDarkAnAusRev" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 105px; height: 46px; left: 278px; top: 527px;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-4.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00007_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00007_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -255,9 +253,8 @@
     </div>
 </script>
 
-
-<script type="text/ejs"
-        id="tplFancyDarkAnAusWippe"
+<script id="tplFancyDarkAnAusWippe"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancyDarkAnAusWippe" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="width: 102px; height: 49px; left: 73px; top: 232px; position: absolute;" > <div class="vis-widget-prev-body"> <fieldset class="fancy-switch" data-o style="background-image: url(widgets/fancyswitch/img/fancyswitch-5.png); background-position: 100% 50%; background-repeat: initial initial;"> <label class="fancy-off" style="text-indent: -10000px;">Off<input type="radio" class="fancy-on_off" name="w00002_on_off" value="0" style="display: none;"></label> <label class="fancy-on" style="text-indent: -10000px;">On<input type="radio" class="fancy-on_off" name="w00002_on_off" value="1" style="display: none;"></label> </fieldset> <div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -275,9 +272,8 @@
     </div>
 </script>
 
-
-<script type="text/ejs"
-        id="tplFancyGivaIButton"
+<script id="tplFancyGivaIButton"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplFancyGivaIButton" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 514px; left: 186px;" > <div class="vis-widget-prev-body"> <div class="ibutton-container" style="pointer-events: none;"><input type="checkbox" name="w00004_checkbox" data-o value="1"><div class="ibutton-handle" style="left: 0px;"><div class="ibutton-handle-right"><div class="ibutton-handle-middle"></div></div></div><div class="ibutton-label-off"><span style="margin-right: 0px;"><label>OFF</label></span></div><div class="ibutton-label-on" style="width: 4px;"><span style="margin-left: -50px;"><label>ON</label></span></div><div class="ibutton-padding-left"></div><div class="ibutton-padding-right"></div></div> </div> </div>'
         data-vis-set="fancyswitch"
@@ -295,8 +291,8 @@
     </div>
 </script>
 
-<script type="text/ejs"
-        id="tplFancyToggleswitch"
+<script id="tplFancyToggleswitch"
+        type="text/ejs"
         data-vis-prev='<div id="prev_tplFancyToggleswitch" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="padding-left: 10px; left: 109px; top: 604px; position: absolute; height: 62px; width: 45px;" > <div class="vis-widget-prev-body" style="padding-top:5px; text-align: center"> <select data-oid="" class="ui-toggle-switch" style="display: none; pointer-events: none;"> <option value="0">OFF</option> <option value="1">ON</option> </select> <div></div> <div class="ui-toggle-switch" style="pointer-events: none;"><label style="border: 0px" class="ui-state-active">OFF</label><div class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false" style="width: 40px;"><div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-max" style="width: 100%;"></div><a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 0%;"></a></div><label style="border: 0px">ON</label></div></div> </div>'
         class="vis-tpl"
         data-vis-set="fancyswitch"
