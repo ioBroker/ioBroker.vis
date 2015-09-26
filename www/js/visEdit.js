@@ -349,6 +349,8 @@ vis = $.extend(true, vis, {
             width: '100%'
         });
 
+        $('#screen_size-menu').css({'max-height': '400px'})
+
         $('#screen_size_x').change(function () {
             var x = $('#screen_size_x').val();
             var y = $('#screen_size_y').val();
@@ -1805,6 +1807,7 @@ vis = $.extend(true, vis, {
                 that.changeView($(this).val());
             }
         }).selectmenu("menuWidget").parent().addClass("view-select-menu");
+        $('#select_view-menu').css('max-height', '400px');
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
         $('#inspect_view_theme').selectmenu({
@@ -1816,7 +1819,9 @@ vis = $.extend(true, vis, {
                 //that.additionalThemeCss(theme);
                 that.save();
             }
-        });
+        })
+        // set max height of select menu and autocomplete
+        $('#inspect_view_theme-menu').css('max-height', '300px');
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
@@ -1858,6 +1863,9 @@ vis = $.extend(true, vis, {
                 }
             }
         });
+
+        // set maximal height
+        $('#select_set-menu').css('max-height', '400px');
 
         // Create list of filters
         this.filterList = [];
@@ -4433,7 +4441,6 @@ $(document).keydown(function (e) {
     // | b 	         66   |   numpad 5 	        101  |    close braket      221
     // | c 	         67   |   numpad 6 	        102  |    single quote 	    222
     // | d 	         68   |   numpad 7 	        103  |
-
     // Capture ctrl-z (Windows/Linux) and cmd-z (MacOSX)
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         vis.undo();
@@ -4443,6 +4450,10 @@ $(document).keydown(function (e) {
         if (vis.selectAll()) {
             e.preventDefault();
         }
+    } else if (e.which === 83 && (e.ctrlKey || e.metaKey)) {
+        // Ctrl+S
+        e.preventDefault();
+        vis.saveRemote();
     } else if (e.which === 27) {
         // Esc
         if (vis.deselectAll()) {

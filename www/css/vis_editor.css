@@ -817,4 +817,16 @@ td > .select_active_widget :nth-child(2) {
             #000000 40px
     );
 }
-.ui-icon-logout { background-image: url(../lib/img/logout.png) !important;}
+.ui-icon-logout {
+    background-image: url(../lib/img/logout.png) !important;
+}
+
+.ui-autocomplete {
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.ui-selectmenu-open {
+    z-index: 999;
+}
