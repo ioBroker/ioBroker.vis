@@ -1696,6 +1696,9 @@ var vis = {
                             }
                             string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                         }
+                        if (oids[t].operations[k].formula.indexOf('widget.') != -1) {
+                            string += 'var widget = ' + JSON.stringify(widget) + ';';
+                        }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';
                         try {

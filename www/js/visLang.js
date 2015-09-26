@@ -99,6 +99,11 @@ $.extend(systemDictionary, {
         'de': 'Zeige Widget-Beschreibung nicht',
         'ru': 'Скрыть описание элементов'
     },
+    "Changes are not saved!. Continue?": {
+        "en": "Changes are not saved!. Continue?",
+        "de": "Änderungen sind nicht gespeichert!. Weitermachen?",
+        "ru": "Изменения не сохранены!. Продолжить?"
+    },
     'Is hide':              {'en': 'Is hide',           'de': 'Verbergen',              'ru': 'Скрыть'},
     'User defined':         {'en': 'User defined',      'de': 'Vom Anwender definiert', 'ru': 'Пользовательское'},
     'Resolution':           {'en': 'Resolution:',       'de': 'Auflösung:',             'ru': 'Разрешение:'},

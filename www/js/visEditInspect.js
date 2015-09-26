@@ -713,6 +713,8 @@ vis = $.extend(true, vis, {
                 if (that.config['dialog-edit-text']) {
                     data = JSON.parse(that.config['dialog-edit-text']);
                 }
+                var editor = ace.edit('dialog-edit-text-textarea');
+                var changed = false;
                 $('#dialog-edit-text').dialog({
                     autoOpen: true,
                     width:    data.width  || 800,
@@ -734,13 +736,18 @@ vis = $.extend(true, vis, {
                                 $(this).parent().css({left: 0});
                             }
                         }
-                        $('#dialog-edit-text').find('textarea').val($('#inspect_' + wdata.attr).val()).unbind('keyup').keyup(function () {
-                            var timer = $('#dialog-edit-text').data('timer');
-                            if (timer) clearTimeout(timer);
-                            $('#dialog-edit-text').data('timer', setTimeout(function () {
-                                $('#dialog-edit-text').data('timer', null);
-                                $('#inspect_' + wdata.attr).val($('#dialog-edit-text').find('textarea').val()).trigger('change');
-                            }, 500));
+                        editor.getSession().setMode("ace/mode/html");
+                        editor.setOptions({
+                            enableBasicAutocompletion: true,
+                            enableLiveAutocompletion:  true
+                        });
+                        editor.$blockScrolling = Infinity;
+                        editor.getSession().setUseWrapMode(true);
+                        editor.setValue($('#inspect_' + wdata.attr).val());
+                        editor.navigateFileEnd();
+                        editor.focus();
+                        editor.getSession().on('change', function(e) {
+                            changed = true;
                         });
                     },
                     beforeClose: function () {
@@ -751,12 +758,18 @@ vis = $.extend(true, vis, {
                             width:  $('#dialog-edit-text').parent().width(),
                             height: $('#dialog-edit-text').parent().height() + 9
                         }));
+
+                        if (changed) {
+                            if (!window.confirm(_('Changes are not saved!. Continue?'))) {
+                                return false;
+                            }
+                        }
                     },
                     buttons:  [
                         {
                             text: _('Ok'),
                             click: function () {
-                                $('#inspect_' + wdata.attr).val($('#dialog-edit-text').find('textarea').val()).trigger('change');
+                                $('#inspect_' + wdata.attr).val(editor.getValue()).trigger('change');
                                 $(this).dialog('close');
                             }
                         },
@@ -920,6 +933,9 @@ vis = $.extend(true, vis, {
                 line = this.editColor(widAttr.name);
                 break;
             case 'text':
+                line = this.editText(widAttr.name);
+                break;
+            case 'html':
                 line = this.editText(widAttr.name);
                 break;
             case 'number':
