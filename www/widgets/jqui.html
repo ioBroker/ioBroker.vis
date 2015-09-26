@@ -48,7 +48,14 @@
             "dialog_left":      {"en": "Left",               "de": "Position links",        "ru": "Позиция слева"},
             "overflowX":        {"en": "Overflow X",         "de": "Overflow X",            "ru": "Overflow X"},
             "overflowY":        {"en": "Overflow Y",         "de": "Overflow Y",            "ru": "Overflow Y"},
-            "noHeader":         {"en": "Hide header",        "de": "Kopfzeile verbergen",   "ru": "Скрыть заголовок"}
+            "noHeader":         {"en": "Hide header",        "de": "Kopfzeile verbergen",   "ru": "Скрыть заголовок"},
+            "setId":            {"en": "Set Object ID",      "de": "Setze Objekt-ID",       "ru": "Записать в Объект с ID"},
+            "setId_tooltip":    {
+                "en": "By opening of dialog the Object ID\x0Awill be set with given value.",
+                "de": "Beim Offnen vom Dialog folgende Object ID\x0Awird mit eingegebenem Wert gesetzt.",
+                "ru": "При открытии диалога в объект с этим ID будет записано значение"
+            },
+            "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"}
         });
     }
 
@@ -181,8 +188,14 @@
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
             $dlg.data('preload', (!preload || preload == 'false') && !$dlg.html().replace(/\s/g, ''));
             $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
+
+            options.width     = options.dialog_width;
+            options.height    = options.dialog_height;
+            options.top       = options.dialog_top;
+            options.left      = options.dialog_left;
             options.minHeight = options.height;
             options.minWidth  = options.width;
+
             // Show dialog in edit mode too
             if (1 || !vis.editMode) {
                 $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
@@ -192,10 +205,11 @@
                     if ($dlg.data('preload')) $dlg.html(html);
 
                     if (persistent) {
+                        if (options.setId) vis.setValue(options.setId, options.setValue);
                         $dlg.dialog('open');
                         if (options.minHeight)   $dlg.css('min-height', options.minHeight);
                         if (options.minWidth)    $dlg.css('min-width', options.minWidth);
-                        if (options.top  || options.top === 0)  $dlg.parent().css('top', options.top);
+                        if (options.top  || options.top  === 0)  $dlg.parent().css('top', options.top);
                         if (options.left || options.left === 0) $dlg.parent().css('left', options.left);
                         if (options.overflowX) $dlg.css('overflow-x', options.overflowX);
                         if (options.overflowY) $dlg.css('overflow-y', options.overflowY);
@@ -205,10 +219,11 @@
                         $dlg.dialog($.extend({
                             autoOpen: true,
                             open: function () {
+                                if (options.setId) vis.setValue(options.setId, options.setValue);
                                 $(this).parent().css('z-index', 998);
                                 if (options.minHeight)   $(this).css('min-height', options.minHeight);
                                 if (options.minWidth)    $(this).css('min-width', options.minWidth);
-                                if (options.top  || options.top === 0)  $(this).parent().css('top', options.top);
+                                if (options.top  || options.top  === 0)  $(this).parent().css('top', options.top);
                                 if (options.left || options.left === 0) $(this).parent().css('left', options.left);
                                 if (options.overflowX) $(this).css('overflow-x', options.overflowX);
                                 if (options.overflowY) $(this).css('overflow-y', options.overflowY);
@@ -256,6 +271,10 @@
         },
         dialogContainer: function (el, options, persistent, preload) {
             var dlg = $(el).parent().find("div.vis-widget-dialog");
+            options.width     = options.dialog_width;
+            options.height    = options.dialog_height;
+            options.top       = options.dialog_top;
+            options.left      = options.dialog_left;
             options.minHeight = options.height;
             options.minWidth  = options.width;
             dlg.dialog($.extend({
@@ -282,6 +301,7 @@
 
                     });
 
+                    if (options.setId) vis.setValue(options.setId, options.setValue);
                     var $id =  $('#' + $(this).parent().attr('id') + '_dialog');
                     $id.dialog('open');
                     if (options.minHeight)   $id.css('min-height', options.minHeight);
@@ -312,7 +332,6 @@
                     primary: options.iconClass ? 'ui-icon-' + options.iconClass : null
                 }
             }).click(function () {
-                debugger;
                 if (options.dlgName) {
                     $('#' + options.dlgName + '_dialog').dialog('close');
                 } else {
@@ -917,7 +936,7 @@
         data-vis-set="jqui"
         data-vis-type="static,dialog"
         data-vis-name="HTML - Dialog"
-        data-vis-attrs="html/text;"
+        data-vis-attrs="html/text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
 
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>">
@@ -927,7 +946,7 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, data, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
     </div>
 </script>
 
@@ -937,7 +956,7 @@
         data-vis-set="jqui"
         data-vis-type="static,dialog"
         data-vis-name="static - Icon - Dialog"
-        data-vis-attrs="src/image;alt;text;invert_icon/checkbox;"
+        data-vis-attrs="src/image;alt;text;invert_icon/checkbox;setId/id;setValue;"
         data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = "";
@@ -952,7 +971,7 @@
         <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialog(el, data, data.attr('persistent'), data.attr('preload'), data.attr('html_dialog'), data.attr('closeOnClick')) %> />
     </div>
 </script>
 
@@ -961,7 +980,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - HTML - view in jqui Dialog" 
-        data-vis-attrs="html/text;contains_view/views;"
+        data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -971,7 +990,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
     </div>
 </script>
 
@@ -980,7 +999,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - ext cmd - view in jqui Dialog" 
-        data-vis-attrs="html/text;contains_view/view;"
+        data-vis-attrs="html/text;contains_view/view;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; cursor: pointer; border: 2px dashed red; opacity:0.8;">
@@ -992,7 +1011,7 @@
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
             </div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
     </div>
 </script>
 
@@ -1001,7 +1020,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Icon - view in jqui Dialog" 
-        data-vis-attrs="src/image;alt;text;"
+        data-vis-attrs="src/image;alt;text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/view;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = "";
@@ -1017,7 +1036,7 @@
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width: data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
     </div>
 </script>
 
@@ -1026,7 +1045,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
-        data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];"
+        data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/view;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
@@ -1037,7 +1056,7 @@
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
         </div>
-        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, {width:data.attr('dialog_width'), height: data.attr('dialog_height'), modal: data.attr('modal'), top: data.attr('dialog_top'), left: data.attr('dialog_left'), overflowX: data.attr('overflowX'), overflowY: data.attr('overflowY'), noHeader: data.attr('noHeader')}) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
     </div>
 </script>
 
