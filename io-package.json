@@ -24,7 +24,8 @@
         "dependencies":             ["web"],
         "restartAdapters":          ["vis"],
         "singleton":                true,
-        "type":                     "vis"
+        "type":                     "vis",
+		"highlight":                true
     },
     "native": {
         "defaultFileMode":          1604
