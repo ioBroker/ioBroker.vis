@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -121,9 +121,9 @@
         tooltipObj.style.borderRadius       = '5px';
         tooltipObj.style.MozBorderRadius    = '5px';
         tooltipObj.style.WebkitBorderRadius = '5px';
-        tooltipObj.style.WebkitBoxShadow    = 'rgba(96,96,96,0.5) 0 0 15px';
-        tooltipObj.style.MozBoxShadow       = 'rgba(96,96,96,0.5) 0 0 15px';
-        tooltipObj.style.boxShadow          = 'rgba(96,96,96,0.5) 0 0 15px';
+        tooltipObj.style.WebkitBoxShadow    = 'rgba(96,96,96,0.5) 0 0 5px';
+        tooltipObj.style.MozBoxShadow       = 'rgba(96,96,96,0.5) 0 0 5px';
+        tooltipObj.style.boxShadow          = 'rgba(96,96,96,0.5) 0 0 5px';
         tooltipObj.style.filter             = 'progid:DXImageTransform.Microsoft.Shadow(color=#666666,direction=135)';
         tooltipObj.style.opacity            = 0;
         //tooltipObj.style.overflow           = 'hidden';

@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -18,9 +18,10 @@
 // Module pattern
 (function (win, doc, undefined)
 {
-    var RG  = RGraph,
-        ua  = navigator.userAgent,
-        ma  = Math;
+    var RG     = RGraph,
+        ua     = navigator.userAgent,
+        ma     = Math,
+        active = null;
 
 
     /**
@@ -31,145 +32,133 @@
     RGraph.allowResizing =
     RGraph.AllowResizing = function (obj)
     {
-        if (obj.Get('chart.resizable')) {
+        var ca = obj.canvas,
+            co = obj.context,
+            pa = RGraph.path;
+        
+        ca.resizing = ca.resizing || {};
+        ca.resizing.placeHolders = ca.resizing.placeHolders || [];
+        
+        /**
+        * Store the original width/height on the canvas
+        */
+        if (!ca.resizing.originalw) { ca.resizing.originalw = ca.width; }
+        if (!ca.resizing.originalh) { ca.resizing.originalh = ca.height; }
 
-            var canvas  = obj.canvas;
-            var context = obj.context;
 
-            var resizeHandle = 15;
-            RGraph.Resizing.canvas = canvas;
-            RGraph.Resizing.placeHolders = [];
+
+
+
+
+
+
+
+
+
+
+
+        // The size of the resize handle (so '15' isn't littered throughout the code)
+        var resizeHandleSize = 15;
+
+
+        // Add the original width and height to the canvas
+        if (   !ca.resizing.__rgraph_original_width__
+            || !ca.resizing.__rgraph_original_height__
+            || !ca.resizing.__adjustX
+            || !ca.resizing.__adjustY
+           ) {
+
+            ca.resizing.__rgraph_original_width__  = ca.width;
+            ca.resizing.__rgraph_original_height__ = ca.height;
+            ca.resizing.adjustX = (typeof obj.get('chart.resize.handle.adjust') == 'object' && typeof obj.get('chart.resize.handle.adjust')[0] == 'number' ? obj.Get('chart.resize.handle.adjust')[0] : 0);
+            ca.resizing.adjustY = (typeof obj.get('chart.resize.handle.adjust') == 'object' && typeof obj.get('chart.resize.handle.adjust')[1] == 'number' ? obj.Get('chart.resize.handle.adjust')[1] : 0);
+            ca.resizing.bgcolor = obj.get('chart.resize.handle.background') || 'rgba(0,0,0,0)';
+        }
+
+
+
+
+        // Draw the resize handle
+        pa(co, ['b','m', ca.width - resizeHandleSize - resizeHandleSize + ca.resizing.adjustX, ca.height - resizeHandleSize,'r', ca.width - resizeHandleSize - resizeHandleSize + ca.resizing.adjustX, ca.height - resizeHandleSize + ca.resizing.adjustY, 2 * resizeHandleSize, resizeHandleSize,'f', ca.resizing.bgcolor]);
+
+        // Draw the arrows
+        pa(co, ['b','lw', 1,'m', ma.round(ca.width - (resizeHandleSize / 2) + ca.resizing.adjustX), ca.height - resizeHandleSize + ca.resizing.adjustY,'l', ma.round(ca.width - (resizeHandleSize / 2) + ca.resizing.adjustX), ca.height + ca.resizing.adjustY,'m',ca.width + ca.resizing.adjustX, ma.round(ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY),'l',  ca.width - resizeHandleSize + ca.resizing.adjustX, ma.round(ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY), 's', 'gray', 'f', 'transparent']);
+
+        // Top arrow head
+        pa(co, [ 'b', 'm', ca.width - (resizeHandleSize / 2) + ca.resizing.adjustX, ca.height - resizeHandleSize + ca.resizing.adjustY, 'l',ca.width - (resizeHandleSize / 2) + 3 + ca.resizing.adjustX, ca.height - resizeHandleSize + 3 + ca.resizing.adjustY, 'l',ca.width - (resizeHandleSize / 2) - 3 + ca.resizing.adjustX, ca.height - resizeHandleSize + 3 + ca.resizing.adjustY, 'c', 'f','gray']);
+
+        // Bottom arrow head
+        pa(co, ['b','m', ca.width - (resizeHandleSize / 2) + ca.resizing.adjustX, ca.height + ca.resizing.adjustY,'l', ca.width - (resizeHandleSize / 2) + 3 + ca.resizing.adjustX, ca.height - 3 + ca.resizing.adjustY,'l', ca.width - (resizeHandleSize / 2) - 3 + ca.resizing.adjustX, ca.height - 3 + ca.resizing.adjustY,'c','f', 'gray']);
+
+        // Left arrow head
+        pa(co, ['b','m', ca.width - resizeHandleSize + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY,'l', ca.width - resizeHandleSize + 3 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + 3 + ca.resizing.adjustY,'l', ca.width - resizeHandleSize + 3 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) - 3 + ca.resizing.adjustY,'c','f', 'gray']);
+        
+        // Right arrow head
+        pa(co, ['b','m',ca.width + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY,'l',ca.width - 3 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + 3 + ca.resizing.adjustY,'l',ca.width  - 3 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) - 3 + ca.resizing.adjustY,'c','f', 'gray']);
+        
+        // Square at the centre of the arrows
+        pa(co, ['b','m',ca.width + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY,'r',ca.width - (resizeHandleSize / 2) - 2 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) - 2 + ca.resizing.adjustY, 4, 4,'r',ca.width - (resizeHandleSize / 2) - 2 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) - 2 + ca.resizing.adjustY, 4, 4,'s','gray','f','white']);
+
+        // Draw the "Reset" button
+        pa(co, ['b','m',ma.round(ca.width - resizeHandleSize - 3 + ca.resizing.adjustX), ca.height - resizeHandleSize / 2 + ca.resizing.adjustY,'l',ma.round(ca.width - resizeHandleSize - resizeHandleSize + ca.resizing.adjustX), ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY,'l',ca.width - resizeHandleSize - resizeHandleSize + 2 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) - 2 + ca.resizing.adjustY,'l',ca.width - resizeHandleSize - resizeHandleSize + 2 + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + 2 + ca.resizing.adjustY,'l',ca.width - resizeHandleSize - resizeHandleSize + ca.resizing.adjustX, ca.height - (resizeHandleSize / 2) + ca.resizing.adjustY,'s','gray','f','gray']);
+
+        // The vertical line at the end of the reset button
+        pa(co, ['b','m', ma.round(ca.width - resizeHandleSize - resizeHandleSize - 1 + ca.resizing.adjustX), ca.height - (resizeHandleSize / 2) - 3 + ca.resizing.adjustY,'l', ma.round(ca.width - resizeHandleSize - resizeHandleSize - 1 + ca.resizing.adjustX), ca.height - (resizeHandleSize / 2) + 3 + ca.resizing.adjustY,'s','f']);
+
+
+
+
+
+
+
+        /**
+        * The code inside this if() condition only runs once due to the if() condition tests- if
+        * the obj.rgraphResizewrapper variable exists then the code has run
+        */
+        if (obj.get('chart.resizable') && !ca.rgraphResizewrapper) {
+
+
+
+            //
+            // Wrap the canvas
+            //
+            ca.rgraphResizewrapper = $('<div id="rgraph_resize_container_' + ca.id +'"></div>').css({
+                'float': ca.style.cssFloat,
+                position: 'relative'
+            }).get(0);
             
-            /**
-            * Add the original width and height to the canvas
-            */
-            if (!canvas.__original_width__ && !canvas.__original_height__) {
-                canvas.__original_width__  = canvas.width;
-                canvas.__original_height__ = canvas.height;
-            }
+            $(ca).wrap(ca.rgraphResizewrapper);
+
+            // TODO Might need to add more properties here (eg margin, padding etc)
+            ca.style.cssFloat = 'none';
+            ca.style.top   = 0;
+            ca.style.left  = 0;
 
 
-            var adjustX = (typeof(obj.Get('chart.resize.handle.adjust')) == 'object' && typeof(obj.Get('chart.resize.handle.adjust')[0]) == 'number' ? obj.Get('chart.resize.handle.adjust')[0] : 0);
-            var adjustY = (typeof(obj.Get('chart.resize.handle.adjust')) == 'object' && typeof(obj.Get('chart.resize.handle.adjust')[1]) == 'number' ? obj.Get('chart.resize.handle.adjust')[1] : 0);
-
-
-            /**
-            * Draw the resize handle
-            */
-            var textWidth = context.measureText('Reset').width + 2;
-
-
-            // Draw the white background for the resize handle - OPTIONAL default is rgba(0,0,0,0);
-            var bgcolor = obj.Get('chart.resize.handle.background');
-            
-            if (!bgcolor) {
-                bgcolor = 'rgba(0,0,0,0)';
-            }
-
-            context.beginPath();
-                context.fillStyle = bgcolor;
-                context.moveTo(canvas.width - resizeHandle - resizeHandle + adjustX, canvas.height - resizeHandle);
-                context.rect(canvas.width - resizeHandle - resizeHandle + adjustX, canvas.height - resizeHandle + adjustY, 2 * resizeHandle, resizeHandle);
-            context.fill();
-
-
-            obj.context.beginPath();
-                obj.context.strokeStyle = 'gray';
-                obj.context.fillStyle = 'rgba(0,0,0,0)';
-                obj.context.lineWidth = 1;
-                //obj.context.rect(obj.canvas.width - resizeHandle + adjustX, obj.canvas.height - resizeHandle - 2 + adjustY, resizeHandle, resizeHandle + 2);
-                //obj.context.rect(obj.canvas.width - resizeHandle - textWidth + adjustX, obj.canvas.height - resizeHandle + adjustY, resizeHandle + textWidth, resizeHandle + 2);
-
-
-                // Draw the arrows
-                
-                    // Vertical line
-                    obj.context.moveTo(Math.round(obj.canvas.width - (resizeHandle / 2) + adjustX), obj.canvas.height - resizeHandle + adjustY);
-                    obj.context.lineTo(Math.round(obj.canvas.width - (resizeHandle / 2) + adjustX), obj.canvas.height + adjustY);
-
-
-                    // Horizontal line
-                    obj.context.moveTo(obj.canvas.width + adjustX, Math.round(obj.canvas.height - (resizeHandle / 2) + adjustY));
-                    obj.context.lineTo(obj.canvas.width - resizeHandle + adjustX, Math.round(obj.canvas.height - (resizeHandle / 2) + adjustY));
-
-            context.stroke();
-            context.fill();
-
-
-            // Top arrow head
-            context.fillStyle = 'gray';
-            context.beginPath();
-                context.moveTo(canvas.width - (resizeHandle / 2) + adjustX, canvas.height - resizeHandle + adjustY);
-                context.lineTo(canvas.width - (resizeHandle / 2) + 3 + adjustX, canvas.height - resizeHandle + 3 + adjustY);
-                context.lineTo(canvas.width - (resizeHandle / 2) - 3 + adjustX, canvas.height - resizeHandle + 3 + adjustY);
-            context.closePath();
-            context.fill();
-
-            // Bottom arrow head
-            context.beginPath();
-                context.moveTo(canvas.width - (resizeHandle / 2) + adjustX, canvas.height + adjustY);
-                context.lineTo(canvas.width - (resizeHandle / 2) + 3 + adjustX, canvas.height - 3 + adjustY);
-                context.lineTo(canvas.width - (resizeHandle / 2) - 3 + adjustX, canvas.height - 3 + adjustY);
-            context.closePath();
-            context.fill();
-
-            // Left arrow head
-            context.beginPath();
-                context.moveTo(canvas.width - resizeHandle + adjustX, canvas.height - (resizeHandle / 2) + adjustY);
-                context.lineTo(canvas.width - resizeHandle + 3 + adjustX, canvas.height - (resizeHandle / 2) + 3 + adjustY);
-                context.lineTo(canvas.width - resizeHandle + 3 + adjustX, canvas.height - (resizeHandle / 2) - 3 + adjustY);
-            context.closePath();
-            context.fill();
-
-            // Right arrow head
-            context.beginPath();
-                context.moveTo(canvas.width + adjustX, canvas.height - (resizeHandle / 2) + adjustY);
-                context.lineTo(canvas.width - 3 + adjustX, canvas.height - (resizeHandle / 2) + 3 + adjustY);
-                context.lineTo(canvas.width  - 3 + adjustX, canvas.height - (resizeHandle / 2) - 3 + adjustY);
-            context.closePath();
-            context.fill();
-            
-            // Square at the centre of the arrows
-            context.beginPath();
-                context.fillStyle = 'white';
-                context.moveTo(canvas.width + adjustX, canvas.height - (resizeHandle / 2) + adjustY);
-                context.rect(canvas.width - (resizeHandle / 2) - 2 + adjustX, canvas.height - (resizeHandle / 2) - 2 + adjustY, 4, 4);
-                context.rect(canvas.width - (resizeHandle / 2) - 2 + adjustX, canvas.height - (resizeHandle / 2) - 2 + adjustY, 4, 4);
-            context.stroke();
-            context.fill();
-
-
-            // Draw the "Reset" button
-            context.beginPath();
-                context.fillStyle = 'gray';
-                context.moveTo(Math.round(canvas.width - resizeHandle - 3 + adjustX), canvas.height - resizeHandle / 2 + adjustY);
-                context.lineTo(Math.round(canvas.width - resizeHandle - resizeHandle + adjustX), canvas.height - (resizeHandle / 2) + adjustY);
-                context.lineTo(canvas.width - resizeHandle - resizeHandle + 2 + adjustX, canvas.height - (resizeHandle / 2) - 2 + adjustY);
-                context.lineTo(canvas.width - resizeHandle - resizeHandle + 2 + adjustX, canvas.height - (resizeHandle / 2) + 2 + adjustY);
-                context.lineTo(canvas.width - resizeHandle - resizeHandle + adjustX, canvas.height - (resizeHandle / 2) + adjustY);
-            context.stroke();
-            context.fill();
-
-            context.beginPath();
-                context.moveTo(Math.round(canvas.width - resizeHandle - resizeHandle - 1 + adjustX), canvas.height - (resizeHandle / 2) - 3 + adjustY);
-                context.lineTo(Math.round(canvas.width - resizeHandle - resizeHandle - 1 + adjustX), canvas.height - (resizeHandle / 2) + 3 + adjustY);
-            context.stroke();
-            context.fill();
-            
 
             var window_onmousemove = function (e)
             {
-                e = RGraph.FixEventObject(e);
+                var ca = active;
                 
-                var canvas    = RGraph.Resizing.canvas;
-                var newWidth  = RGraph.Resizing.originalw - (RGraph.Resizing.originalx - e.pageX);// - 5
-                var newHeight = RGraph.Resizing.originalh - (RGraph.Resizing.originaly - e.pageY);// - 5
+                if (ca) {
 
-                if (RGraph.Resizing.mousedown) {
-                    if (newWidth > (canvas.__original_width__ / 2)) RGraph.Resizing.div.style.width = newWidth + 'px';
-                    if (newHeight > (canvas.__original_height__ / 2)) RGraph.Resizing.div.style.height = newHeight + 'px';
-                    
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresize');
+                    e = RG.fixEventObject(e);
+
+                    if (ca.resizing.mousedown) {
+    
+                        var newWidth  = ca.width + (e.pageX - ca.resizing.originalx);
+                        var newHeight = ca.height + (e.pageY - ca.resizing.originaly);
+
+                        if (newWidth > (ca.resizing.originalw / 2)) {
+                            ca.resizing.div.style.width = newWidth + 'px';
+                        }
+                        
+                        if (newHeight > (ca.resizing.originalh / 2)) {
+                            ca.resizing.div.style.height = newHeight + 'px';
+                        }
+                        
+                        RG.fireCustomEvent(ca.__object__, 'onresize');
+                    }
                 }
             }
             // Install the function as an event listener - but only once
@@ -178,68 +167,79 @@
                 canvas.rgraph_resize_window_mousemove_listener_installed = true;
             }
 
-            /**
-            * The window onmouseup function
-            */
+            // The window onmouseup function
             var MouseupFunc = function (e)
             {
-                if (!RGraph.Resizing || !RGraph.Resizing.div || !RGraph.Resizing.mousedown) {
+                if (!ca.resizing || !ca.resizing.div || !ca.resizing.mousedown) {
                     return;
                 }
 
-                if (RGraph.Resizing.div) {
+                if (ca.resizing.div) {
 
-                    var div    = RGraph.Resizing.div;
-                    var canvas = div.__canvas__;
-                    var coords = RGraph.getCanvasXY(div.__canvas__);
+                    var div    = ca.resizing.div;
+                    var coords = RG.getCanvasXY(ca);
 
-                    var parentNode = canvas.parentNode;
+                    var parentNode = ca.parentNode;
 
-                    if (canvas.style.position != 'absolute') {
+                    if (ca.style.position != 'absolute') {
+                        
                         // Create a DIV to go in the canvases place
-                        var placeHolderDIV = document.createElement('DIV');
-                            placeHolderDIV.style.width = RGraph.Resizing.originalw + 'px';
-                            placeHolderDIV.style.height = RGraph.Resizing.originalh + 'px';
-                            //placeHolderDIV.style.backgroundColor = 'red';
-                            placeHolderDIV.style.display = 'inline-block'; // Added 5th Nov 2010
-                            placeHolderDIV.style.position = canvas.style.position;
-                            placeHolderDIV.style.left     = canvas.style.left;
-                            placeHolderDIV.style.top      = canvas.style.top;
-                            placeHolderDIV.style.cssFloat = canvas.style.cssFloat;
+                        var placeHolderDIV               = document.createElement('DIV');
+                            placeHolderDIV.style.width   = ca.resizing.originalw + 'px';
+                            placeHolderDIV.style.height  = ca.resizing.originalh + 'px';
 
-                        parentNode.insertBefore(placeHolderDIV, canvas);
+                            placeHolderDIV.style.display  = 'inline-block'; // Added 5th Nov 2010
+                            placeHolderDIV.style.position = ca.style.position;
+                            placeHolderDIV.style.left     = ca.style.left;
+                            placeHolderDIV.style.top      = ca.style.top;
+                            placeHolderDIV.style.cssFloat = ca.style.cssFloat;
+
+                        parentNode.insertBefore(placeHolderDIV, ca);
                     }
 
 
                     // Now set the canvas to be positioned absolutely
-                    canvas.style.backgroundColor = 'white';
-                    canvas.style.position        = 'absolute';
-                    canvas.style.border = '1px dashed gray';
-                    canvas.style.left            = (RGraph.Resizing.originalCanvasX  - 1) + 'px';
-                    canvas.style.top             = (RGraph.Resizing.originalCanvasY - 1) + 'px';
+                    ca.style.backgroundColor = 'white';
+                    ca.style.position        = 'absolute';
+                    ca.style.border          = '1px dashed gray';
+                    ca.style.boxShadow       = '2px 2px 5px #ddd';
+
+                    if (ca.getAttribute('data-l') === 'false') {
+                        ca.style.left = (ca.resizing.originalCanvasX  - 2) + 'px';
+                        ca.style.top  = (ca.resizing.originalCanvasY - 2) + 'px';
+                    } else {
+                        ca.style.left = 0;
+                        ca.style.top  = 0;
+                    }
 
 
-                    /**
-                    * Set the dimensions of the canvas using the HTML attributes
-                    */
-                    canvas.width  = parseInt(div.style.width);
-                    canvas.height = parseInt(div.style.height);
+                    // Set the dimensions of the canvas using the HTML attributes
+                    ca.width  = parseInt(div.style.width);
+                    ca.height = parseInt(div.style.height);
+                    
+                    // Enlarge the container
+                    //ca.parentNode.style.width = ca.width + 'px';
+                    //ca.parentNode.style.height = ca.height + 'px';
+                    
+                    
+                    // Hide the link if it exists
+                    if (ca.__link__) {
+                        ca.__link__.style.display = 'none';
+                    }
 
 
-                    /**
-                    * Because resizing the canvas resets any tranformation - the antialias fix needs to be reapplied.
-                    */
-                    canvas.getContext('2d').translate(0.5,0.5);
+
+                    // Because resizing the canvas resets any tranformation - the antialias fix needs to be reapplied.
+                    ca.getContext('2d').translate(0.5,0.5);
 
 
-                    /**
-                    * Reset the gradient parsing status by setting all of the color values back to their original
-                    * values before Draw was first called
-                    */
-                    var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(canvas.id);
+
+                    // Reset the gradient parsing status by setting all of the color values back to their original
+                    // values before Draw was first called
+                    var objects = RG.ObjectRegistry.getObjectsByCanvasID(ca.id);
                     for (var i=0,len=objects.length; i<len; i+=1) {
                         
-                        RGraph.resetColorsToOriginalValues(objects[i]);
+                        RG.resetColorsToOriginalValues(objects[i]);
                         if (typeof objects[i].reset === 'function') {
                             objects[i].reset();
                         }
@@ -248,93 +248,121 @@
                     
                     
                     
-                    /**
-                    * Kill the background cache
-                    */
-                    RGraph.cache = [];
+                    // Kill the background cache
+                    RG.cache = [];
                 
 
-                    /**
-                    * Fire the onresize event
-                    */
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresizebeforedraw');
+                    // Fire the onresize event
+                    RG.fireCustomEvent(canvas.__object__, 'onresizebeforedraw');
 
-                    RGraph.RedrawCanvas(canvas);
+                    RG.redrawCanvas(ca);
                     
 
                     // Get rid of transparent semi-opaque DIV
-                    RGraph.Resizing.mousedown = false;
+                    ca.resizing.mousedown = false;
                     div.style.display = 'none';
                     document.body.removeChild(div);
                 }
 
-                /**
-                * If there is zoom enabled in thumbnail mode, lose the zoom image
-                */
-                if (RGraph.Registry.Get('chart.zoomed.div') || RGraph.Registry.Get('chart.zoomed.img')) {
-                    RGraph.Registry.Set('chart.zoomed.div', null);
-                    RGraph.Registry.Set('chart.zoomed.img', null);
+
+                // If there is zoom enabled in thumbnail mode, lose the zoom image
+                if (RG.Registry.Get('chart.zoomed.div') || RGraph.Registry.Get('chart.zoomed.img')) {
+                    RG.Registry.Set('chart.zoomed.div', null);
+                    RG.Registry.Set('chart.zoomed.img', null);
                 }
 
-                /**
-                * Fire the onresize event
-                */
-                RGraph.FireCustomEvent(canvas.__object__, 'onresizeend');
-            }
+
+                // Fire the onresize event
+                RG.FireCustomEvent(ca.__object__, 'onresizeend');
+            };
 
 
             var window_onmouseup = MouseupFunc;
             
             // Install the function as an event listener - but only once
-            if (typeof(canvas.rgraph_resize_window_mouseup_listener_installed) != 'boolean') {
+            if (typeof ca.rgraph_resize_window_mouseup_listener_installed != 'boolean') {
                 window.addEventListener('mouseup', window_onmouseup, false);
-                canvas.rgraph_resize_window_mouseup_listener_installed = true;
+                ca.rgraph_resize_window_mouseup_listener_installed = true;
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             var canvas_onmousemove = function (e)
             {
-                e = RGraph.FixEventObject(e);
+
+                e = RG.fixEventObject(e);
                 
-                var coords  = RGraph.getMouseXY(e);
+                var coords  = RG.getMouseXY(e);
                 var obj     = e.target.__object__;
-                var canvas  = e.target;
-                var context = canvas.getContext('2d');
-                var cursor  = canvas.style.cursor;
+                var ca      = e.target;
+                var co      = ca.getContext('2d');
+                var cursor  = ca.style.cursor;
 
                 // Save the original cursor
-                if (!RGraph.Resizing.original_cursor) {
-                    RGraph.Resizing.original_cursor = cursor;
+                if (!ca.resizing.original_cursor) {
+                    ca.resizing.original_cursor = cursor;
                 }
                 
-                if (   (coords[0] > (canvas.width - resizeHandle)
-                    && coords[0] < canvas.width
-                    && coords[1] > (canvas.height - resizeHandle)
-                    && coords[1] < canvas.height)) {
-                        
-                        canvas.style.cursor = 'move';
+                if (   (coords[0] > (ca.width - resizeHandleSize)
+                    && coords[0] < ca.width
+                    && coords[1] > (ca.height - resizeHandleSize)
+                    && coords[1] < ca.height)) {
 
-                } else if (   coords[0] > (canvas.width - resizeHandle - resizeHandle)
-                           && coords[0] < canvas.width - resizeHandle
-                           && coords[1] > (canvas.height - resizeHandle)
-                           && coords[1] < canvas.height) {
+                        ca.style.cursor = 'move';
+
+                } else if (   coords[0] > (ca.width - resizeHandleSize - resizeHandleSize)
+                           && coords[0] < ca.width - resizeHandleSize
+                           && coords[1] > (ca.height - resizeHandleSize)
+                           && coords[1] < ca.height) {
                     
-                    canvas.style.cursor = 'pointer';
+                    ca.style.cursor = 'pointer';
 
                 } else {
-                    if (RGraph.Resizing.original_cursor) {
-                        canvas.style.cursor = RGraph.Resizing.original_cursor;
-                        RGraph.Resizing.original_cursor = null;
+                    if (ca.resizing.original_cursor) {
+                        ca.style.cursor = ca.resizing.original_cursor;
+                        ca.resizing.original_cursor = null;
                     } else {
-                        canvas.style.cursor = 'default';
+                        ca.style.cursor = 'default';
                     }
                 }
             };
+
+
+
+
+
             // Install the function as an event listener - but only once
-            if (typeof(canvas.rgraph_resize_mousemove_listener_installed) != 'boolean') {
-                canvas.addEventListener('mousemove', canvas_onmousemove, false);
-                canvas.rgraph_resize_mousemove_listener_installed = true;
+            if (typeof ca.rgraph_resize_mousemove_listener_installed != 'boolean') {
+                ca.addEventListener('mousemove', canvas_onmousemove, false);
+                ca.rgraph_resize_mousemove_listener_installed = true;
             }
+
+
 
 
 
@@ -345,58 +373,72 @@
             };
 
             // Install the function as an event listener - but only once
-            if (typeof(canvas.rgraph_resize_mouseout_listener_installed) != 'boolean') {
-                canvas.addEventListener('mouseout', canvas_onmouseout, false);
-                canvas.rgraph_resize_mouseout_listener_installed = true;
+            if (typeof ca.rgraph_resize_mouseout_listener_installed != 'boolean') {
+                ca.addEventListener('mouseout', canvas_onmouseout, false);
+                ca.rgraph_resize_mouseout_listener_installed = true;
             }
+
+
 
 
 
             var canvas_onmousedown = function (e)
             {
-                e = RGraph.FixEventObject(e);
+                e = RG.fixEventObject(e);
 
-                var coords = RGraph.getMouseXY(e);
-                var canvasCoords = RGraph.getCanvasXY(e.target);
-                var canvas = e.target;
+                var coords   = RG.getMouseXY(e);
+                var canvasXY = RG.getCanvasXY(e.target);
+                var ca       = e.target;
+                
+                /**
+                * Set the active variable to the last canvas that was clicked on
+                */
+                active = ca;
 
-                if (   coords[0] > (obj.canvas.width - resizeHandle)
-                    && coords[0] < obj.canvas.width
-                    && coords[1] > (obj.canvas.height - resizeHandle)
-                    && coords[1] < obj.canvas.height) {
-                    
-                    RGraph.FireCustomEvent(obj, 'onresizebegin');
+
+
+
+
+
+                if (   coords[0] > (ca.width - resizeHandleSize)
+                    && coords[0] < ca.width
+                    && coords[1] > (ca.height - resizeHandleSize)
+                    && coords[1] < ca.height) {
+
+                    RG.fireCustomEvent(obj, 'onresizebegin');
                     
                     // Save the existing border
-                    if (canvas.__original_css_border__ == null) {
-                        canvas.__original_css_border__ = canvas.style.border;
+                    if (ca.resizing.original_css_border == null) {
+                        ca.resizing.original_css_border = ca.style.border;
+                    }
+                    
+                    // Save the existing shadow
+                    if (ca.resizing.original_css_shadow == null) {
+                        ca.resizing.original_css_shadow = ca.style.boxShadow;
                     }
 
-                    RGraph.Resizing.mousedown = true;
+                    ca.resizing.mousedown = true;
 
 
-                    /**
-                    * Create the semi-opaque DIV
-                    */
-
+                    // Create the semi-opaque DIV
                     var div = document.createElement('DIV');
-                    div.style.position = 'absolute';
-                    div.style.left     = canvasCoords[0] + 'px';
-                    div.style.top      = canvasCoords[1] + 'px';
-                    div.style.width    = canvas.width + 'px';
-                    div.style.height   = canvas.height + 'px';
-                    div.style.border   = '1px dotted black';
-                    div.style.backgroundColor = 'gray';
-                    div.style.opacity  = 0.5;
-                    div.__canvas__ = e.target;
-
+                        div.style.position = 'absolute';
+                        div.style.left     = canvasXY[0] + 'px';
+                        div.style.top      = canvasXY[1] + 'px';
+                        div.style.width    = ca.width + 'px';
+                        div.style.height   = ca.height + 'px';
+                        div.style.border   = '1px dotted black';
+                        div.style.backgroundColor = 'gray';
+                        div.style.opacity  = 0.5;
+                        div.__canvas__ = e.target;
                     document.body.appendChild(div);
-                    RGraph.Resizing.div = div;
-                    RGraph.Resizing.placeHolders.push(div);
+
+                    ca.resizing.div = div;
+                    ca.resizing.placeHolders.push(div);
                     
                     // Hide the previous resize indicator layers. This is only necessary it seems for the Meter chart
-                    for (var i=0; i<(RGraph.Resizing.placeHolders.length - 1); ++i) {
-                        RGraph.Resizing.placeHolders[i].style.display = 'none';
+                    for (var i=0; i<(ca.resizing.placeHolders.length - 1); ++i) {
+                        ca.resizing.placeHolders[i].style.display = 'none';
                     }
 
                     // This is a repetition of the window.onmouseup function (No need to use DOM2 here)
@@ -407,158 +449,112 @@
 
                     
                     // No need to use DOM2 here
-                    RGraph.Resizing.div.onmouseover = function (e)
+                    ca.resizing.div.onmouseover = function (e)
                     {
-                        e = RGraph.FixEventObject(e);
+                        e = RG.fixEventObject(e);
                         e.stopPropagation();
                     }
-    
+
                     // The mouse
-                    RGraph.Resizing.originalx = e.pageX;
-                    RGraph.Resizing.originaly = e.pageY;
-                    
-                    RGraph.Resizing.originalw = obj.canvas.width;
-                    RGraph.Resizing.originalh = obj.canvas.height;
-                    
-                    RGraph.Resizing.originalCanvasX = RGraph.getCanvasXY(obj.canvas)[0];
-                    RGraph.Resizing.originalCanvasY = RGraph.getCanvasXY(obj.canvas)[1];
+                    ca.resizing.originalx = e.pageX;
+                    ca.resizing.originaly = e.pageY;
+
+                    ca.resizing.originalCanvasX = RG.getCanvasXY(ca)[0];
+                    ca.resizing.originalCanvasY = RG.getCanvasXY(ca)[1];
                 }
 
-
-                /**
-                * This facilitates the reset button
-                */
-                if (   coords[0] > (canvas.width - resizeHandle - resizeHandle)
-                    && coords[0] < canvas.width - resizeHandle
-                    && coords[1] > (canvas.height - resizeHandle)
-                    && coords[1] < canvas.height) {
+                // This facilitates the reset button
+                if (   coords[0] > (ca.width - resizeHandleSize - resizeHandleSize)
+                    && coords[0] < ca.width - resizeHandleSize
+                    && coords[1] > (ca.height - resizeHandleSize)
+                    && coords[1] < ca.height
+                    && ca.resizing.originalw
+                    && ca.resizing.originaly) {
                     
-                    /**
-                    * Fire the onresizebegin event
-                    */
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresizebegin');
+
+                    // Fire the onresizebegin event
+                    RG.fireCustomEvent(ca.__object__, 'onresizebegin');
 
                     // Restore the original width and height
-                    canvas.width = canvas.__original_width__;
-                    canvas.height = canvas.__original_height__;
+                    ca.width = ca.resizing.originalw;
+                    ca.height = ca.resizing.originalh;
+
+                    // TODO Need to check the parent is actually a DIV container or not?
+                    
+                    // Show the link if it exists and the display is set to none
+                    if (ca.__link__ && ca.__link__.style.display === 'none') {
+                        ca.__link__.style.display = 'inline';
+                    }
+
+                    if (typeof ca.parentNode.id === 'string' && ca.parentNode.id.substring(0, 24) === 'rgraph_resize_container_') {
+                        ca.parentNode.style.width  = ca.resizing.originalw + 'px';
+                        ca.parentNode.style.height = ca.resizing.originalh + 'px';
+                    }
 
                     // Lose the border
-                    canvas.style.border = canvas.__original_css_border__;
-                    //canvas.__original_css_border__ = null;
+                    ca.style.border = ca.resizing.original_css_border;
+                    
+                    //Lose the shadow
+                    ca.style.boxShadow = ca.resizing.original_css_shadow;
+
                     
                     // Add 1 pixel to the top/left because the border is going
-                    canvas.style.left = (parseInt(canvas.style.left)) + 'px';
-                    canvas.style.top  = (parseInt(canvas.style.top)) + 'px';
+                    ca.style.left = (parseInt(ca.style.left)) + 'px';
+                    ca.style.top  = (parseInt(ca.style.top)) + 'px';
 
 
-                    /**
-                    * Because resetting the canvas resizes it - and so loses any translation - need to reapply the
-                    * antialiasing translation
-                    */
-                    canvas.getContext('2d').translate(0.5,0.5);
+
+                    // Because resetting the canvas resizes it - and so loses any translation - need to reapply the
+                    // antialiasing translation
+                    ca.getContext('2d').translate(0.5,0.5);
                     
                     
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresizebeforedraw');
+                    RG.fireCustomEvent(ca.__object__, 'onresizebeforedraw');
                     
                     // Since gradients are pre-parsed colors - this resets the colors to what they were
                     // before the parsing.
-                    var objects = RGraph.ObjectRegistry.getObjectsByCanvasID(canvas.id);
+                    var objects = RG.ObjectRegistry.getObjectsByCanvasID(ca.id);
                     for (var i=0; i<objects.length; i+=1) {
-                        RGraph.resetColorsToOriginalValues(objects[i]);
+                        RG.resetColorsToOriginalValues(objects[i]);
                         if (objects[i].reset) {
                             objects[i].reset();
                         }
                         
-                        RGraph.redrawCanvas(objects[i].canvas);
+                        RG.redrawCanvas(objects[i].canvas);
                     }
                     
                     
-                    /**
-                    * Clear the cache so that old things (eg backgrounds) are not reused
-                    */
-                    RGraph.cache = [];
+                    // Clear the cache so that old things (eg backgrounds) are not reused
+                    RG.cache = [];
 
 
 
 
 
 
-                    /**
-                    * Redraw the canvas
-                    */
-                    //RGraph.RedrawCanvas(objects[i].canvas);
+                    // Redraw the canvas
+                    //RG.redrawCanvas(objects[i].canvas);
                     
-                    /**
-                    * Set the width and height on the DIV
-                    */
-                    if (RGraph.Resizing.div) {
-                        RGraph.Resizing.div.style.width  = canvas.__original_width__ + 'px';
-                        RGraph.Resizing.div.style.height = canvas.__original_height__ + 'px';
+
+                    // Set the width and height on the DIV
+                    if (ca.resizing.div) {
+                        ca.resizing.div.style.width  = ca.__original_width__ + 'px';
+                        ca.resizing.div.style.height = ca.__original_height__ + 'px';
                     }
 
-                    /**
-                    * Fire the resize event
-                    */
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresize');
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresizeend');
+
+                    // Fire the resize event
+                    RG.fireCustomEvent(ca.__object__, 'onresize');
+                    RG.fireCustomEvent(ca.__object__, 'onresizeend');
                 }
             };
 
             // Install the function as an event listener - but only once
-            if (typeof(canvas.rgraph_resize_mousedown_listener_installed) != 'boolean') {
-                canvas.addEventListener('mousedown', canvas_onmousedown, false);
-                canvas.rgraph_resize_mousedown_listener_installed = true;
+            if (typeof ca.rgraph_resize_mousedown_listener_installed != 'boolean') {
+                ca.addEventListener('mousedown', canvas_onmousedown, false);
+                ca.rgraph_resize_mousedown_listener_installed = true;
             }
-
-
-            /**
-            * This function facilitates the reset button
-            * 
-            * NOTE: 31st December 2010 - doesn't appear to be being used any more
-            */
-
-            /*
-            canvas.onclick = function (e)
-            {
-                var coords = RGraph.getMouseXY(e);
-                var canvas = e.target;
-
-                if (   coords[0] > (canvas.width - resizeHandle - resizeHandle)
-                    && coords[0] < canvas.width - resizeHandle
-                    && coords[1] > (canvas.height - resizeHandle)
-                    && coords[1] < canvas.height) {
-
-                    // Restore the original width and height
-                    canvas.width = canvas.__original_width__;
-                    canvas.height = canvas.__original_height__;
-
-                    // Lose the border
-                    canvas.style.border = '';
-                    
-                    // Add 1 pixel to the top/left because the border is going
-                    canvas.style.left = (parseInt(canvas.style.left) + 1) + 'px';
-                    canvas.style.top  = (parseInt(canvas.style.top) + 1) + 'px';
-                    
-                    // Fire the onresizebeforedraw event
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresizebeforedraw');
-
-                    // Redraw the canvas
-                    canvas.__object__.Draw();
-                    
-                    // Set the width and height on the DIV
-                    RGraph.Resizing.div.style.width  = canvas.__original_width__ + 'px';
-                    RGraph.Resizing.div.style.height = canvas.__original_height__ + 'px';
-                    
-                    // Fire the resize event
-                    RGraph.FireCustomEvent(canvas.__object__, 'onresize');
-                }
-            }
-            */
         }
     };
-
-
-
-
 // End module pattern
 })(window, document);

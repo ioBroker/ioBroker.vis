@@ -176,13 +176,15 @@
             style.height = parseInt(style.height) || parseInt(height);
 
             //$('#'+wid).remove ();
-            if (!document.getElementById(wid)) {
+            var $wid = $('#' + wid);
+            if (!$wid.length) {
                 $('#visview_' + view).append('<div class="vis-widget ' + (_class || "") + '" id="' + wid + '" data-oid="' + oid + '" >' +
                         '<canvas class="vis-widget" id="c' + wid + '"></canvas></div>');
+                $wid = $('#' + wid);
             } else {
-                $('#' + wid).addClass(_class || '');
+                $wid.addClass(_class || '');
             }
-            $('#' + wid).css(style);
+            $wid.css(style);
 
             // Canvas understand no Style, so set width and height extra
             var can = document.getElementById('c' + wid);
@@ -709,8 +711,7 @@
 
             var max_value = data.attr("max_value_oid") ? vis.states.attr(data.attr('max_value_oid') + '.val') : data.attr('max_value');
 
-            var t = new RGraph.Gauge("c"+data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
-
+            var t = new RGraph.Gauge("c" + data.attr('wid'), parseFloat(data.attr("min_value")), parseFloat(max_value), values);
             t.Set("oid",   data.attr('oid'));
             t.Set("oid_2", data.attr('oid_2'));
             t.Set("oid_3", data.attr('oid_3'));
@@ -983,7 +984,7 @@
             }
         },
         tplRBarChart: function (view, data) {
-            var wid = data.attr('wid')
+            var wid = data.attr('wid');
 
             var factor = data.attr('factor') || 1;
             factor = parseFloat(factor);
@@ -1023,7 +1024,7 @@
                 }
             }
 
-            var values  = [];
+            var values = [];
             for (var i = 0, len = IDs.length; i < len; i++) {
                 values[i] = [];
                 var val = vis.states.attr(IDs[i] + '.val');
@@ -1063,11 +1064,12 @@
                 label_size:   parseInt(data.attr('label_size')),
                 label_color:  data.attr('label_color'),
                 labels_above: data.attr('labels_above'),
+                labels_color: data.attr('labels_color'),
                 decimals:     parseInt(data.attr('decimals')),
                 shadow:       data.attr('show_shadow'),
-                bar_labels_color: data.attr('bar_labels_color'),
-                bar_labels_bold: data.attr('bar_labels_bold'),
-                bar_labels_center: data.attr('bar_labels_center'),
+                bar_labels_color:   data.attr('bar_labels_color'),
+                bar_labels_bold:    data.attr('bar_labels_bold'),
+                bar_labels_center:  data.attr('bar_labels_center'),
                 gutter_left:  parseInt(data.attr('gutter_left')) || 45,
                 horz_margin:  parseInt(data.attr('horz_margin')) || 15,
                 defaultWidth: 200,
@@ -1106,6 +1108,7 @@
             t.set('axis.color', '#ccc');
             t.set('noyaxis', true);
             t.set('labels.above.color', options.label_color);
+            t.set('chart.text.color', options.labels_color);
             t.set('title', options.title);
 
             if (options.legend) {

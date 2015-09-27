@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -85,9 +85,9 @@
             'chart.background.grid.hlines': true,
             'chart.background.grid.border': true,
             'chart.background.grid.autofit':           true,
-            'chart.background.grid.autofit.align':     false,
+            'chart.background.grid.autofit.align':     true,
             'chart.background.grid.autofit.numhlines': 5,
-            'chart.background.grid.autofit.numvlines': 20,
+            'chart.background.grid.autofit.numvlines': null,
             'chart.background.grid.dashed': false,
             'chart.background.grid.dotted': false,
             'chart.background.hbars':       null,
@@ -101,9 +101,17 @@
             'chart.background.color':       null,
             'chart.labels':                 null,
             'chart.labels.ingraph':         null,
-            'chart.labels.above':           false,
-            'chart.labels.above.size':      8,
-            'chart.labels.above.decimals':  null,
+            'chart.labels.above':            false, // Working
+            'chart.labels.above.size':       8, // Working
+            'chart.labels.above.decimals':   null, // Working
+            'chart.labels.above.color':      null,
+            'chart.labels.above.background': 'white',
+            'chart.labels.above.font':       null,
+            'chart.labels.above.border':     true,
+            'chart.labels.above.offsety':     5,
+            'chart.labels.above.units.pre':  '',
+            'chart.labels.above.units.post': '',
+            'chart.labels.above.specific':   null,
             'chart.xtickgap':               20,
             'chart.smallxticks':            3,
             'chart.largexticks':            5,
@@ -114,7 +122,9 @@
             'chart.linewidth':              2.01,
             'chart.colors':                 ['red', '#0f0', '#00f', '#f0f', '#ff0', '#0ff','green','pink','blue','black'],
             'chart.hmargin':                0,
-            'chart.tickmarks.dot.color':    'white',
+            'chart.tickmarks.dot.stroke':   'white',
+            'chart.tickmarks.dot.fill':     null,
+            'chart.tickmarks.dot.linewidth': 3,
             'chart.tickmarks':              'endcircle',
             'chart.tickmarks.linewidth':    null,
             'chart.tickmarks.image':        null,
@@ -126,14 +136,14 @@
             'chart.gutter.left':            25,
             'chart.gutter.right':           25,
             'chart.gutter.top':             25,
-            'chart.gutter.bottom':          25,
+            'chart.gutter.bottom':          30,
             'chart.tickdirection':          -1,
             'chart.yaxispoints':            5,
             'chart.fillstyle':              null,
             'chart.xaxispos':               'bottom',
             'chart.yaxispos':               'left',
             'chart.xticks':                 null,
-            'chart.text.size':              10,
+            'chart.text.size':              12,
             'chart.text.angle':             0,
             'chart.text.color':             'black',
             'chart.text.font':              'Arial',
@@ -371,7 +381,11 @@
             RG.Effects.decorate(this);
         }
 
-
+        //
+        // Wrap the canvas with a DIV so that DOM text can be positioned
+        // accurately
+        //
+        //RG.wrap(ca);
 
 
     
@@ -398,7 +412,6 @@
 
 
 
-            name = name.toLowerCase();
     
             /**
             * This should be done first - prepend the propertyy name with "chart." if necessary
@@ -406,7 +419,18 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
-    
+
+
+
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase();
+            });
+
+
+
             // Consolidate the tooltips
             if (name == 'chart.tooltips' && typeof value == 'object' && value) {
     
@@ -481,6 +505,11 @@
             if (name == 'chart.ylabels.invert') {
                 name = 'chart.scale.invert';
             }
+
+
+
+
+
     
     
             this.properties[name] = value;
@@ -505,6 +534,12 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase()
+            });
             
             /**
             * If requested property is chart.spline - change it to chart.curvy
@@ -944,7 +979,7 @@
             * Draw " above" labels if enabled
             */
             if (prop['chart.labels.above']) {
-                this.DrawAboveLabels();
+                this.drawAboveLabels();
             }
     
             /**
@@ -1057,7 +1092,7 @@
             }
     
             // Turn any shadow off
-            RG.NoShadow(this);
+            RG.noShadow(this);
     
             co.lineWidth   = prop['chart.axis.linewidth'] + 0.001;
             co.lineCap     = 'butt';
@@ -1227,6 +1262,12 @@
             }
     
             co.stroke();
+            
+            /**
+            * This is here so that setting the color after this function doesn't
+            * change the color of the axes
+            */
+            co.beginPath();
         };
 
 
@@ -2149,40 +2190,29 @@
                         co.fillStyle = 'white';
                     }
     
-                    co.moveTo(Math.round(xPos - prop['chart.ticksize']), yPos + prop['chart.ticksize']);
-                    co.lineTo(Math.round(xPos), yPos - prop['chart.ticksize']);
-                    co.lineTo(Math.round(xPos + prop['chart.ticksize']), yPos + prop['chart.ticksize']);
+                    co.moveTo(ma.round(xPos - prop['chart.ticksize']), yPos + prop['chart.ticksize']);
+                    co.lineTo(ma.round(xPos), yPos - prop['chart.ticksize']);
+                    co.lineTo(ma.round(xPos + prop['chart.ticksize']), yPos + prop['chart.ticksize']);
                 co.closePath();
                 
                 co.stroke();
                 co.fill();
     
     
+            // 
             // A white bordered circle
+            //
             } else if (tickmarks == 'borderedcircle' || tickmarks == 'dot') {
-                    co.lineWidth   = 1;
-                    co.strokeStyle = prop['chart.tickmarks.dot.color'];
-                    co.fillStyle   = prop['chart.tickmarks.dot.color'];
-    
-                    // The outer white circle
-                    co.beginPath();
-                    co.arc(xPos, yPos, prop['chart.ticksize'], 0, 360 / (180 / RG.PI), false);
-                    co.closePath();
-    
-    
-                    co.fill();
-                    co.stroke();
                     
-                    // Now do the inners
-                    co.beginPath();
-                    co.fillStyle   = color;
-                    co.strokeStyle = color;
-                    co.arc(xPos, yPos, prop['chart.ticksize'] - 2, 0, 360 / (180 / RG.PI), false);
-    
-                    co.closePath();
-    
-                    co.fill();
-                    co.stroke();
+                    co.lineWidth   = prop['chart.tickmarks.dot.linewidth'] || 0.00000001;
+
+                    pa(this, [
+                        'b',
+                        'a',xPos, yPos, prop['chart.ticksize'], 0, 360 / (180 / RG.PI), false,
+                        'c',
+                        'f',prop['chart.tickmarks.dot.fill'] || color,
+                        's',prop['chart.tickmarks.dot.stroke'] || color
+                    ]);
             
             } else if (   tickmarks == 'square'
                        || tickmarks == 'filledsquare'
@@ -2589,7 +2619,7 @@
                     for (var i=0; i<coords.length; ++i) {
                         yCoords.push(coords[i][1])
                     }
-    
+
                     this.DrawSpline(co, yCoords, color, null);
     
                 } else {
@@ -2705,12 +2735,20 @@
         this.drawAboveLabels =
         this.DrawAboveLabels = function ()
         {
-            var size       = prop['chart.labels.above.size'];
-            var font       = prop['chart.text.font'];
-            var units_pre  = prop['chart.units.pre'];
-            var units_post = prop['chart.units.post'];
-            var decimals   = prop['chart.labels.above.decimals'];
-    
+            var size       = prop['chart.labels.above.size'],
+                font       = prop['chart.labels.above.font'] || prop['chart.text.font'],
+                units_pre  = prop['chart.labels.above.units.pre'],
+                units_post = prop['chart.labels.above.units.post'],
+                decimals   = prop['chart.labels.above.decimals'],
+                color      = prop['chart.labels.above.color'] || prop['chart.text.color'],
+                bgcolor    = prop['chart.labels.above.background'] || 'white',
+                border     = ((
+                       typeof prop['chart.labels.above.border'] === 'boolean'
+                    || typeof prop['chart.labels.above.border'] === 'number'
+                ) ? prop['chart.labels.above.border'] : true),
+                offsety = prop['chart.labels.above.offsety'] + size,
+                specific = prop['chart.labels.above.specific'];
+
             // Use this to 'reset' the drawing state
             co.beginPath();
     
@@ -2719,17 +2757,20 @@
 
                 var coords = this.coords[i];
 
-                RG.Text2(this, {'font':font,
-                                'size':size,
-                                'x':coords[0],
-                                'y':coords[1] - 5 - size,
-                                'text':RG.numberFormat(this, typeof decimals === 'number' ? this.data_arr[i].toFixed(decimals) : this.data_arr[i], units_pre, units_post),
-                                'valign':'center',
-                                'halign':'center',
-                                'bounding':true,
-                                'boundingFill':'white',
-                                'tag': 'labels.above'
-                               });
+                RG.text2(this, {
+                    color:color,
+                    'font':font,
+                    'size':size,
+                    'x':coords[0],
+                    'y':coords[1] - offsety,
+                    'text':(specific && specific[i]) ? specific[i] : (specific ? null : RG.numberFormat(this, typeof decimals === 'number' ? this.data_arr[i].toFixed(decimals) : this.data_arr[i], units_pre, units_post)),
+                    'valign':'center',
+                    'halign':'center',
+                    'bounding':true,
+                    'boundingFill':bgcolor,
+                    'boundingStroke':border ? 'black' : 'rgba(0,0,0,0)',
+                    'tag':'labels.above'
+                });
             }
         };
 
@@ -2742,10 +2783,6 @@
         this.drawCurvyLine =
         this.DrawCurvyLine = function (coords, color, linewidth, index)
         {
-            //var ca   = this.canvas;
-            //var co   = this.context;
-            //var prop = this.properties;
-
             if (RG.ISOLD) {
                 return;
             }
@@ -3034,11 +3071,6 @@
         this.drawSpline =
         this.DrawSpline = function (context, coords, color, index)
         {
-            // Commented out on 26th Oct 2013
-            //var co          = context;
-            //var ca          = co.canvas;
-            //var prop        = this.properties;
-
             this.coordsSpline[index] = [];
             var xCoords     = [];
             var gutterLeft  = prop['chart.gutter.left'];
@@ -3069,7 +3101,6 @@
                 P.push(coords[i]);
             }
             P.push(coords[coords.length - 1] + (coords[coords.length - 1] - coords[coords.length - 2]));
-            //P.push(null);
     
             for (var j=1; j<P.length-2; ++j) {
                 for (var t=0; t<10; ++t) {
@@ -3077,7 +3108,9 @@
                     var yCoord = Spline( t/10, P[j-1], P[j], P[j+1], P[j+2] );
     
                     xCoords.push(((j-1) * interval) + (t * (interval / 10)) + gutterLeft + hmargin);
+
                     co.lineTo(xCoords[xCoords.length - 1], yCoord);
+
                     
                     if (typeof index == 'number') {
                         this.coordsSpline[index].push([xCoords[xCoords.length - 1], yCoord]);
@@ -3172,18 +3205,20 @@
             /**
             * Parse various properties for colors
             */
-            var properties = ['chart.background.barcolor1',
-                              'chart.background.barcolor2',
-                              'chart.background.grid.color',
-                              'chart.background.color',
-                              'chart.text.color',
-                              'chart.crosshairs.color',
-                              'chart.annotate.color',
-                              'chart.title.color',
-                              'chart.title.yaxis.color',
-                              'chart.key.background',
-                              'chart.axis.color',
-                              'chart.highlight.fill'];
+            var properties = [
+                'chart.background.barcolor1',
+                'chart.background.barcolor2',
+                'chart.background.grid.color',
+                'chart.background.color',
+                'chart.text.color',
+                'chart.crosshairs.color',
+                'chart.annotate.color',
+                'chart.title.color',
+                'chart.title.yaxis.color',
+                'chart.key.background',
+                'chart.axis.color',
+                'chart.highlight.fill'
+            ];
     
             for (var i=0; i<properties.length; ++i) {
                 prop[properties[i]] = this.parseSingleColorForGradient(prop[properties[i]]);
@@ -3208,15 +3243,11 @@
         * This parses a single color value
         */
         this.parseSingleColorForGradient = function (color)
-        {
-            //var RG = RGraph;
-            //var ca = this.canvas;
-            //var co = this.context;
-            
+        {            
             if (!color || typeof(color) != 'string') {
                 return color;
             }
-            
+
             /**
             * Horizontal or vertical gradient
             */
@@ -3848,6 +3879,15 @@
             
             return this;
         };
+        
+        
+        
+
+
+
+
+
+        RG.att(ca);
 
 
 

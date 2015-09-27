@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -240,15 +240,15 @@
         /**
         * Store the palette div in the registry
         */
-        RGraph.Registry.Set('palette', div);
+        RGraph.Registry.Set('chart.palette', div);
         
-        setTimeout(function () {RG.Registry.Get('palette').style.opacity = 0.2;}, 50);
-        setTimeout(function () {RG.Registry.Get('palette').style.opacity = 0.4;}, 100);
-        setTimeout(function () {RG.Registry.Get('palette').style.opacity = 0.6;}, 150);
-        setTimeout(function () {RG.Registry.Get('palette').style.opacity = 0.8;}, 200);
-        setTimeout(function () {RG.Registry.Get('palette').style.opacity = 1;}, 250);
+        setTimeout(function () {div.style.opacity = 0.2;}, 50);
+        setTimeout(function () {div.style.opacity = 0.4;}, 100);
+        setTimeout(function () {div.style.opacity = 0.6;}, 150);
+        setTimeout(function () {div.style.opacity = 0.8;}, 200);
+        setTimeout(function () {div.style.opacity = 1;}, 250);
 
-        RGraph.HideContext();
+        RGraph.hideContext();
 
         window.onclick = function ()
         {

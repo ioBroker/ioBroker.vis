@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -102,7 +102,7 @@
             'chart.title.color':     null, // Defaults to same as chart.colors
             'chart.text.color':      null, // Defaults to same as chart.colors
             'chart.text.font':       'Arial',
-            'chart.text.size':       10,
+            'chart.text.size':       12,
             'chart.align':           'bottom',
             'chart.numlabels':       5,
             'chart.scale.visible':   true,
@@ -201,8 +201,6 @@
             }
 
 
-
-            name = name.toLowerCase();
     
             /**
             * This should be done first - prepend the property name with "chart." if necessary
@@ -210,6 +208,15 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
+
+
+
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase();
+            });
     
             /**
             * Make the tickmarks align if labels are specified
@@ -217,6 +224,11 @@
             if (name == 'chart.labels' && !prop['chart.numxticks']) {
                 prop['chart.numxticks'] = value.length;
             }
+
+
+
+
+
     
             prop[name] = value;
     
@@ -240,7 +252,13 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
-    
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase()
+            });
+
             return prop[name.toLowerCase()];
         };
 
@@ -752,6 +770,10 @@
         this.firstDrawFunc = function ()
         {
         };
+
+
+        RG.att(ca);
+
 
 
 

@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -74,7 +74,7 @@
                              left: canvas.style.left,
                              top: canvas.style.top,
                              display: 'inline-block'
-                            })
+                        })
                         .get(0);
 
             // Add the new DIV to the DOM
@@ -217,14 +217,13 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'linear-gradient(135deg, rgba(255,255,255,0) ' + pc + '%, ' + color + ' ' + (pc + 20) + '%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'linear-gradient(135deg, rgba(255,255,255,0) ' + pc + '%, ' + color + ' ' + (pc + 20) + '%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1] + 'px',
+            left: canvasXY[0] + 'px',
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
             function iterator ()
             {
@@ -274,14 +273,13 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'linear-gradient(135deg, ' + color + ' ' + pc + '%, rgba(255,255,255,0) ' + (pc + 20) + '%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'linear-gradient(135deg, ' + color + ' ' + pc + '%, rgba(255,255,255,0) ' + (pc + 20) + '%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1] + 'px',
+            left: canvasXY[0] + 'px',
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
             function iterator ()
             {
@@ -336,22 +334,22 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'radial-gradient(rgba(255,255,255,0) 0%, white ' + radius + '%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'radial-gradient(rgba(255,255,255,0) 0%, white ' + radius + '%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1],
+            left: canvasXY[0],
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
         function iterator ()
         {
             if (frame < frames) {
 
                     $('div#rgraph_fadeslide_cover_' + obj.id).css({
-                                                                   background: 'radial-gradient(rgba(255,255,255,0) ' + ((frame++ / frames) * 100) + '%, ' + color + ' ' + ((frame++ / frames) * 150) + '%)'
-                                                                  });
+                        background: 'radial-gradient(rgba(255,255,255,0) ' + ((frame++ / frames) * 100) + '%, ' + color + ' ' + ((frame++ / frames) * 150) + '%)'
+                    });
+
                     RG.Effects.updateCanvas(iterator);
             
             } else {
@@ -394,14 +392,13 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'radial-gradient(rgba(255,255,255,0) 0%, white 0%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'radial-gradient(rgba(255,255,255,0) 0%, white 0%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1],
+            left: canvasXY[0],
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
         function iterator ()
         {
@@ -452,14 +449,13 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'radial-gradient(rgba(255,255,255,0) 100%, rgba(255,255,255,0) 0%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'radial-gradient(rgba(255,255,255,0) 100%, rgba(255,255,255,0) 0%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1] + 'px',
+            left: canvasXY[0] + 'px',
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
         function iterator ()
         {
@@ -508,14 +504,13 @@
 
         // Create the cover
         $('<div id="rgraph_fadeslide_cover_' + obj.id + '"></div>').css({
-                                                                          background: 'radial-gradient(rgba(255,255,255,0) 0%, rgba(255,255,255,0) 0%)',
-                                                                          width:obj.canvas.width + 'px',
-                                                                          height: obj.canvas.height + 'px',
-                                                                          top: canvasXY[1] + 'px',
-                                                                          left: canvasXY[0] + 'px',
-                                                                          position: 'absolute'
-                                                                         })
-                        .appendTo($(obj.canvas.parentNode));
+            background: 'radial-gradient(rgba(255,255,255,0) 0%, rgba(255,255,255,0) 0%)',
+            width:obj.canvas.width + 'px',
+            height: obj.canvas.height + 'px',
+            top: canvasXY[1],
+            left: canvasXY[0],
+            position: 'absolute'
+        }).appendTo($(obj.canvas.parentNode));
 
         function iterator ()
         {
@@ -585,11 +580,11 @@
         if (bounce) {
 
             jQuery('#' + obj.id).animate({opacity: 1, width: (obj.canvas.width * 1.2) + 'px', height: (obj.canvas.height * 1.2) + 'px', left: (obj.canvas.width * -0.1) + 'px', top: (obj.canvas.height * -0.1) + 'px'}, duration * 0.5, function ()
-              {
-                  jQuery('#' + obj.id).animate({width: (obj.canvas.width * 0.9) + 'px', height: (obj.canvas.height * 0.9) + 'px', top: (obj.canvas.height * 0.05) + 'px', left: (obj.canvas.width * 0.05) + 'px'}, duration * 0.25, function ()
-                    {
-                        jQuery('#' + obj.id).animate({width: obj.canvas.width + 'px', height: obj.canvas.height + 'px', top: 0, left: 0}, duration * 0.25, function () {callback(obj);});
-                    });
+            {
+                jQuery('#' + obj.id).animate({width: (obj.canvas.width * 0.9) + 'px', height: (obj.canvas.height * 0.9) + 'px', top: (obj.canvas.height * 0.05) + 'px', left: (obj.canvas.width * 0.05) + 'px'}, duration * 0.25, function ()
+                {
+                    jQuery('#' + obj.id).animate({width: obj.canvas.width + 'px', height: obj.canvas.height + 'px', top: 0, left: 0}, duration * 0.25, function () {callback(obj);});
+                });
               });
         
         } else {
@@ -690,11 +685,11 @@
 
 
         var divs = [
-                    ['rgraph_reveal_left_' + obj.id, xy[0], xy[1], obj.canvas.width  / 2, obj.canvas.height],
-                    ['rgraph_reveal_right_' + obj.id,(xy[0] + (obj.canvas.width  / 2)),xy[1],(obj.canvas.width  / 2),obj.canvas.height],
-                    ['rgraph_reveal_top_' + obj.id,xy[0],xy[1],obj.canvas.width,(obj.canvas.height / 2)],
-                    ['rgraph_reveal_bottom_' + obj.id,xy[0],(xy[1] + (obj.canvas.height  / 2)),obj.canvas.width,(obj.canvas.height / 2)]
-                   ];
+            ['rgraph_reveal_left_' + obj.id, xy[0], xy[1], obj.canvas.width  / 2, obj.canvas.height],
+            ['rgraph_reveal_right_' + obj.id,(xy[0] + (obj.canvas.width  / 2)),xy[1],(obj.canvas.width  / 2),obj.canvas.height],
+            ['rgraph_reveal_top_' + obj.id,xy[0],xy[1],obj.canvas.width,(obj.canvas.height / 2)],
+            ['rgraph_reveal_bottom_' + obj.id,xy[0],(xy[1] + (obj.canvas.height  / 2)),obj.canvas.width,(obj.canvas.height / 2)]
+        ];
         
         for (var i=0,len=divs.length; i<len; ++i) {
             var div = document.createElement('DIV');
@@ -787,7 +782,7 @@
                 }
                 
                 // Now draw the chart
-                obj.Draw();
+                obj.draw();
             obj.context.restore();
 
 
@@ -834,11 +829,11 @@
 
 
         var divs = [
-                    ['rgraph_conceal_left_' + obj.id, xy[0], xy[1], 0, obj.canvas.height],
-                    ['rgraph_conceal_right_' + obj.id,(xy[0] + obj.canvas.width),xy[1],0,obj.canvas.height],
-                    ['rgraph_conceal_top_' + obj.id,xy[0],xy[1],obj.canvas.width,0],
-                    ['rgraph_conceal_bottom_' + obj.id,xy[0],(xy[1] + obj.canvas.height),obj.canvas.width,0]
-                   ];
+            ['rgraph_conceal_left_' + obj.id, xy[0], xy[1], 0, obj.canvas.height],
+            ['rgraph_conceal_right_' + obj.id,(xy[0] + obj.canvas.width),xy[1],0,obj.canvas.height],
+            ['rgraph_conceal_top_' + obj.id,xy[0],xy[1],obj.canvas.width,0],
+            ['rgraph_conceal_bottom_' + obj.id,xy[0],(xy[1] + obj.canvas.height),obj.canvas.width,0]
+        ];
 
 
 
@@ -898,7 +893,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var height   = this.canvas.height / 5;
@@ -952,7 +946,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var height   = this.canvas.height / 5;
@@ -1003,7 +996,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var width    = this.canvas.width / 10;
@@ -1063,7 +1055,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var width    = this.canvas.width / 10;
@@ -1123,7 +1114,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var width    = this.canvas.width / 10;
@@ -1181,7 +1171,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var width    = this.canvas.width / 10;
@@ -1228,9 +1217,8 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
-        var xy       = RG.getCanvasXY(obj.canvas);
+        var xy       = RG.getCanvasXY(this.canvas);
         var width    = this.canvas.width / 10;
         var to       = opt.to || 'left';
         var height   = obj.canvas.height / 5;
@@ -1298,7 +1286,6 @@
         var duration = (frames / 60) * 1000;
         var frame    = 0;
         var callback = arguments[1] || function () {};
-        var xy       = RG.getCanvasXY(obj.canvas);
         var color    = opt.background || opt.color || opt.backgroundColor || 'white';
         var xy       = RG.getCanvasXY(this.canvas);
         var height   = obj.canvas.height / 5;
@@ -1372,10 +1359,10 @@
             if (!div) {
                 var div = doc.createElement('DIV');
                     div.id = 'rgraph_vscissors_' + i + '_' + obj.id;
-                    div.style.width =  width + 'px';
-                    div.style.height = obj.canvas.height + 'px';
-                    div.style.left   = xy[0] + (obj.canvas.width * (i / 10)) + 'px';
-                    div.style.top   = xy[1] + 'px';
+                    div.style.width    =  width + 'px';
+                    div.style.height   = obj.canvas.height + 'px';
+                    div.style.left     = xy[0] + (obj.canvas.width * (i / 10)) + 'px';
+                    div.style.top      = xy[1] + 'px';
                     div.style.position = 'absolute';
                     div.style.backgroundColor = color;
                 doc.body.appendChild(div);
@@ -1461,6 +1448,74 @@
         
         return this;
     };
+
+
+
+
+    /**
+    * The Animate function. Similar to the jQuery Animate() function - simply pass it a
+    * map of the properties and their target values, and this function will animate
+    * them to get to those values.
+    * 
+    * @param object map A map (an associative array) of the properties and their target values.
+    * @param            An optional function which will be called when the animation is complete
+    */
+    RG.Effects.Common.animate = function (map)
+    {
+        var obj = this;
+        obj.draw();
+
+        var totalFrames    = (map && map['frames']) ? map['frames'] : 30;
+        var currentFrame   = new Array();
+        var originalValues = new Array();
+        var diffs          = new Array();
+        var steps          = new Array();
+        var callback       = arguments[1]
+
+        function iterator ()
+        {
+            var id = [obj.id +  '_' + obj.type];
+
+            // Initialise the arrays
+            if (!currentFrame[id]) {
+                currentFrame[id]   = totalFrames;
+                originalValues[id] = {};
+                diffs[id]          = {};
+                steps[id]          = {};
+            }
+
+            for (var i in map) {
+                if (typeof map[i] === 'string' || typeof map[i] === 'number') {
+
+                    // If this the first frame, record the proginal value
+                    if (currentFrame[id] == totalFrames) {
+                        originalValues[id][i] = obj.get(i);
+                        diffs[id][i]          = map[i] - originalValues[id][i];
+                        steps[id][i]          = diffs[id][i] / totalFrames;
+                    }
+
+                    obj.set(i, obj.get(i) + steps[id][i]);
+
+                    RG.clear(obj.canvas);
+                    obj.draw();
+                }
+            }
+
+            // If the current frame number is above zero, run the animation iterator again
+            if (--currentFrame[id] > 0) {
+                RG.Effects.updateCanvas(iterator);
+            
+            // Optional callback
+            } else {
+
+                if (typeof callback === 'function') {
+                    callback(obj);
+                }
+            }
+        }
+
+        iterator();
+    }
 
 
 

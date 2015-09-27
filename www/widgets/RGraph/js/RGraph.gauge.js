@@ -1,14 +1,14 @@
-// version: 2014-11-15
+// version: 2015-08-28
     /**
     * o--------------------------------------------------------------------------------o
     * | This file is part of the RGraph package - you can learn more at:               |
     * |                                                                                |
     * |                          http://www.rgraph.net                                 |
     * |                                                                                |
-    * | This package is licensed under the Creative Commons BY-NC license. That means  |
-    * | that for non-commercial purposes it's free to use and for business use there's |
-    * | a 99 GBP per-company fee to pay. You can read the full license here:           |
-    * |                                                                                |
+    * | RGraph is dual licensed under the Open Source GPL (General Public License)     |
+    * | v2.0 license and a commercial license which does not mean that you're bound by |
+    * | the terms of the GPL. The commercial license is just £99 (GBP) and you can     |
+    * | read about it here:                                                            |
     * |                      http://www.rgraph.net/license                             |
     * o--------------------------------------------------------------------------------o
     */
@@ -114,7 +114,7 @@
             'chart.title.bottom.pos':null,
             'chart.text.font':    'Arial',
             'chart.text.color':     '#666',
-            'chart.text.size':      10,
+            'chart.text.size':      12,
             'chart.background.color': 'white',
             'chart.background.gradient': false,
             'chart.scale.decimals': 0,
@@ -122,10 +122,16 @@
             'chart.scale.thousand': ',',
             'chart.units.pre':      '',
             'chart.units.post':     '',
-            'chart.value.text':     false,
-            'chart.value.text.y.pos': 0.5,
-            'chart.value.text.units.pre': null,
-            'chart.value.text.units.post': null,
+
+            'chart.value.text':                 false,
+            'chart.value.text.y.pos':           0.5,
+            'chart.value.text.units.pre':       null,
+            'chart.value.text.units.post':      null,
+            'chart.value.text.color':           'black',
+            'chart.value.text.bounding':        true,
+            'chart.value.text.bounding.fill':   'white',
+            'chart.value.text.bounding.stroke': 'black',
+
             'chart.red.start':      0.9 * this.max,
             'chart.red.color':      '#DC3912',
             'chart.yellow.color':   '#FF9900',
@@ -224,7 +230,6 @@
 
 
 
-            name = name.toLowerCase();
     
             /**
             * This should be done first - prepend the propertyy name with "chart." if necessary
@@ -232,7 +237,20 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
-    
+
+
+
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase();
+            });
+
+
+
+
+
             /**
             * Title compatibility
             */
@@ -246,6 +264,11 @@
             if (name == 'chart.needle.color') {
                 name = 'chart.needle.colors';
             }
+
+
+
+
+
     
             prop[name] = value;
     
@@ -269,6 +292,12 @@
             if (name.substr(0,6) != 'chart.') {
                 name = 'chart.' + name;
             }
+
+            // Convert uppercase letters to dot+lower case letter
+            name = name.replace(/([A-Z])/g, function (str)
+            {
+                return '.' + String(RegExp.$1).toLowerCase()
+            });
     
             // BC
             if (name == 'chart.needle.color') {
@@ -675,20 +704,28 @@
                 var x = this.centerx;
                 var y = this.centery + (prop['chart.value.text.y.pos'] * this.radius);
                 
-                var units_pre  = typeof(prop['chart.value.text.units.pre']) == 'string' ? prop['chart.value.text.units.pre'] : prop['chart.units.pre'];
-                var units_post = typeof(prop['chart.value.text.units.post']) == 'string' ? prop['chart.value.text.units.post'] : prop['chart.units.post'];
+                var units_pre      = typeof(prop['chart.value.text.units.pre']) == 'string' ? prop['chart.value.text.units.pre'] : prop['chart.units.pre'];
+                var units_post     = typeof(prop['chart.value.text.units.post']) == 'string' ? prop['chart.value.text.units.post'] : prop['chart.units.post'];
+                var color          = prop['chart.value.text.color'];
+                var bounding       = prop['chart.value.text.bounding'];
+                var boundingFill   = prop['chart.value.text.bounding.fill'];
+                var boundingStroke = prop['chart.value.text.bounding.stroke'];
+                
+                co.fillStyle = color;
             
-                RG.Text2(this, {'font':font,
-                               'size':size + 2,
-                               'x':x,
-                               'y':y,
-                               'text':RG.number_format(this, this.value.toFixed(prop['chart.scale.decimals']), units_pre, units_post),
-                               'halign':'center',
-                               'valign':'center',
-                               'bounding':true,
-                               'boundingFill':'white',
-                               'tag': 'value.text'
-                              });
+                RG.text2(this, {
+                    'font':font,
+                    'size':size + 2,
+                    'x':x,
+                    'y':y,
+                    'text':RG.number_format(this, this.value.toFixed(prop['chart.scale.decimals']), units_pre, units_post),
+                    'halign':'center',
+                    'valign':'center',
+                    'bounding':bounding,
+                    'bounding.fill':boundingFill,
+                    'bounding.stroke': boundingStroke,
+                    'tag': 'value.text'
+                });
             }
         };
 
@@ -1313,6 +1350,10 @@
             
             return this;
         };
+
+
+
+        RG.att(ca);
 
 
 
