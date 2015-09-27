@@ -93,6 +93,7 @@ Note: there is a special object ID - "username". It shows logged in user.
       "view" - has a name of actual view
       "wid" - has a name of actual widget
       "wname" - widget name
+	  "widget" - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
 Note: to use ":" in calculatinos (e.g. in string formula) use "::" instead.
 
 ## Filters
@@ -115,12 +116,12 @@ Commands:
 * reload - same as refresh.
 * dialog - Show dialog window. Dialog must exist on view. One of:
 
-    - "static - HTML - Dialog",
-    - "static - Icon - Dialog",
-    - "container - HTML - view in jqui Dialog",
+    - "static    - HTML    - Dialog",
+    - "static    - Icon    - Dialog",
+    - "container - HTML    - view in jqui Dialog",
     - "container - ext cmd - view in jqui Dialog",
-    - "container - Icon - view in jqui Dialog",
-    - "container - Button - view in jqui Dialog".
+    - "container - Icon    - view in jqui Dialog",
+    - "container - Button  - view in jqui Dialog".
 
     "control.data" must have id of dialog widget, e.g. "w00056".
 * popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
@@ -148,6 +149,20 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.6.19 (2015-09-27)
+* (bluefox) translate segment clock
+* (bluefox) fix slider "dark On/Off" and autoOFF
+* (bluefox) support mouseup and mouse down by debouncing
+* (bluefox) make url as URL and not as sound selector
+* (bluefox) add special variables "view", wname and "wid" to use it in bindings
+* (bluefox) update ace editor
+* (bluefox) highligh vis in admin
+* (bluefox) add to dialogs: position, hide header, scroll settings
+* (bluefox) make dialogs work
+* (bluefox) add jqui dialog close button
+* (bluefox) set maximal height for all select menus
+* (bluefox) add setId by opening of dialog
+
 ### 0.6.18 (2015-09-24)
 (bluefox) add segment clock widget
 (bluefox) clear filter button in File Manager

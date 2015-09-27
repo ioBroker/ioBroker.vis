@@ -352,6 +352,8 @@
                 <%
                     var max = (this.data.attr('max') !== undefined) ? parseFloat(this.data.attr('max')) : 100;
                     var min = (this.data.attr('min') !== undefined) ? parseFloat(this.data.attr('min')) : 0;
+                    if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                    if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
                 %>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= min %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('off') %></label>
                 <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= min + (max - min) * 0.25 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
@@ -715,7 +717,7 @@
 
             var val = vis.states.attr(this.data.oid + '.val');
             if (val === 'true'  || val === true)  val = opened;
-            if (val === 'false' || val === false) val = closed;
+            if (val === 'false' || val === false || val === undefined || val === null || val === '') val = closed;
 
             if (this.data.attr('iconColor')) {
                 if (val == closed) { %>
@@ -866,7 +868,8 @@
         data-vis-name="val - Door"
         data-vis-prev='<div id="prev_tplMfdDoor" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default" style="height: 76px; width: 76px"> <div class="vis-widget-prev-body"> <img style="filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);" height="100%" src="widgets/jqui-mfd/img/fts_door.png"> </div> </div></div>'
         data-vis-attrs="oid;invert_icon/checkbox;invert_state/checkbox;asButton[true]/checkbox;iconColor/color;"
-        data-vis-attrs0="group.values;closed_value;opened_value;"
+        data-vis-attrs0="group.values;closed_value;tilted_value;opened_value;"
+        data-vis-attrs1="group.icons;closed_icon;tilted_icon;opened_icon;"
         >
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%= this.data.attr('asButton') ? ' ui-widget ui-button ui-corner-all ui-state-default' : '' %> <%= this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:76px; width:76px; position:absolute"  data-min="<%= this.data.attr('closed_value') %>" data-max="<%= this.data.attr('opened_value') %>" <%= (el) -> this.data.attr('asButton') ? vis.binds.jqueryui.active(el, this.data.invert_state) : '' %>>
         <div class="vis-widget-body">
@@ -875,46 +878,40 @@
             if (this.data.invert_icon === "true" || this.data.invert_icon === true) {
                 styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
             }
+            debugger;
             var opened = this.data.attr('opened_value');
+            if (opened === undefined || opened === '') opened = 1;
+
             var closed = this.data.attr('closed_value');
+            if (closed === undefined || closed === '') closed = 0;
+
+            var tilted = this.data.attr('tilted_value');
+            if (tilted === undefined || tilted === '') tilted = 2;
 
             var val = vis.states.attr(this.data.oid + '.val');
+            if (val === 'true'  || val === true)  val = opened;
+            if (val === 'false' || val === false || val === undefined || val === null) val = closed;
 
-            if (opened === undefined || opened === '' || opened === null) {
-                opened = 1;
-                closed = 0;
-
-                if (val === 'true'  || val === true)  val = opened;
-                if (val === 'false' || val === false) val = closed;
-
-                val = parseFloat(val) || 0;
-                val = (val > closed) ? opened : closed;
-            }
-            if (this.data.invert_state) {
-                if (val == opened) {
-                    val = closed;
-                } else {
-                    val = opened;
-                }
-            }
             if (this.data.attr('iconColor')) {
-                if (val != opened) {
-            %>
-                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+                if (val == closed) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_door.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  } else if (val == tilted) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_door_tilt.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
             <%  } else { %>
-                    <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door_open.svg" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
-            <%
-                }
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_door_open.svg' %>" <%= (el) -> vis.binds.jqueryui.setSvgColor(el, this.data.attr('iconColor')) %>/>
+            <%  }
             } else {
-                if (val != opened) {
-            %>
-                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door.png"/>
+                if (val == closed) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('closed_icon') ? this.data.attr('closed_icon')  : 'widgets/jqui-mfd/img/fts_door.png' %>"/>
+            <%  } else if (val == tilted) { %>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('tilted_icon') ? this.data.attr('tilted_icon')  : 'widgets/jqui-mfd/img/fts_door_tilt.png' %>"/>
             <%  } else { %>
-                <img style="<%= styles %>" height="100%" src="widgets/jqui-mfd/img/fts_door_open.png"/>
+                    <img style="<%= styles %>" height="100%" src="<%= this.data.attr('opened_icon') ? this.data.attr('opened_icon')  : 'widgets/jqui-mfd/img/fts_door_open.png' %>"/>
             <%  }
             } %>
         </div>
     </div>
+
 </script>
 
 <script id="tplMfdGarage"
@@ -1094,6 +1091,9 @@
             <%
                 var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 100;
                 var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+
+                if (typeof max == 'string' && parseFloat(max).toString() == max) max = parseFloat(max);
+                if (typeof min == 'string' && parseFloat(min).toString() == min) min = parseFloat(min);
             %>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio0" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min : max                                           %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio0"><%= _('closed') %></label>
             <input type="radio" id="<%= this.data.attr('wid') %>_radio1" name="<%= this.data.attr('wid') %>_radio" value="<%= !this.data.attr('invert_value') ? min + (max - min) * 0.25 : min + (max - min) * 0.75 %>" checked="checked"/><label for="<%= this.data.attr('wid') %>_radio1">25%</label>
