@@ -189,10 +189,10 @@
             $dlg.data('preload', (!preload || preload == 'false') && !$dlg.html().replace(/\s/g, ''));
             $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
 
-            options.width     = options.dialog_width;
-            options.height    = options.dialog_height;
-            options.top       = options.dialog_top;
-            options.left      = options.dialog_left;
+            options.width     = options.width  || options.dialog_width;
+            options.height    = options.height || options.dialog_height;
+            options.top       = options.top    || options.dialog_top;
+            options.left      = options.left   || options.dialog_left;
             options.minHeight = options.height;
             options.minWidth  = options.width;
 

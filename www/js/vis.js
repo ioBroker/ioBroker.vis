@@ -204,7 +204,7 @@ var vis = {
             cache:    this.useCache,
             success:  function (data) {
                 setTimeout(function () {
-                    try{
+                    try {
                         $('head').append(data);
                     } catch (e) {
                         console.error('Cannot load widget set "' + name + '": ' + e);
