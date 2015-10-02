@@ -398,15 +398,17 @@ var vis = {
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
                             for (var t = 0; t < oids.length; t++) {
-                                if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
-                                if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                                if (oids[t].systemOid) {
+                                    if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
+                                    if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                                    oids[t].type   = 'data';
+                                    oids[t].attr   = attr;
+                                    oids[t].view   = view;
+                                    oids[t].widget = id;
 
-                                oids[t].type = 'data';
-                                oids[t].attr = attr;
-                                oids[t].view = view;
-                                oids[t].widget = id;
+                                    this.bindings[oids[t].systemOid].push(oids[t]);
+                                }
 
-                                this.bindings[oids[t].systemOid].push(oids[t]);
 
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
@@ -1496,6 +1498,7 @@ var vis = {
         if (oid) {
             for (var p = 0; p < oid.length; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
+                if (_oid[0] == '{') continue;
                 // If first symbol '"' => it is JSON
                 if (_oid && _oid[0] == '"') continue;
                 var parts = _oid.split(';');
@@ -1505,7 +1508,8 @@ var vis = {
 
                 var test1 = visOid.substring(visOid.length - 4);
                 var test2 = visOid.substring(visOid.length - 3);
-                if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+
+                if (visOid && test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
                     visOid = visOid + '.val';
                 }
 
@@ -1513,13 +1517,14 @@ var vis = {
 
                 var test1 = systemOid.substring(systemOid.length - 4);
                 var test2 = systemOid.substring(systemOid.length - 3);
+
                 if (test1 === '.val' || test1 === '.ack') {
                     systemOid = systemOid.substring(0, systemOid.length - 4);
                 } else if (test2 === '.lc' || test2 === '.ts') {
                     systemOid = systemOid.substring(0, systemOid.length - 3);
                 }
                 var operations = null;
-                var isEval = (visOid.indexOf(':') != -1) && (visOid.indexOf('::') == -1);
+                var isEval = visOid.match(/[\d\w_\.]+:[\d\w_\.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') != -1) && (visOid.indexOf('::') == -1);
 
                 if (isEval) {
                     var xx = visOid.split(':', 2);
@@ -1530,9 +1535,9 @@ var vis = {
                     operations.push({
                         op: 'eval',
                         arg: [{
-                            name:      xx[0],
-                            visOid:    xx[1],
-                            systemOid: yy[1]
+                            name:       xx[0],
+                            visOid:     visOid,
+                            systemOid:  systemOid
                         }]
                     });
                 }
@@ -1541,18 +1546,20 @@ var vis = {
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
-                        if (parts[u].indexOf(':') != -1 && parts[u].indexOf('::') == -1) {
+                        if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') != -1 && parts[u].indexOf('::') == -1) {
                             var _systemOid = parts[u].trim();
                             var _visOid    = _systemOid;
 
                             var test1 = _visOid.substring(_visOid.length - 4);
                             var test2 = _visOid.substring(_visOid.length - 3);
+
                             if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
                                 _visOid = _visOid + '.val';
                             }
 
                             test1 = systemOid.substring(_systemOid.length - 4);
                             test2 = systemOid.substring(_systemOid.length - 3);
+
                             if (test1 === '.val' || test1 === '.ack') {
                                 _systemOid = _systemOid.substring(0, _systemOid.length - 4);
                             } else if (test2 === '.lc' || test2 === '.ts') {
@@ -1673,7 +1680,7 @@ var vis = {
                 value = widget.data.name || wid;
             } else if (oids[t].visOid == 'view.val') {
                 value = view;
-            } else {
+            } else if (oids[t].visOid) {
                 value = this.states.attr(oids[t].visOid);
             }
             if (oids[t].operations) {
@@ -1681,6 +1688,7 @@ var vis = {
                     if (oids[t].operations[k].op === 'eval') {
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
+                            if (!oids[t].operations[k].arg[a].name) continue;
                             if (oids[t].operations[k].arg[a].visOid == 'wid.val') {
                                 value = wid;
                             } else if (oids[t].operations[k].arg[a].visOid == 'view.val') {
@@ -1791,6 +1799,7 @@ var vis = {
             }
             format = format.replace(oids[t].token, value);
         }
+        format = format.replace(/{{/g, '{').replace(/}}/g, '}');
         return format;
     },
     findNearestResolution: function (resultRequiredOrX, height) {
@@ -2114,7 +2123,7 @@ window.onpopstate();
                                 var now = new Date().getTime() / 1000;
                                 for (var id in vis.IDs) {
                                     if (vis.states[vis.IDs[id] + '.val'] === undefined) {
-                                        if (!vis.IDs[id].match(/^dev\d+$/)) {
+                                        if (!vis.IDs[id] || !vis.IDs[id].match(/^dev\d+$/)) {
                                             console.log('Create inner vis object ' + vis.IDs[id]);
                                         }
                                         if (vis.editMode) {
