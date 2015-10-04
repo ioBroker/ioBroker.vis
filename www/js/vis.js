@@ -1875,7 +1875,7 @@ var vis = {
         // Protect against two events
         var now = (new Date()).getTime();
         //console.log('gclick: ' + this.lastChange + ' ' + (now - this.lastChange));
-        if (this.lastChange && now - this.lastChange < 400) {
+        if (this.lastChange && now - this.lastChange < 700) {
             //console.log('gclick: filtered');
             return true;
         }

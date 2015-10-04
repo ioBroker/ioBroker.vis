@@ -999,7 +999,7 @@
         class="vis-tpl" 
         data-vis-set="jqui" 
         data-vis-name="container - ext cmd - view in jqui Dialog" 
-        data-vis-attrs="html/text;contains_view/view;setId/id;setValue;"
+        data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; cursor: pointer; border: 2px dashed red; opacity:0.8;">
@@ -1021,7 +1021,7 @@
         data-vis-set="jqui" 
         data-vis-name="container - Icon - view in jqui Dialog" 
         data-vis-attrs="src/image;alt;text;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;contains_view/view;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1046,7 +1046,7 @@
         data-vis-set="jqui" 
         data-vis-name="container - Button - view in jqui Dialog"
         data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];setId/id;setValue;"
-        data-vis-attrs0="group.dialog;contains_view/view;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
