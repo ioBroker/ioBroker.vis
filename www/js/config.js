@@ -1,14 +1,10 @@
 var visConfig = {
     widgetSets: [
         "basic",
-        {name: "fancyswitch", depends: ["basic"]},
         {name: "jqui",        depends: ["basic"]},
-        {name: "jqui-mfd",    depends: ["basic", "jqui"]},
-        "timeAndWeather",
         "weather-adapter",
         "tabs",
-        "jqplot",
-        "RGraph"
+        "jqplot"
     ]
 };
 

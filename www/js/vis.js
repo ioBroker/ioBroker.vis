@@ -296,6 +296,16 @@ var vis = {
                     this.views[view].widgets[id].widgetSet = 'hqwidgets';
                 }
 
+                // rename RGraph => rgraph
+                if (this.views[view].widgets[id].widgetSet === 'RGraph') {
+                    this.views[view].widgets[id].widgetSet = 'rgraph';
+                }
+
+                // rename timeAndWeather => timeandweather
+                if (this.views[view].widgets[id].widgetSet === 'timeAndWeather') {
+                    this.views[view].widgets[id].widgetSet = 'timeandweather';
+                }
+                
                 // convert "Show on Value" to HTML
                 if (this.views[view].widgets[id].tpl === 'tplShowValue') {
                     this.views[view].widgets[id].tpl = 'tplHtml';
