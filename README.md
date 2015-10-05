@@ -151,6 +151,19 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.0 (2015-10-05)
+* (bluefox) add door_tilt pictures
+* (bluefox) update RGraph library
+* (bluefox) fix RGraph/ bar chart "Label color" bug
+* (bluefox) fix jquery valve dialog
+* (bluefox) support of binding like "{;Math.random()}
+* (bluefox) remove jqui-mfd to own package
+* (bluefox) remove RGraph and fancyswitch sets
+* (bluefox) increase wait period by view changes to fix click on the next view
+* (bluefox) fix view selector for some jqui dialogs
+* (bluefox) remove time and weather
+* (bluefox) check some possible error
+
 ### 0.6.19 (2015-09-27)
 * (bluefox) translate segment clock
 * (bluefox) fix slider "dark On/Off" and autoOFF
