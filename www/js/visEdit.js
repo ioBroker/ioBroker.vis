@@ -3255,6 +3255,7 @@ vis = $.extend(true, vis, {
 
                     $('#inspect_css_width').val(w);
                     $('#inspect_css_height').val(h);
+                    if (!that.views[that.activeView].widgets[widget]) return;
 
                     if (!that.views[that.activeView].widgets[widget].style) that.views[that.activeView].widgets[widget].style = {};
 
