@@ -320,6 +320,10 @@
                     if (oid) {
                         var val = $(this).attr('data-val');
                         if (val === undefined || val === null) val = false;
+                        if (val === 'true')  val = true;
+                        if (val === 'false') val = false;
+                        if (parseFloat(val).toString() == val) val = parseFloat(val);
+
                         if (oid) vis.setValue(oid, val);
                     }
                 });
