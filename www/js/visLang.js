@@ -29,7 +29,7 @@ $.extend(systemDictionary, {
     'Misc':                 {'en': 'Misc',              'de': 'Versch.',                'ru': 'Разное'},
     'Info':                 {'en': 'Info',              'de': 'Info',                   'ru': 'Инфо'},
     'default_filter_key':   {'en': 'Default filter:',   'de': 'Voreinge. Filter:',      'ru': 'Фильтр по умолчанию:'},
-    'class':                {'en': 'CSS Class',         'de': 'CSS Klasse:',            'ru': 'CSS Класс'},
+    'class':                {'en': 'CSS Class',         'de': 'CSS Klasse',            'ru': 'CSS Класс'},
     'Snapping':             {'en': 'Snapping',          'de': 'Ausrichten',             'ru': 'Опорные точки'},
     'disabled':             {'en': 'Disabled',          'de': 'Inaktiv',                'ru': 'не&nbsp;активно'},
     'elements':             {'en': 'Elements',          'de': 'Elemente',               'ru': 'элементы'},

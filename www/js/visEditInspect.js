@@ -165,7 +165,7 @@ vis = $.extend(true, vis, {
 
             // Init select dialog
             if (!$('#dialog-select-member-' + widAttr).length) {
-                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none">');
+                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none"></div>');
                 $('#dialog-select-member-' + widAttr).selectId('init', {
                     texts: {
                         select:          _('Select'),

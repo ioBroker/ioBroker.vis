@@ -924,9 +924,16 @@ var vis = {
                 console.error('Widget "' + id + '" is invalid. Please delete it.');
                 return;
             }
+            var $wid;
 
             if (widget.style && !widgetData._no_style) {
-                $("#" + id).css(widget.style);
+                $wid = $wid || $("#" + id);
+                $wid.css(widget.style);
+            }
+
+            if (widget.data && widget.data.class) {
+                $wid = $wid || $("#" + id);
+                $wid.addClass(widget.data.class);
             }
 
             if (!this.editMode) {

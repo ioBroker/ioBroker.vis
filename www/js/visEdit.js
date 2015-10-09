@@ -827,6 +827,51 @@ vis = $.extend(true, vis, {
             $('#li_menu_file_manager').hide();
         }
 
+        $('#li_menu_object_browser').click(function () {
+            var $dlg = $('#dialog-select-member-object-browser');
+            if (!$dlg.length) {
+                $('body').append('<div id="dialog-select-member-object-browser" style="display:none"></div>');
+                $dlg = $('#dialog-select-member-object-browser');
+                $dlg.selectId('init', {
+                    texts: {
+                        select:          _('Select'),
+                        cancel:          _('Cancel'),
+                        all:             _('All'),
+                        id:              _('ID'),
+                        name:            _('Name'),
+                        role:            _('Role'),
+                        room:            _('Room'),
+                        value:           _('Value'),
+                        selectid:        _('Select ID'),
+                        enum:            _('Members'),
+                        from:            _('from'),
+                        lc:              _('lc'),
+                        ts:              _('ts'),
+                        ack:             _('ack'),
+                        expand:          _('expand'),
+                        collapse:        _('collapse'),
+                        refresh:         _('refresh'),
+                        edit:            _('edit'),
+                        ok:              _('ok'),
+                        wait:            _('wait'),
+                        list:            _('list'),
+                        tree:            _('tree'),
+                        copyToClipboard: _('Copy to clipboard')
+                    },
+                    noMultiselect: true,
+                    columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                    imgPath: '/lib/css/fancytree/',
+                    objects: that.objects,
+                    states:  that.states,
+                    zindex:  1001
+                });
+            }
+
+            $dlg.selectId('show', function (newId, oldId) {
+
+            });
+        });
+
         // Ribbon icons Golbal
 
         $('.icon-on-iconbar')
