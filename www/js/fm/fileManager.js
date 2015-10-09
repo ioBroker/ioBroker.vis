@@ -135,7 +135,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             'Cancel'                            : {'de': 'Abbrechen',                      'en': 'Cancel',                      'ru': 'Отмена'},
             'Upload to'                         : {'de': 'Upload nach',                    'en': 'Upload to',                   'ru': 'Загрузить в'},
             'Dropbox'                           : {'de': 'Dropbox',                        'en': 'Dropbox',                     'ru': 'Dropbox'},
-            'Drop the files here'               : {'de': 'Hier Datein reinziehen',         'en': 'Drop the files here',         'ru': 'Перетяните файлы сюда'},
+            'Drop the files here'               : {'de': 'Hier Datein reinziehen oder clicken', 'en': 'Drop the files or click here',         'ru': 'Перетяните файлы сюда или нажмите'},
             'Close'                             : {'de': 'Schliesen',                      'en': 'Close',                       'ru': 'Закрыть'},
             'OK'                                : {'de': 'OK',                             'en': 'OK',                          'ru': 'Ok'},
             'Cannot create folder'              : {'de': 'Ordner erstellen nicht möglich', 'en': 'Failed to create folder',     'ru': 'Невозможно создать папку'},
@@ -194,7 +194,6 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     $('.fm-path').cursorPosition(1);
                                 }
                                 o.path = o.root + val;
-
 
                                 if ($('.fm-path').data('old') != val) {
                                     o.cursorPosition = $('.fm-path').cursorPosition();
@@ -889,14 +888,14 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     $('#dialog_fm').append(
                             '<div id="dialog_fm_add" title="' + fmTranslate('Upload to') + ' ' + $('.fm-path').val() + '">' +
-                            '<div id="fm_add_dropzone" ondragover="return false" class="dropzone ui-corner-all ui-state-highlight">' +
-                            '<p class="fm_dropbox_text">' + fmTranslate('Dropbox') + '<br>' + fmTranslate('Drop the files here') + ' </p>' +
-                            '</div>' +
-                            '<div class="fm_add_buttonbar">' +
-                            '    <button id="btn_fm_add_ok">' + fmTranslate('Upload') + '</button>' +
-                            '    <button id="btn_fm_add_close" >' + fmTranslate('Close') + '</button>' +
-                            '</div>' +
-                            '<input type="file" id="fm_open_file" style="height: 0; width: 0 "/>' +
+                            '   <div id="fm_add_dropzone" ondragover="return false" class="dropzone ui-corner-all ui-state-highlight">' +
+                            '      <p class="fm_dropbox_text">' + fmTranslate('Dropbox') + '<br>' + fmTranslate('Drop the files here') + ' </p>' +
+                            '   <input type="file" id="fm_open_file" multiple style="display:none">' +
+                            '   </div>' +
+                            '   <div class="fm_add_buttonbar">' +
+                            '      <button id="btn_fm_add_ok">' + fmTranslate('Upload') + '</button>' +
+                            '      <button id="btn_fm_add_close" >' + fmTranslate('Close') + '</button>' +
+                            '   </div>' +
                             '</div>');
 
                     $('#dialog_fm_add').dialog({
@@ -911,8 +910,24 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     var files = [];
 
-                    $("#fm_dropbox_text").click(function () {
-                        $("#fm_open_file").trigger("click");
+                    $(".fm_dropbox_text").click(function () {
+                        $("#fm_open_file").trigger('click');
+                    });
+                    $("#fm_open_file").change(function (event) {
+                        try {
+                            $.each(event.target.files, function () {
+                                files.push(this);
+                            });
+
+                            if (files.length) {
+                                read(o, files, uploadArray);
+                            }
+                            return false;
+                        }
+                        catch (err) {
+                            alert(err);
+                            return false;
+                        }
                     });
 
                     $('#fm_add_dropzone').bind('drop', function (e) {

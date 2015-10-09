@@ -35,6 +35,7 @@
              noDialog:   false,    // do not make dialog
              noMultiselect: false, // do not make multiselect
              buttons:    null,     // array with buttons, that should be shown in last column
+             panelButtons: null,   // array with buttons, that should be shown at the top of dialog (near expand all)
              list:       false,    // tree view or list view
              name:       null,     // name of the dialog to store filter settings
              texts: {
@@ -63,7 +64,8 @@
                  tree:     'Show tree view',
                  selectAll: 'Select all',
                  unselectAll: 'Unselect all',
-                 invertSelection: 'Invert selection'
+                 invertSelection: 'Invert selection',
+                 copyTpClipboard: "Copy to clipboard",
              },
              columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
              widths:    null,   // array with width for every column
@@ -157,7 +159,7 @@
         for (var id in objects) {
             if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
 
-            if (isType && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
+            if (isType && objects[id].type && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
 
             if (isRole && objects[id].common && objects[id].common.role) {
                 var parts = objects[id].common.role.split('.');
@@ -326,12 +328,23 @@
                     try {
                         node.setActive();
                         node.makeVisible({scrollIntoView: scrollIntoView || false});
-                    } catch (e) {
-                        //console.warn(e);
+                    } catch (err) {
+                        console.error(err);
                     }
                     return false;
                 }
             });
+        }
+    }
+
+    function syncHeader($dlg) {
+        // read width of data.$tree and set the same width for header
+        var data = $dlg.data('selectId');
+        var $header = $('#selectID_header_' + data.instance);
+        var thDest = $header.find('>colgroup>col');	//if table headers are specified in its semantically correct tag, are obtained
+        var thSrc = data.$tree.find('>thead>tr>th');
+        for (var i = 1; i < thSrc.length; i++) {
+            $(thDest[i]).attr('width', $(thSrc[i]).width());
         }
     }
 
@@ -349,6 +362,46 @@
         if (data.objects[id]) findRoomsForObject(data, id, rooms);
 
         return rooms;
+    }
+
+    function clippyCopy(e) {
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(this).parent().data('clippy')).select();
+        document.execCommand("copy");
+        $temp.remove();
+    }
+
+    function clippyShow(e) {
+        var text = '<button class="clippy-button ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" ' +
+            'role="button" title="' + $(this).data('copyTpClipboard') + '" ' +
+            'style="position: absolute; right: 0; top: 0; width: 36px; height: 18px;">' +
+            '<span class="ui-button-icon-primary ui-icon ui-icon-clipboard"></span></button>';
+
+        $(this).append(text);
+        $(this).find('.clippy-button').click(clippyCopy);
+    }
+
+    function clippyHide(e) {
+        $(this).find('.clippy-button').remove();
+    }
+
+    function installColResize($dlg) {
+        if (!$.fn.colResizable) return;
+
+        var data = $dlg.data('selectId');
+        if (data.$tree.is(':visible')) {
+            data.$tree.colResizable({
+                liveDrag: true,
+                onResize: function (event) {
+                    syncHeader($dlg);
+                }
+            });
+        } else {
+            setTimeout(function () {
+                installColResize($dlg);
+            }, 400)
+        }
     }
 
     function initTreeDialog($dlg) {
@@ -464,7 +517,7 @@
         text += '<td><button id="btn_refresh_' + data.instance + '"></button></td>';
         text += '<td><button id="btn_list_' + data.instance + '"></button></td>';
         text += '<td><button id="btn_collapse_' + data.instance + '"></button></td>';
-        text += '<td><button id="btn_expand_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_expand_' + data.instance + '"></button></td><td class="select-id-custom-buttons"></td>';
         if (data.filter && data.filter.type == 'state' && multiselect) {
             text += '<td style="padding-left: 10px"><button id="btn_select_all_' + data.instance + '"></button></td>';
             text += '<td><button id="btn_unselect_all_' + data.instance + '"></button></td>';
@@ -472,6 +525,7 @@
         }
 
         if (data.panelButtons) {
+            text += '<td style="width: 20px">&nbsp;&nbsp;</td>';
             for (c = 0; c < data.panelButtons.length; c++) {
                 text += '<td><button id="btn_custom_' + data.instance + '_' + c + '"></button></td>';
             }
@@ -639,6 +693,13 @@
                 if (data.filter && data.filter.type == 'state' && (!data.objects[node.key] || data.objects[node.key].type != 'state')) {
                     $tdList.eq(1).find('.fancytree-checkbox').hide();
                 }
+                $tdList.eq(1)
+                    .addClass('clippy')
+                    .data('clippy', node.key)
+                    .css({position: 'relative'})
+                    .data('copyTpClipboard', data.texts.copyTpClipboard)
+                    .mouseenter(clippyShow)
+                    .mouseleave(clippyHide);
 
                 for (var c = 0; c < data.columns.length; c++) {
                     if (data.columns[c] == 'image') {
@@ -722,6 +783,10 @@
                                 state = JSON.parse(JSON.stringify(state));
                             }
 
+                            if (data.objects[node.key] && data.objects[node.key].common && data.objects[node.key].common.role == 'value.time') {
+                                state.val = state.val ? (new Date(state.val)).toString() : state.val;
+                            }
+
                             var fullVal;
                             if (state.val === undefined) {
                                 state.val = '';
@@ -733,12 +798,24 @@
                                 fullVal += '\x0A' + data.texts.lc    + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
                                 fullVal += '\x0A' + data.texts.from  + ': ' + (state.from || '');
                             }
-                            $tdList.eq(base).text(state.val);
-                            $tdList.eq(base).attr('title', fullVal);
+                            $tdList.eq(base)
+                                .text(state.val)
+                                .attr('title', fullVal)
+                                .addClass('clippy')
+                                .css({position: 'relative'})
+                                .data('clippy', state.val)
+                                .data('copyTpClipboard', data.texts.copyTpClipboard)
+                                .mouseenter(clippyShow)
+                                .mouseleave(clippyHide).css({color: state.ack ? '' : 'red'});
                         } else {
-                            $tdList.eq(base).text('');
-                            $tdList.eq(base).attr('title', '');
+                            $tdList.eq(base)
+                                .text('')
+                                .attr('title', '')
+                                .removeClass('clippy');
                         }
+                        $tdList.eq(base).dblclick(function (e) {
+                            e.preventDefault();
+                        });
                         base++;
                     } else
                     if (data.columns[c] == 'button') {
@@ -1197,6 +1274,7 @@
 
         showActive($dlg);
         loadSettings(data);
+        installColResize($dlg);
 
         // set preset filters
         for (var field in data.filterPresets) {
@@ -1234,6 +1312,9 @@
                 } catch(e) {
                     console.error('Cannot parse settings: ' + e);
                 }
+            } else if (!data.filter) {
+                // set default filter: state
+                $('#filter_type_' + data.instance).val('state').trigger('change');
             }
         }
     }
@@ -1283,7 +1364,8 @@
                 tree:     'Show tree view',
                 selectAll: 'Select all',
                 unselectAll: 'Unselect all',
-                invertSelection: 'Invert selection'
+                invertSelection: 'Invert selection',
+                copyTpClipboard: "Copy to clipboard"
             }, settings.texts);
 
             var that = this;
@@ -1708,6 +1790,14 @@
                 return nodes;
             }
             return null;
+        },
+        "getActual": function () {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                return data ? data.selectedID : null;
+            }
         }
     };
 
