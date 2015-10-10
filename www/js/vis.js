@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.7.0',
+    version: '0.7.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -628,14 +628,15 @@ var vis = {
         }
     },
     setViewSize: function (view) {
-        var $view = $("#visview_" + view);
+        var $view = $('#visview_' + view);
         // Because of background, set the width and height of the view
         var width = parseInt(this.views[view].settings.sizex, 10);
         var height = parseInt(this.views[view].settings.sizey, 10);
-        if (!width || width < $("#vis_container").width()) {
+        var $vis_container = $('#vis_container');
+        if (!width || width < $vis_container.width()) {
             width = '100%';
         }
-        if (!height || height < $("#vis_container").height()) {
+        if (!height || height < $vis_container.height()) {
             height = '100%';
         }
         $view.css({width: width});
@@ -644,7 +645,7 @@ var vis = {
     updateContainers: function (view) {
         var that = this;
         // Set ths views for containers
-        $("#visview_" + view).find('.vis-view-container').each(function () {
+        $('#visview_' + view).find('.vis-view-container').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
                 $(this).html('<span style="color:red">' + _('error: view not found.') + '</span>');
@@ -653,8 +654,9 @@ var vis = {
             } else {
                 $(this).html('');
                 that.renderView(cview, true);
-                $('#visview_' + cview).appendTo(this);
-                $('#visview_' + cview).show();
+                $('#visview_' + cview)
+                    .appendTo(this)
+                    .show();
             }
         });
     },
@@ -731,8 +733,9 @@ var vis = {
                 return false;
             }
             that.renderView(cview, true);
-            $("#visview_" + cview).appendTo(this);
-            $("#visview_" + cview).show();
+            $("#visview_" + cview)
+                .appendTo(this)
+                .show();
         });
 
         if (!hidden) {
@@ -757,8 +760,8 @@ var vis = {
             }
         }
         setTimeout(function(){
-            $("#visview_" + view).trigger("rendered");
-        });
+            $("#visview_" + view).trigger('rendered');
+        }, 0);
 
     },
     addViewStyle: function (view, theme) {
@@ -796,8 +799,12 @@ var vis = {
         }
     },
     reRenderWidget: function (view, widget) {
-        $("#" + widget).remove();
+        var $widget = $('#' + widget);
+        var updateContainers = $widget.find('.vis-view-container').length;
+        $widget.remove();
         this.renderWidget(view || this.activeView, widget);
+        
+        if (updateContainers) this.updateContainers(view || this.activeView);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[this.activeView].widgets;
@@ -924,7 +931,7 @@ var vis = {
                 console.error('Widget "' + id + '" is invalid. Please delete it.');
                 return;
             }
-            var $wid;
+            var $wid = null;
 
             if (widget.style && !widgetData._no_style) {
                 $wid = $wid || $("#" + id);
@@ -982,12 +989,11 @@ var vis = {
         if (hideOptions.effect == 'show') effect = false;
 
         if (!this.views[view]) {
-            var prop;
-            for (prop in this.views) {
-                // object[prop]
+            view = null;
+            for (var prop in this.views) {
+                view = prop;
                 break;
             }
-            view = prop;
         }
 
         // If really changed
@@ -1006,7 +1012,7 @@ var vis = {
                     $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
-                            for (var id in this.views[view].widgets) {
+                            for (var id in that.views[view].widgets) {
                                 if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                     that.views[view].widgets[id].renderVisible)
                                     that.renderWidget(view, id);
@@ -1096,8 +1102,6 @@ var vis = {
 
         // --------- Editor -----------------
         if (this.editMode) this.changeViewEdit(view);
-
-        return;
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
@@ -1268,9 +1272,10 @@ var vis = {
         }
         $('#dialog-message-text').html(message);
         if (icon) {
-            $('#dialog-message-icon').show();
-            $('#dialog-message-icon').attr('class', '');
-            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
+            $('#dialog-message-icon')
+                .show()
+                .attr('class', '')
+                .addClass('ui-icon ui-icon-' + icon);
         } else {
             $('#dialog-message-icon').hide();
         }
@@ -1300,8 +1305,8 @@ var vis = {
             }
             if (step !== undefined) {
                 this.waitScreenVal += step;
-                setTimeout(function (_val) {
-                    $(".vis-progressbar").progressbar("value", _val);
+                _setTimeout(function (_val) {
+                    $(".vis-progressbar").progressbar('value', _val);
                 }, 0, this.waitScreenVal);
 
             }
@@ -1431,7 +1436,7 @@ var vis = {
         var v;
         // Year
         if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
-            v = dateObj.getFullYear();
+            v = dateObj.getFullYear().toString();
             format = format.replace('YYYY', v);
             format = format.replace('JJJJ', v);
             format = format.replace('ГГГГ', v);
@@ -1455,13 +1460,13 @@ var vis = {
 
         // Day
         if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate();
             if (v < 10) v = '0' + v;
             format = format.replace('DD', v);
             format = format.replace('TT', v);
             format = format.replace('ДД', v);
         } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate().toString();
             format = format.replace('D', v);
             format = format.replace('T', v);
             format = format.replace('Д', v);
@@ -1475,7 +1480,7 @@ var vis = {
             format = format.replace('SS', v);
             format = format.replace('чч', v);
         } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
-            v =  dateObj.getHours();
+            v =  dateObj.getHours().toString();
             format = format.replace('h', v);
             format = format.replace('S', v);
             format = format.replace('ч', v);
@@ -1488,7 +1493,7 @@ var vis = {
             format = format.replace('mm', v);
             format = format.replace('мм', v);
         } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
-            v =  dateObj.getMinutes();
+            v =  dateObj.getMinutes().toString();
             format = format.replace('m', v);
             format = format.replace('v', v);
         }
@@ -1500,7 +1505,7 @@ var vis = {
             format = format.replace('ss', v);
             format = format.replace('cc', v);
         } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
-            v =  dateObj.getHours();
+            v =  dateObj.getHours().toString();
             format = format.replace('s', v);
             format = format.replace('с', v);
         }

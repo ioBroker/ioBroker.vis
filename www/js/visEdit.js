@@ -90,6 +90,14 @@ vis = $.extend(true, vis, {
             //    //});
             //    //that.editSaveConfig('tabs/pan_attr', i);
             //}
+        }).resizable({
+            handles: 'w',
+            maxWidth: 670,
+            minWidth: 100,
+            resize: function () {
+                $(this).css("left", "auto");
+            }
+
         });
         $('#pan_add_wid').resizable({
             handles:  'e',
@@ -99,15 +107,7 @@ vis = $.extend(true, vis, {
                 $('#filter_set').clearSearch('update');
             }
         });
-        $('#pan_attr').resizable({
-            handles: 'w',
-            maxWidth: 670,
-            minWidth: 100,
-            resize: function () {
-                $(this).css("left", "auto");
-            }
 
-        });
         if (this.config['size/pan_add_wid']) $('#pan_add_wid').width(this.config['size/pan_add_wid']);
         if (this.config['size/pan_attr'])    $('#pan_attr').width(this.config['size/pan_attr']);
 
@@ -211,7 +211,7 @@ vis = $.extend(true, vis, {
             for (var j = 0; j < widgets.length; j++) {
                 if (that.activeWidgets.indexOf(widgets[j]) === -1) {
                     that.activeWidgets.push(widgets[j]);
-                    that.actionHighlighWidget(widgets[j]);
+                    that.actionHighlightWidget(widgets[j]);
                 }
             }
             that.inspectWidgets();
@@ -316,8 +316,7 @@ vis = $.extend(true, vis, {
         $('.vis-inspect-view').change(function () {
             var $this = $(this);
             var attr = $this.attr('id').slice(13);
-            var val = $this.val();
-            that.views[that.activeView].settings[attr] = val;
+            that.views[that.activeView].settings[attr] = $this.val();
             that.save();
         }).keyup(function () {
             $(this).trigger('change');
@@ -349,7 +348,7 @@ vis = $.extend(true, vis, {
             width: '100%'
         });
 
-        $('#screen_size-menu').css({'max-height': '400px'})
+        $('#screen_size-menu').css({'max-height': '400px'});
 
         $('#screen_size_x').change(function () {
             var x = $('#screen_size_x').val();
@@ -781,11 +780,9 @@ vis = $.extend(true, vis, {
                                 window.alert(_('Empty name is not allowed!'));
                                 return;
                             }
-                            var found = false;
                             $('.project-select').each(function () {
                                 if ($(this).data('project') == name) {
                                     window.alert(_('Project yet exists!'));
-                                    return;
                                 }
                             });
 
@@ -868,11 +865,16 @@ vis = $.extend(true, vis, {
             }
 
             $dlg.selectId('show', function (newId, oldId) {
-
+                var $temp = $('<input>');
+                $dlg.append($temp);
+                $temp.val(newId).select();
+                document.execCommand('copy');
+                $temp.remove();
+                that.showHint(_('Object ID "%s" copied to clipboard', newId) + '.', 15000);
             });
         });
 
-        // Ribbon icons Golbal
+        // Ribbon icons Global
 
         $('.icon-on-iconbar')
             .hover(
@@ -933,13 +935,13 @@ vis = $.extend(true, vis, {
                 data.push(_data);
             });
 
-            function SortByLeft(a, b) {
+            function sortByLeft(a, b) {
                 var aName = a.left;
                 var bName = b.left;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortByLeft);
+            data.sort(sortByLeft);
             var left = data.shift().left;
 
             $.each(data, function () {
@@ -963,13 +965,13 @@ vis = $.extend(true, vis, {
                 data.push(_data);
             });
 
-            function SortByLeft(a, b) {
+            function sortByLeft(a, b) {
                 var aName = a.left;
                 var bName = b.left;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortByLeft);
+            data.sort(sortByLeft);
             var left = data.pop().left;
 
             $.each(data, function(){
@@ -993,13 +995,13 @@ vis = $.extend(true, vis, {
                 data.push(_data);
             });
 
-            function SortBytop(a, b) {
+            function sortByTop(a, b) {
                 var aName = a.top;
                 var bName = b.top;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortBytop);
+            data.sort(sortByTop);
             var top = data.shift().top;
 
             $.each(data, function () {
@@ -1025,13 +1027,13 @@ vis = $.extend(true, vis, {
                 data.push(_data);
             });
 
-            function SortBytop(a, b) {
+            function sortByTop(a, b) {
                 var aName = a.top;
                 var bName = b.top;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortBytop);
+            data.sort(sortByTop);
             var top = data.pop().top;
 
             $.each(data, function () {
@@ -1051,7 +1053,7 @@ vis = $.extend(true, vis, {
             var max_bottom = 0;
             var middle;
             $.each(that.activeWidgets, function () {
-                var top = parseInt($("#" + this).css("top"));
+                var top = parseInt($("#" + this).css('top'));
                 var bottom = top + $("#" + this).height();
                 if (min_top > top) min_top = top;
                 if (max_bottom < bottom) max_bottom = bottom;
@@ -1117,13 +1119,13 @@ vis = $.extend(true, vis, {
 
             if (between < 0 ) between = 0;
 
-            function SortByLeft(a, b) {
+            function sortByLeft(a, b) {
                 var aName = a.left;
                 var bName = b.left;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortByLeft);
+            data.sort(sortByLeft);
             var first = data.shift();
             var left  = first.left + $("#" + first.wid).width();
 
@@ -1164,13 +1166,13 @@ vis = $.extend(true, vis, {
 
             between = (max_bottom - min_top - cont_size) / (that.activeWidgets.length - 1);
             if (between < 0 ) between = 0;
-            function SortByTop(a, b) {
+            function sortByTop(a, b) {
                 var aName = a.top;
                 var bName = b.top;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(SortByTop);
+            data.sort(sortByTop);
             var first = data.shift();
             var top  = first.top + $("#" + first.wid).height();
 
@@ -1285,9 +1287,7 @@ vis = $.extend(true, vis, {
 
         $("#rib_view_add_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_addname').val().trim());
-            if (name === false) {
-                return;
-            } else {
+            if (name !== false) {
                 setTimeout(function () {
                     that.addView(name);
                     $('#rib_view').show();
@@ -1351,7 +1351,7 @@ vis = $.extend(true, vis, {
 
 
         // Tools ----------------------------------------------------------------
-        // Resolutuion -----------------
+        // Resolution -----------------
 
         $(".rib_tool_resolution_toggle").button({
             text:  false,
@@ -1423,7 +1423,7 @@ vis = $.extend(true, vis, {
                 if ($that.attr('type') == 'number') {
                     if ($that.attr('step') == '0.1') {
                         val = val.replace(',', '.');
-                        that.setValue($that.attr("id").split("_")[1], parseFloat(val, 10));
+                        that.setValue($that.attr("id").split("_")[1], parseFloat(val));
                     } else {
                         that.setValue($that.attr("id").split("_")[1], parseInt(val, 10));
                     }
@@ -1772,16 +1772,15 @@ vis = $.extend(true, vis, {
             editor.navigateFileEnd();
         });
 
-        $("#cssEditor_tab").click(function(){
+        $('#cssEditor_tab').click(function(){
             editor.focus();
         });
 
-        $("#pan_attr").resize(function(){
+        $('#pan_attr').resize(function(){
             editor.resize();
         });
 
-
-        $("#css_find").change(function(){
+        $('#css_find').change(function(){
             editor.find($(this).val(),{
                 backwards: false,
                 wrap: false,
@@ -1864,7 +1863,7 @@ vis = $.extend(true, vis, {
                 //that.additionalThemeCss(theme);
                 that.save();
             }
-        })
+        });
         // set max height of select menu and autocomplete
         $('#inspect_view_theme-menu').css('max-height', '300px');
 
@@ -2676,7 +2675,7 @@ vis = $.extend(true, vis, {
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
             if (!options.noAnimate) {
-                this.actionHighlighWidget(widgetId);
+                this.actionHighlightWidget(widgetId);
             }
         }
 
@@ -3447,7 +3446,7 @@ vis = $.extend(true, vis, {
         }
         return true;
     },
-    actionHighlighWidget: function (id) {
+    actionHighlightWidget: function (id) {
         if (id == "none") return;
 
         var $jWidget = $('#' + id);

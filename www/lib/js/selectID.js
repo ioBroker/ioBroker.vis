@@ -365,10 +365,11 @@
     }
 
     function clippyCopy(e) {
-        var $temp = $("<input>");
-        $("body").append($temp);
+        var $temp = $('<input>');
+        //$('body').append($temp);
+        $(this).append($temp);
         $temp.val($(this).parent().data('clippy')).select();
-        document.execCommand("copy");
+        document.execCommand('copy');
         $temp.remove();
     }
 

@@ -238,7 +238,7 @@ vis = $.extend(true, vis, {
         // options[1] nameFilter
         // options[2] attrFilter
         // Effect selector
-        var line = {
+        return {
             input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
             init: function (_wid_attr, data) {
                 if (that.styleSelect) {
@@ -259,7 +259,6 @@ vis = $.extend(true, vis, {
                 }
             }
         };
-        return line;
     },
     editFontName: function (widAttr) {
         // Select
@@ -267,8 +266,8 @@ vis = $.extend(true, vis, {
         return this.editSelect(widAttr, values);
     },
     editAutoComplete: function (widAttr, values) {
-        // Autocomplete
-        var line = {
+        // Auto-complete
+        return {
             input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
             init: function (_wid_attr, data) {
                 $(this).autocomplete({
@@ -290,7 +289,6 @@ vis = $.extend(true, vis, {
                 });
             }
         };
-        return line;
     },
     _editSetFontColor: function(element) {
         try {
@@ -442,7 +440,6 @@ vis = $.extend(true, vis, {
             input: '<button id="inspect_' + widAttr + '">' + widAttr + '</button>',
             init: function (w, data) {
                 $(this).button().click(function () {
-                    var that = this;
                     $(this).val(true).trigger('change');
                 });
             }
@@ -532,8 +529,7 @@ vis = $.extend(true, vis, {
         options.min = (!options.min) ? 0 : options.min;
         options.max = (!options.max) ? 0 : options.max;
         options.step = (!options.step) ? (options.max - options.min) / 100 : options.step;
-        var that = this;
-        var line = {
+        return {
             input: '<table width="100%"><tr><td style="width:50px"><input style="width:50px" id="inspect_' + widAttr + '"/></td><td width="100%"><div id="inspect_' + widAttr + '_slider"></div></td></tr>',
             init: function (w, data) {
                 options.value = (data === undefined) ? options.min : data;
@@ -547,11 +543,9 @@ vis = $.extend(true, vis, {
                 $('#inspect_' + widAttr + '_slider').slider('value', (value === undefined) ? options.min : value);
             }
         };
-        return line;
     },
     editCssCommon: function () {
         var group = 'css_common';
-        var line;
         this.groups[group] = this.groups[group] || {};
 
         this.groups[group].css_left   = {input: '<input type="text" id="inspect_css_left"/>'};
@@ -571,7 +565,6 @@ vis = $.extend(true, vis, {
     },
     editCssFontText: function () {
         var group = 'css_font_text';
-        var line;
         this.groups[group] = this.groups[group] || {};
 
         this.groups[group].css_color             = this.editColor('css_color');
@@ -606,7 +599,6 @@ vis = $.extend(true, vis, {
     },
     editCssBackground: function () {
         var group = 'css_background';
-        var line;
         this.groups[group] = this.groups[group] || {};
 
         this.groups[group].css_background               = {input: '<input type="text" id="inspect_css_background" class="vis-edit-textbox vis-inspect-widget"/>'};
@@ -639,7 +631,6 @@ vis = $.extend(true, vis, {
     },
     editCssBorder: function () {
         var group = 'css_border';
-        var line;
         var that = this;
         this.groups[group] = this.groups[group] || {};
 
@@ -747,17 +738,18 @@ vis = $.extend(true, vis, {
                         editor.setValue($('#inspect_' + wdata.attr).val());
                         editor.navigateFileEnd();
                         editor.focus();
-                        editor.getSession().on('change', function(e) {
+                        editor.getSession().on('change', function() {
                             changed = true;
                         });
                     },
                     beforeClose: function () {
-                        var pos = $('#dialog-edit-text').parent().position();
+                        var $parent = $('#dialog-edit-text').parent();
+                        var pos = $parent.position();
                         that.editSaveConfig('dialog-edit-text', JSON.stringify({
                             top:    pos.top  > 0 ? pos.top  : 0,
                             left:   pos.left > 0 ? pos.left : 0,
-                            width:  $('#dialog-edit-text').parent().width(),
-                            height: $('#dialog-edit-text').parent().height() + 9
+                            width:  $parent.width(),
+                            height: $parent.height() + 9
                         }));
 
                         if (changed) {
@@ -842,7 +834,6 @@ vis = $.extend(true, vis, {
         return result;
     },
     findByName: function (stateId, objName) {
-        var result = {};
         // try to detect other values
 
         // Go trough all channels of this device
@@ -1101,7 +1092,6 @@ vis = $.extend(true, vis, {
 
                 // Init value
                 var $input = $('#inspect_' + widAttr);
-                var val;
 
                 if ($input.attr('type') == 'text' || $input.prop("tagName") == 'TEXTAREA') $input.addClass('vis-edit-textbox');
 
@@ -1174,7 +1164,7 @@ vis = $.extend(true, vis, {
         }
         this.initStealHandlers();
 
-        $('.vis-inspect-widget').change(function (e) {
+        $('.vis-inspect-widget').change(function () {
             var $this   = $(this);
             var wdata   = $this.data('data-wdata');
             var depends = $this.data('data-depends');
@@ -1761,7 +1751,7 @@ vis = $.extend(true, vis, {
             return false;
         }
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_("Widget") + ": " + ((this.activeWidgets.length == 1) ? wid : this.activeWidgets.length));
+        $('#widget_tab').text(_('Widget') + ": " + ((this.activeWidgets.length == 1) ? wid : this.activeWidgets.length));
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -1774,11 +1764,11 @@ vis = $.extend(true, vis, {
 
         var $widgetTpl = $('#' + widget.tpl);
         if (!$widgetTpl) {
-            console.log(widget.tpl + " is not included");
+            console.log(widget.tpl + ' is not included');
             return false;
         }
-        var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
-        // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+        /*var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+        // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
         var t = 0;
         var attr;
         while ((attr = $widgetTpl.attr('data-vis-attrs' + t))) {
@@ -1790,13 +1780,12 @@ vis = $.extend(true, vis, {
         } else {
             widgetAttrs = [];
         }
-        var widgetFilter = $widgetTpl.attr('data-vis-filter');
+        var widgetFilter = $widgetTpl.attr('data-vis-filter');*/
 
         $('#inspect_comment_tr').show();
         $('#inspect_class_tr').show();
-        var widgetDiv = document.getElementById(wid);
 
-        $widgetAttrs.css({"width": "100%"});
+        $widgetAttrs.css({width: "100%"});
 
         // Add fixed attributes
         var group = 'fixed';
@@ -1859,7 +1848,8 @@ vis = $.extend(true, vis, {
         }
 
         // Put all view names in the select element
-        $('#inspect_views').html('');
+        var $inspect_views = $('#inspect_views');
+        $inspect_views.html('');
         // TODO
         var views = this.getViewsOfWidget(this.activeWidgets[0]);
         for (var v in this.views) {
@@ -1871,11 +1861,11 @@ vis = $.extend(true, vis, {
                         break;
                     }
                 }
-                $('#inspect_views').append('<option value=\'' + v + "' " + selected + ">" + v + "</option>");
+                $inspect_views.append('<option value="' + v + '" ' + selected + '>' + v + '</option>');
             }
         }
 
-        $('#inspect_views').multiselect({
+        $inspect_views.multiselect({
             maxWidth: 180,
             height: 260,
             noneSelectedText: _('Single view'),
@@ -1890,8 +1880,8 @@ vis = $.extend(true, vis, {
             checkAllText: _('Check all'),
             uncheckAllText: _('Uncheck all'),
             close: function () {
-                if ($('#inspect_views').data('changed')) {
-                    $('#inspect_views').data('changed', false);
+                if ($inspect_views.data('changed')) {
+                    $inspect_views.data('changed', false);
                     that.syncWidgets(that.activeWidgets, $(this).val());
                     that.save();
                 }
@@ -1903,7 +1893,7 @@ vis = $.extend(true, vis, {
             //that.save();
         }).data('changed', false);
 
-        $("#inspect_views").next().css('width', '100%');
+        $inspect_views.next().css('width', '100%');
 
         // If tab Widget is not selected => select it
         if ($('#menu_body').tabs('option', 'active') == 1) {

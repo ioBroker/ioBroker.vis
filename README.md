@@ -151,6 +151,14 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.1 (2015-10-10)
+* (bluefox) parse value by ctrl widgets
+* (bluefox) update select ID
+* (bluefox) add to file upload "file select dialog"
+* (bluefox) add browse objects dialog
+* (bluefox) fix update container by bindings
+* (bluefox) warnings clear
+
 ### 0.7.0 (2015-10-05)
 * (bluefox) add door_tilt pictures
 * (bluefox) update RGraph library

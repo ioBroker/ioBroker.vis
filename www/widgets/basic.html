@@ -1302,10 +1302,10 @@
         data-vis-name="view in widget"
         data-vis-attrs="contains_view/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-            <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
-            <% } %>
-            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper"></div>
+        <% } %>
+        <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
         </div>
     </div>
 </script>
