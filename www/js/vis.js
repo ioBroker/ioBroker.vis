@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.7.1',
+    version: '0.7.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -694,7 +694,7 @@ var vis = {
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
 
-            var $view = $("#visview_" + view);
+            var $view = $('#visview_' + view);
             $view.css(this.views[view].settings.style);
             if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
 
@@ -723,7 +723,7 @@ var vis = {
         }
 
         // move views in container
-        $("#visview_" + view).find("div[id$='container']").each(function () {
+        $('#visview_' + view).find("div[id$='container']").each(function () {
             var cview = $(this).attr("data-vis-contains");
             if (!that.views[cview]) {
                 $(this).append("error: view not found.");
@@ -733,13 +733,13 @@ var vis = {
                 return false;
             }
             that.renderView(cview, true);
-            $("#visview_" + cview)
+            $('#visview_' + cview)
                 .appendTo(this)
                 .show();
         });
 
         if (!hidden) {
-            $("#visview_" + view).show();
+            $('#visview_' + view).show();
 
             if (this.views[view].rerender) {
                 this.views[view].rerender = false;
@@ -760,7 +760,7 @@ var vis = {
             }
         }
         setTimeout(function(){
-            $("#visview_" + view).trigger('rendered');
+            $('#visview_' + view).trigger('rendered');
         }, 0);
 
     },
@@ -1021,10 +1021,10 @@ var vis = {
                     }).dequeue();
                 }
 
-                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
+                $('#visview_' + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     // If first hide, than show
                     if (!sync) {
-                        $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+                        $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                             if (that.views[view].rerender) {
                                 that.views[view].rerender = false;
                                 for (var id in that.views[view].widgets) {
@@ -1046,8 +1046,8 @@ var vis = {
                 this.renderView(view, true);
 
                 // View ggf aus Container heraus holen
-                if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
-                    $("#visview_" + view).appendTo("#vis_container");
+                if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
+                    $('#visview_' + view).appendTo("#vis_container");
                 }
 
                 //if (this.views[view] && this.views[view].settings) {
@@ -1062,8 +1062,8 @@ var vis = {
                     //}
                     //this.additionalThemeCss(this.views[view].settings.theme);
                 //}
-                $("#visview_" + view).show();
-                $("#visview_" + this.activeView).hide();
+                $('#visview_' + view).show();
+                $('#visview_' + this.activeView).hide();
             }
             // remember last click for debounce
             this.lastChange = (new Date()).getTime();
@@ -1071,8 +1071,8 @@ var vis = {
             this.renderView(view);
 
             // View ggf aus Container heraus holen
-            if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
-                $("#visview_" + view).appendTo("#vis_container");
+            if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
+                $('#visview_' + view).appendTo("#vis_container");
             }
         }
         this.activeView = view;
@@ -1952,6 +1952,21 @@ window.onpopstate = function () {
     vis.editMode = (window.location.href.indexOf('edit.html') != -1 || vis.urlParams.edit === '');
 };
 window.onpopstate();
+
+if (!vis.editMode) {
+    // Protection after view change
+    $(window).on('click touchstart mousedown', function (e) {
+        if (vis.lastChange) {
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+    });
+    $(window).on('touchend mouseup', function (e) {
+        vis.lastChange = null;
+    });
+}
+
 
 // Start of initialisation: main ()
 (function ($) {
