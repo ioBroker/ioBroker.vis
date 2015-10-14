@@ -798,17 +798,18 @@
             }
         },
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
-            if (document.getElementById (wid)) $('#' + wid).remove ();
+            if (document.getElementById(wid)) $('#' + wid).remove ();
 
             var str = vis.states.attr(oid + '.val');
+            if (typeof str === 'string') str = str.toLowerCase();
             var val = parseFloat(str);
-            var sText = '<svg class="vis-widget ' + (myClass || "") + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
+            var sText = '<svg class="vis-widget ' + (myClass || '') + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
             if (vis.editMode) {
                 if (opacity === undefined || opacity === null || opacity === '') opacity = 1;
 
                 if (parseFloat(opacity) < 0.2) opacity = 0.2;
             }
-            if (val === 0 || str === "false" || str === false || str === null) {
+            if (val === 0 || str === 'false' || str === '0' || str === 'off' || str === false || str === null || str === undefined) {
                 // try to analyse
                 sText += svg_false;
             } else {
@@ -1078,7 +1079,7 @@
                     return val == min;
                 }
             }
-            if (val === undefined || val === null || val === false || val === 'false' || val === '') return true;
+            if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') return true;
             if (val === '0' || val === 0) return true;
             var f = parseFloat(val);
             if (f.toString() !== 'NaN') return !f;
@@ -1789,7 +1790,7 @@
         data-vis-attrs="oid;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
-            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val")))  { %>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"))) { %>
                 <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
             <% } else { %>
                 <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
