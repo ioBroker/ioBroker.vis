@@ -470,6 +470,8 @@ vis = $.extend(true, vis, {
                 var html = $clone.parent().html();
 
                 html = html
+                    .replace(/id="[-_\w\d]+"/, '')
+                    .replace(/data-[\w+]="[-_\w\d]+"/, '')
                     .replace('vis-widget ', 'vis-widget_prev ')
                     .replace('vis-widget-body', 'vis-widget-prev-body')
                     .replace('vis-widget-lock', ' ')
