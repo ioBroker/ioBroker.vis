@@ -1,1 +1,813 @@
-(function(a){a.sliderTabs=function(b,c){var d=this,e={autoplay:!1,tabArrowWidth:35,classes:{leftTabArrow:"",panel:"",panelActive:"",panelsContainer:"",rightTabArrow:"",tab:"",tabActive:"",tabsList:""},defaultTab:1,height:null,indicators:!1,mousewheel:!0,position:"top",panelArrows:!1,panelArrowsShowOnHover:!1,tabs:!0,tabHeight:30,tabArrows:!0,tabSlideLength:100,tabSlideSpeed:200,transition:"slide",transitionEasing:"easeOutCubic",transitionSpeed:500,width:null},f=a(b),g,h,i,j,k,l,m,n,o,p,q=!1,r=!0,s,t;d.selectedTab=e.defaultTab,d.init=function(){s=d.settings=a.extend({},e,c),f.addClass("ui-slider-tabs"),i=f.children("div").addClass("ui-slider-tab-content").remove(),h=f.children("ul").addClass("ui-slider-tabs-list").remove(),h.children("li").remove().appendTo(h),d.count=h.children("li").length,k=a("<div class='ui-slider-tabs-list-wrapper'>"),j=a("<div class='ui-slider-tabs-list-container'>").append(h).appendTo(k),j.find("li").css("height",s.tabHeight+2),j.find("li a").css("height",s.tabHeight+2),m=a("<a href='#' class='ui-slider-left-arrow'><div></div></a>").css({width:s.tabArrowWidth,height:s.tabHeight+2}).appendTo(j).click(function(a){return d.slideTabs("right",s.tabSlideLength),!1}),n=a("<a href='#' class='ui-slider-right-arrow'><div></div></a>").css({width:s.tabArrowWidth,height:s.tabHeight+2}).appendTo(j).click(function(a){return d.slideTabs("left",s.tabSlideLength),!1}),l=a("<div class='ui-slider-tabs-content-container'>").append(i),s.position=="bottom"?f.append(l).append(k.addClass("bottom")):f.append(k).append(l),s.width&&f.width(parseInt(s.width)),s.height&&l.height(parseInt(s.height)-s.tabHeight),s.indicators&&d.showIndicators(),d.selectTab(s.defaultTab),d.slideTabs("left",0),w(),D(),f.delegate(".ui-slider-tabs-list li a","click",function(){return!a(this).parent().hasClass("selected")&&!q&&d.selectTab(a(this).parent()),!1}),g&&g.delegate(".ui-slider-tabs-indicator","click",function(){!a(this).hasClass("selected")&&!q&&d.selectTab(a(this).index()+1)}),a.each(s.classes,function(a,b){switch(a){case"leftTabArrow":m.addClass(b);break;case"rightTabArrow":n.addClass(b);break;case"panel":i.addClass(b);break;case"panelsContainer":l.addClass(b);break;case"tab":h.find("li").addClass(b);break;case"tabsList":h.addClass(b);break;default:}}),s.panelArrows&&B(),s.panelArrowsShowOnHover&&(o&&o.addClass("showOnHover"),p&&p.addClass("showOnHover")),l.resize(B),k.resize(function(){C(),D()}),setInterval(function(){var a=l.children(".selected");a.outerHeight()>l.outerHeight()&&r&&A(a)},100),C(),s.tabs||k.hide(),s.autoplay&&setInterval(d.next,s.autoplay),f.bind("mousewheel",function(a,b,c,e){return b>0?d.next():b<0&&d.prev(),!1})},d.selectTab=function(a){r=!1;var b=typeof a=="number"?h.children("li:nth-child("+a+")"):a,c=b.find("a").attr("href").substr(1),e=l.children("#"+c);d.selectedTab=typeof a=="number"?a:a.index()+1,A(e),q=!0;var f=h.find(".selected").index()<b.index()?"left":"right";b.siblings().removeClass("selected"),s.classes.tabActive!=""&&b.siblings().removeClass(s.classes.tabActive),b.addClass("selected").addClass(s.classes.tabActive),y(l.children(".ui-slider-tab-content:visible"),f),z(e),v(b),u()},d.next=function(){q||(d.count===d.selectedTab?d.selectTab(1):d.selectTab(d.selectedTab+1))},d.prev=function(){q||(d.selectedTab===1?d.selectTab(d.count):d.selectTab(d.selectedTab-1))},d.slideTabs=function(a,b){var c=parseInt(h.css("margin-left")),d=c;m.removeClass("edge"),n.removeClass("edge"),a=="right"?d+=b:a=="left"&&(d-=b),d>=0?(d=0,m.addClass("edge")):d<=t&&(d=t,n.addClass("edge")),h.animate({"margin-left":d},s.tabSlideSpeed)},d.showIndicators=function(){if(!g){g=a("<div class='ui-slider-tabs-indicator-container'>");for(var b=0;b<i.length;b++)g.append("<div class='ui-slider-tabs-indicator'></div>");l.append(g)}else g.show()},d.hideIndicators=function(){g&&g.hide()},d.showTabArrows=function(){if(!s.tabArrows)return;m.show(),n.show(),j.css("margin","0 "+s.tabArrowWidth+"px")},d.hideTabArrows=function(){m.hide(),n.hide(),j.css("margin","0")},d.showPanelArrows=function(){o&&o.show(),p&&p.show()},d.hidePanelArrows=function(){o&&o.hide(),p&&p.hide()};var u=function(){if(s.indicators&&g){var a=g.children("div:nth-child("+d.selectedTab+")");a.siblings().removeClass("selected"),a.addClass("selected")}},v=function(a){var b=a.offset(),c=j.offset(),e=b.left-c.left,f=c.left+j.outerWidth()-(b.left+a.outerWidth());e<0?d.slideTabs("right",-e):f<0&&d.slideTabs("left",-f)},w=function(){s.transition=="slide"&&h.children("li").each(function(b,c){var d=h.children(".selected").index(),e=a(c).index(),f=l.children("#"+a(c).find("a").attr("href").substr(1));d<e?f.css({left:l.width()+"px"}):d>e?f.css({left:"-"+l.width()+"px"}):f.addClass(s.classes.panelActive)}),s.transition=="fade"&&h.children("li").each(function(b,c){var d=h.children(".selected").index(),e=a(c).index(),f=l.children("#"+a(c).find("a").attr("href").substr(1));d!=e?f.css({opacity:0}):f.addClass(s.classes.panelActive)})},x=function(a){return{hide:{slideleft:{left:"-"+a+"px"},slideright:{left:a+"px"},fade:{opacity:0}},show:{slide:{left:0},fade:{opacity:1}}}},y=function(a,b){if(s.transition=="slide")var c="slide"+b;else var c=s.transition;a.animate(x(l.width()).hide[c],s.transitionSpeed,s.transitionEasing,function(){a.hide(),a.removeClass("selected"),q=!1,w()})},z=function(a){a.show(),a.addClass(s.classes.panelActive).addClass("selected"),a.animate(x(l.width()).show[s.transition],s.transitionSpeed,s.transitionEasing,function(){q=!1,r=!0,w()})},A=function(a){s.height||l.animate({height:E(a)},200)},B=function(){s.panelArrows&&(!o&&!p&&(o=a("<div class='ui-slider-tabs-leftPanelArrow'>").click(function(){d.prev()}),p=a("<div class='ui-slider-tabs-rightPanelArrow'>").click(function(){d.next()}),o.appendTo(l),p.appendTo(l)),p.css({top:l.height()/2-p.outerHeight()/2}),o.css({top:l.height()/2-o.outerHeight()/2}))},C=function(){var b=0;h.children().each(function(c,d){b+=a(d).outerWidth(!0)}),h.width(b),j.width()<b&&s.tabArrows?(d.showTabArrows(),t=j.width()-b):d.hideTabArrows()},D=function(){i.width(l.width()-(i.outerWidth()-i.width()))},E=function(a){var b={display:a.css("display"),left:a.css("left"),position:a.css("position")};a.css({display:"normal",left:-5e3,position:"absolute"});var c=a.outerHeight();return a.css(b),c};d.init()},a.fn.sliderTabs=function(b){return this.each(function(){var c=a(this),d=c.data("sliderTabs");if(!d)return d=new a.sliderTabs(this,b),c.data("sliderTabs",d),d;if(d.methods[b])return d.methods[b].apply(this,Array.prototype.slice.call(arguments,1))})}})(jQuery),$.extend($.easing,{def:"easeOutQuad",swing:function(a,b,c,d,e){return $.easing[$.easing.def](a,b,c,d,e)},easeInQuad:function(a,b,c,d,e){return d*(b/=e)*b+c},easeOutQuad:function(a,b,c,d,e){return-d*(b/=e)*(b-2)+c},easeInOutQuad:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b+c:-d/2*(--b*(b-2)-1)+c},easeInCubic:function(a,b,c,d,e){return d*(b/=e)*b*b+c},easeOutCubic:function(a,b,c,d,e){return d*((b=b/e-1)*b*b+1)+c},easeInOutCubic:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b+c:d/2*((b-=2)*b*b+2)+c},easeInQuart:function(a,b,c,d,e){return d*(b/=e)*b*b*b+c},easeOutQuart:function(a,b,c,d,e){return-d*((b=b/e-1)*b*b*b-1)+c},easeInOutQuart:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b+c:-d/2*((b-=2)*b*b*b-2)+c},easeInQuint:function(a,b,c,d,e){return d*(b/=e)*b*b*b*b+c},easeOutQuint:function(a,b,c,d,e){return d*((b=b/e-1)*b*b*b*b+1)+c},easeInOutQuint:function(a,b,c,d,e){return(b/=e/2)<1?d/2*b*b*b*b*b+c:d/2*((b-=2)*b*b*b*b+2)+c},easeInSine:function(a,b,c,d,e){return-d*Math.cos(b/e*(Math.PI/2))+d+c},easeOutSine:function(a,b,c,d,e){return d*Math.sin(b/e*(Math.PI/2))+c},easeInOutSine:function(a,b,c,d,e){return-d/2*(Math.cos(Math.PI*b/e)-1)+c},easeInExpo:function(a,b,c,d,e){return b==0?c:d*Math.pow(2,10*(b/e-1))+c},easeOutExpo:function(a,b,c,d,e){return b==e?c+d:d*(-Math.pow(2,-10*b/e)+1)+c},easeInOutExpo:function(a,b,c,d,e){return b==0?c:b==e?c+d:(b/=e/2)<1?d/2*Math.pow(2,10*(b-1))+c:d/2*(-Math.pow(2,-10*--b)+2)+c},easeInCirc:function(a,b,c,d,e){return-d*(Math.sqrt(1-(b/=e)*b)-1)+c},easeOutCirc:function(a,b,c,d,e){return d*Math.sqrt(1-(b=b/e-1)*b)+c},easeInOutCirc:function(a,b,c,d,e){return(b/=e/2)<1?-d/2*(Math.sqrt(1-b*b)-1)+c:d/2*(Math.sqrt(1-(b-=2)*b)+1)+c},easeInElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;if(b==0)return c;if((b/=e)==1)return c+d;g||(g=e*.3);if(h<Math.abs(d)){h=d;var f=g/4}else var f=g/(2*Math.PI)*Math.asin(d/h);return-(h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g))+c},easeOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;if(b==0)return c;if((b/=e)==1)return c+d;g||(g=e*.3);if(h<Math.abs(d)){h=d;var f=g/4}else var f=g/(2*Math.PI)*Math.asin(d/h);return h*Math.pow(2,-10*b)*Math.sin((b*e-f)*2*Math.PI/g)+d+c},easeInOutElastic:function(a,b,c,d,e){var f=1.70158,g=0,h=d;if(b==0)return c;if((b/=e/2)==2)return c+d;g||(g=e*.3*1.5);if(h<Math.abs(d)){h=d;var f=g/4}else var f=g/(2*Math.PI)*Math.asin(d/h);return b<1?-0.5*h*Math.pow(2,10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)+c:h*Math.pow(2,-10*(b-=1))*Math.sin((b*e-f)*2*Math.PI/g)*.5+d+c},easeInBack:function(a,b,c,d,e,f){return f==undefined&&(f=1.70158),d*(b/=e)*b*((f+1)*b-f)+c},easeOutBack:function(a,b,c,d,e,f){return f==undefined&&(f=1.70158),d*((b=b/e-1)*b*((f+1)*b+f)+1)+c},easeInOutBack:function(a,b,c,d,e,f){return f==undefined&&(f=1.70158),(b/=e/2)<1?d/2*b*b*(((f*=1.525)+1)*b-f)+c:d/2*((b-=2)*b*(((f*=1.525)+1)*b+f)+2)+c},easeInBounce:function(a,b,c,d,e){return d-$.easing.easeOutBounce(a,e-b,0,d,e)+c},easeOutBounce:function(a,b,c,d,e){return(b/=e)<1/2.75?d*7.5625*b*b+c:b<2/2.75?d*(7.5625*(b-=1.5/2.75)*b+.75)+c:b<2.5/2.75?d*(7.5625*(b-=2.25/2.75)*b+.9375)+c:d*(7.5625*(b-=2.625/2.75)*b+.984375)+c},easeInOutBounce:function(a,b,c,d,e){return b<e/2?$.easing.easeInBounce(a,b*2,0,d,e)*.5+c:$.easing.easeOutBounce(a,b*2-e,0,d,e)*.5+d*.5+c}}),function(a){function d(b){var c=b||window.event,d=[].slice.call(arguments,1),e=0,f=!0,g=0,h=0;return b=a.event.fix(c),b.type="mousewheel",c.wheelDelta&&(e=c.wheelDelta/120),c.detail&&(e=-c.detail/3),h=e,c.axis!==undefined&&c.axis===c.HORIZONTAL_AXIS&&(h=0,g=-1*e),c.wheelDeltaY!==undefined&&(h=c.wheelDeltaY/120),c.wheelDeltaX!==undefined&&(g=-1*c.wheelDeltaX/120),d.unshift(b,e,g,h),(a.event.dispatch||a.event.handle).apply(this,d)}var b=["DOMMouseScroll","mousewheel"];if(a.event.fixHooks)for(var c=b.length;c;)a.event.fixHooks[b[--c]]=a.event.mouseHooks;a.event.special.mousewheel={setup:function(){if(this.addEventListener)for(var a=b.length;a;)this.addEventListener(b[--a],d,!1);else this.onmousewheel=d},teardown:function(){if(this.removeEventListener)for(var a=b.length;a;)this.removeEventListener(b[--a],d,!1);else this.onmousewheel=null}},a.fn.extend({mousewheel:function(a){return a?this.bind("mousewheel",a):this.trigger("mousewheel")},unmousewheel:function(a){return this.unbind("mousewheel",a)}})}(jQuery),function(a,b,c){function l(){f=b[g](function(){d.each(function(){var b=a(this),c=b.width(),d=b.height(),e=a.data(this,i);(c!==e.w||d!==e.h)&&b.trigger(h,[e.w=c,e.h=d])}),l()},e[j])}var d=a([]),e=a.resize=a.extend(a.resize,{}),f,g="setTimeout",h="resize",i=h+"-special-event",j="delay",k="throttleWindow";e[j]=250,e[k]=!0,a.event.special[h]={setup:function(){if(!e[k]&&this[g])return!1;var b=a(this);d=d.add(b),a.data(this,i,{w:b.width(),h:b.height()}),d.length===1&&l()},teardown:function(){if(!e[k]&&this[g])return!1;var b=a(this);d=d.not(b),b.removeData(i),d.length||clearTimeout(f)},add:function(b){function f(b,e,f){var g=a(this),h=a.data(this,i);h.w=e!==c?e:g.width(),h.h=f!==c?f:g.height(),d.apply(this,arguments)}if(!e[k]&&this[g])return!1;var d;if(a.isFunction(b))return d=b,f;d=b.handler,b.handler=f}}}(jQuery,this)
+/*
+ * jQuery SliderTabs v1.1
+ * http://lopatin.github.com/sliderTabs
+ *
+ * Copyright 2012, Alex Lopatin
+ * Free to use under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ */
+
+
+(function( $ ){
+    /*
+     * The sliderTabs tabs class
+     */
+    $.sliderTabs = function(container, options){
+        var plugin = this;
+
+        var defaults = {
+            autoplay: false,
+            tabArrowWidth: 35,
+            classes: {
+                leftTabArrow: '',
+                panel: '',
+                panelActive: '',
+                panelsContainer: '',
+                rightTabArrow: '',
+                tab: '',
+                tabActive: '',
+                tabsList: ''
+            },
+            defaultTab: 1,
+            height: null,
+            indicators: false,
+            mousewheel: true,
+            position: "top",
+            panelArrows: false,
+            panelArrowsShowOnHover: false,
+            tabs: true,
+            tabHeight: 30,
+            tabArrows: true,
+            tabSlideLength: 100,
+            tabSlideSpeed: 200,
+            transition: 'slide',
+            transitionEasing: 'easeOutCubic',
+            transitionSpeed: 500,
+            width: null
+        };
+
+        // jQuery objects of important elements
+        var $container = $(container),
+            $indicators,
+            $tabsList,
+            $contentDivs,
+            $tabsListContainer,
+            $tabsListWrapper,
+            $contentDivsContainer,
+            $leftTabArrow,
+            $rightTabArrow,
+            $leftPanelArrow,
+            $rightPanelArrow;
+
+        // Locks to stop out of sync behavior
+        var selectLock = false,
+            heightLock = true;
+
+        var settings, minMargin;
+
+        // Index of currently selected tab
+        plugin.selectedTab = defaults.defaultTab;
+
+        plugin.init = function(){
+            settings = plugin.settings = $.extend({}, defaults, options);
+            $container.addClass('ui-slider-tabs');
+
+            /*
+             * Rebuild structure of container
+             */
+            $contentDivs = $container.children("div").addClass('ui-slider-tab-content').remove();
+
+            // Tabs
+            $tabsList = $container.children("ul").addClass('ui-slider-tabs-list').remove();
+            $tabsList.children("li").remove().appendTo($tabsList);
+            plugin.count = $tabsList.children('li').length;
+            $tabsListWrapper = $("<div class='ui-slider-tabs-list-wrapper'>");
+            $tabsListContainer = $("<div class='ui-slider-tabs-list-container'>").append($tabsList).appendTo($tabsListWrapper);
+            $tabsListContainer.find('li').css('height', settings.tabHeight+2);
+            $tabsListContainer.find('li a').css('height', settings.tabHeight+2);
+
+            // Tab arrows
+            $leftTabArrow = $("<a href='#' class='ui-slider-left-arrow'><div></div></a>").css({
+                'width': settings.tabArrowWidth,
+                'height': settings.tabHeight+2
+            }).appendTo($tabsListContainer).click(function(e){
+                plugin.slideTabs('right', settings.tabSlideLength);
+                return false;
+            });
+            $rightTabArrow = $("<a href='#' class='ui-slider-right-arrow'><div></div></a>").css({
+                'width': settings.tabArrowWidth,
+                'height': settings.tabHeight+2
+            }).appendTo($tabsListContainer).click(function(e){
+                plugin.slideTabs('left', settings.tabSlideLength);
+                return false;
+            });
+
+            // Content container
+            $contentDivsContainer = $("<div class='ui-slider-tabs-content-container'>").append($contentDivs);
+
+            // Position the tabs on top or bottom
+            if(settings.position == 'bottom')
+                $container.append($contentDivsContainer).append($tabsListWrapper.addClass('bottom'));
+            else
+                $container.append($tabsListWrapper).append($contentDivsContainer);
+
+
+            if(settings.width)
+                $container.width(parseInt(settings.width));
+            if(settings.height)
+                $contentDivsContainer.height(parseInt(settings.height)- settings.tabHeight);
+
+            // Create and show indicators
+            if(settings.indicators)
+                plugin.showIndicators();
+
+
+            // Select default tab
+            plugin.selectTab(settings.defaultTab);
+            plugin.slideTabs('left', 0);
+
+            reorderPanels();
+
+            resizePanels();
+
+            // When tab is clicked
+            $container.delegate('.ui-slider-tabs-list li a', 'click', function(){
+                if(!$(this).parent().hasClass('selected') && !selectLock){
+                    plugin.selectTab($(this).parent());
+                }
+                return false;
+            });
+
+            // When indicator is clicked
+            if($indicators)
+                $indicators.delegate('.ui-slider-tabs-indicator', 'click', function(){
+                    if(!$(this).hasClass('selected') && !selectLock)
+                        plugin.selectTab($(this).index()+1);
+                });
+
+            // Set classes
+            $.each(settings.classes, function(i, c){
+                switch(i){
+                    case 'leftTabArrow':
+                        $leftTabArrow.addClass(c);
+                        break;
+                    case 'rightTabArrow':
+                        $rightTabArrow.addClass(c);
+                        break;
+                    case 'panel':
+                        $contentDivs.addClass(c);
+                        break;
+                    case 'panelsContainer':
+                        $contentDivsContainer.addClass(c);
+                        break;
+                    case 'tab':
+                        $tabsList.find('li').addClass(c);
+                        break;
+                    case 'tabsList':
+                        $tabsList.addClass(c);
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            // Panel arrows
+            // Creates them if they don't exist
+            if(settings.panelArrows)
+                positionPanelArrows();
+
+            if(settings.panelArrowsShowOnHover){
+                if($leftPanelArrow)
+                    $leftPanelArrow.addClass('showOnHover');
+                if($rightPanelArrow)
+                    $rightPanelArrow.addClass('showOnHover');
+            }
+
+            $contentDivsContainer.resize(positionPanelArrows);
+
+            // Make responsive to changes in dimensions
+            $tabsListWrapper.resize(function(){
+                resizeTabsList();
+                resizePanels();
+            });
+
+            // Resize content container height if inner panels change
+            setInterval(function(){
+                var $panel = $contentDivsContainer.children('.selected');
+                if($panel.outerHeight() > $contentDivsContainer.outerHeight() && heightLock)
+                    resizeContentContainer($panel);
+            }, 100);
+
+            resizeTabsList();
+
+            // Hide tabs wrapper if option if false
+            if(!settings.tabs)
+                $tabsListWrapper.hide();
+
+            // Auto play
+            if(settings.autoplay)
+                setInterval(plugin.next, settings.autoplay);
+
+            // Panel arrows
+
+            // Mousehweel
+            $container.bind('mousewheel', function(event, delta, deltaX, deltaY) {
+                if(delta > 0)
+                    plugin.next();
+                else if(delta < 0)
+                    plugin.prev();
+                return false;
+            });
+        }
+
+        /*
+         * Public methods
+         */
+
+        // Select tab
+        // param: tab is a tab index (1 ... n) or jQuery object of tab li element
+        plugin.selectTab = function(tab){
+            heightLock = false;
+
+            // Find $targetPanel, the panel to show
+            var $clicked = (typeof tab === 'number') ? $tabsList.children("li:nth-child("+tab+")") : tab;
+            var targetId = ($clicked.find('a').attr('href')).substr(1);
+            var $targetPanel = $contentDivsContainer.children("#"+targetId);
+
+            // Update selected tab
+            plugin.selectedTab = (typeof tab === 'number') ? tab : tab.index()+1;
+
+            // Resize the main contant container to the size of $targetPanel
+            resizeContentContainer($targetPanel);
+
+            // Lock selections until transitions finished
+            selectLock = true;
+
+            // Direction to slide panel on hide
+            var direction = ($tabsList.find('.selected').index() < $clicked.index()) ? 'left' : 'right';
+
+            // Update selected classes
+            $clicked.siblings().removeClass('selected');
+            if(settings.classes.tabActive != '') $clicked.siblings().removeClass(settings.classes.tabActive);
+            $clicked.addClass('selected').addClass(settings.classes.tabActive);
+
+            // Hide and show appropriate panels
+            hidePanel($contentDivsContainer.children(".ui-slider-tab-content:visible"), direction);
+            showPanel($targetPanel);
+
+            // Slide tabs so that they fit in $tabsListContainer
+            fitTabInContainer($clicked);
+
+            // Select the proper indicator
+            selectIndicator();
+        };
+
+        // Select the next (right) panel
+        plugin.next = function(){
+            if(!selectLock){
+                if(plugin.count === plugin.selectedTab)
+                    plugin.selectTab(1);
+                else plugin.selectTab(plugin.selectedTab+1);
+            }
+        };
+
+        // Select the previous panel
+        plugin.prev = function(){
+            if(!selectLock){
+                if(plugin.selectedTab === 1)
+                    plugin.selectTab(plugin.count);
+                else plugin.selectTab(plugin.selectedTab-1);
+            }
+        };
+
+        // Slide tabs left/right within $tabsListContainer
+        plugin.slideTabs = function(direction, length){
+            var margin = parseInt($tabsList.css('margin-left'));
+            var newMargin = margin;
+
+            // Reset 'edge' classes on tab arrows
+            $leftTabArrow.removeClass('edge');
+            $rightTabArrow.removeClass('edge');
+
+            // Calculate delta to slide by
+            if(direction=='right') newMargin += length;
+            else if(direction=='left') newMargin -= length;
+            if(newMargin >= 0) {
+                newMargin = 0;
+                $leftTabArrow.addClass('edge');
+            }
+            else if(newMargin <= minMargin){
+                newMargin = minMargin;
+                $rightTabArrow.addClass('edge');
+            }
+
+            // Animate
+            $tabsList.animate({'margin-left': newMargin}, settings.tabSlideSpeed);
+        };
+
+        // Show panel indicators
+        // Create indicators if they don't exist yet
+        plugin.showIndicators = function(){
+            if(!$indicators){
+                $indicators = $("<div class='ui-slider-tabs-indicator-container'>");
+                for(var i = 0; i < $contentDivs.length; i++){
+                    $indicators.append("<div class='ui-slider-tabs-indicator'></div>");
+                }
+                $contentDivsContainer.append($indicators);
+            }
+            else
+                $indicators.show();
+        };
+
+        // Hide panel indicators
+        plugin.hideIndicators = function(){
+            if($indicators)
+                $indicators.hide();
+        };
+
+        // Show arrows that slide tabs left and right
+        plugin.showTabArrows = function(){
+            if(!settings.tabArrows)
+                return;
+            $leftTabArrow.show();
+            $rightTabArrow.show();
+            $tabsListContainer.css('margin', '0 '+settings.tabArrowWidth+'px');
+        };
+
+        // Hide arrows that slide tabs left and right
+        plugin.hideTabArrows = function(){
+            $leftTabArrow.hide();
+            $rightTabArrow.hide();
+            $tabsListContainer.css('margin', '0');
+        };
+
+        // Show panel arrows
+        plugin.showPanelArrows = function(){
+            if($leftPanelArrow) $leftPanelArrow.show();
+            if($rightPanelArrow) $rightPanelArrow.show();
+        };
+
+        // Hide panel arrows
+        plugin.hidePanelArrows = function(){
+            if($leftPanelArrow) $leftPanelArrow.hide();
+            if($rightPanelArrow) $rightPanelArrow.hide();
+        };
+
+        /*
+         * Private methods
+         */
+
+        // Add the selected class to the plugin.selectedTab tab. Remove from all others.
+        var selectIndicator = function(){
+            if(settings.indicators && $indicators){
+                var $indicator = $indicators.children("div:nth-child("+plugin.selectedTab+")");
+                $indicator.siblings().removeClass('selected');
+                $indicator.addClass('selected');
+            }
+        };
+
+        // 	Slide tabs inside of $tabsListContainer so that the selected one fits inside
+        var fitTabInContainer = function(tab){
+            var tabOffset = tab.offset(),
+                containerOffset = $tabsListContainer.offset(),
+                leftOffset = tabOffset.left - containerOffset.left,
+                rightOffset = (containerOffset.left + $tabsListContainer.outerWidth()) - (tabOffset.left + tab.outerWidth() );
+
+            if(leftOffset < 0)
+                plugin.slideTabs('right', -leftOffset);
+            else if(rightOffset < 0)
+                plugin.slideTabs('left', -rightOffset);
+        };
+
+        // Reposition content panels so that they are ready to be transitioned in and out.
+        // This depends on whether the transition is set to slide or fade
+        var reorderPanels = function(){
+            // Position content divs
+            if(settings.transition == 'slide')
+            // Move panels left/right basedon their index relative to the selected panel
+                $tabsList.children('li').each(function(index, el){
+                    var selectedIndex = $tabsList.children('.selected').index(),
+                        thisIndex = $(el).index();
+                    var panel = $contentDivsContainer.children('#'+$(el).find('a').attr('href').substr(1));
+                    if(selectedIndex < thisIndex)
+                        panel.css({left: $contentDivsContainer.width()+'px'});
+                    else if(selectedIndex > thisIndex)
+                        panel.css({left: '-'+$contentDivsContainer.width()+'px'});
+                    else
+                        panel.addClass(settings.classes.panelActive);
+                });
+
+            if(settings.transition == 'fade')
+            // Set opacity to correct value for non selected panels.
+                $tabsList.children('li').each(function(index, el){
+                    var selectedIndex = $tabsList.children('.selected').index(),
+                        thisIndex = $(el).index();
+                    var panel = $contentDivsContainer.children('#'+$(el).find('a').attr('href').substr(1));
+                    if(selectedIndex != thisIndex)
+                        panel.css({opacity: 0});
+                    else
+                        panel.addClass(settings.classes.panelActive);
+                });
+        };
+
+        // Object determining css properties to be animated to based on various actions, transitions, and directions
+        var panelAnimationCSS = function(width){
+            return {
+                hide: {
+                    slideleft: {
+                        left: '-'+width+'px'
+                    },
+                    slideright: {
+                        left: width+'px'
+                    },
+                    fade: {
+                        opacity: 0
+                    }
+                },
+                show: {
+                    slide: {
+                        left: 0
+                    },
+                    fade: {
+                        opacity: 1
+                    }
+                }
+            }
+        };
+
+        // Transition out the passed in panel.
+        // param: 	panel is the jQuery object of the panel to be hidden
+        //			direction is either 'left' or 'right' for sliding transitions
+        var hidePanel = function(panel, direction){
+            // Calculate correct key in panelAnimationCSS
+            if(settings.transition == 'slide')
+                var trans = 'slide'+direction;
+            else var trans = settings.transition;
+
+            // Animate the panel out
+            panel.animate(panelAnimationCSS($contentDivsContainer.width())['hide'][trans], settings.transitionSpeed, settings.transitionEasing, function(){
+                panel.hide();
+                panel.removeClass('selected');
+                //if(settings.classes.panelActive != '') panel.removeClass(settings.classes.panelActive);
+                selectLock = false;
+                reorderPanels();
+            });
+        };
+
+        // Transition in the parameter panel
+        // param: 	panel is the jQuery object of the panel to be shown
+        var showPanel = function(panel){
+            // Show first
+            panel.show();
+            panel.addClass(settings.classes.panelActive).addClass('selected');
+
+            // Then animate css properties
+            panel.animate(panelAnimationCSS($contentDivsContainer.width())['show'][settings.transition], settings.transitionSpeed, settings.transitionEasing, function(){
+                selectLock = false;
+                heightLock = true;
+                reorderPanels();
+            });
+        };
+
+        // Animate the height of the content container to height target
+        // params:  target (int) is the new height
+        var resizeContentContainer = function(target){
+            if(!settings.height)
+                $contentDivsContainer.animate({
+                    height: actualHeight(target)
+                }, 200);
+        };
+
+        // Position the panel arrows
+        var positionPanelArrows = function(){
+            if(settings.panelArrows){
+                // Initialize them if you need to
+                if(!$leftPanelArrow && !$rightPanelArrow){
+                    $leftPanelArrow = $("<div class='ui-slider-tabs-leftPanelArrow'>").click(function(){
+                        plugin.prev();
+                    });
+                    $rightPanelArrow = $("<div class='ui-slider-tabs-rightPanelArrow'>").click(function(){
+                        plugin.next();
+                    });
+
+                    $leftPanelArrow.appendTo($contentDivsContainer);
+                    $rightPanelArrow.appendTo($contentDivsContainer);
+                }
+
+                // Set correct CSS 'top' attribute of each panel arrow
+                $rightPanelArrow.css({
+                    "top": $contentDivsContainer.height()/2 - $rightPanelArrow.outerHeight()/2
+                });
+                $leftPanelArrow.css({
+                    "top": $contentDivsContainer.height()/2 - $leftPanelArrow.outerHeight()/2
+                });
+            }
+        };
+
+        // Change the width of $tabsList to the sum of the outer widths of all tabs
+        var resizeTabsList = function(){
+            // Calculate total width
+            var width = 0;
+            $tabsList.children().each(function(index, element){
+                width += $(element).outerWidth(true);
+            });
+            // Set new width of $tabsList
+            $tabsList.width(width);
+
+            // Update minMargin. Hide tab arrows if no overflow
+            if($tabsListContainer.width() < width && settings.tabArrows){
+                plugin.showTabArrows();
+                minMargin = $tabsListContainer.width() - width;
+            }
+            else plugin.hideTabArrows();
+        }
+
+        // Resize indiviual panels to the width of the new container
+        var resizePanels = function(){
+            $contentDivs.width($contentDivsContainer.width() - ($contentDivs.outerWidth() - $contentDivs.width()));
+        };
+
+        // Get height of a hidden element
+        var actualHeight = function(element){
+            var prevCSS = {
+                'display': element.css('display'),
+                'left': element.css('left'),
+                'position': element.css('position')
+            };
+            element.css({
+                'display': 'normal',
+                'left': -5000,
+                'position': 'absolute'
+            });
+            var height = element.outerHeight();
+            element.css(prevCSS);
+            return height;
+        };
+
+
+        // Initialize the plugin
+        plugin.init();
+    };
+
+    /*
+     * Handle input. Call public functions and initializers
+     */
+    $.fn.sliderTabs = function( data ) {
+        return this.each(function(){
+            var _this = $(this),
+                plugin = _this.data('sliderTabs');
+
+            // Method calling logic
+            if (!plugin) {
+                // If no plugin, initialize it
+                plugin = new $.sliderTabs(this, data);
+                _this.data('sliderTabs', plugin);
+                return plugin;
+            }
+            if (plugin.methods[data]){
+                // If plugin exists, call a public method
+                return plugin.methods[ data ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+            }
+        });
+    };
+})( jQuery );
+
+
+
+
+
+/*
+ * Additional easing functions
+ * Taken from jQuery UI source code
+ * 
+ * https://github.com/jquery/jquery-ui
+ */
+
+$.extend($.easing,
+    {
+        def: 'easeOutQuad',
+        swing: function (x, t, b, c, d) {
+            //alert($.easing.default);
+            return $.easing[$.easing.def](x, t, b, c, d);
+        },
+        easeInQuad: function (x, t, b, c, d) {
+            return c*(t/=d)*t + b;
+        },
+        easeOutQuad: function (x, t, b, c, d) {
+            return -c *(t/=d)*(t-2) + b;
+        },
+        easeInOutQuad: function (x, t, b, c, d) {
+            if ((t/=d/2) < 1) return c/2*t*t + b;
+            return -c/2 * ((--t)*(t-2) - 1) + b;
+        },
+        easeInCubic: function (x, t, b, c, d) {
+            return c*(t/=d)*t*t + b;
+        },
+        easeOutCubic: function (x, t, b, c, d) {
+            return c*((t=t/d-1)*t*t + 1) + b;
+        },
+        easeInOutCubic: function (x, t, b, c, d) {
+            if ((t/=d/2) < 1) return c/2*t*t*t + b;
+            return c/2*((t-=2)*t*t + 2) + b;
+        },
+        easeInQuart: function (x, t, b, c, d) {
+            return c*(t/=d)*t*t*t + b;
+        },
+        easeOutQuart: function (x, t, b, c, d) {
+            return -c * ((t=t/d-1)*t*t*t - 1) + b;
+        },
+        easeInOutQuart: function (x, t, b, c, d) {
+            if ((t/=d/2) < 1) return c/2*t*t*t*t + b;
+            return -c/2 * ((t-=2)*t*t*t - 2) + b;
+        },
+        easeInQuint: function (x, t, b, c, d) {
+            return c*(t/=d)*t*t*t*t + b;
+        },
+        easeOutQuint: function (x, t, b, c, d) {
+            return c*((t=t/d-1)*t*t*t*t + 1) + b;
+        },
+        easeInOutQuint: function (x, t, b, c, d) {
+            if ((t/=d/2) < 1) return c/2*t*t*t*t*t + b;
+            return c/2*((t-=2)*t*t*t*t + 2) + b;
+        },
+        easeInSine: function (x, t, b, c, d) {
+            return -c * Math.cos(t/d * (Math.PI/2)) + c + b;
+        },
+        easeOutSine: function (x, t, b, c, d) {
+            return c * Math.sin(t/d * (Math.PI/2)) + b;
+        },
+        easeInOutSine: function (x, t, b, c, d) {
+            return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
+        },
+        easeInExpo: function (x, t, b, c, d) {
+            return (t==0) ? b : c * Math.pow(2, 10 * (t/d - 1)) + b;
+        },
+        easeOutExpo: function (x, t, b, c, d) {
+            return (t==d) ? b+c : c * (-Math.pow(2, -10 * t/d) + 1) + b;
+        },
+        easeInOutExpo: function (x, t, b, c, d) {
+            if (t==0) return b;
+            if (t==d) return b+c;
+            if ((t/=d/2) < 1) return c/2 * Math.pow(2, 10 * (t - 1)) + b;
+            return c/2 * (-Math.pow(2, -10 * --t) + 2) + b;
+        },
+        easeInCirc: function (x, t, b, c, d) {
+            return -c * (Math.sqrt(1 - (t/=d)*t) - 1) + b;
+        },
+        easeOutCirc: function (x, t, b, c, d) {
+            return c * Math.sqrt(1 - (t=t/d-1)*t) + b;
+        },
+        easeInOutCirc: function (x, t, b, c, d) {
+            if ((t/=d/2) < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
+            return c/2 * (Math.sqrt(1 - (t-=2)*t) + 1) + b;
+        },
+        easeInElastic: function (x, t, b, c, d) {
+            var s=1.70158;var p=0;var a=c;
+            if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+            if (a < Math.abs(c)) { a=c; var s=p/4; }
+            else var s = p/(2*Math.PI) * Math.asin (c/a);
+            return -(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+        },
+        easeOutElastic: function (x, t, b, c, d) {
+            var s=1.70158;var p=0;var a=c;
+            if (t==0) return b;  if ((t/=d)==1) return b+c;  if (!p) p=d*.3;
+            if (a < Math.abs(c)) { a=c; var s=p/4; }
+            else var s = p/(2*Math.PI) * Math.asin (c/a);
+            return a*Math.pow(2,-10*t) * Math.sin( (t*d-s)*(2*Math.PI)/p ) + c + b;
+        },
+        easeInOutElastic: function (x, t, b, c, d) {
+            var s=1.70158;var p=0;var a=c;
+            if (t==0) return b;  if ((t/=d/2)==2) return b+c;  if (!p) p=d*(.3*1.5);
+            if (a < Math.abs(c)) { a=c; var s=p/4; }
+            else var s = p/(2*Math.PI) * Math.asin (c/a);
+            if (t < 1) return -.5*(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
+            return a*Math.pow(2,-10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )*.5 + c + b;
+        },
+        easeInBack: function (x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            return c*(t/=d)*t*((s+1)*t - s) + b;
+        },
+        easeOutBack: function (x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            return c*((t=t/d-1)*t*((s+1)*t + s) + 1) + b;
+        },
+        easeInOutBack: function (x, t, b, c, d, s) {
+            if (s == undefined) s = 1.70158;
+            if ((t/=d/2) < 1) return c/2*(t*t*(((s*=(1.525))+1)*t - s)) + b;
+            return c/2*((t-=2)*t*(((s*=(1.525))+1)*t + s) + 2) + b;
+        },
+        easeInBounce: function (x, t, b, c, d) {
+            return c - $.easing.easeOutBounce (x, d-t, 0, c, d) + b;
+        },
+        easeOutBounce: function (x, t, b, c, d) {
+            if ((t/=d) < (1/2.75)) {
+                return c*(7.5625*t*t) + b;
+            } else if (t < (2/2.75)) {
+                return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
+            } else if (t < (2.5/2.75)) {
+                return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
+            } else {
+                return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
+            }
+        },
+        easeInOutBounce: function (x, t, b, c, d) {
+            if (t < d/2) return $.easing.easeInBounce (x, t*2, 0, c, d) * .5 + b;
+            return $.easing.easeOutBounce (x, t*2-d, 0, c, d) * .5 + c*.5 + b;
+        }
+    });
+
+
+
+
+
+/*
+ * The following is the jQuery Mousewheel plugin. Full credit goes to 
+ * Brandon Aaron. (https://github.com/brandonaaron/jquery-mousewheel)
+ * /
+
+
+ /*! Copyright (c) 2011 Brandon Aaron (http://brandonaaron.net)
+ * Licensed under the MIT License (LICENSE.txt).
+ *
+ * Thanks to: http://adomas.org/javascript-mouse-wheel/ for some pointers.
+ * Thanks to: Mathias Bank(http://www.mathias-bank.de) for a scope bug fix.
+ * Thanks to: Seamus Leahy for adding deltaX and deltaY
+ *
+ * Version: 3.0.6
+ * 
+ * Requires: 1.2.2+
+ */
+
+(function($) {
+
+    var types = ['DOMMouseScroll', 'mousewheel'];
+
+    if ($.event.fixHooks) {
+        for ( var i=types.length; i; ) {
+            $.event.fixHooks[ types[--i] ] = $.event.mouseHooks;
+        }
+    }
+
+    $.event.special.mousewheel = {
+        setup: function() {
+            if ( this.addEventListener ) {
+                for ( var i=types.length; i; ) {
+                    this.addEventListener( types[--i], handler, false );
+                }
+            } else {
+                this.onmousewheel = handler;
+            }
+        },
+
+        teardown: function() {
+            if ( this.removeEventListener ) {
+                for ( var i=types.length; i; ) {
+                    this.removeEventListener( types[--i], handler, false );
+                }
+            } else {
+                this.onmousewheel = null;
+            }
+        }
+    };
+
+    $.fn.extend({
+        mousewheel: function(fn) {
+            return fn ? this.bind("mousewheel", fn) : this.trigger("mousewheel");
+        },
+
+        unmousewheel: function(fn) {
+            return this.unbind("mousewheel", fn);
+        }
+    });
+
+
+    function handler(event) {
+        var orgEvent = event || window.event, args = [].slice.call( arguments, 1 ), delta = 0, returnValue = true, deltaX = 0, deltaY = 0;
+        event = $.event.fix(orgEvent);
+        event.type = "mousewheel";
+
+        // Old school scrollwheel delta
+        if ( orgEvent.wheelDelta ) { delta = orgEvent.wheelDelta/120; }
+        if ( orgEvent.detail     ) { delta = -orgEvent.detail/3; }
+
+        // New school multidimensional scroll (touchpads) deltas
+        deltaY = delta;
+
+        // Gecko
+        if ( orgEvent.axis !== undefined && orgEvent.axis === orgEvent.HORIZONTAL_AXIS ) {
+            deltaY = 0;
+            deltaX = -1*delta;
+        }
+
+        // Webkit
+        if ( orgEvent.wheelDeltaY !== undefined ) { deltaY = orgEvent.wheelDeltaY/120; }
+        if ( orgEvent.wheelDeltaX !== undefined ) { deltaX = -1*orgEvent.wheelDeltaX/120; }
+
+        // Add event and delta to the front of the arguments
+        args.unshift(event, delta, deltaX, deltaY);
+
+        return ($.event.dispatch || $.event.handle).apply(this, args);
+    }
+
+})(jQuery);
