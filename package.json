@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.5.3",
+  "version": "0.7.2",
   "author": {
     "name": "bluefox",
     "email": "bluefox@ccu.io"
@@ -18,7 +18,7 @@
   },
   "licenses": [
     {
-      "type": "CC BY-NC",
+      "type": "CC-BY-NC-4.0",
       "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
     }
   ],
@@ -31,15 +31,15 @@
     "SCADA"
   ],
   "devDependencies": {
-    "grunt": "~0.4.4",
-    "grunt-replace": "~0.7.6",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-jscs": "~0.6.1",
-    "grunt-http": "~1.4.1",
-    "grunt-contrib-clean": "~0.5.0",
-    "grunt-contrib-compress": "~0.8.0",
-    "grunt-contrib-copy": "~0.5.0",
-    "grunt-exec": "~0.4.5"
+    "grunt": "^0.4.5",
+    "grunt-replace": "^0.9.3",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-jscs": "^2.0.0",
+    "grunt-http": "^1.6.0",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-compress": "^0.13.0",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-exec": "^0.4.6"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.vis/issues"
@@ -49,5 +49,5 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "install": "node main.js --install"
   },
-  "license": "CC BY-NC"
+  "license": "CC-BY-NC-4.0"
 }

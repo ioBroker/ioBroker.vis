@@ -249,7 +249,7 @@ var servConn = {
         // Detect if running under cordova
         var app = document.URL.indexOf('http://') === -1 && document.URL.indexOf('https://') === -1;
         if (app) {
-            $('body').append('<div id="system_menu" style="z-index:3000;width: 30%; height:30px; background-color: white; position:absolute; bottom: 0; left: 35%; display: none; border:1px solid black; text-align:center">' + vis.translate('Settings') + '</a></div>');
+            $('body').append('<div id="system_menu" style="z-index:3000;width: 30%; height:30px; background-color: white; position:absolute; bottom: 0; left: 35%; display: none; border:1px solid black; text-align:center">' + _('Settings') + '</a></div>');
             $("#system_menu").click(function () {
                 console.log("Goto settings");
                 if (window.localStorage) {
@@ -468,7 +468,7 @@ var servConn = {
                     }
                     callback(vis.views);
                     if (!vis.views) {
-                        alert(vis.translate('No Views found on Server'));
+                        alert(_('No Views found on Server'));
                     }
                 },
                 error: function (state) {
@@ -521,7 +521,7 @@ var servConn = {
                 if (typeof storage !== 'undefined') {
                     storage.set(filename, vis.views);
                     if (!storage.get('localWarnShown')) {
-                        alert(vis.translate('All changes are saved locally. To reset changes clear the cache.'));
+                        alert(_('All changes are saved locally. To reset changes clear the cache.'));
                         storage.set('localWarnShown', true);
                     }
                     if (callback) {
@@ -874,14 +874,14 @@ var servConn = {
             this._socket.emit('programExecute', [objId]);
         }
     },
-    getUrl: function (url, callback) {
+    httpGet: function (url, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
         }
         if (this._type === 0) {
             //SignalR
-            this._hub.invoke('getUrl', url).done(function (jsonString) {
+            this._hub.invoke('httpGet', url).done(function (jsonString) {
                 if (callback) {
                     callback(jsonString);
                 }
@@ -892,7 +892,7 @@ var servConn = {
                 console.log('socket.io not initialized');
                 return;
             }
-            this._socket.emit('getUrl', url, function (data) {
+            this._socket.emit('httpGet', url, function (data) {
                 if (callback) {
                     callback(data);
                 }

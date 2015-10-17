@@ -88,6 +88,16 @@ Take care about types. All of them defined as strings. To be sure, that value wi
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
+Note: there is a special object ID - "username". It shows logged in user. 
+      And there is a "language" object id: can be "de", "en" or "ru".
+      "view" - has a name of actual view
+      "wid" - has a name of actual widget
+      "wname" - widget name
+	  "widget" - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
+Note: to use ":" in calculatinos (e.g. in string formula) use "::" instead.
+
+**Remember, that style definitions will be interprated as bindings, so use ```{{style: value}}``` for that.**
+
 ## Filters
 To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
  
@@ -108,12 +118,12 @@ Commands:
 * reload - same as refresh.
 * dialog - Show dialog window. Dialog must exist on view. One of:
 
-    - "static - HTML - Dialog",
-    - "static - Icon - Dialog",
-    - "container - HTML - view in jqui Dialog",
+    - "static    - HTML    - Dialog",
+    - "static    - Icon    - Dialog",
+    - "container - HTML    - view in jqui Dialog",
     - "container - ext cmd - view in jqui Dialog",
-    - "container - Icon - view in jqui Dialog",
-    - "container - Button - view in jqui Dialog".
+    - "container - Icon    - view in jqui Dialog",
+    - "container - Button  - view in jqui Dialog".
 
     "control.data" must have id of dialog widget, e.g. "w00056".
 * popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
@@ -141,6 +151,172 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.2 (2015-10-13)
+* (bluefox) fix error with view change and click on widget
+
+### 0.7.1 (2015-10-10)
+* (bluefox) parse value by ctrl widgets
+* (bluefox) update select ID
+* (bluefox) add to file upload "file select dialog"
+* (bluefox) add browse objects dialog
+* (bluefox) fix update container by bindings
+* (bluefox) warnings clear
+
+### 0.7.0 (2015-10-05)
+* (bluefox) add door_tilt pictures
+* (bluefox) update RGraph library
+* (bluefox) fix RGraph/ bar chart "Label color" bug
+* (bluefox) fix jquery valve dialog
+* (bluefox) support of binding like "{;Math.random()}
+* (bluefox) remove jqui-mfd to own package
+* (bluefox) remove RGraph and fancyswitch sets
+* (bluefox) increase wait period by view changes to fix click on the next view
+* (bluefox) fix view selector for some jqui dialogs
+* (bluefox) remove time and weather
+* (bluefox) check some possible error
+
+### 0.6.19 (2015-09-27)
+* (bluefox) translate segment clock
+* (bluefox) fix slider "dark On/Off" and autoOFF
+* (bluefox) support mouseup and mouse down by debouncing
+* (bluefox) make url as URL and not as sound selector
+* (bluefox) add special variables "view", wname and "wid" to use it in bindings
+* (bluefox) update ace editor
+* (bluefox) highligh vis in admin
+* (bluefox) add to dialogs: position, hide header, scroll settings
+* (bluefox) make dialogs work
+* (bluefox) add jqui dialog close button
+* (bluefox) set maximal height for all select menus
+* (bluefox) add setId by opening of dialog
+
+### 0.6.18 (2015-09-24)
+(bluefox) add segment clock widget
+(bluefox) clear filter button in File Manager
+(bluefox) add to fancy switch "autoOff" property
+(bluefox) add svg shapes
+(bluefox) fix problem with view selection for widget
+(bluefox) add new widget "Svg clock"
+
+### 0.6.17 (2015-09-20)
+* (bluefox) add fancyswitch-6.png
+* (bluefox) add icons for some jqui widgets
+* (bluefox) fix some errors in qui and jqui-mfd
+* (bluefox) add to Bulb on/off image selector
+* (bluefox) fix "ctrl - Icon State / val - Icon Bool"
+* (bluefox) fix fileManager.js
+
+### 0.6.16 (2015-09-17)
+* (bluefox) add to fancyswitch custom values and light style to german switch
+* (bluefox) try to accept for visibility true and false
+
+### 0.6.15 (2015-09-15)
+* (bluefox) add Custom10 to jqui-mfd
+* (bluefox) ignore "touch" event exactly after the view change
+
+### 0.6.14 (2015-09-13)
+* (bluefox) allow change the color of jqui-mfd
+
+### 0.6.13 (2015-08-23)
+* (bluefox) update select ID dialog, support of role filter in selectId dialog
+* (bluefox) fix Gruntfile.js
+* (bluefox) call convertOldHqWidgets by import
+* (bluefox) remove prepublish script
+* (bluefox) allow for visibility false/0, true/1
+* (bluefox) support of import of old hqWidgets
+
+### 0.6.12 (2015-08-14)
+* (bluefox) update development packets
+* (bluefox) improve table widget (do not try to show functions)
+* (bluefox) support of custom set OIDs for metro/toggle, basic/BulbOnOff, jqui-mfd/socketCtrl
+
+### 0.6.11 (2015-08-12)
+* (bluefox) improve click bounce detection
+* (bluefox) add filter to fileManager
+* (bluefox) add file manager to "setup" menu
+* (bluefox) fix SVG
+* (bluefox) remove: Hide on >0/True, Show on Value, Hide on 0/False, Turning handle, Door/Window sensor
+* (bluefox) add all previews in basic
+
+### 0.6.10 (2015-08-11)
+- (bluefox) protect against double event: click and touchstart
+- (bluefox) implement urlTrue/urlFalse and oidTrue/oirFalse by jqui-mfd/socket 
+- (bluefox) remove bars and plumbs
+- (bluefox) remove jshint warnings
+
+### 0.6.9 (2015-08-11)
+- (bluefox) protect against double event: click and touchstart
+
+### 0.6.8 (2015-08-08)
+* (bluefox) all jqui-mfd widgets
+          do not background if active and no background desired
+          new widget jqui-mfd valve
+          change jqui-mfd window (close 0, opened 1, closed 2)
+* (bluefox) hide "Name: .." text that sometimes is shown
+* (bluefox) use "click touchstart" instead of "click" to enable mobile devices
+* (bluefox) fix export/import titles
+* (bluefox) add preview to stateful image
+
+### 0.6.7 (2015-08-06)
+* (bluefox) fix scroll of view tabs
+* (bluefox) add comment about group/byindex
+* (bluefox) add update interval to small icon jqui-mfd
+* (bluefox) filter key as autocomplete
+* (bluefox) fix paths for plumps
+* (bluefox) enable install for node-red-vis
+
+### 0.6.5 (2015-07-25)
+* (bluefox) fix hqWidgets dimmer
+* (bluefox) optimize upload
+* (bluefox) catch error after import
+* (bluefix) add changeView event (required for lcars)
+* (bluefox) fix update of cache.manifest
+
+### 0.6.4 (2015-07-19)
+* (bluefox) add permissions
+* (bluefox) upload config.js to fix error with vis-metro
+* (bluefox) remove hqWidgets and colorpicker
+* (bluefox) add jqui-mfd translations
+* (bluefox) add "new project" menu
+
+### 0.6.2 (2015-07-01)
+- (bluefox) fix metro widgets
+
+### 0.6.1 (2015-06-28)
+- (bluefox) fix jqui-mfd
+- (bluefox) add prev for "jqui-mfd" dimmer dialog
+- (bluefox) fix bars in firefox
+- (bluefox) add permissions check
+- (bluefox) fix problem with hqWidgets and image selector
+* (bluefox) implement list of projects
+* (bluefox) case insensitive sorting of views
+* (bluefox) set automatically temperature ID of metro Heating
+* (bluefox) add max_rows for basic-table
+* (bluefox) show label on jqui-toggle
+* (bluefox) fix cameras jqui-mfd
+* (bluefox) jqui-mfd - remove most of all mfd icons
+
+### 0.5.9 (2015-06-10)
+- (bluefox) fix jqui-mfd
+- (bluefox) change adapter type from "visualisation" to "vis"
+- (bluefox) enable zoom on chrome
+- (bluefox) fix close button
+
+### 0.5.8 (2015-06-01)
+- (bluefox) add forgotten noise.png for hqWidgets buttons
+- (bluefox) jqui dialog fixed
+- (bluefox) fixed edit number in FireFox
+- (bluefox) create logout button
+- (bluefox) fix "basic - table"
+- (bluefox) fix jqui-mfd
+- (bluefox) fix bars on multiple views
+
+### 0.5.5 (2015-05-26)
+- (bluefox) activate try/catch again
+
+### 0.5.4 (2015-05-26)
+- (bluefox) add some button styles
+- (bluefox) fix conn.js
+
 ### 0.5.3 (2015-05-25)
 - (bluefox) fix "delete counter"
 - (bluefox) fix table "scroll" flag

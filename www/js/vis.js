@@ -78,6 +78,16 @@ if (typeof systemDictionary !== 'undefined') {
             'en': 'Error: view container recursion',
             'de': 'Fehler: View ist rekursiv',
             'ru': 'Ошибка: Страница вызывет саму себя'
+        },
+        "Cannot execute %s for %s, because of insufficient permissions": {
+            "en": "Cannot execute %s for %s, because of insufficient permissions.",
+            "de": "Kann das Kommando \"%s\" für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden.",
+            "ru": "Не могу выполнить \"%s\" для %s, так как недостаточно прав."
+        },
+        "Insufficient permissions": {
+            "en": "Insufficient permissions",
+            "de": "Nicht genügend Zugriffsrechte",
+            "ru": "Недостаточно прав"
         }
     });
 }
@@ -85,8 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-
-    version:                '0.5.3',
+    version: '0.7.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -106,7 +115,7 @@ var vis = {
     useCache:               false,
     authRunning:            false,
     cssChecked:             false,
-
+    isTouch:                'ontouchstart' in document.documentElement,
     binds:                  {},
     onChangeCallbacks:      [],
     viewsActiveFilter:      {},
@@ -120,16 +129,28 @@ var vis = {
     bindingsCache:          {},
     commonStyle:            null,
     _setValue: function (id, state) {
-        this.conn.setState(id, state[id + '.val']);
-
-        if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
-            this.states.attr(state);
-
-            // Inform other widgets, that does not support canJS
-            for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+        var oldValue = this.states.attr(id + '.val');
+        this.conn.setState(id, state[id + '.val'], function (err) {
+            if (err) {
+                //state[id + '.val'] = oldValue;
+                this.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
-        }
+
+            if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
+                this.states.attr(state);
+
+                // If error set value back, but we need generate the edge
+                if (err) {
+                    state[id + '.val'] = oldValue;
+                    this.states.attr(state);
+                }
+
+                // Inform other widgets, that does not support canJS
+                for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
+                    this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+                }
+            }
+        }.bind(this));
     },
     setValue: function (id, val) {
         if (!id) {
@@ -183,7 +204,11 @@ var vis = {
             cache:    this.useCache,
             success:  function (data) {
                 setTimeout(function () {
-                    $('head').append(data);
+                    try {
+                        $('head').append(data);
+                    } catch (e) {
+                        console.error('Cannot load widget set "' + name + '": ' + e);
+                    }
                     that.toLoadSetsCount -= 1;
                     if (that.toLoadSetsCount <= 0) {
                         that.showWaitScreen(true, null, null, 100);
@@ -266,8 +291,67 @@ var vis = {
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
-                for (var attr in data) {
+                // rename hqWidgets => hqwidgets
+                if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
+                    this.views[view].widgets[id].widgetSet = 'hqwidgets';
+                }
 
+                // rename RGraph => rgraph
+                if (this.views[view].widgets[id].widgetSet === 'RGraph') {
+                    this.views[view].widgets[id].widgetSet = 'rgraph';
+                }
+
+                // rename timeAndWeather => timeandweather
+                if (this.views[view].widgets[id].widgetSet === 'timeAndWeather') {
+                    this.views[view].widgets[id].widgetSet = 'timeandweather';
+                }
+                
+                // convert "Show on Value" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplShowValue') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = this.views[view].widgets[id].data.value;
+                    delete this.views[view].widgets[id].data.oid;
+                    delete this.views[view].widgets[id].data.value;
+                }
+
+                // convert "Hide on >0/True" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHideTrue') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-cond'] = '!=';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = true;
+                    delete this.views[view].widgets[id].data.oid;
+                }
+
+                // convert "Hide on 0/False" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHide') {
+                    this.views[view].widgets[id].tpl = 'tplHtml';
+                    this.views[view].widgets[id].data['visibility-cond'] = '!=';
+                    this.views[view].widgets[id].data['visibility-oid'] = this.views[view].widgets[id].data.oid;
+                    this.views[view].widgets[id].data['visibility-val'] = false;
+                    delete this.views[view].widgets[id].data.oid;
+                }
+                // convert "Door/Window sensor" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHmWindow') {
+                    this.views[view].widgets[id].tpl = 'tplValueBool';
+                    this.views[view].widgets[id].data.html_false = this.views[view].widgets[id].data.html_closed;
+                    this.views[view].widgets[id].data.html_true  = this.views[view].widgets[id].data.html_open;
+                    delete this.views[view].widgets[id].data.html_closed;
+                    delete this.views[view].widgets[id].data.html_open;
+                }
+                // convert "Door/Window sensor" to HTML
+                if (this.views[view].widgets[id].tpl === 'tplHmWindowRotary') {
+                    this.views[view].widgets[id].tpl = 'tplValueListHtml8';
+                    this.views[view].widgets[id].data.count = 2;
+                    this.views[view].widgets[id].data.value0 = this.views[view].widgets[id].data.html_closed;
+                    this.views[view].widgets[id].data.value1 = this.views[view].widgets[id].data.html_open;
+                    this.views[view].widgets[id].data.value2 = this.views[view].widgets[id].data.html_tilt;
+                    delete this.views[view].widgets[id].data.html_closed;
+                    delete this.views[view].widgets[id].data.html_open;
+                    delete this.views[view].widgets[id].data.html_tilt;
+                }
+                for (var attr in data) {
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];
@@ -324,15 +408,17 @@ var vis = {
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
                             for (var t = 0; t < oids.length; t++) {
-                                if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
-                                if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                                if (oids[t].systemOid) {
+                                    if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
+                                    if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                                    oids[t].type   = 'data';
+                                    oids[t].attr   = attr;
+                                    oids[t].view   = view;
+                                    oids[t].widget = id;
 
-                                oids[t].type = 'data';
-                                oids[t].attr = attr;
-                                oids[t].view = view;
-                                oids[t].widget = id;
+                                    this.bindings[oids[t].systemOid].push(oids[t]);
+                                }
 
-                                this.bindings[oids[t].systemOid].push(oids[t]);
 
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
@@ -342,7 +428,7 @@ var vis = {
                                     }
                                 }
                             }
-                        } else if ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr]) {
+                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr])) {
                             if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
 
                             // Visibility binding
@@ -456,7 +542,6 @@ var vis = {
         // First start.
         if (!this.views) {
             this.initViewObject();
-            return false;
         } else {
             this.showWaitScreen(false);
         }
@@ -472,11 +557,11 @@ var vis = {
             if (typeof io == 'undefined') {
                 if (!this.activeView) {
                     if (!this.editMode) {
-                        window.alert(_("error - View doesn't exist"));
-                        window.location.href = "./edit.html";
+                        window.alert(_('error - View doesn\'t exist'));
+                        window.location.href = './edit.html';
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                        this.activeView = "DemoView";
+                        this.activeView = 'DemoView';
                         //vis.showWaitScreen(false);
                     }
                 }
@@ -506,8 +591,6 @@ var vis = {
         }
 
 
-        $('#active_view').html(this.activeView);
-
         // Navigation
         $(window).bind('hashchange', function (e) {
             that.changeView(window.location.hash.slice(1));
@@ -523,7 +606,7 @@ var vis = {
         this.initialized = true;
 
         // If this function called earlier, it makes problems under FireFox.
-        if (this.views["_project"]) {
+        if (this.views._project) {
             this.renderView("_project", false, true);
         }
 
@@ -533,10 +616,10 @@ var vis = {
         if (!this.editMode) {
             window.location.href = './edit.html' + window.location.search;
         } else {
-            if (window.confirm(_("no views found on server.\nCreate new %s ?", this.projectPrefix + 'vis-views.json'))) {
+            if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                this.saveRemote(function () {
+                this.saveRemote(true, function () {
                     //window.location.reload();
                 });
             } else {
@@ -545,14 +628,15 @@ var vis = {
         }
     },
     setViewSize: function (view) {
-        var $view = $("#visview_" + view);
+        var $view = $('#visview_' + view);
         // Because of background, set the width and height of the view
         var width = parseInt(this.views[view].settings.sizex, 10);
         var height = parseInt(this.views[view].settings.sizey, 10);
-        if (!width || width < $("#vis_container").width()) {
+        var $vis_container = $('#vis_container');
+        if (!width || width < $vis_container.width()) {
             width = '100%';
         }
-        if (!height || height < $("#vis_container").height()) {
+        if (!height || height < $vis_container.height()) {
             height = '100%';
         }
         $view.css({width: width});
@@ -561,7 +645,7 @@ var vis = {
     updateContainers: function (view) {
         var that = this;
         // Set ths views for containers
-        $("#visview_" + view).find('.vis-view-container').each(function () {
+        $('#visview_' + view).find('.vis-view-container').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
                 $(this).html('<span style="color:red">' + _('error: view not found.') + '</span>');
@@ -570,8 +654,9 @@ var vis = {
             } else {
                 $(this).html('');
                 that.renderView(cview, true);
-                $('#visview_' + cview).appendTo(this);
-                $('#visview_' + cview).show();
+                $('#visview_' + cview)
+                    .appendTo(this)
+                    .show();
             }
         });
     },
@@ -609,7 +694,7 @@ var vis = {
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
 
-            var $view = $("#visview_" + view);
+            var $view = $('#visview_' + view);
             $view.css(this.views[view].settings.style);
             if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
 
@@ -638,7 +723,7 @@ var vis = {
         }
 
         // move views in container
-        $("#visview_" + view).find("div[id$='container']").each(function () {
+        $('#visview_' + view).find("div[id$='container']").each(function () {
             var cview = $(this).attr("data-vis-contains");
             if (!that.views[cview]) {
                 $(this).append("error: view not found.");
@@ -648,12 +733,13 @@ var vis = {
                 return false;
             }
             that.renderView(cview, true);
-            $("#visview_" + cview).appendTo(this);
-            $("#visview_" + cview).show();
+            $('#visview_' + cview)
+                .appendTo(this)
+                .show();
         });
 
         if (!hidden) {
-            $("#visview_" + view).show();
+            $('#visview_' + view).show();
 
             if (this.views[view].rerender) {
                 this.views[view].rerender = false;
@@ -674,8 +760,8 @@ var vis = {
             }
         }
         setTimeout(function(){
-            $("#visview_"+view).trigger("rendered")
-        })
+            $('#visview_' + view).trigger('rendered');
+        }, 0);
 
     },
     addViewStyle: function (view, theme) {
@@ -713,8 +799,12 @@ var vis = {
         }
     },
     reRenderWidget: function (view, widget) {
-        $("#" + widget).remove();
+        var $widget = $('#' + widget);
+        var updateContainers = $widget.find('.vis-view-container').length;
+        $widget.remove();
         this.renderWidget(view || this.activeView, widget);
+        
+        if (updateContainers) this.updateContainers(view || this.activeView);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
         var widgets = this.views[this.activeView].widgets;
@@ -804,24 +894,24 @@ var vis = {
 
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
-        //try {
+        try {
             this.widgets[id] = {
                 wid: id,
                 data: new can.Map($.extend({
                     "wid": id
                 }, widget.data))
             };
-        //} catch (e) {
-        //    console.log('Cannot bind data of widget widget:' + id);
-        //    return;
-        //}
+        } catch (e) {
+            console.log('Cannot bind data of widget widget:' + id);
+            return;
+        }
         // Register oid to detect changes
         // if (widget.data.oid != 'nothing_selected')
         //   $.homematic("advisState", widget.data.oid, widget.data.hm_wid);
 
         var widgetData = this.widgets[id].data;
 
-        //try {
+        try {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 $view.append(can.view(widget.tpl, {
@@ -832,15 +922,25 @@ var vis = {
                     data: widgetData,
                     view: view
                 }));
-            } else {
+            } else if (widget.tpl) {
                 $view.append(can.view(widget.tpl, {
                     data: widgetData,
                     view: view
                 }));
+            } else {
+                console.error('Widget "' + id + '" is invalid. Please delete it.');
+                return;
             }
+            var $wid = null;
 
             if (widget.style && !widgetData._no_style) {
-                $("#" + id).css(widget.style);
+                $wid = $wid || $("#" + id);
+                $wid.css(widget.style);
+            }
+
+            if (widget.data && widget.data.class) {
+                $wid = $wid || $("#" + id);
+                $wid.addClass(widget.data.class);
             }
 
             if (!this.editMode) {
@@ -868,9 +968,9 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
-        //} catch (e) {
-        //   this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        //}
+        } catch (e) {
+           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
         var that = this;
@@ -889,12 +989,11 @@ var vis = {
         if (hideOptions.effect == 'show') effect = false;
 
         if (!this.views[view]) {
-            var prop;
-            for (prop in this.views) {
-                // object[prop]
+            view = null;
+            for (var prop in this.views) {
+                view = prop;
                 break;
             }
-            view = prop;
         }
 
         // If really changed
@@ -913,7 +1012,7 @@ var vis = {
                     $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
-                            for (var id in this.views[view].widgets) {
+                            for (var id in that.views[view].widgets) {
                                 if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                     that.views[view].widgets[id].renderVisible)
                                     that.renderWidget(view, id);
@@ -922,13 +1021,18 @@ var vis = {
                     }).dequeue();
                 }
 
-                $("#visview_" + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
+                $('#visview_' + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                     // If first hide, than show
                     if (!sync) {
-                        $("#visview_" + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+                        $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                             if (that.views[view].rerender) {
                                 that.views[view].rerender = false;
                                 for (var id in that.views[view].widgets) {
+                                    if (!that.views[view].widgets[id] && !that.views[view].widgets[id].tpl) {
+                                        console.error('Widget "' + id + '" is invalid. Please delete it.');
+                                        continue;
+                                    }
+
                                     if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
                                         that.views[view].widgets[id].renderVisible)
                                         that.renderWidget(view, id);
@@ -942,8 +1046,8 @@ var vis = {
                 this.renderView(view, true);
 
                 // View ggf aus Container heraus holen
-                if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
-                    $("#visview_" + view).appendTo("#vis_container");
+                if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
+                    $('#visview_' + view).appendTo("#vis_container");
                 }
 
                 //if (this.views[view] && this.views[view].settings) {
@@ -958,16 +1062,17 @@ var vis = {
                     //}
                     //this.additionalThemeCss(this.views[view].settings.theme);
                 //}
-                $("#visview_" + view).show();
-                $("#visview_" + this.activeView).hide();
+                $('#visview_' + view).show();
+                $('#visview_' + this.activeView).hide();
             }
-
+            // remember last click for debounce
+            this.lastChange = (new Date()).getTime();
         } else {
             this.renderView(view);
 
             // View ggf aus Container heraus holen
-            if ($("#visview_" + view).parent().attr("id") !== "vis_container") {
-                $("#visview_" + view).appendTo("#vis_container");
+            if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
+                $('#visview_' + view).appendTo("#vis_container");
             }
         }
         this.activeView = view;
@@ -981,6 +1086,7 @@ var vis = {
 
         if (!this.editMode) {
             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
+            $(window).trigger('viewChanged', view);
         }
 
         if (window.location.hash.slice(1) != view) {
@@ -996,16 +1102,18 @@ var vis = {
 
         // --------- Editor -----------------
         if (this.editMode) this.changeViewEdit(view);
-
-
-        // update resolution tool widget
-
-        return;
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
         this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
-            if (err) window.alert(that.projectPrefix + 'vis-views.json ' + err);
+            if (err) {
+                window.alert(that.projectPrefix + 'vis-views.json ' + err);
+                if (err == 'permissionError') {
+                    that.showWaitScreen(true, '', _('Loading stopped', location.protocol + '//' + location.host, location.protocol + '//' + location.host), 0);
+                    // do nothing any more
+                    return;
+                }
+            }
 
             if (data) {
                 if (typeof data == 'string') {
@@ -1028,15 +1136,27 @@ var vis = {
         });
     },
     saveRemoteActive: 0,
-    saveRemote: function (callback) {
+    saveRemote: function (mode, callback) {
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = null;
+        }
+
         var that = this;
+        if (this.permissionDenied) {
+            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
+            5000, 'ui-state-error');
+            if (typeof callback == 'function') callback();
+            return;
+        }
+
 
         if (this.saveRemoteActive % 10) {
             this.saveRemoteActive--;
             setTimeout(function () {
-                that.saveRemote(callback);
+                that.saveRemote(mode, callback);
             }, 1000);
-        }else {
+        } else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
             if (this.saveRemoteActive == 10) {
                 console.log('possible no connection');
@@ -1060,19 +1180,36 @@ var vis = {
                     viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
                 }
             }
+            viewsToSave = JSON.stringify(viewsToSave, null, 2);
+            if (this.lastSave == viewsToSave) {
+                if (typeof callback == 'function') callback(null);
+                return;
+            }
 
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', JSON.stringify(viewsToSave, null, 2), function () {
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, mode, function (err) {
+                if (err) {
+                    if (err == 'permissionError') {
+                        that.permissionDenied = true;
+                    }
+                    that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
+                } else {
+                    that.lastSave = viewsToSave;
+                }
                 that.saveRemoteActive = 0;
-                if (callback) callback();
+                if (typeof callback == 'function') callback(err);
 
                 // If not yet checked => check if project css file exists
                 if (!that.cssChecked) {
-                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (err, data) {
+                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
                         that.cssChecked = true;
                         // Create vis-user.css file if not exist
-                        if (err || data === null || data === undefined) {
+                        if (err != 'permissionError' && (_err || data === null || data === undefined)) {
                             // Create empty css file
-                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '');
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
+                                if (___err) {
+                                    that.showMessage(_('Cannot create file %s: ', 'vis-user.css') + _(___err), _('Error'), 'alert');
+                                }
+                            });
                         }
                     });
                 }
@@ -1115,7 +1252,7 @@ var vis = {
                 autoOpen: false,
                 modal:    true,
                 open: function () {
-                    $(this).parent().css({'z-index': 1001});
+                    $(this).parent().css({'z-index': 1003});
                 },
                 buttons: [
                     {
@@ -1135,13 +1272,17 @@ var vis = {
         }
         $('#dialog-message-text').html(message);
         if (icon) {
-            $('#dialog-message-icon').show();
-            $('#dialog-message-icon').attr('class', '');
-            $('#dialog-message-icon').addClass('ui-icon ui-icon-' + icon);
+            $('#dialog-message-icon')
+                .show()
+                .attr('class', '')
+                .addClass('ui-icon ui-icon-' + icon);
         } else {
             $('#dialog-message-icon').hide();
         }
         this.$dialogMessage.dialog('open');
+    },
+    showError: function (error) {
+        this.showMessage(error, _('Error'), 'alert', 400);
     },
     waitScreenVal: 0,
     showWaitScreen: function (isShow, appendText, newText, step) {
@@ -1164,8 +1305,8 @@ var vis = {
             }
             if (step !== undefined) {
                 this.waitScreenVal += step;
-                setTimeout(function (_val) {
-                    $(".vis-progressbar").progressbar("value", _val);
+                _setTimeout(function (_val) {
+                    $(".vis-progressbar").progressbar('value', _val);
                 }, 0, this.waitScreenVal);
 
             }
@@ -1203,8 +1344,8 @@ var vis = {
             if (!condition || value === undefined) return false;
 
             var t = typeof val;
-            if (t == 'boolean') {
-                value = (value === 'true' || value === true || value === 1);
+            if (t == 'boolean' || val === 'false' || val === 'true') {
+                value = (value === 'true' || value === true || value === 1 || value === '1');
             } else if (t == 'number') {
                 value = parseFloat(value);
             }  else if (t == 'object') {
@@ -1214,8 +1355,20 @@ var vis = {
             // Take care: return true if widget is hidden!
             switch (condition) {
                 case '==':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
                     return value != val;
                 case '!=':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
                     return value == val;
                 case '>=':
                     return val < value;
@@ -1226,6 +1379,8 @@ var vis = {
                 case '<':
                     return val >= value;
                 case 'consist':
+                    value = value.toString();
+                    val   = val.toString();
                     return (val.toString().indexOf(value) === -1);
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);
@@ -1249,6 +1404,7 @@ var vis = {
             }
             var styles = {};
             for (var view in this.views) {
+                if (!this.views[view] || !this.views[view].settings.theme) continue;
                 if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
                     styles[this.views[view].settings.theme]++;
                 } else {
@@ -1280,7 +1436,7 @@ var vis = {
         var v;
         // Year
         if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
-            v = dateObj.getFullYear();
+            v = dateObj.getFullYear().toString();
             format = format.replace('YYYY', v);
             format = format.replace('JJJJ', v);
             format = format.replace('ГГГГ', v);
@@ -1304,13 +1460,13 @@ var vis = {
 
         // Day
         if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate();
             if (v < 10) v = '0' + v;
             format = format.replace('DD', v);
             format = format.replace('TT', v);
             format = format.replace('ДД', v);
         } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
-            v =  dateObj.getDate();
+            v = dateObj.getDate().toString();
             format = format.replace('D', v);
             format = format.replace('T', v);
             format = format.replace('Д', v);
@@ -1324,7 +1480,7 @@ var vis = {
             format = format.replace('SS', v);
             format = format.replace('чч', v);
         } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
-            v =  dateObj.getHours();
+            v =  dateObj.getHours().toString();
             format = format.replace('h', v);
             format = format.replace('S', v);
             format = format.replace('ч', v);
@@ -1337,7 +1493,7 @@ var vis = {
             format = format.replace('mm', v);
             format = format.replace('мм', v);
         } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
-            v =  dateObj.getMinutes();
+            v =  dateObj.getMinutes().toString();
             format = format.replace('m', v);
             format = format.replace('v', v);
         }
@@ -1349,7 +1505,7 @@ var vis = {
             format = format.replace('ss', v);
             format = format.replace('cc', v);
         } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
-            v =  dateObj.getHours();
+            v =  dateObj.getHours().toString();
             format = format.replace('s', v);
             format = format.replace('с', v);
         }
@@ -1364,6 +1520,7 @@ var vis = {
         if (oid) {
             for (var p = 0; p < oid.length; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
+                if (_oid[0] == '{') continue;
                 // If first symbol '"' => it is JSON
                 if (_oid && _oid[0] == '"') continue;
                 var parts = _oid.split(';');
@@ -1373,7 +1530,8 @@ var vis = {
 
                 var test1 = visOid.substring(visOid.length - 4);
                 var test2 = visOid.substring(visOid.length - 3);
-                if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+
+                if (visOid && test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
                     visOid = visOid + '.val';
                 }
 
@@ -1381,13 +1539,14 @@ var vis = {
 
                 var test1 = systemOid.substring(systemOid.length - 4);
                 var test2 = systemOid.substring(systemOid.length - 3);
+
                 if (test1 === '.val' || test1 === '.ack') {
                     systemOid = systemOid.substring(0, systemOid.length - 4);
                 } else if (test2 === '.lc' || test2 === '.ts') {
                     systemOid = systemOid.substring(0, systemOid.length - 3);
                 }
                 var operations = null;
-                var isEval = visOid.indexOf(':') != -1;
+                var isEval = visOid.match(/[\d\w_\.]+:[\d\w_\.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') != -1) && (visOid.indexOf('::') == -1);
 
                 if (isEval) {
                     var xx = visOid.split(':', 2);
@@ -1398,9 +1557,9 @@ var vis = {
                     operations.push({
                         op: 'eval',
                         arg: [{
-                            name:      xx[0],
-                            visOid:    xx[1],
-                            systemOid: yy[1]
+                            name:       xx[0],
+                            visOid:     visOid,
+                            systemOid:  systemOid
                         }]
                     });
                 }
@@ -1409,18 +1568,20 @@ var vis = {
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
-                        if (parts[u].indexOf(':') != -1) {
+                        if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') != -1 && parts[u].indexOf('::') == -1) {
                             var _systemOid = parts[u].trim();
                             var _visOid    = _systemOid;
 
                             var test1 = _visOid.substring(_visOid.length - 4);
                             var test2 = _visOid.substring(_visOid.length - 3);
+
                             if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
                                 _visOid = _visOid + '.val';
                             }
 
                             test1 = systemOid.substring(_systemOid.length - 4);
                             test2 = systemOid.substring(_systemOid.length - 3);
+
                             if (test1 === '.val' || test1 === '.ack') {
                                 _systemOid = _systemOid.substring(0, _systemOid.length - 4);
                             } else if (test2 === '.lc' || test2 === '.ts') {
@@ -1434,6 +1595,7 @@ var vis = {
                                     systemOid: yy[1]
                                 });
                         } else {
+                            parts[u] = parts[u].replace(/::/g, ':');
                             if (operations[0].formula) {
                                 var n = JSON.parse(JSON.stringify(operations[0]));
                                 n.formula = parts[u];
@@ -1526,24 +1688,55 @@ var vis = {
 
         return result;
     },
-    formatBinding: function (format) {
+    formatBinding: function (format, view, wid, widget) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
-            var value = this.states.attr(oids[t].visOid);
+            var value;
+            if (oids[t].visOid == 'username.val') {
+                value = this.conn.getUser();
+            } else if (oids[t].visOid == 'language.val') {
+                value = this.language;
+            } else if (oids[t].visOid == 'wid.val') {
+                value = wid;
+            } else if (oids[t].visOid == 'wname.val') {
+                value = widget.data.name || wid;
+            } else if (oids[t].visOid == 'view.val') {
+                value = view;
+            } else if (oids[t].visOid) {
+                value = this.states.attr(oids[t].visOid);
+            }
             if (oids[t].operations) {
                 for (var k = 0; k < oids[t].operations.length; k++) {
                     if (oids[t].operations[k].op === 'eval') {
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + this.states.attr(oids[t].operations[k].arg[a].visOid) + '";';
+                            if (!oids[t].operations[k].arg[a].name) continue;
+                            if (oids[t].operations[k].arg[a].visOid == 'wid.val') {
+                                value = wid;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'view.val') {
+                                value = view;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'username.val') {
+                                value = this.conn.getUser();
+                            } else if (oids[t].operations[k].arg[a].visOid == 'language.val') {
+                                value = this.language;
+                            } else if (oids[t].operations[k].arg[a].visOid == 'wname.val') {
+                                value = widget.data.name || wid;
+                            } else {
+                                value = this.states.attr(oids[t].operations[k].arg[a].visOid);
+                            }
+                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                        }
+                        if (oids[t].operations[k].formula.indexOf('widget.') != -1) {
+                            string += 'var widget = ' + JSON.stringify(widget) + ';';
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
                         //string += '}())';
-                        try{
+                        try {
                             value = new Function(string)();
-                        } catch(e)
-                        {
-                            console.log('Error in eval: ' + string);
+                        } catch(e) {
+                            console.error('Error in eval[value]     : ' + format);
+                            console.error('Error in eval[script]: ' + string);
+                            console.error('Error in eval[error] : ' + e);
                             value = 0;
                         }
                     } else
@@ -1628,6 +1821,7 @@ var vis = {
             }
             format = format.replace(oids[t].token, value);
         }
+        format = format.replace(/{{/g, '{').replace(/}}/g, '}');
         return format;
     },
     findNearestResolution: function (resultRequiredOrX, height) {
@@ -1696,6 +1890,26 @@ var vis = {
                 that.changeView(view);
             }
         }, 200);
+    },
+    detectBounce: function (el, isUp) {
+        if (!this.isTouch) return false;
+
+        // Protect against two events
+        var now = (new Date()).getTime();
+        //console.log('gclick: ' + this.lastChange + ' ' + (now - this.lastChange));
+        if (this.lastChange && now - this.lastChange < 700) {
+            //console.log('gclick: filtered');
+            return true;
+        }
+
+        var lastClick = $(el).data(isUp ? 'lcu' : 'lc');
+        //console.log('click: ' + lastClick + ' ' + (now - lastClick));
+        if (lastClick && now - lastClick < 700) {
+            //console.log('click: filtered');
+            return true;
+        }
+        $(el).data(isUp ? 'lcu' : 'lc', now);
+        return false;
     }
 };
 
@@ -1738,6 +1952,21 @@ window.onpopstate = function () {
     vis.editMode = (window.location.href.indexOf('edit.html') != -1 || vis.urlParams.edit === '');
 };
 window.onpopstate();
+
+if (!vis.editMode) {
+    // Protection after view change
+    $(window).on('click touchstart mousedown', function (e) {
+        if (vis.lastChange) {
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+    });
+    $(window).on('touchend mouseup', function (e) {
+        vis.lastChange = null;
+    });
+}
+
 
 // Start of initialisation: main ()
 (function ($) {
@@ -1869,6 +2098,7 @@ window.onpopstate();
 
         vis.conn.init(null, {
             onConnChange: function (isConnected) {
+
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
                     $("#server-disconnect").dialog("close");
@@ -1891,6 +2121,9 @@ window.onpopstate();
                     vis.loadRemote(function () {
                         // Read all states from server
                         vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                            if (error) {
+                                vis.showError(error);
+                            }
                             if (data) {
                                 for (var id in data) {
                                     var obj = data[id];
@@ -1915,7 +2148,8 @@ window.onpopstate();
 
                                     if (!vis.editMode && vis.bindings[id]) {
                                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                            var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                                            widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
                                         }
                                     }
                                 }
@@ -1926,7 +2160,7 @@ window.onpopstate();
                                 var now = new Date().getTime() / 1000;
                                 for (var id in vis.IDs) {
                                     if (vis.states[vis.IDs[id] + '.val'] === undefined) {
-                                        if (!vis.IDs[id].match(/^dev\d+$/)) {
+                                        if (!vis.IDs[id] || !vis.IDs[id].match(/^dev\d+$/)) {
                                             console.log('Create inner vis object ' + vis.IDs[id]);
                                         }
                                         if (vis.editMode) {
@@ -1950,7 +2184,8 @@ window.onpopstate();
 
                                         if (!vis.editMode && vis.bindings[id]) {
                                             for (var i = 0; i < vis.bindings[id].length; i++) {
-                                                vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format);
+                                                var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                                                widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
                                             }
                                         }
                                     }
@@ -2060,9 +2295,10 @@ window.onpopstate();
                     // Bindings on every element
                     if (!vis.editMode && vis.bindings[id]) {
                         for (var i = 0; i < vis.bindings[id].length; i++) {
-                            var value = vis.formatBinding(vis.bindings[id][i].format);
+                            var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
+                            var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
 
-                            vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
+                            widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
                             if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
                                 vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
                             }
@@ -2175,7 +2411,11 @@ window.onpopstate();
                             }, 1);
                             break;
                         case 'dialog':
+                        case 'dialogOpen':
                             $('#' + data + '_dialog').dialog('open');
+                            break;
+                        case 'dialogClose':
+                            $('#' + data + '_dialog').dialog('close');
                             break;
                         case 'popup':
                             window.open(data);
@@ -2219,6 +2459,13 @@ window.onpopstate();
                 }
 
                 if ($.fn.selectId) $.fn.selectId('objectAll', id, obj);
+            },
+            onError:      function (err) {
+                if (err.arg == 'vis.0.control.instance' || err.arg == 'vis.0.control.data' || err.arg == 'vis.0.control.command') {
+                    console.warn('Cannot set ' + err.arg + ', because of insufficient permissions');
+                } else {
+                    vis.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
+                }
             }
         }, vis.editMode);
 

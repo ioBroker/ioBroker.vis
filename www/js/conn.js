@@ -12,6 +12,7 @@
 /* global socketNamespace */
 /* global socketUrl */
 /* global socketSession */
+/* global storage */
 /* jshint -W097 */// jshint strict:false
 
 "use strict";
@@ -32,7 +33,8 @@ var servConn = {
         onUpdate:     null,
         onRefresh:    null,
         onAuth:       null,
-        onCommand:    null
+        onCommand:    null,
+        onError:      null
     },
     _authInfo:          null,
     _isAuthDone:        false,
@@ -46,12 +48,20 @@ var servConn = {
     _subscribes:        [],
     _cmdData:           null,
     _cmdInstance:       null,
+    _isSecure:          false,
+    _defaultMode:       0x644,
     namespace:          'vis.0',
     getType:          function () {
         return this._type;
     },
     getIsConnected:   function () {
         return this._isConnected;
+    },
+    getIsLoginRequired: function () {
+        return this._isSecure;
+    },
+    getUser: function () {
+        return this._user;
     },
     _checkConnection: function (func, _arguments) {
         if (!this._isConnected) {
@@ -68,16 +78,34 @@ var servConn = {
         }
         return true;
     },
+    _monitor:         function () {
+        if (this._timer) return;
+        var ts = (new Date()).getTime();
+        if (ts - this._lastTimer > 30000) {
+            // It seems, that PC was in a sleep => Reload page to request authentication anew
+            location.reload();
+        } else {
+            this._lastTimer = ts;
+        }
+        var that = this;
+        this._timer = setTimeout(function () {
+            that._timer = null;
+            that._monitor();
+        }, 10000);
+    },
     _onAuth:          function (objectsRequired, isSecure) {
         var that = this;
+
+        this._isSecure = isSecure;
+
+        if (this._isSecure) {
+            that._lastTimer = (new Date()).getTime();
+            this._monitor();
+        }
+
         this._socket.emit('subscribe', '*');
         if (objectsRequired) this._socket.emit('subscribeObjects', '*');
 
-        if (this._disconnectTimeout) {
-            clearTimeout(this._disconnectTimeout);
-            this._disconnectTimeout = null;
-        }
-        //console.log("socket.io connect");
         if (this._isConnected === true) {
             // This seems to be a reconnect because we're already connected!
             // -> prevent firing onConnChange twice
@@ -86,10 +114,12 @@ var servConn = {
         this._isConnected = true;
         if (this._connCallbacks.onConnChange) {
             setTimeout(function () {
-                that._connCallbacks.onConnChange(that._isConnected, isSecure);
+                that._socket.emit('authEnabled', function (auth, user) {
+                    that._user = user;
+                    that._connCallbacks.onConnChange(that._isConnected);
+                });
             }, 0);
         }
-        //this._myParent._autoReconnect();
     },
     init:             function (connOptions, connCallbacks, objectsRequired) {
         // To start vis as local use one of:
@@ -120,7 +150,7 @@ var servConn = {
             }
         }
 
-        that._connCallbacks = connCallbacks;
+        this._connCallbacks = connCallbacks;
 
         var connLink = connOptions.connLink || window.localStorage.getItem('connLink');
 
@@ -131,8 +161,8 @@ var servConn = {
         // if no remote data
         if (this._type === 'local') {
             // report connected state
-            that._isConnected = true;
-            if (that._connCallbacks.onConnChange) that._connCallbacks.onConnChange(that._isConnected);
+            this._isConnected = true;
+            if (this._connCallbacks.onConnChange) this._connCallbacks.onConnChange(this._isConnected);
         } else
         if (typeof io != 'undefined') {
             connOptions.socketSession = connOptions.socketSession || 'nokey';
@@ -147,38 +177,49 @@ var servConn = {
                 url = location.protocol + '//' + location.host;
             }
 
-            that._socket = io.connect(url, {
+            this._socket = io.connect(url, {
                 'query': 'key=' + connOptions.socketSession,
                 'reconnection limit': 10000,
                 'max reconnection attempts': Infinity
             });
 
-            that._socket.on('connect', function () {
-                that._socket.emit('name', connOptions.name);
-				console.log('Connected => authenticate');
-                that._socket.emit('authenticate', function (isOk, isSecure) {
-					console.log('Authenticated: ' + isOk);
-                    if (isOk) {
-                        that._onAuth(objectsRequired, isSecure);
-                    } else {
-                        console.log('no permission');
-                    }
-                });
-            });
+            this._socket.on('connect', function () {
+                this._socket.emit('name', connOptions.name);
+				console.log((new Date()).toISOString() + ' Connected => authenticate');
+                setTimeout(function () {
+                    this._socket.emit('authenticate', function (isOk, isSecure) {
+                        console.log((new Date()).toISOString() + ' Authenticated: ' + isOk);
+                        if (isOk) {
+                            this._onAuth(objectsRequired, isSecure);
+                        } else {
+                            console.log('permissionError');
+                        }
+                    }.bind(this));
+                }.bind(this), 50);
+            }.bind(this));
 
-            that._socket.on('disconnect', function () {
-                //console.log("socket.io disconnect");
-                that._disconnectedSince = (new Date()).getTime();
-
-                that._isConnected = false;
-                if (that._connCallbacks.onConnChange) {
-                    that.disconnectTimeout = setTimeout(function () {
-                        that._connCallbacks.onConnChange(that._isConnected);
-                    }, 5000);
+            this._socket.on('reauthenticate', function () {
+                if (this._connCallbacks.onReAuth) {
+                    this._connCallbacks.onConnChange(this._isSecure);
+                } else {
+                    location.reload();
                 }
-            });
+            }.bind(this));
+
+            this._socket.on('disconnect', function () {
+                //console.log("socket.io disconnect");
+                this._disconnectedSince = (new Date()).getTime();
+
+                this._isConnected = false;
+                if (this._connCallbacks.onConnChange) {
+                    this.disconnectTimeout = setTimeout(function () {
+                        this._connCallbacks.onConnChange(this._isConnected);
+                    }.bind(this), 5000);
+                }
+            }.bind(this));
+
             // after reconnect the "connect" event will be called
-            that._socket.on('reconnect', function () {
+            this._socket.on('reconnect', function () {
                 //console.log("socket.io reconnect");
                 var offlineTime = (new Date()).getTime() - that._disconnectedSince;
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
@@ -188,15 +229,16 @@ var servConn = {
                     //window.location.reload();
                 //}
                 //that._autoReconnect();
-            });
-            that._socket.on('objectChange', function (id, obj) {
-                if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange(id, obj);
-            });
+            }.bind(this));
 
-            that._socket.on('stateChange', function (id, state) {
+            this._socket.on('objectChange', function (id, obj) {
+                if (this._connCallbacks.onObjectChange) this._connCallbacks.onObjectChange(id, obj);
+            }.bind(this));
+
+            this._socket.on('stateChange', function (id, state) {
                 if (!id || state === null || typeof state != 'object') return;
 
-                if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
+                if (this._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;
 
                     if (state.val &&
@@ -212,24 +254,38 @@ var servConn = {
 
                     // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
                     if (state.val && state.val.instance) {
-                        if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
+                        if (this._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
                             // clear state
-                            that.setState(id, {val: '', ack: true});
+                            this.setState(id, {val: '', ack: true});
                         }
                     } else {
-                        if (that._connCallbacks.onCommand(that._cmdInstance, state.val, that._cmdData)) {
+                        if (this._connCallbacks.onCommand(this._cmdInstance, state.val, this._cmdData)) {
                             // clear state
-                            that.setState(id, {val: '', ack: true});
+                            this.setState(id, {val: '', ack: true});
                         }
                     }
                 } else if (id == that.namespace + '.control.data') {
-                    that._cmdData = state.val;
+                    this._cmdData = state.val;
                 } else if (id == that.namespace + '.control.instance') {
-                    that._cmdInstance = state.val;
-                } else if (that._connCallbacks.onUpdate) {
-                    that._connCallbacks.onUpdate(id, state);
+                    this._cmdInstance = state.val;
+                } else if (this._connCallbacks.onUpdate) {
+                    this._connCallbacks.onUpdate(id, state);
                 }
-            });
+            }.bind(this));
+
+            this._socket.on('permissionError', function (err) {
+                if (this._connCallbacks.onError) {
+                    /* {
+                     command:
+                     type:
+                     operation:
+                     arg:
+                     }*/
+                    this._connCallbacks.onError(err);
+                } else {
+                    console.log('permissionError');
+                }
+            }.bind(this));
         }
     },
     logout:           function (callback) {
@@ -336,7 +392,11 @@ var servConn = {
             }
         });
     },
-    writeFile:        function (filename, data, callback) {
+    writeFile:        function (filename, data, mode, callback) {
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode = null;
+        }
         var that = this;
         if (this._type === 'local') {
             storage.set(filename, JSON.stringify(data));
@@ -346,7 +406,7 @@ var servConn = {
 
             if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-            this._socket.emit('writeFile', this.namespace, filename, data, callback);
+            this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
         }
     },
     // Write file base 64
@@ -358,7 +418,7 @@ var servConn = {
         var adapter = parts[1];
         parts.splice(0, 2);
 
-        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), callback);
+        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), {mode: this._defaultMode}, callback);
     },
     readDir:          function (dirname, callback) {
         //socket.io
@@ -371,7 +431,7 @@ var servConn = {
         var adapter = parts[1];
         parts.splice(0, 2);
 
-        this._socket.emit('readDir', adapter, parts.join('/'), function (err, data) {
+        this._socket.emit('readDir', adapter, parts.join('/'), {filter: true}, function (err, data) {
             if (callback) callback(err, data);
         });
     },
@@ -403,13 +463,13 @@ var servConn = {
             if (callback) callback(err);
         });
     },
-    setState:         function (pointId, value) {
+    setState:         function (pointId, value, callback) {
         //socket.io
         if (this._socket === null) {
             //console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('setState', pointId, value);
+        this._socket.emit('setState', pointId, value, callback);
     },
     // callback(err, data)
     getStates:        function (IDs, callback) {
@@ -462,6 +522,12 @@ var servConn = {
                     for (var i = 0; i < res.rows.length; i++) {
                         data[res.rows[i].id] = res.rows[i].value;
                     }
+                    // find out default file mode
+                    if (data['system.adapter.' + that.namespace] &&
+                        data['system.adapter.' + that.namespace].native &&
+                        data['system.adapter.' + that.namespace].native.defaultFileMode) {
+                        that._defaultMode = data['system.adapter.' + that.namespace].native.defaultFileMode;
+                    }
 
                     // Read all channels for images
                     that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
@@ -508,7 +574,7 @@ var servConn = {
 
         this._socket.emit('delObject', objId);
     },
-    getUrl:           function (url, callback) {
+    httpGet:          function (url, callback) {
         if (!this._isConnected) {
             console.log("No connection!");
             return;
@@ -518,10 +584,8 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('getUrl', url, function (data) {
-            if (callback) {
-                callback(data);
-            }
+        this._socket.emit('httpGet', url, function (data) {
+            if (callback) callback(data);
         });
     },
     logError:         function (errorText) {
@@ -607,5 +671,43 @@ var servConn = {
         this.setState(this.namespace + '.control.instance', {val: instance || 'notdefined', ack: true});
         this.setState(this.namespace + '.control.data',     {val: data,    ack: true});
         this.setState(this.namespace + '.control.command',  {val: command, ack: true});
+    },
+    _detectViews:     function (projectDir, callback) {
+        this.readDir('/' + this.namespace + '/' + projectDir, function (err, dirs) {
+            // find vis-views.json
+            for (var f = 0; f < dirs.length; f++) {
+                if (dirs[f].file == 'vis-views.json' && (!dirs[f].acl || dirs[f].acl.read)) {
+                    return callback(err, {name: projectDir, readOnly: (dirs[f].acl && !dirs[f].acl.write), mode: dirs[f].acl ? dirs[f].acl.permissions : 0});
+                }
+            }
+            callback(err);
+        });
+    },
+    readProjects:     function (callback) {
+        this.readDir('/' + this.namespace, function (err, dirs) {
+            var result = [];
+            var count = 0;
+            for (var d = 0; d < dirs.length; d++) {
+                if (dirs[d].isDir) {
+                    count++;
+                    this._detectViews(dirs[d].file, function (subErr, project) {
+                        if (project) result.push(project);
+
+                        err = err || subErr;
+                        if (!(--count)) callback(err, result);
+                    });
+                }
+            }
+        }.bind(this));
+    },
+    chmodProject:     function (projectDir, mode, callback) {
+        //socket.io
+        if (this._socket === null) {
+            console.log('socket.io not initialized');
+            return;
+        }
+        this._socket.emit('chmodFile', this.namespace, projectDir + '*', {mode: mode}, function (err, data) {
+            if (callback) callback(err, data);
+        });
     }
 };

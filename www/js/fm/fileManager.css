@@ -103,14 +103,14 @@
     height: 27px;
     width: 37px;
     position: absolute;
-    right: -1px;
+    right: 40px;
     top: 1px;
 }
 #fm_bar_background {
     height: 27px;
     width: 37px;
     position: absolute;
-    right: 40px;
+    right: -1px;
     top: 1px;
 }
 #fm_bar_folder {

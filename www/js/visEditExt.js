@@ -18,6 +18,8 @@
 /* jshint browser:true */
 /* global _ */
 /* global $ */
+/* global jQuery */
+/* global console */
 /* global systemDictionary */
 /* global vis:true */
 /* jshint -W097 */// jshint strict:false
@@ -50,39 +52,11 @@ $.extend(systemDictionary, {
 
 vis.styleSelect = {
     // local variables
-    _currentElement: 0,
-    _scrollWidth:    -1,
     _internalList:   null,
-    // Default settings
-    settings: {
-        // List of styles
-        styles:        null,
-        width:         100,
-        style:         "",     // Init style as text
-        onchange:      null,   // onchange fuction: handler (newStyle, onchangeParam);
-        onchangeParam: null,   // user parameter for onchange function
-        parent:        null,
-        height:        30,
-        dropOpened:    false,
-        name:          null,
-        id:            -1,
-        filterFile:    null,
-        filterName:    null,
-        filterAttrs:   null
-    },
-    _findTitle: function (styles, style) {
-        for (var st in styles) {
-            if (styles[st] == style) {
-                return ((st == "") ? style : st);
-            }
-        }
-        return style;
-    },
-
     // Functions
     show: function (options) {
         // Fill the list of styles
-        if (this._internalList == null) {
+        if (!this._internalList) {
             this._internalList = {};
             var sSheetList = document.styleSheets;
             for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
@@ -91,35 +65,37 @@ vis.styleSelect = {
                     var bglen = "hq-background-".length;
                     for (var rule = 0; rule < ruleList.length; rule ++) {
                         if (!ruleList[rule].selectorText) continue;
+                        var _styles = ruleList[rule].selectorText.split(',');
+                        for (var s = 0; s < _styles.length; s++) {
+                            var substyles = _styles[s].trim().split(' ');
+                            var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                        var styles = ruleList[rule].selectorText.split(' ');
-                        var style = styles[styles.length - 1].replace('::before', '').replace('::after', '');
+                            if (!_style || _style[0] != '.' || _style.indexOf(':') != -1) continue;
 
-                        if (!style || style[0] != '.' || style.indexOf(':') != -1) continue;
+                            var name = _style;
+                            name = name.replace(',', '');
+                            name = name.replace(/^\./, '');
 
-                        var name = style;
-                        name = name.replace(',', '');
-                        name = name.replace(/^\./, '');
+                            var val  = name;
+                            name = name.replace(/^hq-background-/, '');
+                            name = name.replace(/^hq-/, '');
+                            name = name.replace(/^ui-/, '');
+                            name = name.replace(/[-_]/g, ' ');
 
-                        var val  = name;
-                        name = name.replace(/^hq-background-/, '');
-                        name = name.replace(/^hq-/, '');
-                        name = name.replace(/^ui-/, '');
-                        name = name.replace(/[-_]/g, ' ');
+                            if (name.length > 0) {
+                                name = name[0].toUpperCase() + name.substring(1);
+                                var fff = document.styleSheets[sSheet].href;
 
-                        if (name.length > 0) {
-                            name = name[0].toUpperCase() + name.substring(1);
-                            var fff = document.styleSheets[sSheet].href;
+                                if (fff && fff.indexOf('/') != -1) {
+                                    fff = fff.substring(fff.lastIndexOf('/') + 1);
+                                }
 
-                            if (fff && fff.indexOf('/') != -1) {
-                                fff = fff.substring(fff.lastIndexOf('/') + 1);
-                            }
-
-                            if (!this._internalList[val]) {
-                                if (styles.length > 1) {
-                                    this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: styles[0].replace('.', '')};
-                                } else {
-                                    this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style};
+                                if (!this._internalList[val]) {
+                                    if (substyles.length > 1) {
+                                        this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', '')};
+                                    } else {
+                                        this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style};
+                                    }
                                 }
                             }
                         }
@@ -127,7 +103,6 @@ vis.styleSelect = {
                 }
             }
         }
-
 
         options.filterName  = options.filterName  || '';
         options.filterAttrs = options.filterAttrs || '';
@@ -142,43 +117,46 @@ vis.styleSelect = {
             if (options.filterFile || options.filterName) {
                 var filters = (options.filterName)  ? options.filterName.split(' ')  : null;
                 var attrs   = (options.filterAttrs) ? options.filterAttrs.split(' ') : null;
+                var files   = (options.filterFile)  ? options.filterFile.split(' ')  : [''];
 
                 for (var style in this._internalList) {
-                    if (!options.filterFile ||
-                       (this._internalList[style].file && this._internalList[style].file.indexOf(options.filterFile) != -1)) {
-                        var isFound = !filters;
-                        if (!isFound) {
-                            for (var k = 0; k < filters.length; k++) {
-                                if (style.indexOf(filters[k]) != -1) {
-                                    isFound = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (isFound) {
-                            isFound = !attrs;
+                    for (var f = 0; f < files.length; f++) {
+                        if (!options.filterFile ||
+                            (this._internalList[style].file && this._internalList[style].file.indexOf(files[f]) != -1)) {
+                            var isFound = !filters;
                             if (!isFound) {
-                                for (var k = 0; k < attrs.length; k++) {
-                                    var t = this._internalList[style].attrs[attrs[k]];
-                                    if (t || t === 0) {
+                                for (var k = 0; k < filters.length; k++) {
+                                    if (style.indexOf(filters[k]) != -1) {
                                         isFound = true;
                                         break;
                                     }
                                 }
                             }
-                        }
-
-                        if (isFound) {
-                            var n = this._internalList[style].name;
-                            if (options.removeName) {
-                                n = n.replace(options.removeName, '');
-                                n = n[0].toUpperCase() + n.substring(1).toLowerCase();
+                            if (isFound) {
+                                isFound = !attrs;
+                                if (!isFound) {
+                                    for (var u = 0; u < attrs.length; u++) {
+                                        var t = this._internalList[style].attrs[attrs[u]];
+                                        if (t || t === 0) {
+                                            isFound = true;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
-                            styles[style] = {
-                                name:        n,
-                                file:        this._internalList[style].file,
-                                parentClass: this._internalList[style].parentClass
-                            };
+
+                            if (isFound) {
+                                var n = this._internalList[style].name;
+                                if (options.removeName) {
+                                    n = n.replace(options.removeName, '');
+                                    n = n[0].toUpperCase() + n.substring(1).toLowerCase();
+                                }
+                                styles[style] = {
+                                    name:        n,
+                                    file:        this._internalList[style].file,
+                                    parentClass: this._internalList[style].parentClass
+                                };
+                            }
                         }
                     }
                 }
@@ -187,10 +165,11 @@ vis.styleSelect = {
             }
         }
 
+        var text = '';
         if (!$('#' + options.name + '_styles').length) {
-            var text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
-            for (var style in styles) {
-                text += '<option ' + ((options.style == style) ? 'selected' : '') + ' value="' + style + '" data-parent-style="' +  styles[style].parentClass + '">' + styles[style].name + '</option>\n';
+            text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
+            for (var style_ in styles) {
+                text += '<option ' + ((options.style == style_) ? 'selected' : '') + ' value="' + style_ + '" data-parent-style="' +  styles[style_].parentClass + '">' + styles[style_].name + '</option>\n';
             }
             text += '</select>';
         }
@@ -258,62 +237,6 @@ vis.styleSelect = {
         if (styles[options.style] && styles[options.style].parentClass) {
             $text.parent().addClass(styles[options.style].parentClass);
         }
-    },
-    _toggleDrop: function (obj) {
-        if (obj.settings.dropOpened) {
-            $("#styleSelectBox" + obj.settings.id).css({display: "none"});
-            $("#styleSelectB" + obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-s" }});
-            obj.settings.dropOpened = false;
-        } else {
-            var elem = $('#styleSelect'+obj.settings.id);
-            var elemBox = $("#styleSelectBox"+obj.settings.id);
-            //if ($(window).height() < elemBox.height() + elemBox.position().top) {
-            // Get position of last element
-            var iHeight = 150;/*obj.settings.count * (obj.settings.height + 18);
-            var wHeight = $(window).height() - $(window).scrollTop();
-            if (iHeight > wHeight - elem.offset().top - elem.height() - 5) {
-                iHeight = wHeight - elem.offset().top - elem.height() - 5;
-            } else {
-                iHeight += 5;
-            }
-
-            if (iHeight > obj.settings.height * 4) {
-                iHeight = obj.settings.height * 4;
-            }*/
-            elemBox.height(iHeight + 5);
-
-            var iWidth = $("#styleSelect"+obj.settings.id).width();
-            elemBox.buttonset().find('table').width(iWidth - 37 - this._scrollWidth);
-            $("#styleSelectBox"+obj.settings.id).css({display: "", width: elem.width(), top: elem.position().top + elem.height(), left: elem.position().left});
-            $("#styleSelectB"+obj.settings.id).button("option", {icons: { primary: "ui-icon-circle-triangle-n" }});
-            obj.settings.dropOpened = true;
-        }
-
-    },
-    _select: function (obj, iStyle, iParentStyle) {
-        var nameImg  = "styleSelectImg"  + obj.settings.id;
-        var nameText = "styleSelectText" + obj.settings.id;
-        $('#' + nameImg).removeClass(obj.settings.style);
-        if (obj.settings.parentClass) {
-            $('#' + nameImg).parent().removeClass(obj.settings.parentClass);
-        }
-
-        obj.settings.style = iStyle;
-        obj.settings.parentClass = iParentStyle;
-
-        $('#' + nameImg).addClass(obj.settings.style);
-        if (iParentStyle) {
-            $('#' + nameImg).parent().addClass(iParentStyle);
-        }
-        $('#' + nameText).html(this._findTitle(obj.settings.styles, obj.settings.style));
-
-        if (obj.settings.onchange) {
-            obj.settings.onchange (obj.settings.style, obj.settings.onchangeParam);
-        }
-    },
-    destroy: function (htmlElem) {
-        $("#styleSelectBox" + htmlElem.settings.id).remove();
-        $('#styleSelect' +    htmlElem.settings.id).remove();
     }
 };
 
@@ -336,20 +259,20 @@ var colorSelect = {
     show:  function (options) {
         var i = 0;
         
-        if (this._selectText == "") {
+        if (!this._selectText) {
             this._selectText = _("Select");
             this._cancelText = _("Cancel");
             this._titleText  = _("Select color");
         }
            
-        if (!options.elemName || options.elemName == "") {
+        if (!options.elemName) {
             options.elemName = "idialog_";
         }
         if (!options.parent) {
             options.parent = $('body');
         }
         
-        if (document.getElementById(options.elemName) != undefined) {
+        if (document.getElementById(options.elemName) !== undefined) {
             $('#'+options.elemName).remove();
         }
         options.parent.append("<div class='dialog' id='colorSelect' title='" + this._titleText + "' style='text-align: center;' ><div style='display: inline-block;' id='colorpicker'></div><input type='text' id='colortext'/></div>");
@@ -408,7 +331,7 @@ if (!$().multiselect) {
                 }
                 var elem = this.element.hide();
                 var div = '<table class="ui-widget-content">';
-                div += '</table>'
+                div += '</table>';
                 this.table = $(div);
                 this.table.insertAfter(elem);
                 this._build();

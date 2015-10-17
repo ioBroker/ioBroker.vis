@@ -324,7 +324,7 @@ vis = $.extend(true, vis, {
 			}
 		}
 		if (widgetIds.length) {
-			window.alert (vis.translate ("Place following widget to the room and start wizard again"));
+			window.alert(_("Place following widget to the room and start wizard again"));
 			for (var i = 0; i < widgetIds.length; i++) {
 				vis.actionNewWidget (widgetIds[i]);
 			}
@@ -340,18 +340,18 @@ vis = $.extend(true, vis, {
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+localData.metaObjects[elems[r]]["Name"]+"</option>\n");
 		}
-		jSelect.append('<option value="_general">'+vis.translate("General")+'</option>');
-		jSelect.append('<option value="">'+vis.translate("All")+'</option>');
+		jSelect.append('<option value="_general">' + _("General")+'</option>');
+		jSelect.append('<option value="">' + _("All")+'</option>');
 		
 		elems = localData.metaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
 		jSelect = $('#wizard_funcs').html("").addClass('dashui-wizard-select');
-		jSelect.append('<option value="">'+vis.translate("All")+'</option>');
+		jSelect.append('<option value="">' + _("All")+'</option>');
 		for (var r in elems) {
 			jSelect.append("<option value='"+elems[r]+"'>"+localData.metaObjects[elems[r]]["Name"]+"</option>\n");
 		}
 		jSelect = $('#wizard_widgets').html("").addClass('dashui-wizard-select');
-		jSelect.append('<option value="_nobat">'+vis.translate("All except Low battery")+'</option>');
-		jSelect.append('<option value="">'+vis.translate("All")+'</option>');
+		jSelect.append('<option value="_nobat">'+_("All except Low battery")+'</option>');
+		jSelect.append('<option value="">'+_("All")+'</option>');
 		for (var r in vis.hm2Widget) {
 			for (var i = 0; i < vis.widgetSets.length; i++) {
 				var name = vis.widgetSets[i].name || vis.widgetSets[i];

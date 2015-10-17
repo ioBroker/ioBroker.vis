@@ -8,13 +8,13 @@
         // Add words for basic widgets
         $.extend(true, systemDictionary, {
             // Bars
-            "src":             {"en": "Source",               "de": "Quelle",              "ru": "Адрес"},
-            "refreshInterval": {"en": "Refresh interval(ms)", "de": "Updatezeit(ms)",      "ru": "Интервал обновления(ms)"},
-            "is_comma":        {"en": "Divider comma",        "de": "Komme als Trennung",  "ru": "Запятая-разделитель"},
-            "digits":          {"en": "Digits after comma",   "de": "Zeichen nach Komma",  "ru": "Знаков после запятой"},
-            "oid":             {"en": "Object ID",            "de": "Object ID",           "ru": "ID Объекта"},
-            "html_prepend":    {"en": "Prepend value",        "de": "Voranstellen HTML",   "ru": "Префикс значения"},
-            "html_append":     {"en": "Append to value",      "de": "HTML anhängen",       "ru": "Суффикс значения"},
+            "src":              {"en": "Source",                    "de": "Quelle",                 "ru": "Адрес"},
+            "refreshInterval":  {"en": "Refresh interval(ms)",      "de": "Updatezeit(ms)",         "ru": "Интервал обновления(ms)"},
+            "is_comma":         {"en": "Divider comma",             "de": "Komme als Trennung",     "ru": "Запятая-разделитель"},
+            "digits":           {"en": "Digits after comma",        "de": "Zeichen nach Komma",     "ru": "Знаков после запятой"},
+            "oid":              {"en": "Object ID",                 "de": "Object ID",              "ru": "ID Объекта"},
+            "html_prepend":     {"en": "Prepend value",             "de": "Voranstellen HTML",      "ru": "Префикс значения"},
+            "html_append":      {"en": "Append to value",           "de": "HTML anhängen",          "ru": "Суффикс значения"},
             "html_append_singular": {
                 "en" : "Append to value (Singular)",
                 "de": "HTML anhängen (Singulär)",
@@ -35,126 +35,145 @@
                 "de": "HTML Kod, der wird vom dem Wert platziert,\x0Az.B. </b>",
                 "ru": "HTML код будет помещён после значения,\x0Aнапример </b>"
             },
-            "stretch":         {"en": "Stretch",               "de": "Strecken",           "ru": "Растянуть"},
-            "factor":          {"en": "Multiplex factor",      "de": "Multiplikation",     "ru": "Множитеть"},
-            "class_true":      {"en": "Class if quality 'true'", "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-            "class_false":     {"en": "Class if quality 'false'", "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
-            "test_html":       {"en": "Text for test",         "de": "Testtext",           "ru": "Тестовый текст"},
+            "stretch":          {"en": "Stretch",                   "de": "Strecken",               "ru": "Растянуть"},
+            "factor":           {"en": "Multiplex factor",          "de": "Multiplikation",         "ru": "Множитеть"},
+            "class_true":       {"en": "Class if quality 'true'",   "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
+            "class_false":      {"en": "Class if quality 'false'",  "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
+            "test_html":        {"en": "Text for test",             "de": "Testtext",               "ru": "Тестовый текст"},
             "test_html_tooltip": {
                 "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
                 "de": "Man kann noch Testtext setzen um die Einstellungen visuell zu sehen.\x0ADas ist nur während Edit gültig.",
                 "ru": "Можно задать тестовый текст, что бы видеть настройки визуально.\x0AОн действителен только во время редактирования."
             },
-            "html":            {"en": "HTML",                  "de": "HTML",               "ru": "HTML"},
-            "oid-quality":     {"en": "Quality ID",            "de": "Qualität ID",        "ru": "ID-Качество"},
+            "html":             {"en": "HTML",                      "de": "HTML",                   "ru": "HTML"},
+            "oid-quality":      {"en": "Quality ID",                "de": "Qualität ID",            "ru": "ID-Качество"},
             "oid-quality_tooltip":     {
                 "en": "You can set additionally Quality ID to indicate if the value valid or not.",
                 "de": "Man kann noch zusätzlich Qualität ID setzetn um zu zeigen ob das Wert aktuell ist.",
                 "ru": "Можно дополнительно установить ID-Качества, что бы показать актуальное значение или нет."},
-            "title":           {"en": "Title",                 "de": "Titel",              "ru": "Заголовок"},
-            "title_font":      {"en": "Title font name",       "de": "Titelschriftname",   "ru": "Шрифт заголовка"},
-            "title_color":     {"en": "Title color",           "de": "Titelfarbe",         "ru": "Цвет заголовка"},
-            "title_back":      {"en": "Title backg. color",    "de": "Titelhintergrund",   "ru": "Цвет фона текста"},
-            "title_top":       {"en": "Title top padding",     "de": "Titel-Oben-Abstand", "ru": "Отступ заголовка сверху"},
-            "title_left":      {"en": "Title left padding",    "de": "Titel-Links-Abstand", "ru": "Отступ заголовка слева"},
-            "header_height":   {"en": "Header height",         "de": "Kopfhöhe",           "ru": "Высота заголовока"},
-            "header_color":    {"en": "Header color",          "de": "Kopffarbe",          "ru": "Цвет фона заголовка"},
-            "refreshOnWakeUp": {"en": "Refresh on wake up",    "de": "Update bei Aufwachen", "ru": "Обновлять при выходе из сна"},
+            "title":            {"en": "Title",                     "de": "Titel",                  "ru": "Заголовок"},
+            "title_font":       {"en": "Title font name",           "de": "Titelschriftname",       "ru": "Шрифт заголовка"},
+            "title_color":      {"en": "Title color",               "de": "Titelfarbe",             "ru": "Цвет заголовка"},
+            "title_back":       {"en": "Title backg. color",        "de": "Titelhintergrund",       "ru": "Цвет фона текста"},
+            "title_top":        {"en": "Title top padding",         "de": "Titel-Oben-Abstand",     "ru": "Отступ заголовка сверху"},
+            "title_left":       {"en": "Title left padding",        "de": "Titel-Links-Abstand",    "ru": "Отступ заголовка слева"},
+            "header_height":    {"en": "Header height",             "de": "Kopfhöhe",               "ru": "Высота заголовока"},
+            "header_color":     {"en": "Header color",              "de": "Kopffarbe",              "ru": "Цвет фона заголовка"},
+            "refreshOnWakeUp":  {"en": "Refresh on wake up",        "de": "Update bei Aufwachen",   "ru": "Обновлять при выходе из сна"},
             "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
-            "src_":            {"en": "URL, by value=",        "de": "URL falls Wert=",     "ru": "Адрес при значении "},
-            "nav_view":        {"en": "View to navigate",      "de": "View zum Navigieren", "ru": "Перейти на страницу"},
-            "group_effects":   {"en": "Show/Hide Effects",     "de": "Anzeige Effekte",     "ru": "Эффекты появления/исчезновения"},
-            "group_extended":  {"en": "Extended settings",     "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
-            "body-background": {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
-            "sync":            {"en": "Hide and show together:", "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
+            "src_":             {"en": "URL, by value=",            "de": "URL falls Wert=",        "ru": "Адрес при значении "},
+            "nav_view":         {"en": "View to navigate",          "de": "View zum Navigieren",    "ru": "Перейти на страницу"},
+            "group_effects":    {"en": "Show/Hide Effects",         "de": "Anzeige Effekte",        "ru": "Эффекты появления/исчезновения"},
+            "group_extended":   {"en": "Extended settings",         "de": "Erweiterte Eistellungen", "ru": "Расширенные настройки"},
+            "body-background":  {"en": "Background color by changing", "de": "Hintegrund by Wechsel", "ru": "Фон при смене страниц"},
+            "sync":             {"en": "Hide and show together:",   "de": "Anzeigen und verbergen gleichzeitig", "ru": "Появления и исчезновение вместе"},
             // Effects
-            "show":            {"en": "show", "de": "show", "ru": "show"},
-            "blind":           {"en": "blind", "de": "blind", "ru": "blind"},
-            "bounce":          {"en": "bounce", "de": "bounce", "ru": "bounce"},
-            "clip":            {"en": "clip", "de": "clip", "ru": "clip"},
-            "drop":            {"en": "drop", "de": "drop", "ru": "drop"},
-            "explode":         {"en": "explode", "de": "explode", "ru": "explode"},
-            "fade":            {"en": "fade", "de": "fade", "ru": "fade"},
-            "fold":            {"en": "fold", "de": "fold", "ru": "fold"},
-            "highlight":       {"en": "highlight", "de": "highlight", "ru": "highlight"},
-            "puff":            {"en": "puff", "de": "puff", "ru": "puff"},
-            "pulsate":         {"en": "pulsate", "de": "pulsate", "ru": "pulsate"},
-            "scale":           {"en": "scale", "de": "scale", "ru": "scale"},
-            "shake":           {"en": "shake", "de": "shake", "ru": "shake"},
-            "size":            {"en": "size", "de": "size", "ru": "size"},
-            "slide":           {"en": "slide", "de": "slide", "ru": "slide"},
-            "is_milliseconds": {"en": "Milliseconds", "de": "Millisekunden", "ru": "Миллисекунды"},
+            "show":             {"en": "show",                      "de": "show",                   "ru": "show"},
+            "blind":            {"en": "blind",                     "de": "blind",                  "ru": "blind"},
+            "bounce":           {"en": "bounce",                    "de": "bounce",                 "ru": "bounce"},
+            "clip":             {"en": "clip",                      "de": "clip",                   "ru": "clip"},
+            "drop":             {"en": "drop",                      "de": "drop",                   "ru": "drop"},
+            "explode":          {"en": "explode",                   "de": "explode",                "ru": "explode"},
+            "fade":             {"en": "fade",                      "de": "fade",                   "ru": "fade"},
+            "fold":             {"en": "fold",                      "de": "fold",                   "ru": "fold"},
+            "highlight":        {"en": "highlight",                 "de": "highlight",              "ru": "highlight"},
+            "puff":             {"en": "puff",                      "de": "puff",                   "ru": "puff"},
+            "pulsate":          {"en": "pulsate",                   "de": "pulsate",                "ru": "pulsate"},
+            "scale":            {"en": "scale",                     "de": "scale",                  "ru": "scale"},
+            "shake":            {"en": "shake",                     "de": "shake",                  "ru": "shake"},
+            "size":             {"en": "size",                      "de": "size",                   "ru": "size"},
+            "slide":            {"en": "slide",                     "de": "slide",                  "ru": "slide"},
+            "is_milliseconds":  {"en": "Milliseconds",              "de": "Millisekunden",          "ru": "Миллисекунды"},
             "is_milliseconds_tooltip": {
                 "en": "Is object is milliseconds from 1970.01.01 00:00:00. Normally no.",
                 "de": "Ob das Wert die Milleskunden seit 1970.01.01 00:00:00 ist. Normalerweise nicht.",
                 "ru": "Является ли значение объекта миллисекундами с 1970.01.01 00:00:00. Обычно нет."
             },
-            "format_date":     {"en": "Dateformat", "de": "Datumformat", "ru": "Формат даты"},
+            "format_date":      {"en": "Dateformat",                "de": "Datumformat",            "ru": "Формат даты"},
             "format_date_tooltip": {
                 "en": "Dateformat",
                 "de": "Datumformat",
                 "ru": "Формат даты"
             },
 
-            "hide_effect":     {"en": "Hide effect",           "de": "Verbergeneffekt",    "ru": "Эффект скрытия"},
-            "hide_duration":   {"en": "Hide duration(ms)",     "de": "Verbergendauer",     "ru": "Длительность скрытия(мс)"},
-            "hide_options":    {"en": "Hide options",          "de": "Verbergenoptionen",  "ru": "Опции скрытия"},
-            "show_effect":     {"en": "Show effect",           "de": "Anzeigeeffekt",      "ru": "Эффект появления"},
-            "show_duration":   {"en": "Show duration(ms)",     "de": "Anzeigedauer",       "ru": "Длительность появления(мс)"},
-            "show_options":    {"en": "Show options",          "de": "Anzeigeoptionen",    "ru": "Опции появления"},
-            "left":            {"en": "left",                  "de": "links",              "ru": "лево"},
-            "right":           {"en": "right",                 "de": "rechts",             "ru": "право"},
-            "top":             {"en": "top",                   "de": "oben",               "ru": "верх"},
-            "bottom":          {"en": "bottom",                "de": "unten",              "ru": "низ"},
+            "hide_effect":      {"en": "Hide effect",               "de": "Verbergeneffekt",        "ru": "Эффект скрытия"},
+            "hide_duration":    {"en": "Hide duration(ms)",         "de": "Verbergendauer",         "ru": "Длительность скрытия(мс)"},
+            "hide_options":     {"en": "Hide options",              "de": "Verbergenoptionen",      "ru": "Опции скрытия"},
+            "show_effect":      {"en": "Show effect",               "de": "Anzeigeeffekt",          "ru": "Эффект появления"},
+            "show_duration":    {"en": "Show duration(ms)",         "de": "Anzeigedauer",           "ru": "Длительность появления(мс)"},
+            "show_options":     {"en": "Show options",              "de": "Anzeigeoptionen",        "ru": "Опции появления"},
+            "left":             {"en": "left",                      "de": "links",                  "ru": "лево"},
+            "right":            {"en": "right",                     "de": "rechts",                 "ru": "право"},
+            "top":              {"en": "top",                       "de": "oben",                   "ru": "верх"},
+            "bottom":           {"en": "bottom",                    "de": "unten",                  "ru": "низ"},
 
-            "contains_view":   {"en": "Contains view",         "de": "Viewname",           "ru": "Имя страницы"},
-            "persistent":      {"en": "Persistent",            "de": "Bleibend",           "ru": "Постоянно"},
+            "contains_view":    {"en": "Contains view",             "de": "Viewname",               "ru": "Имя страницы"},
+            "persistent":       {"en": "Persistent",                "de": "Bleibend",               "ru": "Постоянно"},
             "persistent_tooltip": {
                 "en": "If persistent the view will not be destroyed when inactive, just hide.\nElsewise the view will be destroyed, if inactive.",
                 "de": "Falls 'Bleibend', dann wird die View nicht zerstört, sondern nur versteckt wenn inaktive. Sonst wird die View immer wieder kreiert und zerstört.",
                 "ru": "Если выбранно 'Постоянно', то страница не будет уничтожаться, если она не активна. В противном случае страница будет создаваться и разрушаться."},
-            "valuelist":       {"en": "Values list",           "de": "Wertenliste",        "ru": "Список значений"},
+            "valuelist":        {"en": "Values list",               "de": "Wertenliste",            "ru": "Список значений"},
             "valuelist_tooltip": {
                 "en": "Divide values with semicolon, like 'ok;warning;alram'. Every text accordingly for value 0,1,2 and so on",
                 "de": "Die Werte mit Semikolon trennen, wie 'ok;Warnung;Alarm'. Jeder Text ist entsprechend für das Wert 0,1,2 usw.",
                 "ru": "Разделять значения точкой запятой, например 'ok;Внимание;Тревога'. Каждый текст соответственно для значения 0,1,2 итд."},
-            "html_false":      {"en": "HTML by 'false'",       "de": "HTML bei 'false'",   "ru": "HTML если 0"},
-            "html_true":       {"en": "HTML by 'true'",        "de": "HTML bei 'true'",    "ru": "HTML если 1"},
-            "text_false":      {"en": "Text by 'false'",       "de": "Text bei 'false'",   "ru": "Текст если 0"},
-            "text_true":       {"en": "Text by 'true'",        "de": "Text bei 'true'",    "ru": "Текст если 1"},
-            "svg_false":       {"en": "SVG by 'true'",         "de": "SVG bei 'true'",     "ru": "SVG если 0"},
-            "svg_true":        {"en": "SVG by 'true'",         "de": "SVG bei 'true'",     "ru": "SVG если 1"},
-            "opacity":         {"en": "Opacity",               "de": "Durchsichtigkeit",   "ru": "Текст если 1"},
-            "html_closed":     {"en": "HTML by 'closed'",      "de": "HTML bei 'zu'",      "ru": "HTML если закрыто"},
-            "html_open":       {"en": "HTML by 'open'",        "de": "HTML bei 'auf'",     "ru": "HTML если открыто"},
-            "html_tilt":       {"en": "HTML by 'tilted'",      "de": "HTML bei 'gekippt'", "ru": "HTML если наклоненно"},
+            "html_false":       {"en": "HTML by 'false'",           "de": "HTML bei 'false'",       "ru": "HTML если 0"},
+            "html_true":        {"en": "HTML by 'true'",            "de": "HTML bei 'true'",        "ru": "HTML если 1"},
+            "text_false":       {"en": "Text by 'false'",           "de": "Text bei 'false'",       "ru": "Текст если 0"},
+            "text_true":        {"en": "Text by 'true'",            "de": "Text bei 'true'",        "ru": "Текст если 1"},
+            "svg_false":        {"en": "SVG by 'false'",            "de": "SVG bei 'false'",        "ru": "SVG если 0"},
+            "svg_true":         {"en": "SVG by 'true'",             "de": "SVG bei 'true'",         "ru": "SVG если 1"},
+            "svg_opacity":      {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Прозрачность"},
+            "html_closed":      {"en": "HTML by 'closed'",          "de": "HTML bei 'zu'",          "ru": "HTML если закрыто"},
+            "html_open":        {"en": "HTML by 'open'",            "de": "HTML bei 'auf'",         "ru": "HTML если открыто"},
+            "html_tilt":        {"en": "HTML by 'tilted'",          "de": "HTML bei 'gekippt'",     "ru": "HTML если наклоненно"},
             "html_tilt_tooltip": {
                 "en": "0 - Closed, 1 - tilt, 2 - open",
                 "de": "0- Zu, 1 - gekippt, 2 - auf",
                 "ru": "0 - закрыто, 1 - откинуто, 2 - открыто"
             },
-            "color":           {"en": "Color",                 "de": "Farbe",              "ru": "Цвет"},
-            "shadow":          {"en": "Opacity",               "de": "Durchsichtigkeit",   "ru": "Тень"},
-            "shadow_tooltip":  {
+            "color":            {"en": "Color",                     "de": "Farbe",                  "ru": "Цвет"},
+            "shadow":           {"en": "Opacity",                   "de": "Durchsichtigkeit",       "ru": "Тень"},
+            "shadow_tooltip":   {
                 "en": "CSS Shadow, like '10px 10px 5px #888888'",
                 "de": "CSS Shatten, wie '10px 10px 5px #888888'",
                 "ru": "CSS Тень, как '10px 10px 5px #888888'"
             },
-            "reverse":         {"en": "Revers value",          "de": "Wert umkehren",      "ru": "Перевернуть значение"},
-            "border":          {"en": "Border",                "de": "Rand",               "ru": "Окантовка"},
-            "border_tooltip":  {
+            "reverse":          {"en": "Revers value",              "de": "Wert umkehren",          "ru": "Перевернуть значение"},
+            "border":           {"en": "Border",                    "de": "Rand",                   "ru": "Окантовка"},
+            "border_tooltip":   {
                 "en": "CSS border, like 'green 5px solid'",
                 "de": "CSS Rand, wie 'green 5px solid'",
                 "ru": "CSS бордюр, как 'green 5px solid'"
             },
-            "test_text":       {"en": "Test text",             "de": "Testtext",           "ru": "Тестовый текст"},
-            "max_width":       {"en": "Max. width",            "de": "Maximale Breite",    "ru": "Максимальная ширина"},
-            "style":           {"en": "Style for ",            "de": "Stil für ",          "ru": "Стиль для "},
-            "style_tooltip":   {
+            "test_text":        {"en": "Test text",                 "de": "Testtext",               "ru": "Тестовый текст"},
+            "max_width":        {"en": "Max. width",                "de": "Maximale Breite",        "ru": "Максимальная ширина"},
+            "style":            {"en": "Style for ",                "de": "Stil für ",              "ru": "Стиль для "},
+            "style_tooltip":    {
                 "en": "Write here css style, like: 'color:red;background:white'",
                 "de": "Hier muss CSS Stil stehen, wie 'color:red;background:white'",
                 "ru": "CSS Стиль, например: 'color:red;background:white'"},
-            "count":           {"en": "Values number to",      "de": "Wertsanzahl bis",        "ru": "Количество значений до"}
+            "count":            {"en": "Values number to",          "de": "Wertsanzahl bis",        "ru": "Количество значений до"},
+            "test_list":        {"en": "Test value",                "de": "Testwert",               "ru": "Тестовое значение"},
+            "urlValue":         {"en": "Call URL on click",         "de": "Rufe URL bei click",     "ru": "Вызвать URL при нажатии"},
+            "group_ccontrol":   {"en": "Advanced control",          "de": "Extrasteuerung",         "ru": "Продвинутое управление"},
+            "urlFalse":         {"en": "URL on false",              "de": "URL bei false",          "ru": "URL при false"},
+            "urlTrue":          {"en": "URL on true",               "de": "URL bei true",           "ru": "URL при true"},
+            "oidFalse":         {"en": "Object ID on false",        "de": "Objekt ID bei false",    "ru": "ID объекта при false"},
+            "oidTrue":          {"en": "Object ID on true",         "de": "Objekt ID bei true",     "ru": "ID объекта при true"},
+            "oidTrueValue":     {"en": "Value for OÍD on true",     "de": "Wert für ID bei false",  "ru": "Значение для ID при false"},
+            "oidFalseValue":    {"en": "Value for OÍD on false",    "de": "Wert für ID bei true",   "ru": "Значение для ID при true"},
+            "square":           {"en": "square",                    "de": "square",                 "ru": "квадрат"},
+            "pentagone":        {"en": "pentagone",                 "de": "pentagone",              "ru": "Пятиуголник"},
+            "hexagone":         {"en": "hexagone",                  "de": "hexagone",               "ru": "Шестиугольник"},
+            "octagone":         {"en": "octagone",                  "de": "octagone",               "ru": "Восьмиугольник"},
+            "circle":           {"en": "circle",                    "de": "Kreis",                  "ru": "Круг"},
+            "svgType":          {"en": "Type",                      "de": "Typ",                    "ru": "Тип"},
+            "strokeColor":      {"en": "Stroke color",              "de": "Liniefarbe",             "ru": "Цвет линии"},
+            "fill":             {"en": "Fill color",                "de": "Füllfarbe",              "ru": "Цвет заливки"},
+            "strokeWidth":      {"en": "Stroke width",              "de": "Liniebreite",            "ru": "Ширина линии"},
+            "rotate":           {"en": "Rotate",                    "de": "Drehen",                 "ru": "Повернуть на"}
         });
     }
 
@@ -171,6 +190,8 @@
             var oid   = $this.attr('data-oid');
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 var view = viewArr[newVal];
                 if (!persistent) {
                     $this.parent().find('div.vis-view').remove();
@@ -188,16 +209,23 @@
             var oid   = $this.attr('data-oid');
 
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
             });
 
             if (vis.states[oid + '.val'] !== undefined) {
-                $this.attr('src', srcArr[vis.states[oid + '.val']]);
+                var val = vis.states[oid + '.val'];
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                $this.attr('src', srcArr[val]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
                     var val = vis.states[oid + '.val'] || 0;
+                    if (val === 'true'  || val === true)  val = 1;
+                    if (val === 'false' || val === false) val = 0;
                     var src = srcArr[val];
                     $this.attr("src", src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -208,16 +236,24 @@
             var oid = $this.attr('data-oid');
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
             });
 
             if (vis.states[oid + '.val'] !== undefined) {
-                $this.attr('src', srcArr[vis.states[oid + '.val']]);
+                var val = vis.states[oid + '.val'];
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                $this.attr('src', srcArr[val]);
             }
 
             if (refreshInterval > 0) {
                 setInterval(function () {
                     var val = vis.states[oid + '.val'] || 0;
+                    if (val === 'true'  || val === true)  val = 1;
+                    if (val === 'false' || val === false) val = 0;
+
                     var src = srcArr[val];
                     if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
@@ -225,7 +261,10 @@
         },
         value: function (values, oid) {
             if (oid != 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
-                return values[vis.states.attr(oid + '.val')];
+                var val = vis.states.attr(oid + '.val');
+                if (val === 'true'  || val === true)  val = 1;
+                if (val === 'false' || val === false) val = 0;
+                return values[val];
             } else {
                 return values[0];
             }
@@ -268,15 +307,26 @@
             if (val === 'false') val = false;
 
             if (!vis.editMode) {
-                $this.on('click', function (e) {
-                    vis.setValue($(this).attr('data-oid'), $(this).attr('data-val'));
+                $this.on('click touchstart', function (e) {
+                    // Protect against two events
+                    if (vis.detectBounce(this)) return;
+
+                    var oid = $(this).attr('data-oid');
+
+                    if ($(this).attr('url-value')) {
+                        vis.conn.httpGet($(this).attr('url-value'));
+                    }
+
+                    if (oid) {
+                        var val = $(this).attr('data-val');
+                        if (val === undefined || val === null) val = false;
+                        if (val === 'true')  val = true;
+                        if (val === 'false') val = false;
+                        if (parseFloat(val).toString() == val) val = parseFloat(val);
+
+                        if (oid) vis.setValue(oid, val);
+                    }
                 });
-                // @geolin - auch das musste ich wieder entfernen weil es zu doppelter Ausführung geführt hat.
-                /*
-                 $this.on('touchend',function (e) {
-                    $(this).trigger('click');
-                 });
-                */
             }
         },
         pressed: null,
@@ -311,7 +361,10 @@
             }
 
             if (!vis.editMode) {
-                $(el).click(function (e) {
+                $(el).on('click touchstart', function (e) {
+                    // Protect against two events
+                    if (vis.detectBounce(this)) return;
+
                     clearTimeout(vis.binds.basic.pressed);
                     if (vis.binds.basic.pressedNext) {
                         vis.binds.basic.pressedNext = false;
@@ -345,20 +398,21 @@
             }
         },
         navigation: function (el, options) {
-            var $this = $(el);
-            $this.click(function (e) {
-                if (!vis.editMode) {
-                    if (options.background) {
-                        $('body').css({background: options.background});
-                    }
+            if (!vis.editMode) {
+                var $this = $(el);
+                $this.on('click touchstart', function (e) {
+                    // Protect against two events
+                    if (vis.detectBounce(this)) return;
+
+                    if (options.background) $('body').css({background: options.background});
+
                     vis.changeView(options.nav_view, options.hideOptions, options.showOptions, options.sync);
                     //e.preventDefault();
                     //return false;
-                }
-
-            });
+                });
+            }
         },
-        hideOnFalse: function (el) {
+        /*hideOnFalse: function (el) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
             vis.states.bind(oid + ".val", function (e, newVal, oldVal) {
@@ -412,7 +466,7 @@
                     $this.hide();
                 }
             }
-        },
+        },*/
         _onChange: function (el, oid, wid) {
             var $this = $(el);
             // If still working
@@ -578,27 +632,111 @@
         },
         toggle: function (el, oid) {
             var $this = $(el);
-            var oid = oid || $this.attr('data-oid');
+            var oid = oid || $this.data('oid');
+            var min = $this.data('min');
+            var max = $this.data('max');
 
-            if (oid && !vis.editMode) {
-                // @geolin - musste das wieder entfernen - das führt zu doppelter Ausführung (Gerät geht kurz an und sofort wieder aus bzw umgekehrt)
-                //$this.on('touchend', function () { $(this).trigger('click'); });
+            var urlTrue     = $this.data('url-true');
+            var urlFalse    = $this.data('url-false');
+            var oidTrue     = $this.data('oid-true');
+            var oidFalse    = $this.data('oid-false');
+            var oidTrueVal  = $this.data('oid-true-value');
+            var oidFalseVal = $this.data('oid-false-value');
 
-                $this.on('click', function () {
-                    var _oid = $(this).attr('data-oid');
-                    var val = vis.states[oid + '.val'];
-                    if (val === null || val === '' || val === undefined || val === false || val === 'false') {
-                        vis.setValue(oid, true);
-                    } else if (val === true || val === 'true') {
-                        vis.setValue(oid, false);
-                    } else {
-                        val = parseFloat(val);
-                        if (val >= 0.5) {
-                            val = 1;
+            if (min === '') min = undefined;
+            if (max === '') max = undefined;
+
+            if ((oid || oidTrue || urlTrue) && !vis.editMode) {
+                $this.on('click touchstart', function () {
+                    // Protect against two events
+                    if (vis.detectBounce(this)) return;
+                    var val;
+
+                    if (oidTrue || urlTrue) {
+                        if (!oidFalse && oidTrue) oidFalse = oidTrue;
+                        if (!urlFalse && urlTrue) urlFalse = urlTrue;
+
+                        if (!oid || oid == 'nothing_selected') {
+                            val = !$(this).data('state');
+                            // remember state
+                            $(this).data('state', val);
                         } else {
-                            val = 0;
+                            val = vis.states[oid + '.val'];
+                            if (max !== undefined) {
+                                val = (val == max);
+                            } else {
+                                val = (val === 1 || val === '1' || val === true || val === 'true');
+                            }
+                            val = !val; // invert
                         }
-                        vis.setValue(oid, 1 - val);
+                        if (min === undefined || min === 'false' || min === null) min = false;
+                        if (max === undefined || max === 'true'  || max === null) max = true;
+
+                        if (oidTrue) {
+                            if (val) {
+                                if (oidTrueVal === undefined || oidTrueVal === null) oidTrueVal = max;
+                                if (oidTrueVal === 'false') oidTrueVal = false;
+                                if (oidTrueVal === 'true')  oidTrueVal = true;
+                                var f = parseFloat(oidTrueVal);
+                                if (f.toString() == oidTrueVal) oidTrueVal = f;
+                                vis.setValue(oidTrue,  oidTrueVal);
+                            } else {
+                                if (oidFalseVal === undefined || oidFalseVal === null) oidFalseVal = min;
+                                if (oidFalseVal === 'false') oidFalseVal = false;
+                                if (oidFalseVal === 'true')  oidFalseVal = true;
+                                var f = parseFloat(oidFalseVal);
+                                if (f.toString() == oidFalseVal) oidFalseVal = f;
+                                vis.setValue(oidFalse, oidFalseVal);
+                            }
+                        }
+
+                        if (urlTrue) {
+                            if (val) {
+                                vis.conn.httpGet(urlTrue)
+                            } else {
+                                vis.conn.httpGet(urlFalse);
+                            }
+                        }
+
+                        // show new state
+                        if (!oid || oid == 'nothing_selected') {
+                            var img = $(this).data('img-class');
+                            if (val) {
+                                if ($(this).data('as-button')) $(this).addClass('ui-state-active');
+                                val = $(this).data('img-true');
+                            } else {
+                                val = $(this).data('img-false')
+                                if ($(this).data('as-button')) $(this).removeClass('ui-state-active');
+                            }
+                            $(this).find('.' + img).attr('src', val);
+                        }
+                    } else {
+                        var val = vis.states[oid + '.val'];
+                        if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
+                                (min !== undefined && min == val)) {
+                            vis.setValue(oid, max !== undefined ? max : true);
+                        } else
+                        if ((max === undefined && (val === true || val === 'true')) ||
+                                (max !== undefined && val == max))
+                        {
+                            vis.setValue(oid, min !== undefined ? min : false);
+                        } else {
+                            val = parseFloat(val);
+                            if (min !== undefined && max !== undefined) {
+                                if (val >= (max - min) / 2) {
+                                    val = min;
+                                } else {
+                                    val = max;
+                                }
+                            } else {
+                                if (val >= 0.5) {
+                                    val = 0;
+                                } else {
+                                    val = 1;
+                                }
+                            }
+                            vis.setValue(oid, val);
+                        }
                     }
                 });
             }
@@ -659,69 +797,69 @@
                 }
             }
         },
-        showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style) {
-            var obj = {myClass: myClass, view: view, wid: wid, oid: oid, opacity: opacity, svg_false: svg_false, svg_true: svg_true};
-            if (document.getElementById (wid)) {
-                $('#' + wid).remove ();
-            }
+        showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
+            if (document.getElementById(wid)) $('#' + wid).remove ();
+
             var str = vis.states.attr(oid + '.val');
+            if (typeof str === 'string') str = str.toLowerCase();
             var val = parseFloat(str);
-            var sText = '<svg class="vis-widget ' + (myClass || "") + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
+            var sText = '<svg class="vis-widget ' + (myClass || '') + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
             if (vis.editMode) {
                 if (opacity === undefined || opacity === null || opacity === '') opacity = 1;
 
                 if (parseFloat(opacity) < 0.2) opacity = 0.2;
             }
-            if (val === 0 || str === "false" || str === false || str === null) {
+            if (val === 0 || str === 'false' || str === '0' || str === 'off' || str === false || str === null || str === undefined) {
                 // try to analyse
                 sText += svg_false;
-            }
-            else {
+            } else {
                 sText += svg_true;
             }
             sText += '</svg>';
-            $('#visview_'+view).append (sText);
+            $('#visview_' + view).append (sText);
 
-            $('#' + wid).children().attr('data-wid', wid);
-            $('#' + wid).children().attr('data-oid', oid);
-            $('#' + wid).children().attr('opacity', opacity);
-            if ($('#' + wid).children()[0]) {
-                $('#' + wid).children()[0]._obj = obj;
-            }
+            if (style) $('#' + wid).css(style);
 
-            if (style) {
-                $('#' + wid).css(style);
-            }
+            function onSvgClick() {
+                // Protect against two events
+                if (vis.detectBounce(this)) return;
 
-            if (!vis.editMode) {
-                $('#'+wid).children().click(function () {
-                    var $this = $(this);
-                    var id = $this.attr('data-oid');
-                    var val = vis.states[id + '.val'];
-                    if (val === null || val === '' || val === undefined || val === false || val === "false") {
-                        vis.setValue(id, true);
-                    } else if (val === true || val === "true") {
-                        vis.setValue(id, false);
+                var val = vis.states[oid + '.val'];
+                if (val === null || val === '' || val === undefined || val === false || val === "false") {
+                    vis.setValue(oid, true);
+                } else if (val === true || val === "true") {
+                    vis.setValue(oid, false);
+                } else {
+                    val = parseFloat(val);
+                    if (val >= 0.5) {
+                        val = 1;
                     } else {
-                        val = parseFloat(val);
-                        if (val >= 0.5) {
-                            val = 1;
-                        } else {
-                            val = 0;
-                        }
-                        vis.setValue(id, 1 - val);
+                        val = 0;
                     }
-                    var el = $('#'+obj.wid);
-                    this._obj.style = {
-                        "position":'absolute',
-                        top:    el.position().top,
-                        width:  el.width(),
-                        left:   el.position().left,
-                        height: el.height()
-                    };
-                    _setTimeout(function (obj) {
-                        vis.binds.basic.showSvg(obj.myClass, obj.view, obj.wid, obj.oid, obj.opacity, obj.svg_false, obj.svg_true, obj.style);
-                    }, 200, this._obj);
+                    vis.setValue(oid, 1 - val);
+                }
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', function (e, newVal) {
+                    if (newVal === 'true'  || newVal === true)  newVal = 1;
+                    if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
+                    $('#' + wid).html(newVal ? svg_true : svg_false);
+                    if (!vis.editMode && !no_control) {
+                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', onSvgClick);
+                    } else if (vis.editMode){
+                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                            vis.inspectWidgets([wid]);
+                        });
+                    }
+                });
+            }
+
+            if (!vis.editMode && !no_control) {
+                $('#' + wid).children().on('click touchstart', onSvgClick);
+            } else if (vis.editMode){
+                $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                    vis.inspectWidgets([wid]);
                 });
             }
         },
@@ -932,6 +1070,37 @@
                     $('.vis-resolution-default-view').html(vis.findNearestResolution());
                 }
             }, 100);
+        },
+        isFalse: function (val, min, max) {
+            if (min !== undefined && min !== null && min !== '') {
+                if (max !== undefined && max !== null && max !== '') {
+                    return val != max;
+                } else {
+                    return val == min;
+                }
+            }
+            if (val === undefined || val === null || val === false || val === 'false' || val === 'FALSE' || val === 'False' || val === 'OFF' || val === 'Off' || val === 'off' || val === '') return true;
+            if (val === '0' || val === 0) return true;
+            var f = parseFloat(val);
+            if (f.toString() !== 'NaN') return !f;
+            return false;
+        },
+        circlePoints: function (radius, num, step) {
+            var isArray = false;
+            if (step === true) {
+                isArray = true;
+                step = 0;
+            }
+            step = step || 360 / num;
+            var points = [];
+            var text = '';
+            for (var i = 0; i < num; i++) {
+                var point = {x:Math.sin(Math.PI / 180 * (i * step - 180)) * radius, y:Math.cos(Math.PI / 180 * (i * step - 180)) * radius};
+                points.push(point);
+                text += point.x + ', ' + point.y + ' ';
+            }
+            if (isArray) return points;
+            return text;
         }
     };
 
@@ -958,6 +1127,66 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" <%= (el) -> vis.binds.basic.htmlRefresh(el, this.data.attr('html'), data.attr("refreshInterval")) %>>
             <%== this.data.attr('html') %>
+        </div>
+    </div>
+</script>
+
+<script id="tplShapes"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="static"
+        data-vis-name="Svg shape"
+        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 56px; height: 60px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"> <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block; width: 100%; height: 100%; fill: rgb(0, 179, 172); stroke: rgb(0, 156, 179); stroke-width: 6px;"> <circle cx="50" cy="50" r="47"></circle> </svg> </div> </div></div>'
+        data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle,star,arrow;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,360,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewbox="-50 -50 100 100" style="display: block;width:100%; height:100%;fill:<%== this.data.attr('fill') %>;stroke:<%== this.data.attr('strokeColor')%>;stroke-width: <%== this.data.attr('strokeWidth') %>">
+                <%
+                var svg = '';
+                var rotate      = parseFloat(this.data.attr('rotate')) || 0;
+                var scaleWidth  = parseFloat(this.data.attr('scaleWidth')) || 1;
+                var scaleHeight = parseFloat(this.data.attr('scaleHeight')) || 1;
+                var strokeWidth = parseInt(this.data.attr('strokeWidth'), 10) || 0;
+
+                if (this.data.svgType == 'triangle') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 3) + '"/>';
+                } else if (this.data.svgType == 'line') {
+                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
+                } else if (this.data.svgType == 'circle') {
+                    svg = '<circle transform="scale(' + scaleWidth + ', ' + scaleHeight + ') rotate(' + rotate + ')" cx="0" cy="0" r="' + (50 - parseInt(strokeWidth, 10) / 2) + '" />';
+                } else if (this.data.svgType == 'pentagone') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 5) + '"/>';
+                } else if (this.data.svgType == 'square') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 4) + '"/>';
+                } else if (this.data.svgType == 'hexagone') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 6) + '"/>';
+                } else if (this.data.svgType == 'octagone') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 8) + '"/>';
+                } else if (this.data.svgType == 'star') {
+                    svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 5, 144) + '"/>';
+                } else if (this.data.svgType == 'arrow') {
+                    var points = vis.binds.basic.circlePoints(50 - strokeWidth * 4, 3, true);
+                    var text = '';
+                    for (var p = 0; p < points.length; p++) {
+                        text += points.x + ',' + points.y;
+                        if (points.length == p - 2) {
+                            text += '0,0';
+                        }
+                    }
+                    svg = '<polygon transform="rotate(' + rotate + ') translate(0,10)  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
+                        'points="0, -50 -43.3, 25 0,0 43.3, 25"/>';
+                }
+                %>
+                <%== svg %>
+                </g>
+            </svg>
         </div>
     </div>
 </script>
@@ -1027,7 +1256,7 @@
         <% if (this.data.attr('header_height')) { %>
 	    <div style="width:100%;height:<%= this.data.attr('header_height') %>px;background-color:<%= this.data.attr('header_color') %>">
 		<% } %>
-        <div style="position:absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
+        <div style="position: absolute;top:<%= this.data.attr('title_top') %>px;left:<%= this.data.attr('title_left') %>px;color:<%== this.data.attr('title_color') %>;background:<%== this.data.attr('title_back') %>;font:<%== this.data.attr('title_font') %>"><%== this.data.attr('title') %></div>
         <% if (this.data.attr('header_height')) { %>
         </div>
 		<% } %>
@@ -1074,10 +1303,10 @@
         data-vis-name="view in widget"
         data-vis-attrs="contains_view/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
-            <% if (vis.editMode) { %>
-                <div class="editmode-helper" />
-            <% } %>
-            <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
+        <% if (vis.editMode) { %>
+            <div class="editmode-helper"></div>
+        <% } %>
+        <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container">
         </div>
     </div>
 </script>
@@ -1140,6 +1369,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_StatefulImage.png"></img>'
         data-vis-type="stateful"
         data-vis-name="Image 8"
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;src_(0-7)/image">
@@ -1170,7 +1400,8 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static,navigation"
-        data-vis-name="HTML"
+        data-vis-prev='<img src="widgets/basic/img/Prev_HTMLnavigation.png"></img>'
+        data-vis-name="HTML navigation"
         data-vis-attrs="html;nav_view;sync/checkbox;body-background/color;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;hide_options/effect-options;show_effect/effect;show_duration/slider,0,10000,100;show_options/effect-options">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; " id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: (data.attr('hide_options') ? data.attr('hide_options') : {}),duration:data.attr('hide_duration')}, showOptions: {effect:data.attr('show_effect'), options: (data.attr('show_options') ? data.attr('show_options') : {}), duration: data.attr('show_duration')}, sync: data.attr('sync'), background: data.attr('body-background')}) %>>
         <div class="vis-widget-body">
@@ -1223,8 +1454,8 @@
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
+            <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
+                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + ".val"))) : (vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1285,6 +1516,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringImg.png"></img>'
         data-vis-type="val"
         data-vis-name="String img src"
         data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
@@ -1292,7 +1524,7 @@
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %>
-                <img <%= vis.states.attr(this.data.oid + ".val" ) ? "src='" +  vis.states.attr(this.data.oid + ".val" ) + "'" : "" %> width="100%"/>
+                <img src="<%= vis.states.attr(this.data.oid + '.val') || '' %>" width="100%"/>
                  <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
             </div>
@@ -1304,13 +1536,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueList.png"></img>'
         data-vis-type="val"
         data-vis-name="ValueList Text"
         data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%= list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1320,13 +1553,14 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml.png"></img>'
         data-vis-type="val"
         data-vis-name="ValueList HTML"
         data-vis-attrs="oid;html_prepend;html_append;valuelist;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
+                <%== this.data.attr("html_prepend") %><% var list = (data.valuelist ? data.valuelist.split(';') : []); %><%== list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : parseInt(vis.states.attr(this.data.oid + ".val"), 10)] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1336,19 +1570,19 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueListHtml8.png"></img>'
         data-vis-type="val"
         data-vis-name="ValueList HTML Style"
         data-vis-attrs="oid;html_prepend;html_append;count[2]/number,0,10,1;value(0-count);style(0-count);test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px; background-color:gray" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 30px;" id="<%= this.data.attr('wid') %>">
         <%
             var slist = [];
             var i = 0;
             while (data['style' + i] !== undefined) {
                 slist[i] = data['style' + i]; i++;
             }
-            console.log(slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))]);
         %>
-        <div class="vis-widget-body" style="<%== slist[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
+        <div class="vis-widget-body" style="<%== slist[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %>">
             <div data-oid="<%= this.data.attr('oid') %>">
                <%== this.data.attr("html_prepend") %><%
                    var list = [];
@@ -1356,7 +1590,7 @@
                    while (data['value' + j] !== undefined) {
                         list[j] = data['value' + j]; j++;
                    }
-                   %><%== list[(vis.editMode && this.data.attr('test_list') !== '') ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
+                   %><%== list[(vis.editMode && (this.data.attr('test_list') || this.data.attr('test_list') == '0')) ? parseInt(this.data.attr('test_list')) : (parseInt((vis.states.attr(this.data.oid + ".val") == true ? 1 : (vis.states.attr(this.data.oid + ".val") == false ? 0 : vis.states.attr(this.data.oid + ".val"))), 10))] %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1366,6 +1600,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBool.png"></img>'
         data-vis-type="val"
         data-vis-name="Bool HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
@@ -1376,7 +1611,7 @@
             var str = vis.states.attr(this.data.oid + ".val");
             var val = parseFloat(str);
             var state;
-            if (str === false || str === "false" || val == 0) {
+            if (str === false || str === "false" || val == 0 || str === "" || str === null || str === undefined) {
             %>
             <%== this.data.attr("html_false") %>
             <% } else { %>
@@ -1391,6 +1626,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_AckBool.png"></img>'
         data-vis-type="val"
         data-vis-name="AckFlag HTML"
         data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
@@ -1415,7 +1651,7 @@
 <script id="tplValueBoolCheckbox"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-selected" style="left: 232px; top: 312px;" > <div class="vis-widget-prev-body"><input type="checkbox" name="w00004_checkbox"></div> </div>'
+        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-selected" style="left: 232px; top: 312px;" > <div class="vis-widget-prev-body"><input type="checkbox"></div> </div>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bool Checkbox"
@@ -1433,11 +1669,12 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<div id="prev_tplValueBoolSelect" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 61px; height: 20px; position: absolute;"><div class="vis-widget-prev-body" style="overflow:false"><select><option value="1" selected>true</option></select></div></div></div>'
         data-vis-type="ctrl"
         data-vis-name="Bool Select"
         data-vis-attrs="oid;html_prepend;html_append;text_true;text_false">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
-        <div class="vis-widget-body">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:false" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body"  style="overflow:false">
 			<%== this.data.attr("html_prepend") %>
 			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>">
 				<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
@@ -1453,21 +1690,38 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCtrl.png"></img>'
         data-vis-type="ctrl"
         data-vis-name="Bool HTML"
-        data-vis-attrs="oid;html_prepend;html_append;html_false;html_true">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>>
+        data-vis-attrs="oid;min;max;html_prepend;html_append;html_false;html_true;"
+        data-vis-attrs1="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;">
+    <div
+        class="vis-widget <%== this.data.attr('class') %>"
+        style="width:76px; height:76px;"
+        id="<%= this.data.attr('wid') %>"
+        data-oid="<%= this.data.attr('oid') %>"
+        data-min="<%= this.data.attr('min') %>"
+        data-max="<%= this.data.attr('max') %>"
+        data-as-button="<%= this.data.attr('asButton') %>"
+        data-url-true="<%=  this.data.attr('urlTrue') %>"
+        data-url-false="<%= this.data.attr('urlFalse') %>"
+        data-oid-true="<%=  this.data.attr('oidTrue') %>"
+        data-oid-false="<%= this.data.attr('oidFalse') %>"
+        <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<%
-			var str = vis.states.attr(this.data.oid + ".val");
-			var val = parseFloat(str);
-			var state;
-			if (val === 0 || str === "false" || str === false) {
+	        var str = (this.data.oid && this.data.oid != 'nothing_selected') ? vis.states.attr(this.data.oid + '.val') : false;
+            var val = parseFloat(str);
+            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
+            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
+            if (str === true  || str === 'true')  val = max;
+            if (str === false || str === 'false') val = min;
+			if (val != min) {
 			%>
-			    <%== this.data.attr("html_false") %>
-			<% } else { %>
 			    <%== this.data.attr("html_true") %>
+			<% } else { %>
+			    <%== this.data.attr("html_false") %>
 			<% } %>
 			<%== this.data.attr("html_append") %>
         </div>
@@ -1478,64 +1732,35 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
+        data-vis-prev='<div id="prev_tplValueBoolCtrlSvg" style="position: relative; text-align: initial;padding: 4px "><svg class="vis-widget_prev " version="1.1" style="width: 80px; height: 80px; position: absolute;" xmlns="http://www.w3.org/2000/svg"><polygon points="100,10 40,198 190,78 10,78 160,198" style="fill:lime; stroke:purple; stroke-width:5; fill-rule:nonzero" transform="scale(0.3)"></polygon></svg></div>'
         data-vis-type="ctrl,bool"
         data-vis-name="Bool SVG"
-        data-vis-attrs="oid;svg_false;svg_true;opacity/slider,0,1,0.05">
-    <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'),this.data.attr("opacity"),this.data.attr("svg_false"),this.data.attr("svg_true")) %>
+        data-vis-attrs="oid;no_control/checkbox;"
+        data-vis-attrs0="svg_false[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime§ stroke:purple§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
+        data-vis-attrs1="svg_true[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:yellow§ stroke:red§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
+        data-vis-attrs2="svg_opacity/slider,0,1,0.05">
+    <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'), this.data.attr('svg_opacity'), this.data.attr('svg_false'), this.data.attr('svg_true'), null, this.data.attr('no_control')) %>
 </script>
 
 <script id="tplBasicState"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-prev='<img src="widgets/basic/img/Prev_BasicState.png"></img>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="HTML State"
-        data-vis-attrs="html;oid;value">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el) %>>
+        data-vis-attrs="oid;html;value;urlValue">
+    <div
+        class="vis-widget <%== this.data.attr('class') %>"
+        style="width:76px; height:76px;"
+        id="<%= this.data.attr('wid') %>"
+        data-oid="<%= this.data.attr('oid') %>"
+        data-url-value="<%= this.data.attr('urlValue') %>"
+        data-val="<%= this.data.attr('value') %>"
+        <%= (el) -> vis.binds.basic.state(el) %>
+        >
         <div class="vis-widget-body">
 			<%== this.data.attr("html") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHide"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Hide on 0/False"
-        data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHideTrue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Hide on >0/True"
-        data-vis-attrs="oid;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnTrue(el) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
-        </div>
-    </div>
-</script>
-
-<script id="tplShowValue"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Show on Value"
-        data-vis-attrs="oid;value;html;html_prepend;html_append">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 50px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.showOnValue(el, data.attr('value')) %>>
-        <div class="vis-widget-body">
-            <%== this.data.attr("html_prepend") %><%== this.data.attr('html') %><%== this.data.attr("html_append") %>
         </div>
     </div>
 </script>
@@ -1562,13 +1787,13 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid">
+        data-vis-attrs="oid;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;">
     <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
         <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + '.val')) { case null: case '': case undefined: case 0: case "0": case "0.000000": case false: case "false": %>
-                <img src="img/bulb_off.png" width="100%"/>
-            <% break; default: %>
-                <img src="img/bulb_on.png" width="100%"/>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"))) { %>
+                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
+            <% } else { %>
+                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
             <% } %>
         </div>
     </div>
@@ -1581,53 +1806,29 @@
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.toggle(el) %>  style="width: 44px; height: 59px">
-    <div class="vis-widget-body">
-        <% switch (vis.states.attr(this.data.oid + ".val")) { case null: case '': case undefined: case 0: case "0": case "0.000000": case "false": case false: %>
-        <img src="img/bulb_off.png" width="100%"/>
-        <% break; default: %>
-        <img src="img/bulb_on.png" width="100%"/>
-        <% } %>
-    </div>
-    </div>
-</script>
-
-<script id="tplHmWindowRotary"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Turning handle"
-        data-vis-attrs="oid;html_closed;html_tilt;html_open">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:100px;height:20px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>">
+        data-vis-attrs="oid;min;max;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;"
+        data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
+        >
+    <div
+        data-oid="<%= this.data.attr('oid') %>"
+        class="vis-widget <%== this.data.attr('class') %>"
+        id="<%= this.data.attr('wid') %>"
+        style="width: 44px; height: 59px"
+        data-min="<%= this.data.attr('min') %>"
+        data-max="<%= this.data.attr('max') %>"
+        data-url-true="<%=  this.data.attr('urlTrue') %>"
+        data-url-false="<%= this.data.attr('urlFalse') %>"
+        data-oid-true="<%=  this.data.attr('oidTrue') %>"
+        data-oid-false="<%= this.data.attr('oidFalse') %>"
+        data-oid-true-value="<%=  this.data.attr('oidTrueValue') %>"
+        data-oid-false-value="<%= this.data.attr('oidFalseValue') %>"
+        <%= (el) -> vis.binds.basic.toggle(el) %>
+        >
         <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + ".val")) { case 0: case "false": case false: %>
-            <%== this.data.attr("html_closed") %>
-            <% break; case 1: case true: %>
-            <%== this.data.attr("html_tilt") %>
-            <% break; case 2: %>
-            <%== this.data.attr("html_open") %>
-            <% break; default: %>
-            <%== this.data.attr("html_closed") %>
-            <% } %>
-        </div>
-    </div>
-</script>
-
-<script id="tplHmWindow"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Door/Window sensor"
-        data-vis-attrs="oid;html_closed;html_open">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="height:20px;width:100px">
-        <div class="vis-widget-body">
-            <% switch (vis.states.attr(this.data.oid + ".val")) { case "true": case true: %>
-            <%== this.data.attr("html_open") %>
-            <% break; default: %>
-            <%== this.data.attr("html_closed") %>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
+                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
+            <% } else { %>
+                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
             <% } %>
         </div>
     </div>
@@ -1685,12 +1886,27 @@
         data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
         data-vis-attrs="table_oid/id;"
         data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
-        data-vis-attrs1="event_oid/id;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;"
+        data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid;max_rows/number;"
         data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
-        data-vis-attrs-not-used="new_on_top/checkbox;btn_print;view_for_print/views;ack_oid/id"
+        data-vis-attrs-not-used="btn_print;view_for_print/views"
         >
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
        <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
+    </div>
+</script>
+
+<script id="tplHtmlLogout"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="logout,html"
+        data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
+        data-vis-name="HTML logout"
+        data-vis-attrs="html[Logout]/text">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
+        <div class="vis-widget-body">
+            <%== this.data.attr('html') %>
+        </div>
     </div>
 </script>
 
@@ -1717,7 +1933,7 @@
         };
         vis.binds.table.showDialog(this.view, this.data.attr('wid'), options);
     %>
-</script>
+</script-->
 
 <script id="tplScreenResolution"
         type="text/ejs"

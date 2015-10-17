@@ -260,6 +260,13 @@ body{
 
 }
 
+.table-no-space {
+    border: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
+/*    padding: 0;*/
+    margin: 0;
+}
 .fullscreen {
     position: absolute !important;
     z-index: 10000;
@@ -551,6 +558,7 @@ body{
 
 .view-select-tab {
     display: inline;
+    white-space: nowrap;
     margin-left: 1px;
     margin-right: 1px;
     padding: 2px 6px 3px 6px;
@@ -809,4 +817,17 @@ td > .select_active_widget :nth-child(2) {
             #000000 20px,
             #000000 40px
     );
+}
+.ui-icon-logout {
+    background-image: url(../lib/img/logout.png) !important;
+}
+
+.ui-autocomplete {
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.ui-selectmenu-open {
+    z-index: 999;
 }

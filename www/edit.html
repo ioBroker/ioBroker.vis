@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.5.3 -->
+    <!-- ioBroker.vis Version 0.7.2 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -25,7 +25,7 @@
     <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
     <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
-    <link rel="stylesheet" type="text/css" href="widgets/colorpicker/css/farbtastic.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/farbtastic.css"/>
 
     <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
     <link rel="stylesheet" type="text/css" href="css/vis.css"/>
@@ -35,6 +35,7 @@
     <script type="text/javascript" src="lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery-ui-1.11.4.full.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.fancytree-all.min.js"></script>
+    <script type="text/javascript" src="lib/js/colResizable-1.5.min.js"></script>
     <script type="text/javascript" src="lib/js/selectID.js"></script>
     <script type="text/javascript" src="lib/js/socket.io.js"></script>
     <script type="text/javascript" src="lib/js/translate.js"></script>
@@ -46,12 +47,12 @@
     <script type="text/javascript" src="lib/js/can.2.2.4.custom.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
-    <script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script>
+    <!--script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script-->
     <script type="text/javascript" src="lib/js/superclick.js"></script>
     <script type="text/javascript" src="lib/ace/ace.js"></script>
     <script type="text/javascript" src="lib/ace/ext-language_tools.js"></script>
 
-    <script type="text/javascript" src="widgets/colorpicker/js/farbtastic.js"></script>
+    <script type="text/javascript" src="lib/js/farbtastic.js"></script>
 
     <script type="text/javascript" src="js/fm/fileManager.js"></script>
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
@@ -67,8 +68,8 @@
     <!--script type="text/javascript" src="js/visWizard.js"></script-->
 
     <!-- widgets ->
-    <script type="text/javascript" src="widgets/hqWidgets/js/jquery.knob.js"></script>
-    <script type="text/javascript" src="widgets/hqWidgets/js/hqWidgets.js"></script>
+    <script type="text/javascript" src="widgets/hqwidgets/js/jquery.knob.js"></script>
+    <script type="text/javascript" src="widgets/hqwidgets/js/hqwidgets.js"></script>
     <-- widgetsStop -->
 
 </head>
@@ -117,15 +118,31 @@
     <p class="translate">license4</p-->
     <p class="translate">license5</p>
 </div>
-<div style="display: none;" id="dialog_export_view" title="export" class="translateT">
+<div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
     <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
               id="textarea_import_view"></textarea>
-    <input type="text" id="name_import_view">
-    <button id="start_import_view" class="translateB">import</button>
+    <table class="table-no-space">
+        <tr class="table-no-space">
+            <td class="translate table-no-space">View name: </td>
+            <td class="table-no-space"><input type="text" id="name_import_view"></td>
+            <td class="table-no-space"><button id="start_import_view" class="translateB">import view</button></td>
+        </tr>
+    </table>
+
+
+</div>
+<div style="display: none;" id="dialog_export_widgets" title="export widgets title" class="translateT">
+    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+              id="textarea_export_widgets"></textarea>
+</div>
+<div style="display: none;" id="dialog_import_widgets" title="import widgets" class="translateT">
+    <textarea rows="50" cols="160" style="width: 99%; height: calc(98% - 40px); font-size: 11px;"
+              id="textarea_import_widgets"></textarea>
+    <button id="start_import_widgets" class="translateB">import widgets</button>
 </div>
 <div style="display: none ;text-align: center" id="dialog_shortcuts" title="Shortcuts" class="translateT">
     <table style="height: 100%;width: 100%">
@@ -173,7 +190,7 @@
 
 </div>
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
-    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span>vis </span><span id="vis-version"></span></div>
+    <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span class="ui-widget-header"  style="border: 0">vis </span><span id="vis-version" class="ui-widget-header" style="border: 0"></span></div>
 
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
         <li id="ribbon_tab_datei" style="display: none">
@@ -193,7 +210,7 @@
         </li>
     </ul>
     <div id="menu_sf" style="display: inline-block; margin-bottom: -4px;">
-        <ul id="menu" style="margin: 0;height: auto;" class="sf-menu">
+        <ul id="menu" style="margin: 0; height: auto;" class="sf-menu">
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
                 <ul style="display: none;">
                     <li class="ui-state-default " role="tab" style="width: 250px ; background-image: none">
@@ -277,9 +294,20 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none; display: none">
-                        <div style="display: inline-block" class="translate">Hide widget description</div>
-                        <input id="screen_hide_description" type="checkbox"/>
+                    <li id="li_menu_projects" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">Projects</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <ul id="menu_projects">
+                            <li class="ui-state-default project-select menu-item" data-language="de"><a>Main</a></li>
+                        </ul>
+                    </li>
+                    <li id="li_menu_new_project" class="ui-state-default project-new" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">New project...</span></a>
+                    </li>
+                    <li id="li_menu_file_manager" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">File manager...</span></a>
+                    </li>
+                    <li id="li_menu_object_browser" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                        <a class="menu-tab-text"><span class="translate">Object browser...</span></a>
                     </li>
                 </ul>
             </li>
@@ -294,7 +322,9 @@
     <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top translateT" title="Undo">
     <table style="display: inline-block; float: right">
         <tr>
-            <td><button id="saving_progress"></button></td>
+            <td><div id="current-user" class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px"></div></td>
+            <td style="width:30px"><button id="saving_progress"></button></td>
+            <td><button id="logout_button" class="ui-state-default ui-corner-top translateT" style="display: none;" title="Logout"></button></td>
             <td><button id="exit_button"></button></td>
         </tr>
     </table>
@@ -367,6 +397,18 @@
                     </tr>
                 </table>
 
+            </div>
+            <div class="ribbon_field ui-widget-content ui-corner-all">
+                <table style="border-spacing: 0px">
+                    <tr>
+                        <td>
+                            <button class="vis-editor translateB" id="export_view">export view</button>
+                        </td>
+                        <td>
+                            <button class="vis-editor translateB" id="import_view">import view</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -568,12 +610,12 @@
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
                 <table style="border-spacing: 0px">
-                                  <tr>
+                    <tr>
                         <td>
-                            <button class="vis-editor translateB" id="export_view">export view</button>
+                            <span style="display: inline-block" class="translate translateT" title="Make available for all users">Available for all:</span>
                         </td>
                         <td>
-                            <button class="vis-editor translateB" id="import_view">import view</button>
+                            <input type="checkbox" id="vis_access_mode"/>
                         </td>
                     </tr>
                 </table>
@@ -974,7 +1016,11 @@
     </p>
 </div>
 <div id="dialog-edit-text" title="Edit text" style="display: none">
-    <textarea style="width: 98%; height: 96%;resize: none;"></textarea>
+    <!--textarea style="width: 98%; height: 96%;resize: none;" id="dialog-edit-text-textarea"></textarea-->
+    <div id="dialog-edit-text-textarea" style="width: 98%; height: 96%;"></div>
+</div>
+<div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden;display:none">
+    <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width:250px" /></td></tr></table>
 </div>
 
 <div style="display: none" id="uploadPreview"></div>

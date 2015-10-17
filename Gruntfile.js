@@ -29,8 +29,27 @@ module.exports = function (grunt) {
                             replacement: "var version = '" + version + "';"
                         },
                         {
-                            match: /"version"\: *"[\.0-9]*",/g,
+                            match: /"version": *"[\.0-9]*",/g,
                             replacement: '"version": "' + version + '",'
+                        },
+                        {
+                            match: /version: *"[\.0-9]*",/,
+                            replacement: 'version: "' + version + '",'
+                        },
+                        {
+                            match: /version: *'[\.0-9]*',/,
+                            replacement: "version: '" + version + "',"
+                        },                        {
+                            match: /<!-- ioBroker\.vis Version [\.0-9]+ -->/,
+                            replacement: '<!-- ioBroker.vis Version ' + version + ' -->'
+                        },
+                        {
+                            match: /# ioBroker\.vis Version [\.0-9]+/,
+                            replacement: '# ioBroker.vis Version ' + version
+                        },
+                        {
+                            match: /# dev build [\.0-9]+/g,
+                            replacement: '# dev build 0'
                         }
                     ]
                 },
@@ -44,6 +63,24 @@ module.exports = function (grunt) {
                                 srcDir + 'io-package.json'
                         ],
                         dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/cache.manifest',
+                            srcDir + 'www/edit.html',
+                            srcDir + 'www/index.html'
+                        ],
+                        dest:    srcDir + '/www'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/js/vis.js'
+                        ],
+                        dest:    srcDir + '/www/js'
                     }
                 ]
             }
@@ -99,69 +136,6 @@ module.exports = function (grunt) {
                 dest: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.png'
 
             }
-        },
-        compress: {
-            adapter: {
-                options: {
-                    archive: dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.zip'
-                },
-                files: [
-                    {
-                        expand: true,
-                        src: ['**', '!tasks/*', '!Gruntfile.js', '!node_modules/**/*', '!build/**/*'],
-                        dest: '/',
-                        cwd: srcDir
-                    }
-                ]
-            },
-            adapterOffline: {
-                options: {
-                    archive: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.zip'
-                },
-                files: [
-                    {
-                        expand: true,
-                        src: ['**',
-                            '!tasks/*',
-                            '!Gruntfile.js',
-                            '!build/**/*',
-                            '!node_modules/grunt/**/*',
-                            '!node_modules/grunt*/**/*'
-                        ],
-                        dest: '/',
-                        cwd: srcDir
-                    }
-                ]
-            }
-        },
-        exec: {
-            npm: {
-                cmd: 'npm install'
-            }
-        },
-        copy: {
-            json: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: srcDir,
-                        src: ['io-package.json'],
-                        dest: dstDir,
-                        rename: function (dest, src) {
-                            return dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.json';
-                        }
-                    },
-                    {
-                        expand: true,
-                        cwd: srcDir,
-                        src: ['io-package.json'],
-                        dest: dstDir,
-                        rename: function (dest, src) {
-                            return dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.json';
-                        }
-                    }
-                ]
-            }
         }
     });
 
@@ -214,4 +188,6 @@ module.exports = function (grunt) {
         'jshint',
         'jscs'
     ]);
+	
+	grunt.registerTask('prepublish', ['replace']);
 };

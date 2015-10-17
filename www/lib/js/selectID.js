@@ -33,8 +33,11 @@
              onSuccess:  null,     // callback function to be called if user press "Select". Can be overwritten in "show"
              onChange:   null,     // called every time the new object selected
              noDialog:   false,    // do not make dialog
+             noMultiselect: false, // do not make multiselect
              buttons:    null,     // array with buttons, that should be shown in last column
+             panelButtons: null,   // array with buttons, that should be shown at the top of dialog (near expand all)
              list:       false,    // tree view or list view
+             name:       null,     // name of the dialog to store filter settings
              texts: {
                  select:   'Select',
                  cancel:   'Cancel',
@@ -57,8 +60,12 @@
                  edit:     'Edit',
                  ok:       'Ok',
                  wait:     'Processing...',
-                 list:     'Show list view'
-                 tree:     'Show tree view'
+                 list:     'Show list view',
+                 tree:     'Show tree view',
+                 selectAll: 'Select all',
+                 unselectAll: 'Unselect all',
+                 invertSelection: 'Invert selection',
+                 copyTpClipboard: "Copy to clipboard",
              },
              columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button'],
              widths:    null,   // array with width for every column
@@ -68,7 +75,7 @@
              customButtonFilter: null // if in the filter over the buttons some specific button must be shown. It has type like {icons:{primary: 'ui-icon-close'}, text: false, callback: function ()}
      }
  +  show(currentId, filter, callback) - all arguments are optional if set by "init"
- +  clear() - clear object tree to read and buildit anew (used only if objects set by "init")
+ +  clear() - clear object tree to read and build anew (used only if objects set by "init")
  +  getInfo(id) - get information about ID
  +  getTreeInfo(id) - get {id, parent, children, object}
  +  state(id, val) - update states in tree
@@ -147,11 +154,12 @@
         var isRoom  = data.columns.indexOf('room') != -1;
         var isRole  = data.columns.indexOf('role') != -1;
         data.tree = {title: '', children: [], count: 0, root: true};
+        data.enums = [];
 
         for (var id in objects) {
             if (isRoom && objects[id].type == 'enum' && data.regexEnumRooms.test(id)) data.enums.push(id);
 
-            if (isType && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
+            if (isType && objects[id].type && data.types.indexOf(objects[id].type) == -1) data.types.push(objects[id].type);
 
             if (isRole && objects[id].common && objects[id].common.role) {
                 var parts = objects[id].common.role.split('.');
@@ -317,18 +325,91 @@
         if (data.selectedID) {
             data.$tree.fancytree('getTree').visit(function (node) {
                 if (node.key == data.selectedID) {
-                    node.setActive();
-                    node.makeVisible({scrollIntoView: scrollIntoView || false});
+                    try {
+                        node.setActive();
+                        node.makeVisible({scrollIntoView: scrollIntoView || false});
+                    } catch (err) {
+                        console.error(err);
+                    }
                     return false;
                 }
             });
         }
     }
 
+    function syncHeader($dlg) {
+        // read width of data.$tree and set the same width for header
+        var data = $dlg.data('selectId');
+        var $header = $('#selectID_header_' + data.instance);
+        var thDest = $header.find('>colgroup>col');	//if table headers are specified in its semantically correct tag, are obtained
+        var thSrc = data.$tree.find('>thead>tr>th');
+        for (var i = 1; i < thSrc.length; i++) {
+            $(thDest[i]).attr('width', $(thSrc[i]).width());
+        }
+    }
+
+    function findRoomsForObject(data, id, rooms) {
+        rooms = rooms || [];
+        for (var i = 0; i < data.enums.length; i++) {
+            if (data.objects[data.enums[i]].common.members.indexOf(id) != -1 &&
+                rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
+                rooms.push(data.objects[data.enums[i]].common.name);
+            }
+        }
+        var parts = id.split('.');
+        parts.pop();
+        id = parts.join('.');
+        if (data.objects[id]) findRoomsForObject(data, id, rooms);
+
+        return rooms;
+    }
+
+    function clippyCopy(e) {
+        var $temp = $('<input>');
+        //$('body').append($temp);
+        $(this).append($temp);
+        $temp.val($(this).parent().data('clippy')).select();
+        document.execCommand('copy');
+        $temp.remove();
+    }
+
+    function clippyShow(e) {
+        var text = '<button class="clippy-button ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" ' +
+            'role="button" title="' + $(this).data('copyTpClipboard') + '" ' +
+            'style="position: absolute; right: 0; top: 0; width: 36px; height: 18px;">' +
+            '<span class="ui-button-icon-primary ui-icon ui-icon-clipboard"></span></button>';
+
+        $(this).append(text);
+        $(this).find('.clippy-button').click(clippyCopy);
+    }
+
+    function clippyHide(e) {
+        $(this).find('.clippy-button').remove();
+    }
+
+    function installColResize($dlg) {
+        if (!$.fn.colResizable) return;
+
+        var data = $dlg.data('selectId');
+        if (data.$tree.is(':visible')) {
+            data.$tree.colResizable({
+                liveDrag: true,
+                onResize: function (event) {
+                    syncHeader($dlg);
+                }
+            });
+        } else {
+            setTimeout(function () {
+                installColResize($dlg);
+            }, 400)
+        }
+    }
+
     function initTreeDialog($dlg) {
         var c;
         var data = $dlg.data('selectId');
-        var noStates = (data.objects && !data.states);
+        //var noStates = (data.objects && !data.states);
+        var multiselect = (!data.noDialog && !data.noMultiselect);
         // Get all states
         getAllStates(data);
 
@@ -341,6 +422,7 @@
                         var _data = $dlg.data('selectId');
                         if (_data && _data.onSuccess) _data.onSuccess(_data.selectedID, _data.currentId);
                         _data.currentId = _data.selectedID;
+                        storeSettings(data);
                         $dlg.dialog('close');
                     }
                 },
@@ -348,6 +430,7 @@
                     id:   data.instance + '-button-cancel',
                     text: data.texts.cancel,
                     click: function () {
+                        storeSettings(data);
                         $(this).dialog('close');
                     }
                 }
@@ -357,6 +440,9 @@
                 autoOpen: false,
                 modal:    true,
                 width:    '90%',
+                close:    function () {
+                    storeSettings(data);
+                },
                 height:   500,
                 buttons:  data.buttonsDlg
             });
@@ -394,7 +480,7 @@
         var textTypes;
         if (data.columns.indexOf('type') != -1) {
             textTypes = '<select id="filter_type_' + data.instance + '" class="filter_' + data.instance + '" style="padding:0;width:150px"><option value="">' + data.texts.all + '</option>';
-            for (k = 0; k < data.types.length; k++) {
+            for (var k = 0; k < data.types.length; k++) {
                 textTypes += '<option value="' + data.types[k] + '">' + data.types[k] + '</option>';
             }
             textTypes += '</select>';
@@ -403,7 +489,7 @@
         var text = '<div id="' + data.instance + '-div" style="width:100%; height:100%"><table id="selectID_header_' + data.instance + '" style="width: 100%;padding:0; height: 50" cellspacing="0" cellpadding="0">';
         text += '<colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="350px"/>';
+        text += '            <col width="400px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {
@@ -432,8 +518,15 @@
         text += '<td><button id="btn_refresh_' + data.instance + '"></button></td>';
         text += '<td><button id="btn_list_' + data.instance + '"></button></td>';
         text += '<td><button id="btn_collapse_' + data.instance + '"></button></td>';
-        text += '<td><button id="btn_expand_' + data.instance + '"></button></td>';
+        text += '<td><button id="btn_expand_' + data.instance + '"></button></td><td class="select-id-custom-buttons"></td>';
+        if (data.filter && data.filter.type == 'state' && multiselect) {
+            text += '<td style="padding-left: 10px"><button id="btn_select_all_' + data.instance + '"></button></td>';
+            text += '<td><button id="btn_unselect_all_' + data.instance + '"></button></td>';
+            text += '<td><button id="btn_invert_selection_' + data.instance + '"></button></td>';
+        }
+
         if (data.panelButtons) {
+            text += '<td style="width: 20px">&nbsp;&nbsp;</td>';
             for (c = 0; c < data.panelButtons.length; c++) {
                 text += '<td><button id="btn_custom_' + data.instance + '_' + c + '"></button></td>';
             }
@@ -485,7 +578,7 @@
         text +=' <table id="selectID_' + data.instance + '" style="width: 100%;padding:0;table-layout:fixed; overflow:hidden;white-space:nowrap" cellspacing="0" cellpadding="0">';
         text += '        <colgroup>';
         text += '            <col width="1px"/>';
-        text += '            <col width="350px"/>';
+        text += '            <col width="400px"/>';
 
         for (c = 0; c < data.columns.length; c++) {
             if (data.columns[c] == 'image') {
@@ -517,7 +610,7 @@
         text += '        </thead>';
         text += '        <tbody>';
         text += '        </tbody>';
-        text += '    </table></div><div id="process_running_' + data.instance + '" style="position:absolute; top:50%; left:50%; width: 150; height: 25; padding: 12; background: rgba(30, 30, 30, 0.5); display: none; text-align:center; font-size: 1.2em; color: white; font-weight: bold; border-radius: 5">' + data.texts.wait + '</div>';
+        text += '    </table></div><div id="process_running_' + data.instance + '" style="position:absolute; top:50%; left:50%; width: 150; height: 25; padding: 12; background: rgba(30, 30, 30, 0.5); display: none; text-align:center; font-size: 1.2em; color: white; font-weight: bold; border-radius: 5px">' + data.texts.wait + '</div>';
 
         $dlg.html(text);
 
@@ -526,9 +619,10 @@
 
         var foptions = {
             titlesTabbable: true,     // Add all node titles to TAB chain
-            quicksearch: true,
-            source: data.tree.children,
-            extensions: ["table", "gridnav", "filter", "themeroller"],
+            quicksearch:    true,
+            source:         data.tree.children,
+            extensions:     ["table", "gridnav", "filter", "themeroller"],
+            checkbox:       multiselect,
             table: {
                 indentation: 20,
                 nodeColumnIdx: 1
@@ -545,25 +639,47 @@
                 // A node was activated: display its title:
                 // On change
                 //var $dlg = $('#' + data.instance + '-dlg');
+                if (!multiselect) {
+                    var _data = $dlg.data('selectId');
+                    var newId = data.node.key;
+
+                    if (_data.onChange) _data.onChange(newId, _data.selectedID);
+
+                    _data.selectedID = newId;
+                    if (!_data.noDialog) {
+                        // Set title of dialog box
+                        if (_data.objects[newId] && _data.objects[newId].common && _data.objects[newId].common.name) {
+                            $dlg.dialog('option', 'title', _data.texts.selectid + ' - ' + (_data.objects[newId].common.name || ' '));
+                        } else {
+                            $dlg.dialog('option', 'title', _data.texts.selectid + ' - ' + (newId || ' '));
+                        }
+                        // Enable/ disable "Select" button
+                        if (_data.objects[newId]) { // && _data.objects[newId].type == 'state') {
+                            $('#' + _data.instance + '-button-ok').removeClass('ui-state-disabled');
+                        } else {
+                            $('#' + _data.instance + '-button-ok').addClass('ui-state-disabled');
+                        }
+
+                    }
+                }
+            },
+            select: function(event, data) {
                 var _data = $dlg.data('selectId');
-                var newId = data.node.key;
-                if (_data.onChange) _data.onChange(newId, _data.selectedID);
+                var newIds = [];
+                var selectedNodes = data.tree.getSelectedNodes();
+                for	(var i = 0; i < selectedNodes.length; i++) {
+                    newIds.push(selectedNodes[i].key);
+                }
 
-                _data.selectedID = newId;
+                if (_data.onChange) _data.onChange(newIds, _data.selectedID);
 
-                if (!_data.noDialog) {
-                    // Set title of dialog box
-                    if (_data.objects[newId] && _data.objects[newId].common && _data.objects[newId].common.name) {
-                        $dlg.dialog('option', 'title', _data.texts.selectid +  ' - ' + (_data.objects[newId].common.name || ' '));
-                    } else {
-                        $dlg.dialog('option', 'title', _data.texts.selectid +  ' - ' + (newId || ' '));
-                    }
-                    // Enable/ disable "Select" button
-                    if (_data.objects[newId] && _data.objects[newId].type == 'state') {
-                        $('#' + _data.instance + '-button-ok').removeClass('ui-state-disabled');
-                    } else {
-                        $('#' + _data.instance + '-button-ok').addClass('ui-state-disabled');
-                    }
+                _data.selectedID = newIds;
+
+                // Enable/ disable "Select" button
+                if (newIds.length > 0) {
+                    $('#' + _data.instance + '-button-ok').removeClass('ui-state-disabled');
+                } else {
+                    $('#' + _data.instance + '-button-ok').addClass('ui-state-disabled');
                 }
             },
             renderColumns: function (event, _data) {
@@ -573,6 +689,18 @@
                 var isCommon = data.objects[node.key] && data.objects[node.key].common;
                 $tdList.eq(1).css({'overflow': 'hidden'});
                 var base = 2;
+
+                // hide checkbox if only states should be selected
+                if (data.filter && data.filter.type == 'state' && (!data.objects[node.key] || data.objects[node.key].type != 'state')) {
+                    $tdList.eq(1).find('.fancytree-checkbox').hide();
+                }
+                $tdList.eq(1)
+                    .addClass('clippy')
+                    .data('clippy', node.key)
+                    .css({position: 'relative'})
+                    .data('copyTpClipboard', data.texts.copyTpClipboard)
+                    .mouseenter(clippyShow)
+                    .mouseleave(clippyHide);
 
                 for (var c = 0; c < data.columns.length; c++) {
                     if (data.columns[c] == 'image') {
@@ -634,19 +762,10 @@
                     if (data.columns[c] == 'room') {
                         // Try to find room
                         if (data.rooms) {
-                            var rooms = data.rooms[node.key];
-                            if (!rooms) {
-                                rooms = [];
-                                for (var i = 0; i < data.enums.length; i++) {
-                                    if (data.objects[data.enums[i]].common.members.indexOf(node.key) != -1 &&
-                                        rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) rooms.push(data.objects[data.enums[i]].common.name);
-                                }
-                                data.rooms[node.key] = rooms;
-                            }
-                            $tdList.eq(base++).text(rooms.join(', '));
+                            if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
+                            $tdList.eq(base++).text(data.rooms[node.key].join(', '));
                         } else {
                             $tdList.eq(base++).text('');
-
                         }
 
                     } else
@@ -661,6 +780,12 @@
                                     from: data.states[node.key + '.from'],
                                     ack: (data.states[node.key + '.ack'] === undefined) ? '' : data.states[node.key + '.ack']
                                 };
+                            } else {
+                                state = JSON.parse(JSON.stringify(state));
+                            }
+
+                            if (data.objects[node.key] && data.objects[node.key].common && data.objects[node.key].common.role == 'value.time') {
+                                state.val = state.val ? (new Date(state.val)).toString() : state.val;
                             }
 
                             var fullVal;
@@ -674,12 +799,24 @@
                                 fullVal += '\x0A' + data.texts.lc    + ': ' + (state.lc ? formatDate(new Date(state.lc * 1000)) : '');
                                 fullVal += '\x0A' + data.texts.from  + ': ' + (state.from || '');
                             }
-                            $tdList.eq(base).text(state.val);
-                            $tdList.eq(base).attr('title', fullVal);
+                            $tdList.eq(base)
+                                .text(state.val)
+                                .attr('title', fullVal)
+                                .addClass('clippy')
+                                .css({position: 'relative'})
+                                .data('clippy', state.val)
+                                .data('copyTpClipboard', data.texts.copyTpClipboard)
+                                .mouseenter(clippyShow)
+                                .mouseleave(clippyHide).css({color: state.ack ? '' : 'red'});
                         } else {
-                            $tdList.eq(base).text('');
-                            $tdList.eq(base).attr('title', '');
+                            $tdList.eq(base)
+                                .text('')
+                                .attr('title', '')
+                                .removeClass('clippy');
                         }
+                        $tdList.eq(base).dblclick(function (e) {
+                            e.preventDefault();
+                        });
                         base++;
                     } else
                     if (data.columns[c] == 'button') {
@@ -770,8 +907,17 @@
                 }
             },
             dblclick: function (event, _data) {
-                if (data.buttonsDlg && _data && _data.node && !_data.node.folder) {
-                    data.buttonsDlg[0].click();
+                if (data.buttonsDlg) {
+                    if (_data && _data.node && !_data.node.folder) {
+                        data.buttonsDlg[0].click();
+                    }
+                } else if (data.dblclick) {
+                    var tree = data.$tree.fancytree('getTree');
+
+                    var node = tree.getActiveNode();
+                    if (node) {
+                        data.dblclick(node.key);
+                    }
                 }
             }
         };
@@ -952,6 +1098,8 @@
                         }
                     }
                 }
+                // if no clear "close" event => store on change
+                if (data.noDialog) storeSettings(data);
             }
 
             var isCommon = null;
@@ -974,7 +1122,7 @@
                     if (!data.objects[node.key] || data.objects[node.key][f] === undefined || data.objects[node.key][f] != data.filterVals[f]) return false;
                 } else
                 if (f == 'value') {
-                    if (!data.states[node.key] || data.states[node.key].val === undefined || data.states[node.key].val.toString().toLowerCase().indexOf(data.filterVals[f]) == -1) return false;
+                    if (!data.states[node.key] || data.states[node.key].val === undefined || data.states[node.key].val === null || data.states[node.key].val.toString().toLowerCase().indexOf(data.filterVals[f]) == -1) return false;
                 } else
                 if (f == 'button') {
                     if (data.filterVals[f] === 'true') {
@@ -987,20 +1135,8 @@
                     if (!data.objects[node.key]) return false;
 
                     // Try to find room
-                    var rooms = data.rooms[node.key];
-                    if (!data.rooms[node.key]) {
-                        rooms = [];
-
-                        for (var i = 0; i < data.enums.length; i++) {
-                            if (data.objects[data.enums[i]].common.members.indexOf(node.key) != -1 &&
-                                rooms.indexOf(data.objects[data.enums[i]].common.name) == -1) {
-                                rooms.push(data.objects[data.enums[i]].common.name);
-                            }
-                        }
-                        data.rooms[node.key] = rooms;
-                    }
-
-                    if (rooms.indexOf(data.filterVals[f]) == -1) return false;
+                    if (!data.rooms[node.key]) data.rooms[node.key] = findRoomsForObject(data, node.key);
+                    if (data.rooms[node.key].indexOf(data.filterVals[f]) == -1) return false;
                 }
             }
 
@@ -1067,7 +1203,8 @@
                 initTreeDialog(data.$dlg);
                 $('#process_running_' + data.instance).hide();
             }, 200);
-        }).attr('title', data.texts.tree)
+        }).attr('title', data.texts.tree);
+
         if (data.list) {
             $('#btn_list_' + data.instance).addClass('ui-state-error');
             $('#btn_expand_' + data.instance).hide();
@@ -1081,6 +1218,45 @@
             initTreeDialog(data.$dlg);
             $('#process_running_' + data.instance).hide();
         }).attr('title', data.texts.refresh);
+
+        $('#btn_select_all_' + data.instance).button({icons: {primary: 'ui-icon-circle-check'}, text: false}).css({width: 18, height: 18}).click(function () {
+            $('#process_running_' + data.instance).show();
+            setTimeout(function () {
+                data.$tree.fancytree('getRootNode').visit(function (node) {
+                    if (!data.filterVals.length || node.match || node.subMatch) {
+                        // hide checkbox if only states should be selected
+                        if (data.objects[node.key] && data.objects[node.key].type == 'state') {
+                            node.setSelected(true);
+                        }
+                    }
+                });
+                $('#process_running_' + data.instance).hide();
+            }, 100);
+        }).attr('title', data.texts.selectAll);
+
+        $('#btn_unselect_all_' + data.instance).button({icons: {primary: 'ui-icon-circle-close'}, text: false}).css({width: 18, height: 18}).click(function () {
+            $('#process_running_' + data.instance).show();
+            setTimeout(function () {
+                data.$tree.fancytree('getRootNode').visit(function (node) {
+                    node.setSelected(false);
+                });
+                $('#process_running_' + data.instance).hide();
+            }, 100);
+        }).attr('title', data.texts.unselectAll);
+
+        $('#btn_invert_selection_' + data.instance).button({icons: {primary: 'ui-icon-transferthick-e-w'}, text: false}).css({width: 18, height: 18}).click(function () {
+            $('#process_running_' + data.instance).show();
+            setTimeout(function () {
+                data.$tree.fancytree('getRootNode').visit(function (node) {
+                    if (!data.filterVals.length || node.match || node.subMatch){
+                        if (data.objects[node.key] && data.objects[node.key].type == 'state') {
+                            node.toggleSelected();
+                        }
+                    }
+                });
+                $('#process_running_' + data.instance).hide();
+            }, 100);
+        }).attr('title', data.texts.invertSelection);
 
         for (var f in filter) {
             if (f) $('#filter_' + f + '_' + data.instance).val(filter[f]).trigger('change');
@@ -1098,6 +1274,50 @@
         }
 
         showActive($dlg);
+        loadSettings(data);
+        installColResize($dlg);
+
+        // set preset filters
+        for (var field in data.filterPresets) {
+            if (!data.filterPresets[field]) continue;
+            if (typeof data.filterPresets[field] == 'object') {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field][0]).trigger('change');
+            } else {
+                $('#filter_' + field + '_' + data.instance).val(data.filterPresets[field]).trigger('change');
+            }
+        }
+    }
+
+    function storeSettings(data) {
+        if (data.timer) {
+            clearTimeout(data.timer);
+        }
+        data.timer = setTimeout(function () {
+            if (typeof(Storage) !== "undefined" && data.name) {
+                window.localStorage.setItem(data.name + '-filter', JSON.stringify(data.filterVals));
+            }
+        }, 500);
+    }
+
+    function loadSettings(data) {
+        if (typeof(Storage) !== "undefined" && data.name) {
+            var f = window.localStorage.getItem(data.name + '-filter');
+            if (f) {
+                try{
+                    f = JSON.parse(f);
+                    for (var field in f) {
+                        if (field == 'length') continue;
+                        if (data.filterPresets[field]) continue;
+                        $('#filter_' + field + '_' + data.instance).val(f[field]).trigger('change');
+                    }
+                } catch(e) {
+                    console.error('Cannot parse settings: ' + e);
+                }
+            } else if (!data.filter) {
+                // set default filter: state
+                $('#filter_type_' + data.instance).val('state').trigger('change');
+            }
+        }
     }
 
     var methods = {
@@ -1114,6 +1334,7 @@
                 onChange:   null,
                 zindex:     null,
                 list:       false,
+                name:       null,
                 columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value', 'button']
             }, options);
 
@@ -1141,7 +1362,11 @@
                 ok:       'Ok',
                 wait:     'Processing...',
                 list:     'Show list view',
-                tree:     'Show tree view'
+                tree:     'Show tree view',
+                selectAll: 'Select all',
+                unselectAll: 'Unselect all',
+                invertSelection: 'Invert selection',
+                copyTpClipboard: "Copy to clipboard"
             }, settings.texts);
 
             var that = this;
@@ -1255,7 +1480,6 @@
                 var dlg = this[i];
                 var $dlg = $(dlg);
                 var data = $dlg.data('selectId');
-                $dlg.addClass('select-id-dialog-marker');
                 if (!data) continue;
                 if (data.inited) {
                     // Re-init tree if filter or selectedID changed
@@ -1285,7 +1509,7 @@
                 }
                 data.selectedID = data.currentId;
 
-                if (!data.inited) {
+                if (!data.inited || !data.noDialog) {
                     data.$dlg = $dlg;
                     initTreeDialog($dlg);
                 } else {
@@ -1532,6 +1756,20 @@
             }
             return this;
         },
+        "option": function (name, value) {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                if (!data) continue;
+
+                if (data[name] !== undefined) {
+                    data[name] = value;
+                } else {
+                    console.error('Unknown options for selectID: ' + name);
+                }
+            }
+        },
         "objectAll": function (id, obj) {
             $('.select-id-dialog-marker').selectId('object', id, obj);
         },
@@ -1553,6 +1791,14 @@
                 return nodes;
             }
             return null;
+        },
+        "getActual": function () {
+            for (var k = 0; k < this.length; k++) {
+                var dlg = this[k];
+                var $dlg = $(dlg);
+                var data = $dlg.data('selectId');
+                return data ? data.selectedID : null;
+            }
         }
     };
 
