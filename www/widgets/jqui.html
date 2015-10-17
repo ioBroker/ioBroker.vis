@@ -55,7 +55,9 @@
                 "de": "Beim Offnen vom Dialog folgende Object ID\x0Awird mit eingegebenem Wert gesetzt.",
                 "ru": "При открытии диалога в объект с этим ID будет записано значение"
             },
-            "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"}
+            "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"},
+            "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",        "ru": "ID Объекта"}, // todo ru
+            "oid-2-working":    {"en": "oid-working max.",    "de": "oid-working max.",       "ru": "oid-working min"} // todo ru
         });
     }
 
@@ -173,7 +175,7 @@
                 });
                 vis.binds.jqueryui.activeHelper($this, vis.states.attr(oid + '.val'), min, max, _value, reverse);
             }
-       },
+        },
         classes: function (el, reverse, _value) {
             var $this = $(el);
             $this.hover(function () {
@@ -280,7 +282,7 @@
             dlg.dialog($.extend({
                 autoOpen: false
             }, options));
-            
+
             if (!vis.editMode) {
                 $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
                     // Protect against two events
@@ -377,7 +379,7 @@
                     }).change(function () {
                         vis.setValue(oid, $(this).val());
                     });
-            
+
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != "") newVal = parseFloat(newVal).toFixed(digits);
 
@@ -405,15 +407,15 @@
             }, options);
 
             $this.addClass("ui-widget ui-button ui-corner-all ui-state-default")
-                .css({
-                    font:       'inherit',
-                    //'color' :   'inherit',
-                    'text-align': 'left',
-                    outline:    'none',
-                    cursor:     'text',
-                    height:     '95%'
-                });
-            
+                    .css({
+                        font:       'inherit',
+                        //'color' :   'inherit',
+                        'text-align': 'left',
+                        outline:    'none',
+                        cursor:     'text',
+                        height:     '95%'
+                    });
+
             if (!vis.editMode) $this.datepicker(datepickerOptions);
 
             $this.change(function () {
@@ -450,14 +452,14 @@
                 pickerTimeFormat: 'HH:mm:ss'
             }, options);
             $this.addClass("ui-state-default")
-            .css({
-                'font':       'inherit',
-                //'color':    'inherit',
-                'text-align': 'left',
-                'outline':    'none',
-                'cursor':     'text',
-                height:       '95%'
-            });
+                    .css({
+                        'font':       'inherit',
+                        //'color':    'inherit',
+                        'text-align': 'left',
+                        'outline':    'none',
+                        'cursor':     'text',
+                        height:       '95%'
+                    });
             // Store options
             $this[0].__options = options;
 
@@ -470,11 +472,11 @@
                 var $this = $(this);
                 var val = $this.val();
                 /*if ($this[0].__options && !$this[0].__options.showSecond) {
-                    var vals = val.split(':');
-                    if (vals.length == 3) {
-                        val = vals[0] + ":" + vals[1];
-                    }
-                }*/
+                 var vals = val.split(':');
+                 if (vals.length == 3) {
+                 val = vals[0] + ":" + vals[1];
+                 }
+                 }*/
                 vis.setValue(oid, val);
             });
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
@@ -545,10 +547,10 @@
                 $this.find('option[value="' + newVal + '"]').attr('selected', true);
                 $this.multiselect('refresh');
             });
-            
+
             if (vis.editMode) {
                 if (isOpen) $this.multiselect('open');
-                
+
                 vis.bindWidgetClick(el.id);
                 $this.parent().parent().resize(function () {
                     $this.multiselect('option', 'minWidth', $(this).width() - 7);
@@ -558,28 +560,45 @@
         slider: function (el, options) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
+            var oid2 = $this.attr('data-oid2');
+            var oid_val = 0;
+            var oid2_val = 0;
             var wid = $this.attr("data-oid-working");
+            var wid2 = $this.attr("data-oid2-working");
             var settings = $.extend({
-                min:   0,
-                max:   100,
-                step:  1,
+                range: oid2 ? true : false,
+                min: 0,
+                max: 100,
+                step: 1,
                 value: parseFloat(vis.states.attr(oid + '.val')),
-                slide: function (e, ui) {0
+                slide: function (e, ui) {
                     // Slider -> Observable
-                    if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-                    vis.setValue(oid, ui.value); //.toFixed(6));
+
+                    if (oid2) {
+                        if (options.inverted) {
+                            ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                            ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                        }
+
+                        vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                        vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                    } else {
+                        if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                        vis.setValue(oid, ui.value); //.toFixed(6));
+                    }
+
                 }
             }, options);
 
             settings.inverted = (settings.inverted === 'true' || settings.inverted === true);
 
             if (isNaN(settings.value)) settings.value = 0;
-            if (isNaN(settings.min))   settings.min   = 0;
-            if (isNaN(settings.max))   settings.max   = 100;
-            if (isNaN(settings.step))  settings.step  = (settings.max - settings.min) / 100;
+            if (isNaN(settings.min))   settings.min = 0;
+            if (isNaN(settings.max))   settings.max = 100;
+            if (isNaN(settings.step))  settings.step = (settings.max - settings.min) / 100;
 
-            settings.min   = parseFloat(settings.min);
-            settings.max   = parseFloat(settings.max);
+            settings.min = parseFloat(settings.min);
+            settings.max = parseFloat(settings.max);
             settings.value = parseFloat(settings.value);
 
             if (settings.inverted) settings.value = (settings.max - settings.value) + settings.min;
@@ -587,16 +606,63 @@
             $this.slider(settings);
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-               // console.log("slider newVal="+JSON.stringify(newVal));
+                // console.log("slider newVal="+JSON.stringify(newVal));
                 // If device not in working state
                 if (!vis.states.attr(wid + '.val')) {
-                    var value = parseFloat(newVal);
-                    if (settings.inverted) value = (settings.max - value) + settings.min;
+
+                    if (settings.inverted) {
+                        oid_val = (settings.max - parseFloat(newVal)) + settings.min;
+                    } else {
+                        oid_val = parseFloat(newVal);
+                    }
                     if ($this.slider('instance')) {
-                        $this.slider('value', value);
+                        if (oid2) {
+                            $this.slider('values', [oid_val, oid2_val]);
+                        } else {
+                            $this.slider('value', oid_val);
+                        }
                     }
                 }
             });
+            if (oid2) {
+                vis.states.bind(oid2 + '.val', function (e, newVal, oldVal) {
+//                     console.log("slider newVal="+JSON.stringify(newVal));
+                    // If device not in working state
+                    if (!vis.states.attr(wid2 + '.val')) {
+                        oid2_val = parseFloat(newVal);
+                        if (settings.inverted) {
+                            oid2_val = (settings.max - parseFloat(newVal)) + settings.min;
+                        } else {
+                            oid2_val = parseFloat(newVal);
+                        }
+                        if ($this.slider('instance')) {
+                            $this.slider('values', [oid_val, oid2_val]);
+                        }
+                    }
+                });
+
+                oid_val = vis.states.attr(oid + '.val');
+                oid2_val = vis.states.attr(oid2 + '.val');
+                if (settings.inverted) {
+                    oid_val = (settings.max - oid_val) + settings.min;
+                    oid2_val = (settings.max - oid2_val) + settings.min;
+                }
+                $this.slider('values', [oid_val, oid2_val]);
+            }
+
+            $(function () {
+                $("#slider-range").slider({
+                    range: true,
+                    min: 0,
+                    max: 500,
+                    values: [75, 300],
+                    slide: function (event, ui) {
+                        $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
+                    }
+                });
+                $("#amount").val("$" + $("#slider-range").slider("values", 0) +
+                        " - $" + $("#slider-range").slider("values", 1));
+            })
         },
         button: function (el, value) {
             $(el).button();
@@ -652,7 +718,7 @@
                 $this.buttonset(settings);
 
                 $this.find('input').each(function () {
-                     if ($this.button('instance')) $(this).button('refresh');
+                    if ($this.button('instance')) $(this).button('refresh');
                 });
                 if (!vis.editMode) {
                     // Buttonset -> Observable
@@ -673,7 +739,7 @@
         },
         iconHttpGet: function (el, url) {
             if (vis.editMode) return;
-            
+
             var $this = $(el).parent();
             $this.on('click touchstart', function (e) {
                 // Protect against two events
@@ -705,7 +771,7 @@
                 }
             });
         },
-        
+
         _disable: function () {
             $("div#vis_container").find(".ui-slider").each(function () {
                 if ($(this).slider('instance')) {
@@ -850,8 +916,8 @@
     };
 </script>
 
-<script id="tplJquiButtonLink" 
-        type="text/ejs" 
+<script id="tplJquiButtonLink"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiButtonLink" style=" position: relative; text-align: initial;"><div class="vis-widget_prev ui-selectee ui-selected" style="height: 30px"> <div class="vis-widget-prev-body"> <input type="button" value=" Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
@@ -867,8 +933,8 @@
     </div>
 </script>
 
-<script id="tplJquiButtonLinkBlank" 
-        type="text/ejs" 
+<script id="tplJquiButtonLinkBlank"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiButtonLinkBlank" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div  style="height: 30px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Link " data-vis-link="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
@@ -884,8 +950,8 @@
     </div>
 </script>
 
-<script id="tplIconLink" 
-        type="text/ejs" 
+<script id="tplIconLink"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplIconLink" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 119px; height: 30px;"> <div class="vis-widget-prev-body"> <a class="widget-link" href="" target="" style="white-space:no-wrap; text-decoration: none; text-align: left; width:100%;height:100%;"> <img src="widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align: middle; height: 100%;" alt=""> Icon link </a> </div> </div></div>'
@@ -908,9 +974,9 @@
     </div>
 </script>
 
-<script id="tplIconHttpGet" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplIconHttpGet"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplIconHttpGet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 97px; height: 38px; " > <div class="vis-widget-prev-body"> <a class="widget-link" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img style="vertical-align:middle;height:100%;">URL GET</a></div></div></div>'
         data-vis-type="static"
@@ -930,9 +996,9 @@
     </div>
 </script>
 
-<script id="tplJquiDialog" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplJquiDialog"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-type="static,dialog"
         data-vis-name="HTML - Dialog"
@@ -950,9 +1016,9 @@
     </div>
 </script>
 
-<script id="tplJquiIconDialog" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplJquiIconDialog"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-type="static,dialog"
         data-vis-name="static - Icon - Dialog"
@@ -975,11 +1041,11 @@
     </div>
 </script>
 
-<script id="tplContainerDialog" 
-        type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="container - HTML - view in jqui Dialog" 
+<script id="tplContainerDialog"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="jqui"
+        data-vis-name="container - HTML - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>">
@@ -994,11 +1060,11 @@
     </div>
 </script>
 
-<script id="tplContainerDialogExternal" 
-        type="text/ejs" 
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="container - ext cmd - view in jqui Dialog" 
+<script id="tplContainerDialogExternal"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="jqui"
+        data-vis-name="container - ext cmd - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
@@ -1015,11 +1081,11 @@
     </div>
 </script>
 
-<script id="tplContainerIconDialog" 
+<script id="tplContainerIconDialog"
         type="text/ejs"
-        class="vis-tpl" 
-        data-vis-set="jqui" 
-        data-vis-name="container - Icon - view in jqui Dialog" 
+        class="vis-tpl"
+        data-vis-set="jqui"
+        data-vis-name="container - Icon - view in jqui Dialog"
         data-vis-attrs="src/image;alt;text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
@@ -1040,10 +1106,10 @@
     </div>
 </script>
 
-<script id="tplContainerButtonDialog" 
+<script id="tplContainerButtonDialog"
         type="text/ejs"
-        class="vis-tpl" 
-        data-vis-set="jqui" 
+        class="vis-tpl"
+        data-vis-set="jqui"
         data-vis-name="container - Button - view in jqui Dialog"
         data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
@@ -1077,8 +1143,8 @@
     </div>
 </script>
 
-<script id="tplJquiButtonNav" 
-        type="text/ejs" 
+<script id="tplJquiButtonNav"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiButtonNav" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="left: 167px; top: 129px;" > <div class="vis-widget-prev-body"> <input type="button" value=" Nav Button " class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> '
         data-vis-set="jqui"
@@ -1094,12 +1160,12 @@
     </div>
 </script>
 
-<script id="tplJquiIconNav" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplJquiIconNav"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 130px; height: 33px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;" alt="">Nav button </div> </div></div>'
-        data-vis-name="navigation - Icon" 
+        data-vis-name="navigation - Icon"
         data-vis-attrs="src/image;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>>
         <div class="vis-widget-body">
@@ -1109,11 +1175,11 @@
     </div>
 </script>
 
-<script id="tplJquiInput" 
-        type="text/ejs" 
+<script id="tplJquiInput"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiInput" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 30px;" > <div class="vis-widget-prev-body" style="text-align: center"> <label style=" display: none;">Input</label><input type="text" value=" Input" size="10" data-o class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> '
-        data-vis-set="jqui" 
+        data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Input"
         data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
@@ -1126,8 +1192,8 @@
 </script>
 
 <script id="tplJquiBool"
-        type="text/ejs" 
-        class="vis-tpl" 
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-prev='<div id="prev_tplJquiBool" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev " style="width: 79px; height: 25px;"> <div class="vis-widget-prev-body" style="text-align: center;padding-top: 5px;"> true/false</div> </div></div>'
@@ -1154,8 +1220,8 @@
     </div>
 </script>
 
-<script id="tplJquiToogle" 
-        type="text/ejs" 
+<script id="tplJquiToogle"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiToogle" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev" style="width: 90px; height: 19px; padding: 10px;"> <div class="vis-widget-prev-body"><label>Toggle Icon</label><img class="imgToggleFalse" src="/vis/icon/add.png" style=" vertical-align:middle; height:100%"></div></div></div>'
         data-vis-set="jqui"
@@ -1179,12 +1245,12 @@
     </div>
 </script>
 
-<script id="tplJquiInputDate" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplJquiInputDate"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputDate" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 110px; height: 25px; overflow: visible; "> <div class="vis-widget-prev-body"> <input type="text" value="2015-09-20" size="10" class="ui-widget ui-button ui-corner-all ui-state-default" style="font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; text-align: left; outline: none; cursor: text;text-align:center;"></div> </div></div>'
-        data-vis-name="ctrl - Input Date" 
+        data-vis-name="ctrl - Input Date"
         data-vis-attrs="oid/id;size[10]/slider,1,50,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:200px;height:40px;overflow: visible;text-align:center;" id="<%= this.data.attr("wid") %>">
         <% if (vis.editMode) { %>
@@ -1196,9 +1262,9 @@
     </div>
 </script>
 
-<script id="tplJquiInputDatetime" 
-        type="text/ejs" 
-        class="vis-tpl" 
+<script id="tplJquiInputDatetime"
+        type="text/ejs"
+        class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputDatetime" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 110px; height: 39px; overflow: visible; text-align: center;"> <div class="vis-widget-prev-body"> <input type="text" style="text-align: left; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; outline: none; cursor: text; " value="18:00:00" size="5" class="ui-state-default ui-widget ui-button ui-corner-all"> </div> </div></div>'
         data-vis-name="ctrl - Input Datetime"
@@ -1213,11 +1279,11 @@
     </div>
 </script>
 
-<script id="tplJquiInputSet" 
-        type="text/ejs" class="vis-tpl" 
+<script id="tplJquiInputSet"
+        type="text/ejs" class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputSet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 32px; overflow: visible;"> <div class="vis-widget-prev-body"> <label></label> <input type="text" value="Input" size="2" style="font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; padding-left: 5px; padding-right: 5px; text-align: left; outline: none; cursor: text;height:14px" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> <input type="button" style="padding-left: 5px; padding-right: 5px;" value="Set" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div></div>'
-        data-vis-name="ctrl - Input + Set-Button" 
+        data-vis-name="ctrl - Input + Set-Button"
         data-vis-attrs="title;buttontext[Text];oid;unit;digits/slider,0,10,1;size/slider,1,50,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1229,8 +1295,8 @@
     </div>
 </script>
 
-<script id="tplJquiButtonState" 
-        type="text/ejs" 
+<script id="tplJquiButtonState"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiButtonState" style=" position: relative; text-align: initial;padding: 4px; height: 30px "><div style="left: 384px; top: 470px;" class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}"> <div class="vis-widget-prev-body"> <input type="button" value=" Button " data-o data-val="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div>'
         data-vis-set="jqui"
@@ -1246,8 +1312,8 @@
     </div>
 </script>
 
-<script id="tplJquiRadio" 
-        type="text/ejs" 
+<script id="tplJquiRadio"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiRadio" style=" position: relative; text-align: initial;padding: 4px;height: 30px"><div style="top: 243px; left: 348px; font-size: 9px;" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">ON</span></label> </div> </div> </div>'
         data-vis-set="jqui"
@@ -1264,8 +1330,8 @@
     </div>
 </script>
 
-<script id="tplJquiRadioList" 
-        type="text/ejs" 
+<script id="tplJquiRadioList"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiRadioList" style=" position: relative; text-align: initial;padding: 4px "><div style="font-size: 8px;overflow:visible;height:20px" class="vis-widget_prev ui-selectee ui-selected ui-draggable-handle"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">OFF</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">AUTO</span></label> </div> </div> </div>'
         data-vis-set="jqui"
@@ -1290,8 +1356,8 @@
     </div>
 </script>
 
-<script id="tplJquiSelectList" 
-        type="text/ejs" 
+<script id="tplJquiSelectList"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiSelectList" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":""}" style="left: 336px; top: 323px;"> <div class="vis-widget-prev-body"> <select data-o disabled="" style="display: none;"> <option value="0">OFF</option> <option value="1">ON</option> <option value="2">AUTO</option> </select><button type="button" class="ui-multiselect ui-widget ui-state-default ui-corner-all" aria-haspopup="true" style="width: 86px;"><span class="ui-icon ui-icon-triangle-2-n-s"></span><span>OFF</span></button> </div> </div>'
         data-vis-set="jqui"
@@ -1318,8 +1384,8 @@
     </div>
 </script>
 
-<script id="tplJquiRadioSteps" 
-        type="text/ejs" 
+<script id="tplJquiRadioSteps"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiRadioSteps" style="zoom: 0.99; position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled":true, "handles":"e"}" style="left: 85px; top: 258px; font-size: 5px;"> <div class="vis-widget-prev-body"> <div data-o class="ui-buttonset"> <input type="radio" value="0" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-left" role="button" aria-pressed="false"><span class="ui-button-text">aus</span></label> <input type="radio" value="0.25" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">25%</span></label> <input type="radio" value="0.5" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only" role="button" aria-pressed="false"><span class="ui-button-text">50%</span></label> <input type="radio" value="0.75" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-state-active" role="button" aria-pressed="true"><span class="ui-button-text">75%</span></label> <input type="radio" value="1" class="ui-helper-hidden-accessible"><label class="ui-button ui-widget ui-state-default ui-button-text-only ui-corner-right" role="button" aria-pressed="false"><span class="ui-button-text">100%</span></label> </div> </div> </div>'
         data-vis-set="jqui"
@@ -1339,9 +1405,9 @@
     </div>
 </script>
 
-<script id="tplJquiSliderVertical" 
-        type="text/ejs" 
-        data-vis-attrs="oid;oid-working;min;max;step;inverted/checkbox"
+<script id="tplJquiSliderVertical"
+        type="text/ejs"
+        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiSliderVertical" style="position: relative; text-align: initial;padding: 4px;overflow:visible;height:50px"><div class="vis-widget_prev " style="width: 23px; height: 30px; overflow: visible !important;"> <div class="vis-widget-prev-body " style="width: 100%; padding: 4px; "> <div class="sliderJQUI ui-slider ui-slider-vertical ui-widget ui-widget-content ui-corner-all" id="19vlqqb6r_slider" data-oid="nothing_selected" data-oid-working="" style="height:100%"><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="bottom: 0%;"></span></div></div> </div></div>'
         data-vis-set="jqui"
@@ -1349,14 +1415,14 @@
         data-vis-name="Slider vertical">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min), max: parseFloat(data.max), step: parseFloat(data.step), orientation:"vertical", inverted: data.inverted}) %> style="height:100%"/></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min), max: parseFloat(data.max), step: parseFloat(data.step), orientation:"vertical", inverted: data.inverted}) %> style="height:100%"/></div>
         </div>
     </div>
 </script>
 
-<script id="tplJquiSlider" 
-        type="text/ejs" 
-        data-vis-attrs="oid;oid-working;min;max;step;inverted/checkbox"
+<script id="tplJquiSlider"
+        type="text/ejs"
+        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiSlider" style="position: relative; text-align: initial;padding: 4px;overflow:visible"><div class="vis-widget_prev " style="width: 80px; overflow: visible !important; left: 475px; top: 188px; position: absolute; height: 23px;"> <div class="vis-widget-prev-body " style="padding: 4px;"> <div class="sliderJQUI ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="19vlqppi9_slider" data-oid="nothing_selected" data-oid-working=""><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 0%;"></span></div></div> </div></div>'
         data-vis-set="jqui"
@@ -1364,17 +1430,17 @@
         data-vis-name="Slider horizontal">
     <div id="<%= this.data.attr("wid") %>" data-vis-resizable='{"minHeight":23, "maxHeight":23}' class="vis-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
-            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid-working="<%= this.data.attr('oid-working') %>" <%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step), inverted: data.inverted}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr("wid") %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step), inverted: data.inverted}) %> /></div>
         </div>
     </div>
 </script>
 
-<script id="tplIconState" 
+<script id="tplIconState"
         type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplIconState" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 122.4px; height: 32.4px; position: absolute; left: 237px; top: 201px;" id="19vlr5eto" data-oid="dev1" data-val="value"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
-        data-vis-set="jqui" 
-        data-vis-name="ctrl - Icon State" 
+        data-vis-set="jqui"
+        data-vis-name="ctrl - Icon State"
         data-vis-attrs="oid;value;text;src/image;alt;invert_icon/checkbox">
     <%
     var styles = "";
@@ -1389,12 +1455,12 @@
     </div>
 </script>
 
-<script id="tplIconStateBool" 
-        type="text/ejs" 
+<script id="tplIconStateBool"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplIconStateBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 100px; height: 25px;" > <div class="vis-widget-prev-body"> <img class="tplImgFalse" src="/vis/img/bulb_on.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
-        data-vis-name="ctrl - Icon State / val - Icon Bool" 
+        data-vis-name="ctrl - Icon State / val - Icon Bool"
         data-vis-attrs="oid;click_id/id;click_value;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
     <%
     var styles = "";
@@ -1411,12 +1477,12 @@
     </div>
 </script>
 
-<script id="tplIconInc" 
-        type="text/ejs" 
+<script id="tplIconInc"
+        type="text/ejs"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplIconInc" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active " style="width: 44px; height: 20px;" data-vis-step="1" data-val=""> <div class="vis-widget-prev-body"> <img style=" vertical-align:middle;height:100%;">+1 </div> </div></div>'
         data-vis-set="jqui"
-        data-vis-name="ctrl - Icon Increment" 
+        data-vis-name="ctrl - Icon Increment"
         data-vis-attrs="oid;step;minmax;text;src/image;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
     <%
     var styles = "";
