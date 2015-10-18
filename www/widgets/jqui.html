@@ -56,8 +56,22 @@
                 "ru": "При открытии диалога в объект с этим ID будет записано значение"
             },
             "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"},
-            "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",        "ru": "ID Объекта"}, // todo ru
-            "oid-2-working":    {"en": "oid-working max.",    "de": "oid-working max.",       "ru": "oid-working min"} // todo ru
+            "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",      "ru": "ID Объекта макс"}, 
+            "oid-2-working":    {"en": "OID Working max.",   "de": "OID Working max.",      "ru": "ID working макс"},
+            "values":           {"en": "Values",             "de": "Werte",                 "ru": "Значения"},
+            "values_tooltip":   {
+                "en": "Values divided by semicolon:\x0A0;1;2",
+                "de": "Werte sind mit Semikolon getrennt:\x0A0;1;2",
+                "ru": "Значения разделены точкой с запятой:\x0A0;1;2"
+            },
+            "texts":            {"en": "Texts",             "de": "Texte",                  "ru": "Тексты"},
+            "height":           {"en": "Height",            "de": "Höhe",                   "ru": "Высота"},
+            "no_style":         {"en": "No jQuery style",   "de": "Ohne jQuery Stil",       "ru": "Без стиля jQuery"},
+            "texts_tooltip":   {
+                "en": "Texts divided by semicolon:\x0AOn;Off;Auto",
+                "de": "Texte sind mit Semikolon getrennt:\x0AAn;Aus;Auto",
+                "ru": "Тексты разделены точкой с запятой:\x0AВкл;Выкл;Авто"
+            }
         });
     }
 
@@ -524,36 +538,52 @@
         multiselect: function (el, options, isOpen) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
+            var noJsStyle = $this.attr('data-no-style');
             $this.find('option:selected').removeAttr('selected');
             $this.find('option[value="' + vis.states[oid + '.val'] + '"]').attr('selected', true);
 
-            $this.multiselect($.extend({
-                minWidth:         $this.parent().parent().width() - 7,
-                multiple:         false,
-                header:           false,
-                noneSelectedText: false,
-                selectedList:     1
-            }, options)).change(function () {
-                if (!vis.editMode) vis.setValue(oid, $this.find('option:selected').val());
-            });
+            if (noJsStyle !== true && noJsStyle !== 'true') {
+                $this.multiselect($.extend({
+                    minWidth:         $this.parent().parent().width() - 7,
+                    multiple:         false,
+                    header:           false,
+                    noneSelectedText: false,
+                    selectedList:     1
+                }, options)).change(function () {
+                    if (!vis.editMode) vis.setValue(oid, $this.find('option:selected').val());
+                });
+            } else {
+                $this.change(function () {
+                    if (!vis.editMode) vis.setValue(oid, $this.find('option:selected').val());
+                });
+            }
+
 
             $this.find('option:selected').removeAttr('selected');
             $this.find("option[value='" + vis.states[oid + '.val'] + "']").attr('selected', true);
-            $this.prop("disabled", vis.editMode);
-            $this.multiselect('refresh');
+            $this.prop('disabled', vis.editMode);
+            if (noJsStyle !== true && noJsStyle !== 'true') {
+                $this.multiselect('refresh');
+            }
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 $this.find('option:selected').removeAttr('selected');
                 $this.find('option[value="' + newVal + '"]').attr('selected', true);
-                $this.multiselect('refresh');
+                if (noJsStyle !== true && noJsStyle !== 'true') {
+                    $this.multiselect('refresh');
+                }
             });
 
             if (vis.editMode) {
-                if (isOpen) $this.multiselect('open');
+                if (noJsStyle !== true && noJsStyle !== 'true') {
+                    if (isOpen) $this.multiselect('open');
+                }
 
                 vis.bindWidgetClick(el.id);
                 $this.parent().parent().resize(function () {
-                    $this.multiselect('option', 'minWidth', $(this).width() - 7);
+                    if (noJsStyle !== true && noJsStyle !== 'true') {
+                        $this.multiselect('option', 'minWidth', $(this).width() - 7);
+                    }
                 });
             }
         },
@@ -1363,13 +1393,13 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Select ValueList"
-        data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO];height[100]/slider,15,500,1;open/checkbox">
+        data-vis-attrs="oid;values[0§1§2]/text;texts[OFF§ON§AUTO]/text;height[100]/slider,15,500,1;open/checkbox;no_style/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" >
         <% if (false && vis.editMode) { %>
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
             <%
 				var values = (data.attr('values') ? data.attr('values').split(';') : []);
 				var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);

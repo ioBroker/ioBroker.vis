@@ -588,6 +588,14 @@
 
             $this.val(vis.states[oid + '.val'] === undefined ? '' : vis.states[oid + '.val']);
 
+            setTimeout(function () {
+                $this.css('text-align', $this.parent().parent().css('text-align'));
+                $this.css('color', $this.parent().parent().css('color'));
+                $this.css('background', $this.parent().parent().css('background'));
+                $this.css('border', '0');
+                $this.css('text-font', $this.parent().parent().css('text-font'));
+            }, 0);
+
             if (!vis.editMode) {
                 $this.change(function () {
                     var $this_ = $(this);
@@ -604,7 +612,7 @@
                     } else {
                         vis.setValue($this_.data('oid'), $this_.val());
                     }
-                })
+                });
                 if (data.autoSet) {
                     $this.keyup(function(e) {
                         var timer = $this.data('timer');
@@ -1739,9 +1747,10 @@
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplValueInput" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 47px; height: 23px;" > <div class="vis-widget-prev-body"> <input type="text" value="abc" style="width: calc(100% - 5px);"> </div> </div></div>'        data-vis-set="basic"
         data-vis-type="ctrl"
+        data-vis-update-style="true"
         data-vis-name="Input val"
         data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="background: white; color: black; border: 2px inset" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<input type="text" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"/>
