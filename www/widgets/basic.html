@@ -1749,11 +1749,11 @@
         data-vis-type="ctrl"
         data-vis-update-style="true"
         data-vis-name="Input val"
-        data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox">
+        data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox;readOnly/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="background: white; color: black; border: 2px inset" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
-			<input type="text" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"/>
+			<input type="text" <%= (this.data.attr('readOnly') === true || this.data.attr('readOnly') === 'true') ? 'readonly' : '' %> data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"/>
 			<%== this.data.attr("html_append") %>
         </div>
     </div>
