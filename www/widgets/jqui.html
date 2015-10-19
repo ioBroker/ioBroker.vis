@@ -192,11 +192,16 @@
         },
         classes: function (el, reverse, _value) {
             var $this = $(el);
-            $this.hover(function () {
-                $this.addClass("ui-state-hover");
-            }, function () {
-                $this.removeClass("ui-state-hover");
-            });
+            if (!$this.data('no-style')) {
+                $this.hover(function () {
+                    $this.addClass('ui-state-hover');
+                }, function () {
+                    $this.removeClass('ui-state-hover');
+                });
+            } else {
+                $this.removeClass('ui-widget ui-corner-all ui-state-default');
+            }
+
             $this.css({position: 'absolute'});
             vis.binds.jqueryui.active(el, reverse, _value);
         },
@@ -343,12 +348,14 @@
             });
         },
         dialogClose: function (el, options) {
-            if ($(el).data('no-style') !== true && $(el).data('no-style') !== 'true') {
-                $(el).button({
-                    icons: {
-                        primary: options.iconClass ? 'ui-icon-' + options.iconClass : null
-                    }
-                });
+            if (!$(el).data('no-style')) {
+                setTimeout(function () {
+                    $(el).button({
+                        icons: {
+                            primary: options.iconClass ? 'ui-icon-' + options.iconClass : null
+                        }
+                    });
+                }, 0);
             }
             $(el).click(function () {
                 if (options.dlgName) {
@@ -385,17 +392,21 @@
             var $this  = $(el);
             var oid    = $this.attr('data-oid');
             var digits = options;
-            $this.button().addClass("ui-state-default")
-                    .css({
-                        'font':       'inherit',
-                        //'color' :   'inherit',
-                        'text-align': 'left',
-                        'outline':    'none',
-                        'cursor':     'text',
-                        height:       '50%'
-                    }).change(function () {
-                        vis.setValue(oid, $(this).val());
-                    });
+            if (!$this.data('no-style')) {
+                $this.button().addClass('ui-state-default');
+            } else {
+                $this.removeClass('ui-widget ui-corner-all ui-state-default');
+            }
+            $this.css({
+                'font':       'inherit',
+                //'color' :   'inherit',
+                'text-align': 'left',
+                'outline':    'none',
+                'cursor':     'text',
+                height:       '50%'
+                }).change(function () {
+                    vis.setValue(oid, $(this).val());
+                });
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != "") newVal = parseFloat(newVal).toFixed(digits);
@@ -504,10 +515,14 @@
         inputset: function (el, options) {
             var digits = options;
             var $this = $(el);
-            var input = '#' + $this.attr("id").slice(0, -3) + 'input';
+            var input = '#' + $this.attr('id').slice(0, -3) + 'input';
+            var noJsStyle = $(el).data('no-style');
 
             var oid = $this.attr('data-oid');
-            $this.button().css({'padding-left': 5,'padding-right': 5});
+            if (!noJsStyle) $this.button();
+
+            $this.css({'padding-left': 5,'padding-right': 5});
+
             if (!vis.editMode) {
                 $this.on('click touchstart', function () {
                     // Protect against two events
@@ -516,16 +531,17 @@
                     vis.setValue(oid,  $(input).val());
                 });
             }
-            $this.prev().button().addClass("ui-state-default")
+            if (!noJsStyle) $this.prev().button();
+            $this.prev().addClass('ui-state-default')
                     .css({
-                        font:       'inherit',
-                        'padding-left': 5,
+                        font:            'inherit',
+                        'padding-left':  5,
                         'padding-right': 5,
                         //'color' :   'inherit',
-                        'text-align': 'left',
-                        outline:    'none',
-                        cursor:     'text',
-                        height:       '95%'
+                        'text-align':   'left',
+                        outline:        'none',
+                        cursor:         'text',
+                        height:         '95%'
                     });
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != '') {
@@ -698,34 +714,34 @@
             })
         },
         button: function (el, value) {
-            if ($(el).data('no-style') === true || $(el).data('no-style') === 'true') return;
+            if ($(el).data('no-style')) return;
             $(el).button();
         },
         buttonDialog: function (el) {
-            if ($(el).data('no-style') === true || $(el).data('no-style') === 'true') return;
-            $(el).button();
+            if ($(el).data('no-style')) return;
+            setTimeout(function () {
+                $(el).button();
+            }, 0);
         },
         buttonLink: function (el, href) {
-            if ($(el).data('no-style') === true || $(el).data('no-style') === 'true') {
-                $(el).click(function () {
-                    if (!vis.editMode && href) window.location.href = href;
-                });
-            } else {
-                $(el).button().click(function () {
-                    if (!vis.editMode && href) window.location.href = href;
-                });
+            if (!$(el).data('no-style')) {
+                setTimeout(function () {
+                    $(el).button();
+                }, 0);
             }
+            $(el).click(function () {
+                if (!vis.editMode && href) window.location.href = href;
+            });
         },
         buttonLinkBlank: function (el, href) {
-            if ($(el).data('no-style') === true || $(el).data('no-style') === 'true') {
-                $(el).click(function () {
-                    if (!vis.editMode && href) window.open(href);
-                });
-            } else {
-                $(el).button().click(function () {
-                    if (!vis.editMode && href) window.open(href);
-                });
+            if (!$(el).data('no-style')) {
+                setTimeout(function () {
+                    $(el).button();
+                }, 0);
             }
+            $(el).click(function () {
+                if (!vis.editMode && href) window.open(href);
+            });
         },
         radio: function (el, options, process) {
             if (!process) {
@@ -974,7 +990,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" value="<%= this.data.attr('buttontext') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLink(el, data.attr('href')); %> style="padding: <%= this.data.attr('padding') %>px"/>
+            <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLink(el, data.attr('href')); %> style="padding: <%= this.data.attr('padding') %>px"><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -991,7 +1007,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}' >
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" value="<%= this.data.attr('buttontext') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> style="padding: <%= this.data.attr('padding') %>px"/>
+            <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" data-vis-link="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonLinkBlank(el, data.attr('href')); %> style="padding: <%= this.data.attr('padding') %>px"><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1163,7 +1179,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> style="padding: <%= this.data.attr('padding') %>px"/>
+            <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.buttonDialog(el); %> style="padding: <%= this.data.attr('padding') %>px"><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
@@ -1184,7 +1200,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <input type="button" value="<%= this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.dialogClose(el, {hideOptions: {effect: data.attr('hide_effect'), options:{}, duration: data.attr('hide_duration')}, iconClass: data.attr('iconClass'), dlgName: data.attr('dlgName')}) %> />
+            <button data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.dialogClose(el, {hideOptions: {effect: data.attr('hide_effect'), options:{}, duration: data.attr('hide_duration')}, iconClass: data.attr('iconClass'), dlgName: data.attr('dlgName')}) %>><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1201,7 +1217,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" value="<%= this.data.attr('buttontext') %>" <%= (el) -> vis.binds.jqueryui.button(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> />
+            <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.button(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> ><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1229,7 +1245,7 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Input"
-        data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1;no_style/checkbox">
+        data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:275px;height:44px;" id="<%= this.data.attr("wid") %>" data-no-style="<%= this.data.attr('no_style') %>" >
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label>
@@ -1244,24 +1260,17 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-prev='<div id="prev_tplJquiBool" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev " style="width: 79px; height: 25px;"> <div class="vis-widget-prev-body" style="text-align: center;padding-top: 5px;"> true/false</div> </div></div>'
-        data-vis-name="Icon Bool"
+        data-vis-name="Html Bool"
         data-vis-attrs="oid;html_true;html_false;no_style/checkbox">
 
     <div class="ui-widget ui-corner-all ui-state-default vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>"  data-no-style="<%= this.data.attr('no_style') %>"  data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %>>
         <div class="vis-widget-body">
             <div>
-                <%
-                var str = vis.states.attr(this.data.oid + '.val');
-                var val = parseFloat(str);
-                var state;
-                if (str === false || str === 'false' || val == 0) {
-                %>
+                <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"))) { %>
                     <%== this.data.attr("html_false") %>
                 <% } else { %>
                     <%== this.data.attr("html_true") %>
                 <% } %>
-
-
             </div>
         </div>
     </div>
@@ -1331,13 +1340,13 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputSet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 32px; overflow: visible;"> <div class="vis-widget-prev-body"> <label></label> <input type="text" value="Input" size="2" style="font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; padding-left: 5px; padding-right: 5px; text-align: left; outline: none; cursor: text;height:14px" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> <input type="button" style="padding-left: 5px; padding-right: 5px;" value="Set" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div></div>'
         data-vis-name="ctrl - Input + Set-Button"
-        data-vis-attrs="title;buttontext[Text];oid;unit;digits/slider,0,10,1;size/slider,1,50,1;no_style/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
+        data-vis-attrs="title;buttontext[Text];oid;unit;digits/slider,0,10,1;size/slider,1,50,1">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important"/>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input"  data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important"/>
             <%== this.data.attr('unit') %>
-            <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%= this.data.attr('buttontext') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits); %>/>
+            <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%== this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits); %>/>
         </div>
     </div>
 </script>
@@ -1353,7 +1362,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":"e"}'>
         <div class="vis-widget-body" >
             <%== this.data.attr("html_prepend") %>
-            <input type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" value="<%= this.data.attr('buttontext') %>" data-oid="<%= this.data.attr('oid') %>"  data-no-style="<%= this.data.attr('no_style') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> style="padding: <%= this.data.attr('padding') %>px"/>
+            <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-oid="<%= this.data.attr('oid') %>"  data-no-style="<%= this.data.attr('no_style') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.jqueryui.button(el, data.value); vis.binds.basic.state(el); %> style="padding: <%= this.data.attr('padding') %>px"><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1394,7 +1403,7 @@
                 var wid = data.attr('wid');
                 for (var val in values) {
                 %>
-                    <td class="vis-no-spaces"><input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%= values[val] %>" /><label style="float: left" for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label></td>
+                    <td class="vis-no-spaces"><input type="radio" id="<%= wid %>_radio<%= val %>" name="<%= wid %>_radio" value="<%== values[val] %>" /><label style="float: left" for="<%= wid %>_radio<%= val %>"><%= texts[val] %></label></td>
                 <%
                 }
                 %>
