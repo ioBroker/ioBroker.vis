@@ -173,7 +173,15 @@
             "strokeColor":      {"en": "Stroke color",              "de": "Liniefarbe",             "ru": "Цвет линии"},
             "fill":             {"en": "Fill color",                "de": "Füllfarbe",              "ru": "Цвет заливки"},
             "strokeWidth":      {"en": "Stroke width",              "de": "Liniebreite",            "ru": "Ширина линии"},
-            "rotate":           {"en": "Rotate",                    "de": "Drehen",                 "ru": "Повернуть на"}
+            "rotate":           {"en": "Rotate",                    "de": "Drehen",                 "ru": "Повернуть на"},
+            "no_control":       {"en": "Read only",                 "de": "Nur Anzeige",            "ru": "Только показывать"},
+            "numeric":          {"en": "Number",                    "de": "Nummer",                 "ru": "Число"},
+            "autoSet":          {"en": "Auto set",                  "de": "Auto-setzen",            "ru": "Авто запись"},
+            "autoSet_tooltip":  {
+                "en": "Without 'Auto set' you must press ENTER,\x0ato write the value.",
+                "de": "Ohne 'Auto-setzen' man muss danach ENTER drucken,\x0A um das Wert zu schreiben.",
+                "ru": "Без 'Авто записи' нужно нажать ENTER,\x0Aчто бы записать значение."
+            }
         });
     }
 
@@ -496,12 +504,11 @@
             } else {
                 $this.prop('checked', val);
             }
-
         },
         checkbox: function (el, numeric, min, max) {
             var $this = $(el);
-            var oid   = $this.attr('data-oid'); // Object ID
-            var wid   = $this.attr('data-oid-working'); // Work ID
+            var oid   = $this.data('oid'); // Object ID
+            var wid   = $this.data('oid-working'); // Work ID
 
             if (oid) {
                 vis.states.bind(oid + '.val', function (e, val, oldVal) {
@@ -531,9 +538,9 @@
                 max = true;
             }
 
-            $this.data('data-min',     min);
-            $this.data('data-max',     max);
-            $this.data('data-numeric', numeric);
+            $this.data('min',     min);
+            $this.data('max',     max);
+            $this.data('numeric', numeric);
 
             vis.binds.basic._onChange(el, oid, wid);
 
@@ -541,11 +548,80 @@
                 $this.change(function () {
                     var $this_ = $(this);
                     if ($this_.prop('checked')) {
-                        vis.setValue($this_.attr('data-oid'), $this_.data('data-max'));
+                        vis.setValue($this_.data('oid'), $this_.data('max'));
                     } else {
-                        vis.setValue($this_.attr('data-oid'), $this_.data('data-min'));
+                        vis.setValue($this_.data('oid'), $this_.data('min'));
                     }
                 });
+            }
+        },
+        input: function (el, data) {
+            var $this = $(el);
+            var oid   = $this.data('oid'); // Object ID
+            var wid   = $this.data('oid-working'); // Work ID
+
+            if (oid) {
+                vis.states.bind(oid + '.val', function (e, val, oldVal) {
+                    $this.val(val);
+                });
+                if (wid) {
+                    vis.states.bind(wid + '.val', function (e, val, oldVal) {
+                        $this.val(val);
+                    });
+                }
+            }
+
+            if (data.numeric) {
+                $this.attr('type', 'number');
+                if (data.min !== undefined && data.min !== null && data.min !== '') {
+                    data.min = parseFloat(data.min);
+                } else {
+                    data.min = null;
+                }
+
+                if (data.max !== undefined && data.max !== null && data.max !== '') {
+                    data.max = parseFloat(data.max);
+                } else {
+                    data.max = null;
+                }
+            }
+
+            $this.val(vis.states[oid + '.val'] === undefined ? '' : vis.states[oid + '.val']);
+
+            setTimeout(function () {
+                $this.css('text-align', $this.parent().parent().css('text-align'));
+                $this.css('color', $this.parent().parent().css('color'));
+                $this.css('background', $this.parent().parent().css('background'));
+                $this.css('border', '0');
+                $this.css('text-font', $this.parent().parent().css('text-font'));
+            }, 0);
+
+            if (!vis.editMode) {
+                $this.change(function () {
+                    var $this_ = $(this);
+                    if (data.numeric) {
+                        var value = parseFloat($this_.val());
+                        if (data.min !== null && value < data.min) {
+                            value = data.min;
+                            $this_.val(value);
+                        } else if (data.max !== null && value > data.max) {
+                            value = data.max;
+                            $this_.val(value);
+                        }
+                        vis.setValue($this_.data('oid'), value);
+                    } else {
+                        vis.setValue($this_.data('oid'), $this_.val());
+                    }
+                });
+                if (data.autoSet) {
+                    $this.keyup(function(e) {
+                        var timer = $this.data('timer');
+                        if (timer) clearTimeout(timer);
+                        $this.data('timer', setTimeout(function () {
+                            $this.trigger('change');
+                        }), 1000);
+                    });
+                }
             }
         },
         select: function (el, invert) {
@@ -798,12 +874,16 @@
             }
         },
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
-            if (document.getElementById(wid)) $('#' + wid).remove ();
-
+            if (!$('#' + wid).length) {
+                return setTimeout(function () {
+                    vis.binds.basic.showSvg(myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control);
+                }, 100);
+            };
+            $('#' + wid).find('svg').remove();
             var str = vis.states.attr(oid + '.val');
             if (typeof str === 'string') str = str.toLowerCase();
             var val = parseFloat(str);
-            var sText = '<svg class="vis-widget ' + (myClass || '') + '" version="1.1" style="width:100px;height:100px" xmlns="http://www.w3.org/2000/svg" id="' + wid + '" data-oid="' + oid + '">';
+            var sText = '<svg version="1.1" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg" data-oid="' + oid + '">';
             if (vis.editMode) {
                 if (opacity === undefined || opacity === null || opacity === '') opacity = 1;
 
@@ -816,7 +896,7 @@
                 sText += svg_true;
             }
             sText += '</svg>';
-            $('#visview_' + view).append (sText);
+            $('#' + wid).find('.vis-widget-body').append (sText);
 
             if (style) $('#' + wid).css(style);
 
@@ -842,23 +922,25 @@
 
             if (oid) {
                 vis.states.bind(oid + '.val', function (e, newVal) {
+                    debugger;
                     if (newVal === 'true'  || newVal === true)  newVal = 1;
                     if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
-                    $('#' + wid).html(newVal ? svg_true : svg_false);
+                    var $svg = $('#' + wid).find('svg');
+                    $svg.html(newVal ? svg_true : svg_false);
                     if (!vis.editMode && !no_control) {
-                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', onSvgClick);
+                        $svg.children().unbind('click touchstart').on('click touchstart', onSvgClick);
                     } else if (vis.editMode){
-                        $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                        $svg.children().unbind('click touchstart').on('click touchstart', function () {
                             vis.inspectWidgets([wid]);
                         });
                     }
                 });
             }
-
+            var $svg = $('#' + wid).find('svg');
             if (!vis.editMode && !no_control) {
-                $('#' + wid).children().on('click touchstart', onSvgClick);
+                $svg.children().on('click touchstart', onSvgClick);
             } else if (vis.editMode){
-                $('#' + wid).children().unbind('click touchstart').on('click touchstart', function () {
+                $svg.children().unbind('click touchstart').on('click touchstart', function () {
                     vis.inspectWidgets([wid]);
                 });
             }
@@ -1607,15 +1689,10 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>"  data-oid="<%= this.data.attr('oid') %>" >
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
-            <%
-            var str = vis.states.attr(this.data.oid + ".val");
-            var val = parseFloat(str);
-            var state;
-            if (str === false || str === "false" || val == 0 || str === "" || str === null || str === undefined) {
-            %>
-            <%== this.data.attr("html_false") %>
+            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
+                <%== this.data.attr("html_false") %>
             <% } else { %>
-            <%== this.data.attr("html_true") %>
+                <%== this.data.attr("html_true") %>
             <% } %>
             <%== this.data.attr("html_append") %>
         </div>
@@ -1660,6 +1737,23 @@
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
 			<input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.checkbox(el) %>/>
+			<%== this.data.attr("html_append") %>
+        </div>
+    </div>
+</script>
+
+<script id="tplValueInput"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplValueInput" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 47px; height: 23px;" > <div class="vis-widget-prev-body"> <input type="text" value="abc" style="width: calc(100% - 5px);"> </div> </div></div>'        data-vis-set="basic"
+        data-vis-type="ctrl"
+        data-vis-update-style="true"
+        data-vis-name="Input val"
+        data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox;readOnly/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="background: white; color: black; border: 2px inset" id="<%= this.data.attr('wid') %>" >
+        <div class="vis-widget-body">
+			<%== this.data.attr("html_prepend") %>
+			<input type="text" <%= (this.data.attr('readOnly') === true || this.data.attr('readOnly') === 'true') ? 'readonly' : '' %> data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"/>
 			<%== this.data.attr("html_append") %>
         </div>
     </div>
@@ -1710,18 +1804,10 @@
         <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
-			<%
-	        var str = (this.data.oid && this.data.oid != 'nothing_selected') ? vis.states.attr(this.data.oid + '.val') : false;
-            var val = parseFloat(str);
-            var max = (this.data.attr('max') !== undefined) ? this.data.attr('max') : 1;
-            var min = (this.data.attr('min') !== undefined) ? this.data.attr('min') : 0;
-            if (str === true  || str === 'true')  val = max;
-            if (str === false || str === 'false') val = min;
-			if (val != min) {
-			%>
-			    <%== this.data.attr("html_true") %>
-			<% } else { %>
+			< if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
 			    <%== this.data.attr("html_false") %>
+			<% } else { %>
+			    <%== this.data.attr("html_true") %>
 			<% } %>
 			<%== this.data.attr("html_append") %>
         </div>
@@ -1739,7 +1825,11 @@
         data-vis-attrs0="svg_false[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime§ stroke:purple§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
         data-vis-attrs1="svg_true[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:yellow§ stroke:red§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
         data-vis-attrs2="svg_opacity/slider,0,1,0.05">
-    <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'), this.data.attr('svg_opacity'), this.data.attr('svg_false'), this.data.attr('svg_true'), null, this.data.attr('no_control')) %>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>">
+        <div class="vis-widget-body">
+            <% vis.binds.basic.showSvg(this.data.attr('class'), this.view, this.data.attr('wid'), this.data.attr('oid'), this.data.attr('svg_opacity'), this.data.attr('svg_false'), this.data.attr('svg_true'), null, this.data.attr('no_control')) %>
+        </div>
+    </div>
 </script>
 
 <script id="tplBasicState"
