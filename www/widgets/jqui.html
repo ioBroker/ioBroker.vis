@@ -714,8 +714,12 @@
             })
         },
         button: function (el, value) {
+
             if ($(el).data('no-style')) return;
-            $(el).button();
+            setTimeout(function(){
+                $(el).button();
+            },0)
+
         },
         buttonDialog: function (el) {
             if ($(el).data('no-style')) return;
@@ -1217,7 +1221,13 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr("html_prepend") %>
+            <button id="<%= this.data.attr('wid') %>_button"
+             name="<%= this.data.attr('wid') %>_button"
+              data-no-style="<%= this.data.attr('no_style') %>"
+               <%= (el) -> vis.binds.jqueryui.button(el);
+               vis.binds.jqueryui.navigationActive(el, data.attr('nav_view'));
             <button id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.button(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> ><%== this.data.attr('buttontext') %></button>
+               <%== this.data.attr('buttontext') %></button>
             <%== this.data.attr("html_append") %>
         </div>
     </div>
