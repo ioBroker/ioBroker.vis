@@ -979,6 +979,36 @@
 
                 }, 'xml');
             }, 0);
+        },
+        navigationPw: function (el, data) {
+            var $this = $(el);
+            $($this).button().click(function () {
+                $("body").append("<div id='NavPwDialog' style='text-align: center'><input  type='password'  id='inp_NavPw' ><input style='width: 100px; margin-top: 20px' id='btn_navPwOk' VALUE='OK'><input id='btn_navPwcancel' value='cancel' style='width: 100px; margin-top: 20px' ></div>");
+
+                $("#inp_NavPw").change(function () {
+                    check_pw()
+                });
+                $("#btn_navPwOk").button().click(function () {
+                    check_pw()
+                });
+
+                function check_pw() {
+                    if (data._data.Password == $("#inp_NavPw").val()) {
+                        $("#NavPwDialog").remove();
+                        vis.changeView(data.attr('nav_view'), {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}, data.attr('sync'));
+                    } else {
+                        $("#inp_NavPw").val("")
+                    }
+                }
+
+                $("#btn_navPwcancel").button().click(function () {
+                    $("#NavPwDialog").remove()
+                });
+                $("#NavPwDialog").dialog({
+                    title: _("Password"),
+                    modal: true
+                })
+            })
         }
     };
 </script>
@@ -1244,6 +1274,20 @@
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
 
+        </div>
+    </div>
+</script>
+
+<script id="tplJquiNavPw"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="jqui"
+        data-vis-prev='<div id="prev_tplJquiNavPw" style=" position: relative; text-align: initial;padding: 4px " class="wid_prev_content"><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="top: 445px; left: 314px; width: 116px; height: 35px;"> <div class="vis-widget-prev-body" style="text-align: center"> <label style=" display: none;">Input</label><input type="text" value="Nav button Pw" size="10" data-o="" class="ui-button ui-widget ui-state-default ui-corner-all" role="button" style="height: 20px;font-family: inherit; font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; line-height: inherit; text-align: left; outline: none; cursor: text;"> </div> </div></div>'
+        data-vis-name="navigation - Pw"
+        data-vis-attrs="buttontext[Text];Password;nav_view;hide_effect;hide_duration;show_effect;show_duration;sync/checkbox">
+       <div class="vis-widget <%== this.data.attr('class') %>" style="width:76px;height:30px;" id="<%= this.data.attr("wid") %>">
+        <div class="vis-widget-body">
+        <button style="width:100%; height:100%" type="button" id="<%= this.data.attr('wid') %>_button" name="<%= this.data.attr('wid') %>_button" <%= (el) -> vis.binds.jqueryui.navigationPw(el, data)%> /><%== this.data.attr('buttontext') %></button>
         </div>
     </div>
 </script>
