@@ -574,11 +574,19 @@
                     noneSelectedText: false,
                     selectedList:     1
                 }, options)).change(function () {
-                    if (!vis.editMode) vis.setValue(oid, $this.find('option:selected').val());
+                    var val = $this.find('option:selected').val();
+                    if (parseFloat(val).toString() == val) val = parseFloat(val);
+                    if (val === 'true')  val = true;
+                    if (val === 'false') val = false;
+                    if (!vis.editMode) vis.setValue(oid, val);
                 });
             } else {
                 $this.change(function () {
-                    if (!vis.editMode) vis.setValue(oid, $this.find('option:selected').val());
+                    var val = $this.find('option:selected').val();
+                    if (parseFloat(val).toString() == val) val = parseFloat(val);
+                    if (val === 'true') val = true;
+                    if (val === 'false') val = false;
+                    if (!vis.editMode) vis.setValue(oid, val);
                 });
             }
 
