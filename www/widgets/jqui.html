@@ -68,6 +68,7 @@
             "height":           {"en": "Height",            "de": "Höhe",                   "ru": "Высота"},
             "no_style":         {"en": "No jQuery style",   "de": "Ohne jQuery Stil",       "ru": "Без стиля jQuery"},
             "Password":         {"en": "Password",          "de": "Kennwort",               "ru": "Пароль"},
+            "imageHeight":      {"en": "Image height %",    "de": "Bildhöhe in %",          "ru": "Высота иконки в %"},
             "texts_tooltip":   {
                 "en": "Texts divided by semicolon:\x0AOn;Off;Auto",
                 "de": "Texte sind mit Semikolon getrennt:\x0AAn;Aus;Auto",
@@ -1079,7 +1080,7 @@
         data-vis-prev='<div id="prev_tplIconLink" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 119px; height: 30px;"> <div class="vis-widget-prev-body"> <a class="widget-link" href="" target="" style="white-space:no-wrap; text-decoration: none; text-align: left; width:100%;height:100%;"> <img src="widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align: middle; height: 100%;" alt=""> Icon link </a> </div> </div></div>'
         data-vis-type="static"
         data-vis-name="Icon link"
-        data-vis-attrs="src/image;href;target/auto,,_blank,_self,_parent,_top;alt;text;invert_icon/checkbox">
+        data-vis-attrs="src/image;imageHeight/slider,0,200,1;href;target/auto,,_blank,_self,_parent,_top;alt;text;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1089,8 +1090,8 @@
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 32px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div class="vis-widget-body">
             <a class="widget-link" href="<%== this.data.attr('href') %>" target="<%== this.data.attr('target') %>" style="white-space:no-wrap; text-decoration: none; text-align: left; width:100%; height:100%;">
-                <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" />
-                <%= this.data.attr('text') %>
+                <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" />
+                <%== this.data.attr('text') %>
             </a>
         </div>
     </div>
@@ -1103,7 +1104,7 @@
         data-vis-prev='<div id="prev_tplIconHttpGet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 97px; height: 38px; " > <div class="vis-widget-prev-body"> <a class="widget-link" style="white-space:no-wrap; text-decoration:none;text-align:left;width:100%;height:100%;"><img style="vertical-align:middle;height:100%;">URL GET</a></div></div></div>'
         data-vis-type="static"
         data-vis-name="Icon HTTP GET"
-        data-vis-attrs="url;src;alt;text">
+        data-vis-attrs="url;src/image;imageHeight/slider,0,200,1;alt;text">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1112,7 +1113,9 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div class="vis-widget-body">
-            <a class="widget-link" href='#' style="white-space:no-wrap; text-decoration:none;text-align:left; width:100%; height:100%;"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: 100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %></a>
+            <a class="widget-link" href='#' style="white-space:no-wrap; text-decoration: none; text-align: left; width:100%; height:100%;">
+                <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
+            </a>
             <div <%= (el) -> vis.binds.jqueryui.iconHttpGet(el, data.attr('url')) %> />
         </div>
     </div>
@@ -1144,7 +1147,7 @@
         data-vis-set="jqui"
         data-vis-type="static,dialog"
         data-vis-name="static - Icon - Dialog"
-        data-vis-attrs="src/image;alt;text;invert_icon/checkbox;setId/id;setValue;"
+        data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;invert_icon/checkbox;setId/id;setValue;"
         data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = "";
@@ -1154,7 +1157,7 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px; cursor: pointer" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <%== this.data.attr("preload") ? this.data.attr("html_dialog") : "" %>
@@ -1208,7 +1211,7 @@
         class="vis-tpl"
         data-vis-set="jqui"
         data-vis-name="container - Icon - view in jqui Dialog"
-        data-vis-attrs="src/image;alt;text;setId/id;setValue;"
+        data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = "";
@@ -1219,7 +1222,7 @@
 
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 76px; height: 76px; cursor: pointer" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el) %>>
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
         </div>
         <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
             <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
@@ -1288,10 +1291,10 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 130px; height: 33px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;" alt="">Nav button </div> </div></div>'
         data-vis-name="navigation - Icon"
-        data-vis-attrs="src/image;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
+        data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>>
         <div class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
 
         </div>
     </div>
@@ -1356,7 +1359,7 @@
         data-vis-set="jqui"
         data-vis-type="ctrl,state"
         data-vis-name="Icon Toggle"
-        data-vis-attrs="label;oid;src_true/image;alt_true;src_false/image;alt_false;invert_icon/checkbox">
+        data-vis-attrs="label;oid;src_true/image;imageHeight/slider,0,200,1;alt_true;src_false/image;alt_false;invert_icon/checkbox">
 
     <div class="ui-widget ui-corner-all ui-state-default vis-widget <%== this.data.attr('class') %>" style="width:76px; height:76px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.toggle(el); vis.binds.jqueryui.classes(el) %> >
         <div class="vis-widget-body">
@@ -1367,8 +1370,8 @@
             }
             %>
             <label style="margin: 0" for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('label') %></label>
-            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%"               alt="<%== this.data.attr('alt_false') %>" />
-            <img class="imgToggleTrue"  <%= this.data.attr('src_true')  ? 'src="' +  this.data.attr('src_true')  + '"' : '' %> style="<%= styles %> vertical-align:middle; height:100%; display:none" alt="<%== this.data.attr('alt_true')  %>" />
+            <img class="imgToggleFalse" <%= this.data.attr('src_false') ? 'src="' +  this.data.attr('src_false') + '"' : '' %> style="<%= styles %> vertical-align: middle; height:<%= this.data.attr('imageHeight') || 100 %>%"               alt="<%== this.data.attr('alt_false') %>" />
+            <img class="imgToggleTrue"  <%= this.data.attr('src_true')  ? 'src="' +  this.data.attr('src_true')  + '"' : '' %> style="<%= styles %> vertical-align: middle; height:<%= this.data.attr('imageHeight') || 100 %>%; display:none" alt="<%== this.data.attr('alt_true')  %>" />
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>
@@ -1570,7 +1573,7 @@
         data-vis-prev='<div id="prev_tplIconState" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 122.4px; height: 32.4px; position: absolute; left: 237px; top: 201px;" id="19vlr5eto" data-oid="dev1" data-val="value"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
         data-vis-set="jqui"
         data-vis-name="ctrl - Icon State"
-        data-vis-attrs="oid;value;text;src/image;alt;invert_icon/checkbox">
+        data-vis-attrs="oid;value;text;src/image;imageHeight/slider,0,200,1;alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1579,7 +1582,7 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.value) %>>
         <div class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height:<%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
         </div>
     </div>
 </script>
@@ -1590,7 +1593,7 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplIconStateBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 100px; height: 25px;" > <div class="vis-widget-prev-body"> <img class="tplImgFalse" src="/vis/img/bulb_on.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
         data-vis-name="ctrl - Icon State / val - Icon Bool"
-        data-vis-attrs="oid;click_id/id;click_value;false_text;true_text;false_src/image;true_src/image;false_alt;true_alt;invert_icon/checkbox">
+        data-vis-attrs="oid;click_id/id;click_value;false_text;true_text;false_src/image;true_src/image;imageHeight/slider,0,200,1;false_alt;true_alt;invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1599,8 +1602,8 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('click_value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
         <div class="vis-widget-body">
-            <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="                 <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
-            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display:none"><%= this.data.attr('true_text')  %></span>
+            <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="               <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
+            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display:none"><%= this.data.attr('true_text')  %></span>
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>
@@ -1612,7 +1615,7 @@
         data-vis-prev='<div id="prev_tplIconInc" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default ui-state-active " style="width: 44px; height: 20px;" data-vis-step="1" data-val=""> <div class="vis-widget-prev-body"> <img style=" vertical-align:middle;height:100%;">+1 </div> </div></div>'
         data-vis-set="jqui"
         data-vis-name="ctrl - Icon Increment"
-        data-vis-attrs="oid;step[1];minmax[100];text[+1];src/image;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
+        data-vis-attrs="oid;step[1];minmax[100];text[+1];src/image;imageHeight/slider,0,200,1;alt;repeat_delay[800];repeat_interval[800];invert_icon/checkbox">
     <%
     var styles = "";
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1621,7 +1624,7 @@
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 735px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-vis-step="<%= this.data.attr('step') %>" data-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
         <div class="vis-widget-body">
-            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align:middle;height:100%;" alt="<%== this.data.attr('alt') %>" /><%= this.data.attr('text') %>
+            <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
         </div>
     </div>
 </script>
