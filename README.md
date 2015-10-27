@@ -151,6 +151,17 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.4 (2015-10-27)
+* (SmilingJack) add "jqui-navigation" with password
+* (bluefox) fix jqui-selectValue: write number instead of string
+* (bluefox) make all jqui buttons resizable.
+* (bluefox) add "image height %" to jqui with icons
+* (bluefox) add some features to basic and jqui widgets
+* (bluefox) add to jqui option: no jQuiery style.
+* (bluefox) make possible to use new line in jqui-buttons
+* (bluefox) extend basic-screen resolution with instance information
+* (SmilingJack) Remove vkb (for own adapter)
+
 ### 0.7.3 (2015-10-18)
 * (SmilingJack) expand slider to range slider
 * (bluefox) fix Basci-htmlBool, basic-svgbool, basic-val bulb
