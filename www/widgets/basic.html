@@ -1804,7 +1804,7 @@
         <%= (el) -> vis.binds.basic.toggle(el) %>>
         <div class="vis-widget-body">
 			<%== this.data.attr("html_prepend") %>
-			< if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
+			<% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"), this.data.attr('min'), this.data.attr('max'))) { %>
 			    <%== this.data.attr("html_false") %>
 			<% } else { %>
 			    <%== this.data.attr("html_true") %>
