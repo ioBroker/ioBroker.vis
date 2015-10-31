@@ -257,6 +257,7 @@
                                 $(this).parent().find('.ui-state-focus').blur();
                             },
                             close: function () {
+                                if ($dlg.data('timer')) { clearTimeout($dlg.data('timer')); $dlg.data('timer', null)};
                                 $dlg.dialog('destroy');
                                 // Destroy content if not preloaded
                                 if ($dlg.data('preload')) $dlg.html('');
@@ -281,6 +282,10 @@
                         if ($dlg.data('preload')) $dlg.html(html);
                     },
                     close: function () {
+                        if ($dlg.data('timer')) {
+                            clearTimeout($dlg.data('timer'));
+                            $dlg.data('timer', null);
+                        }
                         // Destroy content if not preloaded
                         if ($dlg.data('preload')) $dlg.html('');
                     }
@@ -304,7 +309,13 @@
             options.minHeight = options.height;
             options.minWidth  = options.width;
             dlg.dialog($.extend({
-                autoOpen: false
+                autoOpen: false,
+                close: function () {
+                    if ($dlg.data('timer')) {
+                        clearTimeout($dlg.data('timer'));
+                        $dlg.data('timer', null);
+                    }
+                }
             }, options));
 
             if (!vis.editMode) {
@@ -343,12 +354,19 @@
                 $(el).parent().find("div.vis-widget-body").show();
             }
         },
-        dialogAutoClose: function (el) {
+        dialogAutoClose: function (el, timeout) {
             var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
-            // TODO auf bestimme Elemente einschränken (Button, Radio, ...)
+
+            if (timeout === true || timeout === 'true') timeout = 100;
+
             $dialog.on('dialogopen', function () {
-                $dialog.one('click', function () {
-                    $dialog.dialog("close");
+                $dialog.find('input').on('click', function () {
+                    var timer = $dialog.data('timer');
+                    if (timer) clearTimeout(timer);
+                    $dialog.data('timer', setTimeout(function () {
+                        $dialog.data('timer', null);
+                        $dialog.dialog('close');
+                    }, timeout));
                 });
             });
         },
@@ -780,7 +798,7 @@
                 if (newVal === false || newVal === 'false') {
                     newVal = 0;
                 }
-
+                $this.find('input').prop('checked', false);
                 $this.find('input[value="' + newVal + '"]').prop('checked', true);
                 $this.find('input').each(function () {
                     if ($(this).button('instance')) $(this).button('refresh');
@@ -793,7 +811,7 @@
             if (val === false || val === 'false') { val = 0; }
             setTimeout(function () {
                 //console.log(val + ' ' + $this.find('input[value="' + val + '"]').length);
-                $this.find('input').removeAttr('checked');
+                $this.find('input').prop('checked', false);
                 $this.find('input[value="' + val + '"]').prop('checked', true);
                 $this.buttonset(settings);
 

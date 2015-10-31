@@ -51,7 +51,7 @@
 //              views - Name of the view
 //              effect - jquery UI show/hide effects
 //              eff_opt - additional option to effect slide (up, down, left, right)
-//              fontName - Font name
+//              fontname - Font name
 //              slider,min,max,step - Default step is ((max - min) / 100)
 //              select,value1,value2,... - dropdown select
 //              nselect,value1,value2,... - same as select, but without translation of items
@@ -61,10 +61,12 @@
 //              group.name/byindex - like group, but all following attributes will be grouped by ID. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
 //              text - dialog box with html editor
 //              html - dialog box with html editor
+//              widget - existing widget selector
 
 'use strict';
 
 vis = $.extend(true, vis, {
+    fontNames: ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'],
     editObjectID: function (widAttr, widgetFilter) {
         var that = this;
         // Edit for Object ID
@@ -207,6 +209,21 @@ vis = $.extend(true, vis, {
 
         return line;
     },
+    editWidgetNames: function (widAttr, options) {
+        // options[0] all views
+        var widgets =  [''];
+        if (options && options[0] === 'all') {
+            for (var w in this.widgets) {
+                widgets.push(w);
+            }
+        } else {
+            for (var w in this.views[this.activeView].widgets) {
+                widgets.push(w);
+            }
+        }
+
+        return this.editSelect(widAttr, widgets, true);
+    },
     editSelect: function (widAttr, values, notTranslate, init, onchange) {
         if (typeof notTranslate == 'function') {
             onchange = init;
@@ -262,8 +279,7 @@ vis = $.extend(true, vis, {
     },
     editFontName: function (widAttr) {
         // Select
-        var values = ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'];
-        return this.editSelect(widAttr, values);
+        return this.editSelect(widAttr, this.fontNames, true);
     },
     editAutoComplete: function (widAttr, values) {
         // Auto-complete
@@ -779,6 +795,10 @@ vis = $.extend(true, vis, {
         };
         return line;
     },
+    // add font name to font selector (used in adapters, eg. vis-google-fonts
+    addFont: function (fontName) {
+        if (this.fontNames.indexOf(fontName) == -1) this.fontNames.push(fontName);
+    },
     // find states with requested roles of device
     findByRoles: function (stateId, roles) {
         if (typeof roles != 'object') {
@@ -966,6 +986,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'effect':
                 line = this.editEffect(widAttr.name);
+                break;
+            case 'widget':
+                line = this.editWidgetNames(widAttr.name, widAttr.options);
                 break;
             case 'effect-options':
                 line = this.editSelect(widAttr.name, {
