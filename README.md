@@ -151,6 +151,13 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.5 (2015-11-02)
+* (bluefox) fix Widget "basic - ctrl Bool Html "
+* (bluefox) make red-number working again.
+* (bluefox) extend dialog with atuoclose timeout
+* (bluefox) add editWidgetNames
+* (bluefox) remove jqueryUI files to ioBroker.web
+
 ### 0.7.4 (2015-10-27)
 * (SmilingJack) add "jqui-navigation" with password
 * (bluefox) fix jqui-selectValue: write number instead of string
