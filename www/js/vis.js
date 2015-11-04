@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.7.4',
+    version: '0.7.6',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
