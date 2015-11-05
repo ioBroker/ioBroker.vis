@@ -66,7 +66,20 @@
 'use strict';
 
 vis = $.extend(true, vis, {
-    fontNames: ['', 'Arial', 'Times', 'Andale Mono', 'Comic Sans', 'Impact'],
+    fontNames: [
+        'Verdana, Geneva, sans-serif',
+        'Georgia, "Times New Roman", Times, serif',
+        '"Courier New", Courier, monospace',
+        'Arial, Helvetica, sans-serif',
+        'Tahoma, Geneva, sans-serif',
+        '"Trebuchet MS", Arial, Helvetica, sans-serif',
+        '"Arial Black", Gadget, sans-serif',
+        '"Times New Roman", Times, serif',
+        '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+        '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+        '"MS Serif", "New York", serif',
+        '"Comic Sans MS", cursive'
+    ],
     editObjectID: function (widAttr, widgetFilter) {
         var that = this;
         // Edit for Object ID
@@ -278,8 +291,34 @@ vis = $.extend(true, vis, {
         };
     },
     editFontName: function (widAttr) {
-        // Select
-        return this.editSelect(widAttr, this.fontNames, true);
+        var that = this;
+        // Auto-complete
+        return {
+            input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
+            init: function (_wid_attr, data) {
+                $(this).autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        var _data = $.grep(that.fontNames, function (value) {
+                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                        });
+
+                        response(_data);
+                    },
+                    select: function (event, ui) {
+                        $(this).val(ui.item.value);
+                        $(this).trigger('change', ui.item.value);
+                    }
+                }).focus(function () {
+                    // Show dropdown menu
+                    $(this).autocomplete('search', '');
+                }).autocomplete('instance')._renderItem = function (ul, item) {
+                    return $('<li>')
+                        .append('<a><span style="font-family: ' + item.label + '">' + item.label + '(En, Рус, Äü)</span></a>')
+                        .appendTo(ul);
+                };
+            }
+        };
     },
     editAutoComplete: function (widAttr, values) {
         // Auto-complete
@@ -376,7 +415,7 @@ vis = $.extend(true, vis, {
         return this.editAutoComplete(widAttr, views);
     },
     editFilterName: function (widAttr) {
-        var filters = vis.updateFilter();
+        var filters = this.updateFilter();
         filters.unshift('');
 
         //return this.editSelect(widAttr, filters, true);
@@ -586,19 +625,7 @@ vis = $.extend(true, vis, {
         this.groups[group].css_color             = this.editColor('css_color');
         this.groups[group]['css_text-align']     = this.editSelect('css_text-align', ['', 'left', 'right', 'center' ,'justify', 'initial', 'inherit'], true);
         this.groups[group]['css_text-shadow']    = {input: '<input type="text" id="inspect_css_text-shadow"/>'};
-        this.groups[group]['css_font-family']    = this.editAutoComplete('css_font-family', ['',
-            'Verdana, Geneva, sans-serif',
-            'Georgia, "Times New Roman", Times, serif',
-            '"Courier New", Courier, monospace',
-            'Arial, Helvetica, sans-serif',
-            'Tahoma, Geneva, sans-serif',
-            '"Trebuchet MS", Arial, Helvetica, sans-serif',
-            '"Arial Black", Gadget, sans-serif',
-            '"Times New Roman", Times, serif',
-            '"Palatino Linotype", "Book Antiqua", Palatino, serif',
-            '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
-            '"MS Serif", "New York", serif',
-            '"Comic Sans MS", cursive']);//{input: '<input type="text" id="inspect_css_font-family"/>'};
+        this.groups[group]['css_font-family']    = this.editFontName('css_font-family');
         this.groups[group]['css_font-style']     = this.editSelect('css_font-style', ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], true);
         this.groups[group]['css_font-variant']   = this.editSelect('css_font-variant', ['', 'normal', 'small-caps', 'initial', 'inherit'], true);
         this.groups[group]['css_font-weight']    = this.editAutoComplete('css_font-weight', ['', 'normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit']);
