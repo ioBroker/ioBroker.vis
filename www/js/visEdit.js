@@ -675,7 +675,7 @@ vis = $.extend(true, vis, {
         // Theme select Editor
         if (this.config.editorTheme) {
             $('#commonTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="commonTheme"/>');
             $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
@@ -684,7 +684,7 @@ vis = $.extend(true, vis, {
             // deselect all
             $('#ul_theme li').removeClass('ui-state-active');
             $('#commonTheme').remove();
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css" id="commonTheme"/>');
             //that.additionalThemeCss(theme);
 
             var oldValue = that.config.editorTheme;

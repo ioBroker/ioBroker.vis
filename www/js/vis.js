@@ -95,7 +95,7 @@ if (typeof systemDictionary !== 'undefined') {
 if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
 
 var vis = {
-    version: '0.7.6',
+    version: '0.7.7',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -664,7 +664,7 @@ var vis = {
         var that = this;
 
         if (!this.editMode && !$('#commonTheme').length) {
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
         }
 
         if (!this.views[view] || !this.views[view].settings) {
@@ -685,7 +685,7 @@ var vis = {
         //if (!noThemeChange) {
         //    $("style[data-href$='jquery-ui.min.css']").remove();
         //    $("link[href$='jquery-ui.min.css']").remove();
-        //    $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+        //    $("head").prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
         //    vis.additionalThemeCss(vis.views[view].settings.theme);
         //}
 
@@ -768,14 +768,14 @@ var vis = {
         var _view = 'visview_' + view;
         if (this.calcCommonStyle() == theme) return;
         $.ajax({
-            url: 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
+            url: '../../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
                 $('#' + view + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
-                data = data.replace(/images/g, "lib/css/themes/jquery-ui/" + theme + "/images/");
+                data = data.replace(/images/g, '../../lib/css/themes/jquery-ui/' + theme + '/images/');
                 $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
 
                 $('#' + view + '_style_common_user').remove();
@@ -1054,9 +1054,9 @@ var vis = {
                     //if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
                     //    this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
                     //    if ($("link[href$='jquery-ui.min.css']").length == 0) {
-                    //        $("head").prepend('<link rel="stylesheet" type="text/css" href="../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
+                    //        $("head").prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
                     //    } else {
-                    //        $("link[href$='jquery-ui.min.css']").attr("href", '../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
+                    //        $("link[href$='jquery-ui.min.css']").attr("href", '../../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
                     //    }
                     //    $("style[data-href$='jquery-ui.min.css']").remove();
                     //}
@@ -2480,7 +2480,7 @@ if (!vis.editMode) {
         }
     });
 
-    //vis.preloadImages(["../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);
+    //vis.preloadImages(["../../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);
 
     vis.initWakeUp();
 })(jQuery);
