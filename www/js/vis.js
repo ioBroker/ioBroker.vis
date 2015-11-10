@@ -484,13 +484,17 @@ var vis = {
             // Get list of used widget sets. if Edit mode list is null.
             var widgetSets = this.editMode ? null : this.getUsedWidgetSets();
 
-            // Firts calculate how many sets to load
+            // First calculate how many sets to load
             for (var i = 0; i < this.widgetSets.length; i++) {
                 var name = this.widgetSets[i].name || this.widgetSets[i];
 
                 // Skip unused widget sets in non-edit mode
-                if (widgetSets && widgetSets.indexOf(name) === -1) {
-                    continue;
+                if (!this.widgetSets[i].always) {
+                    if (this.widgetSets[i].widgetSets && widgetSets.indexOf(name) === -1) {
+                        continue;
+                    }
+                } else {
+                    if (widgetSets && widgetSets.indexOf(name) == -1) widgetSets.push(name);
                 }
 
                 arrSets[arrSets.length] = name;
