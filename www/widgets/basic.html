@@ -181,7 +181,9 @@
                 "en": "Without 'Auto set' you must press ENTER,\x0ato write the value.",
                 "de": "Ohne 'Auto-setzen' man muss danach ENTER drucken,\x0A um das Wert zu schreiben.",
                 "ru": "Без 'Авто записи' нужно нажать ENTER,\x0Aчто бы записать значение."
-            }
+            },
+            "group_views":      {"en": "Views",                     "de": "Views",                  "ru": "Страницы"},
+            "group_frames":     {"en": "iFrames",                   "de": "iFrames",                "ru": "iFrames"}
         });
     }
 
@@ -1352,7 +1354,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_StatefulIFrame8.png"></img>'
         data-vis-type="stateful"
         data-vis-name="iFrame 8"
-        data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;src_(0-7)">
+        data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.frames;src_(0-count)">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper"/>
@@ -1401,7 +1403,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_StatefulContainerView8.png"></img>'
         data-vis-type="stateful,container"
         data-vis-name="view in widget 8"
-        data-vis-attrs="oid;persistent/checkbox;contains_view_(0-7)/views">
+        data-vis-attrs="oid;persistent/checkbox;count[1]/number;group.views;contains_view_(0-count)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper" />
@@ -1454,7 +1456,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_StatefulImage.png"></img>'
         data-vis-type="stateful"
         data-vis-name="Image 8"
-        data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;src_(0-7)/image">
+        data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.images;src_(0-count)/image">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper" />

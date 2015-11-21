@@ -1498,7 +1498,7 @@ vis = $.extend(true, vis, {
                 return [];
             }
             var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
-            // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+            // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
             var t = 0;
             var attr;
             while ((attr = $widgetTpl.attr('data-vis-attrs' + t))) {
