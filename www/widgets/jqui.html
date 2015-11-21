@@ -301,14 +301,14 @@
             }
         },
         dialogContainer: function (el, options, persistent, preload) {
-            var dlg = $(el).parent().find("div.vis-widget-dialog");
+            var $dlg = $(el).parent().find("div.vis-widget-dialog");
             options.width     = options.dialog_width;
             options.height    = options.dialog_height;
             options.top       = options.dialog_top;
             options.left      = options.dialog_left;
             options.minHeight = options.height;
             options.minWidth  = options.width;
-            dlg.dialog($.extend({
+            $dlg.dialog($.extend({
                 autoOpen: false,
                 close: function () {
                     if ($dlg.data('timer')) {
@@ -323,7 +323,7 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    dlg.find("div[id$='container']").each(function () {
+                    $dlg.find("div[id$='container']").each(function () {
                         var cview = $(this).attr('data-vis-contains');
                         if (!vis.views[cview]) {
                             $(this).append("error: view not found.");
