@@ -26,7 +26,7 @@
 //       {"Time": "12:34:36", "Event": "Window opened", "_data":{"Type": "3", "Event" : "SomeEvent3"}}\
 //     ]'
 //
-//  If _data object found and detailed_wid is defined
+//  If _detail object found and detailed_wid is defined
 //  following object will be created by selecting of one row:
 // <table class="tclass-detail">
 //     <tr class="tclass-detail-tr tclass-detail-tr-even"><td class="tclass-detail-td-name">Type</td><td class="tclass-detail-td-value">1</td></tr>
@@ -102,40 +102,78 @@ vis.binds.table = {
         if ($el.length) {
             var text = "";
             var print = null;
-            // Try to find special attributes starting with '_'
-            for (var obj in data.content) {
-                if (obj.length > 0 && obj[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
-                    text += '<table class="' + data.tClass + '-detail">';
-                    // Show that object
-                    var r = 0;
-                    // Go through all attributes
-                    if (typeof data.content[obj] == 'object') {
-                        for (var odata in data.content[obj]) {
-                            var val = data.content[obj][odata].toString();
-                            if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0,4) != '_btn' && obj != '_id') {
-                                continue;
-                            }
-                            text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + odata + '</td>' +
-                                '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
-                            if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
-                                text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
-                            }
-                            r++;
+
+            if (data.content._detail) {
+                text += '<table class="' + data.tClass + '-detail">';
+                // Show that object
+                var r = 0;
+                var obj = '_detail';
+                // Go through all attributes
+                if (typeof data.content[obj] == 'object') {
+                    for (var odata in data.content[obj]) {
+                        if (typeof data.content[obj][odata] === 'function') continue;
+                        var val = data.content[obj][odata].toString();
+                        if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                            continue;
                         }
-                    } else {
-                        var val = data.content[obj].toString();
-
-                        text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + obj.substring(1) + '</td>' +
+                        text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + odata + '</td>' +
                             '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
-
                         if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
                             text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                         }
                         r++;
                     }
-                    text += '</table>';
+                } else {
+                    var val = data.content[obj].toString();
+
+                    text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + obj.substring(1) + '</td>' +
+                        '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
+
+                    if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                        text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
+                    }
+                    r++;
+                }
+                text += '</table>';
+            } else {
+                // Try to find special attributes starting with '_'
+                for (var obj in data.content) {
+                    if (typeof data.content[obj] === 'function') continue;
+                    if (obj.length > 0 && obj[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                        text += '<table class="' + data.tClass + '-detail">';
+                        // Show that object
+                        var r = 0;
+                        // Go through all attributes
+                        if (typeof data.content[obj] == 'object') {
+                            for (var odata in data.content[obj]) {
+                                if (typeof data.content[obj][odata] === 'function') continue;
+                                var val = data.content[obj][odata].toString();
+                                if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                                    continue;
+                                }
+                                text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + odata + '</td>' +
+                                    '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
+                                if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                                    text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
+                                }
+                                r++;
+                            }
+                        } else {
+                            var val = data.content[obj].toString();
+
+                            text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + obj.substring(1) + '</td>' +
+                                '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
+
+                            if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                                text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
+                            }
+                            r++;
+                        }
+                        text += '</table>';
+                    }
                 }
             }
+
 
             // If no special _data object found => show standard elements
             if (!text) {
@@ -355,11 +393,11 @@ vis.binds.table = {
             view:    view
         };
 
-        $elem.find('.vis-table-ack-button').unbind('click touchstart').bind('click touchstart', function (e){
+        $elem.find('.vis-table-ack-button').unbind('click touchstart').bind('click touchstart', function (e) {
             // Protect against two events
             if (vis.detectBounce(this)) return;
 
-            vis.binds.table.onAckButton(e);
+            vis.binds.table.onAckButton.call(this, e);
         });
 
         // Set additional data for every row
@@ -375,11 +413,11 @@ vis.binds.table = {
         // If detailed information desired
         if (options.detailed_wid) {
             // Bind on click event for every row
-            $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', function (e){
+            $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', function (e) {
                 // Protect against two events
                 if (vis.detectBounce(this)) return;
 
-                vis.binds.table.onRowClick(e);
+                vis.binds.table.onRowClick.call(this, e);
             });
 
             // Set additional data for every row
@@ -466,22 +504,22 @@ vis.binds.table = {
                             detailed_wid: options.detailed_wid,
                             tClass:       tClass,
                             wid:          wid
-                        }).unbind('click touchstart').bind('click touchstart', function (e){
+                        }).unbind('click touchstart').bind('click touchstart', function (e) {
                             // Protect against two events
                             if (vis.detectBounce(this)) return;
 
-                            vis.binds.table.onRowClick(e);
+                            vis.binds.table.onRowClick.call(this, e);
                         });
                     $el = $(this).find('.tr_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id));
                 }
 
                 $('#' + this.id).find('.ack_button_' + ((newEvent._id === undefined) ? data.rowNum : newEvent._id))
                     .data('options', {data: newEvent, parent: this, ack_id: newEvent._ack_id || JSON.stringify(newEvent)})
-                    .unbind('click touchstart').bind('click touchstart', function (e){
+                    .unbind('click touchstart').bind('click touchstart', function (e) {
                         // Protect against two events
                         if (vis.detectBounce(this)) return;
 
-                        vis.binds.table.onAckButton(e);
+                        vis.binds.table.onAckButton.call(this, e);
                     });
             })
             .on('newTable', function (e, newVal) {
