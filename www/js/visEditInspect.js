@@ -43,6 +43,7 @@
 // defaultValue: If defaultValue has '/' it must be replaced by ~
 // defaultValue: If defaultValue has '"' it must be replaced by ^
 // defaultValue: If defaultValue has '^' it must be replaced by ^^
+// onChangeFunc has following attributes (widgetID, view, newId, attr, isCss) and must return back the array with changed attributes or null
 // Type format: id - Object ID Dialog
 //              checkbox
 //              image - image

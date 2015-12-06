@@ -183,7 +183,10 @@
                 "ru": "Без 'Авто записи' нужно нажать ENTER,\x0Aчто бы записать значение."
             },
             "group_views":      {"en": "Views",                     "de": "Views",                  "ru": "Страницы"},
-            "group_frames":     {"en": "iFrames",                   "de": "iFrames",                "ru": "iFrames"}
+            "group_frames":     {"en": "iFrames",                   "de": "iFrames",                "ru": "iFrames"},
+            "horizontal":       {"en": "horizontal",                "de": "horizontal",             "ru": "горизонтально"},
+            "vertical":         {"en": "vertical",                  "de": "senkrecht",              "ru": "вертикально"},
+            "orientation":      {"en": "Orientation",               "de": "Ausrichtung ",           "ru": "Направление"}
         });
     }
 
@@ -720,11 +723,12 @@
             var oidFalse    = $this.data('oid-false');
             var oidTrueVal  = $this.data('oid-true-value');
             var oidFalseVal = $this.data('oid-false-value');
+            var readOnly    = $this.data('read-only');
 
             if (min === '') min = undefined;
             if (max === '') max = undefined;
 
-            if ((oid || oidTrue || urlTrue) && !vis.editMode) {
+            if ((oid || oidTrue || urlTrue) && !vis.editMode && !readOnly) {
                 $this.on('click touchstart', function () {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
@@ -942,7 +946,6 @@
 
             if (oid) {
                 vis.states.bind(oid + '.val', function (e, newVal) {
-                    debugger;
                     if (newVal === 'true'  || newVal === true)  newVal = 1;
                     if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
                     var $svg = $('#' + wid).find('svg');
@@ -1042,10 +1045,12 @@
                 }
             }
         },
-        getCalc: function (data) {
-            //<%=
-            return (data.border) ? ("calc(" + (parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : ((parseFloat(vis.states.attr(data.oid + '.val')) * data.factor) + "%");
-            //        %>
+        getCalc: function (data, val) {
+            var min = (!data.min && data.min !== 0) ? parseFloat(data.min) : 0;
+            var max = (!data.max && data.max !== 0) ? parseFloat(data.max) : 100;
+            var val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
+            val = (val - min) / (max - min);
+            return (data.border) ? ("calc(" + Math.round(val * 100) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : (Math.round(val * 100) + "%");
         },
         formatDate: function (dateObj, isSeconds, format) {
             if (typeof isSeconds != 'boolean') {
@@ -1203,7 +1208,7 @@
             }
             if (isArray) return points;
             return text;
-        }
+        },
     };
 
     $(document).mouseup(function () {
@@ -1212,6 +1217,36 @@
         }
     });
 
+    if (vis.editMode) {
+        vis.binds.basic.onOrientation = function (widgetID, view, newId, attr, isCss) {
+            var data  = vis.views[view].widgets[widgetID].data;
+            var style = vis.views[view].widgets[widgetID].style;
+            var h = parseInt(style.height, 10);
+            var w = parseInt(style.width, 10);
+
+            if (data[attr] === 'vertical') {
+                if (h < w) {
+                    var t = style.height;
+                    style.height = style.width;
+                    style.width = t;
+                    setTimeout(function () {
+                        vis.showWidgetHelper(widgetID, true);
+                    }, 0);
+                    return ['width', 'height'];
+                }
+            } else {
+                if (w < h) {
+                    var t = style.height;
+                    style.height = style.width;
+                    style.width = t;
+                    setTimeout(function () {
+                        vis.showWidgetHelper(widgetID, true);
+                    }, 0);
+                    return ['width', 'height'];
+                }
+            }
+        };
+    }
 </script>
 
 
@@ -1901,25 +1936,6 @@
     <% } %>
 </script>
 
-<script id="tplBulbOnOff"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<div id="prev_tplBulbOnOff" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-selectee" style="left: 82px; top: 31px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
-        data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-name="Bulb on/off"
-        data-vis-attrs="oid;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 44px; height: 59px">
-        <div class="vis-widget-body">
-            <% if (vis.binds.basic.isFalse(vis.states.attr(this.data.oid + ".val"))) { %>
-                <img src="<%== this.data.attr('icon_off') ? this.data.attr('icon_off') : 'img/bulb_off.png' %>" width="100%"/>
-            <% } else { %>
-                <img src="<%== this.data.attr('icon_on') ? this.data.attr('icon_on') : 'img/icon_on.png' %>" width="100%"/>
-            <% } %>
-        </div>
-    </div>
-</script>
-
 <script id="tplBulbOnOffCtrl"
         type="text/ejs"
         class="vis-tpl"
@@ -1927,7 +1943,7 @@
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
-        data-vis-attrs="oid;min;max;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;"
+        data-vis-attrs="oid;min;max;icon_off[~vis~img~bulb_off.png]/image;icon_on[~vis~img~bulb_on.png]/image;readOnly/checkbox;"
         data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
         >
     <div
@@ -1935,6 +1951,7 @@
         class="vis-widget <%== this.data.attr('class') %>"
         id="<%= this.data.attr('wid') %>"
         style="width: 44px; height: 59px"
+        data-read-only="<%=  this.data.attr('readOnly') %>"
         data-min="<%= this.data.attr('min') %>"
         data-max="<%= this.data.attr('max') %>"
         data-url-true="<%=  this.data.attr('urlTrue') %>"
@@ -1960,26 +1977,12 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val,bar"
-        data-vis-name="Bar Horizontal"
+        data-vis-name="Bar"
         data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
-        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
+        data-vis-attrs="oid;min[0];max[100];orientation[horizontal]/select,horizontal,vertical/onOrientation;color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div data-oid="<%= this.data.attr('oid') %>"
-        class="vis-widget-body"
-        style="<%= (this.data.border) ? "height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : "" %><%= (this.data.reverse === "true" || this.data.reverse === true ? "float: right; " : "") %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>;width: <%= vis.binds.basic.getCalc(this.data) %>"></div>
-    </div>
-</script>
-
-<script id="tplValueFloatBarVertical"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,bar"
-        data-vis-name="Bar Vertical"
-        data-vis-prev='<div id="prev_tplValueFloatBarVertical" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev ui-draggable-handle " style="width: 17px; height: 54px; border: 1px solid rgb(136, 136, 136); left: 435px; top: 105px; position: absolute;" > <div class="vis-widget-prev-body" style="height: 68.58%; position: absolute; bottom: 0%; background-color: blue;"></div> </div></div>'
-        data-vis-attrs="oid;factor[1];color[blue]/color;border;shadow;reverse/checkbox">
-    <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget <%== this.data.attr('class') %>" style="width:20px; height:240px; border:1px solid #888" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body" style="<%= (this.data.border) ? "width: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ");" : ""  %>height:<%= vis.binds.basic.getCalc(this.data) + ";" %> %><%= (this.data.reverse === "true" || this.data.reverse === true ? "left:0px; position:absolute; bottom:0%;" : "") %>;border: <%= this.data.border %>; box-shadow:<%= this.data.shadow %>; background-color:<%= this.data.color %>"></div>
+        <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body"
+        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0px; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
     </div>
 </script>
 

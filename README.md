@@ -151,6 +151,18 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Changelog
+### 0.7.8 (2015-12-06)
+* (bluefox) support flag "always" (to always load the widget set)
+* (bluefox) fix error in jqui Container view
+* (bluefox) make basic xxx8 to possible have any count of entries
+* (bluefox) scroll on basic-iframe
+* (bluefox) fix basic - table details
+* (bluefox) add refreshOnViewChange for iFrame
+* (bluefox) remove "basic - val,bulb" and replace it with "basic - ctrl,bulb" + readOnly flag
+* (bluefox) add update on view change for "basic - iFrame"
+* (bluefox) remove "bar - Vertical" and replace it with "bar" + "orientation = vertical"
+* (bluefox) change calculation for bars. Use min/max instead of factor
+
 ### 0.7.7 (2015-11-07)
 * (bluefox) move jQueryUI css files
 

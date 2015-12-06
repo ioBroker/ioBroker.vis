@@ -332,6 +332,7 @@ var vis = {
                     this.views[view].widgets[id].data['visibility-val'] = false;
                     delete this.views[view].widgets[id].data.oid;
                 }
+
                 // convert "Door/Window sensor" to HTML
                 if (this.views[view].widgets[id].tpl === 'tplHmWindow') {
                     this.views[view].widgets[id].tpl = 'tplValueBool';
@@ -340,6 +341,7 @@ var vis = {
                     delete this.views[view].widgets[id].data.html_closed;
                     delete this.views[view].widgets[id].data.html_open;
                 }
+
                 // convert "Door/Window sensor" to HTML
                 if (this.views[view].widgets[id].tpl === 'tplHmWindowRotary') {
                     this.views[view].widgets[id].tpl = 'tplValueListHtml8';
@@ -351,6 +353,19 @@ var vis = {
                     delete this.views[view].widgets[id].data.html_open;
                     delete this.views[view].widgets[id].data.html_tilt;
                 }
+
+                // convert "tplBulbOnOff" to tplBulbOnOffCtrl
+                if (this.views[view].widgets[id].tpl === 'tplBulbOnOff') {
+                    this.views[view].widgets[id].tpl = 'tplBulbOnOffCtrl';
+                    this.views[view].widgets[id].data.readOnly = true;
+                }
+
+                // convert "tplValueFloatBarVertical" to tplValueFloatBar
+                if (this.views[view].widgets[id].tpl === 'tplValueFloatBarVertical') {
+                    this.views[view].widgets[id].tpl = 'tplValueFloatBar';
+                    this.views[view].widgets[id].data.orientation = 'vertical';
+                }
+
                 for (var attr in data) {
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
