@@ -1046,8 +1046,8 @@
             }
         },
         getCalc: function (data, val) {
-            var min = (!data.min && data.min !== 0) ? parseFloat(data.min) : 0;
-            var max = (!data.max && data.max !== 0) ? parseFloat(data.max) : 100;
+            var min = (data.min || data.min === 0) ? parseFloat(data.min) : 0;
+            var max = (data.max || data.max === 0) ? parseFloat(data.max) : 100;
             var val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
             val = (val - min) / (max - min);
             return (data.border) ? ("calc(" + Math.round(val * 100) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : (Math.round(val * 100) + "%");
