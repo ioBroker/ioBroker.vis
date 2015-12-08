@@ -453,7 +453,9 @@ body{
     height: calc(100% - 3px);
     z-index: 998;
 }
-
+.vis-inspect-group {
+    font-weight: bold !important;
+}
 .vis-widget_prev {
     position: relative !important;
     top: 0 !important;

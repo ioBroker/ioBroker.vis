@@ -1072,7 +1072,7 @@ vis = $.extend(true, vis, {
             } else {
                 groupName = _('group_' + group);
             }
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default"><td colspan="3">' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
+            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3">' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
