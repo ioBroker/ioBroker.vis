@@ -128,18 +128,22 @@ vis = $.extend(true, vis, {
 
         $('#vis-version').html(this.version);
 
-        $('#button_undo')
+        $('#button_undo').button({
+                icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'},
+                text: false
+            })
+            .css({height: 28})
             .click(function () {
                 that.undo();
             })
-            .addClass('ui-state-disabled')
+            .addClass('ui-state-disabled').attr('title', _('Undo'))
             .hover(
-            function () {
-                $(this).addClass('ui-state-hover');
-            },
-            function () {
-                $(this).removeClass('ui-state-hover');
-            });
+                function () {
+                    $(this).addClass('ui-state-hover');
+                },
+                function () {
+                    $(this).removeClass('ui-state-hover');
+                });
 
         $('.widget-helper').remove();
 

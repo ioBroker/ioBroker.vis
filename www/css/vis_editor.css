@@ -94,12 +94,12 @@ body{
 }
 
 #button_undo {
-    height: 27px;
+    height: 29px;
     padding-left: 3px;
     padding-right: 3px;
     position: relative;
-    top: 5px;
-    left: -15px;
+    top: -3px;
+    left: -12px;
     display: inline-block;
 }
 
@@ -321,6 +321,7 @@ body{
     background-image: none !important;
     cursor: pointer;
     height: 27px;
+    width: 250px;
 }
 
 .ribbon_field {

@@ -9,7 +9,7 @@
 		Before you start Chrome anew all other instances should be closed.
 		For local start lib directory from ccu.io is required and datastore in ../ directory.
 	-->
-    <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/redmond/jquery-ui.min.css" id="commonTheme">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/custom-light/jquery-ui.min.css" id="commonTheme">
 
     <meta charset="utf-8"/>
 
@@ -209,80 +209,30 @@
             <a href="#ribbon_tools" style="padding: 2px 4px 2px 4px" class="translate">Tools</a>
         </li>
     </ul>
-    <div id="menu_sf" style="display: inline-block; margin-bottom: -4px;">
-        <ul id="menu" style="margin: 0; height: auto;" class="sf-menu">
-            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Setup</a>
-                <ul style="display: none;">
-                    <li class="ui-state-default " role="tab" style="width: 250px ; background-image: none">
+    <div id="menu_sf" style="display: inline-block; margin-bottom: -4px; margin-left: -14px;">
+        <ul id="menu" style="margin: 0; height: auto;" class="ui-tabs-nav sf-menu" >
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style="padding: 1px 4px 1px 4px"><a class="menu-tab-text translate">Setup</a>
+                <ul style="display: none;" class="ui-widget-content">
+                    <li class="ui-state-default menu-item" role="tab">
                         <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
-                        <ul id="ul_theme">
+                        <ul id="ul_theme" class="ui-widget-content">
+                            <li class="ui-state-default menu-item" data-theme="custom-light">
+                                <a data-info="custom-light">Light</a>
+                            </li>
+                            <li class="ui-state-default menu-item" data-theme="custom-dark">
+                                <a data-info="custom-dark">Dark</a>
+                            </li>
                             <li class="ui-state-default menu-item" data-theme="dark-hive">
                                 <a data-info="dark-hive">Dark-Hive</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="start">
-                                <a data-info="start">Start</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="humanity">
-                                <a data-info="humanity">humanity</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="blitzer">
-                                <a data-info="blitzer">blitzer</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="black-tie">
-                                <a data-info="black-tie">BlackTie</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="cupertino">
-                                <a data-info="cupertino">Cupertino</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="eggplant">
-                                <a data-info="eggplant">Eggplant</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="excite-bike">
-                                <a data-info="excite-bike">excite-bike</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="flick">
-                                <a data-info="flick">flick</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="le-frog">
-                                <a data-info="le-frog">le-frog</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="mint-choc">
-                                <a data-info="mint-choc">mint-choc</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="overcast">
-                                <a data-info="overcast">overcast</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="pepper-grinder">
-                                <a data-info="pepper-grinder">pepper-grinder</a>
                             </li>
                             <li class="ui-state-default menu-item" data-theme="redmond">
                                 <a data-info="redmond">redmond</a>
                             </li>
-                            <li class="ui-state-default menu-item" data-theme="smoothness">
-                                <a data-info="smoothness">smoothness</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="south-street">
-                                <a data-info="south-street">south-street</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="sunny">
-                                <a data-info="sunny">sunny</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="trontastic">
-                                <a data-info="trontastic">trontastic</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="ui-darkness">
-                                <a data-info="ui-darkness">ui-darkness</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="ui-lightness">
-                                <a data-info="ui-lightness">ui-lightness</a>
-                            </li>
-                            <li class="ui-state-default menu-item" data-theme="vader">
-                                <a data-info="vader">vader</a></li>
                         </ul>
                     </li>
-                    <li class="ui-state-default " role="tab" style="width: 250px;  background-image: none">
+                    <li class="ui-state-default menu-item" role="tab">
                         <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
-                        <ul>
+                        <ul class="ui-widget-content">
                             <li class="ui-state-default language-select menu-item" data-language="de">
                                 <a>Deutsch</a>
                             </li>
@@ -294,32 +244,32 @@
                             </li>
                         </ul>
                     </li>
-                    <li id="li_menu_projects" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                    <li id="li_menu_projects" class="ui-state-default menu-item" role="tab">
                         <a class="menu-tab-text"><span class="translate">Projects</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
-                        <ul id="menu_projects">
+                        <ul id="menu_projects" class="ui-widget-content">
                             <li class="ui-state-default project-select menu-item" data-language="de"><a>Main</a></li>
                         </ul>
                     </li>
-                    <li id="li_menu_new_project" class="ui-state-default project-new" role="tab" style="width: 250px;  background-image: none">
+                    <li id="li_menu_new_project" class="ui-state-default menu-item project-new" role="tab">
                         <a class="menu-tab-text"><span class="translate">New project...</span></a>
                     </li>
-                    <li id="li_menu_file_manager" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                    <li id="li_menu_file_manager" class="ui-state-default menu-item" role="tab" >
                         <a class="menu-tab-text"><span class="translate">File manager...</span></a>
                     </li>
-                    <li id="li_menu_object_browser" class="ui-state-default" role="tab" style="width: 250px;  background-image: none">
+                    <li id="li_menu_object_browser" class="ui-state-default menu-item" role="tab" >
                         <a class="menu-tab-text"><span class="translate">Object browser...</span></a>
                     </li>
                 </ul>
             </li>
-            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style=""><a class="menu-tab-text translate">Help</a>
-                <ul>
-                    <li class="ui-state-default  menu-item"><a id="m_shortcuts" class="translate">Shortcuts</a></li>
-                    <li class="ui-state-default  menu-item"><a id="m_about" class="translate">About</a></li>
+            <li class="ui-state-default ui-corner-top menu-tab" role="tab" style="padding: 1px 4px 1px 4px"><a class="menu-tab-text translate">Help</a>
+                <ul style="display: none;" class="ui-widget-content">
+                    <li class="ui-state-default  menu-item" style="width: 252px ; background-image: none"><a id="m_shortcuts" class="translate">Shortcuts</a></li>
+                    <li class="ui-state-default  menu-item" style="width: 252px ; background-image: none"><a id="m_about" class="translate">About</a></li>
                 </ul>
             </li>
         </ul>
     </div>
-    <img src="lib/img/edit-undo-8.png" id="button_undo" class="ui-state-default ui-corner-top translateT" title="Undo">
+    <button id="button_undo"></button>
     <table style="display: inline-block; float: right">
         <tr>
             <td><div id="current-user" class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px"></div></td>
