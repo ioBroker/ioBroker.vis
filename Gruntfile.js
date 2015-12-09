@@ -17,8 +17,7 @@ module.exports = function (grunt) {
     grunt.initConfig({
         pkg: pkg,
         clean: {
-            all: ['tmp/*.json', 'tmp/*.zip', 'tmp/*.jpg', 'tmp/*.jpeg', 'tmp/*.png',
-                  dstDir + '*.json', dstDir + '*.zip', dstDir + '*.jpg', dstDir + '*.jpeg', dstDir + '*.png']
+            all: ['cordova/www/**/*']
         },
         replace: {
             core: {
@@ -83,6 +82,26 @@ module.exports = function (grunt) {
                         dest:    srcDir + '/www/js'
                     }
                 ]
+            },
+            index: {
+                options: {
+                    patterns: [
+                        {
+                            match: /\.\.\/\.\.\//g,
+                            replacement: ''
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                                'cordova/www/index.html'
+                        ],
+                        dest:    'cordova/www'
+                    }
+                ]
             }
         },
         // Javascript code styler
@@ -136,15 +155,59 @@ module.exports = function (grunt) {
                 dest: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.png'
 
             }
+        },
+        copy: {
+            vis: {
+                files: [
+                    // includes files within path
+                    {
+                        expand: true,
+                        cwd: 'www/',
+                        src: ['**', '!edit.html', '!offline.html', '!cache.manifest', '!cordova.js', '!js/app.js'],
+                        dest: 'cordova/www'
+                    }
+                ]
+            },
+            web: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'node_modules/iobroker.web/www/',
+                        src: ['lib/css/themes/**', 'lib/js/jquery-1.11.2.min.*', 'lib/js/jquery-ui-1.11.4.full.min.js', 'lib/js/socket.io.js'],
+                        dest: 'cordova/www'
+                    }
+                ]
+            },
+            app: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'cordova',
+                        src: ['app.js'],
+                        dest: 'cordova/www/js'
+                    }
+                ]
+            }
+        },
+        exec: {
+            build: {
+                cwd: 'cordova',
+                cmd: 'cordova.cmd build android'
+            },
+            run: {
+                cwd: 'cordova',
+                cmd: 'cordova.cmd run android'
+            }
+
         }
     });
 
     grunt.registerTask('updateReadme', function () {
         var readme = grunt.file.read('README.md');
-        var pos = readme.indexOf('## Changelog\r\n');
+        var pos = readme.indexOf('## Changelog');
         if (pos != -1) {
-            var readmeStart = readme.substring(0, pos + '## Changelog\r\n'.length);
-            var readmeEnd   = readme.substring(pos + '## Changelog\r\n'.length);
+            var readmeStart = readme.substring(0, pos + '## Changelog\r'.length);
+            var readmeEnd   = readme.substring(pos + '## Changelog\r'.length);
 
             if (iopackage.common && readme.indexOf(iopackage.common.version) == -1) {
                 var timestamp = new Date();
@@ -173,22 +236,19 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jscs');
     grunt.loadNpmTasks('grunt-http');
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', [
-        'exec',
         'http',
-        'clean',
-        'replace',
+        'replace:core',
         'updateReadme',
-        'compress',
-        'copy',
         'jshint',
         'jscs'
     ]);
 	
-	grunt.registerTask('prepublish', ['replace']);
-	grunt.registerTask('p', ['replace']);
+	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
+	grunt.registerTask('p', ['prepublish']);
+    grunt.registerTask('app', ['copy', 'replace:index', 'exec:build']);
+    grunt.registerTask('run', ['copy', 'replace:index', 'exec:run']);
 };

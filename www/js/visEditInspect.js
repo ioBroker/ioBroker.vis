@@ -947,10 +947,10 @@ vis = $.extend(true, vis, {
         // set default value if attr is empty
         if (widAttr.default !== undefined) {
             for (var i = 0; i < widgets.length; i++) {
-                var view         = this.getViewOfWidget(widgets[i]);
-                var widgetData   = this.views[view].widgets[widgets[i]].data;
+                var view       = this.getViewOfWidget(widgets[i]);
+                var widgetData = this.views[view].widgets[widgets[i]].data;
 
-                if (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined) {
+                if (widgetData && (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined)) {
                     widgetData[widAttr.name] = widAttr.default;
                     this.reRenderList = this.reRenderList || [];
                     if (this.reRenderList.indexOf(widgets[i]) == -1) this.reRenderList.push(widgets[i]);

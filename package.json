@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "0.7.9",
+  "version": "0.8.0",
   "author": {
     "name": "bluefox",
     "email": "bluefox@ccu.io"
@@ -37,9 +37,10 @@
     "grunt-jscs": "^2.0.0",
     "grunt-http": "^1.6.0",
     "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-compress": "^0.13.0",
     "grunt-contrib-copy": "^0.8.0",
-    "grunt-exec": "^0.4.6"
+    "grunt-exec": "^0.4.6",
+    "iobroker.web": "*",
+    "cordova": "^5.4.1"
   },
   "bugs": {
     "url": "https://github.com/ioBroker/ioBroker.vis/issues"

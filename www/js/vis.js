@@ -92,7 +92,9 @@ if (typeof systemDictionary !== 'undefined') {
     });
 }
 
-if (typeof systemLang !== 'undefined') systemLang = visConfig.language || systemLang;
+if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
+    systemLang = visConfig.language || systemLang;
+}
 
 var vis = {
     version: '0.7.9',
@@ -577,19 +579,18 @@ var vis = {
                 if (!this.activeView) {
                     if (!this.editMode) {
                         window.alert(_('error - View doesn\'t exist'));
-                        window.location.href = './edit.html';
+                        if (typeof cordova === 'undefined') window.location.href = './edit.html';
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                         this.activeView = 'DemoView';
                         //vis.showWaitScreen(false);
                     }
                 }
-            }
-
+            } else
             if (!this.activeView) {
                 if (!this.editMode) {
                     window.alert(_('error - View doesn\'t exist'));
-                    window.location.href = 'edit.html';
+                    if (typeof cordova === 'undefined') window.location.href = 'edit.html';
                 } else {
                     // All views were deleted, but file exists. Create demo View
                     //window.alert("unexpected error - this should not happen :(");
@@ -604,7 +605,7 @@ var vis = {
                 this.activeView = hash;
             } else {
                 window.alert(_("error - View doesn't exist"));
-                window.location.href = "./edit.html";
+                if (typeof cordova === 'undefined') window.location.href = "./edit.html";
                 $.error("vis Error can't find view");
             }
         }
@@ -625,15 +626,19 @@ var vis = {
         this.initialized = true;
 
         // If this function called earlier, it makes problems under FireFox.
-        if (this.views._project) {
+        if (this.views && this.views._project) {
             this.renderView("_project", false, true);
         }
 
-        this.changeView(this.activeView);
+        if (this.activeView) this.changeView(this.activeView);
     },
     initViewObject: function () {
         if (!this.editMode) {
-            window.location.href = './edit.html' + window.location.search;
+            if (typeof cordova !== 'undefined') {
+                window.alert(_('no views found!'));
+            } else {
+                window.location.href = './edit.html' + window.location.search;
+            }
         } else {
             if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
@@ -683,7 +688,7 @@ var vis = {
         var that = this;
 
         if (!this.editMode && !$('#commonTheme').length) {
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
         }
 
         if (!this.views[view] || !this.views[view].settings) {
@@ -700,13 +705,6 @@ var vis = {
         } else {
             this.viewsActiveFilter[view] = [];
         }
-
-        //if (!noThemeChange) {
-        //    $("style[data-href$='jquery-ui.min.css']").remove();
-        //    $("link[href$='jquery-ui.min.css']").remove();
-        //    $("head").prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + vis.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-        //    vis.additionalThemeCss(vis.views[view].settings.theme);
-        //}
 
         if ($('#visview_' + view).html() === undefined) {
 
@@ -787,14 +785,14 @@ var vis = {
         var _view = 'visview_' + view;
         if (this.calcCommonStyle() == theme) return;
         $.ajax({
-            url: '../../lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
+            url: ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
                 $('#' + view + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
-                data = data.replace(/images/g, '../../lib/css/themes/jquery-ui/' + theme + '/images/');
+                data = data.replace(/images/g, ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/images');
                 $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
 
                 $('#' + view + '_style_common_user').remove();
@@ -1065,22 +1063,10 @@ var vis = {
                 this.renderView(view, true);
 
                 // View ggf aus Container heraus holen
-                if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
-                    $('#visview_' + view).appendTo("#vis_container");
+                if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
+                    $('#visview_' + view).appendTo('#vis_container');
                 }
 
-                //if (this.views[view] && this.views[view].settings) {
-                    //if (this.views[vis.activeView] && this.views[vis.activeView].settings &&
-                    //    this.views[vis.activeView].settings.theme != this.views[view].settings.theme) {
-                    //    if ($("link[href$='jquery-ui.min.css']").length == 0) {
-                    //        $("head").prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css" id="jqui_theme" />');
-                    //    } else {
-                    //        $("link[href$='jquery-ui.min.css']").attr("href", '../../lib/css/themes/jquery-ui/' + this.views[view].settings.theme + '/jquery-ui.min.css');
-                    //    }
-                    //    $("style[data-href$='jquery-ui.min.css']").remove();
-                    //}
-                    //this.additionalThemeCss(this.views[view].settings.theme);
-                //}
                 $('#visview_' + view).show();
                 $('#visview_' + this.activeView).hide();
             }
@@ -1090,8 +1076,8 @@ var vis = {
             this.renderView(view);
 
             // View ggf aus Container heraus holen
-            if ($('#visview_' + view).parent().attr("id") !== "vis_container") {
-                $('#visview_' + view).appendTo("#vis_container");
+            if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
+                $('#visview_' + view).appendTo('#vis_container');
             }
         }
         this.activeView = view;
@@ -1235,14 +1221,6 @@ var vis = {
             });
         }
     },
-    //additionalThemeCss: function (theme) {
-    //    if (theme == "kian") {
-    //        $("#additional_theme_css").remove();
-    //        $("link[href$='jquery-ui.min.css']").after('<link rel="stylesheet" href="css/add_' + theme + '.css" id="additional_theme_css" type="text/css"/>');
-    //    } else {
-    //        $("#additional_theme_css").remove();
-    //    }
-    //},
     wakeUpCallbacks: [],
     initWakeUp: function () {
         var that = this;
