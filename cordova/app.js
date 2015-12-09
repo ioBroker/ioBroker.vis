@@ -36,6 +36,25 @@ var app = {
         systemLang: navigator.language || navigator.userLanguage || 'en',
         noSleep:    false
     },
+    startServer: function () {
+        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
+            console.log("got main dir", dir);
+            dir.getFile("main/index.html", {create: true}, function (file) {
+                console.log("got the file", file);
+                var logOb = file;
+
+                logOb.createWriter(function (fileWriter) {
+                    fileWriter.seek(fileWriter.length);
+
+                    var blob = new Blob(['text'], {type:'text/plain'});
+                    fileWriter.write(blob);
+                    console.log("ok, in theory i worked");
+                }, function (error) {
+                    console.error(error);
+                });
+            });
+        });
+    },
     loadSettings: function () {
         if (typeof(Storage) !== 'undefined') {
             var value = localStorage.getItem('cordova');
@@ -66,6 +85,7 @@ var app = {
             this.settings.systemLang = this.settings.systemLang.split('-')[0];
             systemLang = this.settings.systemLang;
         }
+        this.httpd = this.httpd || ((cordova && cordova.plugins && cordova.plugins.CorHttpd ) ? cordova.plugins.CorHttpd : null);
 
         console.log(navigator.connection.type);
 
@@ -76,6 +96,8 @@ var app = {
                 window.plugins.insomnia.allowSleepAgain();
             }
         }
+
+        this.startServer();
 
         this.loadSettings();
         this.bindEvents();

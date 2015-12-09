@@ -5,3 +5,6 @@
 /lib/js
 /lib/css
 /www/_socket
+/cordova/www
+/cordova/platforms/android/.gradle
+/cordova/platforms/android/CordovaLib/build

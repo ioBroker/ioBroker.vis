@@ -8,6 +8,11 @@
     <feature name="Insomnia">
         <param name="android-package" value="nl.xservices.plugins.Insomnia" />
     </feature>
+    <feature name="File">
+        <param name="android-package" value="org.apache.cordova.file.FileUtils" />
+        <param name="onload" value="true" />
+    </feature>
+    <preference name="AndroidPersistentFileLocation" value="Internal" />
     <allow-intent href="market:*" />
     <name>ioBroker.vis</name>
     <description>

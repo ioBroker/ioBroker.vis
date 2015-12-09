@@ -12,6 +12,9 @@
         },
         "nl.x-services.plugins.insomnia": {
             "PACKAGE_NAME": "net.iobroker.vis"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "net.iobroker.vis"
         }
     },
     "dependent_plugins": {}
