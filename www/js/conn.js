@@ -290,7 +290,7 @@ var servConn = {
     },
     logout:           function (callback) {
         if (!this._isConnected) {
-            console.log("No connection!");
+            console.log('No connection!');
             return;
         }
 
@@ -305,7 +305,7 @@ var servConn = {
     },
     _checkAuth:       function (callback) {
         if (!this._isConnected) {
-            console.log("No connection!");
+            console.log('No connection!');
             return;
         }
         //socket.io
@@ -560,7 +560,7 @@ var servConn = {
     },
     addObject:        function (objId, obj, callback) {
         if (!this._isConnected) {
-            console.log("No connection!");
+            console.log('No connection!');
             return;
         }
         //socket.io
@@ -576,7 +576,7 @@ var servConn = {
     },
     httpGet:          function (url, callback) {
         if (!this._isConnected) {
-            console.log("No connection!");
+            console.log('No connection!');
             return;
         }
         //socket.io
@@ -591,7 +591,7 @@ var servConn = {
     logError:         function (errorText) {
         console.log("Error: " + errorText);
         if (!this._isConnected) {
-            //console.log("No connection!");
+            //console.log('No connection!');
             return;
         }
         //socket.io
@@ -648,7 +648,7 @@ var servConn = {
         }
 
         if (!this._isConnected) {
-            console.log("No connection!");
+            console.log('No connection!');
             return;
         }
 

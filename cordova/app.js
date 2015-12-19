@@ -36,7 +36,7 @@ var app = {
         systemLang: navigator.language || navigator.userLanguage || 'en',
         noSleep:    false
     },
-    startServer: function () {
+    checkLocalFiles: function () {
         window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
             console.log("got main dir", dir);
             dir.getFile("main/index.html", {create: true}, function (file) {
@@ -97,7 +97,7 @@ var app = {
             }
         }
 
-        this.startServer();
+        //this.checkLocalFiles();
 
         this.loadSettings();
         this.bindEvents();
@@ -115,23 +115,36 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
+        app.installMenu();
+        app.syncVis()
     },
-    // Update DOM on a Received Event
-    receivedEvent: function(event) {
-        console.log('Received Event: ' + event);
+    syncVis: function (dir) {
+        dir = dir || 'vis.0';
+
+        if (vis.conn.getIsConnected()) {
+            vis.conn.readDir(dir, function(err, files) {
+                console.log(files);
+            });
+        } else {
+            setTimeout(function () {
+                this.syncVis();
+            }.bind(this), 1000);
+        }
+    },
+    installMenu: function () {
         // install menu button
         $('body').append('<div id="cordova_menu"   style="bottom: 0.5em; left: 0.5em; padding-left: 0.5em; padding-right: 0.5em; position: absolute; background: rgba(0,0,0,0.1); border-radius: 20px; z-index: 5001" id="cordova_menu">...</div>');
         $('body').append('<div id="cordova_dialog" style="background: #d3d3d3; top: 1em; left: 1em; bottom: 1em; right: 1em; position: absolute; border-radius: 0.3em; border: 1px solid grey; display: none; z-index: 5002">' +
             '<h1>' + _('Settings') + '</h1>' +
             '<table style="width: 100%; padding: 1em">' +
-                '<tr><td>' + _('Language') + ':</td><td><select data-name="systemLang" class="cordova-setting" style="width: 100%">' +
-                        '<option value="">' + _('System') + '</option>' +
-                        '<option value="en">english</option>' +
-                        '<option value="de">deutsch</option>' +
-                        '<option value="ru">русский</option>' +
-                '</select></td></tr>'+
-                '<tr><td>' + _('Socket') + ':</td><td><input data-name="socketUrl"  class="cordova-setting" style="width: 100%"></td></tr>'+
-                '<tr><td>' + _('Prevent from sleep') + ':</td><td><input type="checkbox" data-name="noSleep"  class="cordova-setting" style="width: 100%"></td></tr>'+
+            '<tr><td>' + _('Language') + ':</td><td><select data-name="systemLang" class="cordova-setting" style="width: 100%">' +
+            '<option value="">' + _('System') + '</option>' +
+            '<option value="en">english</option>' +
+            '<option value="de">deutsch</option>' +
+            '<option value="ru">русский</option>' +
+            '</select></td></tr>'+
+            '<tr><td>' + _('Socket') + ':</td><td><input data-name="socketUrl"  class="cordova-setting" style="width: 100%"></td></tr>'+
+            '<tr><td>' + _('Prevent from sleep') + ':</td><td><input type="checkbox" data-name="noSleep"  class="cordova-setting" style="width: 100%"></td></tr>'+
             '</table>' +
             '<div style="position: absolute; bottom: 1em; right: 1em; display: inline-block">' +
             '<button id="cordova_reload">' + _('Reload') + '</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
@@ -184,6 +197,10 @@ var app = {
                 window.location.reload();
             }
         }).css({height: '2em'});
+    },
+    receivedEvent: function(event) {
+        console.log('Received Event: ' + event);
+
     }
 };
 

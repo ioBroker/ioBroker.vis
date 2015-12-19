@@ -197,6 +197,10 @@ module.exports = function (grunt) {
             run: {
                 cwd: 'cordova',
                 cmd: 'cordova.cmd run android'
+            },
+            release: {
+                cwd: 'cordova',
+                cmd: 'cordova.cmd build android --release'
             }
 
         }
@@ -249,6 +253,7 @@ module.exports = function (grunt) {
 	
 	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
-    grunt.registerTask('app', ['copy', 'replace:index', 'exec:build']);
-    grunt.registerTask('run', ['copy', 'replace:index', 'exec:run']);
+    grunt.registerTask('build',     ['copy', 'replace:index', 'exec:build']);
+    grunt.registerTask('run',       ['copy', 'replace:index', 'exec:run']);
+    grunt.registerTask('release',   ['copy', 'replace:index', 'exec:release']);
 };

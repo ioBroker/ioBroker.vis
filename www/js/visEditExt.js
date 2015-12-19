@@ -260,22 +260,22 @@ var colorSelect = {
         var i = 0;
         
         if (!this._selectText) {
-            this._selectText = _("Select");
-            this._cancelText = _("Cancel");
-            this._titleText  = _("Select color");
+            this._selectText = _('Select');
+            this._cancelText = _('Cancel');
+            this._titleText  = _('Select color');
         }
            
         if (!options.elemName) {
-            options.elemName = "idialog_";
+            options.elemName = 'idialog_';
         }
         if (!options.parent) {
             options.parent = $('body');
         }
         
         if (document.getElementById(options.elemName) !== undefined) {
-            $('#'+options.elemName).remove();
+            $('#' + options.elemName).remove();
         }
-        options.parent.append("<div class='dialog' id='colorSelect' title='" + this._titleText + "' style='text-align: center;' ><div style='display: inline-block;' id='colorpicker'></div><input type='text' id='colortext'/></div>");
+        options.parent.append('<div class="dialog" id="colorSelect" title="' + this._titleText + '" style="text-align: center;"><div style="display: inline-block;" id="colorpicker"></div><input type="text" id="colortext"/></div>');
         var htmlElem = document.getElementById("colorSelect");
         htmlElem.settings = {};
         htmlElem.settings = $.extend(htmlElem.settings, this.settings);
@@ -285,19 +285,19 @@ var colorSelect = {
          // Define dialog buttons
         var dialog_buttons = {}; 
         dialog_buttons[this._selectText] = function () { 
-            $(this).dialog( "close" ); 
+            $(this).dialog('close');
             if (this.settings.onselect)
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
             $(this).remove();
         };
         dialog_buttons[this._cancelText] = function () {
-            $(this).dialog( "close" ); 
+            $(this).dialog('close');
             $(this).remove();
         };
         $('#colorSelect').dialog({
             resizable: false,
-            height:    380,
-            width:     320,
+            height:    385,
+            width:     340,
             modal:     true,
             buttons:   dialog_buttons
         });
