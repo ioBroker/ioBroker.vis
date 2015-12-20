@@ -318,7 +318,7 @@ var servConn = {
                 callback(version);
         });
     },
-    readFile:         function (filename, callback) {
+    readFile:         function (filename, callback, isRemote) {
         if (!callback) throw 'No callback set';
 
         if (this._type === 'local') {
@@ -331,11 +331,16 @@ var servConn = {
         } else {
             if (!this._checkConnection('readFile', arguments)) return;
 
-            this._socket.emit('readFile', this.namespace, filename, function (err, data) {
-                setTimeout(function () {
-                    callback(err, data);
-                }, 0);
-            });
+            if (!isRemote && typeof app !== 'undefined') {
+                app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), callback);
+            } else {
+                this._socket.emit('readFile', this.namespace, filename, function (err, data) {
+                    setTimeout(function () {
+                        callback(err, data, filename);
+                    }, 0);
+                });
+            }
+
         }
     },
     readFile64:       function (filename, callback) {
@@ -386,9 +391,9 @@ var servConn = {
                     _mimeType = 'text/javascript';
                 }
 
-                callback(err, {mime: _mimeType, data: btoa(data)});
+                callback(err, {mime: _mimeType, data: btoa(data)}, filename);
             } else {
-                callback(err);
+                callback(err, filename);
             }
         });
     },

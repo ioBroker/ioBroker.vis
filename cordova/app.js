@@ -27,32 +27,99 @@ $.extend(systemDictionary, {
     'Language':     {'en': 'Language',          'de': 'Language/Sprache',   'ru': 'Language/Язык'},
     'Socket':       {'en': 'ioBroker socket',   'de': 'ioBroker socket',    'ru': 'ioBroker сокет'},
     'System':       {'en': 'system',            'de': 'System',             'ru': 'системный'},
-    'Reload':       {'en': 'Reload',            'de': 'Neuladen',           'ru': 'Обновить'}
+    'Reload':       {'en': 'Reload',            'de': 'Neuladen',           'ru': 'Обновить'},
+    "Prevent from sleep": {
+        "en": "Prevent from sleep",
+        "de": "Nicht einschlaffen",
+        "ru": "Не засыпать"
+    }
 });
 
 var app = {
     settings: {
         socketUrl:  'http://localhost:8084',
         systemLang: navigator.language || navigator.userLanguage || 'en',
-        noSleep:    false
+        noSleep:    false,
+        project:    'main',
+        resync:     false
     },
-    checkLocalFiles: function () {
-        window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
-            console.log("got main dir", dir);
-            dir.getFile("main/index.html", {create: true}, function (file) {
-                console.log("got the file", file);
-                var logOb = file;
+    loaded: false,
+    projects: [],
+    localDir: null,
+    getLocalDir: function (dir, create, cb, index) {
+        if (typeof create === 'function') {
+            index  = cb;
+            cb     = create;
+            create = true;
+        }
 
-                logOb.createWriter(function (fileWriter) {
-                    fileWriter.seek(fileWriter.length);
-
-                    var blob = new Blob(['text'], {type:'text/plain'});
-                    fileWriter.write(blob);
-                    console.log("ok, in theory i worked");
-                }, function (error) {
-                    console.error(error);
-                });
+        if (!app.localDir) {
+            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function (dirHandler) {
+                app.localDir = dirHandler;
+                app.getLocalDir(dir, create, cb);
             });
+            return;
+        }
+        index = index || 0;
+        var parts = dir.split('/');
+
+        app.localDir.getDirectory(parts[index], {
+                create:    create,
+                exclusive: false
+            }, function (dirHandler) {
+                if (parts.length - 1 == index) {
+                    cb(null, dirHandler);
+                } else {
+                    app.getLocalDir(dir, create, cb, index + 1);
+                }
+            }, function (err) {
+                cb(err);
+        });
+    },
+    writeLocalFile: function (fileName, data, cb) {
+        var parts = fileName.split('/');
+        var fileN = parts.pop();
+        this.getLocalDir(parts.join('/'), true, function (err, dirHandler) {
+            if (err) console.error(err);
+            if (dirHandler) {
+                dirHandler.getFile(fileN, {create: true}, function (fileHandler) {
+                    fileHandler.createWriter(function (fileWriter) {
+                        fileWriter.truncate(0);
+                        fileWriter.write(new Blob([data], {type:'text/plain'}));
+                        cb();
+                    }, function (error) {
+                        cb(error);
+                        console.error('Cannot write file: ' + error);
+                    });
+                }, function (error) {
+                    cb(error);
+                    console.error('Cannot create file')
+                });
+            }
+        });
+    },
+    readLocalFile: function (fileName, cb) {
+        var parts = fileName.split('/');
+        var fileN = parts.pop();
+
+        this.getLocalDir(parts.join('/'), false, function (err, dir) {
+            if (err) console.error(err);
+            if (dir) {
+                dir.getFile(fileN, {create: false}, function (fileEntry) {
+                    fileEntry.file(function(file) {
+                        var reader = new FileReader();
+
+                        reader.onloadend = function(e) {
+                            cb(null, this.result, fileName);
+                        };
+
+                        reader.readAsText(file);
+                    });
+                }, function (error) {
+                    cb(error, null, fileName);
+                    console.error('Cannot read file: ' + error);
+                });
+            }
         });
     },
     loadSettings: function () {
@@ -85,7 +152,7 @@ var app = {
             this.settings.systemLang = this.settings.systemLang.split('-')[0];
             systemLang = this.settings.systemLang;
         }
-        this.httpd = this.httpd || ((cordova && cordova.plugins && cordova.plugins.CorHttpd ) ? cordova.plugins.CorHttpd : null);
+        app.loadSettings();
 
         console.log(navigator.connection.type);
 
@@ -97,9 +164,6 @@ var app = {
             }
         }
 
-        //this.checkLocalFiles();
-
-        this.loadSettings();
         this.bindEvents();
     },
     // Bind Event Listeners
@@ -116,18 +180,90 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         app.installMenu();
-        app.syncVis()
+        app.readLocalFile(app.settings.project + '/views.json', function (err, result) {
+            if (err) console.error(err);
+            if (!result || app.settings.resync) {
+                app.syncVis(app.settings.project, function () {
+                    app.settings.resync = false;
+                    app.saveSettings();
+                });
+            }
+            app.readProjects();
+        });
     },
-    syncVis: function (dir) {
-        dir = dir || 'vis.0';
-
+    readProjects: function (cb) {
         if (vis.conn.getIsConnected()) {
-            vis.conn.readDir(dir, function(err, files) {
-                console.log(files);
+            app.projects = [];
+            vis.conn.readDir('/vis.0', function (err, files) {
+                var text = '';
+                for (var f = 0; f < files.length; f++) {
+                    if (files[f].isDir) {
+                        text += '<option value="' + files[f].file + '" ' + (files[f].file == app.settings.project ? 'selected' : '') + '>' + files[f].file + '</option>';
+
+                        app.projects.push(files[f].file);
+                    }
+                }
+                $('#cordova_project').html(text);
+                cb && cb();
             });
         } else {
             setTimeout(function () {
-                this.syncVis();
+                this.readProjects(cb);
+            }.bind(this), 1000);
+        }
+    },
+    syncVis: function (dir, cb) {
+        dir = dir || '';
+
+        if (vis.conn.getIsConnected()) {
+            vis.conn.readDir('/vis.0/' + dir, function (err, files) {
+                if (files) {
+                    var count = 0;
+                    for (var f = 0; f < files.length; f++) {
+                        if (files[f].isDir) {
+                            count++;
+                            app.syncVis(dir + '/' + files[f].file, function () {
+                                if (!--count) {
+                                    cb && cb();
+                                }
+                            });
+                        } else {
+                            vis.conn.readFile(dir + '/' + files[f].file, function (err, data, filename) {
+                                if (err) console.error(err);
+                                if (filename && filename.indexOf('views.json') != -1) {
+                                    console.log(filename);
+                                    var m = data.match(/"\/vis\.0\/.+"/g);
+                                    if (m) {
+                                        for (var mm = 0; mm < m.length; mm++) {
+                                            data = data.replace(m[mm], '"cdvfile://localhost/persistent' + m[mm].substring(7));
+                                        }
+                                    }
+
+                                    m = data.match(/"\/vis\/.+"/g);
+                                    if (m) {
+                                        for (var mm = 0; mm < m.length; mm++) {
+                                            data = data.replace(m[mm], '"' + m[mm].substring(6));
+                                        }
+                                    }
+                                }
+                                if (data) {
+                                    app.writeLocalFile(filename.replace(/^\/vis\.0\//, ''), data, function (err) {
+                                        if (err) console.error(err);
+                                    });
+                                }
+                            }, true);
+                        }
+                    }
+                    if (!count) {
+                        cb && cb();
+                    }
+                } else {
+                    cb && cb();
+                }
+            });
+        } else {
+            setTimeout(function () {
+                this.syncVis(dir, cb);
             }.bind(this), 1000);
         }
     },
@@ -145,6 +281,8 @@ var app = {
             '</select></td></tr>'+
             '<tr><td>' + _('Socket') + ':</td><td><input data-name="socketUrl"  class="cordova-setting" style="width: 100%"></td></tr>'+
             '<tr><td>' + _('Prevent from sleep') + ':</td><td><input type="checkbox" data-name="noSleep"  class="cordova-setting" style="width: 100%"></td></tr>'+
+            '<tr><td>' + _('Project') + ':</td><td><select data-name="project" id="cordova_project" class="cordova-setting" style="width: 100%">' +
+            '</select></td></tr>'+
             '</table>' +
             '<div style="position: absolute; bottom: 1em; right: 1em; display: inline-block">' +
             '<button id="cordova_reload">' + _('Reload') + '</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +
@@ -170,6 +308,8 @@ var app = {
 
         $('#cordova_reload').click(function () {
             $('#cordova_dialog').hide();
+            app.settings.resync = true;
+            app.saveSettings();
             window.location.reload();
         }).css({height: '2em'});
 
