@@ -180,7 +180,7 @@ var app = {
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
         app.installMenu();
-        app.readLocalFile(app.settings.project + '/views.json', function (err, result) {
+        app.readLocalFile(app.settings.project + '/vis-views.json', function (err, result) {
             if (err) console.error(err);
             if (!result || app.settings.resync) {
                 app.syncVis(app.settings.project, function () {
@@ -235,7 +235,9 @@ var app = {
                                     var m = data.match(/"\/vis\.0\/.+"/g);
                                     if (m) {
                                         for (var mm = 0; mm < m.length; mm++) {
-                                            data = data.replace(m[mm], '"cdvfile://localhost/persistent' + m[mm].substring(7));
+                                            //file:///data/data/net.iobroker.vis/files/main/vis-user.css
+                                            //cdvfile://localhost/persistent
+                                            data = data.replace(m[mm], '"file:///data/data/net.iobroker.vis/files' + m[mm].substring(7));
                                         }
                                     }
 

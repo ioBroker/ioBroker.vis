@@ -1968,6 +1968,24 @@ if (!vis.editMode) {
 // Start of initialisation: main ()
 (function ($) {
     $(document).ready(function () {
+        // parse arguments
+        var args = document.location.href.split('?')[1];
+        vis.args = {};
+        if (args) {
+            vis.projectPrefix = 'main/';
+            var pos = args.indexOf('#');
+            if (pos != -1) {
+                args = args.substring(0, pos);
+            }
+            args = args.split('&');
+            for (var a = 0; a < args.length; a++) {
+                var parts = args[a].split('=');
+                vis.args[parts[0]] = parts[1];
+                if (!parts[1]) vis.projectPrefix = parts[0] + '/';
+            }
+            if (vis.args.project) vis.projectPrefix = vis.args.project + '/';
+        }
+
         // On some platforms, the can.js is not immediately ready
         vis.states = new can.Map({
             'nothing_selected.val': null
@@ -2195,7 +2213,7 @@ if (!vis.editMode) {
                             } else {
                                 // Get Server language
                                 vis.conn.getConfig(function (err, config) {
-                                    systemLang = config.language || systemLang;
+                                    systemLang = vis.args.lang || config.language || systemLang;
                                     vis.language = systemLang;
                                     vis.dateFormat = config.dateFormat;
                                     translateAll();
