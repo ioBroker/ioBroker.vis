@@ -575,6 +575,8 @@ var vis = {
         // create demo states
         if (this.views.DemoView) this.createDemoStates();
 
+        if (!this.views[hash] && typeof app !== 'undefined') hash = null;
+
         // View selected?
         if (!hash) {
             // Take first view in the list
@@ -1996,6 +1998,8 @@ if (!vis.editMode) {
             }
             if (vis.args.project) vis.projectPrefix = vis.args.project + '/';
         }
+        // If cordova project => take cordova project name
+        if (typeof app !== 'undefined') vis.projectPrefix = app.settings.project + '/';
 
         // On some platforms, the can.js is not immediately ready
         vis.states = new can.Map({
@@ -2042,9 +2046,9 @@ if (!vis.editMode) {
             if (!$(e.target).closest("body").length) e.preventDefault();
         });
 
-        vis.preloadImages(["img/disconnect.png"]);
+        vis.preloadImages(['img/disconnect.png']);
 
-        $("#server-disconnect").dialog({
+        $('#server-disconnect').dialog({
             modal:         true,
             closeOnEscape: false,
             autoOpen:      false,
@@ -2053,7 +2057,7 @@ if (!vis.editMode) {
             height:        90
         });
 
-        $(".vis-version").html(vis.version);
+        $('.vis-version').html(vis.version);
 
         vis.showWaitScreen(true, null, _('Connecting to Server...') + '<br/>', 0);
 
@@ -2127,7 +2131,7 @@ if (!vis.editMode) {
 
                 //console.log("onConnChange isConnected="+isConnected);
                 if (isConnected) {
-                    $("#server-disconnect").dialog("close");
+                    $('#server-disconnect').dialog('close');
                     if (vis.isFirstTime) {
                         vis.conn.getVersion(function (version) {
                             if (version) {
@@ -2268,8 +2272,9 @@ if (!vis.editMode) {
                     });
                 } else {
                     //console.log((new Date()) + " socket.io disconnect");
-                    $("#server-disconnect").dialog("open");
+                    $('#server-disconnect').dialog('open');
                 }
+                if (typeof app !== 'undefined') app.connectionChange(isConnected);
             },
             onRefresh:    function () {
                 window.location.reload();
