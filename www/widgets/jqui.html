@@ -581,8 +581,7 @@
             var $this = $(el);
             var oid = $this.attr('data-oid');
             var noJsStyle = $this.attr('data-no-style');
-            $this.find('option:selected').removeAttr('selected');
-            $this.find('option[value="' + vis.states[oid + '.val'] + '"]').attr('selected', true);
+            $this.val(vis.states[oid + '.val']);
 
             if (noJsStyle !== true && noJsStyle !== 'true') {
                 $this.multiselect($.extend({
@@ -592,7 +591,7 @@
                     noneSelectedText: false,
                     selectedList:     1
                 }, options)).change(function () {
-                    var val = $this.find('option:selected').val();
+                    var val = $this.val();
                     if (parseFloat(val).toString() == val) val = parseFloat(val);
                     if (val === 'true')  val = true;
                     if (val === 'false') val = false;
@@ -600,7 +599,7 @@
                 });
             } else {
                 $this.change(function () {
-                    var val = $this.find('option:selected').val();
+                    var val = $this.val();
                     if (parseFloat(val).toString() == val) val = parseFloat(val);
                     if (val === 'true') val = true;
                     if (val === 'false') val = false;
@@ -608,17 +607,14 @@
                 });
             }
 
-
-            $this.find('option:selected').removeAttr('selected');
-            $this.find("option[value='" + vis.states[oid + '.val'] + "']").attr('selected', true);
+            $this.val(vis.states[oid + '.val']);
             $this.prop('disabled', vis.editMode);
             if (noJsStyle !== true && noJsStyle !== 'true') {
                 $this.multiselect('refresh');
             }
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                $this.find('option:selected').removeAttr('selected');
-                $this.find('option[value="' + newVal + '"]').attr('selected', true);
+                $this.val(newVal);
                 if (noJsStyle !== true && noJsStyle !== 'true') {
                     $this.multiselect('refresh');
                 }

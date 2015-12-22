@@ -97,7 +97,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.8.2',
+    version: '0.8.3',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -571,6 +571,9 @@ var vis = {
         }
 
         var hash = window.location.hash.substring(1);
+
+        // create demo states
+        if (this.views.DemoView) this.createDemoStates();
 
         // View selected?
         if (!hash) {
@@ -1910,6 +1913,11 @@ var vis = {
         }
         $(el).data(isUp ? 'lcu' : 'lc', now);
         return false;
+    },
+    createDemoStates: function () {
+        // Create demo variables
+        vis.states.attr({'demoTemperature.val': 25.4});
+        vis.states.attr({'demoHumidity.val': 55});
     }
 };
 

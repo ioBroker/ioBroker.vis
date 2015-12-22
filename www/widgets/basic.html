@@ -186,7 +186,14 @@
             "group_frames":     {"en": "iFrames",                   "de": "iFrames",                "ru": "iFrames"},
             "horizontal":       {"en": "horizontal",                "de": "horizontal",             "ru": "горизонтально"},
             "vertical":         {"en": "vertical",                  "de": "senkrecht",              "ru": "вертикально"},
-            "orientation":      {"en": "Orientation",               "de": "Ausrichtung ",           "ru": "Направление"}
+            "orientation":      {"en": "Orientation",               "de": "Ausrichtung ",           "ru": "Направление"},
+            "filters":          {"en": "Filters",                   "de": "Filter",                 "ru": "Фильтры"},
+            "filters_Tooltip":  {
+                "en": "Divided by semicolon,\x0Ae.g: light;control",
+                "de": "Geteilt mir Semikolon\x0Az.B.: Licht;Steuerung",
+                "ru": "Разделять точкой запятой\x0Aнапример: Свет;Управление"
+            },
+            "Select ID":        {"en": "Select ID",                 "de": "ID auswählen",           "ru": "Выбрать ID"}
         });
     }
 
@@ -194,7 +201,8 @@
         "Edit note":    {"en": "Edit note",     "de": "Meldung eingeben",   "ru": "Сообщение"},
         "Clear":        {"en": "Clear",         "de": "Löschen",            "ru": "Очистить"},
         "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
-        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"}
+        "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"},
+        "all":          {"en": "all",           "de": "Alle",               "ru": "Все"}
     });
 
     vis.binds.stateful = {
@@ -1555,10 +1563,10 @@
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
         data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'),data.attr('show_duration')) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
         <div class="vis-widget-body">
             <select id="" name="">
-                <option value="">all</option>
+                <option value=""><%= _('all') %></option>
             </select>
         </div>
     </div>
