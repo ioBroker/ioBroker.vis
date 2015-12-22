@@ -16,9 +16,6 @@ module.exports = function (grunt) {
     // Project configuration.
     grunt.initConfig({
         pkg: pkg,
-        clean: {
-            all: ['cordova/www/**/*']
-        },
         replace: {
             core: {
                 options: {
@@ -57,7 +54,6 @@ module.exports = function (grunt) {
                         expand:  true,
                         flatten: true,
                         src:     [
-                                srcDir + 'controller.js',
                                 srcDir + 'package.json',
                                 srcDir + 'io-package.json'
                         ],
@@ -80,26 +76,6 @@ module.exports = function (grunt) {
                             srcDir + 'www/js/vis.js'
                         ],
                         dest:    srcDir + '/www/js'
-                    }
-                ]
-            },
-            index: {
-                options: {
-                    patterns: [
-                        {
-                            match: /\.\.\/\.\.\//g,
-                            replacement: ''
-                        }
-                    ]
-                },
-                files: [
-                    {
-                        expand:  true,
-                        flatten: true,
-                        src:     [
-                                'cordova/www/index.html'
-                        ],
-                        dest:    'cordova/www'
                     }
                 ]
             }
@@ -155,54 +131,6 @@ module.exports = function (grunt) {
                 dest: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.png'
 
             }
-        },
-        copy: {
-            vis: {
-                files: [
-                    // includes files within path
-                    {
-                        expand: true,
-                        cwd: 'www/',
-                        src: ['**', '!edit.html', '!offline.html', '!cache.manifest', '!cordova.js', '!js/app.js'],
-                        dest: 'cordova/www'
-                    }
-                ]
-            },
-            web: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'node_modules/iobroker.web/www/',
-                        src: ['lib/css/themes/**', 'lib/js/jquery-1.11.2.min.*', 'lib/js/jquery-ui-1.11.4.full.min.js', 'lib/js/socket.io.js'],
-                        dest: 'cordova/www'
-                    }
-                ]
-            },
-            app: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'cordova',
-                        src: ['app.js'],
-                        dest: 'cordova/www/js'
-                    }
-                ]
-            }
-        },
-        exec: {
-            build: {
-                cwd: 'cordova',
-                cmd: 'cordova.cmd build android'
-            },
-            run: {
-                cwd: 'cordova',
-                cmd: 'cordova.cmd run android'
-            },
-            release: {
-                cwd: 'cordova',
-                cmd: 'cordova.cmd build android --release'
-            }
-
         }
     });
 
@@ -239,9 +167,6 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jscs');
     grunt.loadNpmTasks('grunt-http');
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('default', [
         'http',
@@ -253,7 +178,4 @@ module.exports = function (grunt) {
 	
 	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
-    grunt.registerTask('build',     ['copy', 'replace:index', 'exec:build']);
-    grunt.registerTask('run',       ['copy', 'replace:index', 'exec:run']);
-    grunt.registerTask('release',   ['copy', 'replace:index', 'exec:release']);
 };

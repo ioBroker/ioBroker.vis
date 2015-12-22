@@ -536,7 +536,10 @@ var vis = {
         }
     },
     bindInstance: function () {
-        if (typeof storage !== 'undefined') this.instance = storage.get(this.storageKeyInstance);
+        if (typeof app !== 'undefined' && app.settings) {
+            this.instance = app.settings.instance;
+        }
+        if (typeof storage !== 'undefined') this.instance = this.instance || storage.get(this.storageKeyInstance);
         if (this.editMode) this.bindInstanceEdit();
     },
     init: function () {
@@ -579,7 +582,7 @@ var vis = {
                 if (!this.activeView) {
                     if (!this.editMode) {
                         window.alert(_('error - View doesn\'t exist'));
-                        if (typeof cordova === 'undefined') window.location.href = './edit.html';
+                        if (typeof app === 'undefined') window.location.href = './edit.html';
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                         this.activeView = 'DemoView';
@@ -590,7 +593,7 @@ var vis = {
             if (!this.activeView) {
                 if (!this.editMode) {
                     window.alert(_('error - View doesn\'t exist'));
-                    if (typeof cordova === 'undefined') window.location.href = 'edit.html';
+                    if (typeof app === 'undefined') window.location.href = 'edit.html';
                 } else {
                     // All views were deleted, but file exists. Create demo View
                     //window.alert("unexpected error - this should not happen :(");
@@ -605,7 +608,7 @@ var vis = {
                 this.activeView = hash;
             } else {
                 window.alert(_("error - View doesn't exist"));
-                if (typeof cordova === 'undefined') window.location.href = "./edit.html";
+                if (typeof app === 'undefined') window.location.href = "./edit.html";
                 $.error("vis Error can't find view");
             }
         }
@@ -634,7 +637,7 @@ var vis = {
     },
     initViewObject: function () {
         if (!this.editMode) {
-            if (typeof cordova !== 'undefined') {
+            if (typeof app !== 'undefined') {
                 window.alert(_('no views found!'));
             } else {
                 window.location.href = './edit.html' + window.location.search;
@@ -688,7 +691,7 @@ var vis = {
         var that = this;
 
         if (!this.editMode && !$('#commonTheme').length) {
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
         }
 
         if (!this.views[view] || !this.views[view].settings) {
@@ -785,14 +788,14 @@ var vis = {
         var _view = 'visview_' + view;
         if (this.calcCommonStyle() == theme) return;
         $.ajax({
-            url: ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
+            url: ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
                 $('#' + view + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
-                data = data.replace(/images/g, ((typeof cordova === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/images');
+                data = data.replace(/images/g, ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/images');
                 $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
 
                 $('#' + view + '_style_common_user').remove();
