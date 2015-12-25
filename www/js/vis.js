@@ -184,11 +184,11 @@ var vis = {
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: _setTimeout(function () {
-                        if (that.statesDebounce[id]) {
-                            if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
-                            delete that.statesDebounce[id];
-                        }
-                    }, 1000, id),
+                    if (that.statesDebounce[id]) {
+                        if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
+                        delete that.statesDebounce[id];
+                    }
+                }, 1000, id),
                 state: null
             };
         } else {
@@ -307,7 +307,7 @@ var vis = {
                 if (this.views[view].widgets[id].widgetSet === 'timeAndWeather') {
                     this.views[view].widgets[id].widgetSet = 'timeandweather';
                 }
-                
+
                 // convert "Show on Value" to HTML
                 if (this.views[view].widgets[id].tpl === 'tplShowValue') {
                     this.views[view].widgets[id].tpl = 'tplHtml';
@@ -573,9 +573,9 @@ var vis = {
         var hash = window.location.hash.substring(1);
 
         // create demo states
-        if (this.views.DemoView) this.createDemoStates();
+        if (this.views && this.views.DemoView) this.createDemoStates();
 
-        if (!this.views[hash] && typeof app !== 'undefined') hash = null;
+        if (!this.views || (!this.views[hash] && typeof app !== 'undefined')) hash = null;
 
         // View selected?
         if (!hash) {
@@ -597,8 +597,10 @@ var vis = {
             } else
             if (!this.activeView) {
                 if (!this.editMode) {
-                    window.alert(_('error - View doesn\'t exist'));
-                    if (typeof app === 'undefined') window.location.href = 'edit.html';
+                    if (typeof app === 'undefined') {
+                        window.alert(_('error - View doesn\'t exist'));
+                        window.location.href = 'edit.html';
+                    }
                 } else {
                     // All views were deleted, but file exists. Create demo View
                     //window.alert("unexpected error - this should not happen :(");
@@ -828,7 +830,7 @@ var vis = {
         var updateContainers = $widget.find('.vis-view-container').length;
         $widget.remove();
         this.renderWidget(view || this.activeView, widget);
-        
+
         if (updateContainers) this.updateContainers(view || this.activeView);
     },
     changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
@@ -988,13 +990,13 @@ var vis = {
 
                 // @SJ cannot select menu and dialogs if it is enabled
                 /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
-                    $("#" + id).addClass("vis-widget-lock")
-                }*/
+                 $("#" + id).addClass("vis-widget-lock")
+                 }*/
             }
 
             $(document).trigger('wid_added', id);
         } catch (e) {
-           this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
@@ -1092,8 +1094,8 @@ var vis = {
 
 
         /*$('#visview_' + view).find('div[id$="container"]').each(function () {
-            $('#visview_' + $(this).attr('data-vis-contains')).show();
-        });*/
+         $('#visview_' + $(this).attr('data-vis-contains')).show();
+         });*/
 
         this.updateContainers(view);
 
@@ -1118,6 +1120,10 @@ var vis = {
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
+        if (!this.projectPrefix) {
+            if (callback) callback.call(that, callbackArg);
+            return;
+        }
         this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
             if (err) {
                 window.alert(that.projectPrefix + 'vis-views.json ' + err);
@@ -1158,7 +1164,7 @@ var vis = {
         var that = this;
         if (this.permissionDenied) {
             if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
-            5000, 'ui-state-error');
+                5000, 'ui-state-error');
             if (typeof callback == 'function') callback();
             return;
         }
@@ -1397,9 +1403,9 @@ var vis = {
     },
     isWidgetFilteredOut: function (view, widget) {
         return (
-            this.views[view].widgets[widget].data.filterkey &&
-            this.viewsActiveFilter[view].length > 0 &&
-            this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
+        this.views[view].widgets[widget].data.filterkey &&
+        this.viewsActiveFilter[view].length > 0 &&
+        this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
     },
     calcCommonStyle: function (recalc) {
         if (!this.commonStyle || recalc) {
@@ -1595,10 +1601,10 @@ var vis = {
                             var xx = _visOid.split(':', 2);
                             var yy = _systemOid.split(':', 2);
                             operations[0].arg.push({
-                                    name:      xx[0],
-                                    visOid:    xx[1],
-                                    systemOid: yy[1]
-                                });
+                                name:      xx[0],
+                                visOid:    xx[1],
+                                systemOid: yy[1]
+                            });
                         } else {
                             parts[u] = parts[u].replace(/::/g, ':');
                             if (operations[0].formula) {
@@ -1999,7 +2005,7 @@ if (!vis.editMode) {
             if (vis.args.project) vis.projectPrefix = vis.args.project + '/';
         }
         // If cordova project => take cordova project name
-        if (typeof app !== 'undefined') vis.projectPrefix = app.settings.project + '/';
+        if (typeof app !== 'undefined') vis.projectPrefix = app.settings.project ? app.settings.project + '/' : null;
 
         // On some platforms, the can.js is not immediately ready
         vis.states = new can.Map({
@@ -2093,38 +2099,39 @@ if (!vis.editMode) {
         // old !!!
         // First of all load project/vis-user.css
         //$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
+        if (typeof app === 'undeifned') {
+            $.ajax({
+                url:      'css/vis-common-user.css',
+                type:     'GET',
+                dataType: 'html',
+                cache:    this.useCache,
+                success:  function (data) {
+                    $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
+                    $(document).trigger('vis-common-user');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vis.conn.logError('Cannot load vis-common-user.css - ' + errorThrown);
+                    $('head').append('<style id="vis-common-user" class="vis-common-user"></style>');
+                    $(document).trigger('vis-common-user');
+                }
+            });
 
-        $.ajax({
-            url:      'css/vis-common-user.css',
-            type:     'GET',
-            dataType: 'html',
-            cache:    this.useCache,
-            success:  function (data) {
-                $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
-                $(document).trigger('vis-common-user');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                vis.conn.logError('Cannot load vis-common-user.css - ' + errorThrown);
-                $('head').append('<style id="vis-common-user" class="vis-common-user"></style>');
-                $(document).trigger('vis-common-user');
-            }
-        });
-
-        $.ajax({
-            url:      '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css',
-            type:     'GET',
-            dataType: 'html',
-            cache:    this.useCache,
-            success:  function (data) {
-                $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
-                $(document).trigger('vis-user');
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css - ' + errorThrown);
-                $('head').append('<style id="vis-user" class="vis-user"></style>');
-                $(document).trigger('vis-user');
-            }
-        });
+            $.ajax({
+                url:      '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css',
+                type:     'GET',
+                dataType: 'html',
+                cache:    this.useCache,
+                success:  function (data) {
+                    $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
+                    $(document).trigger('vis-user');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    vis.conn.logError('Cannot load /' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css - ' + errorThrown);
+                    $('head').append('<style id="vis-user" class="vis-user"></style>');
+                    $(document).trigger('vis-user');
+                }
+            });
+        }
 
         vis.conn.init(null, {
             onConnChange: function (isConnected) {
@@ -2140,7 +2147,7 @@ if (!vis.editMode) {
                                 }
                             }
                             //else {
-                                // Possible not authenticated, wait for request from server
+                            // Possible not authenticated, wait for request from server
                             //}
                         });
 
@@ -2274,7 +2281,6 @@ if (!vis.editMode) {
                     //console.log((new Date()) + " socket.io disconnect");
                     $('#server-disconnect').dialog('open');
                 }
-                if (typeof app !== 'undefined') app.connectionChange(isConnected);
             },
             onRefresh:    function () {
                 window.location.reload();
@@ -2360,19 +2366,19 @@ if (!vis.editMode) {
                     users = '<input id="login-username" value="" type="text" autocomplete="on" class="login-input-field" placeholder="' + _('User name') + '">';
                 }
 
-            var text = '<div id="login-box" class="login-popup" style="display:none">' +
-                        '<div class="login-message">' + message + '</div>' +
-                        '<div class="login-input-field">' +
-                            '<label class="username">' +
-                                '<span class="_">' + _('User name') + '</span>' +
-                                users +
-                            '</label>' +
-                            '<label class="password">' +
-                                '<span class="_">' + _('Password') + '</span>' +
-                                '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
-                            '</label>' +
-                            '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
-                        '</div>' +
+                var text = '<div id="login-box" class="login-popup" style="display:none">' +
+                    '<div class="login-message">' + message + '</div>' +
+                    '<div class="login-input-field">' +
+                    '<label class="username">' +
+                    '<span class="_">' + _('User name') + '</span>' +
+                    users +
+                    '</label>' +
+                    '<label class="password">' +
+                    '<span class="_">' + _('Password') + '</span>' +
+                    '<input id="login-password" value="" type="password" class="login-input-field" placeholder="' + _('Password') + '">' +
+                    '</label>' +
+                    '<button class="login-button" type="button"  class="_">' + _('Sign in') + '</button>' +
+                    '</div>' +
                     '</div>';
 
                 $('body').append(text);
@@ -2431,7 +2437,7 @@ if (!vis.editMode) {
                         case 'changeView':
                             parts = data.split('/');
                             //if (parts[1]) {
-                                // Todo switch to desired project
+                            // Todo switch to desired project
                             //}
                             vis.changeView(parts[1] || parts[0]);
                             break;
@@ -2473,6 +2479,12 @@ if (!vis.editMode) {
                                     document.getElementById('external_sound').play();
                                 }
                             }, 1);
+                            break;
+
+                        case 'tts':
+                            if (typeof app !== 'undefined') {
+                                app.tts(data);
+                            }
                             break;
                         default:
                             vis.conn.logError('unknown external command ' + command);

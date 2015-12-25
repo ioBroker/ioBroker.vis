@@ -117,6 +117,7 @@ var servConn = {
                 that._socket.emit('authEnabled', function (auth, user) {
                     that._user = user;
                     that._connCallbacks.onConnChange(that._isConnected);
+                    if (typeof app !== 'undefined') app.onConnChange(that._isConnected);
                 });
             }, 0);
         }
@@ -163,8 +164,9 @@ var servConn = {
             // report connected state
             this._isConnected = true;
             if (this._connCallbacks.onConnChange) this._connCallbacks.onConnChange(this._isConnected);
+            if (typeof app !== 'undefined') app.onConnChange(this._isConnected);
         } else
-        if (typeof io != 'undefined') {
+        if (typeof io !== 'undefined') {
             connOptions.socketSession = connOptions.socketSession || 'nokey';
 
             var url;
@@ -185,7 +187,7 @@ var servConn = {
 
             this._socket.on('connect', function () {
                 this._socket.emit('name', connOptions.name);
-				console.log((new Date()).toISOString() + ' Connected => authenticate');
+                console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
                     this._socket.emit('authenticate', function (isOk, isSecure) {
                         console.log((new Date()).toISOString() + ' Authenticated: ' + isOk);
@@ -201,7 +203,7 @@ var servConn = {
             this._socket.on('reauthenticate', function () {
                 if (this._connCallbacks.onReAuth) {
                     this._connCallbacks.onConnChange(this._isSecure);
-                } else {
+                    if (typeof app !== 'undefined') app.onConnChange(this._isSecure);
                     location.reload();
                 }
             }.bind(this));
@@ -212,8 +214,9 @@ var servConn = {
 
                 this._isConnected = false;
                 if (this._connCallbacks.onConnChange) {
-                    this.disconnectTimeout = setTimeout(function () {
+                    setTimeout(function () {
                         this._connCallbacks.onConnChange(this._isConnected);
+                        if (typeof app !== 'undefined') app.onConnChange(this._isConnected);
                     }.bind(this), 5000);
                 }
             }.bind(this));
@@ -226,7 +229,7 @@ var servConn = {
 
                 // TODO does this make sense?
                 //if (offlineTime > 12000) {
-                    //window.location.reload();
+                //window.location.reload();
                 //}
                 //that._autoReconnect();
             }.bind(this));
