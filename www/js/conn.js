@@ -129,12 +129,12 @@ var servConn = {
         // - create "_socket/info.js" file with
         //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
         //   in this case you can overwrite browser language settings
-        if ((document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' || socketUrl === 'local'))) {
-            this._type =  'local';
+        if (document.URL.split('/local/')[1] || typeof socketUrl === 'undefined' || socketUrl === 'local') {
+            this._type = 'local';
         }
 
         // init namespace
-        if (typeof socketNamespace != 'undefined') this.namespace = socketNamespace;
+        if (typeof socketNamespace !== 'undefined') this.namespace = socketNamespace;
 
         connOptions = connOptions || {};
         var that = this;
