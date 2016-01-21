@@ -625,7 +625,7 @@
                     if (isOpen) $this.multiselect('open');
                 }
 
-                vis.bindWidgetClick(el.id);
+                vis.bindWidgetClick($this.attr('data-view'), $this.attr('id').replace('_multiselect', ''));
                 $this.parent().parent().resize(function () {
                     if (noJsStyle !== true && noJsStyle !== 'true') {
                         $this.multiselect('option', 'minWidth', $(this).width() - 7);
@@ -1521,10 +1521,10 @@
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-view="<%= this.view %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
             <%
 				var values = (data.attr('values') ? data.attr('values').split(';') : []);
-				var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);
+				var texts  = (data.attr('texts')  ? data.attr('texts').split(';')  : []);
 				for (var val in values) {
 					%>
 					<option value="<%= values[val] %>"><%= texts[val] %></option>
