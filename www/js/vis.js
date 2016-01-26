@@ -97,7 +97,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.8.4',
+    version: '0.8.5',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -2096,7 +2096,7 @@ function main($) {
     // old !!!
     // First of all load project/vis-user.css
     //$('#project_css').attr('href', '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css');
-    if (typeof app === 'undeifned') {
+    if (typeof app === 'undefined') {
         $.ajax({
             url:      'css/vis-common-user.css',
             type:     'GET',
