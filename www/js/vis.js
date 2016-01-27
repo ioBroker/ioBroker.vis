@@ -1669,6 +1669,13 @@ var vis = {
                                 parse[2] = parse[2].substring(1, parse[2].length - 1);
                                 operations.push({op: parse[1], arg: parse[2]});
                             } else
+                            // value formatting
+                            if (parse[1] == 'value') {
+                                operations = operations || [];
+                                parse[2] = parse[2].trim();
+                                parse[2] = parse[2].substring(1, parse[2].length - 1);
+                                operations.push({ op: parse[1], arg: parse[2] });
+                            } else
                             // operators have optional parameter
                             if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
                                 if (parse[2] === undefined) {
@@ -1721,37 +1728,53 @@ var vis = {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
-            if (oids[t].visOid == 'username.val') {
-                value = this.conn.getUser();
-            } else if (oids[t].visOid == 'language.val') {
-                value = this.language;
-            } else if (oids[t].visOid == 'wid.val') {
-                value = wid;
-            } else if (oids[t].visOid == 'wname.val') {
-                value = widget.data.name || wid;
-            } else if (oids[t].visOid == 'view.val') {
-                value = view;
-            } else if (oids[t].visOid) {
-                value = this.states.attr(oids[t].visOid);
+            if (oids[t].visOid) switch (oids[t].visOid) {
+                case 'username.val':
+                    value = this.conn.getUser();
+                    break;
+                case 'language.val':
+                    value = this.language;
+                    break;
+                case 'wid.val':
+                    value = wid;
+                    break;
+                case 'wname.val':
+                    value = widget.data.name || wid;
+                    break;
+                case 'view.val':
+                    value = view;
+                    break;
+                default:
+                    value = this.states.attr(oids[t].visOid);
+                    break;
             }
-            if (oids[t].operations) {
-                for (var k = 0; k < oids[t].operations.length; k++) {
-                    if (oids[t].operations[k].op === 'eval') {
+            if (!oids[t].operations) for (var k = 0; k < oids[t].operations.length; k++) {
+
+                switch (oids[t].operations[k].op) {
+                    case 'eval':
                         var string = '';//'(function() {';
                         for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
                             if (!oids[t].operations[k].arg[a].name) continue;
-                            if (oids[t].operations[k].arg[a].visOid == 'wid.val') {
-                                value = wid;
-                            } else if (oids[t].operations[k].arg[a].visOid == 'view.val') {
-                                value = view;
-                            } else if (oids[t].operations[k].arg[a].visOid == 'username.val') {
-                                value = this.conn.getUser();
-                            } else if (oids[t].operations[k].arg[a].visOid == 'language.val') {
-                                value = this.language;
-                            } else if (oids[t].operations[k].arg[a].visOid == 'wname.val') {
-                                value = widget.data.name || wid;
-                            } else {
-                                value = this.states.attr(oids[t].operations[k].arg[a].visOid);
+                            switch (oids[t].operations[k].arg[a].visOid) {
+                                case 'wid.val':
+                                    value = wid;
+                                    oids[t].operations[k].arg[a].visOid;
+                                    break;
+                                case 'view.val':
+                                    value = view;
+                                    break;
+                                case 'username.val':
+                                    value = this.conn.getUser();
+                                    break;
+                                case 'language.val':
+                                    value = this.language;
+                                    break;
+                                case 'wname.val':
+                                    value = widget.data.name || wid;
+                                    break;
+                                default:
+                                    value = this.states.attr(oids[t].operations[k].arg[a].visOid);
+                                    break;
                             }
                             string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                         }
@@ -1762,94 +1785,106 @@ var vis = {
                         //string += '}())';
                         try {
                             value = new Function(string)();
-                        } catch(e) {
+                        } catch (e) {
                             console.error('Error in eval[value]     : ' + format);
                             console.error('Error in eval[script]: ' + string);
                             console.error('Error in eval[error] : ' + e);
                             value = 0;
                         }
-                    } else
-                    if (oids[t].operations[k].op === '*' && oids[t].operations[k].arg !== undefined) {
-                        value = parseFloat(value) * oids[t].operations[k].arg;
-                    } else
-                    if (oids[t].operations[k].op === '/' && oids[t].operations[k].arg !== undefined) {
-                        value = parseFloat(value) / oids[t].operations[k].arg;
-                    } else
-                    if (oids[t].operations[k].op === '+' && oids[t].operations[k].arg !== undefined) {
-                        value = parseFloat(value) + oids[t].operations[k].arg;
-                    } else
-                    if (oids[t].operations[k].op === '-' && oids[t].operations[k].arg !== undefined) {
-                        value = parseFloat(value) - oids[t].operations[k].arg;
-                    } else
-                    if (oids[t].operations[k].op === '%' && oids[t].operations[k].arg !== undefined) {
-                        value = parseFloat(value) % oids[t].operations[k].arg;
-                    } else
-                    if (oids[t].operations[k].op === 'round') {
+                        break;
+                    case '*':
+                        if (oids[t].operations[k].arg !== undefined) {
+                            value = parseFloat(value) * oids[t].operations[k].arg;
+                        }
+                        break;
+                    case '/':
+                        if (oids[t].operations[k].arg !== undefined) {
+                            value = parseFloat(value) / oids[t].operations[k].arg;
+                        }
+                        break;
+                    case '+':
+                        if (oids[t].operations[k].arg !== undefined) {
+                            value = parseFloat(value) + oids[t].operations[k].arg;
+                        }
+                        break;
+                    case '-':
+                        if (oids[t].operations[k].arg !== undefined) {
+                            value = parseFloat(value) - oids[t].operations[k].arg;
+                        }
+                        break;
+                    case '%':
+                        if (oids[t].operations[k].arg !== undefined) {
+                            value = parseFloat(value) % oids[t].operations[k].arg;
+                        }
+                        break;
+                    case 'round':
                         if (oids[t].operations[k].arg === undefined) {
                             value = Math.round(parseFloat(value));
                         } else {
                             value = parseFloat(value).toFixed(oids[t].operations[k].arg);
                         }
-                    } else
-                    if (oids[t].operations[k].op === 'pow') {
+                        break;
+                    case 'pow':
                         if (oids[t].operations[k].arg === undefined) {
                             value = Math.pow(parseFloat(value), 2);
                         } else {
                             value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
                         }
-                    } else
-                    if (oids[t].operations[k].op === 'sqrt') {
+                        break;
+                    case 'sqrt':
                         value = Math.sqrt(parseFloat(value));
-                    } else
-                    if (oids[t].operations[k].op === 'hex') {
+                        break;
+                    case 'hex':
                         value = Math.round(parseFloat(value)).toString(16);
-                    } else
-                    if (oids[t].operations[k].op === 'hex2') {
+                        break;
+                    case 'hex2':
                         value = Math.round(parseFloat(value)).toString(16);
                         if (value.length < 2) value = '0' + value;
-                    } else
-                    if (oids[t].operations[k].op === 'HEX') {
+                        break;
+                    case 'HEX':
                         value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                    } else
-                    if (oids[t].operations[k].op === 'HEX2') {
+                        break;
+                    case 'HEX2':
                         value = Math.round(parseFloat(value)).toString(16).toUpperCase();
                         if (value.length < 2) value = '0' + value;
-                    } else
-                    if (oids[t].operations[k].op === 'date') {
+                        break;
+                    case 'value':
+                        value = this.formatValue(value, oids[t].operations[k].arg);
+                        break;
+                    case 'date':
                         var number = parseInt(value);
-
                         // This seconds or milliseconds
                         if (number.toString() == value) {
                             value = this.formatDate(value, oids[t].isSeconds, oids[t].operations[k].arg);
                         } else {
                             value = this.formatDate(value, false, oids[t].operations[k].arg);
                         }
-                    } else
-                    if (oids[t].operations[k].op === 'min') {
+                        break;
+                    case 'min':
                         value = parseFloat(value);
                         value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                    } else
-                    if (oids[t].operations[k].op === 'max') {
+                        break;
+                    case 'max':
                         value = parseFloat(value);
                         value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                    } else
-                    if (oids[t].operations[k].op === 'random') {
+                        break;
+                    case 'random':
                         if (oids[t].operations[k].arg === undefined) {
                             value = Math.random();
                         } else {
                             value = Math.random() * oids[t].operations[k].arg;
                         }
-                    } else
-                    if (oids[t].operations[k].op === 'floor') {
+                        break;
+                    case 'floor':
                         value = Math.floor(parseFloat(value));
-                    } else
-                    if (oids[t].operations[k].op === 'ceil') {
+                        break;
+                    case 'ceil':
                         value = Math.ceil(parseFloat(value));
-                    }
-                }
-            }
+                        break;
+                } //switch
+            } //if for
             format = format.replace(oids[t].token, value);
-        }
+        }//for
         format = format.replace(/{{/g, '{').replace(/}}/g, '}');
         return format;
     },
