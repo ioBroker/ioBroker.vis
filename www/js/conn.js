@@ -414,7 +414,14 @@ var servConn = {
 
             if (typeof data == 'object') data = JSON.stringify(data, null, 2);
 
-            this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
+            var parts = filename.split('/');
+            var adapter = parts[1];
+            parts.splice(0, 2);
+            if (adapter == 'vis') {
+                this._socket.emit('writeFile', adapter, parts.join('/'), data, mode ? {mode: this._defaultMode} : {}, callback);
+            } else {
+                this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
+            }
         }
     },
     // Write file base 64

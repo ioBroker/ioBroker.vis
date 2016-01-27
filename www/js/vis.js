@@ -97,7 +97,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.8.5',
+    version: '0.8.6',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -2101,7 +2101,7 @@ function main($) {
             url:      'css/vis-common-user.css',
             type:     'GET',
             dataType: 'html',
-            cache:    this.useCache,
+            cache:    vis.useCache,
             success:  function (data) {
                 $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
                 $(document).trigger('vis-common-user');
@@ -2117,7 +2117,7 @@ function main($) {
             url:      '/' + vis.conn.namespace + '/' + vis.projectPrefix + 'vis-user.css',
             type:     'GET',
             dataType: 'html',
-            cache:    this.useCache,
+            cache:    vis.useCache,
             success:  function (data) {
                 $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
                 $(document).trigger('vis-user');
