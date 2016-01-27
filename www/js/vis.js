@@ -1433,7 +1433,27 @@ var vis = {
         }
         return this.commonStyle;
     },
+    formatValue: function formatValue(value, decimals, _format) {
+        if (typeof decimals !== 'number') {
+            decimals = 2;
+            _format = decimals;
+        }
+
+        //format = (_format === undefined) ? (that.isFloatComma) ? ".," : ",." : _format;
+        // does not work...
+        // using default german...
+        format = (_format === undefined) ? ".," : _format;
+
+        if (typeof value !== "number") value = parseFloat(value);
+        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+    },
     formatDate: function formatDate(dateObj, isSeconds, _format) {
+
+        var duration = false;
+        if ((typeof isSeconds === 'string') && (isSeconds.toLowerCase() === 'duration')) {
+            isSeconds = true;
+            duration = true;
+        }
         if (typeof isSeconds != 'boolean') {
             _format = isSeconds;
             isSeconds = false;
@@ -1442,85 +1462,83 @@ var vis = {
         var format = _format || 'DD.MM.YYYY';
 
         if (!dateObj) return '';
-        if (typeof dateObj != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+        var text = typeof dateObj;
+        if (text == 'string') {
+            var pos = dateObj.indexOf('.');
+            if (pos != -1) dateObj = dateObj.substring(0, pos);
+            return dateObj;
+        }
+        if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+        if (duration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
 
-        var v;
-        // Year
-        if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
-            v = dateObj.getFullYear().toString();
-            format = format.replace('YYYY', v);
-            format = format.replace('JJJJ', v);
-            format = format.replace('ГГГГ', v);
-        } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
-            v = dateObj.getFullYear() % 100;
-            format = format.replace('YY', v);
-            format = format.replace('JJ', v);
-            format = format.replace('ГГ', v);
-        }
-        // Month
-        if (format.indexOf('MM') != -1 || format.indexOf('ММ') != -1) {
-            v =  dateObj.getMonth() + 1;
-            if (v < 10) v = '0' + v;
-            format = format.replace('MM', v);
-            format = format.replace('ММ', v);
-        } else if (format.indexOf('M') != -1 || format.indexOf('М') != -1) {
-            v =  dateObj.getMonth() + 1;
-            format = format.replace('M', v);
-            format = format.replace('М', v);
+        const validFormatChars = 'YJГMDДhSчmмsс';
+        var s = "", result = '';
+
+        function put(s) {
+            var v = '';
+            switch (s) {
+                case 'YYYY':
+                case 'JJJJ':
+                case 'ГГГГ':
+                case 'YY':
+                case 'JJ':
+                case 'ГГ':
+                    v = dateObj.getFullYear();
+                    if (s.length == 2) v %= 100;
+                    break;
+                case 'MM':
+                case 'M':
+                    v = dateObj.getMonth() + 1;
+                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    break;
+                case 'DD':
+                case 'TT':
+                case 'D':
+                case 'T':
+                case 'ДД':
+                case 'Д':
+                    v = dateObj.getDate();
+                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    break;
+                case 'hh':
+                case 'SS':
+                case 'h':
+                case 'S':
+                case 'чч':
+                case 'ч':
+                    v = dateObj.getHours();
+                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    break;
+                case 'mm':
+                case 'm':
+                case 'мм':
+                case 'м':
+                    v = dateObj.getMinutes();
+                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    break;
+                case 'ss':
+                case 's':
+                case 'cc':
+                case 'c':
+                    v = dateObj.getSeconds();
+                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    v = v.toString();
+                    break;
+            }
+            return result += v;
         }
 
-        // Day
-        if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
-            v = dateObj.getDate();
-            if (v < 10) v = '0' + v;
-            format = format.replace('DD', v);
-            format = format.replace('TT', v);
-            format = format.replace('ДД', v);
-        } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
-            v = dateObj.getDate().toString();
-            format = format.replace('D', v);
-            format = format.replace('T', v);
-            format = format.replace('Д', v);
+        for (var i = 0; i < format.length; i++) {
+            if (validFormatChars.indexOf(format[i]) >= 0)
+                s += format[i];
+            else {
+                put(s);
+                s = '';
+                result += format[i];
+            }
         }
-
-        // hours
-        if (format.indexOf('hh') != -1 || format.indexOf('SS') != -1 || format.indexOf('чч') != -1) {
-            v =  dateObj.getHours();
-            if (v < 10) v = '0' + v;
-            format = format.replace('hh', v);
-            format = format.replace('SS', v);
-            format = format.replace('чч', v);
-        } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
-            v =  dateObj.getHours().toString();
-            format = format.replace('h', v);
-            format = format.replace('S', v);
-            format = format.replace('ч', v);
-        }
-
-        // minutes
-        if (format.indexOf('mm') != -1 || format.indexOf('мм') != -1) {
-            v =  dateObj.getMinutes();
-            if (v < 10) v = '0' + v;
-            format = format.replace('mm', v);
-            format = format.replace('мм', v);
-        } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
-            v =  dateObj.getMinutes().toString();
-            format = format.replace('m', v);
-            format = format.replace('v', v);
-        }
-
-        // seconds
-        if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
-            v =  dateObj.getSeconds();
-            if (v < 10) v = '0' + v;
-            format = format.replace('ss', v);
-            format = format.replace('cc', v);
-        } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
-            v =  dateObj.getHours().toString();
-            format = format.replace('s', v);
-            format = format.replace('с', v);
-        }
-        return format;
+        put(s);
+        return result;
     },
     extractBinding: function (format) {
         if (this.editMode) return null;
