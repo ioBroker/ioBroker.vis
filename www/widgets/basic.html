@@ -11,6 +11,7 @@
             "src":              {"en": "Source",                    "de": "Quelle",                 "ru": "Адрес"},
             "refreshInterval":  {"en": "Refresh interval(ms)",      "de": "Updatezeit(ms)",         "ru": "Интервал обновления(ms)"},
             "is_comma":         {"en": "Divider comma",             "de": "Komme als Trennung",     "ru": "Запятая-разделитель"},
+            "is_tdp":           {"en": "Use thousands separator",  "de": "Tausender Trennzeichen",  "ru": "Use thousands separator"},
             "digits":           {"en": "Digits after comma",        "de": "Zeichen nach Komma",     "ru": "Знаков после запятой"},
             "oid":              {"en": "Object ID",                 "de": "Object ID",              "ru": "ID Объекта"},
             "html_prepend":     {"en": "Prepend value",             "de": "Voranstellen HTML",      "ru": "Префикс значения"},
@@ -1035,7 +1036,9 @@
             if (data.factor !== undefined && data.factor != '') val = val * parseFloat(data.factor);
             if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseFloat(data.digits, 10));
 
-            if (data.attr('is_comma')) {
+            if (data.attr('is_tdp')) {
+                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? ".," : ",.");
+            } else if (data.attr('is_comma')) {
                 val = '' + val;
                 val = val.replace('.', ',');
             }
@@ -1060,6 +1063,17 @@
             val = (val - min) / (max - min);
             return (data.border) ? ("calc(" + Math.round(val * 100) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : (Math.round(val * 100) + "%");
         },
+
+        formatValue: function formatValue(value, decimals, _format) {
+	        if (typeof decimals !== 'number') {
+	            decimals = 2;
+	            _format = decimals;
+	        }
+	        var format = (_format === undefined) ? ".," : _format;
+	        if (typeof value !== "number") value = parseFloat(value);
+	        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+	    },
+
         formatDate: function (dateObj, isSeconds, format) {
             if (typeof isSeconds != 'boolean') {
                 format = isSeconds;
@@ -1579,7 +1593,7 @@
         data-vis-type="val"
         data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
         data-vis-name="Number"
-        data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
+        data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">

@@ -1442,7 +1442,7 @@ var vis = {
         //format = (_format === undefined) ? (that.isFloatComma) ? ".," : ",." : _format;
         // does not work...
         // using default german...
-        format = (_format === undefined) ? ".," : _format;
+        var format = (_format === undefined) ? ".," : _format;
 
         if (typeof value !== "number") value = parseFloat(value);
         return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
@@ -1672,9 +1672,10 @@ var vis = {
                             // value formatting
                             if (parse[1] == 'value') {
                                 operations = operations || [];
-                                parse[2] = parse[2].trim();
-                                parse[2] = parse[2].substring(1, parse[2].length - 1);
-                                operations.push({ op: parse[1], arg: parse[2] });
+                                var param = (parse[2]===undefined) ? '(2)' : parse[2];
+                                param = param.trim();
+                                param = param.substring(1, param.length - 1);
+                                operations.push({ op: parse[1], arg: param });
                             } else
                             // operators have optional parameter
                             if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
@@ -1748,7 +1749,7 @@ var vis = {
                     value = this.states.attr(oids[t].visOid);
                     break;
             }
-            if (!oids[t].operations) for (var k = 0; k < oids[t].operations.length; k++) {
+            if (oids[t].operations) for (var k = 0; k < oids[t].operations.length; k++) {
 
                 switch (oids[t].operations[k].op) {
                     case 'eval':
@@ -1849,7 +1850,7 @@ var vis = {
                         if (value.length < 2) value = '0' + value;
                         break;
                     case 'value':
-                        value = this.formatValue(value, oids[t].operations[k].arg);
+                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg));
                         break;
                     case 'date':
                         var number = parseInt(value);
