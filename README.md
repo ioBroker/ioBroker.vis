@@ -45,6 +45,8 @@ Following operations are supported:
 - floor - Math.floor
 - ceil - Math.ceil
 - random(R) - Math.random() * R, or just Math.random() if no argument
+- formatValue(decimals) - format value according to system settings and use decimals
+- date(format) - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
 
 You can use this pattern in any text, like
 
