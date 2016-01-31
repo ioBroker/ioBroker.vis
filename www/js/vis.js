@@ -1158,7 +1158,12 @@ var vis = {
     saveRemote: function (mode, callback) {
         if (typeof mode == 'function') {
             callback = mode;
-            mode = null;
+            mode     = null;
+        }
+        if (typeof app !== 'undefined') {
+            console.warn('Do not allow save of views from Cordova!');
+            if (typeof callback == 'function') callback();
+            return;
         }
 
         var that = this;
