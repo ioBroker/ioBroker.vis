@@ -2,6 +2,11 @@
 ioBroker.vis
 ============
 
+[![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
+
+[![NPM](https://nodei.co/npm/iobroker.vis.png?downloads=true)](https://nodei.co/npm/iobroker.vis/)
+
 WEB visualisation for ioBroker platform.
 
 ## Installation & Dokumentation
