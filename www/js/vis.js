@@ -1521,6 +1521,16 @@ var vis = {
                     v = dateObj.getMinutes();
                     if ((v < 10) && (s.length == 2)) v = '0' + v;
                     break;
+                case 'sss':
+                case 'ccc':
+                    v = dateObj.getMilliseconds();
+                    if (v < 10) {
+                        v = '00' + v;
+                    } else if (v < 100) {
+                        v = '0' + v;
+                    }
+                    v = v.toString();
+                    break;
                 case 'ss':
                 case 's':
                 case 'cc':
@@ -1855,10 +1865,10 @@ var vis = {
                         if (value.length < 2) value = '0' + value;
                         break;
                     case 'value':
-                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg));
+                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
                         break;
                     case 'date':
-                        var number = parseInt(value);
+                        var number = parseInt(value, 10);
                         // This seconds or milliseconds
                         if (number.toString() == value) {
                             value = this.formatDate(value, oids[t].isSeconds, oids[t].operations[k].arg);
