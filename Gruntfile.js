@@ -5,13 +5,18 @@
 /*jslint node: true */
 "use strict";
 
+function getAppName() {
+    var parts = __dirname.replace(/\\/g, '/').split('/');
+    return parts[parts.length - 1].split('.')[0].toLowerCase();
+}
+
 module.exports = function (grunt) {
 
     var srcDir    = __dirname + '/';
-    var dstDir    = srcDir + '.build/';
     var pkg       = grunt.file.readJSON('package.json');
     var iopackage = grunt.file.readJSON('io-package.json');
     var version   = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
+    var appName   = getAppName();
 
     // Project configuration.
     grunt.initConfig({
@@ -78,6 +83,27 @@ module.exports = function (grunt) {
                         dest:    srcDir + '/www/js'
                     }
                 ]
+            },
+            name: {
+                options: {
+                    patterns: [
+                        {
+                            match:       /iobroker/gi,
+                            replacement: appName
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + '*',
+                            srcDir + '.travis.yml'
+                        ],
+                        dest:    srcDir
+                    }
+                ]
             }
         },
         // Javascript code styler
@@ -85,51 +111,17 @@ module.exports = function (grunt) {
         // Lint
         jshint: require(__dirname + '/tasks/jshint.js'),
         http: {
-            /*get_hjscs: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/tasks/jscs.js'
-                },
-                dest: 'tasks/jscs.js'
-            },
-            get_jshint: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/tasks/jshint.js'
-                },
-                dest: 'tasks/jshint.js'
-            },
-            get_gruntfile: {
-                options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/Gruntfile.js'
-                },
-                dest: 'Gruntfile.js'
-            },*/
             get_utilsfile: {
                 options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.build/master/adapters/utils.js'
+                    url: 'https://raw.githubusercontent.com/' + appName + '/' + appName + '.build/master/adapters/utils.js'
                 },
                 dest: 'lib/utils.js'
             },
             get_jscsRules: {
                 options: {
-                    url: 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/tasks/jscsRules.js'
+                    url: 'https://raw.githubusercontent.com/' + appName + '/' + appName + '.js-controller/master/tasks/jscsRules.js'
                 },
                 dest: 'tasks/jscsRules.js'
-            },
-            get_iconOnline: {
-                options: {
-                    encoding: null,
-                    url: iopackage.common.extIcon || 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/adapter/example/admin/example.png'
-                },
-                dest: dstDir + 'ioBroker.adapter.' + iopackage.common.name + '.png'
-
-            },
-            get_iconOffline: {
-                options: {
-                    encoding: null,
-                    url: iopackage.common.extIcon || 'https://raw.githubusercontent.com/ioBroker/ioBroker.js-controller/master/adapter/example/admin/example.png'
-                },
-                dest: dstDir + 'ioBroker.adapter.offline.' + iopackage.common.name + '.png'
-
             }
         }
     });
@@ -178,4 +170,7 @@ module.exports = function (grunt) {
 	
 	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
+    grunt.registerTask('rename', [
+        'replace:name'
+    ]);
 };
