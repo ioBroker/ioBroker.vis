@@ -733,6 +733,27 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
+    editGestures: function(){
+        var group = 'gestures';
+        this.groups[group] = this.groups[group] || {};
+        var gesturesAnalog = ['swiping'];
+        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown'];
+
+        for (var j = 0; j < gesturesAnalog.length; j++){
+            var gesture = gesturesAnalog[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-maximum', type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-minimum', type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-delta', type: 'number'},   group);
+        }
+        for (var j = 0; j < gestures.length; j++){
+            var gesture = gestures[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-limit', type: 'number'},   group);
+        }
+    },
     editText: function (widAttr) {
         var that = this;
         var line = {
@@ -1852,6 +1873,7 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
         this.addToInspect('delimiter', group);
+
         // Edit all attributes
         group = 'common';
         for (group in this.actualAttrs) {
@@ -1868,6 +1890,9 @@ vis = $.extend(true, vis, {
         this.editCssBorder();
         this.editCssShadowPadding();
         //this.editCssAnimation();
+
+        this.addToInspect('delimiter', 'css_shadow_padding');
+        this.editGestures();
 
         // Rerender all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {
