@@ -980,6 +980,107 @@ var vis = {
                         mWidget._customHandlers.onHide(mWidget, id);
                     }
                 }
+
+                //gestures
+                var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','swiping'];
+                var $$wid = $$("#" + id);
+                var that = this;
+                gestures.forEach(function(gesture){
+                    if(widget.data && widget.data['gestures-'+gesture+'-oid']){
+                        var oid = widget.data['gestures-'+gesture+'-oid'];
+                        var val = widget.data['gestures-'+gesture+'-value'];
+                        var delta = parseInt(widget.data['gestures-'+gesture+'-delta']) || false;
+                        var limit = parseFloat(widget.data['gestures-'+gesture+'-limit']) || false;
+                        var max = parseFloat(widget.data['gestures-'+gesture+'-maximum']) || 100;
+                        var min = parseFloat(widget.data['gestures-'+gesture+'-minimum']) || -100;
+                        var valState = that.states.attr(oid + '.val');
+                        var newVal = null;
+                        if (oid) {
+                            if(valState !== undefined){
+                                $wid.on('touchmove', function(evt) {
+                                    evt.preventDefault();
+                                });
+                                $$wid[gesture](function(data) {
+                                    $('body').css({
+                                        "-webkit-user-select": "none",
+                                        "-khtml-user-select": "none",
+                                        "-moz-user-select": "none",
+                                        "-ms-user-select": "none",
+                                        "user-select": "none",
+                                    });
+                                    valState = that.states.attr(oid + '.val');
+                                    if (val === 'toggle') {
+                                        if (valState === true) {
+                                            newVal = false;
+                                        } else if (valState === false) {
+                                            newVal = true;
+                                        } else {
+                                            newVal = null;
+                                            return;
+                                        }
+                                    }else if (delta > 0) {
+                                        if (newVal === null){
+                                            $(document).on( "mouseup.gesture touchend.gesture", function () {
+                                                $('#gestureIndicator').css({
+                                                    display: 'none',
+                                                }).html(newVal);
+                                                $$('#vis_container').off("touch");
+                                                that.setValue(oid, newVal);
+                                                newVal = null;
+                                                $(document).off('mouseup.gesture touchend.gesture');
+                                                $('body').css({
+                                                    "-webkit-user-select": "text",
+                                                    "-khtml-user-select": "text",
+                                                    "-moz-user-select": "text",
+                                                    "-ms-user-select": "text",
+                                                    "user-select": "text",
+                                                });
+                                            });
+                                        }
+                                        var swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                        newVal = (parseFloat(valState)||0)+(parseFloat(val)||1)*swipeDelta;
+                                        newVal = Math.max(min,Math.min(max,newVal));
+                                        $('#gestureIndicator').css({
+                                            display: 'block',
+                                            left: data.touch.x+'px',
+                                            top: data.touch.y-50+'px',
+                                            'font-size': '50px',
+                                            'text-shadow':'0 -1px #333333, 1px 0 #333333, 0 1px #333333, -1px 0 #333333',
+                                            'font-family':'Comfortaa-Regular,Verdana,sans-serif',
+                                            'background-color': 'rgba(255, 255, 255, 0.5)',
+                                            'border-width': '2px',
+                                            'border-radius': '10px',
+                                            'border-style': 'solid',
+                                            'text-align': 'center',
+                                            'vertical-align': 'middle',
+                                            color: "#cccccc"
+                                        }).html(newVal);
+                                        return;
+                                    }else if (limit !== false) {
+                                        newVal = (parseFloat(valState)||0)+(parseFloat(val)||1);
+                                        if (parseFloat(val)>0 && newVal > limit){
+                                            newVal = limit;
+                                        }else if (parseFloat(val)<0 && newVal < limit){
+                                            newVal = limit;
+                                        }
+                                    }else{
+                                        newVal = val;
+                                    }
+                                    that.setValue(oid,newVal);
+                                    newVal = null;
+                                    $('body').css({
+                                        "-webkit-user-select": "text",
+                                        "-khtml-user-select": "text",
+                                        "-moz-user-select": "text",
+                                        "-ms-user-select": "text",
+                                        "user-select": "text",
+                                    });
+                                });
+                            }
+                        }
+                    }
+                });
             }
 
 
