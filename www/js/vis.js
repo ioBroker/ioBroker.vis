@@ -997,6 +997,9 @@ var vis = {
                         var newVal = null;
                         if (oid) {
                             if(valState !== undefined){
+                                $wid.on('touchmove', function(evt) {
+                                    evt.preventDefault();
+                                });
                                 $$wid[gesture](function(data) {
                                     $('body').css({
                                         "-webkit-user-select": "none",
@@ -1018,7 +1021,7 @@ var vis = {
                                         console.log("toggle value:"+newVal);
                                     }else if (delta > 0) {
                                         if (newVal === null){
-                                            $$('#vis_container').on("touch", function () {
+                                            $(document).on( "mouseup.gesture touchend.gesture", function () {
                                                 $('#gestureIndicator').css({
                                                     display: 'none',
                                                 }).html(newVal);
@@ -1026,6 +1029,7 @@ var vis = {
                                                 $$('#vis_container').off("touch");
                                                 that.setValue(oid, newVal);
                                                 newVal = null;
+                                                $(document).off('mouseup.gesture touchend.gesture');
                                                 $('body').css({
                                                     "-webkit-user-select": "text",
                                                     "-khtml-user-select": "text",
@@ -1048,7 +1052,15 @@ var vis = {
                                             left: data.touch.x+'px',
                                             top: data.touch.y-50+'px',
                                             'font-size': '50px',
-                                            color: "#cccccc",
+                                            'text-shadow':'0 -1px #333333, 1px 0 #333333, 0 1px #333333, -1px 0 #333333',
+                                            'font-family':'Comfortaa-Regular,Verdana,sans-serif',
+                                            'background-color': 'rgba(255, 255, 255, 0.5)',
+                                            'border-width': '2px',
+                                            'border-radius': '10px',
+                                            'border-style': 'solid',
+                                            'text-align': 'center',
+                                            'vertical-align': 'middle',
+                                            color: "#cccccc"
                                         }).html(newVal);
                                         return;
                                     }else if (limit !== false) {
@@ -1064,6 +1076,7 @@ var vis = {
                                         console.log("set value:"+newVal);
                                     }
                                     that.setValue(oid,newVal);
+                                    newVal = null;
                                     $('body').css({
                                         "-webkit-user-select": "text",
                                         "-khtml-user-select": "text",
@@ -1071,7 +1084,6 @@ var vis = {
                                         "-ms-user-select": "text",
                                         "user-select": "text",
                                     });
-                                    newVal = null;
                                 });
                             }
                         }
