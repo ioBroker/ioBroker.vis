@@ -1018,14 +1018,12 @@ var vis = {
                                             newVal = null;
                                             return;
                                         }
-                                        console.log("toggle value:"+newVal);
                                     }else if (delta > 0) {
                                         if (newVal === null){
                                             $(document).on( "mouseup.gesture touchend.gesture", function () {
                                                 $('#gestureIndicator').css({
                                                     display: 'none',
                                                 }).html(newVal);
-                                                console.log('analog ready');
                                                 $$('#vis_container').off("touch");
                                                 that.setValue(oid, newVal);
                                                 newVal = null;
@@ -1039,14 +1037,10 @@ var vis = {
                                                 });
                                             });
                                         }
-                                        console.log("valState:"+valState);
                                         var swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
                                         swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
                                         newVal = (parseFloat(valState)||0)+(parseFloat(val)||1)*swipeDelta;
-                                        console.log("min:"+min);
-                                        console.log("max:"+max);
                                         newVal = Math.max(min,Math.min(max,newVal));
-                                        console.log("analog:"+newVal);
                                         $('#gestureIndicator').css({
                                             display: 'block',
                                             left: data.touch.x+'px',
@@ -1070,10 +1064,8 @@ var vis = {
                                         }else if (parseFloat(val)<0 && newVal < limit){
                                             newVal = limit;
                                         }
-                                        console.log("inc/dec value:"+newVal);
                                     }else{
                                         newVal = val;
-                                        console.log("set value:"+newVal);
                                     }
                                     that.setValue(oid,newVal);
                                     newVal = null;
