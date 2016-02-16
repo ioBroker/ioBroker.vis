@@ -2489,7 +2489,7 @@ function main($) {
         },
         onCommand:    function (instance, command, data) {
             var parts;
-            if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+            if (instance != vis.instance && instance != 'FFFFFFFF' && instance != '*') return false;
             if (command) {
                 // external Commands
                 switch (command) {

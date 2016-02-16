@@ -536,9 +536,9 @@
             $this.val(vis.states.attr(oid + '.val'));
         },
         inputset: function (el, options) {
-            var digits = options;
-            var $this = $(el);
-            var input = '#' + $this.attr('id').slice(0, -3) + 'input';
+            var digits    = options;
+            var $this     = $(el);
+            var input     = '#' + $this.attr('id').slice(0, -3) + 'input';
             var noJsStyle = $(el).data('no-style');
 
             var oid = $this.attr('data-oid');
@@ -551,21 +551,28 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    vis.setValue(oid,  $(input).val());
+                    vis.setValue(oid, $(input).val());
                 });
+
+                // send text on enter
+                setTimeout(function () {
+                    $(input).keydown(function (e) {
+                        if (e.keyCode == 13) vis.setValue(oid, $(this).val());
+                    });
+                }, 100);
             }
             if (!noJsStyle) $this.prev().button();
             $this.prev().addClass('ui-state-default')
-                    .css({
-                        font:            'inherit',
-                        'padding-left':  5,
-                        'padding-right': 5,
-                        //'color' :   'inherit',
-                        'text-align':   'left',
-                        outline:        'none',
-                        cursor:         'text',
-                        height:         '95%'
-                    });
+                .css({
+                    font:            'inherit',
+                    'padding-left':  5,
+                    'padding-right': 5,
+                    //'color' :   'inherit',
+                    'text-align':   'left',
+                    outline:        'none',
+                    cursor:         'text',
+                    height:         '95%'
+                });
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != '') {
                     newVal = parseFloat(newVal).toFixed(digits);
@@ -1440,7 +1447,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input"  data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important"/>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important"/>
             <%== this.data.attr('unit') %>
             <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%== this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits); %>/>
         </div>
