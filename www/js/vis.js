@@ -33,12 +33,13 @@
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
-        'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
-        'Loading Views...': {'en': 'Loading Views...', 'de': 'Lade Views...', 'ru': 'Загрузка пользовательских страниц...'},
-        'Connecting to Server...': {'en': 'Connecting to Server...', 'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
-        'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
-        'Loading data values...':  {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
-        'error - View doesn\'t exist': {'en': 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
+        'No connection to Server':  {'en': 'No connection to Server',   'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
+        'Loading Views...':         {'en': 'Loading Views...',          'de': 'Lade Views...',          'ru': 'Загрузка пользовательских страниц...'},
+        'Connecting to Server...':  {'en': 'Connecting to Server...',   'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
+        'Loading data objects...':  {'en': 'Loading data...',           'de': 'Lade Daten...',          'ru': 'Загрузка данных...'},
+        'Loading data values...':   {'en': 'Loading values...',         'de': 'Lade Werte...',          'ru': 'Загрузка значений...'},
+        'error - View doesn\'t exist': {'en': 'View doesn\'t exist!',   'de': 'View existiert nicht!',  'ru': 'Страница не существует!'},
+        "no views found!":          {"en": "No views found!",           "de": "Keine Views gefunden!",  "ru": "Не найдено страниц!"},
         'No Views found on Server': {
             'en': 'No Views found on Server',
             'de': 'Keine Views gefunden am Server.',
@@ -970,7 +971,7 @@ var vis = {
                 $wid.addClass(widget.data.class);
             }
 
-            if (!this.editMode) {
+            if (!this.editMode && $$) {
                 if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
                     $(mWidget).hide();
@@ -983,10 +984,10 @@ var vis = {
 
                 //gestures
                 var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','swiping'];
-                var $$wid = $$("#" + id);
+                var $$wid = $$('#' + id);
                 var that = this;
                 gestures.forEach(function(gesture){
-                    if(widget.data && widget.data['gestures-'+gesture+'-oid']){
+                    if(widget.data && widget.data['gestures-' + gesture + '-oid']){
                         var oid = widget.data['gestures-'+gesture+'-oid'];
                         var val = widget.data['gestures-'+gesture+'-value'];
                         var delta = parseInt(widget.data['gestures-'+gesture+'-delta']) || false;
@@ -2323,6 +2324,7 @@ function main($) {
 
                 // first of all try to load views
                 vis.loadRemote(function () {
+                    vis.IDs = vis.IDs || [];
                     // Read all states from server
                     vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
                         if (error) {
