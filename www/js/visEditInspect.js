@@ -736,8 +736,8 @@ vis = $.extend(true, vis, {
     editGestures: function(){
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
-        var gesturesAnalog = ['swiping'];
-        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown'];
+        var gesturesAnalog = ['swiping','rotating','pinching'];
+        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','rotateLeft','rotateRight','pinchIn','pinchOut'];
 
         for (var j = 0; j < gesturesAnalog.length; j++){
             var gesture = gesturesAnalog[j];

@@ -982,7 +982,7 @@ var vis = {
                 }
 
                 //gestures
-                var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','swiping'];
+                var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
                 var $$wid = $$("#" + id);
                 var that = this;
                 gestures.forEach(function(gesture){
@@ -1021,12 +1021,13 @@ var vis = {
                                     }else if (delta > 0) {
                                         if (newVal === null){
                                             $(document).on( "mouseup.gesture touchend.gesture", function () {
+                                                if (newVal != null) {
+                                                    that.setValue(oid, newVal);
+                                                    newVal = null;
+                                                }
                                                 $('#gestureIndicator').css({
                                                     display: 'none',
                                                 }).html(newVal);
-                                                $$('#vis_container').off("touch");
-                                                that.setValue(oid, newVal);
-                                                newVal = null;
                                                 $(document).off('mouseup.gesture touchend.gesture');
                                                 $('body').css({
                                                     "-webkit-user-select": "text",
@@ -1037,14 +1038,45 @@ var vis = {
                                                 });
                                             });
                                         }
-                                        var swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
-                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                        var swipeDelta, indicatorX, indicatorY = 0;
+                                        switch (gesture){
+                                            case "swiping":
+                                                swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                                indicatorX = data.touch.x+50+'px';
+                                                indicatorY = data.touch.y-100+'px';
+                                                break;
+                                            case "rotating":
+                                                swipeDelta = data.touch.delta;
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                                if (data.touch.touches[0].y < data.touch.touches[1].y){
+                                                    indicatorX = data.touch.touches[1].x+50+'px';
+                                                    indicatorY = data.touch.touches[1].y-100+'px';
+                                                }else{
+                                                    indicatorX = data.touch.touches[0].x+50+'px';
+                                                    indicatorY = data.touch.touches[0].y-100+'px';
+                                                }
+                                                break;
+                                            case "pinching":
+                                                swipeDelta = data.touch.delta;
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                                if (data.touch.touches[0].y < data.touch.touches[1].y){
+                                                    indicatorX = data.touch.touches[1].x+50+'px';
+                                                    indicatorY = data.touch.touches[1].y-100+'px';
+                                                }else{
+                                                    indicatorX = data.touch.touches[0].x+50+'px';
+                                                    indicatorY = data.touch.touches[0].y-100+'px';
+                                                }
+                                                break;
+                                            default:
+                                        }
+
                                         newVal = (parseFloat(valState)||0)+(parseFloat(val)||1)*swipeDelta;
                                         newVal = Math.max(min,Math.min(max,newVal));
                                         $('#gestureIndicator').css({
                                             display: 'block',
-                                            left: data.touch.x+'px',
-                                            top: data.touch.y-50+'px',
+                                            left: indicatorX,
+                                            top: indicatorY,
                                             'font-size': '50px',
                                             'text-shadow':'0 -1px #333333, 1px 0 #333333, 0 1px #333333, -1px 0 #333333',
                                             'font-family':'Comfortaa-Regular,Verdana,sans-serif',
