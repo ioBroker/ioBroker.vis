@@ -985,6 +985,8 @@ var vis = {
                 var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
                 var $$wid = $$("#" + id);
                 var that = this;
+                var offsetX = parseInt(widget.data['gestures-offsetX']) || 0;
+                var offsetY = parseInt(widget.data['gestures-offsetY']) || 0;
                 gestures.forEach(function(gesture){
                     if(widget.data && widget.data['gestures-'+gesture+'-oid']){
                         var oid = widget.data['gestures-'+gesture+'-oid'];
@@ -1050,29 +1052,29 @@ var vis = {
                                             case "swiping":
                                                 swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
                                                 swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
-                                                indicatorX = data.touch.x+50+'px';
-                                                indicatorY = data.touch.y-100+'px';
+                                                indicatorX = data.touch.x;
+                                                indicatorY = data.touch.y;
                                                 break;
                                             case "rotating":
                                                 swipeDelta = data.touch.delta;
                                                 swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
                                                 if (data.touch.touches[0].y < data.touch.touches[1].y){
-                                                    indicatorX = data.touch.touches[1].x+50+'px';
-                                                    indicatorY = data.touch.touches[1].y-100+'px';
+                                                    indicatorX = data.touch.touches[1].x;
+                                                    indicatorY = data.touch.touches[1].y;
                                                 }else{
-                                                    indicatorX = data.touch.touches[0].x+50+'px';
-                                                    indicatorY = data.touch.touches[0].y-100+'px';
+                                                    indicatorX = data.touch.touches[0].x;
+                                                    indicatorY = data.touch.touches[0].y;
                                                 }
                                                 break;
                                             case "pinching":
                                                 swipeDelta = data.touch.delta;
                                                 swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
                                                 if (data.touch.touches[0].y < data.touch.touches[1].y){
-                                                    indicatorX = data.touch.touches[1].x+50+'px';
-                                                    indicatorY = data.touch.touches[1].y-100+'px';
+                                                    indicatorX = data.touch.touches[1].x;
+                                                    indicatorY = data.touch.touches[1].y;
                                                 }else{
-                                                    indicatorX = data.touch.touches[0].x+50+'px';
-                                                    indicatorY = data.touch.touches[0].y-100+'px';
+                                                    indicatorX = data.touch.touches[0].x;
+                                                    indicatorY = data.touch.touches[0].y;
                                                 }
                                                 break;
                                             default:
@@ -1080,7 +1082,7 @@ var vis = {
 
                                         newVal = (parseFloat(valState)||0)+(parseFloat(val)||1)*swipeDelta;
                                         newVal = Math.max(min,Math.min(max,newVal));
-                                        $indicator.trigger('gestureUpdate',{val: newVal, x: indicatorX, y: indicatorY});
+                                        $indicator.trigger('gestureUpdate',{val: newVal, x: indicatorX+offsetX, y: indicatorY+offsetY});
                                         return;
                                     }else if (limit !== false) {
                                         newVal = (parseFloat(valState)||0)+(parseFloat(val)||1);

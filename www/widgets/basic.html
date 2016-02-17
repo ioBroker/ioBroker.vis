@@ -1251,10 +1251,10 @@
                 text += vis.binds.basic.formatFloat(data,val);
                 text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || "" : data.html_append_plural || "";
                 $content.html(text);
-                $div.css({left: x, top: y}).show();
+                $div.css({left: parseInt(x)-$div.width()/2+'px', top: parseInt(y)-$div.height()/2+'px'}).show();
             }
             if(vis.editMode){
-                refresh(data.test_html || 0, $div.position().left, $div.position().top);
+                refresh(data.test_html || 0, $div.position().left+$div.width()/2, $div.position().top+$div.height()/2);
             }else {
                 refresh(null, 0, 0);
             }

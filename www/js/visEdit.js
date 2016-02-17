@@ -3537,6 +3537,22 @@ vis = $.extend(true, vis, {
             return [];
         }
     },
+    getWidgetIds: function (tpl) {
+        if (this.activeView && this.views) {
+            var widgets = this.views[this.activeView].widgets;
+            var list = [];
+            for (var widget in widgets) {
+                if (widgets[widget] && widgets[widget].data) {
+                    if (tpl === undefined || tpl === null || tpl == widgets[widget].tpl){
+                        list.push(widget);
+                    }
+                }
+            }
+            return list;
+        } else {
+            return [];
+        }
+    },
     initStealHandlers: function () {
         var that = this;
         $('.vis-steal-css').each(function () {
