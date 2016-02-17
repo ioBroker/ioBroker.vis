@@ -1251,7 +1251,6 @@
                 text += vis.binds.basic.formatFloat(data,val);
                 text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || "" : data.html_append_plural || "";
                 $content.html(text);
-                console.log(JSON.stringify({left: x, top: y}));
                 $div.css({left: x, top: y}).show();
             }
             if(vis.editMode){
