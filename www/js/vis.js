@@ -1000,6 +1000,13 @@ var vis = {
                                 $wid.on('touchmove', function(evt) {
                                     evt.preventDefault();
                                 });
+                                $wid.css({
+                                    "-webkit-user-select": "none",
+                                    "-khtml-user-select": "none",
+                                    "-moz-user-select": "none",
+                                    "-ms-user-select": "none",
+                                    "user-select": "none",
+                                });
                                 $$wid[gesture](function(data) {
                                     $('body').css({
                                         "-webkit-user-select": "none",
