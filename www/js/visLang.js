@@ -465,6 +465,10 @@ $.extend(systemDictionary, {
     "css_animation-name":       {"en": "animation-name",        "de": "animation-name",         "ru": "animation-name"},
     "css_animation-duration":   {"en": "animation-duration",    "de": "animation-duration",     "ru": "animation-duration"},
 
+    "gestures-indicator":       {"en": "Gesture Indicator", "de": "Gestenindikator", "ru": "Gesture Indicator"},
+    "gestures-offsetX":         {"en": "-offset X", "de": "Versatz Y", "ru": "-offset X"},
+    "gestures-offsetY":         {"en": "-offset Y", "de": "Versatz Y", "ru": "-offset Y"},
+
     "gestures-swiping-oid":     {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
     "gestures-swiping-oid_tooltip": {
         "en": "Object ID of the state to be changed",
@@ -495,6 +499,16 @@ $.extend(systemDictionary, {
         "de": "Wert wird nach so viele Pixeln Bewegung verändert",
         "ru": "value gets changed after that many pixels movement",
     },
+    "gestures-rotating-oid":    {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
+    "gestures-rotating-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-rotating-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
+    "gestures-rotating-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
+    "gestures-rotating-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
+    "gestures-pinching-oid":    {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
+    "gestures-pinching-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-pinching-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
+    "gestures-pinching-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
+    "gestures-pinching-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
     "gestures-swipeRight-oid":  {"en": "swipe right Object ID", "de": "swipe right Object ID",  "ru": "swipe right Object ID"},
     "gestures-swipeRight-oid_tooltip": {
         "en": "Object ID of the state to be changed",
@@ -567,5 +581,17 @@ $.extend(systemDictionary, {
         "de": "minimaler oder maximaler Wert",
         "ru": "minimum or maximum value",
     },
+    "gestures-rotateLeft-oid":  {"en": "rotate left Object ID",  "de": "rotate left Object ID",   "ru": "rotate left Object ID"},
+    "gestures-rotateLeft-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-rotateLeft-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-rotateRight-oid": {"en": "rotate right Object ID",  "de": "rotate right Object ID",   "ru": "rotate right Object ID"},
+    "gestures-rotateRight-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-rotateRight-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-pinchIn-oid":     {"en": "pinch in Object ID",  "de": "pinch in Object ID",   "ru": "pinch in Object ID"},
+    "gestures-pinchIn-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-pinchIn-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-pinchOut-oid":    {"en": "pinch out Object ID",  "de": "pinch out Object ID",   "ru": "pinch out Object ID"},
+    "gestures-pinchOut-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
 });
 
