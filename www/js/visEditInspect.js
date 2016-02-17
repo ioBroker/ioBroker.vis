@@ -739,6 +739,7 @@ vis = $.extend(true, vis, {
         var gesturesAnalog = ['swiping','rotating','pinching'];
         var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','rotateLeft','rotateRight','pinchIn','pinchOut'];
 
+        this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', default: ''},   group);
         for (var j = 0; j < gesturesAnalog.length; j++){
             var gesture = gesturesAnalog[j];
             this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
