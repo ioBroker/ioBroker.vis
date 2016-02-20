@@ -2083,14 +2083,19 @@ var vis = {
             //console.log('gclick: filtered');
             return true;
         }
-
-        var lastClick = $(el).data(isUp ? 'lcu' : 'lc');
+        var $el = $(el);
+        var tag = $(el).prop('tagName').toLowerCase();
+        while (tag === 'polygon') {
+            $el = $el.parent();
+            tag = $el.prop('tagName').toLowerCase();
+        }
+        var lastClick = $el.data(isUp ? 'lcu' : 'lc');
         //console.log('click: ' + lastClick + ' ' + (now - lastClick));
         if (lastClick && now - lastClick < 700) {
             //console.log('click: filtered');
             return true;
         }
-        $(el).data(isUp ? 'lcu' : 'lc', now);
+        $el.data(isUp ? 'lcu' : 'lc', now);
         return false;
     },
     createDemoStates: function () {
