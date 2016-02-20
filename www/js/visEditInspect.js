@@ -736,9 +736,12 @@ vis = $.extend(true, vis, {
     editGestures: function(){
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
-        var gesturesAnalog = ['swiping'];
-        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown'];
+        var gesturesAnalog = ['swiping','rotating','pinching'];
+        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','rotateLeft','rotateRight','pinchIn','pinchOut'];
 
+        this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds('tplValueGesture')}, group);
+        this.addToInspect(this.activeWidgets, {name: 'gestures-offsetX', default: 0, type: 'number'},   group);
+        this.addToInspect(this.activeWidgets, {name: 'gestures-offsetY', default: 0, type: 'number'},   group);
         for (var j = 0; j < gesturesAnalog.length; j++){
             var gesture = gesturesAnalog[j];
             this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);

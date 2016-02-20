@@ -1026,12 +1026,13 @@
                 buttons: buttons
             });
         },
-        formatFloat: function (data) {
-            var val;
+        formatFloat: function (data, val) {
             if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
                 val = parseFloat(data.attr('test_html'));
-            } else {
+            } else if(val === undefined || val === null){
                 val = parseFloat(vis.states.attr(data.oid + '.val'));
+            }else {
+                val = parseFloat(val);
             }
             if (data.factor !== undefined && data.factor != '') val = val * parseFloat(data.factor);
             if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseFloat(data.digits, 10));
@@ -1230,6 +1231,38 @@
             }
             if (isArray) return points;
             return text;
+        },
+        createValueGesture: function (widgetID, view, data, style) {
+            var $div = $('#' + widgetID);
+            // if nothing found => wait
+            if (!$div.length) {
+                return setTimeout(function () {
+                    vis.binds.basic.createValueGesture(widgetID, view, data, style);
+                }, 100);
+            }
+            var $content = $('#' + widgetID + ' .vis-widget-body');
+            var text;
+            function refresh(val, x, y) {
+                if (val === null){
+                    $div.hide();
+                    return;
+                }
+                text = data.html_prepend || "";
+                text += vis.binds.basic.formatFloat(data,val);
+                text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || "" : data.html_append_plural || "";
+                $content.html(text);
+                $div.css({left: parseInt(x)-$div.width()/2+'px', top: parseInt(y)-$div.height()/2+'px'}).show();
+            }
+            if(vis.editMode){
+                refresh(data.test_html || 0, $div.position().left+$div.width()/2, $div.position().top+$div.height()/2);
+            }else {
+                refresh(null, 0, 0);
+            }
+
+            // subscribe top value updates
+            $div.on('gestureUpdate', function(event, evData){
+                refresh(evData.val, evData.x, evData.y);
+            });
         }
     };
 
@@ -2097,6 +2130,21 @@
 			Instance: <span><%= vis.instance %></span>
 		</div>
 		<%= vis.binds.basic.detectScreen() %>
+    </div>
+</script>
+
+<script id="tplValueGesture"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val"
+        data-vis-prev='<div id="prev_tplValueGesture" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>25,5</div> </div> </div></div>'
+        data-vis-name="Gesture indicator"
+        data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% vis.binds.basic.createValueGesture(this.data.wid, this.view, this.data, this.style); %>
+        </div>
     </div>
 </script>
 
