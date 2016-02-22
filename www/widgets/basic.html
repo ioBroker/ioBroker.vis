@@ -1241,21 +1241,21 @@
                 }, 100);
             }
             var $content = $('#' + widgetID + ' .vis-widget-body');
-            var text;
             function refresh(val, x, y) {
+                var text;
                 if (val === null){
                     $div.hide();
                     return;
                 }
-                text = data.html_prepend || "";
+                text = data.html_prepend || '';
                 text += vis.binds.basic.formatFloat(data,val);
-                text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || "" : data.html_append_plural || "";
+                text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || '' : data.html_append_plural || '';
                 $content.html(text);
-                $div.css({left: parseInt(x)-$div.width()/2+'px', top: parseInt(y)-$div.height()/2+'px'}).show();
+                $div.css({left: parseInt(x)  -$div.width() / 2 + 'px', top: parseInt(y) - $div.height() / 2 + 'px'}).show();
             }
-            if(vis.editMode){
-                refresh(data.test_html || 0, $div.position().left+$div.width()/2, $div.position().top+$div.height()/2);
-            }else {
+            if (vis.editMode){
+                refresh(data.test_html || 0, $div.position().left + $div.width() / 2, $div.position().top + $div.height() / 2);
+            } else {
                 refresh(null, 0, 0);
             }
 
@@ -2138,10 +2138,11 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-prev='<div id="prev_tplValueGesture" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>25,5</div> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplValueGesture" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="height: 22px; border: 1px solid rgb(199, 199, 199); text-align: center; padding-top: 8px !important; padding-left: 2px !important; padding-right: 2px !important; background: lightgray; font-size: 14px; font-weight: normal;">25,5</div></div>'
         data-vis-name="Gesture indicator"
-        data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+        data-vis-no-gestures="true"
+        data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits[0];is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; box-shadow: 2px 2px 5px 1px gray; padding-left: 2px; padding-right: 2px; background: lightgray;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% vis.binds.basic.createValueGesture(this.data.wid, this.view, this.data, this.style); %>
         </div>

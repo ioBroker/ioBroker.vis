@@ -736,25 +736,27 @@ vis = $.extend(true, vis, {
     editGestures: function(){
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
-        var gesturesAnalog = ['swiping','rotating','pinching'];
-        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','rotateLeft','rotateRight','pinchIn','pinchOut'];
+        var gesturesAnalog = ['swiping', 'rotating', 'pinching'];
+        var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'];
 
         this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds('tplValueGesture')}, group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetX', default: 0, type: 'number'},   group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetY', default: 0, type: 'number'},   group);
-        for (var j = 0; j < gesturesAnalog.length; j++){
-            var gesture = gesturesAnalog[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-maximum', type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-minimum', type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-delta', type: 'number'},   group);
+        var j;
+        var gesture;
+        for (j = 0; j < gesturesAnalog.length; j++){
+            gesture = gesturesAnalog[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',        type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',      default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-minimum',    type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-maximum',    type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-delta',      type: 'number'},   group);
         }
-        for (var j = 0; j < gestures.length; j++){
-            var gesture = gestures[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-limit', type: 'number'},   group);
+        for (j = 0; j < gestures.length; j++){
+            gesture = gestures[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'},   group);
         }
     },
     editText: function (widAttr) {
@@ -1215,7 +1217,7 @@ vis = $.extend(true, vis, {
                 if (line_[0]) line_ = line_[0];
                 if (typeof line_ == 'string') line_ = {input: line_};
                 if (typeof line_.init == 'function') {
-                    if (wdata_.css) {
+                if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
                         if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
                         line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
@@ -1895,9 +1897,11 @@ vis = $.extend(true, vis, {
         //this.editCssAnimation();
 
         this.addToInspect('delimiter', 'css_shadow_padding');
-        this.editGestures();
+        if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
+            this.editGestures();
+        }
 
-        // Rerender all widgets, where default values applied
+        // Re-render all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {
             for (var r = 0; r < this.reRenderList.length; r++) {
                 this.reRenderWidgetEdit(this.reRenderList[r]);
