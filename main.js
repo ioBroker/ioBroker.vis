@@ -1,6 +1,6 @@
 /**
  *
- *      ioBroker vis Adapter
+ *      iobroker vis Adapter
  *
  *      (c) 2014-2015 bluefox, hobbyquaker
  *

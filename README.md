@@ -1,5 +1,5 @@
 ![Logo](admin/vis.png)
-ioBroker.vis
+iobroker.vis
 ============
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
@@ -7,7 +7,7 @@ ioBroker.vis
 
 [![NPM](https://nodei.co/npm/iobroker.vis.png?downloads=true)](https://nodei.co/npm/iobroker.vis/)
 
-WEB visualisation for ioBroker platform.
+WEB visualisation for iobroker platform.
 
 ## Installation & Dokumentation
 
@@ -41,7 +41,7 @@ Following operations are supported:
 - hex2 - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
 - HEX - same as hex, but upper cased.
 - HEX2 - same as hex2, but upper cased.
-- date - format date according to given format. Format is the same as in [ioBroker.javascript](https://github.com/ioBroker/ioBroker.javascript/blob/master/README.md#formatdate)
+- date - format date according to given format. Format is the same as in [iobroker.javascript](https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate)
 - min(N) - if value is less than N, take the N, elsewise value
 - max(M) - if value is greater than M, take the M, elsewise value
 - sqrt - square root
@@ -205,7 +205,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 * (bluefox) make red-number working again.
 * (bluefox) extend dialog with atuoclose timeout
 * (bluefox) add editWidgetNames
-* (bluefox) remove jqueryUI files to ioBroker.web
+* (bluefox) remove jqueryUI files to iobroker.web
 
 ### 0.7.4 (2015-10-27)
 * (SmilingJack) add "jqui-navigation" with password
@@ -476,7 +476,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 - (bluefox) fix installation process
 
 ### 0.2.11 (2015-03-11)
-- (bluefox) fix install for ioBroker. Required newest ioBroke.js-controller
+- (bluefox) fix install for iobroker. Required newest ioBroke.js-controller
 
 ### 0.2.10 (2015-03-09)
 - (bluefox) fix install for node-red-vis

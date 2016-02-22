@@ -41,12 +41,12 @@ module.exports = function (grunt) {
                             match: /version: *'[\.0-9]*',/,
                             replacement: "version: '" + version + "',"
                         },                        {
-                            match: /<!-- ioBroker\.vis Version [\.0-9]+ -->/,
-                            replacement: '<!-- ioBroker.vis Version ' + version + ' -->'
+                            match: /<!-- iobroker\.vis Version [\.0-9]+ -->/,
+                            replacement: '<!-- iobroker.vis Version ' + version + ' -->'
                         },
                         {
-                            match: /# ioBroker\.vis Version [\.0-9]+/,
-                            replacement: '# ioBroker.vis Version ' + version
+                            match: /# iobroker\.vis Version [\.0-9]+/,
+                            replacement: '# iobroker.vis Version ' + version
                         },
                         {
                             match: /# dev build [\.0-9]+/g,

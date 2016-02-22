@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.8.6',
+    version: '0.9.0',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -982,7 +982,7 @@ var vis = {
                     }
                 }
 
-                //gestures
+                // gestures
                 var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
                 var $$wid = $$('#' + id);
                 var offsetX = parseInt(widget.data['gestures-offsetX']) || 0;
