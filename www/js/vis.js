@@ -1025,7 +1025,7 @@ var vis = {
                                                 newVal = null;
                                                 return;
                                             }
-                                        } else if (delta > 0) {
+                                        } else if (gesture == 'swiping' || gesture == 'rotating' || gesture == 'pinching') {
                                             if (newVal === null){
                                                 $indicator = $('#' + widget.data['gestures-indicator']);
                                                 // create default indicator
