@@ -39,7 +39,7 @@ if (typeof systemDictionary !== 'undefined') {
         'Loading data objects...':  {'en': 'Loading data...',           'de': 'Lade Daten...',          'ru': 'Загрузка данных...'},
         'Loading data values...':   {'en': 'Loading values...',         'de': 'Lade Werte...',          'ru': 'Загрузка значений...'},
         'error - View doesn\'t exist': {'en': 'View doesn\'t exist!',   'de': 'View existiert nicht!',  'ru': 'Страница не существует!'},
-        "no views found!":          {"en": "No views found!",           "de": "Keine Views gefunden!",  "ru": "Не найдено страниц!"},
+        'no views found!':          {'en': 'No views found!',           'de': 'Keine Views gefunden!',  'ru': 'Не найдено страниц!'},
         'No Views found on Server': {
             'en': 'No Views found on Server',
             'de': 'Keine Views gefunden am Server.',
@@ -646,7 +646,7 @@ var vis = {
     initViewObject: function () {
         if (!this.editMode) {
             if (typeof app !== 'undefined') {
-                window.alert(_('no views found!'));
+                this.showMessage(_('no views found!'));
             } else {
                 window.location.href = './edit.html' + window.location.search;
             }
@@ -2356,6 +2356,7 @@ function main($) {
     }
 
     vis.conn.init(null, {
+        noReconnection: typeof app !== 'undefined',
         onConnChange: function (isConnected) {
 
             //console.log("onConnChange isConnected="+isConnected);

@@ -180,9 +180,10 @@ var servConn = {
             }
 
             this._socket = io.connect(url, {
-                'query': 'key=' + connOptions.socketSession,
+                query: 'key=' + connOptions.socketSession,
                 'reconnection limit': 10000,
-                'max reconnection attempts': Infinity
+                'max reconnection attempts': Infinity,
+                reconnection: connOptions.noReconnection ? false : true
             });
 
             this._socket.on('connect', function () {
@@ -209,7 +210,6 @@ var servConn = {
             }.bind(this));
 
             this._socket.on('disconnect', function () {
-                //console.log("socket.io disconnect");
                 this._disconnectedSince = (new Date()).getTime();
 
                 this._isConnected = false;
