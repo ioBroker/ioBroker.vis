@@ -33,12 +33,13 @@
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
-        'No connection to Server': {'en': 'No connection to Server', 'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
-        'Loading Views...': {'en': 'Loading Views...', 'de': 'Lade Views...', 'ru': 'Загрузка пользовательских страниц...'},
-        'Connecting to Server...': {'en': 'Connecting to Server...', 'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
-        'Loading data objects...': {'en': 'Loading data...', 'de': 'Lade Daten...', 'ru': 'Загрузка данных...'},
-        'Loading data values...':  {'en': 'Loading values...', 'de': 'Lade Werte...', 'ru': 'Загрузка значений...'},
-        'error - View doesn\'t exist': {'en': 'View doesn\'t exist!', 'de': 'View existiert nicht!', 'ru': 'Страница не существует!'},
+        'No connection to Server':  {'en': 'No connection to Server',   'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
+        'Loading Views...':         {'en': 'Loading Views...',          'de': 'Lade Views...',          'ru': 'Загрузка пользовательских страниц...'},
+        'Connecting to Server...':  {'en': 'Connecting to Server...',   'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
+        'Loading data objects...':  {'en': 'Loading data...',           'de': 'Lade Daten...',          'ru': 'Загрузка данных...'},
+        'Loading data values...':   {'en': 'Loading values...',         'de': 'Lade Werte...',          'ru': 'Загрузка значений...'},
+        'error - View doesn\'t exist': {'en': 'View doesn\'t exist!',   'de': 'View existiert nicht!',  'ru': 'Страница не существует!'},
+        "no views found!":          {"en": "No views found!",           "de": "Keine Views gefunden!",  "ru": "Не найдено страниц!"},
         'No Views found on Server': {
             'en': 'No Views found on Server',
             'de': 'Keine Views gefunden am Server.',
@@ -97,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.8.6',
+    version: '0.9.0',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -970,7 +971,7 @@ var vis = {
                 $wid.addClass(widget.data.class);
             }
 
-            if (!this.editMode) {
+            if (!this.editMode && $$) {
                 if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
                     var mWidget = document.getElementById(id);
                     $(mWidget).hide();
@@ -981,37 +982,38 @@ var vis = {
                     }
                 }
 
-                //gestures
+                // gestures
                 var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
-                var $$wid = $$("#" + id);
-                var that = this;
+                var $$wid = $$('#' + id);
                 var offsetX = parseInt(widget.data['gestures-offsetX']) || 0;
                 var offsetY = parseInt(widget.data['gestures-offsetY']) || 0;
-                gestures.forEach(function(gesture){
-                    if(widget.data && widget.data['gestures-'+gesture+'-oid']){
-                        var oid = widget.data['gestures-'+gesture+'-oid'];
-                        var val = widget.data['gestures-'+gesture+'-value'];
-                        var delta = parseInt(widget.data['gestures-'+gesture+'-delta']) || false;
-                        var limit = parseFloat(widget.data['gestures-'+gesture+'-limit']) || false;
-                        var max = parseFloat(widget.data['gestures-'+gesture+'-maximum']) || 100;
-                        var min = parseFloat(widget.data['gestures-'+gesture+'-minimum']) || -100;
-                        var valState = that.states.attr(oid + '.val');
-                        var newVal = null;
-                        var $indicator;
+                gestures.forEach(function (gesture) {
+                    if (widget.data && widget.data['gestures-' + gesture + '-oid']) {
+                        var oid = widget.data['gestures-' + gesture + '-oid'];
                         if (oid) {
-                            if(valState !== undefined){
+                            var val     = widget.data['gestures-' + gesture + '-value'];
+                            var delta   = parseInt(widget.data['gestures-' + gesture + '-delta'])     || 10;
+                            var limit   = parseFloat(widget.data['gestures-' + gesture + '-limit'])   || false;
+                            var max     = parseFloat(widget.data['gestures-' + gesture + '-maximum']) || 100;
+                            var min     = parseFloat(widget.data['gestures-' + gesture + '-minimum']) || 0;
+                            var valState = this.states.attr(oid + '.val');
+                            var newVal  = null;
+                            var $indicator;
+                            if (valState !== undefined){
                                 $wid.on('touchmove', function(evt) {
                                     evt.preventDefault();
                                 });
+
                                 $wid.css({
-                                    "-webkit-user-select": "none",
-                                    "-khtml-user-select": "none",
-                                    "-moz-user-select": "none",
-                                    "-ms-user-select": "none",
-                                    "user-select": "none",
+                                    "-webkit-user-select":  'none',
+                                    "-khtml-user-select":   'none',
+                                    "-moz-user-select":     'none',
+                                    "-ms-user-select":      'none',
+                                    "user-select":          'none'
                                 });
-                                $$wid[gesture](function(data) {
-                                    valState = that.states.attr(oid + '.val');
+
+                                $$wid[gesture](function (data) {
+                                    valState = this.states.attr(oid + '.val');
                                     if (val === 'toggle') {
                                         if (valState === true) {
                                             newVal = false;
@@ -1021,89 +1023,114 @@ var vis = {
                                             newVal = null;
                                             return;
                                         }
-                                    }else if (delta > 0) {
+                                    } else if (delta > 0) {
                                         if (newVal === null){
-                                            $indicator = $('#'+widget.data['gestures-indicator']);
-                                            $('body').css({
-                                                "-webkit-user-select": "none",
-                                                "-khtml-user-select": "none",
-                                                "-moz-user-select": "none",
-                                                "-ms-user-select": "none",
-                                                "user-select": "none",
+                                            $indicator = $('#' + widget.data['gestures-indicator']);
+                                            // create default indicator
+                                            if (!$indicator.length) {
+                                                $indicator = $('#gestureIndicator');
+                                                if (!$indicator.length) {
+                                                    $('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
+                                                    $indicator = $('#gestureIndicator');
+
+                                                    $indicator.on('gestureUpdate', function(event, evData) {
+                                                        if (evData.val === null) {
+                                                            $(this).hide();
+                                                        } else {
+                                                            $(this).html(evData.val);
+                                                            $(this).css({
+                                                                left: parseInt(evData.x) - $(this).width()  / 2 + 'px',
+                                                                top:  parseInt(evData.y) - $(this).height() / 2 + 'px'
+                                                            }).show();
+                                                        }
+                                                    });
+                                                }
+                                            }
+
+                                            $('#vis_container').css({
+                                                "-webkit-user-select":  'none',
+                                                "-khtml-user-select":   'none',
+                                                "-moz-user-select":     'none',
+                                                "-ms-user-select":      'none',
+                                                "user-select":          'none'
                                             });
-                                            $(document).on( "mouseup.gesture touchend.gesture", function () {
+
+                                            $(document).on('mouseup.gesture touchend.gesture', function () {
                                                 if (newVal != null) {
-                                                    that.setValue(oid, newVal);
+                                                    this.setValue(oid, newVal);
                                                     newVal = null;
                                                 }
-                                                $indicator.trigger('gestureUpdate',{val: null});
+                                                $indicator.trigger('gestureUpdate', {val: null});
                                                 $(document).off('mouseup.gesture touchend.gesture');
-                                                $('body').css({
-                                                    "-webkit-user-select": "text",
-                                                    "-khtml-user-select": "text",
-                                                    "-moz-user-select": "text",
-                                                    "-ms-user-select": "text",
-                                                    "user-select": "text",
+
+                                                $('#vis_container').css({
+                                                    "-webkit-user-select":  'text',
+                                                    "-khtml-user-select":   'text',
+                                                    "-moz-user-select":     'text',
+                                                    "-ms-user-select":      'text',
+                                                    "user-select":          'text'
                                                 });
-                                            });
+                                            }.bind(this));
                                         }
                                         var swipeDelta, indicatorX, indicatorY = 0;
                                         switch (gesture){
-                                            case "swiping":
-                                                swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y*-1;
-                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                            case 'swiping':
+                                                swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
                                                 indicatorX = data.touch.x;
                                                 indicatorY = data.touch.y;
                                                 break;
-                                            case "rotating":
+
+                                            case 'rotating':
                                                 swipeDelta = data.touch.delta;
-                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
                                                 if (data.touch.touches[0].y < data.touch.touches[1].y){
                                                     indicatorX = data.touch.touches[1].x;
                                                     indicatorY = data.touch.touches[1].y;
-                                                }else{
+                                                } else {
                                                     indicatorX = data.touch.touches[0].x;
                                                     indicatorY = data.touch.touches[0].y;
                                                 }
                                                 break;
-                                            case "pinching":
+
+                                            case 'pinching':
                                                 swipeDelta = data.touch.delta;
-                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta/delta) : Math.ceil(swipeDelta/delta);
-                                                if (data.touch.touches[0].y < data.touch.touches[1].y){
+                                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                                if (data.touch.touches[0].y < data.touch.touches[1].y) {
                                                     indicatorX = data.touch.touches[1].x;
                                                     indicatorY = data.touch.touches[1].y;
-                                                }else{
+                                                } else {
                                                     indicatorX = data.touch.touches[0].x;
                                                     indicatorY = data.touch.touches[0].y;
                                                 }
                                                 break;
+
                                             default:
+                                                break;
                                         }
 
-                                        newVal = (parseFloat(valState)||0)+(parseFloat(val)||1)*swipeDelta;
-                                        newVal = Math.max(min,Math.min(max,newVal));
-                                        $indicator.trigger('gestureUpdate',{val: newVal, x: indicatorX+offsetX, y: indicatorY+offsetY});
+                                        newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
+                                        newVal = Math.max(min, Math.min(max, newVal));
+                                        $indicator.trigger('gestureUpdate', {val: newVal, x: indicatorX + offsetX, y: indicatorY + offsetY});
                                         return;
-                                    }else if (limit !== false) {
-                                        newVal = (parseFloat(valState)||0)+(parseFloat(val)||1);
-                                        if (parseFloat(val)>0 && newVal > limit){
+                                    } else if (limit !== false) {
+                                        newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1);
+                                        if (parseFloat(val) > 0 && newVal > limit) {
                                             newVal = limit;
-                                        }else if (parseFloat(val)<0 && newVal < limit){
+                                        } else if (parseFloat(val) < 0 && newVal < limit){
                                             newVal = limit;
                                         }
-                                    }else{
+                                    } else {
                                         newVal = val;
                                     }
-                                    that.setValue(oid,newVal);
+                                    this.setValue(oid,newVal);
                                     newVal = null;
-                                });
+                                }.bind(this));
                             }
                         }
                     }
-                });
+                }.bind(this));
             }
-
-
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
@@ -1279,7 +1306,12 @@ var vis = {
     saveRemote: function (mode, callback) {
         if (typeof mode == 'function') {
             callback = mode;
-            mode = null;
+            mode     = null;
+        }
+        if (typeof app !== 'undefined') {
+            console.warn('Do not allow save of views from Cordova!');
+            if (typeof callback == 'function') callback();
+            return;
         }
 
         var that = this;
@@ -1637,6 +1669,16 @@ var vis = {
                     v = dateObj.getMinutes();
                     if ((v < 10) && (s.length == 2)) v = '0' + v;
                     break;
+                case 'sss':
+                case 'ccc':
+                    v = dateObj.getMilliseconds();
+                    if (v < 10) {
+                        v = '00' + v;
+                    } else if (v < 100) {
+                        v = '0' + v;
+                    }
+                    v = v.toString();
+                    break;
                 case 'ss':
                 case 's':
                 case 'cc':
@@ -1971,10 +2013,10 @@ var vis = {
                         if (value.length < 2) value = '0' + value;
                         break;
                     case 'value':
-                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg));
+                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
                         break;
                     case 'date':
-                        var number = parseInt(value);
+                        var number = parseInt(value, 10);
                         // This seconds or milliseconds
                         if (number.toString() == value) {
                             value = this.formatDate(value, oids[t].isSeconds, oids[t].operations[k].arg);
@@ -2087,14 +2129,19 @@ var vis = {
             //console.log('gclick: filtered');
             return true;
         }
-
-        var lastClick = $(el).data(isUp ? 'lcu' : 'lc');
+        var $el = $(el);
+        var tag = $(el).prop('tagName').toLowerCase();
+        while (tag !== 'div') {
+            $el = $el.parent();
+            tag = $el.prop('tagName').toLowerCase();
+        }
+        var lastClick = $el.data(isUp ? 'lcu' : 'lc');
         //console.log('click: ' + lastClick + ' ' + (now - lastClick));
         if (lastClick && now - lastClick < 700) {
             //console.log('click: filtered');
             return true;
         }
-        $(el).data(isUp ? 'lcu' : 'lc', now);
+        $el.data(isUp ? 'lcu' : 'lc', now);
         return false;
     },
     createDemoStates: function () {
@@ -2328,6 +2375,7 @@ function main($) {
 
                 // first of all try to load views
                 vis.loadRemote(function () {
+                    vis.IDs = vis.IDs || [];
                     // Read all states from server
                     vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
                         if (error) {
@@ -2595,7 +2643,7 @@ function main($) {
         },
         onCommand:    function (instance, command, data) {
             var parts;
-            if (instance != vis.instance && instance != 'FFFFFFFF') return false;
+            if (instance != vis.instance && instance != 'FFFFFFFF' && instance != '*') return false;
             if (command) {
                 // external Commands
                 switch (command) {

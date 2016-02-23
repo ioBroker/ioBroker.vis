@@ -1,21 +1,21 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.8.6",
-        "title":                    "ioBroker Visualisation",
+        "version": "0.9.0",
+        "title":                    "iobroker Visualisation",
         "desc": {
-            "en":                   "Graphical user interface for ioBroker.",
-            "de":                   "Graphische Darstellung für ioBroker (ehemalige DashUI)",
-            "ru":                   "Веб интерфейс для визуализации данных 'ioBroker' (бывший модуль Dash UI)"
+            "en":                   "Graphical user interface for iobroker.",
+            "de":                   "Graphische Darstellung für iobroker (ehemalige DashUI)",
+            "ru":                   "Веб интерфейс для визуализации данных 'iobroker' (бывший модуль Dash UI)"
         },
         "platform":                 "Javascript/Node.js",
         "loglevel":                 "info",
         "icon":                     "vis.png",
         "enabled":                  true,
         "mode":                     "once",
-        "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.vis/master/admin/vis.png",
+        "extIcon":                  "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
         "keywords":                 ["DashUI", "GUI", "graphical", "scada"],
-        "readme":                   "https://github.com/ioBroker/ioBroker.vis/blob/master/README.md",
+        "readme":                   "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
         "authors": [
             "bluefox <bluefox@ccu.io>"
         ],

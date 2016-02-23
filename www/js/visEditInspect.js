@@ -381,7 +381,7 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<input type="text" id="inspect_' + widAttr + '"/>',
             onchange: function (value) {
-                $(this).css("background-color", value || '');
+                $(this).css('background-color', value || '');
                 that._editSetFontColor('inspect_' + widAttr);
             }
         };
@@ -728,34 +728,64 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_animation-duration'] = {input: '<input type="text" id="inspect_css_animation-duration"/>'};
 
         for(var attr in this.groups[group]) {
-            this.groups[group][attr].css = true;
-            this.groups[group][attr].attrName = attr;
+            this.groups[group][attr].css      = true;
+            this.groups[group][attr].attrName  = attr;
             this.groups[group][attr].attrIndex = '';
         }
     },
     editGestures: function(){
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
-        var gesturesAnalog = ['swiping','rotating','pinching'];
-        var gestures = ['swipeRight','swipeLeft','swipeUp','swipeDown','rotateLeft','rotateRight','pinchIn','pinchOut'];
+        var gesturesAnalog = ['swiping', 'rotating', 'pinching'];
+        var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'];
 
         this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds('tplValueGesture')}, group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetX', default: 0, type: 'number'},   group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetY', default: 0, type: 'number'},   group);
-        for (var j = 0; j < gesturesAnalog.length; j++){
-            var gesture = gesturesAnalog[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-maximum', type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-minimum', type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-delta', type: 'number'},   group);
+        var j;
+        var gesture;
+        for (j = 0; j < gesturesAnalog.length; j++){
+            gesture = gesturesAnalog[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',        type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',      default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-minimum',    type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-maximum',    type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-delta',      type: 'number'},   group);
         }
-        for (var j = 0; j < gestures.length; j++){
-            var gesture = gestures[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-oid', type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-value', default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-'+gesture+'-limit', type: 'number'},   group);
+
+        for (j = 0; j < gestures.length; j++){
+            gesture = gestures[j];
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'},   group);
         }
+        // install handlers
+        setTimeout(function () {
+            var that = this;
+            for (var j = 0; j < gesturesAnalog.length; j++){
+                gesture = gesturesAnalog[j];
+                $('#inspect_gestures-' + gesture + '-oid').change(function () {
+                    var id = $(this).attr('id');
+                    var g = id.split('-');
+                    var val = $(this).val();
+                    if (that.objects[val] && that.objects[val].common) {
+                        if (that.objects[val].common.min !== undefined) {
+                            if ($('#inspect_gestures-' + g[1] + '-minimum').val() === '') {
+                                $('#inspect_gestures-' + g[1] + '-minimum').val(that.objects[val].common.min)
+                            }
+                        }
+                        if (that.objects[val].common.max !== undefined) {
+                            if ($('#inspect_gestures-' + g[1] + '-maximum').val() === '') {
+                                $('#inspect_gestures-' + g[1] + '-maximum').val(that.objects[val].common.max)
+                            }
+                        }
+                    }
+
+                }).keyup(function () {
+                    $(this).trigger('change');
+                });
+            }
+        }.bind(this), 300);
     },
     editText: function (widAttr) {
         var that = this;
@@ -1215,7 +1245,7 @@ vis = $.extend(true, vis, {
                 if (line_[0]) line_ = line_[0];
                 if (typeof line_ == 'string') line_ = {input: line_};
                 if (typeof line_.init == 'function') {
-                    if (wdata_.css) {
+                if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
                         if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
                         line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
@@ -1895,9 +1925,11 @@ vis = $.extend(true, vis, {
         //this.editCssAnimation();
 
         this.addToInspect('delimiter', 'css_shadow_padding');
-        this.editGestures();
+        if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
+            this.editGestures();
+        }
 
-        // Rerender all widgets, where default values applied
+        // Re-render all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {
             for (var r = 0; r < this.reRenderList.length; r++) {
                 this.reRenderWidgetEdit(this.reRenderList[r]);

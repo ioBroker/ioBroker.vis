@@ -465,46 +465,51 @@ $.extend(systemDictionary, {
     "css_animation-name":       {"en": "animation-name",        "de": "animation-name",         "ru": "animation-name"},
     "css_animation-duration":   {"en": "animation-duration",    "de": "animation-duration",     "ru": "animation-duration"},
 
-    "gestures-indicator":       {"en": "Gesture Indicator", "de": "Gestenindikator", "ru": "Gesture Indicator"},
-    "gestures-offsetX":         {"en": "-offset X", "de": "Versatz Y", "ru": "-offset X"},
-    "gestures-offsetY":         {"en": "-offset Y", "de": "Versatz Y", "ru": "-offset Y"},
+    "gestures-indicator":       {"en": "Gesture Indicator",     "de": "Gestenindikator",        "ru": "Индикатор изменения"},
+    "gestures-indicator_tooltip": {
+        "en": "Create and style \"basic - Gesture Indicator\".\x0AOne indicator can be used in many widgets.",
+        "de": "Erzeuge einen \"basic - Gesture Indicator\" und setze Stil dafür.\x0AEin Gestenindikator kann für mehrere Widgets benutzt werden.",
+        "ru": "Создайте \"basic - Gesture Indicator\"и задайте стиль. Один индикатор может использоваться во многих элементах."
+    },
+    "gestures-offsetX":         {"en": "-offset X",             "de": "Versatz X",              "ru": "-offset X"},
+    "gestures-offsetY":         {"en": "-offset Y",             "de": "Versatz Y",              "ru": "-offset Y"},
 
     "gestures-swiping-oid":     {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
     "gestures-swiping-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed",
+        "ru": "Object ID of the state to be changed"
     },
     "gestures-swiping-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-swiping-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)",
+        "ru": "value or step (e.g. 0.5 or -0.5)"
     },
     "gestures-swiping-maximum": {"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
     "gestures-swiping-maximum_tooltip": {
         "en": "maximum value",
         "de": "maximaler Wert",
-        "ru": "maximum value",
+        "ru": "maximum value"
     },
     "gestures-swiping-minimum": {"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
     "gestures-swiping-minimum_tooltip": {
         "en": "minimum value",
         "de": "minimaler Wert",
-        "ru": "minimum value",
+        "ru": "minimum value"
     },
     "gestures-swiping-delta":   {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
     "gestures-swiping-delta_tooltip": {
         "en": "value gets changed after that many pixels movement",
         "de": "Wert wird nach so viele Pixeln Bewegung verändert",
-        "ru": "value gets changed after that many pixels movement",
+        "ru": "value gets changed after that many pixels movement"
     },
-    "gestures-rotating-oid":    {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
+    "gestures-rotating-oid":    {"en": "rotating Object ID",    "de": "rotating Object ID",     "ru": "rotating Object ID"},
     "gestures-rotating-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-rotating-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
     "gestures-rotating-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
     "gestures-rotating-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
-    "gestures-pinching-oid":    {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
+    "gestures-pinching-oid":    {"en": "pinching Object ID",    "de": "pinching Object ID",     "ru": "pinching Object ID"},
     "gestures-pinching-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-pinching-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
     "gestures-pinching-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
@@ -513,85 +518,85 @@ $.extend(systemDictionary, {
     "gestures-swipeRight-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed",
+        "ru": "Object ID of the state to be changed"
     },
     "gestures-swipeRight-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-swipeRight-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)",
+        "ru": "value or step (e.g. 0.5 or -0.5)"
     },
     "gestures-swipeRight-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
     "gestures-swipeRight-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value",
+        "ru": "minimum or maximum value"
     },
     "gestures-swipeLeft-oid":   {"en": "swipe left Object ID",  "de": "swipe left Object ID",   "ru": "swipe left Object ID"},
     "gestures-swipeLeft-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed",
+        "ru": "Object ID of the state to be changed"
     },
     "gestures-swipeLeft-value": {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-swipeLeft-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)",
+        "ru": "value or step (e.g. 0.5 or -0.5)"
     },
     "gestures-swipeLeft-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
     "gestures-swipeLeft-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value",
+        "ru": "minimum or maximum value"
     },
     "gestures-swipeUp-oid":     {"en": "swipe up Object ID",    "de": "swipe up Object ID",     "ru": "swipe up Object ID"},
     "gestures-swipeUp-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed",
+        "ru": "Object ID of the state to be changed"
     },
     "gestures-swipeUp-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-swipeUp-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)",
+        "ru": "value or step (e.g. 0.5 or -0.5)"
     },
     "gestures-swipeUp-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
     "gestures-swipeUp-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value",
+        "ru": "minimum or maximum value"
     },
     "gestures-swipeDown-oid":   {"en": "swipe down Object ID",  "de": "swipe down Object ID",   "ru": "swipe down Object ID"},
     "gestures-swipeDown-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed",
+        "ru": "Object ID of the state to be changed"
     },
     "gestures-swipeDown-value": {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-swipeDown-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)",
+        "ru": "value or step (e.g. 0.5 or -0.5)"
     },
     "gestures-swipeDown-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
     "gestures-swipeDown-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value",
+        "ru": "minimum or maximum value"
     },
-    "gestures-rotateLeft-oid":  {"en": "rotate left Object ID",  "de": "rotate left Object ID",   "ru": "rotate left Object ID"},
+    "gestures-rotateLeft-oid":  {"en": "rotate left Object ID", "de": "rotate left Object ID",  "ru": "rotate left Object ID"},
     "gestures-rotateLeft-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-rotateLeft-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
-    "gestures-rotateRight-oid": {"en": "rotate right Object ID",  "de": "rotate right Object ID",   "ru": "rotate right Object ID"},
-    "gestures-rotateRight-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-rotateRight-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
-    "gestures-pinchIn-oid":     {"en": "pinch in Object ID",  "de": "pinch in Object ID",   "ru": "pinch in Object ID"},
+    "gestures-rotateRight-oid": {"en": "rotate right Object ID", "de": "rotate right Object ID", "ru": "rotate right Object ID"},
+    "gestures-rotateRight-value":{"en": "-value",               "de": "-Wert",                  "ru": "-value"},
+    "gestures-rotateRight-limit":{"en": "-limit",               "de": "-limit",                 "ru": "-limit"},
+    "gestures-pinchIn-oid":     {"en": "pinch in Object ID",    "de": "pinch in Object ID",     "ru": "pinch in Object ID"},
     "gestures-pinchIn-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
     "gestures-pinchIn-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
-    "gestures-pinchOut-oid":    {"en": "pinch out Object ID",  "de": "pinch out Object ID",   "ru": "pinch out Object ID"},
+    "gestures-pinchOut-oid":    {"en": "pinch out Object ID",   "de": "pinch out Object ID",    "ru": "pinch out Object ID"},
     "gestures-pinchOut-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-limit"}
 });
 

@@ -1,4 +1,7 @@
-
+/* set font as in editor */
+#vis_container {
+    font-family: Arial, sans-serif;
+}
 /*div#vis_container {
     -webkit-touch-callout: none;
     -ms-touch-select: none;
