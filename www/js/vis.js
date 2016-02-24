@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.9.0',
+    version: '0.9.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -1627,7 +1627,7 @@ var vis = {
         if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
         if (duration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
 
-        const validFormatChars = 'YJГMDДhSчmмsс';
+        var validFormatChars = 'YJГMDДhSчmмsс';
         var s = "", result = '';
 
         function put(s) {
