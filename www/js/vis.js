@@ -2276,14 +2276,14 @@ function main($) {
 
     vis.preloadImages(['img/disconnect.png']);
 
-    $('#server-disconnect').dialog({
-        modal:         true,
-        closeOnEscape: false,
-        autoOpen:      false,
-        dialogClass:   'noTitle',
-        width:         400,
-        height:        90
-    });
+    /*$('#server-disconnect').dialog({
+     modal:         true,
+     closeOnEscape: false,
+     autoOpen:      false,
+     dialogClass:   'noTitle',
+     width:         400,
+     height:        90
+     });*/
 
     $('.vis-version').html(vis.version);
 
@@ -2356,12 +2356,11 @@ function main($) {
     }
 
     vis.conn.init(null, {
-        noReconnection: typeof app !== 'undefined',
+        mayReconnect: typeof app !== 'undefined' ? app.mayReconnect : null,
         onConnChange: function (isConnected) {
-
             //console.log("onConnChange isConnected="+isConnected);
             if (isConnected) {
-                $('#server-disconnect').dialog('close');
+                //$('#server-disconnect').dialog('close');
                 if (vis.isFirstTime) {
                     vis.conn.getVersion(function (version) {
                         if (version) {
@@ -2503,7 +2502,7 @@ function main($) {
                 });
             } else {
                 //console.log((new Date()) + " socket.io disconnect");
-                $('#server-disconnect').dialog('open');
+                //$('#server-disconnect').dialog('open');
             }
         },
         onRefresh:    function () {

@@ -122,6 +122,25 @@ var servConn = {
             }, 0);
         }
     },
+    reconnect:        function (connOptions) {
+        // reconnect
+        if ((!connOptions.mayReconnect || connOptions.mayReconnect()) && !this._connectInterval) {
+            this._connectInterval = setInterval(function () {
+                console.log('Trying connect...');
+                this._socket.connect();
+                this._countDown = 10;
+                $('.splash-screen-text').html(this._countDown + '...').css('color', 'red');
+            }.bind(this), 10000);
+
+            this._countDown = 10;
+            $('.splash-screen-text').html(this._countDown + '...');
+
+            this._countInterval = setInterval(function () {
+                this._countDown--;
+                $('.splash-screen-text').html(this._countDown + '...');
+            }.bind(this), 1000);
+        }
+    },
     init:             function (connOptions, connCallbacks, objectsRequired) {
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
@@ -183,10 +202,20 @@ var servConn = {
                 query: 'key=' + connOptions.socketSession,
                 'reconnection limit': 10000,
                 'max reconnection attempts': Infinity,
-                reconnection: connOptions.noReconnection ? false : true
+                reconnection: false
             });
 
             this._socket.on('connect', function () {
+                if (this._connectInterval) {
+                    clearInterval(this._connectInterval);
+                    this._connectInterval = null;
+                }
+                if (this._countInterval) {
+                    clearInterval(this._countInterval);
+                    this._countInterval = null;
+                }
+                $('#server-disconnect').hide();
+
                 this._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
@@ -208,30 +237,42 @@ var servConn = {
                     location.reload();
                 }
             }.bind(this));
+            
+            this._socket.on('connect_error', function () {
+                $('.splash-screen-text').css('color', '#002951');
+
+                this.reconnect(connOptions);
+            }.bind(this));
 
             this._socket.on('disconnect', function () {
                 this._disconnectedSince = (new Date()).getTime();
 
+                // called only once when connection lost (and it was here before)
                 this._isConnected = false;
                 if (this._connCallbacks.onConnChange) {
                     setTimeout(function () {
+                        $('#server-disconnect').show();
                         this._connCallbacks.onConnChange(this._isConnected);
                         if (typeof app !== 'undefined') app.onConnChange(this._isConnected);
                     }.bind(this), 5000);
+                } else {
+                    $('#server-disconnect').show();
                 }
+
+                // reconnect
+                this.reconnect(connOptions);
             }.bind(this));
 
             // after reconnect the "connect" event will be called
             this._socket.on('reconnect', function () {
-                //console.log("socket.io reconnect");
                 var offlineTime = (new Date()).getTime() - that._disconnectedSince;
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
 
-                // TODO does this make sense?
-                //if (offlineTime > 12000) {
-                //window.location.reload();
-                //}
-                //that._autoReconnect();
+                // reload whole page if no connection longer than one minute
+                if (offlineTime > 60000) {
+                    window.location.reload();
+                }
+                // anyway "on connect" is called
             }.bind(this));
 
             this._socket.on('objectChange', function (id, obj) {
