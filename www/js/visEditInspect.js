@@ -81,12 +81,12 @@ vis = $.extend(true, vis, {
         '"MS Serif", "New York", serif',
         '"Comic Sans MS", cursive'
     ],
-    editObjectID: function (widAttr, widgetFilter) {
+    editObjectID: function (widAttr, widgetFilter, onChange) {
         var that = this;
         // Edit for Object ID
         var line = [
             {
-                input: '<input type="text" id="inspect_' + widAttr + '">'
+                input: '<input type="text" id="inspect_' + widAttr + '" data-onchange="' + (onChange || '')+ '">'
             }
         ];
 
@@ -175,6 +175,15 @@ vis = $.extend(true, vis, {
             line[0].onchange = function (val) {
                 var wdata = $(this).data('data-wdata');
                 $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
+                var userOnchange = $(this).data('onchange');
+                if (userOnchange) {
+                    for (var w = 0; w < wdata.widgets.length; w++) {
+                        var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[w]].tpl).attr('data-vis-set');
+                        if (that.binds[widgetSet] && that.binds[widgetSet][userOnchange]) {
+                            return that.binds[widgetSet][userOnchange](wdata.widgets[w], wdata.view, that.widgets[wdata.widgets[w]].data[wdata.attr], wdata.attr, false);
+                        }
+                    }
+                }
             };
 
             line.push({input: '<div id="inspect_' + widAttr + '_desc"></div>'});
@@ -1015,7 +1024,7 @@ vis = $.extend(true, vis, {
         // Depends on attribute type
         switch (widAttr.type) {
             case 'id':
-                line = this.editObjectID(widAttr.name, widAttr.options);
+                line = this.editObjectID(widAttr.name, widAttr.options, widAttr.onChangeWidget);
                 break;
             case 'checkbox':
                 // All other attributes

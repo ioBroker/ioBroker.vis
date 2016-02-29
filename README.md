@@ -157,7 +157,9 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
-## Changelog
+## Changelog### 0.9.1 (2016-02-24)
+* (bluefox) fix safary error
+
 ### 0.9.0 (2016-02-20)
 * (pmant) add guestures
 * (bluefox) fix svg bool on touch devices
