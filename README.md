@@ -161,6 +161,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 * (bluefox) allow onChange for OIDs too
 * (bluefox) show reconnecting process
 * (pmant) use new gestures lib
+* (bluefox) show project name
 
 ### 0.9.1 (2016-02-24)
 * (bluefox) fix safary error

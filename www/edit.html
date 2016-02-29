@@ -274,7 +274,12 @@
     <button id="button_undo"></button>
     <table style="display: inline-block; float: right">
         <tr>
-            <td><div id="current-user" class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px"></div></td>
+            <td>
+                <div class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px">
+                    <span  style="display: inline-block;" id="current-project"></span> [<span  style="display: inline-block;" class="ui-icon ui-icon-person"></span>
+                    <span style="display: inline-block;" id="current-user"></span>]
+                </div>
+            </td>
             <td style="width:30px"><button id="saving_progress"></button></td>
             <td><button id="logout_button" class="ui-state-default ui-corner-top translateT" style="display: none;" title="Logout"></button></td>
             <td><button id="exit_button"></button></td>
@@ -978,6 +983,11 @@
 <div style="display: none" id="uploadPreview"></div>
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+
+<div id="server-disconnect" style="left: calc(100% - 350px); padding: 10px; display: block; width: 170px; height: 14px; border-radius: 3px; text-align: center; position: fixed;" class="ui-state-error" >
+    <span class="ui-icon ui-icon-alert" style="position: relative; top: 0;left: 0; display: inline-block; float: left; margin-right: .3em;"></span>
+    <div class="translate" style="display: inline-block; position: relative;top: 0;left: 0;">No connection</div>
+</div>
 
 </body>
 

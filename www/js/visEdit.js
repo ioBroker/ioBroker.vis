@@ -1459,6 +1459,9 @@ vis = $.extend(true, vis, {
                 e.preventDefault();
             }
         });
+
+        // show current project
+        $('#current-project').html(that.projectPrefix.substring(0, that.projectPrefix.length - 1));
     },
     editInitWidgetPreview: function () {
         var that = this;

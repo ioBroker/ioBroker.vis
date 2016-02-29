@@ -306,6 +306,7 @@ $.extend(systemDictionary, {
     "readOnly":             {"en": "read only",         "de": "nur lesend",             "ru": "только для чтения"},
     "New project...":       {"en": "New project...",    "de": "Neues Projekt...",       "ru": "Новый проект..."},
     "Create new project":   {"en": "Create new project", "de": "Neues Projekt",         "ru": "Создать новый проект"},
+    "No connection":        {"en": "No connection",     "de": "Verbindungsfehler",             "ru": "Связь прервана"},
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
         "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie erneut.",
