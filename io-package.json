@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.9.1",
+        "version": "0.9.2",
         "title":                    "iobroker Visualisation",
         "desc": {
             "en":                   "Graphical user interface for iobroker.",
