@@ -2394,12 +2394,14 @@ function main($) {
                                         vis.states[id + '.ts']  = obj.ts;
                                         vis.states[id + '.ack'] = obj.ack;
                                         vis.states[id + '.lc']  = obj.lc;
+                                        if (obj.q !== undefined) vis.states[id + '.q'] = obj.q;
                                     } else {
                                         var o = {};
                                         o[id + '.val'] = obj.val;
                                         o[id + '.ts']  = obj.ts;
                                         o[id + '.ack'] = obj.ack;
                                         o[id + '.lc']  = obj.lc;
+                                        if (obj.q !== undefined) o[id + '.q'] = obj.q;
                                         vis.states.attr(o);
                                     }
                                 } catch (e) {
@@ -2515,6 +2517,7 @@ function main($) {
                     vis.states[id + '.ts']  = state.ts;
                     vis.states[id + '.ack'] = state.ack;
                     vis.states[id + '.lc']  = state.lc;
+                    if (state.q !== undefined) vis.states[id + '.q'] = state.q;
                 } else {
                     var o = {};
                     // Check new model
@@ -2522,6 +2525,7 @@ function main($) {
                     o[id + '.ts']  = state.ts;
                     o[id + '.ack'] = state.ack;
                     o[id + '.lc']  = state.lc;
+                    if (state.q !== undefined) o[id + '.q'] = state.q;
                     try {
                         vis.states.attr(o);
                     } catch (e) {
@@ -2648,6 +2652,7 @@ function main($) {
             var parts;
             if (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1) return false;
             if (command) {
+                if (vis.editMode && command !== 'tts' && command !== 'playSound') return;
                 // external Commands
                 switch (command) {
                     case 'alert':
