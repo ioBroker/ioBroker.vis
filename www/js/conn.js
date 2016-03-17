@@ -378,68 +378,102 @@ var servConn = {
             if (!isRemote && typeof app !== 'undefined') {
                 app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), callback);
             } else {
-                this._socket.emit('readFile', this.namespace, filename, function (err, data) {
+                var adapter = this.namespace;
+                if (filename[0] == '/') {
+                    var p = filename.split('/');
+                    adapter = p[1];
+                    p.splice(0, 2);
+                    filename = p.join('/');
+                }
+
+                this._socket.emit('readFile', adapter, filename, function (err, data, mimeType) {
                     setTimeout(function () {
-                        callback(err, data, filename);
+                        callback(err, data, filename, mimeType);
                     }, 0);
                 });
             }
-
         }
     },
-    readFile64:       function (filename, callback) {
+    getMimeType: function (ext) {
+        if (ext.indexOf('.') !== -1) ext = ext.match(/\.[^.]+$/);
+        var _mimeType;
+        if (ext == '.css') {
+            _mimeType = 'text/css';
+        } else if (ext == '.bmp') {
+            _mimeType = 'image/bmp';
+        } else if (ext == '.png') {
+            _mimeType = 'image/png';
+        } else if (ext == '.jpg') {
+            _mimeType = 'image/jpeg';
+        } else if (ext == '.jpeg') {
+            _mimeType = 'image/jpeg';
+        } else if (ext == '.gif') {
+            _mimeType = 'image/gif';
+        } else if (ext == '.tif') {
+            _mimeType = 'image/tiff';
+        } else if (ext == '.js') {
+            _mimeType = 'application/javascript';
+        } else if (ext == '.html') {
+            _mimeType = 'text/html';
+        } else if (ext == '.htm') {
+            _mimeType = 'text/html';
+        } else if (ext == '.json') {
+            _mimeType = 'application/json';
+        } else if (ext == '.xml') {
+            _mimeType = 'text/xml';
+        } else if (ext == '.svg') {
+            _mimeType = 'image/svg+xml';
+        } else if (ext == '.eot') {
+            _mimeType = 'application/vnd.ms-fontobject';
+        } else if (ext == '.ttf') {
+            _mimeType = 'application/font-sfnt';
+        } else if (ext == '.woff') {
+            _mimeType = 'application/font-woff';
+        } else if (ext == '.wav') {
+            _mimeType = 'audio/wav';
+        } else if (ext == '.mp3') {
+            _mimeType = 'audio/mpeg3';
+        } else {
+            _mimeType = 'text/javascript';
+        }
+        return _mimeType;
+    },
+    readFile64:       function (filename, callback, isRemote) {
         if (!callback) {
             throw 'No callback set';
         }
-        this._socket.emit('readFile', this.namespace, filename, function (err, data) {
-            if (data) {
-                var ext = filename.match(/\.[^.]+$/);
-                var _mimeType;
-                if (ext == '.css') {
-                    _mimeType = 'text/css';
-                } else if (ext == '.bmp') {
-                    _mimeType = 'image/bmp';
-                } else if (ext == '.png') {
-                    _mimeType = 'image/png';
-                } else if (ext == '.jpg') {
-                    _mimeType = 'image/jpeg';
-                } else if (ext == '.jpeg') {
-                    _mimeType = 'image/jpeg';
-                } else if (ext == '.gif') {
-                    _mimeType = 'image/gif';
-                } else if (ext == '.tif') {
-                    _mimeType = 'image/tiff';
-                } else if (ext == '.js') {
-                    _mimeType = 'application/javascript';
-                } else if (ext == '.html') {
-                    _mimeType = 'text/html';
-                } else if (ext == '.htm') {
-                    _mimeType = 'text/html';
-                } else if (ext == '.json') {
-                    _mimeType = 'application/json';
-                } else if (ext == '.xml') {
-                    _mimeType = 'text/xml';
-                } else if (ext == '.svg') {
-                    _mimeType = 'image/svg+xml';
-                } else if (ext == '.eot') {
-                    _mimeType = 'application/vnd.ms-fontobject';
-                } else if (ext == '.ttf') {
-                    _mimeType = 'application/font-sfnt';
-                } else if (ext == '.woff') {
-                    _mimeType = 'application/font-woff';
-                } else if (ext == '.wav') {
-                    _mimeType = 'audio/wav';
-                } else if (ext == '.mp3') {
-                    _mimeType = 'audio/mpeg3';
-                } else {
-                    _mimeType = 'text/javascript';
-                }
 
-                callback(err, {mime: _mimeType, data: btoa(data)}, filename);
-            } else {
-                callback(err, filename);
+        if (!this._checkConnection('readFile', arguments)) return;
+
+        if (!isRemote && typeof app !== 'undefined') {
+            app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), function (err, data, mimeType) {
+                setTimeout(function () {
+                    if (data) {
+                        callback(err, {mime: mimeType || this.getMimeType(filename), data: btoa(data)}, filename);
+                    } else {
+                        callback(err, filename);
+                    }
+                }.bind(this), 0);
+            }.bind(this));
+        } else {
+            var adapter = this.namespace;
+            if (filename[0] == '/') {
+                var p = filename.split('/');
+                adapter = p[1];
+                p.splice(0, 2);
+                filename = p.join('/');
             }
-        });
+
+            this._socket.emit('readFile64', adapter, filename, function (err, data, mimeType) {
+                setTimeout(function () {
+                    if (data) {
+                        callback(err, {mime: mimeType || this.getMimeType(filename), data: data}, filename);
+                    } else {
+                        callback(err, {mime: mimeType || this.getMimeType(filename)}, filename);
+                    }
+                }.bind(this), 0);
+            }.bind(this));
+        }
     },
     writeFile:        function (filename, data, mode, callback) {
         if (typeof mode == 'function') {
