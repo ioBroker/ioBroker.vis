@@ -397,6 +397,14 @@ vis = $.extend(true, vis, {
             }
         });
 
+        $('.vis-screen-render-always').change(function () {
+            if (that.views[that.activeView].settings.alwaysRender != $(this).prop('checked')) {
+                that.views[that.activeView].settings.alwaysRender  = $(this).prop('checked');
+                $('.vis-screen-render-always').prop('checked', $(this).prop('checked'));
+                that.save();
+            }
+        });
+
         $('#screen_size_y').change(function () {
             var x = $('#screen_size_x').val();
             var y = $('#screen_size_y').val();
@@ -2297,13 +2305,15 @@ vis = $.extend(true, vis, {
         }
     },
     exportWidgets: function (widgets) {
+        this.removeUnusedFields();
+
         var exportW = [];
         widgets = widgets || this.activeWidgets;
         for (var i = 0; i < widgets.length; i++) {
             exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
-        $('#textarea_export_widgets').html(JSON.stringify(exportW));
+        $('#textarea_export_widgets').text(JSON.stringify(exportW));
         document.getElementById("textarea_export_widgets").select();
         $('#dialog_export_widgets').dialog({
             autoOpen: true,
@@ -3093,6 +3103,7 @@ vis = $.extend(true, vis, {
             } else {
                 $('.vis-screen-default').prop('checked', false).prop('disabled', true);
             }
+            $('.vis-screen-render-always').prop('checked', this.views[view].settings.alwaysRender);
         } else {
             $('#screen_size').val('').selectmenu('refresh');
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
@@ -4091,7 +4102,7 @@ vis = $.extend(true, vis, {
     },
     unlockWidgets: function (view, widgets) {
         view = view || this.activeView;
-        // Enable selecte for all widgets
+        // Enable select for all widgets
         for (var w = 0; w < widgets.length; w++) {
             $('#' + widgets[w]).removeClass('vis-widget-edit-locked').addClass('ui-selectee');
             if (this.views[view].widgets[widgets[w]].data.locked !== undefined) {

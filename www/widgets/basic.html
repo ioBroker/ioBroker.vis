@@ -1263,6 +1263,105 @@
             $div.on('gestureUpdate', function(event, evData){
                 refresh(evData.val, evData.x, evData.y);
             });
+        },
+        speech2text: function (wid, view, data, style) {
+            var final_transcript = '';
+            var recognition;
+            var ignore_onend = false;
+
+            if (typeof webkitSpeechRecognition === 'undefined') {
+                console.error('Browser does not support speech 2 text');
+                return;
+            }
+
+            var words = null;
+            if (data.keywords) {
+                words =  data.keywords.toLowerCase().split(/[\s,;]+/g);
+            }
+
+            function startRecognition() {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous     = data.continuous === true || data.continuous === 'true';
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = function() {
+                    $('#info_speak_now').show();
+                };
+
+                recognition.onerror = function(event) {
+                    if (event.error == 'no-speech') {
+                        $('#info_no_speech').show();
+                        ignore_onend = true;
+                    }
+                    if (event.error == 'audio-capture') {
+                        $('#info_no_microphone').show();
+                        ignore_onend = true;
+                    }
+                    if (event.error == 'not-allowed') {
+                        if (event.timeStamp - start_timestamp < 100) {
+                            $('#info_blocked').show();
+                        } else {
+                            $('#info_denied').show();
+                        }
+                        ignore_onend = true;
+                    }
+                };
+
+                recognition.onend = function() {
+                    console.log('onend');
+                    recognition.stop();
+                    recognition = null;
+                    setTimeout(startRecognition, 1000);
+                };
+
+                recognition.onresult = function(event) {
+                    var interim_transcript = '';
+
+                    if (typeof(event.results) == 'undefined') {
+                        recognition.onend = null;
+                        recognition.stop();
+                        return;
+                    }
+
+                    for (var i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            final_transcript   += event.results[i][0].transcript;
+                        } else {
+                            interim_transcript += event.results[i][0].transcript;
+                        }
+                    }
+                    console.log(interim_transcript);
+                    //final_transcript = capitalize(final_transcript);
+                    $('#' + wid).find('.final').html(final_transcript);
+                    $('#' + wid).find('.interim').html(interim_transcript);
+
+                    if (final_transcript) {
+                        var found = true;
+                        if (words) {
+                            found = false;
+                            var wwords = final_transcript.toLowerCase().split(' ');
+                            for (var w = 0; w < words.length; w++) {
+                                if (wwords.indexOf(words[w]) !== -1) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (found) {
+                            console.log(final_transcript);
+                            vis.setValue(data.oid, final_transcript);
+                        }
+                        final_transcript = '';
+                    }
+                };
+
+                recognition.lang = data.language;
+                if (!vis.editMode)
+                    recognition.start();
+            }
+
+            startRecognition();
         }
     };
 
@@ -2147,5 +2246,54 @@
             <% vis.binds.basic.createValueGesture(this.data.wid, this.view, this.data, this.style); %>
         </div>
     </div>
+</script>
+<script id="tplSpeech2Text"
+                 type="text/ejs"
+                 class="vis-tpl"
+                 data-vis-set="basic"
+                 data-vis-type="val"
+                 data-vis-prev='<div id="prev_tplValueGesture" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="height: 22px; border: 1px solid rgb(199, 199, 199); text-align: center; padding-top: 8px !important; padding-left: 2px !important; padding-right: 2px !important; background: lightgray; font-size: 14px; font-weight: normal;">25,5</div></div>'
+                 data-vis-name="Gesture indicator"
+                 data-vis-no-gestures="true"
+                 data-vis-attrs="oid;language/select,,en-US,de,ru-RU;keywords">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="height: 50px; width: 100px" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div id="info">
+                <p id="info_start">
+                    Click on the microphone icon and begin speaking for as long as you like.
+                </p>
+                <p id="info_speak_now" style="display:none">
+                    Speak now.
+                </p>
+                <p id="info_no_speech" style="display:none">
+                    No speech was detected. You may need to adjust your <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">microphone settings</a>.
+                </p>
+                <p id="info_no_microphone" style="display:none">
+                    No microphone was found. Ensure that a microphone is installed and that
+                    <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                        microphone settings</a> are configured correctly.
+                </p>
+                <p id="info_allow" style="display:none">
+                    Click the "Allow" button above to enable your microphone.
+                </p>
+                <p id="info_denied" style="display:none">
+                    Permission to use microphone was denied.
+                </p>
+                <p id="info_blocked" style="display:none">
+                    Permission to use microphone is blocked. To change, go to
+                    chrome://settings/contentExceptions#media-stream
+                </p>
+                <p id="info_upgrade" style="display:none">
+                    Web Speech API is not supported by this browser. Upgrade to
+                    <a href="//www.google.com/chrome">Chrome</a> version 25 or later.
+                </p>
+            </div>
+            <div id="results">
+                <span class="final"></span>
+                <span class="interim"></span>
+            </div>
+        </div>
+    </div>
+    <% vis.binds.basic.speech2text(this.data.wid, this.view, this.data, this.style); %>
 </script>
 

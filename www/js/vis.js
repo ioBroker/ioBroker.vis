@@ -637,8 +637,13 @@ var vis = {
         this.initialized = true;
 
         // If this function called earlier, it makes problems under FireFox.
-        if (this.views && this.views._project) {
-            this.renderView("_project", false, true);
+        // render all views, that should be always rendered
+        if (this.views && !this.editMode) {
+            for (var view in this.views) {
+                if (this.views[view].settings.alwaysRender) {
+                    this.renderView(view, false, true);
+                }
+            }
         }
 
         if (this.activeView) this.changeView(this.activeView);
@@ -1305,8 +1310,25 @@ var vis = {
             if (callback) callback.call(that, callbackArg);
         });
     },
+    removeUnusedFields: function () {
+        var regExp = /^gestures\-/;
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                // Check all attributes
+                var data = this.views[view].widgets[id].data;
+                for (var attr in data) {
+                    if ((data[attr] === '' || data[attr] === null) && regExp.test(attr)) {
+                        delete data[attr];
+                    }
+                }
+            }
+        }
+    },
     saveRemoteActive: 0,
     saveRemote: function (mode, callback) {
+        // remove all unused fields
+        this.removeUnusedFields();
+
         if (typeof mode == 'function') {
             callback = mode;
             mode     = null;

@@ -755,18 +755,18 @@ vis = $.extend(true, vis, {
         var gesture;
         for (j = 0; j < gesturesAnalog.length; j++){
             gesture = gesturesAnalog[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',        type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',      default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-minimum',    type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-maximum',    type: 'number'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-delta',      type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',        type: 'id'},     group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',      default: ''},    group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-minimum',    type: 'number'}, group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-maximum',    type: 'number'}, group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-delta',      type: 'number'}, group);
         }
 
         for (j = 0; j < gestures.length; j++){
             gesture = gestures[j];
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},   group);
-            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'},   group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},     group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},    group);
+            this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'}, group);
         }
         // install handlers
         setTimeout(function () {
@@ -774,22 +774,22 @@ vis = $.extend(true, vis, {
             for (var j = 0; j < gesturesAnalog.length; j++){
                 gesture = gesturesAnalog[j];
                 $('#inspect_gestures-' + gesture + '-oid').change(function () {
-                    var id = $(this).attr('id');
-                    var g = id.split('-');
+                    var id  = $(this).attr('id');
                     var val = $(this).val();
+                    var g   = id.split('-');
+
                     if (that.objects[val] && that.objects[val].common) {
                         if (that.objects[val].common.min !== undefined) {
                             if ($('#inspect_gestures-' + g[1] + '-minimum').val() === '') {
-                                $('#inspect_gestures-' + g[1] + '-minimum').val(that.objects[val].common.min)
+                                $('#inspect_gestures-' + g[1] + '-minimum').val(that.objects[val].common.min);
                             }
                         }
                         if (that.objects[val].common.max !== undefined) {
                             if ($('#inspect_gestures-' + g[1] + '-maximum').val() === '') {
-                                $('#inspect_gestures-' + g[1] + '-maximum').val(that.objects[val].common.max)
+                                $('#inspect_gestures-' + g[1] + '-maximum').val(that.objects[val].common.max);
                             }
                         }
                     }
-
                 }).keyup(function () {
                     $(this).trigger('change');
                 });

@@ -90,6 +90,10 @@ module.exports = function (grunt) {
                         {
                             match:       /iobroker/gi,
                             replacement: appName
+                        },
+						{
+                            match:       / *  Copyright \(c\) \d+-\d+ bluefox https:\/\/github.com\/GermanBluefox, hobbyquaker https:\/\/github.com\/hobbyquaker/gi,
+                            replacement: ''
                         }
                     ]
                 },
@@ -98,10 +102,75 @@ module.exports = function (grunt) {
                         expand:  true,
                         flatten: true,
                         src:     [
-                            srcDir + '*',
+                            srcDir + '*.*',
                             srcDir + '.travis.yml'
                         ],
                         dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'admin/*.*',
+                            '!' + srcDir + 'admin/*.png'
+                        ],
+                        dest:    srcDir + 'admin'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'lib/*.*'
+                        ],
+                        dest:    srcDir + 'lib'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'example/*.*'
+                        ],
+                        dest:    srcDir + 'example'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/*.*'
+                        ],
+                        dest:    srcDir + 'www'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/js/*.*'
+                        ],
+                        dest:    srcDir + 'www/js'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/widgets/*.*'
+                        ],
+                        dest:    srcDir + 'www/widgets'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'test/*.*'
+                        ],
+                        dest:    srcDir + 'test'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'test/lib/*.*'
+                        ],
+                        dest:    srcDir + 'test/lib'
                     }
                 ]
             }
