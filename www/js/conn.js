@@ -123,25 +123,27 @@ var servConn = {
         }
     },
     reconnect:        function (connOptions) {
+        var that = this;
         // reconnect
         if ((!connOptions.mayReconnect || connOptions.mayReconnect()) && !this._connectInterval) {
             this._connectInterval = setInterval(function () {
                 console.log('Trying connect...');
-                this._socket.connect();
-                this._countDown = 10;
-                $('.splash-screen-text').html(this._countDown + '...').css('color', 'red');
-            }.bind(this), 10000);
+                that._socket.connect();
+                that._countDown = 10;
+                $('.splash-screen-text').html(that._countDown + '...').css('color', 'red');
+            }, 10000);
 
             this._countDown = 10;
             $('.splash-screen-text').html(this._countDown + '...');
 
             this._countInterval = setInterval(function () {
-                this._countDown--;
-                $('.splash-screen-text').html(this._countDown + '...');
-            }.bind(this), 1000);
+                that._countDown--;
+                $('.splash-screen-text').html(that._countDown + '...');
+            }, 1000);
         }
     },
     init:             function (connOptions, connCallbacks, objectsRequired) {
+        var that = this; // support of old safary
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
         // - do not create "_socket/info.js" file in "www" directory
@@ -156,7 +158,6 @@ var servConn = {
         if (typeof socketNamespace !== 'undefined') this.namespace = socketNamespace;
 
         connOptions = connOptions || {};
-        var that = this;
         if (!connOptions.name) connOptions.name = this.namespace;
 
         if (typeof session !== 'undefined') {
@@ -199,69 +200,69 @@ var servConn = {
             }
 
             this._socket = io.connect(url, {
-                query: 'key=' + connOptions.socketSession,
-                'reconnection limit': 10000,
-                'max reconnection attempts': Infinity,
-                reconnection: false
+                query:                          'key=' + connOptions.socketSession,
+                'reconnection limit':           10000,
+                'max reconnection attempts':    Infinity,
+                reconnection:                   false
             });
 
             this._socket.on('connect', function () {
-                if (this._connectInterval) {
-                    clearInterval(this._connectInterval);
-                    this._connectInterval = null;
+                if (that._connectInterval) {
+                    clearInterval(that._connectInterval);
+                    that._connectInterval = null;
                 }
-                if (this._countInterval) {
-                    clearInterval(this._countInterval);
-                    this._countInterval = null;
+                if (that._countInterval) {
+                    clearInterval(that._countInterval);
+                    that._countInterval = null;
                 }
                 $('#server-disconnect').hide();
 
-                this._socket.emit('name', connOptions.name);
+                that._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
-                    this._socket.emit('authenticate', function (isOk, isSecure) {
+                    that._socket.emit('authenticate', function (isOk, isSecure) {
                         console.log((new Date()).toISOString() + ' Authenticated: ' + isOk);
                         if (isOk) {
-                            this._onAuth(objectsRequired, isSecure);
+                            that._onAuth(objectsRequired, isSecure);
                         } else {
                             console.log('permissionError');
                         }
-                    }.bind(this));
-                }.bind(this), 50);
-            }.bind(this));
+                    });
+                }, 50);
+            });
 
             this._socket.on('reauthenticate', function () {
-                if (this._connCallbacks.onReAuth) {
-                    this._connCallbacks.onConnChange(this._isSecure);
-                    if (typeof app !== 'undefined') app.onConnChange(this._isSecure);
+                if (that._connCallbacks.onReAuth) {
+                    that._connCallbacks.onConnChange(that._isSecure);
+                    if (typeof app !== 'undefined') app.onConnChange(that._isSecure);
                     location.reload();
                 }
-            }.bind(this));
-            
+            });
+
             this._socket.on('connect_error', function () {
                 $('.splash-screen-text').css('color', '#002951');
 
-                this.reconnect(connOptions);
-            }.bind(this));
+                that.reconnect(connOptions);
+            });
 
             this._socket.on('disconnect', function () {
-                this._disconnectedSince = (new Date()).getTime();
+                that._disconnectedSince = (new Date()).getTime();
 
                 // called only once when connection lost (and it was here before)
-                this._isConnected = false;
-                if (this._connCallbacks.onConnChange) {
+                that._isConnected = false;
+                if (that._connCallbacks.onConnChange) {
                     setTimeout(function () {
                         $('#server-disconnect').show();
-                        this._connCallbacks.onConnChange(this._isConnected);
-                        if (typeof app !== 'undefined') app.onConnChange(this._isConnected);
-                    }.bind(this), 5000);
+                        that._connCallbacks.onConnChange(that._isConnected);
+                        if (typeof app !== 'undefined') app.onConnChange(that._isConnected);
+                    }, 5000);
                 } else {
                     $('#server-disconnect').show();
                 }
 
                 // reconnect
-                this.reconnect(connOptions);
-            }.bind(this));
+                that.reconnect(connOptions);
+            });
 
             // after reconnect the "connect" event will be called
             this._socket.on('reconnect', function () {
@@ -273,16 +274,16 @@ var servConn = {
                     window.location.reload();
                 }
                 // anyway "on connect" is called
-            }.bind(this));
+            });
 
             this._socket.on('objectChange', function (id, obj) {
-                if (this._connCallbacks.onObjectChange) this._connCallbacks.onObjectChange(id, obj);
-            }.bind(this));
+                if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange(id, obj);
+            });
 
             this._socket.on('stateChange', function (id, state) {
                 if (!id || state === null || typeof state != 'object') return;
 
-                if (this._connCallbacks.onCommand && id == that.namespace + '.control.command') {
+                if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
                     if (state.ack) return;
 
                     if (state.val &&
@@ -298,38 +299,38 @@ var servConn = {
 
                     // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
                     if (state.val && state.val.instance) {
-                        if (this._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
+                        if (that._connCallbacks.onCommand(state.val.instance, state.val.command, state.val.data)) {
                             // clear state
-                            this.setState(id, {val: '', ack: true});
+                            that.setState(id, {val: '', ack: true});
                         }
                     } else {
-                        if (this._connCallbacks.onCommand(this._cmdInstance, state.val, this._cmdData)) {
+                        if (that._connCallbacks.onCommand(that._cmdInstance, state.val, that._cmdData)) {
                             // clear state
-                            this.setState(id, {val: '', ack: true});
+                            that.setState(id, {val: '', ack: true});
                         }
                     }
                 } else if (id == that.namespace + '.control.data') {
-                    this._cmdData = state.val;
+                    that._cmdData = state.val;
                 } else if (id == that.namespace + '.control.instance') {
-                    this._cmdInstance = state.val;
-                } else if (this._connCallbacks.onUpdate) {
-                    this._connCallbacks.onUpdate(id, state);
+                    that._cmdInstance = state.val;
+                } else if (that._connCallbacks.onUpdate) {
+                    that._connCallbacks.onUpdate(id, state);
                 }
-            }.bind(this));
+            });
 
             this._socket.on('permissionError', function (err) {
-                if (this._connCallbacks.onError) {
+                if (that._connCallbacks.onError) {
                     /* {
                      command:
                      type:
                      operation:
                      arg:
                      }*/
-                    this._connCallbacks.onError(err);
+                    that._connCallbacks.onError(err);
                 } else {
                     console.log('permissionError');
                 }
-            }.bind(this));
+            });
         }
     },
     logout:           function (callback) {
@@ -439,6 +440,7 @@ var servConn = {
         return _mimeType;
     },
     readFile64:       function (filename, callback, isRemote) {
+        var that = this;
         if (!callback) {
             throw 'No callback set';
         }
@@ -449,12 +451,12 @@ var servConn = {
             app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), function (err, data, mimeType) {
                 setTimeout(function () {
                     if (data) {
-                        callback(err, {mime: mimeType || this.getMimeType(filename), data: btoa(data)}, filename);
+                        callback(err, {mime: mimeType || that.getMimeType(filename), data: btoa(data)}, filename);
                     } else {
                         callback(err, filename);
                     }
-                }.bind(this), 0);
-            }.bind(this));
+                }, 0);
+            });
         } else {
             var adapter = this.namespace;
             if (filename[0] == '/') {
@@ -467,12 +469,12 @@ var servConn = {
             this._socket.emit('readFile64', adapter, filename, function (err, data, mimeType) {
                 setTimeout(function () {
                     if (data) {
-                        callback(err, {mime: mimeType || this.getMimeType(filename), data: data}, filename);
+                        callback(err, {mime: mimeType || that.getMimeType(filename), data: data}, filename);
                     } else {
-                        callback(err, {mime: mimeType || this.getMimeType(filename)}, filename);
+                        callback(err, {mime: mimeType || that.getMimeType(filename)}, filename);
                     }
-                }.bind(this), 0);
-            }.bind(this));
+                }, 0);
+            });
         }
     },
     writeFile:        function (filename, data, mode, callback) {
@@ -480,7 +482,6 @@ var servConn = {
             callback = mode;
             mode = null;
         }
-        var that = this;
         if (this._type === 'local') {
             storage.set(filename, JSON.stringify(data));
             if (callback) callback();
@@ -501,7 +502,6 @@ var servConn = {
     },
     // Write file base 64
     writeFile64:      function (filename, data, callback) {
-        var that = this;
         if (!this._checkConnection('writeFile', arguments)) return;
 
         var parts = filename.split('/');
@@ -774,13 +774,14 @@ var servConn = {
         });
     },
     readProjects:     function (callback) {
+        var that = this;
         this.readDir('/' + this.namespace, function (err, dirs) {
             var result = [];
             var count = 0;
             for (var d = 0; d < dirs.length; d++) {
                 if (dirs[d].isDir) {
                     count++;
-                    this._detectViews(dirs[d].file, function (subErr, project) {
+                    that._detectViews(dirs[d].file, function (subErr, project) {
                         if (project) result.push(project);
 
                         err = err || subErr;
@@ -788,7 +789,7 @@ var servConn = {
                     });
                 }
             }
-        }.bind(this));
+        });
     },
     chmodProject:     function (projectDir, mode, callback) {
         //socket.io

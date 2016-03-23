@@ -132,28 +132,29 @@ var vis = {
     bindingsCache:          {},
     commonStyle:            null,
     _setValue: function (id, state) {
+        var that = this;
         var oldValue = this.states.attr(id + '.val');
         this.conn.setState(id, state[id + '.val'], function (err) {
             if (err) {
                 //state[id + '.val'] = oldValue;
-                this.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
+                that.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
 
-            if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
-                this.states.attr(state);
+            if (that.states.attr(id) || that.states.attr(id + '.val') !== undefined) {
+                that.states.attr(state);
 
                 // If error set value back, but we need generate the edge
                 if (err) {
                     state[id + '.val'] = oldValue;
-                    this.states.attr(state);
+                    that.states.attr(state);
                 }
 
                 // Inform other widgets, that does not support canJS
-                for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                    this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+                for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
+                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
                 }
             }
-        }.bind(this));
+        });
     },
     setValue: function (id, val) {
         if (!id) {
@@ -994,6 +995,7 @@ var vis = {
                     var $$wid = $$('#' + id);
                     var offsetX = parseInt(widget.data['gestures-offsetX']) || 0;
                     var offsetY = parseInt(widget.data['gestures-offsetY']) || 0;
+                    var that = this;
                     gestures.forEach(function (gesture) {
                         if (widget.data && widget.data['gestures-' + gesture + '-oid']) {
                             var oid = widget.data['gestures-' + gesture + '-oid'];
@@ -1003,7 +1005,7 @@ var vis = {
                                 var limit   = parseFloat(widget.data['gestures-' + gesture + '-limit'])   || false;
                                 var max     = parseFloat(widget.data['gestures-' + gesture + '-maximum']) || 100;
                                 var min     = parseFloat(widget.data['gestures-' + gesture + '-minimum']) || 0;
-                                var valState = this.states.attr(oid + '.val');
+                                var valState = that.states.attr(oid + '.val');
                                 var newVal  = null;
                                 var $indicator;
                                 if (valState !== undefined){
@@ -1018,9 +1020,8 @@ var vis = {
                                         "-ms-user-select":      'none',
                                         "user-select":          'none'
                                     });
-
                                     $$wid[gesture](function (data) {
-                                        valState = this.states.attr(oid + '.val');
+                                        valState = that.states.attr(oid + '.val');
                                         if (val === 'toggle') {
                                             if (valState === true) {
                                                 newVal = false;
@@ -1064,7 +1065,7 @@ var vis = {
 
                                                 $(document).on('mouseup.gesture touchend.gesture', function () {
                                                     if (newVal != null) {
-                                                        this.setValue(oid, newVal);
+                                                        that.setValue(oid, newVal);
                                                         newVal = null;
                                                     }
                                                     $indicator.trigger('gestureUpdate', {val: null});
@@ -1077,7 +1078,7 @@ var vis = {
                                                         "-ms-user-select":      'text',
                                                         "user-select":          'text'
                                                     });
-                                                }.bind(this));
+                                                });
                                             }
                                             var swipeDelta, indicatorX, indicatorY = 0;
                                             switch (gesture){
@@ -1130,13 +1131,13 @@ var vis = {
                                         } else {
                                             newVal = val;
                                         }
-                                        this.setValue(oid,newVal);
+                                        that.setValue(oid,newVal);
                                         newVal = null;
-                                    }.bind(this));
+                                    });
                                 }
                             }
                         }
-                    }.bind(this));
+                    });
                 }
             }
 
@@ -2477,7 +2478,7 @@ function main($) {
                         }
 
                         if (error) {
-                            console.log("Possibly not authenticated, wait for request from server");
+                            console.log('Possibly not authenticated, wait for request from server');
                             // Possibly not authenticated, wait for request from server
                         } else {
                             // Get Server language
@@ -2764,17 +2765,17 @@ function main($) {
 
     if (!vis.editMode) {
         // Listen for resize changes
-        window.addEventListener("orientationchange", function () {
+        window.addEventListener('orientationchange', function () {
             vis.orientationChange();
         }, false);
-        window.addEventListener("resize", function () {
+        window.addEventListener('resize', function () {
             vis.orientationChange();
         }, false);
     }
 
     //vis.preloadImages(["../../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);
     vis.initWakeUp();
-};
+}
 
 // Start of initialisation: main ()
 if (typeof app === 'undefined') {

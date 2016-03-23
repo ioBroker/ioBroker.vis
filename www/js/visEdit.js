@@ -620,22 +620,32 @@ vis = $.extend(true, vis, {
         that.editSaveConfig('widgetAccordeon', that.widgetAccordeon);
     },
     editInitDialogs: function () {
-
-        $('#dialog_about').dialog({
-            autoOpen: false,
-            width:    600,
-            height:   500,
-            position: {
-                my: 'center',
-                at: 'center',
-                of: $('#panel_body')
-            }
-        });
+		if (typeof fillAbout !== 'undefined') {
+			$('#dialog_about').html(fillAbout());
+			$('#dialog_about').dialog({
+				autoOpen: false,
+				width:    600,
+				height:   500,
+                open:     function (/*event, ui*/) {
+                    $('[aria-describedby="dialog_about"]').css('z-index', 1002);
+                    $('.ui-widget-overlay').css('z-index', 1001);
+                },
+				position: {
+					my: 'center',
+					at: 'center',
+					of: $('#panel_body')
+				}
+			});
+		}
 
         $('#dialog_shortcuts').dialog({
             autoOpen: false,
             width: 600,
             height: 500,
+            open:     function (/*event, ui*/) {
+                $('[aria-describedby="dialog_shortcuts"]').css('z-index', 1002);
+                $('.ui-widget-overlay').css('z-index', 1001);
+            },
             position: {my: 'center', at: 'center', of: $('#panel_body')}
         });
 
