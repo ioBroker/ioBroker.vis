@@ -157,7 +157,17 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
-## Changelog### 0.9.2 (2016-02-29)
+## Changelog
+### 0.9.3 (2016-03-23)
+* (bluefox) allow onChange for OIDs too
+* (bluefox) add quality
+* (bluefox) changes for app
+* (bluefox) add new flag "render always" in this case this view will be rendered in any way.
+* (bluefox) add about dialog
+* (bluefox) remove bind(this) to enable it run on iPad1
+
+
+### 0.9.2 (2016-02-29)
 * (bluefox) allow onChange for OIDs too
 * (bluefox) show reconnecting process
 * (pmant) use new gestures lib
