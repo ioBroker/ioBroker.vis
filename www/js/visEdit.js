@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -13,7 +13,7 @@
  * (Free for non-commercial use).
  */
 
-// visEdit - the ioBroker.vis Editor
+// visEdit - the vis Editor
 /* jshint browser:true */
 /* global document */
 /* global console */
@@ -1855,7 +1855,7 @@ vis = $.extend(true, vis, {
         }).button('disable');
     },
     editInitNext: function () {
-        // ioBroker.vis Editor Init
+        // vis Editor Init
         var that = this;
 
         this.editInitSelectView();

@@ -237,7 +237,7 @@ module.exports = function (grunt) {
         'jscs'
     ]);
 	
-	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
+	grunt.registerTask('prepublish', ['replace:core', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
     grunt.registerTask('rename', [
         'replace:name'

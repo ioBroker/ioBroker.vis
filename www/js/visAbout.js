@@ -1,7 +1,7 @@
 function fillAbout() {
     var html = '';
 	html += '<ul style="font-size: 1.1em; line-height: 2em; display: inline;">';
-    html += '    <li><a href="http://ioBroker.net/" target="_blank" class="translate">' + _('Web') + '</a></li>';
+    html += '    <li><a href="http://iobroker.net/" target="_blank" class="translate">' + _('Web') + '</a></li>';
     html += '    <li><a href="http://forum.iobroker.net" target="_blank" class="translate">' + _('Community') + '</a></li>';
     html += '    <li><a href="https://github.com/ioBroker/ioBroker.vis/blob/master/README.md" target="_blank" class="translate">' + _('Change log') + '</a>';
     html += '    </li>';
