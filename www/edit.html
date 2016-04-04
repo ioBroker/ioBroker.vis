@@ -265,7 +265,14 @@
             </td>
             <td style="width:30px"><button id="saving_progress"></button></td>
             <td><button id="logout_button" class="ui-state-default ui-corner-top translateT" style="display: none;" title="Logout"></button></td>
-            <td><button id="exit_button"></button></td>
+            <td><div><button id="exit_button"></button>
+                <button id="exit_button_select"></button></div>
+                <ul style="display: none; position: absolute; z-index: 1000; width: 400px" id="exit_button_select_menu">
+                    <li data-value="close"><span class="ui-icon ui-icon-close"></span><span class="translate">Switch to runtime in this window</span></li>
+                    <li data-value="play"><span class="ui-icon ui-icon-play"></span><span class="translate">Switch to runtime in new window</span></li>
+                    <li data-value="refresh"><span class="ui-icon ui-icon-refresh"></span><span class="translate">Reload all runtimes</span></li>
+                </ul>
+            </td>
         </tr>
     </table>
 
@@ -468,7 +475,7 @@
                         <td>
                             <table style="border: 0px"><tr>
                                 <td><label for="screen_default_man" title="Default screen" class="translate translateT">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td>
-                                <td><label for="render_always"      title="Render always" class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always" type="checkbox"/></td></tr>
+                                <td><label for="render_always"      title="Render always"  class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always" type="checkbox"/></td></tr>
                             </table>
                         </td>
                     </tr>

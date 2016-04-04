@@ -1392,9 +1392,13 @@ vis = $.extend(true, vis, {
             that._saveToServer();
         }).hide().addClass('ui-state-active');
 
+        this.config['button/closeMode'] = this.config['button/closeMode'] || 'close';
+
         $('#exit_button').button({
             text:  false,
-            icons: {primary: 'ui-icon-close'}
+            icons: {
+                primary: 'ui-icon-' + this.config['button/closeMode']
+            }
         }).click(function () {
             that.saveRemote(function () {
                 if (that._saveTimer) {
@@ -1402,15 +1406,62 @@ vis = $.extend(true, vis, {
                     clearTimeout(that._saveTimer);
                     that._saveTimer = null;
                 }
+
                 // Show hint how to get back to edit mode
                 if (!that.config['dialog/isEditHintShown']) {
                     window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
-                    that.editSaveConfig('dialog/isEditHintShown', true);
+                    that.editSaveConfig('button/isEditHintShown', true);
                 }
 
-                // Some systems (e.g. offline mode) show here the content of directory if called without index.html
-                location.href = 'index.html' + window.location.search + '#' + that.activeView;
+                if (that.config['button/closeMode'] == 'refresh') {
+                    that.conn.sendCommand('*', 'refresh', null, false);
+                } else if (that.config['button/closeMode'] == 'play') {
+                    try {
+                        var win = window.open(document.location.protocol + '//' + document.location.host + document.location.pathname.replace('edit', 'index') + window.location.search + '#' + that.activeView, 'vis-runtime');
+                        if (win) {
+                            win.location.reload();
+                            win.focus();
+                        } else {
+                            that.showError(_('Popup window blocked!'), _('Cannot open new window'), 'alert');
+                        }
+                    } catch (err) {
+                        that.showError(_('Popup window blocked: %s!', err), _('Cannot open new window'), 'alert');
+                    }
+                } else {
+                    // Some systems (e.g. offline mode) show here the content of directory if called without index.html
+                    location.href = 'index.html' + window.location.search + '#' + that.activeView;
+                }
             });
+        });
+
+        $('#exit_button_select').button({
+            text: false,
+            icons: {
+                primary: 'ui-icon-triangle-1-s'
+            }
+        }).click(function () {
+            var $menu = $('#exit_button_select_menu').show().position({
+                my:     'left top',
+                at:     'left bottom',
+                of:     this
+            });
+
+            $(document).one('click', function() {
+                $menu.hide();
+            });
+
+            return false;
+        }).css({width: 16, height: 26}).parent().buttonset();
+
+        $('#exit_button_select_menu').menu({
+            select: function (event, ui) {
+                that.editSaveConfig('button/closeMode', ui.item.data('value'));
+
+                $('#exit_button').button('option', 'icons', {
+                    primary: 'ui-icon-' + that.config['button/closeMode']
+                });
+                $('#exit_button').trigger('click');
+            }
         });
 
         if (this.conn.getIsLoginRequired && this.conn.getIsLoginRequired()) {

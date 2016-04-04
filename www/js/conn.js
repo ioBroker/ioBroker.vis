@@ -1059,10 +1059,10 @@ var servConn = {
             }
         });
     },
-    sendCommand:      function (instance, command, data) {
+    sendCommand:      function (instance, command, data, ack) {
         this.setState(this.namespace + '.control.instance', {val: instance || 'notdefined', ack: true});
         this.setState(this.namespace + '.control.data',     {val: data,    ack: true});
-        this.setState(this.namespace + '.control.command',  {val: command, ack: true});
+        this.setState(this.namespace + '.control.command',  {val: command, ack: ack === undefined ? true : ack});
     },
     _detectViews:     function (projectDir, callback) {
         this.readDir('/' + this.namespace + '/' + projectDir, function (err, dirs) {

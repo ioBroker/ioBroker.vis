@@ -250,6 +250,8 @@ $.extend(systemDictionary, {
     "Resolution:":          {"en": "Resolution: ",      "de": "Auflöung: ",             "ru": "Разрешение экрана: "},
     "Widget":               {"en": "Widget",            "de": "Widget",                 "ru": "Элемент"},
     "View":                 {"en": "View",              "de": "View",                   "ru": "Страница"},
+    "Default:":             {"en": "Default:",          "de": "Default:",               "ru": "По умолчанию:"},
+    "Render always:":       {"en": "Render always:",    "de": "Immer rendern:",         "ru": "Всегда создавать:"},
     "filter_key":           {"en": "Initial filter",    "de": "Anfangsfilter",          "ru": "Фильтр при показе"},
     "filter_key_tooltip": {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
@@ -259,6 +261,17 @@ $.extend(systemDictionary, {
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
               "Можно задать несколько ключей через запятую"
     },
+    "Switch to runtime in this window": {
+        "en": "Close editor",
+        "de": "Editor zumachen",
+        "ru": "Закрыть редактор"
+    },
+    "Switch to runtime in new window": {
+        "en": "Open runtime in new window",
+        "de": "Runtime in einem Fenster aufmachen",
+        "ru": "Открыть Runtime в новом окне"
+    },
+    "Reload all runtimes":  {"en": "Reload all runtimes", "de": "Alle Runtimes neu laden", "ru": "Обновить все Runtime"},
     "Projects":             {"en": "Projects",          "de": "Projekte",               "ru": "Проекты"},
     "Lock":                 {"en": "Lock",              "de": "Sperren",                "ru": "Lock"},
     "Unlock":               {"en": "Unlock",            "de": "Entsperren",             "ru": "Unlock"},
