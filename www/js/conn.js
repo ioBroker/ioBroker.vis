@@ -412,7 +412,7 @@ var servConn = {
         }
     },
     getMimeType: function (ext) {
-        if (ext.indexOf('.') !== -1) ext = ext.match(/\.[^.]+$/);
+        if (ext.indexOf('.') !== -1) ext = ext.toLowerCase().match(/\.[^.]+$/);
         var _mimeType;
         if (ext == '.css') {
             _mimeType = 'text/css';
