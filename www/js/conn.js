@@ -45,12 +45,15 @@ var servConn = {
     _type:              'socket.io', // [SignalR | socket.io | local]
     _timeout:           0,           // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000,       // reconnect interval
-    _subscribes:        [],
     _cmdData:           null,
     _cmdInstance:       null,
     _isSecure:          false,
     _defaultMode:       0x644,
+    _useStorage:        false,
+    _objects:           null,        // used if _useStorage == true
+    _enums:             null,        // used if _useStorage == true
     namespace:          'vis.0',
+
     getType:          function () {
         return this._type;
     },
@@ -277,6 +280,19 @@ var servConn = {
             });
 
             this._socket.on('objectChange', function (id, obj) {
+                // If cache used
+                if (that._useStorage && typeof storage !== 'undefined') {
+                    var objects = that._objects || storage.get('objects');
+                    if (objects) {
+                        if (obj) {
+                            objects[id] = obj;
+                        } else {
+                            if (objects[id]) delete objects[id];
+                        }
+                        storage.set('objects',  objects);
+                    }
+                }
+
                 if (that._connCallbacks.onObjectChange) that._connCallbacks.onObjectChange(id, obj);
             });
 
@@ -585,8 +601,44 @@ var servConn = {
             });
         }
     },
+    _fillChildren:    function (objects) {
+        var items = [];
+
+        for (var id in objects) {
+            items.push(id);
+        }
+        items.sort();
+
+        for (var i = 0; i < items.length; i++) {
+            if (objects[items[i]].common) {
+                var j = i + 1;
+                var children = [];
+                var len      = items[i].length + 1;
+                var name     = items[i] + '.';
+                while (j < items.length && items[j].substring(0, len) == name) {
+                    children.push(items[j++]);
+                }
+
+                objects[items[i]].children = children;
+            }
+        }
+    },
     // callback(err, data)
-    getObjects:       function (callback) {
+    getObjects:       function (useCache, callback) {
+        if (typeof useCache === 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+        // If cache used
+        if (this._useStorage && useCache) {
+            if (typeof storage !== 'undefined') {
+                var objects = this._objects || storage.get('objects');
+                if (objects) return callback(null, objects);
+            } else if (this._objects) {
+                return callback(null, this._objects);
+            }
+        }
+
         if (!this._checkConnection('getObjects', arguments)) return;
         var that = this;
         this._socket.emit('getObjects', function (err, data) {
@@ -598,8 +650,10 @@ var servConn = {
                     return;
                 }
                 var result = {};
+                var enums  = {};
                 for (var i = 0; i < res.rows.length; i++) {
                     data[res.rows[i].id] = res.rows[i].value;
+                    enums[res.rows[i].id] = res.rows[i].value;
                 }
 
                 // Read all adapters for images
@@ -641,12 +695,238 @@ var servConn = {
                                 data[res.rows[i].id] = res.rows[i].value;
                             }
 
+                            if (that._useStorage) {
+                                that._fillChildren(data);
+                                that._objects = data;
+                                that._enums   = enums;
+
+                                if (typeof storage !== 'undefined') {
+                                    storage.set('objects',  data);
+                                    storage.set('enums',    enums);
+                                    storage.set('timeSync', (new Date()).getTime());
+                                }
+                            }
+
                             if (callback) callback(err, data);
                         });
                     });
                 });
             });
         });
+    },
+    getChildren:      function (id, useCache, callback) {
+        if (!this._checkConnection('getChildren', arguments)) return;
+
+        if (typeof id == 'function') {
+            callback = id;
+            id = null;
+            useCache = false;
+        }
+        if (typeof id == 'boolean') {
+            callback = useCache;
+            useCache = id;
+            id = null;
+        }
+        if (typeof useCache == 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+
+        if (!id) return callback('getChildren: no id given');
+
+        var that = this;
+        var data = [];
+
+        if (this._useStorage && useCache) {
+            if (typeof storage !== 'undefined') {
+                var objects = storage.get('objects');
+                if (objects && objects[id] && objects[id].children) {
+                    return callback(null, objects[id].children);
+                }
+            } else if (this._objects && this._objects[id] && this._objects[id].children) {
+                return callback(null, this._objects[id].children);
+            }
+        }
+
+        // Read all devices
+        that._socket.emit('getObjectView', 'system', 'device', {startkey: id + '.', endkey: id + '.\u9999'}, function (err, res) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            var result = {};
+            for (var i = 0; i < res.rows.length; i++) {
+                data[res.rows[i].id] = res.rows[i].value;
+            }
+
+            that._socket.emit('getObjectView', 'system', 'channel', {startkey: id + '.', endkey: id + '.\u9999'}, function (err, res) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                var result = {};
+                for (var i = 0; i < res.rows.length; i++) {
+                    data[res.rows[i].id] = res.rows[i].value;
+                }
+
+                // Read all adapters for images
+                that._socket.emit('getObjectView', 'system', 'state', {startkey: id + '.', endkey: id + '.\u9999'}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    var result = {};
+                    for (var i = 0; i < res.rows.length; i++) {
+                        data[res.rows[i].id] = res.rows[i].value;
+                    }
+                    var list = [];
+
+                    var count = id.split('.');
+
+                    // find direct children
+                    for (var _id in data) {
+                        var parts = _id.split('.');
+                        if (count + 1 == parts.length) {
+                            list.push(_id);
+                        }
+                    }
+                    list.sort();
+
+                    if (this._useStorage && typeof storage !== 'undefined') {
+                        var objects = storage.get('objects') || {};
+
+                        for (var id_ in data) {
+                            objects[id_] = data[id_];
+                        }
+                        if (objects[id] && objects[id].common) {
+                            objects[id].children = list;
+                        }
+                        // Store for every element theirs children
+                        var items = [];
+                        for (var __id in data) {
+                            items.push(__id);
+                        }
+                        items.sort();
+
+                        for (var k = 0; k < items.length; k++) {
+                            if (objects[items[k]].common) {
+                                var j = k + 1;
+                                var children = [];
+                                var len  = items[k].length + 1;
+                                var name = items[k] + '.';
+                                while (j < items.length && items[j].substring(0, len) == name) {
+                                    children.push(items[j++]);
+                                }
+
+                                objects[items[k]].children = children;
+                            }
+                        }
+
+                        storage.set('objects', objects);
+                    }
+
+                    if (callback) callback(err, list);
+                }.bind(this));
+            }.bind(this));
+        }.bind(this));
+    },
+    getObject:        function (id, useCache, callback) {
+        if (typeof id == 'function') {
+            callback = id;
+            id = null;
+            useCache = false;
+        }
+        if (typeof id == 'boolean') {
+            callback = useCache;
+            useCache = id;
+            id = null;
+        }
+        if (typeof useCache == 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+        if (!id) return callback('no id given');
+
+        // If cache used
+        if (this._useStorage && useCache && typeof storage !== 'undefined') {
+            if (typeof storage !== 'undefined') {
+                var objects = this._objects || storage.get('objects');
+                if (objects && objects[id]) return callback(null, objects[id]);
+            } else if (this._enums) {
+                return callback(null, this._enums);
+            }
+        }
+
+        this._socket.emit('getObject', id, function (err, obj) {
+            if (err) {
+                callback(err);
+                return;
+            }
+            if (this._useStorage && typeof storage !== 'undefined') {
+                var objects = storage.get('objects') || {};
+                objects[id] = obj;
+                storage.set('objects', objects);
+            }
+            return callback(null, obj);
+        }.bind(this));
+    },
+    getEnums:         function (enumName, useCache, callback) {
+        if (typeof enumName == 'function') {
+            callback = enumName;
+            enumName = null;
+            useCache = false;
+        }
+        if (typeof enumName == 'boolean') {
+            callback = useCache;
+            useCache = enumName;
+            enumName = null;
+        }
+        if (typeof useCache == 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+
+        // If cache used
+        if (this._useStorage && useCache) {
+            if (typeof storage !== 'undefined') {
+                var enums = this._enums || storage.get('enums');
+                if (enums) return callback(null, enums);
+            } else if (this._enums) {
+                return callback(null, this._enums);
+            }
+        }
+
+        if (this._type === 'local') {
+            return callback(null, []);
+        } else {
+
+            enumName = enumName ? enumName + '.' : '';
+
+            // Read all enums
+            this._socket.emit('getObjectView', 'system', 'enum', {startkey: 'enum.' + enumName, endkey: 'enum.' + enumName + '\u9999'}, function (err, res) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                var enums = {};
+                for (var i = 0; i < res.rows.length; i++) {
+                    var obj = res.rows[i].value;
+                    enums[obj._id] = obj;
+                }
+                if (this._useStorage && typeof storage !== 'undefined') {
+                    storage.set('enums', enums);
+                }
+                callback(null, enums);
+            }.bind(this));
+        }
+    },
+    // return time when the objects were synchronized
+    getSyncTime:     function () {
+        if (this._useStorage && typeof storage !== 'undefined') {
+            var timeSync = storage.get('timeSync');
+            if (timeSync) return new Date(timeSync);
+        }
+        return null;
     },
     addObject:        function (objId, obj, callback) {
         if (!this._isConnected) {
@@ -746,11 +1026,33 @@ var servConn = {
             console.log("No credentials!");
         }
     },
-    getConfig:        function (callback) {
-        if (!this._checkConnection('getLanguage', arguments)) return;
+    getConfig:        function (useCache, callback) {
+        if (!this._checkConnection('getConfig', arguments)) return;
 
+        if (typeof useCache === 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+        if (this._useStorage && useCache) {
+            if (typeof storage !== 'undefined') {
+                var objects = storage.get('objects');
+                if (objects && objects['system.config']) {
+                    return callback(null, objects['system.config'].common);
+                }
+            } else if (this._objects && this._objects['system.config']) {
+                return callback(null, this._objects['system.config'].common);
+            }
+        }
+        var that = this;
         this._socket.emit('getObject', 'system.config', function (err, obj) {
             if (callback && obj && obj.common) {
+
+                if (that._useStorage && typeof storage !== 'undefined') {
+                    var objects = storage.get('objects') || {};
+                    objects['system.config'] = obj;
+                    storage.set('objects', objects);
+                }
+
                 callback(null, obj.common);
             } else {
                 callback('Cannot read language');
@@ -800,5 +1102,10 @@ var servConn = {
         this._socket.emit('chmodFile', this.namespace, projectDir + '*', {mode: mode}, function (err, data) {
             if (callback) callback(err, data);
         });
+    },
+    clearCache:       function () {
+        if (typeof storage !== 'undefined') {
+            storage.empty();
+        }
     }
 };
