@@ -625,7 +625,7 @@ vis = $.extend(true, vis, {
 			$('#dialog_about').dialog({
 				autoOpen: false,
 				width:    600,
-				height:   500,
+				height:   550,
                 open:     function (/*event, ui*/) {
                     $('[aria-describedby="dialog_about"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
