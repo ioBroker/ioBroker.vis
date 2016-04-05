@@ -210,6 +210,16 @@ var servConn = {
             });
 
             this._socket.on('connect', function () {
+                if (that._disconnectedSince) {
+                    var offlineTime = (new Date()).getTime() - that._disconnectedSince;
+                    console.log('was offline for ' + (offlineTime / 1000) + 's');
+
+                    // reload whole page if no connection longer than one minute
+                    if (offlineTime > 60000) window.location.reload();
+                    
+                    that._disconnectedSince = null;
+                }
+
                 if (that._connectInterval) {
                     clearInterval(that._connectInterval);
                     that._connectInterval = null;
