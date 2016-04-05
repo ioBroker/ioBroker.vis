@@ -408,6 +408,21 @@ $.extend(systemDictionary, {
     "Find next":            {"en": "Find next",         "de": "Finde nächste",          "ru": "Искать вперёд"},
     "Save CSS":             {"en": "Save CSS",          "de": "Speichern CSS",          "ru": "Сохранить CSS"},
     "CSS":                  {"en": "CSS",               "de": "CSS",                    "ru": "CSS"},
+    'To get back to edit mode just call "%s" in browser': {
+        "en": 'To get back to edit mode just call "%s" in browser',
+        "de": 'Um wieder in Edit-Modus zurück zu kehren, einfach "%s" im Browser aufrufen',
+        "ru": 'Что бы снова вернуться в режим редактирования надо просто вызвать в браузере "%s"'
+    },
+    "Popup window blocked!": {
+        "en": "Popup window blocked!",
+        "de": "Popup-Fenster blokiert!",
+        "ru": "Всплывающее окно заблокировано!"
+    },
+    "Cannot open new window": {
+        "en": "Cannot open new window",
+        "de": "Kann kein neues Fenster aufmachen",
+        "ru": "Не могу открыть новое всплывающее окно"
+    },
 
     "css_left":             {"en": "left",              "de": "left",                   "ru": "left"},
     "css_top":              {"en": "top",               "de": "top",                    "ru": "top"},

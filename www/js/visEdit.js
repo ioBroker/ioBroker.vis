@@ -1407,12 +1407,6 @@ vis = $.extend(true, vis, {
                     that._saveTimer = null;
                 }
 
-                // Show hint how to get back to edit mode
-                if (!that.config['dialog/isEditHintShown']) {
-                    window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
-                    that.editSaveConfig('button/isEditHintShown', true);
-                }
-
                 if (that.config['button/closeMode'] == 'refresh') {
                     that.conn.sendCommand('*', 'refresh', null, false);
                 } else if (that.config['button/closeMode'] == 'play') {
@@ -1428,6 +1422,12 @@ vis = $.extend(true, vis, {
                         that.showError(_('Popup window blocked: %s!', err), _('Cannot open new window'), 'alert');
                     }
                 } else {
+                    // Show hint how to get back to edit mode
+                    if (!that.config['dialog/isEditHintShown']) {
+                        window.alert(_('To get back to edit mode just call "%s" in browser', location.href));
+                        that.editSaveConfig('button/isEditHintShown', true);
+                    }
+
                     // Some systems (e.g. offline mode) show here the content of directory if called without index.html
                     location.href = 'index.html' + window.location.search + '#' + that.activeView;
                 }
