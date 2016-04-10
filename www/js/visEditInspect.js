@@ -1772,7 +1772,6 @@ vis = $.extend(true, vis, {
                 this.showWidgetHelper(deselect[i], false);
                 var $widget = $('#' + deselect[i]);
                 $widget.removeClass('ui-selected');
-                this.$selectActiveWidgets.find('option[value="' + deselect[i] + '"]').removeAttr('selected');
 
                 if ($widget.hasClass('ui-draggable')) {
                     try {
@@ -1806,7 +1805,6 @@ vis = $.extend(true, vis, {
             for (var p = 0; p < select.length; p++) {
                 try {
                     $widget = $('#' + select[p]);
-                    this.$selectActiveWidgets.find('option[value="' + select[p] + '"]').attr('selected', 'selected');
                     this.showWidgetHelper(select[p], true);
 
                     if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
@@ -1816,6 +1814,7 @@ vis = $.extend(true, vis, {
                     console.log(e);
                 }
             }
+            this.$selectActiveWidgets.val(this.activeWidgets);
 
             // Enable disable buttons
             if (this.activeWidgets.length) {

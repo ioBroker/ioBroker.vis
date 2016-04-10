@@ -757,13 +757,13 @@ var vis = {
         }
 
         // move views in container
-        $('#visview_' + view).find("div[id$='container']").each(function () {
-            var cview = $(this).attr("data-vis-contains");
+        $('#visview_' + view).find('div[id$="container"]').each(function () {
+            var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
-                $(this).append("error: view not found.");
+                $(this).append('error: view not found.');
                 return false;
             } else if (cview == view) {
-                $(this).append("error: view container recursion.");
+                $(this).append('error: view container recursion.');
                 return false;
             }
             that.renderView(cview, true);
@@ -1187,7 +1187,7 @@ var vis = {
                 this.renderView(view, true, true);
 
                 // View ggf aus Container heraus holen
-                if ($('#visview_' + view).parent().attr("id") !== 'vis_container') {
+                if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
                     $('#visview_' + view).appendTo('#vis_container');
                 }
 

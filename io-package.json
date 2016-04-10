@@ -25,7 +25,8 @@
         "restartAdapters":          ["vis"],
         "singleton":                true,
         "type":                     "vis",
-		"highlight":                true
+		"highlight":                true,
+		"noConfig":                 true
     },
     "native": {
         "defaultFileMode":          1604
