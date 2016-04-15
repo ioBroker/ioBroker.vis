@@ -59,7 +59,7 @@
 //              style,fileFilter,nameFilter,attrFilter
 //              custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
 //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
-//              group.name/byindex - like group, but all following attributes will be grouped by ID. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
+//              group.name/byindex/icon - like group, but all following attributes will be grouped by ID. Icon is optional. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
 //              text - dialog box with html editor
 //              html - dialog box with html editor
 //              widget - existing widget selector
@@ -742,7 +742,44 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
-    editGestures: function(){
+    editSignalIcons: function () {
+        var group = 'signals';
+        this.groups[group] = this.groups[group] || {};
+        var i = 0;
+        for (var i = 0; i < 3; i++) {
+            // oid
+            this.addToInspect(this.activeWidgets, {name: 'signals-oid-'  + i, type: 'id'},   group);
+            // condition
+            this.addToInspect(this.activeWidgets, {name: 'signals-cond-' + i, type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='}, group);
+            // value
+            this.addToInspect(this.activeWidgets, {name: 'signals-val-'  + i, default: true},   group);
+
+            // icon path
+            this.addToInspect(this.activeWidgets, {name: 'signals-icon-' + i, type: 'image', default: '/vis/signals/lowbattery.png'}, group);
+            // icon size in px
+            this.addToInspect(this.activeWidgets, {name: 'signals-icon-size-' + i, type: 'slider', options: {min: 1, max: 120, step: 1}, default: 0}, group);
+            // icon style
+            this.addToInspect(this.activeWidgets, {name: 'signals-icon-style-' + i}, group);
+
+            // icon text
+            this.addToInspect(this.activeWidgets, {name: 'signals-text-' + i}, group);
+            // text style
+            this.addToInspect(this.activeWidgets, {name: 'signals-text-style-' + i}, group);
+
+
+            // icon position vertical
+            this.addToInspect(this.activeWidgets, {name: 'signals-horz-' + i, type: 'slider', options: {min: -20, max: 120, step: 1}, default: 0}, group);
+            // icon position horizontal
+            this.addToInspect(this.activeWidgets, {name: 'signals-vert-' + i, type: 'slider', options: {min: -20, max: 120, step: 1}, default: 0}, group);
+
+            // icon hide by edit
+            this.addToInspect(this.activeWidgets, {name: 'signals-hide-edit-' + i, type: 'checkbox', default: false}, group);
+
+            if (i < 2) this.addToInspect('delimiterInGroup', group);
+        }
+
+    },
+    editGestures: function() {
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
         var gesturesAnalog = ['swiping', 'rotating', 'pinching'];
@@ -751,6 +788,7 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds('tplValueGesture')}, group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetX', default: 0, type: 'number'},   group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetY', default: 0, type: 'number'},   group);
+        this.addToInspect('delimiterInGroup', group);
         var j;
         var gesture;
         for (j = 0; j < gesturesAnalog.length; j++){
@@ -760,6 +798,7 @@ vis = $.extend(true, vis, {
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-minimum',    type: 'number'}, group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-maximum',    type: 'number'}, group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-delta',      type: 'number'}, group);
+            this.addToInspect('delimiterInGroup', group);
         }
 
         for (j = 0; j < gestures.length; j++){
@@ -767,6 +806,7 @@ vis = $.extend(true, vis, {
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},     group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},    group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'}, group);
+            if (j < gestures.length - 1) this.addToInspect('delimiterInGroup', group);
         }
         // install handlers
         setTimeout(function () {
@@ -988,7 +1028,16 @@ vis = $.extend(true, vis, {
     addToInspect: function (widgets, widAttr, group, options, onchange) {
         if (widgets === 'delimiter') {
             this.groups[widAttr || group] = this.groups[widAttr || group] || {};
-            this.groups[widAttr || group]['delimiter'] = 'delimiter';
+            var d = 0;
+            while (this.groups[widAttr || group]['delimiter' + d]) d++;
+            this.groups[widAttr || group]['delimiter' + d] = 'delimiter';
+            return;
+        }
+        if (widgets === 'delimiterInGroup') {
+            this.groups[widAttr || group] = this.groups[widAttr || group] || {};
+            var d = 0;
+            while (this.groups[widAttr || group]['delimiterInGroup' + d]) d++;
+            this.groups[widAttr || group]['delimiterInGroup' + d] = 'delimiterInGroup';
             return;
         }
         if (typeof widAttr != 'object') {
@@ -1131,6 +1180,7 @@ vis = $.extend(true, vis, {
         var widAttr;
         for (var group in this.groups) {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
+
             var groupName = group;
             if (groupName.indexOf('_§') != -1) {
                 var m = groupName.match(/^([\w_]+)_§([0-9]+)/);
@@ -1138,7 +1188,13 @@ vis = $.extend(true, vis, {
             } else {
                 groupName = _('group_' + group);
             }
-            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3">' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
+//            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3" style="background: url(this.groupsIcons[group]) no-repeat center center;">' + (this.groupsIcons[group] ? '<img class="vis-group-icon" src="' + this.groupsIcons[group] + '"/><div>' + groupName + '</div>' : groupName) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
+            var gText = '<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3"';
+            if (this.groupsIcons[group]) {
+                gText += ' style="background: url(' + (this.groupsIcons[group] || '')+ ') no-repeat left center; padding-left: 30px"'
+            }
+            gText += '>' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>';
+            $widgetAttrs.append(gText);
 
             for (var widAttr in this.groups[group]) {
                 var line = this.groups[group][widAttr];
@@ -1146,8 +1202,13 @@ vis = $.extend(true, vis, {
                     $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header"></td></tr>');
                     continue;
                 }
+                if (line == 'delimiterInGroup') {
+                    $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header group-' + group + '"></td></tr>');
+                    continue;
+                }
                 if (line[0]) line = line[0];
                 if (typeof line == 'string') line = {input: line};
+
                 var title = _(widAttr + '_tooltip');
                 var icon;
                 if (title == widAttr + '_tooltip') {
@@ -1156,6 +1217,7 @@ vis = $.extend(true, vis, {
                 } else {
                     icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
                 }
+
                 var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + widAttr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
 
                 if (!line.button && !line.css) {
@@ -1441,7 +1503,6 @@ vis = $.extend(true, vis, {
         var index         = '';
         var attrDepends   = [];
 
-
         // remove /
         if (wid_type) {
             wid_type = wid_type.substring(1);
@@ -1587,7 +1648,9 @@ vis = $.extend(true, vis, {
                     if (group.indexOf('/') != -1) {
                         var parts = group.split('/');
                         group     = parts[0];
-                        groupMode = parts[1];
+                        groupMode = parts[1] || 'normal';
+                        // if icon
+                        if (parts[2]) this.groupsIcons[group] = groupMode;
                     } else {
                         groupMode = 'normal';
                     }
@@ -1747,6 +1810,11 @@ vis = $.extend(true, vis, {
         // find view
         var view = this.getViewOfWidget(wid);
 
+        this.groups = {};
+        this.groupsIcons = {
+            fixed: 'icon/groupFixed.png'
+        };
+
         if (!onlyUpdate) {
             this.alignIndex = 0;
 
@@ -1856,7 +1924,6 @@ vis = $.extend(true, vis, {
         }
 
         var $widgetAttrs = $('#widget_attrs');
-        this.groups = {};
         // Clear Inspector
         $widgetAttrs.html('');
 
@@ -1938,6 +2005,9 @@ vis = $.extend(true, vis, {
         this.addToInspect('delimiter', 'css_shadow_padding');
         if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
             this.editGestures();
+        }
+        if ($widgetTpl.attr('data-vis-no-signals') !== 'true') {
+            this.editSignalIcons();
         }
 
         // Re-render all widgets, where default values applied
