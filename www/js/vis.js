@@ -1249,7 +1249,6 @@ var vis = {
         }
         this.activeView = view;
 
-
         /*$('#visview_' + view).find('div[id$="container"]').each(function () {
          $('#visview_' + $(this).attr('data-vis-contains')).show();
          });*/
@@ -2806,7 +2805,7 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     }, timeout);
 }
 
-if (window.location.search == "?edit") {
+if (window.location.search == '?edit') {
     window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
 }

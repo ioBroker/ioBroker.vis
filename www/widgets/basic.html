@@ -38,8 +38,8 @@
             },
             "stretch":          {"en": "Stretch",                   "de": "Strecken",               "ru": "Растянуть"},
             "factor":           {"en": "Multiplex factor",          "de": "Multiplikation",         "ru": "Множитеть"},
-            "class_true":       {"en": "Class if quality 'true'",   "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-            "class_false":      {"en": "Class if quality 'false'",  "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
+            "class_true":       {"en": "Class if quality 'true'",   "de": "Klasse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
+            "class_false":      {"en": "Class if quality 'false'",  "de": "Klasse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
             "test_html":        {"en": "Text for test",             "de": "Testtext",               "ru": "Тестовый текст"},
             "test_html_tooltip": {
                 "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
@@ -189,7 +189,7 @@
             "vertical":         {"en": "vertical",                  "de": "senkrecht",              "ru": "вертикально"},
             "orientation":      {"en": "Orientation",               "de": "Ausrichtung ",           "ru": "Направление"},
             "filters":          {"en": "Filters",                   "de": "Filter",                 "ru": "Фильтры"},
-            "filters_Tooltip":  {
+            "filters_tooltip":  {
                 "en": "Divided by semicolon,\x0Ae.g: light;control",
                 "de": "Geteilt mir Semikolon\x0Az.B.: Licht;Steuerung",
                 "ru": "Разделять точкой запятой\x0Aнапример: Свет;Управление"
@@ -1728,10 +1728,10 @@
         data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
         data-vis-name="Number"
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
-    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + '.val') === 'true' ||  vis.states.attr(this.data['oid-quality'] + '.val') === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 60px; height: 18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr('html_prepend') %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) === 1 ? this.data.attr('html_append_singular') : this.data.attr('html_append_plural')) %>
             </div>
         </div>
     </div>
@@ -2182,8 +2182,8 @@
         data-vis-type="logout,html"
         data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
         data-vis-name="HTML logout"
-        data-vis-attrs="html[Logout]/text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
+        data-vis-attrs="html[<button>Logout</button>]/text">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 70px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
         </div>

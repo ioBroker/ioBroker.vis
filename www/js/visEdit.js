@@ -2838,10 +2838,6 @@ vis = $.extend(true, vis, {
                     style:  style, 
                     noSave: true
                 }));
-
-                this.$selectActiveWidgets
-                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
-                    .multiselect('refresh');
             } else {
                 if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
                     this.renderView(targetView, true, true);
@@ -2855,6 +2851,13 @@ vis = $.extend(true, vis, {
                     noSave: true
                 }));
             }
+
+            if (this.activeView === targetView) {
+                this.$selectActiveWidgets
+                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $("#" + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
+                    .multiselect('refresh');
+
+            }
         }
         if (!widgets[0].widget) {
             this.showHint(_('Widget(s) copied to view %s', targetView) + '.', 30000);
@@ -2866,7 +2869,7 @@ vis = $.extend(true, vis, {
         setTimeout(function () {
             that.inspectWidgets();
             that.save();
-        }, 50);
+        }, 200);
     },
     renameWidget: function (oldId, newId) {
         // find view of this widget
@@ -4034,19 +4037,19 @@ vis = $.extend(true, vis, {
             if (isSize) {
                 if (key == 39) {
                     //Right
-                    what = "width";
+                    what = 'width';
                     shift = 1;
                 } else if (key == 37) {
                     // Left
-                    what = "width";
+                    what = 'width';
                     shift = -1;
                 } else if (key == 40) {
                     // Down
-                    what = "height";
+                    what = 'height';
                     shift = 1;
                 } else if (key == 38) {
                     // Up
-                    what = "height";
+                    what = 'height';
                     shift = -1;
                 }
             } else {
@@ -4078,7 +4081,7 @@ vis = $.extend(true, vis, {
                     this.views[this.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
                 }
 
-                this.views[this.activeView].widgets[widgetId].style[what] = parseInt(this.views[this.activeView].widgets[widgetId].style[what], 10) + shift;
+                this.views[this.activeView].widgets[widgetId].style[what] = (parseInt(this.views[this.activeView].widgets[widgetId].style[what], 10) + shift) + 'px';
 
                 if ($actualWidget.length) {
                     var setCss = {};
@@ -4107,7 +4110,7 @@ vis = $.extend(true, vis, {
                     if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(activeWidgets[i]);
                 }
                 that.delayedSettings = null;
-                that.activeWidgets = activeWidgets;
+                that.activeWidgets   = activeWidgets;
                 that.inspectWidgets(true);
             }, 1000);
 
@@ -4517,13 +4520,13 @@ vis = $.extend(true, vis, {
         } else {
             $('#context_menu_paste').addClass('ui-state-disabled');
         }
-        if (!$("#context_menu").data('inited')) {
-            $("#context_menu").data('inited', true);
+        if (!$('#context_menu').data('inited')) {
+            $('#context_menu').data('inited', true);
         } else {
-            $("#context_menu").menu('destroy');
+            $('#context_menu').menu('destroy');
         }
 
-        $("#context_menu").css(options)
+        $('#context_menu').css(options)
             .appendTo('#visview_' + this.activeView)
             .show()
             .focus()
@@ -4589,23 +4592,17 @@ $(document).keydown(function (e) {
         e.preventDefault();
     } else if (e.which === 65 && (e.ctrlKey || e.metaKey)) {
         // Ctrl+A
-        if (vis.selectAll()) {
-            e.preventDefault();
-        }
+        if (vis.selectAll()) e.preventDefault();
     } else if (e.which === 83 && (e.ctrlKey || e.metaKey)) {
         // Ctrl+S
         e.preventDefault();
         vis.saveRemote();
     } else if (e.which === 27) {
         // Esc
-        if (vis.deselectAll()) {
-            e.preventDefault();
-        }
+        if (vis.deselectAll()) e.preventDefault();
     } else if (e.which === 46) {
         // Capture Delete button
-        if (vis.onButtonDelete()) {
-            e.preventDefault();
-        }
+        if (vis.onButtonDelete()) e.preventDefault();
     } else if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
         // Capture down, up, left, right for shift
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
@@ -4618,7 +4615,7 @@ $(document).keydown(function (e) {
     } else if (e.which === 114) {
         // Fullscreen
         var $container = $('#vis_container');
-        var $pan_attr = $('#attr_wrap');
+        var $pan_attr  = $('#attr_wrap');
         var delay;
 
         if ($container.hasClass('fullscreen')) {
@@ -4627,8 +4624,6 @@ $(document).keydown(function (e) {
             $container.addClass('vis_container');
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
-
-
         } else {
             $container.removeClass('vis_container');
             $container.prependTo('body').addClass('fullscreen');
@@ -4652,7 +4647,6 @@ $(document).keydown(function (e) {
     } else if (e.which === 33) {
         // Next View
         vis.nextView();
-
         e.preventDefault();
     }
     if (e.which === 34) {

@@ -819,6 +819,9 @@ vis = $.extend(true, vis, {
                     width:    data.width  || 800,
                     height:   data.height || 600,
                     modal:    true,
+                    resize:   function () {
+                        editor.resize();
+                    },
                     open:     function () {
                         $(this).parent().css({'z-index': 1000});
                         if (data.top !== undefined) {
