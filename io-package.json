@@ -69,7 +69,17 @@
               "name": "Command for vis",
               "type": "string",
               "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-              "states": ["alert", "changeView", "refresh", "reload", "dialog", "popup", "playSound", "changedView"]
+              "states": {
+				  "alert": 			"alert",
+				  "changeView": 	"changeView",
+				  "refresh": 		"refresh",
+				  "reload": 		"reload",
+				  "dialog": 		"dialog",
+				  "popup": 			"popup",
+				  "playSound": 		"playSound",
+				  "changedView": 	"changedView",
+				  "tts": 			"tts"
+			  }      
           },
           "native": {
           }

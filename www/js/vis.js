@@ -2777,7 +2777,7 @@ function main($) {
         },
         onCommand:    function (instance, command, data) {
             var parts;
-            if (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1) return false;
+            if (!instance || (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1)) return false;
             if (command) {
                 if (vis.editMode && command !== 'tts' && command !== 'playSound') return;
                 // external Commands
