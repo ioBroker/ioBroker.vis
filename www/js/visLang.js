@@ -229,6 +229,11 @@ $.extend(systemDictionary, {
         'de': ' ',
         'ru': ' '
     },
+    'icons8': {
+        'en': 'In this project are used the icons from <a href="https://icons8.com">Icons8 resource</a>.',
+        'de': 'In diesem Projekt die Bilder vom <a href="https://icons8.com">Icons8 resource</a> sind benutzt.',
+        'ru': 'В этом проекте используются иконки с ресурса <a href="https://icons8.com">Icons8</a>.'
+    },
     'group_fixed':          {'en': 'General',           'de': 'Generell',               'ru': 'Фиксированные'},
     'group_common':         {'en': 'Common',            'de': 'Allgemein',              'ru': 'Общие'},
     'group_css_common':     {'en': 'CSS Common',        'de': 'CSS Allgemein',          'ru': 'CSS Основные'},

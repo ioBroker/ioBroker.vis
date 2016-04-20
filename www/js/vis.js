@@ -412,16 +412,21 @@ var vis = {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    }  else
+                    } else
                     if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
                         delete data[attr];
                         attr = 'max_value_oid';
-                    }  else
+                    } else
                     if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
+                    } else
+                    if (attr === 'weoid') {
+                        data.woeid = data[attr];
+                        delete data[attr];
+                        attr = 'woeid';
                     }
 
                     if (typeof data[attr] === 'string') {

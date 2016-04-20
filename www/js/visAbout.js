@@ -12,5 +12,6 @@ function fillAbout() {
 
     html += '<p>CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img src="img/cc-nc-by.png"/></a>';
     html += '<p>' + _('license5') + '</p>';
+    html += '<p>' + _('icons8') + '</p>';
 	return html;
 }

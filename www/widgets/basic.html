@@ -1706,7 +1706,8 @@
 <script id="tplFilterDropdown"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplFilterDropdown" style="text-align: initial;padding: 4px"><div class="vis-widget_prev vis-widget-lock" style="width: 60px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_FilterDropdown.png"></img>'
+        data-vis-prev1='<div id="prev_tplFilterDropdown" style="text-align: initial;padding: 4px"><div class="vis-widget_prev vis-widget-lock" style="width: 60px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
         data-vis-set="basic"
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
@@ -1725,7 +1726,8 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloat.png"></img>'
+        data-vis-prev1='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
         data-vis-name="Number"
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + '.val') === 'true' ||  vis.states.attr(this.data['oid-quality'] + '.val') === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 60px; height: 18px" id="<%= this.data.attr('wid') %>">
@@ -1743,7 +1745,8 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="String"
-        data-vis-prev='<div id="tplValueString" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:blue; font-weight:bold" > <div class="vis-widget-prev-body"> <div>Text</div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueString.png"></img>'
+        data-vis-prev1='<div id="tplValueString" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:blue; font-weight:bold" > <div class="vis-widget-prev-body"> <div>Text</div> </div> </div></div>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1759,47 +1762,14 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-prev='<div id="tplValueStringRaw" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 18px; text-align: center;color:#8B008B; font-weight:bold" > <div class="vis-widget-prev-body"> <div><xmp><div>Text</div></xmp></div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
+        data-vis-prev1='<div id="tplValueStringRaw" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 18px; text-align: center;color:#8B008B; font-weight:bold" > <div class="vis-widget-prev-body"> <div><xmp><div>Text</div></xmp></div> </div> </div></div>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script id="tplValueTimestamp"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-name="Timestamp"
-        data-vis-prev='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script id="tplValueLastchange"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-prev='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
-        data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1820,6 +1790,42 @@
                 <img src="<%= vis.states.attr(this.data.oid + '.val') || '' %>" width="100%"/>
                  <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="tplValueTimestamp"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val,timestamp"
+        data-vis-name="Timestamp"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
+        data-vis-prev1='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="tplValueLastchange"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val,timestamp"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
+        data-vis-prev1='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
+        data-vis-name="Last change Timestamp"
+        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -2163,7 +2169,7 @@
         data-vis-set="basic"
         data-vis-type="json,table"
         data-vis-name="Table"
-        data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
+        data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 100px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
         data-vis-attrs="table_oid/id;"
         data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
         data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid/widget;max_rows/number;"
@@ -2180,7 +2186,7 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="logout,html"
-        data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
+        data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 60px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"><button>Logout<button></div> </div></div>'
         data-vis-name="HTML logout"
         data-vis-attrs="html[<button>Logout</button>]/text">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 70px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
@@ -2218,7 +2224,7 @@
 <script id="tplScreenResolution"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplScreenResolution" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-draggable-handle " style="width: 120px; height: 54px; border: 1px solid rgb(136, 136, 136); font-size: 12px; opacity: 0.8;" > <div style="padding: 10px"> Width: <span>640</span><br>Height: <span>360</span><br>Default view:<span></span> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplScreenResolution" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-draggable-handle " style="width: 100px; height: 54px; border: 1px solid rgb(136, 136, 136); font-size: 12px; opacity: 0.8;" > <div style="padding: 10px"> Width: <span>640</span><br>Height: <span>360</span><br>Default view:<span></span> </div> </div></div>'
         data-vis-set="basic"
         data-vis-type="tools"
         data-vis-name="Screen Resolution"
