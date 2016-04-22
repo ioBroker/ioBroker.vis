@@ -1599,7 +1599,7 @@ vis = $.extend(true, vis, {
             checkbox:   'vis-preview-checkbox', // boolean value with control
             dimmer:     'vis-preview-dimmer',
             state:      'vis-preview-state',    // boolean value
-            lock:      'vis-preview-lock'
+            lock:       'vis-preview-lock'
         };
 
         $.each(this.widgetSets, function () {

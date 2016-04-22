@@ -931,5 +931,5 @@ td > .select_active_widget :nth-child(2) {
     background-image: url("../icon/state.png");
 }
 .vis-preview-lock {
-    background-image: url("../icon/lock.png");
+    background-image: url("../icon/lockIcon.png");
 }
