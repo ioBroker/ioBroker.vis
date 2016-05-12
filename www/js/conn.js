@@ -600,7 +600,16 @@ var servConn = {
 
             if (!this._checkConnection('getStates', arguments)) return;
 
+            this.gettingStates = this.gettingStates || 0;
+            this.gettingStates++;
+            if (this.gettingStates > 1) {
+                // fix for slow devices
+                console.log('Trying to get empty list, because the whole list could not be loaded');
+                IDs = [];
+            }
+            var that = this;
             this._socket.emit('getStates', IDs, function (err, data) {
+                that.gettingStates--;
                 if (err || !data) {
                     if (callback) {
                         callback(err || 'Authentication required');

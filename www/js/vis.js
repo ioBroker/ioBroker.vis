@@ -2769,7 +2769,7 @@ function main($) {
                 });
                 setTimeout(function () {
                     vis.authRunning = false;
-                    console.log("user " + user + ", " + pass + " " + salt);
+                    console.log('user ' + user + ', ' + pass + ' ' + salt);
                     vis.conn.authenticate(user, pass, salt);
                 }, 500);
                 return true;
@@ -2835,7 +2835,6 @@ function main($) {
                             }
                         }, 1);
                         break;
-
                     case 'tts':
                         if (typeof app !== 'undefined') {
                             app.tts(data);

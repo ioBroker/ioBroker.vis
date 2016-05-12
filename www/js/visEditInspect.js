@@ -808,9 +808,9 @@ vis = $.extend(true, vis, {
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'}, group);
             if (j < gestures.length - 1) this.addToInspect('delimiterInGroup', group);
         }
+        var that = this;
         // install handlers
         setTimeout(function () {
-            var that = this;
             for (var j = 0; j < gesturesAnalog.length; j++){
                 gesture = gesturesAnalog[j];
                 $('#inspect_gestures-' + gesture + '-oid').change(function () {
@@ -834,7 +834,7 @@ vis = $.extend(true, vis, {
                     $(this).trigger('change');
                 });
             }
-        }.bind(this), 300);
+        }, 300);
     },
     editText: function (widAttr) {
         var that = this;

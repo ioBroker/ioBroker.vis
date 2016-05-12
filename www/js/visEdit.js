@@ -1599,7 +1599,7 @@ vis = $.extend(true, vis, {
             checkbox:   'vis-preview-checkbox', // boolean value with control
             dimmer:     'vis-preview-dimmer',
             state:      'vis-preview-state',    // boolean value
-            lock:       'vis-preview-lock'
+            lock:      'vis-preview-lock'
         };
 
         $.each(this.widgetSets, function () {
@@ -4665,8 +4665,8 @@ $(document).keydown(function (e) {
         var delay;
 
         if ($container.hasClass('fullscreen')) {
-            $("#attr_wrap").unbind("mouseenter").unbind("mouseleave");
-            $("#pan_attr").show();
+            $('#attr_wrap').unbind('mouseenter').unbind('mouseleave');
+            $('#pan_attr').show();
             $container.addClass('vis_container');
             $container.removeClass('fullscreen').appendTo('#vis_wrap');
             $pan_attr.removeClass('fullscreen-pan-attr').appendTo('#panel_body');
@@ -4675,18 +4675,18 @@ $(document).keydown(function (e) {
             $container.prependTo('body').addClass('fullscreen');
             $pan_attr.prependTo('body').addClass('fullscreen-pan-attr');
 
-            $("#attr_wrap").bind("mouseenter",function () {
+            $('#attr_wrap').bind('mouseenter', function () {
                 clearTimeout(delay);
-                $("#pan_attr").show("slide", {direction: "right"});
+                $("#pan_attr").show('slide', {direction: 'right'});
             })
-            .bind("mouseleave",function () {
+            .bind('mouseleave', function () {
                     delay = setTimeout(function () {
-                        if ($pan_attr.hasClass("fullscreen-pan-attr")){
-                            $("#pan_attr").hide("slide", {direction: "right"});
+                        if ($pan_attr.hasClass('fullscreen-pan-attr')){
+                            $('#pan_attr').hide('slide', {direction: 'right'});
                         }
                     }, 750);
                 });
-            $("#pan_attr").hide();
+            $('#pan_attr').hide();
         }
 
         e.preventDefault();
