@@ -765,6 +765,10 @@ vis = $.extend(true, vis, {
             this.addToInspect(this.activeWidgets, {name: 'signals-text-' + i}, group);
             // text style
             this.addToInspect(this.activeWidgets, {name: 'signals-text-style-' + i}, group);
+            // text class
+            this.addToInspect(this.activeWidgets, {name: 'signals-text-class-' + i}, group);
+            // blink
+            this.addToInspect(this.activeWidgets, {name: 'signals-blink-' + i, type: 'checkbox', default: false}, group);
 
 
             // icon position vertical
