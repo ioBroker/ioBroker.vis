@@ -1,12 +1,17 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.10.0",
+        "version": "0.10.1",
         "title":                    "iobroker Visualisation",
         "news": {
-            "en":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
-            "de":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
-            "ru":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings"
+            "en":                   "(bluefox) change version",
+            "de":                   "(bluefox) change version",
+            "ru":                   "(bluefox) change version",
+			"0.10.0": {
+				"en":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
+				"de":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
+				"ru":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings"
+			}
         },
         "desc": {
             "en":                   "Graphical user interface for iobroker.",

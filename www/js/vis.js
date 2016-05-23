@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.9.4',
+    version: '0.10.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -2595,6 +2595,9 @@ function main($) {
                                     for (var ob in data) {
                                         vis.objectSelector = true;
                                         break;
+                                    }
+                                    if (vis.editMode && vis.objectSelector) {
+                                        vis.inspectWidgets(true);
                                     }
                                 });
                             }
