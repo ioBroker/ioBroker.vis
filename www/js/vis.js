@@ -702,9 +702,9 @@ var vis = {
         $('#visview_' + view).find('.vis-view-container').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
-                $(this).html('<span style="color:red">' + _('error: view not found.') + '</span>');
+                $(this).html('<span style="color: red">' + _('error: view not found.') + '</span>');
             } else if (cview == view) {
-                $(this).html('<span style="color:red">' + _('error: view container recursion.') + '</span>');
+                $(this).html('<span style="color: red">' + _('error: view container recursion.') + '</span>');
             } else {
                 $(this).html('');
                 that.renderView(cview, true);
@@ -1045,7 +1045,7 @@ var vis = {
                                 }
                             } else if (gesture == 'swiping' || gesture == 'rotating' || gesture == 'pinching') {
                                 if (newVal === null){
-                                    $indicator = $('#' + data['gestures-indicator']);
+                                    $indicator = $('#' + wdata['gestures-indicator']);
                                     // create default indicator
                                     if (!$indicator.length) {
                                         $indicator = $('#gestureIndicator');

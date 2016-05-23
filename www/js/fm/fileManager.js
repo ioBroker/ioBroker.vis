@@ -694,7 +694,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '        <img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
-                '        <input type="text" id="fm_bar_filter" style="width: calc(100% - 520px);" value="' + o.filter + '" placeholder="' + fmTranslate('Enter filter...') + '" />' +
+                '        <input type="text" id="fm_bar_filter" style="width: calc(100% - 550px);" value="' + o.filter + '" placeholder="' + fmTranslate('Enter filter...') + '" />' +
                 '        <button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
                 '        <button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
                 '    </div>' +
