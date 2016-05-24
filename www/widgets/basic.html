@@ -1075,24 +1075,36 @@
 	        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
 	    },
 
-        formatDate: function (dateObj, isSeconds, format) {
-            if (typeof isSeconds != 'boolean') {
-                format = isSeconds;
-                isSeconds = false;
+        formatDate: function (dateObj, format, _ignoreOld) {
+            if (typeof format === 'boolean') {
+                format = _ignoreOld;
             }
 
-            if (format == 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
+            if (format === 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
 
             var format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
             var text = typeof dateObj;
-            if (text == 'string') {
+            if (text === 'string') {
                 var pos = dateObj.indexOf('.');
                 if (pos != -1) dateObj = dateObj.substring(0, pos);
                 return dateObj;
             }
-            if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+            if (text !== 'object') {
+                var i = parseInt(dateObj, 10);
+                if (i == dateObj) {
+                    i = dateObj;
+                    // if greater than 2000.01.01 00:00:00
+                    if (i > 946681200000) {
+                        dateObj = new Date(dateObj);
+                    } else {
+                        dateObj = new Date(dateObj * 1000);
+                    }
+                } else {
+                    dateObj = new Date(dateObj);
+                }
+            }
 
             var v;
 
@@ -1798,11 +1810,11 @@
         data-vis-type="val,timestamp"
         data-vis-name="Timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
@@ -1815,11 +1827,11 @@
         data-vis-type="val,timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
         data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>

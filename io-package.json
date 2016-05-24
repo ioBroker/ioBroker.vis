@@ -1,16 +1,23 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.10.1",
+        "version": "0.10.2",
         "title":                    "iobroker Visualisation",
         "news": {
-            "en":                   "(bluefox) change version",
-            "de":                   "(bluefox) change version",
-            "ru":                   "(bluefox) change version",
+            "0.10.2": {
+				"en":                   "fix widgets with timestamps",
+				"de":                   "fix widgets with timestamps",
+				"ru":                   "fix widgets with timestamps"
+			},
+			"0.10.1": {
+				"en":                   "change version",
+				"de":                   "change version",
+				"ru":                   "change version"
+			},
 			"0.10.0": {
-				"en":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
-				"de":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings",
-				"ru":                   "(bluefox) translates\n(bluefox) fix 'no widgets selected'\n(bluefox) change widget icons\n(bluefox) add signals\n(bluefox) add app.css for cordova\n(bluefox) change icons preview\n(bluefox) show properties of widget as icon\n(bluefox) fix error with external commands\n(bluefox) add types icon to preview\n(bluefox) support edit on iPad1\n(bluefox) change security settings"
+				"en":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
+				"de":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
+				"ru":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings"
 			}
         },
         "desc": {
@@ -27,7 +34,7 @@
         "keywords":                 ["DashUI", "GUI", "graphical", "scada"],
         "readme":                   "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
         "authors": [
-            "bluefox <bluefox@ccu.io>"
+            "bluefox <dogafox@gmail.com>"
         ],
         "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
