@@ -2346,13 +2346,14 @@ function main($) {
     });
 
     if (vis.editMode) {
+        vis.states.__attrs = vis.states.attr;
         vis.states.attr = function (attr, val) {
             var type = typeof attr;
             if (type !== 'string' && type !== 'number') {
                 for (var o in attr) {
                     // allow only dev1, dev2, ... to be bound
                     if (o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
-                        return this._attrs(attr, val);
+                        return this.__attrs(attr, val);
                     }
                 }
             } else if (arguments.length === 1) {
@@ -2382,7 +2383,7 @@ function main($) {
 
     // für iOS Safari - wirklich notwendig?
     $('body').on('touchmove', function (e) {
-        if (!$(e.target).closest("body").length) e.preventDefault();
+        if (!$(e.target).closest('body').length) e.preventDefault();
     });
 
     vis.preloadImages(['img/disconnect.png']);

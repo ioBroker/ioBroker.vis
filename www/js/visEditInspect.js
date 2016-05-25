@@ -1323,7 +1323,7 @@ vis = $.extend(true, vis, {
                 if (line_[0]) line_ = line_[0];
                 if (typeof line_ == 'string') line_ = {input: line_};
                 if (typeof line_.init == 'function') {
-                if (wdata_.css) {
+                    if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
                         if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
                         line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
@@ -1922,14 +1922,15 @@ vis = $.extend(true, vis, {
             this.$selectActiveWidgets.multiselect('refresh');
 
             // Disable copy widget if was active
-            $("#rib_wid_copy_cancel").trigger('click');
+            $('#rib_wid_copy_cancel').trigger('click');
 
             this.actualAttrs = this.findCommonAttributes(this.activeWidgets);
         }
 
-        var $widgetAttrs = $('#widget_attrs');
+        var $widgetAttrs = $('#widget_attrs').hide();
         // Clear Inspector
-        $widgetAttrs.html('');
+        $widgetAttrs[0].innerHTML = '';
+        //$widgetAttrs.empty();
 
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
@@ -1972,7 +1973,7 @@ vis = $.extend(true, vis, {
         $('#inspect_comment_tr').show();
         $('#inspect_class_tr').show();
 
-        $widgetAttrs.css({width: "100%"});
+        $widgetAttrs.css({width: '100%'});
 
         // Add fixed attributes
         var group = 'fixed';
@@ -2095,5 +2096,7 @@ vis = $.extend(true, vis, {
         if ($('#menu_body').tabs('option', 'active') == 1) {
             $('#menu_body').tabs({'active': 2});
         }
+        $widgetAttrs.show();
+
     }
 });
