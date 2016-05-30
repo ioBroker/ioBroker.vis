@@ -56,7 +56,7 @@
                 "ru": "При открытии диалога в объект с этим ID будет записано значение"
             },
             "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"},
-            "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",      "ru": "ID Объекта макс"}, 
+            "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",      "ru": "ID Объекта макс"},
             "oid-2-working":    {"en": "OID Working max.",   "de": "OID Working max.",      "ru": "ID working макс"},
             "values":           {"en": "Values",             "de": "Werte",                 "ru": "Значения"},
             "values_tooltip":   {
@@ -224,7 +224,8 @@
 
             // Show dialog in edit mode too
             if (1 || !vis.editMode) {
-                $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
+                $(el).parent().find('div.vis-widget-body').on('click touchend', function (event) {
+                    event.stopPropagation();
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
@@ -257,7 +258,8 @@
                                 $(this).parent().find('.ui-state-focus').blur();
                                 //touchscreen fix
                                 var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                                $closeButton.unbind('touchend').on('touchend', function () {
+                                $closeButton.unbind('touchend').on('touchend', function (event) {
+                                    event.stopPropagation();
                                     $dlg.dialog('close');
                                     return false;
                                 });
@@ -273,7 +275,8 @@
                         $dlg.data('inited', true);
 
                         if (closeOnClick) {
-                            $dlg.unbind('click touchstart').on('click touchstart', function () {
+                            $dlg.unbind('click touchstart touchend').on('click touchend', function (event) {
+                                event.stopPropagation();
                                 $dlg.dialog('close');
                                 return false;
                             });
@@ -290,7 +293,8 @@
                         if ($dlg.data('preload')) $dlg.html(html);
                         //touchscreen fix
                         var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                        $closeButton.unbind('touchend').on('touchend', function () {
+                        $closeButton.unbind('touchend').on('touchend', function (event) {
+                            event.stopPropagation();
                             $dlg.dialog('close');
                             return false;
                         });
@@ -308,7 +312,8 @@
                 $dlg.data('inited', true);
 
                 if (closeOnClick) {
-                    $dlg.unbind('click touchstart').on('click touchstart', function () {
+                    $dlg.unbind('click touchstart touchend').on('click touchend', function (event) {
+                        event.stopPropagation();
                         $dlg.dialog('close');
                         return false;
                     });
@@ -328,7 +333,8 @@
                 open: function () {
                     //touchscreen fix
                     var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                    $closeButton.unbind('touchend').on('touchend', function () {
+                    $closeButton.unbind('touchend').on('touchend', function (event) {
+                        event.stopPropagation();
                         $dlg.dialog('close');
                         return false;
                     });
@@ -342,7 +348,8 @@
             }, options));
 
             if (!vis.editMode) {
-                $(el).parent().find('div.vis-widget-body').on('click touchstart', function () {
+                $(el).parent().find('div.vis-widget-body').on('click touchend', function (event) {
+                    event.stopPropagation();
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
@@ -451,9 +458,9 @@
                 'outline':    'none',
                 'cursor':     'text',
                 height:       '50%'
-                }).change(function () {
-                    vis.setValue(oid, $(this).val());
-                });
+            }).change(function () {
+                vis.setValue(oid, $(this).val());
+            });
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != "") newVal = parseFloat(newVal).toFixed(digits);
@@ -587,16 +594,16 @@
             }
             if (!noJsStyle) $this.prev().button();
             $this.prev().addClass('ui-state-default')
-                .css({
-                    font:            'inherit',
-                    'padding-left':  5,
-                    'padding-right': 5,
-                    //'color' :   'inherit',
-                    'text-align':   'left',
-                    outline:        'none',
-                    cursor:         'text',
-                    height:         '95%'
-                });
+                    .css({
+                        font:            'inherit',
+                        'padding-left':  5,
+                        'padding-right': 5,
+                        //'color' :   'inherit',
+                        'text-align':   'left',
+                        outline:        'none',
+                        cursor:         'text',
+                        height:         '95%'
+                    });
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (digits && digits != '') {
                     newVal = parseFloat(newVal).toFixed(digits);
@@ -1060,15 +1067,15 @@
                     if (data._data.Password == $('#inp_NavPw').val()) {
                         $('#NavPwDialog').remove();
                         vis.changeView(data.attr('nav_view'), {
-                            effect: data.attr('hide_effect'),
-                            options: {},
-                            duration: data.attr('hide_duration')
-                        }, {
-                            effect: data.attr('show_effect'),
-                            options: {},
-                            duration: data.attr('show_duration')
-                        },
-                        data.attr('sync'));
+                                    effect: data.attr('hide_effect'),
+                                    options: {},
+                                    duration: data.attr('hide_duration')
+                                }, {
+                                    effect: data.attr('show_effect'),
+                                    options: {},
+                                    duration: data.attr('show_duration')
+                                },
+                                data.attr('sync'));
                     } else {
                         $('#inp_NavPw').val('');
                         var bg = $('#inp_NavPw').data('bg');
@@ -1679,6 +1686,3 @@
         </div>
     </div>
 </script>
-
-
-
