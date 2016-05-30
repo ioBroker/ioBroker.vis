@@ -5,9 +5,9 @@
         "title":                    "iobroker Visualisation",
         "news": {
             "0.10.3": {
-				"en":                   "update canJS\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"de":                   "update canJS\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"ru":                   "update canJS\nspeedUP show attributes at 300ms\nfix click on widget if signal is active"
+				"en":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
+				"de":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
+				"ru":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active"
 			},
             "0.10.2": {
 				"en":                   "fix widgets with timestamps",

@@ -159,6 +159,7 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Changelog### 0.10.3 (2016-05-30)
 * (bluefox) update canJS
+* (pmant) fixes bugs with dialogs on touchscreens
 * (bluefox) speedUP show attributes at 300ms
 * (bluefox) fix click on widget if signal is active
 
