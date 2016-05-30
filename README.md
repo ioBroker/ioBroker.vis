@@ -157,7 +157,45 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
-## Changelog### 0.9.1 (2016-02-24)
+## Changelog### 0.10.2 (2016-05-24)
+* (bluefox) fix widgets with timestamps
+
+### 0.10.1 (2016-05-23)
+* (bluefox) change version
+
+### 0.10.0 (2016-05-23)
+* (bluefox) translates
+* (bluefox) fix 'no widgets selected'
+* (bluefox) change widget icons
+* (bluefox) add signals
+* (bluefox) add app.css for cordova
+* (bluefox) change icons preview
+* (bluefox) show properties of widget as icon
+* (bluefox) fix error with external commands
+* (bluefox) add types icon to preview
+* (bluefox) support edit on iPad1
+* (bluefox) change security settings
+
+### 0.9.4 (2016-04-05)
+* (bluefox) implement more "close" types
+* (bluefox) set height of about window
+* (bluefox) rename the upper case datei extensions into lower case by upload
+* (bluefox) reload vis if lost connection for longer than 1 minute
+
+### 0.9.3 (2016-03-23)
+* (bluefox) allow onChange for OIDs too
+* (bluefox) add quality
+* (bluefox) changes for app
+* (bluefox) add new flag "render always" in this case this view will be rendered in any way.
+* (bluefox) add about dialog
+* (bluefox) remove bind(this) to enable it run on iPad1
+### 0.9.2 (2016-02-29)
+* (bluefox) allow onChange for OIDs too
+* (bluefox) show reconnecting process
+* (pmant) use new gestures lib
+* (bluefox) show project name
+
+### 0.9.1 (2016-02-24)
 * (bluefox) fix safary error
 
 ### 0.9.0 (2016-02-20)

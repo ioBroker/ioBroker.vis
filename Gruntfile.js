@@ -41,12 +41,12 @@ module.exports = function (grunt) {
                             match: /version: *'[\.0-9]*',/,
                             replacement: "version: '" + version + "',"
                         },                        {
-                            match: /<!-- iobroker\.vis Version [\.0-9]+ -->/,
-                            replacement: '<!-- iobroker.vis Version ' + version + ' -->'
+                            match: /<!-- vis Version [\.0-9]+ -->/,
+                            replacement: '<!-- vis Version ' + version + ' -->'
                         },
                         {
-                            match: /# iobroker\.vis Version [\.0-9]+/,
-                            replacement: '# iobroker.vis Version ' + version
+                            match: /# vis Version [\.0-9]+/,
+                            replacement: '# vis Version ' + version
                         },
                         {
                             match: /# dev build [\.0-9]+/g,
@@ -90,6 +90,10 @@ module.exports = function (grunt) {
                         {
                             match:       /iobroker/gi,
                             replacement: appName
+                        },
+						{
+                            match:       / *  Copyright \(c\) \d+-\d+ bluefox https:\/\/github.com\/GermanBluefox, hobbyquaker https:\/\/github.com\/hobbyquaker/gi,
+                            replacement: ''
                         }
                     ]
                 },
@@ -98,10 +102,75 @@ module.exports = function (grunt) {
                         expand:  true,
                         flatten: true,
                         src:     [
-                            srcDir + '*',
+                            srcDir + '*.*',
                             srcDir + '.travis.yml'
                         ],
                         dest:    srcDir
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'admin/*.*',
+                            '!' + srcDir + 'admin/*.png'
+                        ],
+                        dest:    srcDir + 'admin'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'lib/*.*'
+                        ],
+                        dest:    srcDir + 'lib'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'example/*.*'
+                        ],
+                        dest:    srcDir + 'example'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/*.*'
+                        ],
+                        dest:    srcDir + 'www'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/js/*.*'
+                        ],
+                        dest:    srcDir + 'www/js'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'www/widgets/*.*'
+                        ],
+                        dest:    srcDir + 'www/widgets'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'test/*.*'
+                        ],
+                        dest:    srcDir + 'test'
+                    },
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + 'test/lib/*.*'
+                        ],
+                        dest:    srcDir + 'test/lib'
                     }
                 ]
             }
@@ -168,7 +237,7 @@ module.exports = function (grunt) {
         'jscs'
     ]);
 	
-	grunt.registerTask('prepublish', ['replace', 'updateReadme']);
+	grunt.registerTask('prepublish', ['replace:core', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
     grunt.registerTask('rename', [
         'replace:name'

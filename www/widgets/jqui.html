@@ -241,6 +241,12 @@
                         if (options.overflowY) $dlg.css('overflow-y', options.overflowY);
                         if (options.noHeader) $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
                         $dlg.parent().find('.ui-state-focus').blur();
+			//touchscreen fix
+                        var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
+                        $closeButton.unbind('touchend').on('touchend', function () {
+                            $dlg.dialog('close');
+                            return false;
+                        });
                     } else {
                         $dlg.dialog($.extend({
                             autoOpen: true,
@@ -269,9 +275,11 @@
                         if (closeOnClick) {
                             $dlg.unbind('click touchstart').on('click touchstart', function () {
                                 $dlg.dialog('close');
+                                return false;
                             });
                         }
                     }
+                    return false;
                 });
             }
             if (persistent) {
@@ -280,6 +288,12 @@
                     open: function () {
                         $dlg.parent().css({'z-index': 1000});
                         if ($dlg.data('preload')) $dlg.html(html);
+                        //touchscreen fix
+                        var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
+                        $closeButton.unbind('touchend').on('touchend', function () {
+                            $dlg.dialog('close');
+                            return false;
+                        });
                     },
                     close: function () {
                         if ($dlg.data('timer')) {
@@ -296,6 +310,7 @@
                 if (closeOnClick) {
                     $dlg.unbind('click touchstart').on('click touchstart', function () {
                         $dlg.dialog('close');
+                        return false;
                     });
                 }
             }
@@ -310,6 +325,14 @@
             options.minWidth  = options.width;
             $dlg.dialog($.extend({
                 autoOpen: false,
+                open: function () {
+                    //touchscreen fix
+                    var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
+                    $closeButton.unbind('touchend').on('touchend', function () {
+                        $dlg.dialog('close');
+                        return false;
+                    });
+                },
                 close: function () {
                     if ($dlg.data('timer')) {
                         clearTimeout($dlg.data('timer'));
@@ -349,6 +372,7 @@
                     if (options.overflowY) $id.css('overflow-y', options.overflowY);
                     if (options.noHeader) $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
                     $id.parent().find('.ui-state-focus').blur();
+                    return false;
                 });
             } else {
                 $(el).parent().find("div.vis-widget-body").show();

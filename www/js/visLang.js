@@ -225,16 +225,21 @@ $.extend(systemDictionary, {
      'ru': 'ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И ОТСУТСТВИЯ НАРУШЕНИЙ ПРАВ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ ИЛИ ДРУГИХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩИМ КОНТРАКТАМ, ДЕЛИКТАМ ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.'},
      */
     'license5': {
-        'en': 'HomeMatic and the HomeMatic Logo are the registered trademarks of eQ-3 AG',
-        'de': 'HomeMatic und das HomeMatic Logo sind eingetragene Warenzeichen der eQ-3 AG',
-        'ru': 'HomeMatic и HomeMatic логотип являются зарегистрированными тоговыми марками фирмы eQ-3 Inc.'
+        'en': ' ',
+        'de': ' ',
+        'ru': ' '
+    },
+    'icons8': {
+        'en': 'In this project are used the icons from <a href="https://icons8.com">Icons8 resource</a>.',
+        'de': 'In diesem Projekt die Bilder vom <a href="https://icons8.com">Icons8 resource</a> sind benutzt.',
+        'ru': 'В этом проекте используются иконки с ресурса <a href="https://icons8.com">Icons8</a>.'
     },
     'group_fixed':          {'en': 'General',           'de': 'Generell',               'ru': 'Фиксированные'},
     'group_common':         {'en': 'Common',            'de': 'Allgemein',              'ru': 'Общие'},
     'group_css_common':     {'en': 'CSS Common',        'de': 'CSS Allgemein',          'ru': 'CSS Основные'},
     'group_css_font_text':  {'en': 'CSS Font & Text',   'de': 'CSS Font & Text',        'ru': 'CSS шрифт и текст'},
     'group_css_background': {'en': 'CSS background (background-...)', 'de': 'CSS Hintergrund (background-...)', 'ru': 'CSS фон (background-...)'},
-    "group_gestures":       {"en": "Gestures",          "de": "Gesten",                 "ru": "Gestures"},
+    "group_gestures":       {"en": "Gestures",          "de": "Gesten",                 "ru": "Жесты"},
     "File":                 {"en": "File",              "de": "Datei",                  "ru": "Файл"},
     "Dev":                  {"en": "Dev",               "de": "Dev",                    "ru": "Dev"},
     "Tools":                {"en": "Tools",             "de": "Tools",                  "ru": "Инструменты"},
@@ -250,6 +255,8 @@ $.extend(systemDictionary, {
     "Resolution:":          {"en": "Resolution: ",      "de": "Auflöung: ",             "ru": "Разрешение экрана: "},
     "Widget":               {"en": "Widget",            "de": "Widget",                 "ru": "Элемент"},
     "View":                 {"en": "View",              "de": "View",                   "ru": "Страница"},
+    "Default:":             {"en": "Default:",          "de": "Default:",               "ru": "По умолчанию:"},
+    "Render always:":       {"en": "Render always:",    "de": "Immer rendern:",         "ru": "Всегда создавать:"},
     "filter_key":           {"en": "Initial filter",    "de": "Anfangsfilter",          "ru": "Фильтр при показе"},
     "filter_key_tooltip": {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
@@ -259,6 +266,17 @@ $.extend(systemDictionary, {
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
               "Можно задать несколько ключей через запятую"
     },
+    "Switch to runtime in this window": {
+        "en": "Close editor",
+        "de": "Editor zumachen",
+        "ru": "Закрыть редактор"
+    },
+    "Switch to runtime in new window": {
+        "en": "Open runtime in new window",
+        "de": "Runtime in einem Fenster aufmachen",
+        "ru": "Открыть Runtime в новом окне"
+    },
+    "Reload all runtimes":  {"en": "Reload all runtimes", "de": "Alle Runtimes neu laden", "ru": "Обновить все Runtime"},
     "Projects":             {"en": "Projects",          "de": "Projekte",               "ru": "Проекты"},
     "Lock":                 {"en": "Lock",              "de": "Sperren",                "ru": "Lock"},
     "Unlock":               {"en": "Unlock",            "de": "Entsperren",             "ru": "Unlock"},
@@ -306,10 +324,44 @@ $.extend(systemDictionary, {
     "readOnly":             {"en": "read only",         "de": "nur lesend",             "ru": "только для чтения"},
     "New project...":       {"en": "New project...",    "de": "Neues Projekt...",       "ru": "Новый проект..."},
     "Create new project":   {"en": "Create new project", "de": "Neues Projekt",         "ru": "Создать новый проект"},
+    "No connection":        {"en": "No connection",     "de": "Verbindungsfehler",             "ru": "Связь прервана"},
+
+    "filter":               {"en": "Filter",            "de": "Filter",                 "ru": "Фильтр"},
+    "navigation":           {"en": "Navigation",        "de": "Navigation",             "ru": "Навигация"},
+    "static":               {"en": "Static",            "de": "Statisch",               "ru": "Статичное"},
+    "stateful":             {"en": "stateful",          "de": "stateful",               "ru": "stateful"},
+    "container":            {"en": "Container",         "de": "Kontainer",              "ru": "Контейнер"},
+    "val":                  {"en": "Value",             "de": "Wert",                   "ru": "Значение"},
+    "timestamp":            {"en": "Timestamp",         "de": "Zeitstempel",            "ru": "Время"},
+    "state":                {"en": "State",             "de": "Zustand",                "ru": "Состояние"},
+    "bar":                  {"en": "Bar",               "de": "Bar",                    "ru": "Bar"},
+    "json":                 {"en": "JSON",              "de": "JSON",                   "ru": "JSON"},
+    "table":                {"en": "Table",             "de": "Tabelle",                "ru": "Таблица"},
+    "tools":                {"en": "Tools",             "de": "Hilfsmittel",            "ru": "Инструменты"},
+    "bool":                 {"en": "bool", "de": "bool", "ru": "bool"},
+    "button":               {"en": "button", "de": "button", "ru": "button"},
+    "dimmer":               {"en": "dimmer", "de": "dimmer", "ru": "dimmer"},
+    "temperature":          {"en": "temperature", "de": "temperature", "ru": "temperature"},
+    "window":               {"en": "window", "de": "window", "ru": "window"},
+    "shutter":              {"en": "shutter", "de": "shutter", "ru": "shutter"},
+    "door":                 {"en": "door", "de": "door", "ru": "door"},
+    "lock":                 {"en": "lock", "de": "lock", "ru": "lock"},
+    "checkbox":             {"en": "checkbox", "de": "checkbox", "ru": "checkbox"},
+    "number":               {"en": "number", "de": "number", "ru": "number"},
+    "knob":                 {"en": "knob", "de": "knob", "ru": "knob"},
+    "dialog":               {"en": "dialog", "de": "dialog", "ru": "dialog"},
+    "valve":                {"en": "valve", "de": "valve", "ru": "valve"},
+    "camera":               {"en": "camera", "de": "camera", "ru": "camera"},
+    "keyboard":             {"en": "keyboard", "de": "keyboard", "ru": "keyboard"},
+    "slider":               {"en": "slider", "de": "slider", "ru": "slider"},
+    "heating":              {"en": "heating", "de": "heating", "ru": "heating"},
+    "iframe":               {"en": "iframe", "de": "iframe", "ru": "iframe"},
+    "project":              {"en": "project", "de": "project", "ru": "project"},
+
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
         "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie erneut.",
-        "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз.",
+        "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз."
     },
     "Widgets filter. Double click to clear.": {
         "en": "Widgets filter. Double click to clear.",
@@ -378,6 +430,49 @@ $.extend(systemDictionary, {
     },
     "visibility-val":       {"en": "Value for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
 
+    "group_signals":        {"en": "Notification icons", "de": "Signalbilder",         "ru": "Иконки сигналов"},
+    "signals-oid-0":        {"en": "Object ID [0]",     "de": "Objekt ID [0]",         "ru": "ID объекта [0]"},
+    "signals-cond-0":       {"en": "Condition [0]",     "de": "Bedingung [0]",         "ru": "Условие [0]"},
+    "signals-val-0":        {"en": "Value for condition [0]", "de": "Wert für die Bedingung [0]", "ru": "Значение для условия [0]"},
+    "signals-icon-0":       {"en": "Icon path [0]",     "de": "Bild [0]",              "ru": "Картинка [0]"},
+    "signals-text-0":       {"en": "Description [0]",   "de": "Beschreibung [0]",      "ru": "Описание [0]"},
+    "signals-horz-0":       {"en": "Horizontal[0]",     "de": "Horizontale [0]",       "ru": "по горизонтали [0]"},
+    "signals-vert-0":       {"en": "Vertical [0]",      "de": "Vertikale [0]",         "ru": "по вертикали [0]"},
+    "signals-hide-edit-0":  {"en": "Hide by edit [0]",  "de": "Nicht zeigen bei Editieren [0]", "ru": "Не показывать в редакторе [0]"},
+    "signals-icon-size-0":  {"en": "Icon size in px[0]", "de": "Bildgröße in px [0]",  "ru": "Размер картинки в px [0]"},
+    "signals-icon-style-0": {"en": "CSS icon style [0]", "de": "CSS Bildstyl [0]",     "ru": "CSS для картинки [0]"},
+    "signals-text-style-0": {"en": "CSS text style [0]", "de": "CSS Textstyl [0]",     "ru": "CSS для текста[0]"},
+    "signals-blink-0":      {"en": "Blinking [0]",      "de": "Blinken [0]",           "ru": "Мигание [0]"},
+    "signals-text-class-0": {"en": "Classes [0]",       "de": "Klassen [0]",           "ru": "Классы [0]"},
+
+    "signals-oid-1":        {"en": "Object ID [1]",     "de": "Objekt ID [1]",         "ru": "ID объекта [1]"},
+    "signals-cond-1":       {"en": "Condition [1]",     "de": "Bedingung [1]",         "ru": "Условие [1]"},
+    "signals-val-1":        {"en": "Value for condition [1]", "de": "Wert für die Bedingung [1]", "ru": "Значение для условия [1]"},
+    "signals-icon-1":       {"en": "Icon path [1]",     "de": "Bild [1]",              "ru": "Картинка [1]"},
+    "signals-text-1":       {"en": "Description [1]",   "de": "Beschreibung [1]",      "ru": "Описание [1]"},
+    "signals-horz-1":       {"en": "Horizontal[1]",     "de": "Horizontale [1]",       "ru": "по горизонтали [1]"},
+    "signals-vert-1":       {"en": "Vertical [1]",      "de": "Vertikale [1]",         "ru": "по вертикали [1]"},
+    "signals-hide-edit-1":  {"en": "Hide by edit [1]",  "de": "Nicht zeigen bei Editieren [1]", "ru": "Не показывать в редакторе [1]"},
+    "signals-icon-size-1":  {"en": "Icon size in px[1]", "de": "Bildgröße in px [1]",  "ru": "Размер картинки в px [1]"},
+    "signals-icon-style-1": {"en": "CSS icon style [1]", "de": "CSS Bildstyl [1]",     "ru": "CSS для картинки [1]"},
+    "signals-text-style-1": {"en": "CSS text style [1]", "de": "CSS Textstyl [1]",     "ru": "CSS для текста[1]"},
+    "signals-blink-1":      {"en": "Blinking [1]",      "de": "Blinken [1]",           "ru": "Мигание [1]"},
+    "signals-text-class-1": {"en": "Classes [1]",       "de": "Klassen [1]",           "ru": "Классы [1]"},
+
+    "signals-oid-2":        {"en": "Object ID [2]",     "de": "Objekt ID [2]",         "ru": "ID объекта [2]"},
+    "signals-cond-2":       {"en": "Condition [2]",     "de": "Bedingung [2]",         "ru": "Условие [2]"},
+    "signals-val-2":        {"en": "Value for condition [2]", "de": "Wert für die Bedingung [2]", "ru": "Значение для условия [2]"},
+    "signals-icon-2":       {"en": "Icon path [2]",     "de": "Bild [2]",              "ru": "Картинка [2]"},
+    "signals-text-2":       {"en": "Description [2]",   "de": "Beschreibung [2]",      "ru": "Описание [2]"},
+    "signals-horz-2":       {"en": "Horizontal[2]",     "de": "Horizontale [2]",       "ru": "по горизонтали [2]"},
+    "signals-vert-2":       {"en": "Vertical [2]",      "de": "Vertikale [2]",         "ru": "по вертикали [2]"},
+    "signals-hide-edit-2":  {"en": "Hide by edit [2]",  "de": "Nicht zeigen bei Editieren [2]", "ru": "Не показывать в редакторе [2]"},
+    "signals-icon-size-2":  {"en": "Icon size in px[2]", "de": "Bildgröße in px [2]",  "ru": "Размер картинки в px [2]"},
+    "signals-icon-style-2": {"en": "CSS icon style [2]", "de": "CSS Bildstyl [2]",     "ru": "CSS для картинки [2]"},
+    "signals-text-style-2": {"en": "CSS text style [2]", "de": "CSS Textstyl [2]",     "ru": "CSS для текста[2]"},
+    "signals-blink-2":      {"en": "Blinking [2]",      "de": "Blinken [2]",           "ru": "Мигание [2]"},
+    "signals-text-class-2": {"en": "Classes [2]",       "de": "Klassen [2]",           "ru": "Классы [2]"},
+
     "Global":               {"en": "Global",            "de": "Global",                "ru": "Общая"},
     "Project":              {"en": "Project",           "de": "Projekt",               "ru": "Проект"},
     "Align width": {
@@ -394,6 +489,21 @@ $.extend(systemDictionary, {
     "Find next":            {"en": "Find next",         "de": "Finde nächste",          "ru": "Искать вперёд"},
     "Save CSS":             {"en": "Save CSS",          "de": "Speichern CSS",          "ru": "Сохранить CSS"},
     "CSS":                  {"en": "CSS",               "de": "CSS",                    "ru": "CSS"},
+    'To get back to edit mode just call "%s" in browser': {
+        "en": 'To get back to edit mode just call "%s" in browser',
+        "de": 'Um wieder in Edit-Modus zurück zu kehren, einfach "%s" im Browser aufrufen',
+        "ru": 'Что бы снова вернуться в режим редактирования надо просто вызвать в браузере "%s"'
+    },
+    "Popup window blocked!": {
+        "en": "Popup window blocked!",
+        "de": "Popup-Fenster blokiert!",
+        "ru": "Всплывающее окно заблокировано!"
+    },
+    "Cannot open new window": {
+        "en": "Cannot open new window",
+        "de": "Kann kein neues Fenster aufmachen",
+        "ru": "Не могу открыть новое всплывающее окно"
+    },
 
     "css_left":             {"en": "left",              "de": "left",                   "ru": "left"},
     "css_top":              {"en": "top",               "de": "top",                    "ru": "top"},
@@ -471,132 +581,132 @@ $.extend(systemDictionary, {
         "de": "Erzeuge einen \"basic - Gesture Indicator\" und setze Stil dafür.\x0AEin Gestenindikator kann für mehrere Widgets benutzt werden.",
         "ru": "Создайте \"basic - Gesture Indicator\"и задайте стиль. Один индикатор может использоваться во многих элементах."
     },
-    "gestures-offsetX":         {"en": "-offset X",             "de": "Versatz X",              "ru": "-offset X"},
-    "gestures-offsetY":         {"en": "-offset Y",             "de": "Versatz Y",              "ru": "-offset Y"},
+    "gestures-offsetX":         {"en": "-offset X",             "de": "Versatz X",              "ru": "Сдвиг по X"},
+    "gestures-offsetY":         {"en": "-offset Y",             "de": "Versatz Y",              "ru": "Сдвиг по Y"},
 
-    "gestures-swiping-oid":     {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "swiping Object ID"},
+    "gestures-swiping-oid":     {"en": "swiping Object ID",     "de": "swiping Object ID",      "ru": "ID объекта при скольжении"},
     "gestures-swiping-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed"
+        "ru": "ID объекта, который будет изменятся"
     },
-    "gestures-swiping-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-swiping-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-swiping-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)"
+        "ru": "значение или шаг (например 0.5 или -0.5)"
     },
-    "gestures-swiping-maximum": {"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
+    "gestures-swiping-maximum": {"en": "-max value",            "de": "-max Wert",              "ru": "-макс. значение"},
     "gestures-swiping-maximum_tooltip": {
         "en": "maximum value",
         "de": "maximaler Wert",
-        "ru": "maximum value"
+        "ru": "минимальное значение"
     },
-    "gestures-swiping-minimum": {"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
+    "gestures-swiping-minimum": {"en": "-min value",            "de": "-min Wert",              "ru": "-мин. значение"},
     "gestures-swiping-minimum_tooltip": {
         "en": "minimum value",
         "de": "minimaler Wert",
-        "ru": "minimum value"
+        "ru": "максимальное значение"
     },
-    "gestures-swiping-delta":   {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
+    "gestures-swiping-delta":   {"en": "-delta",                "de": "-delta",                 "ru": "-дельта"},
     "gestures-swiping-delta_tooltip": {
         "en": "value gets changed after that many pixels movement",
         "de": "Wert wird nach so viele Pixeln Bewegung verändert",
         "ru": "value gets changed after that many pixels movement"
     },
-    "gestures-rotating-oid":    {"en": "rotating Object ID",    "de": "rotating Object ID",     "ru": "rotating Object ID"},
-    "gestures-rotating-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-rotating-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
-    "gestures-rotating-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
-    "gestures-rotating-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
-    "gestures-pinching-oid":    {"en": "pinching Object ID",    "de": "pinching Object ID",     "ru": "pinching Object ID"},
-    "gestures-pinching-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-pinching-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-max value"},
-    "gestures-pinching-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-min value"},
-    "gestures-pinching-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-delta"},
-    "gestures-swipeRight-oid":  {"en": "swipe right Object ID", "de": "swipe right Object ID",  "ru": "swipe right Object ID"},
+    "gestures-rotating-oid":    {"en": "rotating Object ID",    "de": "rotating Object ID",     "ru": "ID объекта при кручении"},
+    "gestures-rotating-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
+    "gestures-rotating-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-макс. значение"},
+    "gestures-rotating-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-мин. значение"},
+    "gestures-rotating-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-дельта"},
+    "gestures-pinching-oid":    {"en": "pinching Object ID",    "de": "pinching Object ID",     "ru": "ID объекта при увеличении/уменьшении"},
+    "gestures-pinching-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
+    "gestures-pinching-maximum":{"en": "-max value",            "de": "-max Wert",              "ru": "-макс. значение"},
+    "gestures-pinching-minimum":{"en": "-min value",            "de": "-min Wert",              "ru": "-мин. значение"},
+    "gestures-pinching-delta":  {"en": "-delta",                "de": "-delta",                 "ru": "-дельта"},
+    "gestures-swipeRight-oid":  {"en": "swipe right Object ID", "de": "swipe right Object ID",  "ru": "ID объекта при скольжении вправо"},
     "gestures-swipeRight-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed"
+        "ru": "ID объекта, который будет изменятся"
     },
-    "gestures-swipeRight-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-swipeRight-value":{"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-swipeRight-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)"
+        "ru": "значение или шаг (например 0.5 или -0.5)"
     },
-    "gestures-swipeRight-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-swipeRight-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
     "gestures-swipeRight-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value"
+        "ru": "минимальное или максимальное значение"
     },
-    "gestures-swipeLeft-oid":   {"en": "swipe left Object ID",  "de": "swipe left Object ID",   "ru": "swipe left Object ID"},
+    "gestures-swipeLeft-oid":   {"en": "swipe left Object ID",  "de": "swipe left Object ID",   "ru": "ID объекта при скольжении влево"},
     "gestures-swipeLeft-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed"
+        "ru": "ID объекта, который будет изменятся"
     },
-    "gestures-swipeLeft-value": {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-swipeLeft-value": {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-swipeLeft-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)"
+        "ru": "значение или шаг (например 0.5 или -0.5)"
     },
-    "gestures-swipeLeft-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-swipeLeft-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
     "gestures-swipeLeft-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value"
+        "ru": "минимальное или максимальное значение"
     },
-    "gestures-swipeUp-oid":     {"en": "swipe up Object ID",    "de": "swipe up Object ID",     "ru": "swipe up Object ID"},
+    "gestures-swipeUp-oid":     {"en": "swipe up Object ID",    "de": "swipe up Object ID",     "ru": "ID объекта при скольжении вверх"},
     "gestures-swipeUp-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed"
+        "ru": "ID объекта, который будет изменятся"
     },
-    "gestures-swipeUp-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-swipeUp-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-swipeUp-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)"
+        "ru": "значение или шаг (например 0.5 или -0.5)"
     },
-    "gestures-swipeUp-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-swipeUp-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
     "gestures-swipeUp-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value"
+        "ru": "минимальное или максимальное значение"
     },
-    "gestures-swipeDown-oid":   {"en": "swipe down Object ID",  "de": "swipe down Object ID",   "ru": "swipe down Object ID"},
+    "gestures-swipeDown-oid":   {"en": "swipe down Object ID",  "de": "swipe down Object ID",   "ru": "ID объекта при скольжении вниз"},
     "gestures-swipeDown-oid_tooltip": {
         "en": "Object ID of the state to be changed",
         "de": "Objekt ID des zu ändernden Zustandes",
-        "ru": "Object ID of the state to be changed"
+        "ru": "ID объекта, который будет изменятся"
     },
-    "gestures-swipeDown-value": {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
+    "gestures-swipeDown-value": {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-swipeDown-value_tooltip": {
         "en": "value or step (e.g. 0.5 or -0.5)",
         "de": "Wert oder Veränderung (z. B. 0.5 or -0.5)",
-        "ru": "value or step (e.g. 0.5 or -0.5)"
+        "ru": "значение или шаг (например 0.5 или -0.5)"
     },
-    "gestures-swipeDown-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
+    "gestures-swipeDown-limit": {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
     "gestures-swipeDown-limit_tooltip": {
         "en": "minimum or maximum value",
         "de": "minimaler oder maximaler Wert",
-        "ru": "minimum or maximum value"
+        "ru": "минимальное или максимальное значение"
     },
-    "gestures-rotateLeft-oid":  {"en": "rotate left Object ID", "de": "rotate left Object ID",  "ru": "rotate left Object ID"},
-    "gestures-rotateLeft-value":{"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-rotateLeft-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
-    "gestures-rotateRight-oid": {"en": "rotate right Object ID", "de": "rotate right Object ID", "ru": "rotate right Object ID"},
-    "gestures-rotateRight-value":{"en": "-value",               "de": "-Wert",                  "ru": "-value"},
-    "gestures-rotateRight-limit":{"en": "-limit",               "de": "-limit",                 "ru": "-limit"},
-    "gestures-pinchIn-oid":     {"en": "pinch in Object ID",    "de": "pinch in Object ID",     "ru": "pinch in Object ID"},
-    "gestures-pinchIn-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-pinchIn-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-limit"},
-    "gestures-pinchOut-oid":    {"en": "pinch out Object ID",   "de": "pinch out Object ID",    "ru": "pinch out Object ID"},
-    "gestures-pinchOut-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-value"},
-    "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-limit"}
+    "gestures-rotateLeft-oid":  {"en": "rotate left Object ID", "de": "rotate left Object ID",  "ru": "ID объекта при кручении на лево"},
+    "gestures-rotateLeft-value":{"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
+    "gestures-rotateLeft-limit":{"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
+    "gestures-rotateRight-oid": {"en": "rotate right Object ID", "de": "rotate right Object ID", "ru": "ID объекта при кручении на право"},
+    "gestures-rotateRight-value":{"en": "-value",               "de": "-Wert",                  "ru": "-значение"},
+    "gestures-rotateRight-limit":{"en": "-limit",               "de": "-limit",                 "ru": "-ограничение"},
+    "gestures-pinchIn-oid":     {"en": "pinch in Object ID",    "de": "pinch in Object ID",     "ru": "ID объекта при увеличении"},
+    "gestures-pinchIn-value":   {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
+    "gestures-pinchIn-limit":   {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"},
+    "gestures-pinchOut-oid":    {"en": "pinch out Object ID",   "de": "pinch out Object ID",    "ru": "ID объекта при уменьшении"},
+    "gestures-pinchOut-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
+    "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"}
 });
 

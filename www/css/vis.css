@@ -79,9 +79,25 @@
     width: 100%;
     height: 100%;
 }
+
 .vis-widget-prev-body {
     width: 100%;
     height: 100%;
+}
+
+.vis-signals-blink {
+    animation:          vis-blink-animation 1s steps(5, start) infinite;
+    -webkit-animation:  vis-blink-animation 1s steps(5, start) infinite;
+}
+@keyframes vis-blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+@-webkit-keyframes vis-blink-animation {
+    to {
+        visibility: hidden;
+    }
 }
 
 @-webkit-keyframes vis-waitico-rotate {

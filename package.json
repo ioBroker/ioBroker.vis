@@ -1,29 +1,29 @@
 {
   "name": "iobroker.vis",
-  "description": "Graphical user interface for iobroker.",
-  "version": "0.9.1",
+  "description": "Graphical user interface for ioBroker.",
+  "version": "0.10.2",
   "author": {
     "name": "bluefox",
-    "email": "bluefox@ccu.io"
+    "email": "dogafox@gmail.com"
   },
   "contributors": [
-    "bluefox <bluefox@ccu.io>",
+    "bluefox <dogafox@gmail.com>",
     "hobbyquaker <hq@ccu.io>",
     "smilingJack <smilingJack@ccu.io>"
   ],
-  "homepage": "https://github.com/iobroker/iobroker.vis",
+  "homepage": "https://github.com/ioBroker/ioBroker.vis",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iobroker/iobroker.vis"
+    "url": "https://github.com/ioBroker/ioBroker.vis"
   },
   "licenses": [
     {
       "type": "CC-BY-NC-4.0",
-      "url": "https://github.com/iobroker/iobroker.vis/blob/master/LICENSE"
+      "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
     }
   ],
   "keywords": [
-    "iobroker",
+    "ioBroker",
     "GUI",
     "DashUI",
     "web interface",
@@ -39,7 +39,7 @@
     "iobroker.web": "*"
   },
   "bugs": {
-    "url": "https://github.com/iobroker/iobroker.vis/issues"
+    "url": "https://github.com/ioBroker/ioBroker.vis/issues"
   },
   "main": "main.js",
   "scripts": {

@@ -227,7 +227,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             reader.onload = function () {
                 uploadArray.push({name: files[0].name, value: reader.result});
 
-                var type = files[0].name.split(".").pop();
+                var type = files[0].name.split(".").pop().toLowerCase();
                 var icon = "undef";
                 var class_name = files[0].name.split(".")[0].replace(" ", "_");
 
@@ -495,9 +495,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                 '</div>');
 
                     } else {
-                        var name = this.file.split(".")[0];
-                        var _type = this.file.split(".")[1] || "";
-                        var icon = "undef";
+                        var name   = this.file.split(".")[0];
+                        var _type  = (this.file.split(".")[1] || "").toLowerCase();
+                        var icon   = "undef";
                         var filter = "";
                         if (o.fileFilter && o.fileFilter.length && o.fileFilter.indexOf(_type) == -1) {
                             filter = "fm_fileFilter";
@@ -694,7 +694,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 '        <img src="' + fmFolder + 'icon/actions/icons.png"         id="fm_bar_prev"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Preview') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/play.png"          id="fm_bar_play"             style=" margin-left:20px"  class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Play') + '"/>' +
                 '        <img src="' + fmFolder + 'icon/actions/stop.png"          id="fm_bar_stop"                                        class="fm_bar_icon ui-corner-all ui-state-default"  title="' + fmTranslate('Stop') + '"/>' +
-                '        <input type="text" id="fm_bar_filter" style="width: calc(100% - 520px);" value="' + o.filter + '" placeholder="' + fmTranslate('Enter filter...') + '" />' +
+                '        <input type="text" id="fm_bar_filter" style="width: calc(100% - 550px);" value="' + o.filter + '" placeholder="' + fmTranslate('Enter filter...') + '" />' +
                 '        <button  id="fm_bar_all"        class="fm_bar_all" title="' + fmTranslate('Show all files') + '"></button>' +
                 '        <button  id="fm_bar_background" class="fm_bar_background" title="' + fmTranslate('Change background') + '"></button>' +
                 '    </div>' +
@@ -951,7 +951,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         $("#btn_fm_add_ok").button().click(function () {
                             function upload() {
                                 try {
-                                    fmConn.writeFile64(o.path + uploadArray[0].name, uploadArray[0].value.split('base64,')[1], function (err, data) {
+                                    var name = uploadArray[0].name.split('.');
+                                    // convert extension to lower case
+                                    name[name.length - 1] = name[name.length - 1].toLowerCase();
+                                    name = name.join('.');
+                                    fmConn.writeFile64(o.path + name, uploadArray[0].value.split('base64,')[1], function (err, data) {
 
                                         // TODO Leerzeichem im Dateinmaen Berucksichtigen (da in classen keine leertzeichen sein dürfen)
                                         var class_name = uploadArray[0].name.split(".")[0].replace(" ", "_");

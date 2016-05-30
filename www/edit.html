@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- ioBroker.vis Version 0.9.0 -->
+    <!-- vis Version 0.10.2 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -19,7 +19,7 @@
     <link href="img/faviconEdit.png" rel="shortcut icon" type="image/x-icon"/>
     <link href="img/faviconEdit.png" rel="apple-touch-icon" />
 
-    <title>Edit ioBroker.vis</title>
+    <title>Edit vis</title>
 
     <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
 
@@ -45,7 +45,7 @@
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
     <script type="text/javascript" src="lib/js/dropzone.js"></script>
-    <script type="text/javascript" src="lib/js/can.2.2.4.custom.min.js"></script>
+    <script type="text/javascript" src="lib/js/can.2.3.24.custom.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
     <!--script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script-->
@@ -59,6 +59,7 @@
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
 
     <script type="text/javascript" src="js/visLang.js"></script>
+    <script type="text/javascript" src="js/visAbout.js"></script>
     <script type="text/javascript" src="_socket/info.js"></script>
     <script type="text/javascript" src="js/conn.js"></script>
     <script type="text/javascript" src="js/vis.js"></script>
@@ -101,25 +102,7 @@
         </tr>
     </table>
 </div>
-<div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT">
-
-    <ul style="font-size: 1.1em; line-height: 2em; display: inline;">
-        <li><a href="http://ioBroker.net/" target="_blank" class="translate">Web</a></li>
-        <li><a href="http://forum.iobroker.net" target="_blank" class="translate">Community</a></li>
-        <li><a href="https://github.com/ioBroker/ioBroker.vis/blob/master/README.md" target="_blank" class="translate">Change log</a>
-        </li>
-    </ul>
-
-    <h4>Copyright &copy; 2013-2015 <a href="https://github.com/GermanBluefox" target="_blank">Bluefox</a>, <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a>, <a href="https://github.com/smiling-Jack" target="_blank">smiling-Jack</a></h4>
-
-    <p class="translate">CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img
-        src="img/cc-nc-by.png"/></a>
-    <!--p class="translate">license1</p>
-    <p class="translate">license2</p>
-    <p class="translate">license3</p>
-    <p class="translate">license4</p-->
-    <p class="translate">license5</p>
-</div>
+<div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT"></div>
 <div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_view"></textarea>
@@ -193,7 +176,7 @@
 </div>
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
     <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span class="ui-widget-header"  style="border: 0">vis </span><span id="vis-version" class="ui-widget-header" style="border: 0"></span></div>
-
+    <div class="vis-menu-line" style="position: absolute; top: 37px; left: 0px; height: 5px; width: 100%; background: #3C98D3; z-index: 1000;"></div>
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
         <li id="ribbon_tab_datei" style="display: none">
             <a href="#ribbon_file" style="padding: 2px 4px 2px 4px" class="translate">File</a>
@@ -274,10 +257,22 @@
     <button id="button_undo"></button>
     <table style="display: inline-block; float: right">
         <tr>
-            <td><div id="current-user" class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px"></div></td>
+            <td>
+                <div class="ui-widget-header" style="border: 0; padding-right: 10px; height: 16px">
+                    <span  style="display: inline-block;" id="current-project"></span> [<span  style="display: inline-block;" class="ui-icon ui-icon-person"></span>
+                    <span style="display: inline-block;" id="current-user"></span>]
+                </div>
+            </td>
             <td style="width:30px"><button id="saving_progress"></button></td>
             <td><button id="logout_button" class="ui-state-default ui-corner-top translateT" style="display: none;" title="Logout"></button></td>
-            <td><button id="exit_button"></button></td>
+            <td><div><button id="exit_button"></button>
+                <button id="exit_button_select"></button></div>
+                <ul style="display: none; position: absolute; z-index: 1000; width: 400px" id="exit_button_select_menu">
+                    <li data-value="close"><span class="ui-icon ui-icon-close"></span><span class="translate">Switch to runtime in this window</span></li>
+                    <li data-value="play"><span class="ui-icon ui-icon-play"></span><span class="translate">Switch to runtime in new window</span></li>
+                    <li data-value="refresh"><span class="ui-icon ui-icon-refresh"></span><span class="translate">Reload all runtimes</span></li>
+                </ul>
+            </td>
         </tr>
     </table>
 
@@ -458,7 +453,7 @@
     </div>
     <div class="ribbon_tab" id="ribbon_tools" >
         <div class="ribbon_tab_content ui-widget-content" >
-            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 450px">
+            <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 550px">
                 <table style="border-spacing: 0px; width: 100%">
                     <colgroup>
                         <col width="80px" style="text-align:left"/>
@@ -478,8 +473,11 @@
                             <div class="rib_tool_resolution_toggle"></div>
                         </td>
                         <td>
-                            <table style="border: 0px"><tr>
-                                <td><label for="screen_default_man" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td></tr>
+                            <table style="border: 0px">
+                                <tr>
+                                    <td><label for="screen_default_man" title="Default screen" class="translate translateT">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td>
+                                    <td><label for="render_always_man"  title="Render always"  class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always_man" type="checkbox"/></td>
+                                </tr>
                             </table>
                         </td>
                     </tr>
@@ -519,8 +517,11 @@
                             <div class="rib_tool_resolution_toggle"></div>
                         </td>
                         <td>
-                            <table style="border: 0px"><tr>
-                                <td><label for="screen_default_fix" title="Default screen">Default:</label></td><td><input class="vis-screen-default" id="screen_default_fix" type="checkbox"/></td></tr>
+                            <table style="border: 0px">
+                                <tr>
+                                    <td><label for="screen_default_fix" title="Default screen" class="translate translateT">Default:</label></td><td><input class="vis-screen-default" id="screen_default_fix" type="checkbox"/></td>
+                                    <td><label for="render_always_fix"      title="Render always"  class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always_fix" type="checkbox"/></td>
+                                </tr>
                             </table>
                         </td>
                     </tr>
@@ -978,6 +979,11 @@
 <div style="display: none" id="uploadPreview"></div>
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
+
+<div id="server-disconnect" style="left: calc(100% - 350px); padding: 10px; display: block; width: 170px; height: 14px; border-radius: 3px; text-align: center; position: fixed;" class="ui-state-error" >
+    <span class="ui-icon ui-icon-alert" style="position: relative; top: 0;left: 0; display: inline-block; float: left; margin-right: .3em;"></span>
+    <div class="translate" style="display: inline-block; position: relative;top: 0;left: 0;">No connection</div>
+</div>
 
 </body>
 

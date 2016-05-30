@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.9.1',
+    version: '0.10.2',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -128,32 +128,34 @@ var vis = {
     language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:         {},
     visibility:             {},
+    signals:                {},
     bindings:               {},
     bindingsCache:          {},
     commonStyle:            null,
     _setValue: function (id, state) {
+        var that = this;
         var oldValue = this.states.attr(id + '.val');
         this.conn.setState(id, state[id + '.val'], function (err) {
             if (err) {
                 //state[id + '.val'] = oldValue;
-                this.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
+                that.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
 
-            if (this.states.attr(id) || this.states.attr(id + '.val') !== undefined) {
-                this.states.attr(state);
+            if (that.states.attr(id) || that.states.attr(id + '.val') !== undefined) {
+                that.states.attr(state);
 
                 // If error set value back, but we need generate the edge
                 if (err) {
                     state[id + '.val'] = oldValue;
-                    this.states.attr(state);
+                    that.states.attr(state);
                 }
 
                 // Inform other widgets, that does not support canJS
-                for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                    this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
+                for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
+                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
                 }
             }
-        }.bind(this));
+        });
     },
     setValue: function (id, val) {
         if (!id) {
@@ -410,16 +412,21 @@ var vis = {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    }  else
+                    } else
                     if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
                         delete data[attr];
                         attr = 'max_value_oid';
-                    }  else
+                    } else
                     if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
+                    } else
+                    if (attr === 'weoid') {
+                        data.woeid = data[attr];
+                        delete data[attr];
+                        attr = 'woeid';
                     }
 
                     if (typeof data[attr] === 'string') {
@@ -446,7 +453,7 @@ var vis = {
                                     }
                                 }
                             }
-                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid$/) || attr.match(/^oid/)) && data[attr])) {
+                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
                             if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
 
                             // Visibility binding
@@ -454,6 +461,13 @@ var vis = {
                                 var oid = data['visibility-oid'];
                                 if (!this.visibility[oid]) this.visibility[oid] = [];
                                 this.visibility[oid].push({view: view, widget: id});
+                            }
+
+                            // Signal binding
+                            if (attr.match(/^signals-oid-/) && data[attr]) {
+                                var oid = data[attr];
+                                if (!this.signals[oid]) this.signals[oid] = [];
+                                this.signals[oid].push({view: view, widget: id, index: parseInt(attr.substring('signals-oid-'.length), 10)});
                             }
                         }
                     }
@@ -637,8 +651,13 @@ var vis = {
         this.initialized = true;
 
         // If this function called earlier, it makes problems under FireFox.
-        if (this.views && this.views._project) {
-            this.renderView("_project", false, true);
+        // render all views, that should be always rendered
+        if (this.views && !this.editMode) {
+            for (var view in this.views) {
+                if (this.views[view].settings.alwaysRender) {
+                    this.renderView(view, false, true);
+                }
+            }
         }
 
         if (this.activeView) this.changeView(this.activeView);
@@ -683,9 +702,9 @@ var vis = {
         $('#visview_' + view).find('.vis-view-container').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
-                $(this).html('<span style="color:red">' + _('error: view not found.') + '</span>');
+                $(this).html('<span style="color: red">' + _('error: view not found.') + '</span>');
             } else if (cview == view) {
-                $(this).html('<span style="color:red">' + _('error: view container recursion.') + '</span>');
+                $(this).html('<span style="color: red">' + _('error: view container recursion.') + '</span>');
             } else {
                 $(this).html('');
                 that.renderView(cview, true);
@@ -751,13 +770,13 @@ var vis = {
         }
 
         // move views in container
-        $('#visview_' + view).find("div[id$='container']").each(function () {
-            var cview = $(this).attr("data-vis-contains");
+        $('#visview_' + view).find('div[id$="container"]').each(function () {
+            var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
-                $(this).append("error: view not found.");
+                $(this).append('error: view not found.');
                 return false;
             } else if (cview == view) {
-                $(this).append("error: view container recursion.");
+                $(this).append('error: view container recursion.');
                 return false;
             }
             that.renderView(cview, true);
@@ -914,6 +933,224 @@ var vis = {
             this.binds.bars.filterChanged(this.activeView, filter);
         }
     },
+    isSignalVisible: function (view, widget, index, val) {
+        var oid = this.views[view].widgets[widget].data['signals-oid-' + index];
+
+        if (oid) {
+            if (val === undefined) val = this.states.attr(oid + '.val');
+            if (val === undefined) return false;
+
+            var condition = this.views[view].widgets[widget].data['signals-cond-' + index];
+            var value     = this.views[view].widgets[widget].data['signals-val-'  + index];
+
+            if (!condition || value === undefined) return false;
+
+            var t = typeof val;
+            if (t == 'boolean' || val === 'false' || val === 'true') {
+                value = (value === 'true' || value === true || value === 1 || value === '1');
+            } else if (t == 'number') {
+                value = parseFloat(value);
+            }  else if (t == 'object') {
+                val = JSON.stringify(val);
+            }
+
+            switch (condition) {
+                case '==':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
+                    return value == val;
+                case '!=':
+                    value = value.toString();
+                    val   = val.toString();
+                    if (val   == '1') val   = 'true';
+                    if (value == '1') value = 'true';
+                    if (val   == '0') val   = 'false';
+                    if (value == '0') value = 'false';
+                    return value != val;
+                case '>=':
+                    return val >= value;
+                case '<=':
+                    return val <= value;
+                case '>':
+                    return val > value;
+                case '<':
+                    return val < value;
+                case 'consist':
+                    value = value.toString();
+                    val   = val.toString();
+                    return (val.toString().indexOf(value) !== -1);
+                default:
+                    console.log('Unknown signals condition for ' + widget + ': ' + condition);
+                    return false;
+            }
+        } else {
+            return false;
+        }
+    },
+    addSignalIcon: function (view, wid, data, index) {
+        // show icon
+        var display = (this.editMode || this.isSignalVisible(view, wid, index)) ? '' : 'none';
+        if (this.editMode && data['signals-hide-edit-' + index]) display = 'none';
+
+        $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0)+ '%; left: ' + (data['signals-horz-' + index] || 0)+ '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
+            (data['signals-text-' + index] ? ('<div class="vis-signal-text " style="' + (data['signals-text-style-' + index] || '') + '">' + data['signals-text-' + index] + '</div>') : '') + '</div>');
+    },
+    addGestures: function (id, wdata) {
+        // gestures
+        var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
+        var $$wid   = $$('#' + id);
+        var $wid    = $('#' + id);
+        var offsetX = parseInt(wdata['gestures-offsetX']) || 0;
+        var offsetY = parseInt(wdata['gestures-offsetY']) || 0;
+        var that    = this;
+
+        gestures.forEach(function (gesture) {
+            if (wdata && wdata['gestures-' + gesture + '-oid']) {
+                var oid = wdata['gestures-' + gesture + '-oid'];
+                if (oid) {
+                    var val      = wdata['gestures-' + gesture + '-value'];
+                    var delta    = parseInt(wdata['gestures-' + gesture + '-delta'])     || 10;
+                    var limit    = parseFloat(wdata['gestures-' + gesture + '-limit'])   || false;
+                    var max      = parseFloat(wdata['gestures-' + gesture + '-maximum']) || 100;
+                    var min      = parseFloat(wdata['gestures-' + gesture + '-minimum']) || 0;
+                    var valState = that.states.attr(oid + '.val');
+                    var newVal   = null;
+                    var $indicator;
+                    if (valState !== undefined){
+                        $wid.on('touchmove', function(evt) {
+                            evt.preventDefault();
+                        });
+
+                        $wid.css({
+                            '-webkit-user-select':  'none',
+                            '-khtml-user-select':   'none',
+                            '-moz-user-select':     'none',
+                            '-ms-user-select':      'none',
+                            'user-select':          'none'
+                        });
+                        $$wid[gesture](function (data) {
+                            valState = that.states.attr(oid + '.val');
+                            if (val === 'toggle') {
+                                if (valState === true) {
+                                    newVal = false;
+                                } else if (valState === false) {
+                                    newVal = true;
+                                } else {
+                                    newVal = null;
+                                    return;
+                                }
+                            } else if (gesture == 'swiping' || gesture == 'rotating' || gesture == 'pinching') {
+                                if (newVal === null){
+                                    $indicator = $('#' + wdata['gestures-indicator']);
+                                    // create default indicator
+                                    if (!$indicator.length) {
+                                        $indicator = $('#gestureIndicator');
+                                        if (!$indicator.length) {
+                                            $('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
+                                            $indicator = $('#gestureIndicator');
+
+                                            $indicator.on('gestureUpdate', function(event, evData) {
+                                                if (evData.val === null) {
+                                                    $(this).hide();
+                                                } else {
+                                                    $(this).html(evData.val);
+                                                    $(this).css({
+                                                        left: parseInt(evData.x) - $(this).width()  / 2 + 'px',
+                                                        top:  parseInt(evData.y) - $(this).height() / 2 + 'px'
+                                                    }).show();
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    $('#vis_container').css({
+                                        '-webkit-user-select':  'none',
+                                        '-khtml-user-select':   'none',
+                                        '-moz-user-select':     'none',
+                                        '-ms-user-select':      'none',
+                                        'user-select':          'none'
+                                    });
+
+                                    $(document).on('mouseup.gesture touchend.gesture', function () {
+                                        if (newVal != null) {
+                                            that.setValue(oid, newVal);
+                                            newVal = null;
+                                        }
+                                        $indicator.trigger('gestureUpdate', {val: null});
+                                        $(document).off('mouseup.gesture touchend.gesture');
+
+                                        $('#vis_container').css({
+                                            '-webkit-user-select':  'text',
+                                            '-khtml-user-select':   'text',
+                                            '-moz-user-select':     'text',
+                                            '-ms-user-select':      'text',
+                                            'user-select':          'text'
+                                        });
+                                    });
+                                }
+                                var swipeDelta, indicatorX, indicatorY = 0;
+                                switch (gesture){
+                                    case 'swiping':
+                                        swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        indicatorX = data.touch.x;
+                                        indicatorY = data.touch.y;
+                                        break;
+
+                                    case 'rotating':
+                                        swipeDelta = data.touch.delta;
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        if (data.touch.touches[0].y < data.touch.touches[1].y){
+                                            indicatorX = data.touch.touches[1].x;
+                                            indicatorY = data.touch.touches[1].y;
+                                        } else {
+                                            indicatorX = data.touch.touches[0].x;
+                                            indicatorY = data.touch.touches[0].y;
+                                        }
+                                        break;
+
+                                    case 'pinching':
+                                        swipeDelta = data.touch.delta;
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                            indicatorX = data.touch.touches[1].x;
+                                            indicatorY = data.touch.touches[1].y;
+                                        } else {
+                                            indicatorX = data.touch.touches[0].x;
+                                            indicatorY = data.touch.touches[0].y;
+                                        }
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+
+                                newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
+                                newVal = Math.max(min, Math.min(max, newVal));
+                                $indicator.trigger('gestureUpdate', {val: newVal, x: indicatorX + offsetX, y: indicatorY + offsetY});
+                                return;
+                            } else if (limit !== false) {
+                                newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1);
+                                if (parseFloat(val) > 0 && newVal > limit) {
+                                    newVal = limit;
+                                } else if (parseFloat(val) < 0 && newVal < limit){
+                                    newVal = limit;
+                                }
+                            } else {
+                                newVal = val;
+                            }
+                            that.setValue(oid,newVal);
+                            newVal = null;
+                        });
+                    }
+                }
+            }
+        });
+    },
     renderWidget: function (view, id) {
         var $view = $('#visview_' + view);
         if (!$view.length) return;
@@ -926,7 +1163,7 @@ var vis = {
             this.widgets[id] = {
                 wid: id,
                 data: new can.Map($.extend({
-                    "wid": id
+                    wid: id
                 }, widget.data))
             };
         } catch (e) {
@@ -962,12 +1199,12 @@ var vis = {
             var $wid = null;
 
             if (widget.style && !widgetData._no_style) {
-                $wid = $wid || $("#" + id);
+                $wid = $wid || $('#' + id);
                 $wid.css(widget.style);
             }
 
             if (widget.data && widget.data.class) {
-                $wid = $wid || $("#" + id);
+                $wid = $wid || $('#' + id);
                 $wid.addClass(widget.data.class);
             }
 
@@ -983,156 +1220,14 @@ var vis = {
                 }
 
                 // Processing of gestures
-                if (typeof $$ !== 'undefined') {
-                    // gestures
-                    var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
-                    var $$wid = $$('#' + id);
-                    var offsetX = parseInt(widget.data['gestures-offsetX']) || 0;
-                    var offsetY = parseInt(widget.data['gestures-offsetY']) || 0;
-                    gestures.forEach(function (gesture) {
-                        if (widget.data && widget.data['gestures-' + gesture + '-oid']) {
-                            var oid = widget.data['gestures-' + gesture + '-oid'];
-                            if (oid) {
-                                var val     = widget.data['gestures-' + gesture + '-value'];
-                                var delta   = parseInt(widget.data['gestures-' + gesture + '-delta'])     || 10;
-                                var limit   = parseFloat(widget.data['gestures-' + gesture + '-limit'])   || false;
-                                var max     = parseFloat(widget.data['gestures-' + gesture + '-maximum']) || 100;
-                                var min     = parseFloat(widget.data['gestures-' + gesture + '-minimum']) || 0;
-                                var valState = this.states.attr(oid + '.val');
-                                var newVal  = null;
-                                var $indicator;
-                                if (valState !== undefined){
-                                    $wid.on('touchmove', function(evt) {
-                                        evt.preventDefault();
-                                    });
+                if (typeof $$ !== 'undefined') this.addGestures(id, widget.data);
+            }
 
-                                    $wid.css({
-                                        "-webkit-user-select":  'none',
-                                        "-khtml-user-select":   'none',
-                                        "-moz-user-select":     'none',
-                                        "-ms-user-select":      'none',
-                                        "user-select":          'none'
-                                    });
-
-                                    $$wid[gesture](function (data) {
-                                        valState = this.states.attr(oid + '.val');
-                                        if (val === 'toggle') {
-                                            if (valState === true) {
-                                                newVal = false;
-                                            } else if (valState === false) {
-                                                newVal = true;
-                                            } else {
-                                                newVal = null;
-                                                return;
-                                            }
-                                        } else if (gesture == 'swiping' || gesture == 'rotating' || gesture == 'pinching') {
-                                            if (newVal === null){
-                                                $indicator = $('#' + widget.data['gestures-indicator']);
-                                                // create default indicator
-                                                if (!$indicator.length) {
-                                                    $indicator = $('#gestureIndicator');
-                                                    if (!$indicator.length) {
-                                                        $('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
-                                                        $indicator = $('#gestureIndicator');
-
-                                                        $indicator.on('gestureUpdate', function(event, evData) {
-                                                            if (evData.val === null) {
-                                                                $(this).hide();
-                                                            } else {
-                                                                $(this).html(evData.val);
-                                                                $(this).css({
-                                                                    left: parseInt(evData.x) - $(this).width()  / 2 + 'px',
-                                                                    top:  parseInt(evData.y) - $(this).height() / 2 + 'px'
-                                                                }).show();
-                                                            }
-                                                        });
-                                                    }
-                                                }
-
-                                                $('#vis_container').css({
-                                                    "-webkit-user-select":  'none',
-                                                    "-khtml-user-select":   'none',
-                                                    "-moz-user-select":     'none',
-                                                    "-ms-user-select":      'none',
-                                                    "user-select":          'none'
-                                                });
-
-                                                $(document).on('mouseup.gesture touchend.gesture', function () {
-                                                    if (newVal != null) {
-                                                        this.setValue(oid, newVal);
-                                                        newVal = null;
-                                                    }
-                                                    $indicator.trigger('gestureUpdate', {val: null});
-                                                    $(document).off('mouseup.gesture touchend.gesture');
-
-                                                    $('#vis_container').css({
-                                                        "-webkit-user-select":  'text',
-                                                        "-khtml-user-select":   'text',
-                                                        "-moz-user-select":     'text',
-                                                        "-ms-user-select":      'text',
-                                                        "user-select":          'text'
-                                                    });
-                                                }.bind(this));
-                                            }
-                                            var swipeDelta, indicatorX, indicatorY = 0;
-                                            switch (gesture){
-                                                case 'swiping':
-                                                    swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
-                                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                                    indicatorX = data.touch.x;
-                                                    indicatorY = data.touch.y;
-                                                    break;
-
-                                                case 'rotating':
-                                                    swipeDelta = data.touch.delta;
-                                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                                    if (data.touch.touches[0].y < data.touch.touches[1].y){
-                                                        indicatorX = data.touch.touches[1].x;
-                                                        indicatorY = data.touch.touches[1].y;
-                                                    } else {
-                                                        indicatorX = data.touch.touches[0].x;
-                                                        indicatorY = data.touch.touches[0].y;
-                                                    }
-                                                    break;
-
-                                                case 'pinching':
-                                                    swipeDelta = data.touch.delta;
-                                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                                        indicatorX = data.touch.touches[1].x;
-                                                        indicatorY = data.touch.touches[1].y;
-                                                    } else {
-                                                        indicatorX = data.touch.touches[0].x;
-                                                        indicatorY = data.touch.touches[0].y;
-                                                    }
-                                                    break;
-
-                                                default:
-                                                    break;
-                                            }
-
-                                            newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
-                                            newVal = Math.max(min, Math.min(max, newVal));
-                                            $indicator.trigger('gestureUpdate', {val: newVal, x: indicatorX + offsetX, y: indicatorY + offsetY});
-                                            return;
-                                        } else if (limit !== false) {
-                                            newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1);
-                                            if (parseFloat(val) > 0 && newVal > limit) {
-                                                newVal = limit;
-                                            } else if (parseFloat(val) < 0 && newVal < limit){
-                                                newVal = limit;
-                                            }
-                                        } else {
-                                            newVal = val;
-                                        }
-                                        this.setValue(oid,newVal);
-                                        newVal = null;
-                                    }.bind(this));
-                                }
-                            }
-                        }
-                    }.bind(this));
-                }
+            // processing of signals
+            var s = 0;
+            while (widget.data['signals-oid-' + s]) {
+                this.addSignalIcon(view, id, widget.data, s);
+                s++;
             }
 
             // If edit mode, bind on click event to open this widget in edit dialog
@@ -1181,7 +1276,7 @@ var vis = {
                 this.renderView(view, true, true);
 
                 // View ggf aus Container heraus holen
-                if ($('#visview_' + view).parent().attr("id") !== 'vis_container') {
+                if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
                     $('#visview_' + view).appendTo('#vis_container');
                 }
 
@@ -1242,7 +1337,6 @@ var vis = {
             }
         }
         this.activeView = view;
-
 
         /*$('#visview_' + view).find('div[id$="container"]').each(function () {
          $('#visview_' + $(this).attr('data-vis-contains')).show();
@@ -1305,8 +1399,25 @@ var vis = {
             if (callback) callback.call(that, callbackArg);
         });
     },
+    removeUnusedFields: function () {
+        var regExp = /^gestures\-/;
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                // Check all attributes
+                var data = this.views[view].widgets[id].data;
+                for (var attr in data) {
+                    if ((data[attr] === '' || data[attr] === null) && regExp.test(attr)) {
+                        delete data[attr];
+                    }
+                }
+            }
+        }
+    },
     saveRemoteActive: 0,
     saveRemote: function (mode, callback) {
+        // remove all unused fields
+        this.removeUnusedFields();
+
         if (typeof mode == 'function') {
             callback = mode;
             mode     = null;
@@ -2235,13 +2346,14 @@ function main($) {
     });
 
     if (vis.editMode) {
+        vis.states.__attrs = vis.states.attr;
         vis.states.attr = function (attr, val) {
             var type = typeof attr;
             if (type !== 'string' && type !== 'number') {
                 for (var o in attr) {
                     // allow only dev1, dev2, ... to be bound
                     if (o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
-                        return this._attrs(attr, val);
+                        return this.__attrs(attr, val);
                     }
                 }
             } else if (arguments.length === 1) {
@@ -2271,7 +2383,7 @@ function main($) {
 
     // für iOS Safari - wirklich notwendig?
     $('body').on('touchmove', function (e) {
-        if (!$(e.target).closest("body").length) e.preventDefault();
+        if (!$(e.target).closest('body').length) e.preventDefault();
     });
 
     vis.preloadImages(['img/disconnect.png']);
@@ -2394,12 +2506,14 @@ function main($) {
                                         vis.states[id + '.ts']  = obj.ts;
                                         vis.states[id + '.ack'] = obj.ack;
                                         vis.states[id + '.lc']  = obj.lc;
+                                        if (obj.q !== undefined) vis.states[id + '.q'] = obj.q;
                                     } else {
                                         var o = {};
                                         o[id + '.val'] = obj.val;
                                         o[id + '.ts']  = obj.ts;
                                         o[id + '.ack'] = obj.ack;
                                         o[id + '.lc']  = obj.lc;
+                                        if (obj.q !== undefined) o[id + '.q'] = obj.q;
                                         vis.states.attr(o);
                                     }
                                 } catch (e) {
@@ -2453,7 +2567,7 @@ function main($) {
                         }
 
                         if (error) {
-                            console.log("Possibly not authenticated, wait for request from server");
+                            console.log('Possibly not authenticated, wait for request from server');
                             // Possibly not authenticated, wait for request from server
                         } else {
                             // Get Server language
@@ -2482,6 +2596,9 @@ function main($) {
                                     for (var ob in data) {
                                         vis.objectSelector = true;
                                         break;
+                                    }
+                                    if (vis.editMode && vis.objectSelector) {
+                                        vis.inspectWidgets(true);
                                     }
                                 });
                             }
@@ -2515,6 +2632,7 @@ function main($) {
                     vis.states[id + '.ts']  = state.ts;
                     vis.states[id + '.ack'] = state.ack;
                     vis.states[id + '.lc']  = state.lc;
+                    if (state.q !== undefined) vis.states[id + '.q'] = state.q;
                 } else {
                     var o = {};
                     // Check new model
@@ -2522,6 +2640,7 @@ function main($) {
                     o[id + '.ts']  = state.ts;
                     o[id + '.ack'] = state.ack;
                     o[id + '.lc']  = state.lc;
+                    if (state.q !== undefined) o[id + '.q'] = state.q;
                     try {
                         vis.states.attr(o);
                     } catch (e) {
@@ -2548,6 +2667,22 @@ function main($) {
                                 mWidget._customHandlers.onShow) {
                                 mWidget._customHandlers.onShow(mWidget, id);
                             }
+                        }
+                    }
+                }
+
+                // process signals
+                if (!vis.editMode && vis.signals[id]) {
+                    for (var s = 0; s < vis.signals[id].length; s++) {
+                        var signal = vis.signals[id][s];
+                        var mWidget = document.getElementById(signal.widget);
+
+                        if (!mWidget) continue;
+
+                        if (vis.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
+                            $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').show();
+                        } else {
+                            $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').hide();
                         }
                     }
                 }
@@ -2638,7 +2773,7 @@ function main($) {
                 });
                 setTimeout(function () {
                     vis.authRunning = false;
-                    console.log("user " + user + ", " + pass + " " + salt);
+                    console.log('user ' + user + ', ' + pass + ' ' + salt);
                     vis.conn.authenticate(user, pass, salt);
                 }, 500);
                 return true;
@@ -2646,8 +2781,9 @@ function main($) {
         },
         onCommand:    function (instance, command, data) {
             var parts;
-            if (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1) return false;
+            if (!instance || (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1)) return false;
             if (command) {
+                if (vis.editMode && command !== 'tts' && command !== 'playSound') return;
                 // external Commands
                 switch (command) {
                     case 'alert':
@@ -2703,7 +2839,6 @@ function main($) {
                             }
                         }, 1);
                         break;
-
                     case 'tts':
                         if (typeof app !== 'undefined') {
                             app.tts(data);
@@ -2737,17 +2872,17 @@ function main($) {
 
     if (!vis.editMode) {
         // Listen for resize changes
-        window.addEventListener("orientationchange", function () {
+        window.addEventListener('orientationchange', function () {
             vis.orientationChange();
         }, false);
-        window.addEventListener("resize", function () {
+        window.addEventListener('resize', function () {
             vis.orientationChange();
         }, false);
     }
 
     //vis.preloadImages(["../../lib/css/themes/jquery-ui/redmond/images/modalClose.png"]);
     vis.initWakeUp();
-};
+}
 
 // Start of initialisation: main ()
 if (typeof app === 'undefined') {
@@ -2778,7 +2913,7 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     }, timeout);
 }
 
-if (window.location.search == "?edit") {
+if (window.location.search == '?edit') {
     window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
 }

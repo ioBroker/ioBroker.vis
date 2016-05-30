@@ -38,8 +38,8 @@
             },
             "stretch":          {"en": "Stretch",                   "de": "Strecken",               "ru": "Растянуть"},
             "factor":           {"en": "Multiplex factor",          "de": "Multiplikation",         "ru": "Множитеть"},
-            "class_true":       {"en": "Class if quality 'true'",   "de": "Kalsse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
-            "class_false":      {"en": "Class if quality 'false'",  "de": "Kalsse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
+            "class_true":       {"en": "Class if quality 'true'",   "de": "Klasse bei Qualität 'true'", "ru": "Класс, если качество 'true'"},
+            "class_false":      {"en": "Class if quality 'false'",  "de": "Klasse bei Qualität 'false'", "ru": "Класс, если качество 'false'"},
             "test_html":        {"en": "Text for test",             "de": "Testtext",               "ru": "Тестовый текст"},
             "test_html_tooltip": {
                 "en": "You can specify the test text if value is now empty to visualise settings.\x0AIt is valid only during edit.",
@@ -1075,24 +1075,36 @@
 	        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
 	    },
 
-        formatDate: function (dateObj, isSeconds, format) {
-            if (typeof isSeconds != 'boolean') {
-                format = isSeconds;
-                isSeconds = false;
+        formatDate: function (dateObj, format, _ignoreOld) {
+            if (typeof format === 'boolean') {
+                format = _ignoreOld;
             }
 
-            if (format == 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
+            if (format === 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
 
             var format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
             var text = typeof dateObj;
-            if (text == 'string') {
+            if (text === 'string') {
                 var pos = dateObj.indexOf('.');
                 if (pos != -1) dateObj = dateObj.substring(0, pos);
                 return dateObj;
             }
-            if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+            if (text !== 'object') {
+                var i = parseInt(dateObj, 10);
+                if (i == dateObj) {
+                    i = dateObj;
+                    // if greater than 2000.01.01 00:00:00
+                    if (i > 946681200000) {
+                        dateObj = new Date(dateObj);
+                    } else {
+                        dateObj = new Date(dateObj * 1000);
+                    }
+                } else {
+                    dateObj = new Date(dateObj);
+                }
+            }
 
             var v;
 
@@ -1263,6 +1275,105 @@
             $div.on('gestureUpdate', function(event, evData){
                 refresh(evData.val, evData.x, evData.y);
             });
+        },
+        speech2text: function (wid, view, data, style) {
+            var final_transcript = '';
+            var recognition;
+            var ignore_onend = false;
+
+            if (typeof webkitSpeechRecognition === 'undefined') {
+                console.error('Browser does not support speech 2 text');
+                return;
+            }
+
+            var words = null;
+            if (data.keywords) {
+                words =  data.keywords.toLowerCase().split(/[\s,;]+/g);
+            }
+
+            function startRecognition() {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous     = data.continuous === true || data.continuous === 'true';
+                recognition.interimResults = true;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = function() {
+                    $('#info_speak_now').show();
+                };
+
+                recognition.onerror = function(event) {
+                    if (event.error == 'no-speech') {
+                        $('#info_no_speech').show();
+                        ignore_onend = true;
+                    }
+                    if (event.error == 'audio-capture') {
+                        $('#info_no_microphone').show();
+                        ignore_onend = true;
+                    }
+                    if (event.error == 'not-allowed') {
+                        if (event.timeStamp - start_timestamp < 100) {
+                            $('#info_blocked').show();
+                        } else {
+                            $('#info_denied').show();
+                        }
+                        ignore_onend = true;
+                    }
+                };
+
+                recognition.onend = function() {
+                    console.log('onend');
+                    recognition.stop();
+                    recognition = null;
+                    setTimeout(startRecognition, 1000);
+                };
+
+                recognition.onresult = function(event) {
+                    var interim_transcript = '';
+
+                    if (typeof(event.results) == 'undefined') {
+                        recognition.onend = null;
+                        recognition.stop();
+                        return;
+                    }
+
+                    for (var i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            final_transcript   += event.results[i][0].transcript;
+                        } else {
+                            interim_transcript += event.results[i][0].transcript;
+                        }
+                    }
+                    console.log(interim_transcript);
+                    //final_transcript = capitalize(final_transcript);
+                    $('#' + wid).find('.final').html(final_transcript);
+                    $('#' + wid).find('.interim').html(interim_transcript);
+
+                    if (final_transcript) {
+                        var found = true;
+                        if (words) {
+                            found = false;
+                            var wwords = final_transcript.toLowerCase().split(' ');
+                            for (var w = 0; w < words.length; w++) {
+                                if (wwords.indexOf(words[w]) !== -1) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (found) {
+                            console.log(final_transcript);
+                            vis.setValue(data.oid, final_transcript);
+                        }
+                        final_transcript = '';
+                    }
+                };
+
+                recognition.lang = data.language;
+                if (!vis.editMode)
+                    recognition.start();
+            }
+
+            startRecognition();
         }
     };
 
@@ -1314,6 +1425,8 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
+        data-vis-prev1='<div id="prev_tplFrame" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 80px; height: 80px; border: 3px solid rgb(73, 185, 255); border-radius: 20px;"><div style="top: 30px; color: rgb(73, 185, 255); font-size: 20px; text-align: center; padding-top: 32px;">HTML</div></div>'
+        data-vis-set="basic"
         data-vis-name="HTML"
         data-vis-attrs="html/text;refreshInterval[0]/slider,0,180000,100">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
@@ -1329,7 +1442,7 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="Svg shape"
-        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 56px; height: 60px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"> <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block; width: 100%; height: 100%; fill: rgb(0, 179, 172); stroke: rgb(0, 156, 179); stroke-width: 6px;"> <circle cx="50" cy="50" r="47"></circle> </svg> </div> </div></div>'
+        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 90px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block;width: 100%;height: 100%;fill: rgb(255, 255, 255);stroke: rgb(60, 152, 211); stroke-width: 4px;"> <circle cx="50" cy="50" r="47"></circle></svg></div> </div></div>'
         data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle,star,arrow;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,360,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1424,7 +1537,7 @@
 <script id="tplLink"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplLink" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee vis-widget-lock" style="height: 22px" > <div class="vis-widget-prev-body"> <a style="text-decoration:none;width:100%;height:100%"><div style="width:100%;height:100%;text-algin:center">www.ioBroker.com</div></a> </div> </div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_tplLink.png"></img>'
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="link"
@@ -1439,7 +1552,7 @@
 <script id="tplFrame"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplFrame" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="overflow: visible; width: 90px; height: 90px; border: 3px solid rgb(0, 0, 255); left: 90px; top: 222px;" > 	 <div style="width: 100%; height: 0px; background-color: black;">		</div> <div style="position: absolute; top: 1px; left: 29px; color: rgb(0, 0, 255);">Border</div> 		 </div>'
+        data-vis-prev='<div id="prev_tplFrame" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 80px; height: 80px; border: 3px dashed rgb(60, 152, 211); border-radius: 20px;"><div style="top: 30px; color: rgb(60, 152, 211); font-size: 16px; text-align: center; padding-top: 31px;">BORDER</div></div>'
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="Border"
@@ -1605,7 +1718,7 @@
 <script id="tplFilterDropdown"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplFilterDropdown" style="text-align: initial;padding: 4px"><div class="vis-widget_prev vis-widget-lock" style="width: 60px; height: 23px;" > <div class="vis-widget-prev-body"> <select id="" name=""> <option value="" selected="selected">all</option> <option value="filter">filter</option></select> </div> </div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_FilterDropdown.png"></img>'
         data-vis-set="basic"
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
@@ -1624,13 +1737,13 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-prev='<div id="prev_tplValueFloat" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:red; font-weight:bold" > <div class="vis-widget-prev-body"> <div>52,57 MB</div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloat.png"></img>'
         data-vis-name="Number"
         data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
-    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + ".val") == "true" ||  vis.states.attr(this.data['oid-quality'] + ".val") === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height:18px" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + '.val') === 'true' ||  vis.states.attr(this.data['oid-quality'] + '.val') === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 60px; height: 18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr('html_prepend') %><%= vis.binds.basic.formatFloat(this.data) %><%== (parseFloat(vis.binds.basic.formatFloat(this.data)) === 1 ? this.data.attr('html_append_singular') : this.data.attr('html_append_plural')) %>
             </div>
         </div>
     </div>
@@ -1642,7 +1755,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="String"
-        data-vis-prev='<div id="tplValueString" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 74px; height: 18px; text-align: center;color:blue; font-weight:bold" > <div class="vis-widget-prev-body"> <div>Text</div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueString.png"></img>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -1658,47 +1771,13 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="val"
-        data-vis-prev='<div id="tplValueStringRaw" style="text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 18px; text-align: center;color:#8B008B; font-weight:bold" > <div class="vis-widget-prev-body"> <div><xmp><div>Text</div></xmp></div> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.states.attr(this.data.oid + ".val") %><%== this.data.attr("html_append") %>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script id="tplValueTimestamp"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-name="Timestamp"
-        data-vis-prev='<div id="prev_tplValueTimestamp" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#00008B" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".ts"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
-            </div>
-        </div>
-    </div>
-</script>
-
-<script id="tplValueLastchange"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-set="basic"
-        data-vis-type="val,timestamp"
-        data-vis-prev='<div id="prev_tplValueLastchange" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="width: 90px; height: 25px;text-align:center;color:#006400" > <div class="vis-widget-prev-body"> <div> 2015-02-22 19:30:46 </div> </div> </div></div>'
-        data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;is_milliseconds/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
-        <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + ".lc"), !this.data.attr("is_milliseconds"), this.data.attr("format_date")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1719,6 +1798,40 @@
                 <img src="<%= vis.states.attr(this.data.oid + '.val') || '' %>" width="100%"/>
                  <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="tplValueTimestamp"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val,timestamp"
+        data-vis-name="Timestamp"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
+        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="tplValueLastchange"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val,timestamp"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
+        data-vis-name="Last change Timestamp"
+        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
@@ -1838,7 +1951,7 @@
 <script id="tplValueBoolCheckbox"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplValueBoolCheckbox" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-selected" style="left: 232px; top: 312px;" > <div class="vis-widget-prev-body"><input type="checkbox"></div> </div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCheckbox.png"></img>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bool Checkbox"
@@ -1855,7 +1968,7 @@
 <script id="tplValueInput"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplValueInput" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 47px; height: 23px;" > <div class="vis-widget-prev-body"> <input type="text" value="abc" style="width: calc(100% - 5px);"> </div> </div></div>'        data-vis-set="basic"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueInput.png"></img>'
         data-vis-type="ctrl"
         data-vis-update-style="true"
         data-vis-name="Input val"
@@ -1873,7 +1986,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-prev='<div id="prev_tplValueBoolSelect" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 61px; height: 20px; position: absolute;"><div class="vis-widget-prev-body" style="overflow:false"><select><option value="1" selected>true</option></select></div></div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolSelect.png"></img>'
         data-vis-type="ctrl"
         data-vis-name="Bool Select"
         data-vis-attrs="oid;html_prepend;html_append;text_true;text_false">
@@ -1928,8 +2041,8 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-prev='<div id="prev_tplValueBoolCtrlSvg" style="position: relative; text-align: initial;padding: 4px "><svg class="vis-widget_prev " version="1.1" style="width: 80px; height: 80px; position: absolute;" xmlns="http://www.w3.org/2000/svg"><polygon points="100,10 40,198 190,78 10,78 160,198" style="fill:lime; stroke:purple; stroke-width:5; fill-rule:nonzero" transform="scale(0.3)"></polygon></svg></div>'
-        data-vis-type="ctrl,bool"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolCtrlSvg.png"></img>'
+        data-vis-type="ctrl,state"
         data-vis-name="Bool SVG"
         data-vis-attrs="oid;no_control/checkbox;"
         data-vis-attrs0="svg_false[<polygon points='100,10 40,198 190,78 10,78 160,198' style='fill:lime§ stroke:purple§ stroke-width:5§ fill-rule:nonzero' transform='scale(0.4)'/>]/text;"
@@ -1971,7 +2084,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Red Number"
-        data-vis-prev='<div id="prev_tplRedNumber" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="padding: 3px; width: auto; min-width: 21px; height: 21px; border-radius: 16px; border: 3px solid white; color: white; font-style: normal; font-variant: normal; font-weight: normal; font-stretch: normal; font-size: 20px; line-height: normal; font-family: Helvetica; text-align: center; position: absolute; background-color: red;" data-o> <div class="vis-widget-prev-body"> 5 </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_RedNumber.png"></img>'
         data-vis-attrs="oid;type[circle]/select,circle,pin;html_prepend;html_append_singular;html_append_plural">
     <% if (this.data.attr('type') == 'pin') { %>
         <div class="vis-widget <%== this.data.attr('class') %>" style="width: 33px; height: 61px; padding-left: 4px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
@@ -1983,7 +2096,7 @@
             </div>
         </div>
     <% } else { %>
-        <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color:red; color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+        <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color: rgb(214, 69, 69); color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
             <div class="vis-widget-body" >
                 <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + ".val"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
@@ -1994,7 +2107,7 @@
 <script id="tplBulbOnOffCtrl"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplBulbOnOffCtrl" style="position: relative; text-align: initial;padding: 4px "><div data-o class="vis-widget_prev" style="left: 393.0909091234207px; top: 246.9147720336914px;"> <div class="vis-widget-prev-body"> <img src="img/bulb_on.png" width="100%"> </div> </div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_BulbOnOffCtrl.png"></img>'
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bulb on/off"
@@ -2033,7 +2146,7 @@
         data-vis-set="basic"
         data-vis-type="val,bar"
         data-vis-name="Bar"
-        data-vis-prev='<div id="prev_tplValueFloatBar" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-draggable-handle " style="width: 54px; height: 17px; border: 1px solid rgb(136, 136, 136); left: 458px; top: 292px; position: absolute;" > <div data-o class="vis-widget-prev-body" style="width: 68.6%; background-color: blue;"></div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloatBar.png"></img>'
         data-vis-attrs="oid;min[0];max[100];orientation[horizontal]/select,horizontal,vertical/onOrientation;color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
         <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body"
@@ -2047,7 +2160,7 @@
         data-vis-set="basic"
         data-vis-type="val"
         data-vis-name="Note"
-        data-vis-prev='<div id="prev_tplNote" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee ui-draggable-handle " style="width: 70px; height: 50px; border: 1px solid rgb(136, 136, 136); left: 965px; top: 16px; position: absolute; background: rgba(255, 255, 105, 0.8);"><div style="padding: 10px">Message</div></div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_Note.png"></img>'
         data-vis-attrs="oid;max_width[300];html_prepend;html_append;test_text">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:50px; height:50px; border:1px solid #888; background: rgba(255,255,105,0.8)" id="<%= this.data.attr('wid') %>" onclick="vis.binds.basic.editNote('<%= this.data.attr('wid') %>', '<%= this.data.attr('max_width') %>', '<%= this.data.attr('min_width') %>', '<%= this.data.attr('min_height') %>', '<%= this.data.attr('oid') %>')">
 		<div data-oid="<%= this.data.attr('oid') %>" id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
@@ -2062,7 +2175,7 @@
         data-vis-set="basic"
         data-vis-type="json,table"
         data-vis-name="Table"
-        data-vis-prev='<div id="prev_tplTableBody" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 120px; height: 60px;background: rgb(211, 211, 211);"> <table class="vis-table-header tclass"><tbody><tr class="tclass-th"><th class="tclass-th1">Title</th><th class="tclass-th2">Value</th></tr></tbody></table><div class="vis-table-div tclass-inner"><table id="vis-table-body" class="tclass"><tbody><tr class="vis-table-row tclass-tr tclass-tr-odd" data-index="0" data-server-id="undefined"><td class="tclass-th1">first</td><td class="tclass-th2">1</td></tr><tr class="vis-table-row tclass-tr tclass-tr-even" data-index="1" data-server-id="undefined"><td class="tclass-th1">second</td><td class="tclass-th2">2</td></tr></tbody></table></div></div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_TableBody.png"></img>'
         data-vis-attrs="table_oid/id;"
         data-vis-attrs0="static_value[[{^Title^: ^first^, ^Value^: 1, ^_Description^: ^Value1^}, {^Title^: ^second^, ^Value^: 2, ^_Description^: ^Value2^}]]/text;"
         data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid/widget;max_rows/number;"
@@ -2078,11 +2191,11 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="logout,html"
-        data-vis-prev='<div id="prev_tplHtmlLogout" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev " style="width: 54px; height: 22px; cursor: pointer;"> <div class="vis-widget-prev-body"> Logout </div> </div></div>'
+        data-vis-type="tools"
+        data-vis-prev='<img src="widgets/basic/img/Prev_HtmlLogout.png"></img>'
         data-vis-name="HTML logout"
-        data-vis-attrs="html[Logout]/text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 50px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
+        data-vis-attrs="html[<button>Logout</button>]/text">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 70px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
         </div>
@@ -2117,7 +2230,7 @@
 <script id="tplScreenResolution"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplScreenResolution" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock ui-selectee ui-draggable-handle " style="width: 120px; height: 54px; border: 1px solid rgb(136, 136, 136); font-size: 12px; opacity: 0.8;" > <div style="padding: 10px"> Width: <span>640</span><br>Height: <span>360</span><br>Default view:<span></span> </div> </div></div>'
+        data-vis-prev='<img src="widgets/basic/img/Prev_ScreenResolution.png"></img>'
         data-vis-set="basic"
         data-vis-type="tools"
         data-vis-name="Screen Resolution"
@@ -2137,8 +2250,8 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-type="val"
-        data-vis-prev='<div id="prev_tplValueGesture" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="height: 22px; border: 1px solid rgb(199, 199, 199); text-align: center; padding-top: 8px !important; padding-left: 2px !important; padding-right: 2px !important; background: lightgray; font-size: 14px; font-weight: normal;">25,5</div></div>'
+        data-vis-type="val,tools"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueGesture.png"></img>'
         data-vis-name="Gesture indicator"
         data-vis-no-gestures="true"
         data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits[0];is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];test_html">
@@ -2148,4 +2261,54 @@
         </div>
     </div>
 </script>
+
+<!--script id="tplSpeech2Text"
+                 type="text/ejs"
+                 class="vis-tpl"
+                 data-vis-set="basic"
+                 data-vis-type="val"
+                 data-vis-prev='<div id="prev_tplValueGesture" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="height: 22px; border: 1px solid rgb(199, 199, 199); text-align: center; padding-top: 8px !important; padding-left: 2px !important; padding-right: 2px !important; background: lightgray; font-size: 14px; font-weight: normal;">25,5</div></div>'
+                 data-vis-name="Gesture indicator"
+                 data-vis-no-gestures="true"
+                 data-vis-attrs="oid;language/select,,en-US,de,ru-RU;keywords">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="height: 50px; width: 100px" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div id="info">
+                <p id="info_start">
+                    Click on the microphone icon and begin speaking for as long as you like.
+                </p>
+                <p id="info_speak_now" style="display:none">
+                    Speak now.
+                </p>
+                <p id="info_no_speech" style="display:none">
+                    No speech was detected. You may need to adjust your <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">microphone settings</a>.
+                </p>
+                <p id="info_no_microphone" style="display:none">
+                    No microphone was found. Ensure that a microphone is installed and that
+                    <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
+                        microphone settings</a> are configured correctly.
+                </p>
+                <p id="info_allow" style="display:none">
+                    Click the "Allow" button above to enable your microphone.
+                </p>
+                <p id="info_denied" style="display:none">
+                    Permission to use microphone was denied.
+                </p>
+                <p id="info_blocked" style="display:none">
+                    Permission to use microphone is blocked. To change, go to
+                    chrome://settings/contentExceptions#media-stream
+                </p>
+                <p id="info_upgrade" style="display:none">
+                    Web Speech API is not supported by this browser. Upgrade to
+                    <a href="//www.google.com/chrome">Chrome</a> version 25 or later.
+                </p>
+            </div>
+            <div id="results">
+                <span class="final"></span>
+                <span class="interim"></span>
+            </div>
+        </div>
+    </div>
+    <% vis.binds.basic.speech2text(this.data.wid, this.view, this.data, this.style); %>
+</script-->
 
