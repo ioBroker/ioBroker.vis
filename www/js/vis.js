@@ -2262,6 +2262,30 @@ var vis = {
         // Create demo variables
         vis.states.attr({'demoTemperature.val': 25.4});
         vis.states.attr({'demoHumidity.val': 55});
+    },
+    getHistory: function (id, options, callback) {
+        // Possible options:
+        // - **instance - (mandatory) sql.x or history.y
+        // - **start** - (optional) time in ms - *new Date().getTime()*'
+        // - **end** - (optional) time in ms - *new Date().getTime()*', by default is (now + 5000 seconds)
+        // - **step** - (optional) used in aggregate (m4, max, min, average, total) step in ms of intervals
+        // - **count** - number of values if aggregate is 'onchange' or number of intervals if other aggregate method. Count will be ignored if step is set.
+        // - **from** - if *from* field should be included in answer
+        // - **ack** - if *ack* field should be included in answer
+        // - **q** - if *q* field should be included in answer
+        // - **addId** - if *id* field should be included in answer
+        // - **limit** - do not return more entries than limit
+        // - **ignoreNull** - if null values should be include (false), replaced by last not null value (true) or replaced with 0 (0)
+        // - **aggregate** - aggregate method:
+        //    - *minmax* - used special algorithm. Splice the whole time range in small intervals and find for every interval max, min, start and end values.
+        //    - *max* - Splice the whole time range in small intervals and find for every interval max value and use it for this interval (nulls will be ignored).
+        //    - *min* - Same as max, but take minimal value.
+        //    - *average* - Same as max, but take average value.
+        //    - *total* - Same as max, but calculate total value.
+        //    - *count* - Same as max, but calculate number of values (nulls will be calculated).
+        //    - *none* - no aggregation
+
+        this.conn.getHistory(id, options, callback);
     }
 };
 

@@ -63,6 +63,7 @@
 //              text - dialog box with html editor
 //              html - dialog box with html editor
 //              widget - existing widget selector
+//              history - select history instances
 
 'use strict';
 
@@ -329,6 +330,19 @@ vis = $.extend(true, vis, {
                 };
             }
         };
+    },
+    editHistoryInstance: function (widAttr) {
+        if (!this.historyInstances) {
+            for (var id in this.objects) {
+                if (this.objects[id].type === 'instance' && this.objects[id].common && this.objects[id].common.type === 'storage') {
+                    this.historyInstances = this.historyInstances || [];
+                    id = id.substring('system.adapter.'.length);
+                    if (this.historyInstances.indexOf(id) === -1) this.historyInstances.push(id);
+                }
+            }
+        }
+
+        return this.editAutoComplete(widAttr, this.historyInstances);
     },
     editAutoComplete: function (widAttr, values) {
         // Auto-complete
@@ -1149,6 +1163,9 @@ vis = $.extend(true, vis, {
                 return;
             case 'fontname':
                 line = this.editFontName(widAttr.name);
+                break;
+            case 'history':
+                line = this.editHistoryInstance(widAttr.name);
                 break;
             default:
                 line = '<input type="text" id="inspect_' + widAttr.name + '"/>';

@@ -1126,5 +1126,10 @@ var servConn = {
         if (typeof storage !== 'undefined') {
             storage.empty();
         }
+    },
+    getHistory:       function (id, options, callback) {
+        if (!this._checkConnection('getHistory', arguments)) return;
+
+        this._socket.emit('getHistory', id, options, callback);
     }
 };

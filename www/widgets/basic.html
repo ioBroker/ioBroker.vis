@@ -1076,9 +1076,7 @@
 	    },
 
         formatDate: function (dateObj, format, _ignoreOld) {
-            if (typeof format === 'boolean') {
-                format = _ignoreOld;
-            }
+            if (typeof format === 'boolean') format = _ignoreOld;
 
             if (format === 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
 
@@ -1172,6 +1170,18 @@
                 format = format.replace('v', v);
             }
 
+            // milliseconds
+            if (format.indexOf('sss') != -1 || format.indexOf('ссс') != -1) {
+                v =  dateObj.getMilliseconds();
+                if (v < 10) {
+                    v = '00' + v;
+                } else if (v < 100) {
+                    v = '0' + v;
+                }
+                format = format.replace('sss', v);
+                format = format.replace('ссс', v);
+            }
+
             // seconds
             if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
                 v =  dateObj.getSeconds();
@@ -1183,6 +1193,7 @@
                 format = format.replace('s', v);
                 format = format.replace('с', v);
             }
+
             return format;
         },
         detectScreen: function (el) {
