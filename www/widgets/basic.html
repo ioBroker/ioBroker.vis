@@ -203,7 +203,16 @@
         "Clear":        {"en": "Clear",         "de": "Löschen",            "ru": "Очистить"},
         "Ok":           {"en": "Ok",            "de": "Ok",                 "ru": "Ok"},
         "Cancel":       {"en": "Cancel",        "de": "Abbrechen",          "ru": "Отмена"},
-        "all":          {"en": "all",           "de": "Alle",               "ru": "Все"}
+        "all":          {"en": "all",           "de": "Alle",               "ru": "Все"},
+        "just&nbsp;now":  {"en": "just&nbsp;now", "de": "gerade&nbsp;jetzt", "ru": "только&nbsp;что"},
+        "for&nbsp;%s&nbsp;min.":  {"en": "for&nbsp;%s&nbsp;min.", "de": "vor&nbsp;%s&nbsp;Min.", "ru": "%s&nbsp;мин. назад"},
+        "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.": {
+            "en": "for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.",
+            "de": "vor&nbsp;%s&nbsp;St.&nbsp;und&nbsp;%s&nbsp;Min.",
+            "ru": "%s&nbsp;часов&nbsp;и&nbsp;%s&nbsp;мин. назад"
+        },
+        "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "вчера"},
+        "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;часов назад"},
     });
 
     vis.binds.stateful = {
@@ -1385,7 +1394,41 @@
             }
 
             startRecognition();
-        }
+        },
+        getTimeInterval: function (oldTime, hoursToShow) {
+            var result = '';
+
+            var newTime = new Date ();
+
+            if (!oldTime) return '';
+            if (typeof oldTime === 'string') {
+                oldTime = new Date(oldTime);
+            } else {// 2000.01.01 00:00:00 = 946681200000
+                if (typeof oldTime === 'number') oldTime = oldTime > 946681200000 ? new Date(oldTime) : new Date(oldTime * 1000);
+            }
+
+            var seconds = (newTime.getTime() - oldTime.getTime()) / 1000;
+
+            if (hoursToShow && (seconds / 3600) > hoursToShow) return '';
+
+            if (seconds < 60) {
+                result = _('just&nbsp;now');
+            } else
+            if (seconds <= 3600)
+                result = _('for&nbsp;%s&nbsp;min.', Math.floor (seconds / 60));
+            else
+            if (seconds <= 3600 * 24)
+                result = _('for&nbsp;%s&nbsp;hr.&nbsp;and&nbsp;%s&nbsp;min.', Math.floor (seconds / 3600), (Math.floor (seconds / 60) % 60));
+            else
+            if (seconds > 3600 * 24 && seconds <= 3600 * 48)
+                result = _('yesterday');
+            else
+            if (seconds > 3600*48) {
+                result = _('for&nbsp;%s&nbsp;hours', Math.floor (seconds / 3600));
+            }
+
+            return result;
+        },
     };
 
     $(document).mouseup(function () {
@@ -1539,7 +1582,7 @@
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
-            <img style="position:absolute; width:100%;<%= this.data.attr('stretch') ? 'height:100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
+            <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr('src'), data.attr('refreshInterval'), data.attr('refreshOnWakeUp'), data.attr('refreshOnViewChange')) %> />
         </div>
     </div>

@@ -32,7 +32,7 @@ body{
     height: calc(100% - 30px)!important;
     position: relative;
     overflow: auto;
-    border-bottom-width: 0px;
+    border-bottom-width: 0;
 }
 
 ::-webkit-scrollbar {
@@ -72,19 +72,19 @@ body{
     background-color:   transparent !important;
     border-color:       inherit !important;
     border-top-width:   1px !important;
-    border-bottom-width: 0px;
-    border-left-width:  0px;
-    border-right-width: 0px;
+    border-bottom-width: 0;
+    border-left-width:  0;
+    border-right-width: 0;
     border-style:       solid;
 }
 
 #vis_container::-webkit-scrollbar-track:vertical {
     background-color:   transparent !important;
     border-color:       inherit !important;
-    border-top-width:   0px;
-    border-bottom-width: 0px;
+    border-top-width:   0;
+    border-bottom-width: 0;
     border-left-width:  1px !important;
-    border-right-width: 0px;
+    border-right-width: 0;
     border-style:       solid;
 }
 
@@ -358,7 +358,7 @@ body{
     margin: 0;
     position: relative;
     top: -4px;
-    border-right-width: 0px;
+    border-right-width: 0;
     border-bottom-width: 1px;
     border-bottom-style: solid;
     /* display: table; */
@@ -507,8 +507,10 @@ body{
     width: 355px;
 
     margin-right: 1px;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
     /* float: right; */
-    margin: 0;
     padding: 0;
     /* top: 0; */
     border-radius: 0;
@@ -847,7 +849,19 @@ td > .select_active_widget :nth-child(2) {
     z-index: 999;
 }
 
+.vis-grid {
+    position:           absolute;
+    z-index:            0;
+    top:                0;
+    left:               0;
+    right:              0;
+    bottom:             0;
+    pointer-events:     none;
+    margin:             0;
+    background-repeat:  repeat, repeat;
+}
 
+/* --------- vis preview icons ------------------- */
 .vis-preview-informers-container {
     position:   absolute;
     opacity:    0.2;

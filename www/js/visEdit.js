@@ -118,10 +118,7 @@ vis = $.extend(true, vis, {
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
             that.editSaveConfig('size/pan_add_wid', $('#pan_add_wid').width());
             that.editSaveConfig('size/pan_attr',    $('#pan_attr').width());
-            if (vis.css_editor){
-                vis.css_editor.resize();
-            }
-
+            if (vis.css_editor) vis.css_editor.resize();
         }
 
         layout();
@@ -449,17 +446,24 @@ vis = $.extend(true, vis, {
                 that.views[that.activeView].settings.gridSize = gridSize;
                 that.save();
                 that.inspectWidgets([]);
+                that.editSetGrid();
                 setTimeout(function () {
                     that.inspectWidgets(JSON.parse(aw));
                 }, 200);
             }
+        }).keyup(function () {
+            $(this).trigger('change');
         });
+
         $('#snap_type').selectmenu({
             change: function () {
                 var aw = JSON.stringify(that.activeWidgets);
                 that.views[that.activeView].settings.snapType = $(this).val();
+
                 $('#grid_size').prop('disabled', that.views[that.activeView].settings.snapType != 2);
+
                 if (that.views[that.activeView].settings.snapType == 2 && !$('#grid_size').val()) $('#grid_size').val(10).trigger('change');
+                that.editSetGrid();
                 that.save();
                 that.inspectWidgets([]);
                 setTimeout(function () {
@@ -587,6 +591,51 @@ vis = $.extend(true, vis, {
             }
         }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
+    },
+    editSetGrid: function () {
+        var grid = parseInt(this.views[this.activeView].settings.gridSize, 10);
+        if (this.views[this.activeView].settings.snapType == 2 && grid > 2) {
+            var $grid = $('#vis_container .vis-grid');
+            if (!$grid.length) {
+                $('#vis_container').prepend('<div class="vis-grid"></div>');
+                $grid = $('#vis_container .vis-grid');
+            }
+
+            var img;
+            if (grid <= 6) {
+                img = 'bg-dots-5.svg';
+            } else if (grid <= 12) {
+                img = 'bg-dots-10.svg';
+            } else if (grid <= 17) {
+                img = 'bg-dots-15.svg';
+            } else if (grid <= 25) {
+                img = 'bg-dots-20.svg';
+            } else if (grid <= 35) {
+                img = 'bg-dots-30.svg';
+            } else if (grid <= 45) {
+                img = 'bg-dots-40.svg';
+            } else {
+                img = 'bg-dots-50.svg';
+            }
+
+            $grid
+                .addClass('vis-grid')
+                .css({
+                    'background-size':  this.views[this.activeView].settings.gridSize + 'px ' + this.views[this.activeView].settings.gridSize + 'px',
+                    'background-image': 'url(img/' + img + ')'
+                });
+        } else {
+            $('#vis_container .vis-grid').remove();
+        }
+    },
+    editShowLeadingLines: function () {
+        // there are following lines
+        // horz-top
+        // horz-bottom
+        // horz-center
+        // vert-left
+        // vert-right
+        // vert-middle
     },
     editUpdateAccordeon: function () {
         var that = this;
@@ -3214,6 +3263,9 @@ vis = $.extend(true, vis, {
                 $('.vis-screen-default').prop('checked', false).prop('disabled', true);
             }
             $('.vis-screen-render-always').prop('checked', this.views[view].settings.alwaysRender);
+
+            this.editSetGrid();
+
         } else {
             $('#screen_size').val('').selectmenu('refresh');
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
@@ -3411,7 +3463,31 @@ vis = $.extend(true, vis, {
 
         if (resizableOptions.disabled !== true) {
             resizableOptions.disabled = false;
+
+            var grid = this.views[this.activeView].settings.gridSize = parseInt(this.views[this.activeView].settings.gridSize, 10);
+            if (this.views[this.activeView].settings.snapType == 2 && grid > 2) resizableOptions.grid = [grid, grid];
+
             obj.resizable($.extend({
+                start: function (event, ui) {
+                    var grid = that.views[that.activeView].settings.gridSize;
+                    // if grid enabled
+                    if (that.views[that.activeView].settings.snapType == 2 && grid) {
+                        // snap size to grid
+                        var w = ui.element.outerWidth();
+                        var h = ui.element.outerHeight();
+                        var pos = ui.element.position();
+                        var wDiff = (w + pos.left) % grid;
+                        var hDiff = (h + pos.top)  % grid;
+                        if (wDiff) {
+                            ui.element.width(w + grid - wDiff);
+                            $('.widget-helper').css('width', w + grid - wDiff + 2);
+                        }
+                        if (hDiff) {
+                            ui.element.height(h + grid - hDiff);
+                            $('.widget-helper').css('height', h + grid - hDiff - 2);
+                        }
+                    }
+                },
                 stop: function (event, ui) {
                     var widget = ui.helper.attr('id');
                     var w = ui.size.width;

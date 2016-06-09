@@ -1130,6 +1130,19 @@ var servConn = {
     getHistory:       function (id, options, callback) {
         if (!this._checkConnection('getHistory', arguments)) return;
 
-        this._socket.emit('getHistory', id, options, callback);
+        if (!options) options = {};
+        if (!options.timeout) options.timeout = 2000;
+
+        var timeout = setTimeout(function () {
+            timeout = null;
+            callback('timeout');
+        }, options.timeout);
+        this._socket.emit('getHistory', id, options, function (err, result) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            callback(err, result);
+        });
     }
 };
