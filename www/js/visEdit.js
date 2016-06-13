@@ -3464,40 +3464,17 @@ vis = $.extend(true, vis, {
         if (resizableOptions.disabled !== true) {
             resizableOptions.disabled = false;
 
-            var grid = this.views[this.activeView].settings.gridSize = parseInt(this.views[this.activeView].settings.gridSize, 10);
-            if (this.views[this.activeView].settings.snapType == 2 && grid > 2) resizableOptions.grid = [grid, grid];
-
             obj.resizable($.extend({
-                start: function (event, ui) {
-                    var grid = that.views[that.activeView].settings.gridSize;
-                    // if grid enabled
-                    if (that.views[that.activeView].settings.snapType == 2 && grid) {
-                        // snap size to grid
-                        var w = ui.element.outerWidth();
-                        var h = ui.element.outerHeight();
-                        var pos = ui.element.position();
-                        var wDiff = (w + pos.left) % grid;
-                        var hDiff = (h + pos.top)  % grid;
-                        if (wDiff) {
-                            ui.element.width(w + grid - wDiff);
-                            $('.widget-helper').css('width', w + grid - wDiff + 2);
-                        }
-                        if (hDiff) {
-                            ui.element.height(h + grid - hDiff);
-                            $('.widget-helper').css('height', h + grid - hDiff - 2);
-                        }
-                    }
-                },
                 stop: function (event, ui) {
                     var widget = ui.helper.attr('id');
                     var w = ui.size.width;
                     var h = ui.size.height;
-                    if (typeof w == 'string' && w.indexOf('px') === -1) {
+                    if (typeof w === 'string' && w.indexOf('px') === -1) {
                         w += 'px';
                     } else {
                         w = w.toFixed(0) + 'px';
                     }
-                    if (typeof h == 'string' && h.indexOf('px') === -1) {
+                    if (typeof h === 'string' && h.indexOf('px') === -1) {
                         h += 'px';
                     } else {
                         h = h.toFixed(0) + 'px';
@@ -3515,13 +3492,40 @@ vis = $.extend(true, vis, {
                     if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
                         that.reRenderWidgetEdit(widget);
                     }
-
+                    var w = parseInt(ui.element.outerWidth(),  10);
+                    var h = parseInt(ui.element.outerHeight(), 10);
+                    $('.widget-helper').css({
+                        width:  w + 2,
+                        height: h + 2
+                    });
                     that.save();
                 },
                 resize: function (event, ui) {
+                    var grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
+                    // if grid enabled
+                    var w = parseInt(ui.element.outerWidth(),  10);
+                    var h = parseInt(ui.element.outerHeight(), 10);
+
+                    if (that.views[that.activeView].settings.snapType == 2 && grid) {
+                        // snap size to grid
+                        var pos = ui.element.position();
+                        var wDiff = (w + pos.left) % grid;
+                        var hDiff = (h + pos.top)  % grid;
+                        if (wDiff) {
+                            if (wDiff < grid / 2) grid = 0;
+                            ui.element.width((w + grid - wDiff));
+                            //$('.widget-helper').css('width', (w + grid - wDiff + 2));
+                        }
+
+                        if (hDiff) {
+                            if (hDiff < grid / 2) grid = 0;
+                            ui.element.height((h + grid - hDiff));
+                            //$('.widget-helper').css('height', (h + grid - hDiff - 2));
+                        }
+                    }
                     $('.widget-helper').css({
-                        width:  parseInt(ui.element.outerWidth())  + 2 +'px',
-                        height: parseInt(ui.element.outerHeight()) + 2 +'px'
+                        width:  w + 2,
+                        height: h + 2
                     });
                 }
             }, resizableOptions));
