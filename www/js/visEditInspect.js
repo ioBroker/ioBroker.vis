@@ -2075,7 +2075,7 @@ vis = $.extend(true, vis, {
 
         // snap objects to the grid, elsewise cannot move
         if (this.views[view].settings.snapType == 2) {
-            this.gridWidth = parseInt(this.views[view].settings.gridSize);
+            this.gridWidth = parseInt(this.views[view].settings.gridSize, 10);
 
             if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
 

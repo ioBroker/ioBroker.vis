@@ -3444,9 +3444,12 @@ vis = $.extend(true, vis, {
             }
         };
         if (this.views[this.activeView].settings.snapType == 1) {
-            draggableOptions.snap = "#vis_container div.vis-widget";
+            draggableOptions.snap = '#vis_container div.vis-widget';
         } else
         if (this.views[this.activeView].settings.snapType == 2) {
+            this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
+            if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
+
             draggableOptions.grid = [this.gridWidth, this.gridWidth];
         }
         obj.draggable(draggableOptions);
@@ -3463,6 +3466,9 @@ vis = $.extend(true, vis, {
 
         if (resizableOptions.disabled !== true) {
             resizableOptions.disabled = false;
+
+            this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
+            if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
 
             obj.resizable($.extend({
                 stop: function (event, ui) {
