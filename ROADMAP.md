@@ -1,9 +1,10 @@
  	
 ##notion:
-* add a "_project" view:
-  this view can not deleted and will be render always as first view but don't be show
+* Export import of whole projects
 
-* Special "_project" view: Widgets
+* Show leading lines when moving or resizing the widgets
+
+* Special Widgets
    for example: popups, soundplay,.....
    
 * Write the instruction: how create previews and developing generally
