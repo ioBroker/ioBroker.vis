@@ -1463,7 +1463,6 @@ vis = $.extend(true, vis, {
                         changed = wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]) || false;
                     }
                 }
-                console.log(wdata.attr + ': ' + changed);
 
                 if (wdata.onChangeWidget) {
                     var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-set');

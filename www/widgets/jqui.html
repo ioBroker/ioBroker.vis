@@ -234,27 +234,36 @@
                     if (persistent) {
                         if (options.setId) vis.setValue(options.setId, options.setValue);
                         $dlg.dialog('open');
+                        $dlg.parent().css('z-index', 998);
+                        $dlg.parent().find('.ui-widget-header button .ui-button-text').html('');
                         if (options.minHeight)   $dlg.css('min-height', options.minHeight);
                         if (options.minWidth)    $dlg.css('min-width', options.minWidth);
-                        if (options.top  || options.top  === 0)  $dlg.parent().css('top', options.top);
-                        if (options.left || options.left === 0) $dlg.parent().css('left', options.left);
+                        if (options.top  || options.top  === 0 || options.top  === '0') $dlg.parent().css('top',  options.top);
+                        if (options.left || options.left === 0 || options.left === '0') $dlg.parent().css('left', options.left);
                         if (options.overflowX) $dlg.css('overflow-x', options.overflowX);
                         if (options.overflowY) $dlg.css('overflow-y', options.overflowY);
-                        if (options.noHeader) $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                        if (options.noHeader) {
+                            $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                            $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
+                        }
                         $dlg.parent().find('.ui-state-focus').blur();
                     } else {
                         $dlg.dialog($.extend({
                             autoOpen: true,
                             open: function () {
+                                $(this).parent().find('.ui-widget-header button .ui-button-text').html('');
                                 if (options.setId) vis.setValue(options.setId, options.setValue);
                                 $(this).parent().css('z-index', 998);
                                 if (options.minHeight)   $(this).css('min-height', options.minHeight);
                                 if (options.minWidth)    $(this).css('min-width', options.minWidth);
-                                if (options.top  || options.top  === 0)  $(this).parent().css('top', options.top);
-                                if (options.left || options.left === 0) $(this).parent().css('left', options.left);
+                                if (options.top  || options.top  === 0 || options.top  === '0') $(this).parent().css('top',  options.top);
+                                if (options.left || options.left === 0 || options.left === '0') $(this).parent().css('left', options.left);
                                 if (options.overflowX) $(this).css('overflow-x', options.overflowX);
                                 if (options.overflowY) $(this).css('overflow-y', options.overflowY);
-                                if (options.noHeader) $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                                if (options.noHeader) {
+                                    $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                                    $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
+                                }
                                 $(this).parent().find('.ui-state-focus').blur();
                                 //touchscreen fix
                                 var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
@@ -321,16 +330,19 @@
             }
         },
         dialogContainer: function (el, options, persistent, preload) {
-            var $dlg = $(el).parent().find("div.vis-widget-dialog");
+            var $dlg = $(el).parent().find('div.vis-widget-dialog');
             options.width     = options.dialog_width;
             options.height    = options.dialog_height;
             options.top       = options.dialog_top;
             options.left      = options.dialog_left;
             options.minHeight = options.height;
             options.minWidth  = options.width;
+
             $dlg.dialog($.extend({
                 autoOpen: false,
                 open: function () {
+                    $(this).parent().find('.ui-widget-header button .ui-button-text').html('');
+                    $(this).parent().css('z-index', 998);
                     //touchscreen fix
                     var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
                     $closeButton.unbind('touchend').on('touchend', function (event) {
@@ -353,7 +365,7 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    $dlg.find("div[id$='container']").each(function () {
+                    $dlg.find('div[id$="container"]').each(function () {
                         var cview = $(this).attr('data-vis-contains');
                         if (!vis.views[cview]) {
                             $(this).append("error: view not found.");
@@ -363,9 +375,8 @@
                             return false;
                         }
                         vis.renderView(cview, true);
-                        $("#visview_" + cview).appendTo(this);
-                        $("#visview_" + cview).show();
-
+                        $('#visview_' + cview).appendTo(this);
+                        $('#visview_' + cview).show();
                     });
 
                     if (options.setId) vis.setValue(options.setId, options.setValue);
@@ -373,16 +384,19 @@
                     $id.dialog('open');
                     if (options.minHeight)   $id.css('min-height', options.minHeight);
                     if (options.minWidth)    $id.css('min-width', options.minWidth);
-                    if (options.top  || options.top === 0)  $id.parent().css('top', options.top);
-                    if (options.left || options.left === 0) $id.parent().css('left', options.left);
+                    if (options.top  || options.top  === 0 || options.top  === '0') $id.parent().css('top',  options.top);
+                    if (options.left || options.left === 0 || options.left === '0') $id.parent().css('left', options.left);
                     if (options.overflowX) $id.css('overflow-x', options.overflowX);
                     if (options.overflowY) $id.css('overflow-y', options.overflowY);
-                    if (options.noHeader) $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                    if (options.noHeader) {
+                        $id.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                        $id.parent().find('.ui-dialog-title').html('&nbsp;');
+                    }
                     $id.parent().find('.ui-state-focus').blur();
                     return false;
                 });
             } else {
-                $(el).parent().find("div.vis-widget-body").show();
+                $(el).parent().find('div.vis-widget-body').show();
             }
         },
         dialogAutoClose: function (el, timeout) {
@@ -1184,10 +1198,10 @@
         class="vis-tpl"
         data-vis-set="jqui"
         data-vis-type="static,dialog"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_JquiDialog.png"></img>'
         data-vis-name="HTML - Dialog"
         data-vis-attrs="html/text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
-
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html") %>
@@ -1203,8 +1217,9 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_JquiIconDialog.png"></img>'
         data-vis-type="static,dialog"
-        data-vis-name="static - Icon - Dialog"
+        data-vis-name="Icon - Dialog"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;invert_icon/checkbox;setId/id;setValue;"
         data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
@@ -1228,6 +1243,8 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerDialog.png"></img>'
+        data-vis-type="container,dialog"
         data-vis-name="container - HTML - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
@@ -1235,9 +1252,8 @@
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr("html") %>
         </div>
-        <div id="<%= this.data.attr('wid') %>_dialog" style="display:none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
-            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body">
-            </div>
+        <div id="<%= this.data.attr('wid') %>_dialog" style="display: none" class="vis-widget-dialog" title="<%= this.data.attr('title') %>">
+            <div id="<%= this.data.attr('wid') %>_container" data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body"></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
     </div>
@@ -1247,6 +1263,8 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
+        data-vis-type="container,dialog"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerDialogExternal.png"></img>'
         data-vis-name="container - ext cmd - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
         data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
@@ -1267,7 +1285,9 @@
 <script id="tplContainerIconDialog"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-type="container,dialog"
         data-vis-set="jqui"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerIconDialog.png"></img>'
         data-vis-name="container - Icon - view in jqui Dialog"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;setId/id;setValue;"
         data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
@@ -1293,6 +1313,8 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
+        data-vis-type="container,dialog"
+        data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerButtonDialog.png"></img>'
         data-vis-name="container - Button - view in jqui Dialog"
         data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];setId/id;setValue;no_style/checkbox;"
         data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
@@ -1347,7 +1369,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
-        data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 130px; height: 33px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;" alt="">Nav button </div> </div></div>'
+        data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 100px; height: 28px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;">&nbsp;Nav</div></div></div>'
         data-vis-name="navigation - Icon"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>>
@@ -1413,7 +1435,7 @@
 <script id="tplJquiToogle"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplJquiToogle" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev" style="width: 90px; height: 19px; padding: 10px;"> <div class="vis-widget-prev-body"><label>Toggle Icon</label><img class="imgToggleFalse" src="/vis/icon/add.png" style=" vertical-align:middle; height:100%"></div></div></div>'
+        data-vis-prev='<div id="prev_tplJquiToogle" style="position: relative; text-align: initial;padding: 4px "><div class="ui-widget ui-corner-all ui-state-default vis-widget_prev" style="width: 90px; height: 19px; padding: 10px;"> <div class="vis-widget-prev-body"><label>&nbsp;Toggle&nbsp;</label><img class="imgToggleFalse" src="/vis/icon/add.png" style=" vertical-align:middle; height:100%"></div></div></div>'
         data-vis-set="jqui"
         data-vis-type="ctrl,state"
         data-vis-name="Icon Toggle"
