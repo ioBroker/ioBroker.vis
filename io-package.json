@@ -4,6 +4,11 @@
         "version": "0.10.4",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.10.4": {
+				"en":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
+				"de":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
+				"ru":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews"
+			},
             "0.10.3": {
 				"en":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
 				"de":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
