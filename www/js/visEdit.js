@@ -58,7 +58,109 @@ vis = $.extend(true, vis, {
     alignIndex:            0,
     alignType:             '',
     widgetAccordeon:       false,
+    saveRemoteActive:      0,
+    removeUnusedFields: function () {
+        var regExp = /^gestures\-/;
+        for (var view in this.views) {
+            for (var id in this.views[view].widgets) {
+                // Check all attributes
+                var data = this.views[view].widgets[id].data;
+                for (var attr in data) {
+                    if ((data[attr] === '' || data[attr] === null) && regExp.test(attr)) {
+                        delete data[attr];
+                    }
+                }
+            }
+        }
+    },
+    saveRemote: function (mode, callback) {
+        // remove all unused fields
+        this.removeUnusedFields();
 
+        if (typeof mode == 'function') {
+            callback = mode;
+            mode     = null;
+        }
+        if (typeof app !== 'undefined') {
+            console.warn('Do not allow save of views from Cordova!');
+            if (typeof callback == 'function') callback();
+            return;
+        }
+
+        var that = this;
+        if (this.permissionDenied) {
+            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
+                5000, 'ui-state-error');
+            if (typeof callback == 'function') callback();
+            return;
+        }
+
+
+        if (this.saveRemoteActive % 10) {
+            this.saveRemoteActive--;
+            setTimeout(function () {
+                that.saveRemote(mode, callback);
+            }, 1000);
+        } else {
+            if (!this.saveRemoteActive) this.saveRemoteActive = 30;
+            if (this.saveRemoteActive == 10) {
+                console.log('possible no connection');
+                this.saveRemoteActive = 0;
+                return;
+            }
+            // Sync widget before it will be saved
+            if (this.activeWidgets) {
+                for (var t = 0; t < this.activeWidgets.length; t++) {
+                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                        this.syncWidgets(this.activeWidgets);
+                        break;
+                    }
+                }
+            }
+
+            // replace all bounded variables with initial values
+            var viewsToSave = JSON.parse(JSON.stringify(this.views));
+            for (var b in this.bindings) {
+                for (var h = 0; h < this.bindings[b].length; h++) {
+                    viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                }
+            }
+            viewsToSave = JSON.stringify(viewsToSave, null, 2);
+            if (this.lastSave == viewsToSave) {
+                if (typeof callback == 'function') callback(null);
+                return;
+            }
+
+            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, mode, function (err) {
+                if (err) {
+                    if (err == 'permissionError') {
+                        that.permissionDenied = true;
+                    }
+                    that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
+                } else {
+                    that.lastSave = viewsToSave;
+                }
+                that.saveRemoteActive = 0;
+                if (typeof callback == 'function') callback(err);
+
+                // If not yet checked => check if project css file exists
+                if (!that.cssChecked) {
+                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
+                        that.cssChecked = true;
+                        // Create vis-user.css file if not exist
+                        if (err != 'permissionError' && (_err || data === null || data === undefined)) {
+                            // Create empty css file
+                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
+                                if (___err) {
+                                    that.showMessage(_('Cannot create file %s: ', 'vis-user.css') + _(___err), _('Error'), 'alert');
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    },
     editInit: function () {
         var that = this;
         // Create debug variables
@@ -2275,12 +2377,8 @@ vis = $.extend(true, vis, {
         // Selected filter
         if (typeof storage != 'undefined') {
             try {
-                this.config = storage.get('visConfig');
-                if (this.config) {
-                    this.config = JSON.parse(this.config);
-                } else {
-                    this.config = {};
-                }
+                var stored = storage.get('visConfig');
+                this.config = stored ? JSON.parse(stored) : {};
             } catch (e) {
                 console.log('Cannot load edit config');
                 this.config = {};
@@ -2470,7 +2568,7 @@ vis = $.extend(true, vis, {
         }
 
         $('#textarea_export_widgets').text(JSON.stringify(exportW));
-        document.getElementById("textarea_export_widgets").select();
+        document.getElementById('textarea_export_widgets').select();
         $('#dialog_export_widgets').dialog({
             autoOpen: true,
             width:    800,

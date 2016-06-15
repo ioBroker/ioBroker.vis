@@ -644,9 +644,7 @@ var vis = {
         this.bindInstance();
 
         // EDIT mode
-        if (this.editMode) {
-            this.editInitNext();
-        }
+        if (this.editMode) this.editInitNext();
 
         this.initialized = true;
 
@@ -673,9 +671,11 @@ var vis = {
             if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
                 this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
-                this.saveRemote(true, function () {
-                    //window.location.reload();
-                });
+                if (this.saveRemote) {
+                    this.saveRemote(true, function () {
+                        //window.location.reload();
+                    });
+                }
             } else {
                 window.location.reload();
             }
@@ -736,12 +736,12 @@ var vis = {
             this.viewsActiveFilter[view] = [];
         }
 
-        if ($('#visview_' + view).html() === undefined) {
+        var $view = $('#visview_' + view);
+        if ($view.html() === undefined) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
 
-            var $view = $('#visview_' + view);
             $view.css(this.views[view].settings.style);
             if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
 
@@ -752,7 +752,7 @@ var vis = {
             for (var id in this.views[view].widgets) {
                 // Try to complete the widgetSet information to optimize the loading of widgetSets
                 if (!this.views[view].widgets[id].widgetSet) {
-                    var obj = $("#" + this.views[view].widgets[id].tpl);
+                    var obj = $('#' + this.views[view].widgets[id].tpl);
                     if (obj) {
                         this.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
                         isViewsConverted = true;
@@ -770,7 +770,7 @@ var vis = {
         }
 
         // move views in container
-        $('#visview_' + view).find('div[id$="container"]').each(function () {
+        $view.find('div[id$="container"]').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
                 $(this).append('error: view not found.');
@@ -786,7 +786,7 @@ var vis = {
         });
 
         if (!hidden) {
-            $('#visview_' + view).show();
+            $view.show();
 
             if (this.views[view].rerender) {
                 this.views[view].rerender = false;
@@ -798,22 +798,21 @@ var vis = {
         }
 
         // Store modified view
-        if (isViewsConverted) {
-            this.saveRemote();
+        if (isViewsConverted && this.saveRemote) this.saveRemote();
+
+        if (this.editMode && $('#wid_all_lock_function').prop('checked')) {
+            $('.vis-widget').addClass('vis-widget-lock');
         }
-        if (this.editMode) {
-            if ($('#wid_all_lock_function').prop('checked')) {
-                $(".vis-widget").addClass("vis-widget-lock");
-            }
-        }
+
         setTimeout(function(){
             $('#visview_' + view).trigger('rendered');
         }, 0);
-
     },
     addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
+
         if (this.calcCommonStyle() == theme) return;
+
         $.ajax({
             url: ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
@@ -823,13 +822,14 @@ var vis = {
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
                 data = data.replace(/images/g, ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/images');
-                $('#' + _view).append('<style id="' + view + '_style">' + data + '</style>');
+                var $view = $('#' + _view);
+                $view.append('<style id="' + view + '_style">' + data + '</style>');
 
                 $('#' + view + '_style_common_user').remove();
-                $('#' + _view).append('<style id="' + view + '_style_common_user" class="vis-common-user">' + $('#vis-common-user').html() + '</style>');
+                $view.append('<style id="' + view + '_style_common_user" class="vis-common-user">' + $('#vis-common-user').html() + '</style>');
 
                 $('#' + view + '_style_user').remove();
-                $('#' + _view).append('<style id="' + view + '_style_user" class="vis-user">' + $('#vis-user').html() + '</style>');
+                $view.append('<style id="' + view + '_style_user" class="vis-user">' + $('#vis-user').html() + '</style>');
 
             }
         });
@@ -862,7 +862,7 @@ var vis = {
             // show all
             for (widget in widgets) {
                 if (widgets[widget].data.filterkey) {
-                    $("#" + widget).show(showEffect, null, parseInt(showDuration));
+                    $('#' + widget).show(showEffect, null, parseInt(showDuration));
                 }
             }
             // Show complex widgets
@@ -888,7 +888,7 @@ var vis = {
                     mWidget._customHandlers.onHide) {
                     mWidget._customHandlers.onHide(mWidget, widget);
                 }
-                $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
+                $('#' + widget).hide(hideEffect, null, parseInt(hideDuration));
             }
         } else {
             this.viewsActiveFilter[this.activeView] = filter.split(',');
@@ -903,9 +903,9 @@ var vis = {
                             mWidget._customHandlers.onHide) {
                             mWidget._customHandlers.onHide(mWidget, widget);
                         }
-                        $("#" + widget).hide(hideEffect, null, parseInt(hideDuration));
+                        $('#' + widget).hide(hideEffect, null, parseInt(hideDuration));
                     } else {
-                        $("#" + widget).show(showEffect, null, parseInt(showDuration));
+                        $('#' + widget).show(showEffect, null, parseInt(showDuration));
                     }
                 }
             }
@@ -1236,7 +1236,7 @@ var vis = {
 
                 // @SJ cannot select menu and dialogs if it is enabled
                 /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
-                 $("#" + id).addClass("vis-widget-lock")
+                 $('#' + id).addClass("vis-widget-lock")
                  }*/
             }
 
@@ -1269,16 +1269,15 @@ var vis = {
             }
         }
 
+        var $view = $('#visview_' + view);
         // If really changed
         if (this.activeView !== view) {
             if (effect) {
                 //console.log("effect");
                 this.renderView(view, true, true);
 
-                // View ggf aus Container heraus holen
-                if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
-                    $('#visview_' + view).appendTo('#vis_container');
-                }
+                // Get the view, if required, from Container
+                if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
                 // If hide and show at the same time
                 if (sync) {
@@ -1318,12 +1317,10 @@ var vis = {
 
                 this.renderView(view, true);
 
-                // View ggf aus Container heraus holen
-                if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
-                    $('#visview_' + view).appendTo('#vis_container');
-                }
+                // Get the view, if required, from Container
+                if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
-                $('#visview_' + view).show();
+                $view.show();
                 $('#visview_' + this.activeView).hide();
             }
             // remember last click for debounce
@@ -1331,10 +1328,8 @@ var vis = {
         } else {
             this.renderView(view);
 
-            // View ggf aus Container heraus holen
-            if ($('#visview_' + view).parent().attr('id') !== 'vis_container') {
-                $('#visview_' + view).appendTo('#vis_container');
-            }
+            // Get the view, if required, from Container
+            if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
         }
         this.activeView = view;
 
@@ -1398,109 +1393,6 @@ var vis = {
 
             if (callback) callback.call(that, callbackArg);
         });
-    },
-    removeUnusedFields: function () {
-        var regExp = /^gestures\-/;
-        for (var view in this.views) {
-            for (var id in this.views[view].widgets) {
-                // Check all attributes
-                var data = this.views[view].widgets[id].data;
-                for (var attr in data) {
-                    if ((data[attr] === '' || data[attr] === null) && regExp.test(attr)) {
-                        delete data[attr];
-                    }
-                }
-            }
-        }
-    },
-    saveRemoteActive: 0,
-    saveRemote: function (mode, callback) {
-        // remove all unused fields
-        this.removeUnusedFields();
-
-        if (typeof mode == 'function') {
-            callback = mode;
-            mode     = null;
-        }
-        if (typeof app !== 'undefined') {
-            console.warn('Do not allow save of views from Cordova!');
-            if (typeof callback == 'function') callback();
-            return;
-        }
-
-        var that = this;
-        if (this.permissionDenied) {
-            if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
-                5000, 'ui-state-error');
-            if (typeof callback == 'function') callback();
-            return;
-        }
-
-
-        if (this.saveRemoteActive % 10) {
-            this.saveRemoteActive--;
-            setTimeout(function () {
-                that.saveRemote(mode, callback);
-            }, 1000);
-        } else {
-            if (!this.saveRemoteActive) this.saveRemoteActive = 30;
-            if (this.saveRemoteActive == 10) {
-                console.log('possible no connection');
-                this.saveRemoteActive = 0;
-                return;
-            }
-            // Sync widget before it will be saved
-            if (this.activeWidgets) {
-                for (var t = 0; t < this.activeWidgets.length; t++) {
-                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
-                        this.syncWidgets(this.activeWidgets);
-                        break;
-                    }
-                }
-            }
-
-            // replace all bounded variables with initial values
-            var viewsToSave = JSON.parse(JSON.stringify(this.views));
-            for (var b in this.bindings) {
-                for (var h = 0; h < this.bindings[b].length; h++) {
-                    viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
-                }
-            }
-            viewsToSave = JSON.stringify(viewsToSave, null, 2);
-            if (this.lastSave == viewsToSave) {
-                if (typeof callback == 'function') callback(null);
-                return;
-            }
-
-            this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, mode, function (err) {
-                if (err) {
-                    if (err == 'permissionError') {
-                        that.permissionDenied = true;
-                    }
-                    that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
-                } else {
-                    that.lastSave = viewsToSave;
-                }
-                that.saveRemoteActive = 0;
-                if (typeof callback == 'function') callback(err);
-
-                // If not yet checked => check if project css file exists
-                if (!that.cssChecked) {
-                    that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
-                        that.cssChecked = true;
-                        // Create vis-user.css file if not exist
-                        if (err != 'permissionError' && (_err || data === null || data === undefined)) {
-                            // Create empty css file
-                            that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
-                                if (___err) {
-                                    that.showMessage(_('Cannot create file %s: ', 'vis-user.css') + _(___err), _('Error'), 'alert');
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-        }
     },
     wakeUpCallbacks: [],
     initWakeUp: function () {
@@ -1914,7 +1806,7 @@ var vis = {
                         var parse = parts[u].match(/([\w\s\/\+\*\-]+)(\(.+\))?/);
                         if (parse && parse[1]) {
                             parse[1] = parse[1].trim();
-                            // operators requires paremeter
+                            // operators requires parameter
                             if (parse[1] === '*' ||
                                 parse[1] === '+' ||
                                 parse[1] === '-' ||
@@ -2036,7 +1928,6 @@ var vis = {
                             switch (oids[t].operations[k].arg[a].visOid) {
                                 case 'wid.val':
                                     value = wid;
-                                    oids[t].operations[k].arg[a].visOid;
                                     break;
                                 case 'view.val':
                                     value = view;
@@ -2763,7 +2654,10 @@ function main($) {
                 '</div>' +
                 '</div>';
 
-            $('body').append(text);
+            // Add the mask to body            
+            $('body')
+                .append(text)
+                .append('<div id="login-mask"></div>');
 
             var loginBox = $('#login-box');
 
@@ -2778,9 +2672,7 @@ function main($) {
                 'margin-top': -popMargTop,
                 'margin-left': -popMargLeft
             });
-
-            // Add the mask to body
-            $('body').append('<div id="login-mask"></div>');
+            
             $('#login-mask').fadeIn(300);
             // When clicking on the button close or the mask layer the popup closed
             $('#login-password').keypress(function (e) {
