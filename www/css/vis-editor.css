@@ -861,6 +861,30 @@ td > .select_active_widget :nth-child(2) {
     background-repeat:  repeat, repeat;
 }
 
+@-webkit-keyframes vis-leading-line-shadow {
+    from {-webkit-box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    to   {-webkit-box-shadow: none;}
+}
+@-moz-keyframes vis-leading-line-shadow {
+    from {-moz-box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    to   {-moz-box-shadow: none;}
+}
+@keyframes vis-leading-line-shadow {
+    from {box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    to   {box-shadow: none;}
+}
+
+.vis-leading-line {
+    background:     red;
+    opacity:        0.7;
+    position:       absolute;
+    pointer-events: none;
+    z-index:        2000;
+    /*-webkit-animation: vis-leading-line-shadow 0.3s 1;
+    -moz-animation: vis-leading-line-shadow 0.3s 1;
+    animation: vis-leading-line-shadow 0.3s 1;*/
+}
+
 /* --------- vis preview icons ------------------- */
 .vis-preview-informers-container {
     position:   absolute;
