@@ -197,7 +197,7 @@ vis = $.extend(true, vis, {
             maxWidth: 670,
             minWidth: 100,
             resize: function () {
-                $(this).css("left", "auto");
+                $(this).css('left', 'auto');
             }
 
         });
@@ -253,7 +253,7 @@ vis = $.extend(true, vis, {
         $('select.vis-editor').each(function () {
             $(this).multiselect({
                 multiple:         false,
-                classes:          $(this).attr("id"),
+                classes:          $(this).attr('id'),
                 header:           false,
                 selectedList:     1,
                 minWidth:         $(this).attr('data-multiselect-width'),
@@ -294,7 +294,7 @@ vis = $.extend(true, vis, {
         });
 
         this.$selectActiveWidgets.multiselect({
-            classes:          this.$selectActiveWidgets.attr("id"),
+            classes:          this.$selectActiveWidgets.attr('id'),
             header:           true,
             selectedList:     2,
             minWidth:         this.$selectActiveWidgets.attr('data-multiselect-width'),
@@ -335,8 +335,8 @@ vis = $.extend(true, vis, {
 
         if (this.conn.getType() == 'local') {
             // @SJ cannot select menu and dialogs if it is enabled
-            //$("#wid_all_lock_function").trigger("click");
-            $("#ribbon_tab_datei").show();
+            //$('#wid_all_lock_function').trigger('click');
+            $('#ribbon_tab_datei').show();
         }
 
         $('#start_import_view').button();
@@ -438,8 +438,8 @@ vis = $.extend(true, vis, {
                     $('#screen_size_y').prop('disabled', false);
                     $('.vis-screen-default').prop('disabled', false);
                     $('.rib_tool_resolution_toggle').button('enable');
-                    $("#rib_tools_resolution_fix").toggle();
-                    $("#rib_tools_resolution_manuel").toggle();
+                    $('#rib_tools_resolution_fix').toggle();
+                    $('#rib_tools_resolution_manuel').toggle();
                 } else {
                     var size = val.split('x');
                     $('.rib_tool_resolution_toggle').button('enable');
@@ -647,7 +647,7 @@ vis = $.extend(true, vis, {
          if (this.activeView && this.views && this.views[this.activeView] && this.views[this.activeView].widgets) {
          for (var widget in this.views[this.activeView].widgets) {
          var obj = $('#' + this.views[this.activeView].widgets[widget].tpl);
-         $('#select_active_widget').append("<option value='" + widget + "'>" + this.getWidgetName(this.activeView, widget) + </option>");
+         $('#select_active_widget').append('<option value="' + widget + '">' + this.getWidgetName(this.activeView, widget) + </option>");
          }
          }
          $('#select_active_widget').multiselect('refresh');
@@ -731,6 +731,8 @@ vis = $.extend(true, vis, {
         }
     },
     editShowLeadingLines: function () {
+        var $container;
+        $('#vis_container .vis-leading-line').remove();
         // there are following lines
         // horz-top
         // horz-bottom
@@ -738,6 +740,101 @@ vis = $.extend(true, vis, {
         // vert-left
         // vert-right
         // vert-middle
+        var line = 0;
+        for (var i = 0; i < this.activeWidgets.length; i++) {
+            var $awid = $('#' + this.activeWidgets[i]);
+            var aData = $awid.position();
+            aData.top = parseInt(aData.top, 10);
+            aData.bottom = aData.top + parseInt($awid.height(), 10);
+            aData.middle = (aData.bottom + aData.top) / 2;
+
+            aData.left   = parseInt(aData.left, 10);
+            aData.right  = aData.left + parseInt($awid.width(), 10);
+            aData.center = (aData.left + aData.right) / 2;
+
+            var lines = {
+                horz: [],
+                vert: []
+            };
+            for (var wid in this.views[this.activeView].widgets) {
+                if (this.activeWidgets.indexOf(wid) === -1) {
+                    var $wid = $('#' + wid);
+                    var data = $wid.position();
+                    data.top = parseInt(data.top, 10);
+                    data.bottom = data.top + parseInt($wid.height(), 10);
+                    data.middle = (data.bottom + data.top) / 2;
+
+                    data.left   = parseInt(data.left, 10);
+                    data.right  = data.left + parseInt($wid.width(), 10);
+                    data.center = (data.left + data.right) / 2;
+
+                    if (aData.left === data.left) {
+                        if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
+                    }
+                    if (aData.left === data.center) {
+                        if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
+                    }
+                    if (aData.left === data.right) {
+                        if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
+                    }
+                    if (aData.center === data.left) {
+                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                    }
+                    if (aData.center === data.center) {
+                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                    }
+                    if (aData.center === data.right) {
+                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                    }
+                    if (aData.right === data.left) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                    }
+                    if (aData.right === data.center) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                    }
+                    if (aData.right === data.right) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                    }
+
+
+                    if (aData.top === data.top) {
+                        if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                    }
+                    if (aData.top === data.middle) {
+                        if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                    }
+                    if (aData.top === data.top) {
+                        if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                    }
+                    if (aData.middle === data.top) {
+                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                    }
+                    if (aData.middle === data.middle) {
+                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                    }
+                    if (aData.middle === data.top) {
+                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                    }
+                    if (aData.bottom === data.top) {
+                        if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                    }
+                    if (aData.bottom === data.middle) {
+                        if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                    }
+                    if (aData.bottom === data.bottom) {
+                        if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                    }
+                }
+            }
+            for (var l = 0; l < lines.horz.length; l++) {
+                $container = $container || $('#vis_container');
+                $container.append('<div class="vis-leading-line" style="top: 0; bottom: 0; left: ' + lines.horz[l] + 'px; width: 1px"></div>');
+            }
+            for (var l = 0; l < lines.vert.length; l++) {
+                $container = $container || $('#vis_container');
+                $container.append('<div class="vis-leading-line" style="left: 0; right: 0; top: ' + lines.vert[l] + 'px; height: 1px"></div>');
+            }
+        }
     },
     editUpdateAccordeon: function () {
         var that = this;
@@ -753,7 +850,7 @@ vis = $.extend(true, vis, {
                     } else {
                         that.groupsState[group] = false;
                         $(this).button('option', {
-                            icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                            icons: {primary: that.groupsState[group] ? 'ui-icon-triangle-1-n' : 'ui-icon-triangle-1-s'}
                         });
                         if (that.groupsState[group]) {
                             $('.group-' + group).show();
@@ -873,7 +970,7 @@ vis = $.extend(true, vis, {
 
             setTimeout(function () {
                 $('#scrollbar_style').remove();
-                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
+                $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $('.ui-widget-header').first().css('background-color') + '}</style>');
             }, 300);
 
             // Select active theme in menu
@@ -903,8 +1000,8 @@ vis = $.extend(true, vis, {
         $('#m_shortcuts').click(function () {
             $('#dialog_shortcuts').dialog('open');
         });
-        //$("#m_setup").click(function () {
-        //    $("#dialog_setup").dialog("open");
+        //$('#m_setup').click(function () {
+        //    $('#dialog_setup').dialog('open');
         //});
 
 
@@ -1002,7 +1099,7 @@ vis = $.extend(true, vis, {
         $('#li_menu_object_browser').click(function () {
             var $dlg = $('#dialog-select-member-object-browser');
             if (!$dlg.length) {
-                $('body').append('<div id="dialog-select-member-object-browser" style="display:none"></div>');
+                $('body').append('<div id="dialog-select-member-object-browser" style="display: none"></div>');
                 $dlg = $('#dialog-select-member-object-browser');
                 $dlg.selectId('init', {
                     texts: {
@@ -1060,7 +1157,7 @@ vis = $.extend(true, vis, {
                 $(this).parent().removeClass('ui-state-hover');
             })
             .click(function () {
-                $(this).stop(true, true).effect("highlight");
+                $(this).stop(true, true).effect('highlight');
             });
 
         // Widget ----------------------------------------------------------------
@@ -1083,19 +1180,19 @@ vis = $.extend(true, vis, {
             $('#rib_wid').hide();
             $('#rib_wid_copy_tr').show();
         });
-        $("#rib_wid_copy_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
+        $('#rib_wid_copy_cancel').button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
 
-        $("#rib_wid_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
+        $('#rib_wid_copy_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             that.dupWidgets(null, $('#rib_wid_copy_view').val());
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
 
         // Widget Align ---------------------
-        $("#wid_align_left").click(function () {
+        $('#wid_align_left').click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -1105,7 +1202,7 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid:  this,
-                    left: parseInt($('#' + this).css("left"))
+                    left: parseInt($('#' + this).css('left'))
                 };
                 data.push(_data);
             });
@@ -1121,12 +1218,12 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 $('#' + this.wid).css('left', left  + 'px');
-                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                that.views[that.activeView].widgets[this.wid].style.left = left + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_right").click(function () {
+        $('#wid_align_right').click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -1135,7 +1232,7 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid:  this,
-                    left: parseInt($('#' + this).css("left"))
+                    left: parseInt($('#' + this).css('left'))
                 };
                 data.push(_data);
             });
@@ -1150,13 +1247,13 @@ vis = $.extend(true, vis, {
             var left = data.pop().left;
 
             $.each(data, function(){
-                $('#' + this.wid).css("left", left + "px");
-                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                $('#' + this.wid).css('left', left + 'px');
+                that.views[that.activeView].widgets[this.wid].style.left = left + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_top").click(function () {
+        $('#wid_align_top').click(function () {
             var data = [];
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
@@ -1165,7 +1262,7 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
-                    top: parseInt($('#' + this).css("top"))
+                    top: parseInt($('#' + this).css('top'))
                 };
                 data.push(_data);
             });
@@ -1180,13 +1277,13 @@ vis = $.extend(true, vis, {
             var top = data.shift().top;
 
             $.each(data, function () {
-                $('#' + this.wid).css("top", top  +"px");
-                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                $('#' + this.wid).css('top', top + 'px');
+                that.views[that.activeView].widgets[this.wid].style.top = top + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_bottom").click(function () {
+        $('#wid_align_bottom').click(function () {
             var data = [];
 
             if (that.activeWidgets.length < 2) {
@@ -1197,7 +1294,7 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
-                    top: parseInt($('#' + this).css("top"))
+                    top: parseInt($('#' + this).css('top'))
                 };
                 data.push(_data);
             });
@@ -1212,13 +1309,13 @@ vis = $.extend(true, vis, {
             var top = data.pop().top;
 
             $.each(data, function () {
-                $('#' + this.wid).css("top", top  +"px");
-                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                $('#' + this.wid).css('top', top + 'px');
+                that.views[that.activeView].widgets[this.wid].style.top = top + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_vc").click(function () {
+        $('#wid_align_vc').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1236,13 +1333,13 @@ vis = $.extend(true, vis, {
             middle = min_top + (max_bottom - min_top) / 2;
             $.each(that.activeWidgets, function () {
                 var top = middle - ($('#' + this).height() / 2);
-                $('#' + this).css("top", top + "px");
-                that.views[that.activeView].widgets[this].style.top = top + "px";
+                $('#' + this).css('top', top + 'px');
+                that.views[that.activeView].widgets[this].style.top = top + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_hc").click(function () {
+        $('#wid_align_hc').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1252,7 +1349,7 @@ vis = $.extend(true, vis, {
             var max_right = 0;
             var middle;
             $.each(that.activeWidgets, function () {
-                var left = parseInt($('#' + this).css("left"));
+                var left = parseInt($('#' + this).css('left'));
                 var right = left + $('#' + this).width();
                 if (min_left > left) min_left = left;
                 if (max_right < right) max_right = right;
@@ -1260,13 +1357,13 @@ vis = $.extend(true, vis, {
             middle = min_left + (max_right - min_left) / 2;
             $.each(that.activeWidgets, function () {
                 var left = middle - ($('#' + this).width() / 2);
-                $('#' + this).css("left", left +"px");
-                that.views[that.activeView].widgets[this].style.left = left + "px";
+                $('#' + this).css('left', left + 'px');
+                that.views[that.activeView].widgets[this].style.left = left + 'px';
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_dis_h").click(function () {
+        $('#wid_dis_h').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1278,7 +1375,7 @@ vis = $.extend(true, vis, {
             var cont_size = 0;
             var between;
             $.each(that.activeWidgets, function () {
-                var left = parseInt($('#' + this).css("left"));
+                var left = parseInt($('#' + this).css('left'));
                 var right = left + $('#' + this).width();
                 cont_size = cont_size + $('#' + this).width();
                 if (min_left > left) min_left = left;
@@ -1306,14 +1403,14 @@ vis = $.extend(true, vis, {
 
             $.each(data, function(){
                 left = left + between;
-                $('#' + this.wid).css("left", left + "px");
-                that.views[that.activeView].widgets[this.wid].style.left = left + "px";
+                $('#' + this.wid).css('left', left + 'px');
+                that.views[that.activeView].widgets[this.wid].style.left = left + 'px';
                 left = left + $('#' + this.wid).width();
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_dis_v").click(function () {
+        $('#wid_dis_v').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1326,7 +1423,7 @@ vis = $.extend(true, vis, {
             var between;
 
             $.each(that.activeWidgets, function () {
-                var top = parseInt($('#' + this).css("top"));
+                var top = parseInt($('#' + this).css('top'));
                 var bottom = top + $('#' + this).height();
                 cont_size = cont_size + $('#' + this).height();
                 if (min_top > top) min_top = top;
@@ -1353,14 +1450,14 @@ vis = $.extend(true, vis, {
 
             $.each(data, function () {
                 top = top + between;
-                $('#' + this.wid).css("top", top + "px");
-                that.views[that.activeView].widgets[this.wid].style.top = top + "px";
+                $('#' + this.wid).css('top', top + 'px');
+                that.views[that.activeView].widgets[this.wid].style.top = top + 'px';
                 top = top + $('#' + this.wid).height();
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
         });
-        $("#wid_align_width").click(function () {
+        $('#wid_align_width').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1381,12 +1478,12 @@ vis = $.extend(true, vis, {
 
             for (var k = 0; k < that.activeWidgets.length; k++) {
                 $('#' + that.activeWidgets[k]).width(that.alignValues[that.alignIndex]);
-                that.views[that.activeView].widgets[that.activeWidgets[k]].style.width = that.alignValues[that.alignIndex] + "px";
+                that.views[that.activeView].widgets[that.activeWidgets[k]].style.width = that.alignValues[that.alignIndex] + 'px';
                 that.showWidgetHelper(that.activeWidgets[k], true);
             }
             that.save();
         });
-        $("#wid_align_height").click(function () {
+        $('#wid_align_height').click(function () {
             if (that.activeWidgets.length < 2) {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
@@ -1407,20 +1504,20 @@ vis = $.extend(true, vis, {
 
             for (var u = 0; u < that.activeWidgets.length; u++) {
                 $('#' + that.activeWidgets[u]).height(that.alignValues[that.alignIndex]);
-                that.views[that.activeView].widgets[that.activeWidgets[u]].style.height = that.alignValues[that.alignIndex] + "px";
+                that.views[that.activeView].widgets[that.activeWidgets[u]].style.height = that.alignValues[that.alignIndex] + 'px';
                 that.showWidgetHelper(that.activeWidgets[u], true);
             }
             that.save();
         });
 
         // All Widget ---------------------
-        $("#wid_all_lock_function").button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
+        $('#wid_all_lock_function').button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
             if ($('#wid_all_lock_function').prop('checked')) {
-                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
-                $('#wid_all_lock_f').addClass("ui-state-focus");
+                $('#vis_container').find('.vis-widget').addClass('vis-widget-lock');
+                $('#wid_all_lock_f').addClass('ui-state-focus');
             } else {
-                $("#vis_container").find(".vis-widget").removeClass("vis-widget-lock");
-                $('#wid_all_lock_f').removeClass("ui-state-focus");
+                $('#vis_container').find('.vis-widget').removeClass('vis-widget-lock');
+                $('#wid_all_lock_f').removeClass('ui-state-focus');
             }
             that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
@@ -1430,13 +1527,13 @@ vis = $.extend(true, vis, {
             this.config['button/wid_all_lock_function']) {
             setTimeout(function () {
                 $('#wid_all_lock_function').prop('checked', true);
-                $("#vis_container").find(".vis-widget").addClass("vis-widget-lock");
-                $('#wid_all_lock_f').addClass("ui-state-focus ui-state-active");
+                $('#vis_container').find('.vis-widget').addClass('vis-widget-lock');
+                $('#wid_all_lock_f').addClass('ui-state-focus ui-state-active');
             }, 200);
         }
 
-        $("#wid_all_lock_drag").button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
-            $('#wid_all_lock_d').removeClass("ui-state-focus");
+        $('#wid_all_lock_drag').button({icons: {primary: 'ui-icon-extlink', secondary: null}, text: false}).click(function () {
+            $('#wid_all_lock_d').removeClass('ui-state-focus');
             that.inspectWidgets([]);
             //that.editSaveConfig('checkbox/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
         });
@@ -1449,18 +1546,18 @@ vis = $.extend(true, vis, {
             $('#rib_view_add_tr').show();
             $('#rib_view_addname').val('').focus();
         });
-        $("#rib_view_add_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
+        $('#rib_view_add_cancel').button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_add_tr').hide();
         });
         $('#rib_view_addname').keyup(function (e) {
             // On enter
-            if (e.which === 13) $("#rib_view_add_ok").trigger('click');
+            if (e.which === 13) $('#rib_view_add_ok').trigger('click');
             // esc
-            if (e.which === 27) $("#rib_view_add_cancel").trigger('click');
+            if (e.which === 27) $('#rib_view_add_cancel').trigger('click');
         });
 
-        $("#rib_view_add_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
+        $('#rib_view_add_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_addname').val().trim());
             if (name !== false) {
                 setTimeout(function () {
@@ -1482,17 +1579,17 @@ vis = $.extend(true, vis, {
             $('#rib_view_rename_tr').show();
             $('#rib_view_newname').val(that.activeView).focus();
         });
-        $("#rib_view_rename_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
+        $('#rib_view_rename_cancel').button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_rename_tr').hide();
         });
         $('#rib_view_newname').keyup(function (e) {
             // On enter
-            if (e.which === 13) $("#rib_view_rename_ok").trigger('click');
+            if (e.which === 13) $('#rib_view_rename_ok').trigger('click');
             // esc
-            if (e.which === 27) $("#rib_view_rename_cancel").trigger('click');
+            if (e.which === 27) $('#rib_view_rename_cancel').trigger('click');
         });
-        $("#rib_view_rename_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
+        $('#rib_view_rename_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_newname').val().trim());
             if (name === false) return;
             that.renameView(that.activeView, name);
@@ -1504,19 +1601,19 @@ vis = $.extend(true, vis, {
         $('#rib_view_copy').button({icons: {primary: 'ui-icon-copy', secondary: null}, text: false}).click(function () {
             $('#rib_view').hide();
             $('#rib_view_copy_tr').show();
-            $('#rib_view_copyname').val(that.activeView + "_new").focus();
+            $('#rib_view_copyname').val(that.activeView + '_new').focus();
         });
-        $("#rib_view_copy_cancel").button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
+        $('#rib_view_copy_cancel').button({icons: {primary: 'ui-icon-cancel', secondary: null}, text: false}).click(function () {
             $('#rib_view').show();
             $('#rib_view_copy_tr').hide();
         });
         $('#rib_view_copyname').keyup(function (e) {
             // On enter
-            if (e.which === 13) $("#rib_view_copy_ok").trigger('click');
+            if (e.which === 13) $('#rib_view_copy_ok').trigger('click');
             // esc
-            if (e.which === 27) $("#rib_view_copy_cancel").trigger('click');
+            if (e.which === 27) $('#rib_view_copy_cancel').trigger('click');
         });
-        $("#rib_view_copy_ok").button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
+        $('#rib_view_copy_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
             var name = that.checkNewViewName($('#rib_view_copyname').val().trim());
             if (name === false) return;
             that.dupView(that.activeView, name);
@@ -1528,12 +1625,12 @@ vis = $.extend(true, vis, {
         // Tools ----------------------------------------------------------------
         // Resolution -----------------
 
-        $(".rib_tool_resolution_toggle").button({
+        $('.rib_tool_resolution_toggle').button({
             text:  false,
             icons: {primary: 'ui-icon-refresh'}
         }).css({width: 22, height: 22}).click(function () {
-            $("#rib_tools_resolution_fix").toggle();
-            $("#rib_tools_resolution_manuel").toggle();
+            $('#rib_tools_resolution_fix').toggle();
+            $('#rib_tools_resolution_manuel').toggle();
         });
 
         $('#saving_progress').button({
@@ -1639,7 +1736,7 @@ vis = $.extend(true, vis, {
         }
 
         // Dev ----------------------------------------------------------------
-        $(".oid-dev").change(function () {
+        $('.oid-dev').change(function () {
             var timer = $(this).data('timer');
             if (timer) clearTimeout(timer);
             var $that = $(this);
@@ -1649,12 +1746,12 @@ vis = $.extend(true, vis, {
                 if ($that.attr('type') == 'number') {
                     if ($that.attr('step') == '0.1') {
                         val = val.replace(',', '.');
-                        that.setValue($that.attr("id").split("_")[1], parseFloat(val));
+                        that.setValue($that.attr('id').split('_')[1], parseFloat(val));
                     } else {
-                        that.setValue($that.attr("id").split("_")[1], parseInt(val, 10));
+                        that.setValue($that.attr('id').split('_')[1], parseInt(val, 10));
                     }
                 } else {
-                    that.setValue($that.attr("id").split("_")[1], $that.val());
+                    that.setValue($that.attr('id').split('_')[1], $that.val());
                 }
             }, 500));
         }).keyup(function () {
@@ -1671,8 +1768,8 @@ vis = $.extend(true, vis, {
                 var relX = e.pageX - parentOffset.left;
                 var relY = e.pageY - parentOffset.top;
 
-                relX += $("#vis_container").scrollLeft();
-                relY += $("#vis_container").scrollTop();
+                relX += $('#vis_container').scrollLeft();
+                relY += $('#vis_container').scrollTop();
 
                 vis.showContextMenu({left: relX, top: relY});
 
@@ -1700,7 +1797,7 @@ vis = $.extend(true, vis, {
                 $('.wid_prev_content').css('zoom', 1);
             } else {
                 that.editSaveConfig('button/btn_prev_zoom', true);
-                $(this).addClass("ui-state-active");
+                $(this).addClass('ui-state-active');
                 $('.wid_prev').addClass('wid_prev_k');
                 $('.wid_prev_content').css('zoom', 0.5);
             }
@@ -1720,7 +1817,7 @@ vis = $.extend(true, vis, {
                 $('.wid_prev_type').hide();
             } else {
                 that.editSaveConfig('button/btn_prev_type', true);
-                $(this).addClass("ui-state-active");
+                $(this).addClass('ui-state-active');
                 $('.wid_prev_type').show();
             }
         });
@@ -1808,7 +1905,7 @@ vis = $.extend(true, vis, {
 
                     start: function (event, ui) {
                         if (ui.helper.children().length < 3) {
-                            $(ui.helper).addClass('ui-state-highlight ui-corner-all').css({padding: '2px', "font-size": '12px'});
+                            $(ui.helper).addClass('ui-state-highlight ui-corner-all').css({padding: '2px', 'font-size': '12px'});
 
                         } else {
                             $(ui.helper).find('.wid_prev_type').remove();
@@ -1884,13 +1981,13 @@ vis = $.extend(true, vis, {
                 self_l:   parseInt($('#view_select_tabs').css('left'))
             };
             if (o.parent_w >= (o.self_w + o.self_l)) {
-                $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
+                $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
             }
         });
 
         $('#view_select_left').button({
             icons: {
-                primary: "ui-icon-carat-1-w"
+                primary: 'ui-icon-carat-1-w'
             },
             text: false
         }).click(function () {
@@ -1902,16 +1999,16 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.self_l + 50) <= 0) {
-                    $('#view_select_tabs').css('left', o.self_l + 50 + "px");
+                    $('#view_select_tabs').css('left', o.self_l + 50 + 'px');
                 } else {
-                    $('#view_select_tabs').css('left', "0px");
+                    $('#view_select_tabs').css('left', 0);
                 }
             }
         });
 
         $('#view_select_right').button({
             icons: {
-                primary: "ui-icon-carat-1-e"
+                primary: 'ui-icon-carat-1-e'
             },
             text: false
         }).click(function () {
@@ -1923,7 +2020,7 @@ vis = $.extend(true, vis, {
 
             if (o.self_w != o.parent_w) {
                 if ((o.parent_w - o.self_w) <= (o.self_l - 50)) {
-                    $('#view_select_tabs').css('left', o.self_l - 50 + "px");
+                    $('#view_select_tabs').css('left', o.self_l - 50 + 'px');
                 } else {
                     $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                 }
@@ -1940,17 +2037,17 @@ vis = $.extend(true, vis, {
 
                 if (o.self_w != o.parent_w) {
                     if ((o.parent_w - o.self_w) <= (o.self_l - 20)) {
-                        $('#view_select_tabs').css('left', o.self_l - 20 + "px");
+                        $('#view_select_tabs').css('left', o.self_l - 20 + 'px');
                     } else {
-                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + "px");
+                        $('#view_select_tabs').css('left', (o.parent_w - o.self_w) + 'px');
                     }
                 }
             } else {
                 if (o.self_w != o.parent_w) {
                     if ((o.self_l + 20) <= 0) {
-                        $('#view_select_tabs').css('left', o.self_l + 20 + "px");
+                        $('#view_select_tabs').css('left', o.self_l + 20 + 'px');
                     } else {
-                        $('#view_select_tabs').css('left', "0px");
+                        $('#view_select_tabs').css('left', 0);
                     }
                 }
             }
@@ -1968,12 +2065,12 @@ vis = $.extend(true, vis, {
         var that      = this;
 
         var file      = 'vis-common-user';
-        var editor    = ace.edit("css_editor");
+        var editor    = ace.edit('css_editor');
         var timer     = null;
         var selecting = false;
 
-        //editor.setTheme("ace/theme/monokai");
-        editor.getSession().setMode("ace/mode/css");
+        //editor.setTheme('ace/theme/monokai');
+        editor.getSession().setMode('ace/mode/css');
         editor.setOptions({
             enableBasicAutocompletion: true,
             enableLiveAutocompletion:  true
@@ -1983,19 +2080,19 @@ vis = $.extend(true, vis, {
 
         if (that.config['select/select_css_file']) {
             file = that.config['select/select_css_file'];
-            $("#select_css_file").val(file);
+            $('#select_css_file').val(file);
         }
 
-        $("#select_css_file").selectmenu({
+        $('#select_css_file').selectmenu({
             change: function (event, ui) {
                 // Save file
                 if (file == 'vis-user') {
                     that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
-                        $("#css_file_save").button('disable');
+                        $('#css_file_save').button('disable');
                     });
                 } else if (file == 'vis-common-user') {
                     that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
-                        $("#css_file_save").button('disable');
+                        $('#css_file_save').button('disable');
                     });
                 }
                 file = $(this).val();
@@ -2025,12 +2122,12 @@ vis = $.extend(true, vis, {
             if (timer !== null) return;
             timer = setTimeout(function () {
                 timer = null;
-                $("." + file).text(editor.getValue());
-                $("#css_file_save").button('enable');
+                $('.' + file).text(editor.getValue());
+                $('#css_file_save').button('enable');
 
                 // Trigger autosave after 2 seconds
                 setTimeout(function () {
-                    $("#css_file_save").trigger('click');
+                    $('#css_file_save').trigger('click');
                 }, 2000);
             }, 400);
         });
@@ -2062,39 +2159,39 @@ vis = $.extend(true, vis, {
             });
         });
 
-        $("#css_find_prev").button({
+        $('#css_find_prev').button({
             icons: {
-                primary: " ui-icon-arrowthick-1-n"
+                primary: 'ui-icon-arrowthick-1-n'
             },
             text: false
         }).click(function(){
             editor.findPrevious();
         });
 
-        $("#css_find_next").button({
+        $('#css_find_next').button({
             icons: {
-                primary: "ui-icon-arrowthick-1-s"
+                primary: 'ui-icon-arrowthick-1-s'
             },
             text: false
         }).click(function(){
             editor.findNext();
         });
 
-        $("#css_file_save").button({
+        $('#css_file_save').button({
             icons: {
-                primary: " ui-icon-disk"
+                primary: 'ui-icon-disk'
             },
             text: false
         }).click(function() {
-            if ($("#select_css_file").val() == 'vis-user') {
+            if ($('#select_css_file').val() == 'vis-user') {
                 that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
-                    $("#css_file_save").button('disable');
+                    $('#css_file_save').button('disable');
                 });
             }
 
-            if ($("#select_css_file").val() == 'vis-common-user') {
+            if ($('#select_css_file').val() == 'vis-common-user') {
                 that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
-                    $("#css_file_save").button('disable');
+                    $('#css_file_save').button('disable');
                 });
             }
         }).button('disable');
@@ -2122,7 +2219,7 @@ vis = $.extend(true, vis, {
             change: function (event, ui) {
                 that.changeView($(this).val());
             }
-        }).selectmenu("menuWidget").parent().addClass("view-select-menu");
+        }).selectmenu('menuWidget').parent().addClass('view-select-menu');
         $('#select_view-menu').css('max-height', '400px');
         this.$copyWidgetSelectView.val(this.activeView);
         this.$copyWidgetSelectView.selectmenu();
@@ -2166,17 +2263,17 @@ vis = $.extend(true, vis, {
             change: function (event, ui) {
                 var tpl = ui.item.value;
                 that.editSaveConfig('select/select_set', tpl);
-                if (tpl == "all") {
-                    $('.wid_prev').css("display", "inline-block");
+                if (tpl === 'all') {
+                    $('.wid_prev').css('display', 'inline-block');
                 } else {
                     $('.wid_prev').hide();
-                    $('.' + tpl + '_prev').css("display", "inline-block");
+                    $('.' + tpl + '_prev').css('display', 'inline-block');
 
                     // Remove filter
                     if ($filter_set.val() && $filter_set.val() != '*') {
                         $filter_set.val('*');
-                        var textToShow = $filter_set.find(":selected").text();
-                        $filter_set.parent().find("span").find("input").val(textToShow);
+                        var textToShow = $filter_set.find(':selected').text();
+                        $filter_set.parent().find('span').find('input').val(textToShow);
                         filterWidgets();
                     }
                 }
@@ -2239,21 +2336,21 @@ vis = $.extend(true, vis, {
         }).bind('dblclick', function () {
             if ($filter_set.val() && $filter_set.val() != '*') {
                 $filter_set.val('*');
-                var textToShow = $filter_set.find(":selected").text();
-                $filter_set.parent().find("span").find("input").val(textToShow);
+                var textToShow = $filter_set.find(':selected').text();
+                $filter_set.parent().find('span').find('input').val(textToShow);
                 filterWidgets();
             }
         }).clearSearch();
 
-        if (this.config['select/select_set'] != "all" && this.config['select/select_set']) {
+        if (this.config['select/select_set'] !== 'all' && this.config['select/select_set']) {
             $('.wid_prev').hide();
             $('.' + this.config['select/select_set'] + '_prev').show();
         }
 
         if (this.config['select/filter_set'] && this.config['select/filter_set'] != '*') {
             $filter_set.val(this.config['select/filter_set']);
-            var textToShow = $filter_set.find(":selected").text();
-            $filter_set.parent().find("span").find("input").val(textToShow);
+            var textToShow = $filter_set.find(':selected').text();
+            $filter_set.parent().find('span').find('input').val(textToShow);
             setTimeout(filterWidgets, 500);
         }
 
@@ -2261,14 +2358,14 @@ vis = $.extend(true, vis, {
         $('.view-group').each(function () {
             $(this).button({
                 icons: {
-                    primary: "ui-icon-triangle-1-s"
+                    primary: 'ui-icon-triangle-1-s'
                 },
                 text: false
             }).css({width: 22, height: 22}).click(function () {
                 var group = $(this).attr('data-group');
                 that.groupsState[group] = !that.groupsState[group];
                 $(this).button('option', {
-                    icons: {primary: that.groupsState[group] ? "ui-icon-triangle-1-n" : "ui-icon-triangle-1-s"}
+                    icons: {primary: that.groupsState[group] ? 'ui-icon-triangle-1-n' : 'ui-icon-triangle-1-s'}
                 });
                 if (that.groupsState[group]) {
                     $('.group-' + group).show();
@@ -2365,7 +2462,7 @@ vis = $.extend(true, vis, {
         this.showWaitScreen(false);
         $('#menu_body').show();
         $('#panel_body').show();
-        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $(".ui-widget-header ").first().css("background-color") + '}</style>');
+        $('head').prepend('<style id="scrollbar_style">html{}::-webkit-scrollbar-thumb {background-color: ' + $('.ui-widget-header').first().css('background-color') + '}</style>');
 
         $('#filter_set').clearSearch('update');
 
@@ -2599,7 +2696,7 @@ vis = $.extend(true, vis, {
                         var text = $('#textarea_import_widgets').val();
                         importObject = JSON.parse(text);
                     } catch (e) {
-                        that.showMessage(_('invalid JSON') + "\n\n" + e, _('Error'));
+                        that.showMessage(_('invalid JSON') + '\n\n' + e, _('Error'));
                         return;
                     }
                     var activeWidgets = [];
@@ -2633,7 +2730,7 @@ vis = $.extend(true, vis, {
         var wid;
         if (!isAll) {
             for (var widget in exportView.widgets) {
-                wid = "e" + (('0000' + num).slice(-5));
+                wid = 'e' + (('0000' + num).slice(-5));
                 num += 1;
                 exportView.widgets[wid] = exportView.widgets[widget];
                 delete exportView.widgets[widget];
@@ -2641,7 +2738,7 @@ vis = $.extend(true, vis, {
             if (exportView.activeWidgets) delete exportView.activeWidgets;
         }
         $('#textarea_export_view').html(JSON.stringify(exportView, null, '  '));
-        document.getElementById("textarea_export_view").select();
+        document.getElementById('textarea_export_view').select();
         $('#dialog_export_view').dialog({
             autoOpen: true,
             width:    800,
@@ -2665,7 +2762,7 @@ vis = $.extend(true, vis, {
             var text = $('#textarea_import_view').val();
             importObject = JSON.parse(text);
         } catch (e) {
-            that.showMessage(_('invalid JSON') + "\n\n" + e, _('Error'), 'alert');
+            that.showMessage(_('invalid JSON') + '\n\n' + e, _('Error'), 'alert');
             return;
         }
         if (isAll) {
@@ -2731,7 +2828,7 @@ vis = $.extend(true, vis, {
     nextWidget: function () {
         var next = 1;
         var used = [];
-        var key = "w" + (('000000' + next).slice(-5));
+        var key = 'w' + (('000000' + next).slice(-5));
         for (var view in this.views) {
             for (var wid in this.views[view].widgets) {
                 wid = wid.split('_');
@@ -2740,7 +2837,7 @@ vis = $.extend(true, vis, {
             }
             while (used.indexOf(key) > -1) {
                 next += 1;
-                key = "w" + (('000000' + next).slice(-5));
+                key = 'w' + (('000000' + next).slice(-5));
             }
         }
         return key;
@@ -3047,7 +3144,7 @@ vis = $.extend(true, vis, {
 
             if (this.activeView === targetView) {
                 this.$selectActiveWidgets
-                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $('#' + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr("data-vis-name") + ')</option>')
+                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $('#' + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr('data-vis-name') + ')</option>')
                     .multiselect('refresh');
 
             }
@@ -3093,11 +3190,11 @@ vis = $.extend(true, vis, {
         if (this.activeWidgets.indexOf(wid) != -1) {
             var $wid = $('#' + wid);
             // User interaction
-            if (!$("#wid_all_lock_d").hasClass("ui-state-active") && !this.widgets[wid].data._no_move) {
+            if (!$('#wid_all_lock_d').hasClass('ui-state-active') && !this.widgets[wid].data._no_move) {
                 this.draggable($wid);
             }
             if ($('#wid_all_lock_function').prop('checked')) {
-                $wid.addClass("vis-widget-lock");
+                $wid.addClass('vis-widget-lock');
             }
 
             // If only one selected
@@ -3218,10 +3315,10 @@ vis = $.extend(true, vis, {
             }
 
             $('#widget_helper_' + wid).css({
-                    left:   parseInt(pos.left) - 2 +"px" ,
-                    top:    parseInt(pos.top) - 2 + "px" ,
-                    height: parseInt($widget.outerHeight()) + 2 +'px',
-                    width:  parseInt($widget.outerWidth()) + 2 +'px'
+                    left:   parseInt(pos.left) - 2 + 'px' ,
+                    top:    parseInt(pos.top) - 2 + 'px' ,
+                    height: parseInt($widget.outerHeight()) + 2 + 'px',
+                    width:  parseInt($widget.outerWidth()) + 2 + 'px'
                 }
             ).show();
         } else {
@@ -3268,7 +3365,7 @@ vis = $.extend(true, vis, {
                         that.showWidgetHelper(ui.unselecting.id, false);
                     }
                     /*if ($('#widget_helper_' + ui.unselecting.id).html()) {
-                     $("#widget_helper_" + ui.unselecting.id).remove();
+                     $('#widget_helper_' + ui.unselecting.id).remove();
                      that.activeWidgets.splice(that.activeWidgets.indexOf(ui.unselecting.id), 1);
                      }*/
                 }
@@ -3289,9 +3386,9 @@ vis = $.extend(true, vis, {
         }
 
         // Disable rename if enabled
-        $("#rib_view_copy_cancel").trigger('click');
-        $("#rib_view_rename_cancel").trigger('click');
-        $("#rib_view_add_cancel").trigger('click');
+        $('#rib_view_copy_cancel').trigger('click');
+        $('#rib_view_rename_cancel').trigger('click');
+        $('#rib_view_add_cancel').trigger('click');
 
         // Load meta data if not yet loaded
         if (!this.objects) {
@@ -3399,7 +3496,7 @@ vis = $.extend(true, vis, {
             var css = $('#visview_' + view).css(attr);
             $this.val(css);
             if (attr.match(/color$/)) {
-                $this.css("background-color", css || '');
+                $this.css('background-color', css || '');
                 that._editSetFontColor($this.attr('id'));
             }
         });
@@ -3416,10 +3513,6 @@ vis = $.extend(true, vis, {
             $('#inspect_view_theme').val(this.views[view].settings.theme);
         }
         $('#inspect_view_theme').selectmenu('refresh');
-
-        /*if (view == "_project"){
-            wid_prev
-        }*/
     },
     dragging: false,
     draggable: function (obj) {
@@ -3436,48 +3529,64 @@ vis = $.extend(true, vis, {
             cancel: false,
             start:  function (event, ui) {
                 $('#context_menu').hide();
-                that.dragging = true;
+
+                that.gridWidth = parseInt(that.views[that.activeView].settings.gridSize, 10);
+                if (that.gridWidth < 1 || isNaN(that.gridWidth)) that.gridWidth = 10;
+                that.views[that.activeView].settings.snapType = parseInt(that.views[that.activeView].settings.snapType, 10);
+
                 origX = ui.position.left;
                 origY = ui.position.top;
+                that.dragging = true;
             },
             stop:   function (event, ui) {
-                //var pos = $('#' + widget).position();
-
-                /*if (!that.views[that.activeView].widgets[widget].style) {
-                    that.views[that.activeView].widgets[widget].style = {};
+                var grid;
+                if (that.views[that.activeView].settings.snapType === 2) {
+                    grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
+                } else {
+                    grid = 0;
                 }
-
-                if (pos) {
-                    $('#inspect_css_top').val(pos.top + 'px');
-                    $('#inspect_css_left').val(pos.left + 'px');
-                    that.views[that.activeView].widgets[widget].style.left = pos.left;
-                    that.views[that.activeView].widgets[widget].style.top  = pos.top;
-                }*/
-
-
-                //if (mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
-                //    mWidget._customHandlers.onMoveEnd(mWidget, widget);
-                //}
 
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     var wid = that.activeWidgets[i];
                     var $wid = $('#' + that.activeWidgets[i]);
                     var pos = {
-                        left: parseInt($wid.css("left")),
-                        top:  parseInt($wid.css("top"))
+                        left: parseInt($wid.css('left'), 10),
+                        top:  parseInt($wid.css('top'),  10)
                     };
+                    // if grid enabled
+                    if (grid) {
+                        var xDiff = pos.left % grid;
+                        var yDiff = pos.top  % grid;
+                        if (xDiff) {
+                            if (xDiff < grid / 2) {
+                                pos.left += xDiff;
+                            }  else {
+                                pos.left += grid - xDiff;
+                            }
+                            $wid.css('left', pos.left);
+                        }
+
+                        if (yDiff) {
+                            if (yDiff < grid / 2) {
+                                pos.top += yDiff;
+                            } else {
+                                pos.top += grid - yDiff;
+                            }
+                            $wid.css('top', pos.top);
+                        }
+                    }
                     if (!that.views[that.activeView].widgets[wid]) continue;
                     if (!that.views[that.activeView].widgets[wid].style) that.views[that.activeView].widgets[wid].style = {};
 
-                    if (typeof pos.left == 'string' && pos.left.indexOf('px') === -1) {
+                    if (typeof pos.left === 'string' && pos.left.indexOf('px') === -1) {
                         pos.left += 'px';
                     } else {
-                        pos.left = pos.left.toFixed(0) + 'px';
+                        pos.left = Math.round(pos.left) + 'px';
                     }
-                    if (typeof pos.top == 'string' && pos.top.indexOf('px') === -1) {
+                    if (typeof pos.top  === 'string' && pos.top.indexOf('px')  === -1) {
                         pos.top += 'px';
                     } else {
-                        pos.top = pos.top.toFixed(0) + 'px';
+                        pos.top = Math.round(pos.top) + 'px';
                     }
 
                     that.views[that.activeView].widgets[wid].style.left = pos.left;
@@ -3487,11 +3596,12 @@ vis = $.extend(true, vis, {
                         $wid[0]._customHandlers.onMoveEnd($wid[0], wid);
                     }
                     $('#widget_helper_' + wid).css({
-                        left: parseInt($wid.css("left")) - 2 + 'px',
-                        top: parseInt($wid.css("top")) - 2 + 'px'
+                        left: pos.left - 2 + 'px',
+                        top:  pos.top  - 2 + 'px'
                     });
+                    $('#vis_container .vis-leading-line').remove();
                 }
-                $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets, 'top', true));
+                $('#inspect_css_top').val(that.findCommonValue(that.activeWidgets,  'top', true));
                 $('#inspect_css_left').val(that.findCommonValue(that.activeWidgets, 'left', true));
                 that.save();
                 setTimeout(function () {
@@ -3500,45 +3610,82 @@ vis = $.extend(true, vis, {
 
             },
             drag:   function (event, ui) {
+                var grid;
+                if (that.views[that.activeView].settings.snapType === 2) {
+                    grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
+                } else {
+                    grid = 0;
+                }
+
                 var moveX = ui.position.left - origX;
                 var moveY = ui.position.top  - origY;
+
+                var xDiff;
+                var yDiff
+                // if grid enabled
+                if (grid) {
+                    xDiff = ui.position.left % grid;
+                    yDiff = ui.position.top  % grid;
+                    if (xDiff) {
+                        if (xDiff < grid / 2) {
+                            ui.position.left += xDiff;
+                        } else {
+                            ui.position.left += grid - xDiff;
+                        }
+                    }
+
+                    if (yDiff) {
+                        if (yDiff < grid / 2) {
+                            ui.position.top += yDiff;
+                        } else {
+                            ui.position.top += grid - yDiff;
+                        }
+                    }
+                }
+
                 origX = ui.position.left;
                 origY = ui.position.top;
+
                 for (var i = 0; i < that.activeWidgets.length; i++) {
-                    var mWidget = document.getElementById(that.activeWidgets[i]);
+                    var mWidget  = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
                     var pos = {
-                        left : parseInt($mWidget.css("left")),
-                        top : parseInt($mWidget.css("top"))
+                        left: parseInt($mWidget.css('left'), 10),
+                        top:  parseInt($mWidget.css('top'),  10)
                     };
                     var x = pos.left + moveX;
                     var y = pos.top  + moveY;
 
-                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y -2});
+                    // if grid enabled
+                    if (grid) {
+                        xDiff = x % grid;
+                        yDiff = y % grid;
+                        if (xDiff) {
+                            if (xDiff < grid / 2) {
+                                x += xDiff;
+                            } else {
+                                x += grid - xDiff;
+                            }
+                        }
 
-                    if (ui.helper.attr('id') != that.activeWidgets[i]) $mWidget.css({left: x, top: y});
+                        if (yDiff) {
+                            if (yDiff < grid / 2) {
+                                y += yDiff;
+                            } else {
+                                y += grid - yDiff;
+                            }
+                        }
+                    }
+
+                    $('#widget_helper_' + that.activeWidgets[i]).css({left: x - 2, top: y - 2});
+
+                    if (grid || ui.helper.attr('id') !== that.activeWidgets[i]) $mWidget.css({left: x, top: y});
 
                     if (mWidget._customHandlers && mWidget._customHandlers.onMove) {
                         mWidget._customHandlers.onMove(mWidget, that.activeWidgets[i]);
                     }
                 }
-                /*var mWidget = document.getElementById(that.activeWidget);
-
-                if (ui.helper.attr('id') == that.activeWidget) {
-                    $('#widget_helper').css({left: origX - 2, top: origY - 2});
-                } else {
-                    var $mWidget = $(mWidget);
-                    var pos = $mWidget.position();
-                    var x = pos.left + moveX;
-                    var y = pos.top + moveY;
-                    $mWidget.css({left: x, top: y});
-                    $('#widget_helper').css({left: x - 2, top: y - 2});
-                }
-
-                if ($('#allwidgets_helper').is(':visible')) {
-                    var pos = $('#allwidgets_helper').position();
-                    $('#allwidgets_helper').css({left: pos.left + moveX, top: pos.top + moveY});
-                }*/
+                that.editShowLeadingLines();
             }
         };
         if (this.views[this.activeView].settings.snapType == 1) {
@@ -3603,6 +3750,7 @@ vis = $.extend(true, vis, {
                         height: h + 2
                     });
                     that.save();
+                    $('#vis_container .vis-leading-line').remove();
                 },
                 resize: function (event, ui) {
                     var grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
@@ -3616,14 +3764,20 @@ vis = $.extend(true, vis, {
                         var wDiff = (w + pos.left) % grid;
                         var hDiff = (h + pos.top)  % grid;
                         if (wDiff) {
-                            if (wDiff < grid / 2) grid = 0;
-                            ui.element.width((w + grid - wDiff));
+                            if (wDiff < grid / 2) {
+                                ui.element.width((w + wDiff));
+                            } else {
+                                ui.element.width((w + grid - wDiff));
+                            }
                             //$('.widget-helper').css('width', (w + grid - wDiff + 2));
                         }
 
                         if (hDiff) {
-                            if (hDiff < grid / 2) grid = 0;
-                            ui.element.height((h + grid - hDiff));
+                            if (hDiff < grid / 2) {
+                                ui.element.height((h + hDiff));
+                            } else {
+                                ui.element.height((h + grid - hDiff));
+                            }
                             //$('.widget-helper').css('height', (h + grid - hDiff - 2));
                         }
                     }
@@ -3631,22 +3785,23 @@ vis = $.extend(true, vis, {
                         width:  w + 2,
                         height: h + 2
                     });
+                    that.editShowLeadingLines();
                 }
             }, resizableOptions));
         }
     },
     droppable: function (view) {
-        var $view = $("#visview_" + view);
+        var $view = $('#visview_' + view);
         var that = this;
 
         $view.droppable({
-            accept: ".wid_prev",
+            accept: '.wid_prev',
             drop: function (event, ui) {
-                var tpl = $(ui.draggable).data("tpl");
-                var view_pos = $("#vis_container").position();
+                var tpl = $(ui.draggable).data('tpl');
+                var view_pos = $('#vis_container').position();
                 var addPos = {
-                    left: ui.position.left - $('#toolbox').width() + $("#vis_container").scrollLeft() + 5,
-                    top:  ui.position.top - view_pos.top + $("#vis_container").scrollTop() + 8
+                    left: ui.position.left - $('#toolbox').width() + $('#vis_container').scrollLeft() + 5,
+                    top:  ui.position.top - view_pos.top + $('#vis_container').scrollTop() + 8
                 };
 
                 addPos.left = addPos.left.toFixed(0) + 'px';
@@ -3761,7 +3916,7 @@ vis = $.extend(true, vis, {
         return true;
     },
     actionHighlightWidget: function (id) {
-        if (id == "none") return;
+        if (id === 'none') return;
 
         var $jWidget = $('#' + id);
         if (!$jWidget.length) return;
@@ -3783,7 +3938,7 @@ vis = $.extend(true, vis, {
         var $action1 = $('#' + id + '__action1');
         var text = '';
         if (!$action1.length) {
-            text = "<div id='" + id + "__action1' style='z-index:2000; top:" + (s.top - 3.5) + "px; left:" + (s.left - 3.5) + "px; width: " + s.width + "px; height: " + s.height + "px; position: absolute'></div>";
+            text = '<div id="' + id + '__action1" style="z-index:2000; top:' + (s.top - 3.5) + 'px; left:' + (s.left - 3.5) + 'px; width: ' + s.width + 'px; height: ' + s.height + 'px; position: absolute"></div>';
             $('#visview_' + this.activeView).append(text);
             $action1 = $('#' + id + '__action1');
         }
@@ -3866,7 +4021,7 @@ vis = $.extend(true, vis, {
         $('.vis-steal-css').each(function () {
             $(this).button({
                 icons: {
-                    primary: "ui-icon-star"
+                    primary: 'ui-icon-star'
                 },
                 text: false
             }).click(function (e) {
@@ -3906,12 +4061,12 @@ vis = $.extend(true, vis, {
     },
     stealCssMode: function () {
         var that = this;
-        if (this.selectable) $("#visview_" + this.activeView).selectable('disable');
+        if (this.selectable) $('#visview_' + this.activeView).selectable('disable');
 
         this.isStealCss = true;
 
         if (!$('#stealmode_content').length) {
-            $('body').append('<div id="stealmode_content" style="display:none" class="vis-stealmode">CSS steal mode</div>');
+            $('body').append('<div id="stealmode_content" style="display: none" class="vis-stealmode">CSS steal mode</div>');
             $('#stealmode_content').fadeIn('fast')
                 .click(function () {
                     $(this).fadeOut('slow');
@@ -3965,17 +4120,17 @@ vis = $.extend(true, vis, {
         var cssBottom;
         var cssLeft;
 
-        if (attr == "border-radius") {
+        if (attr === 'border-radius') {
             // TODO second attribute
-            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-left"));
-            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top-right"));
-            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-right"));
-            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-top-left'));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-top-right'));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-bottom-right'));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-bottom-left'));
         } else {
-            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-top"));
-            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-right"));
-            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-bottom"));
-            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + "-left"));
+            cssTop    = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-top'));
+            cssRight  = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-right'));
+            cssBottom = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-bottom'));
+            cssLeft   = that.css(attr.replace(new RegExp(baseAttr), baseAttr + '-left'));
         }
         if (cssLeft == cssRight && cssLeft == cssTop && cssLeft == cssBottom) {
             css = cssLeft;
@@ -4062,9 +4217,9 @@ vis = $.extend(true, vis, {
 
             var ctx = newCanvas.getContext('2d');
             ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-            ctx.fillStyle = "#FF0000";
+            ctx.fillStyle = '#FF0000';
             ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-            ctx.font = "5px Arial";
+            ctx.font = '5px Arial';
             ctx.fillText('Cannot render', 0, 0);
             callback(newCanvas);
         } else {
@@ -4155,7 +4310,7 @@ vis = $.extend(true, vis, {
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
-                $('body').append('<div id="clipboard_content" style="display:none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');
+                $('body').append('<div id="clipboard_content" style="display: none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');
                 $clipboard_content = $('#clipboard_content');
             }
 
@@ -4184,7 +4339,7 @@ vis = $.extend(true, vis, {
             $clipboard_content.html('<table><tr><td>' + _('Clipboard:') + '&nbsp;<b>' + widgetNames + '</b></td><td id="thumbnail"></td></tr></table>');
 
             var that = this;
-            if (typeof html2canvas != "undefined") {
+            if (typeof html2canvas !== 'undefined') {
                 this.getWidgetThumbnail(widgets[0], 0, 0, function (canvas) {
                     $('#thumbnail').html(canvas);
                     if (isCut) {
@@ -4353,11 +4508,11 @@ vis = $.extend(true, vis, {
     },
     onPageClosing: function () {
         // If not saved
-        if (this._saveTimer || !$("#css_file_save").prop('disabled')) {
+        if (this._saveTimer || !$('#css_file_save').prop('disabled')) {
             if (window.confirm(_('Changes are not saved. Are you sure?'))) {
                 return null;
             } else {
-                return _("Configuration not saved.");
+                return _('Configuration not saved.');
             }
         }
         return null;
@@ -4640,7 +4795,7 @@ vis = $.extend(true, vis, {
             $('#context_menu_paste').data('widgets', widgets.join(' '));
             $('#context_menu_select').show();
 
-            $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width:300px">'   + text + '</ul>');
+            $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width: 300px">'   + text + '</ul>');
         } else {
             $('#context_menu_paste').data('widgets', '');
             $('.context-submenu').hide();
@@ -4840,7 +4995,7 @@ $(document).keydown(function (e) {
         }
     } else if (e.which === 113) {
         $('#ribbon_tab_dev').toggle();
-        vis.editSaveConfig(['show/ribbon_tab_dev'], $('#ribbon_tab_dev').is(":visible"));
+        vis.editSaveConfig(['show/ribbon_tab_dev'], $('#ribbon_tab_dev').is(':visible'));
         e.preventDefault();
     } else if (e.which === 114) {
         // Fullscreen
@@ -4861,7 +5016,7 @@ $(document).keydown(function (e) {
 
             $('#attr_wrap').bind('mouseenter', function () {
                 clearTimeout(delay);
-                $("#pan_attr").show('slide', {direction: 'right'});
+                $('#pan_attr').show('slide', {direction: 'right'});
             })
             .bind('mouseleave', function () {
                     delay = setTimeout(function () {

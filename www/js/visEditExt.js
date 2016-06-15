@@ -54,48 +54,44 @@ vis.styleSelect = {
     // local variables
     _internalList:   null,
     // Functions
-    show: function (options) {
-        // Fill the list of styles
-        if (!this._internalList) {
-            this._internalList = {};
-            var sSheetList = document.styleSheets;
-            for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
-                var ruleList = document.styleSheets[sSheet].cssRules;
-                if (ruleList) {
-                    var bglen = "hq-background-".length;
-                    for (var rule = 0; rule < ruleList.length; rule ++) {
-                        if (!ruleList[rule].selectorText) continue;
-                        var _styles = ruleList[rule].selectorText.split(',');
-                        for (var s = 0; s < _styles.length; s++) {
-                            var substyles = _styles[s].trim().split(' ');
-                            var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
+    collectClasses: function () {
+        var result = [];
+        var sSheetList = document.styleSheets;
+        for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
+            var ruleList = document.styleSheets[sSheet].cssRules;
+            if (ruleList) {
+                for (var rule = 0; rule < ruleList.length; rule ++) {
+                    if (!ruleList[rule].selectorText) continue;
+                    var _styles = ruleList[rule].selectorText.split(',');
+                    for (var s = 0; s < _styles.length; s++) {
+                        var substyles = _styles[s].trim().split(' ');
+                        var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                            if (!_style || _style[0] != '.' || _style.indexOf(':') != -1) continue;
+                        if (!_style || _style[0] != '.' || _style.indexOf(':') != -1) continue;
 
-                            var name = _style;
-                            name = name.replace(',', '');
-                            name = name.replace(/^\./, '');
+                        var name = _style;
+                        name = name.replace(',', '');
+                        name = name.replace(/^\./, '');
 
-                            var val  = name;
-                            name = name.replace(/^hq-background-/, '');
-                            name = name.replace(/^hq-/, '');
-                            name = name.replace(/^ui-/, '');
-                            name = name.replace(/[-_]/g, ' ');
+                        var val  = name;
+                        name = name.replace(/^hq-background-/, '');
+                        name = name.replace(/^hq-/, '');
+                        name = name.replace(/^ui-/, '');
+                        name = name.replace(/[-_]/g, ' ');
 
-                            if (name.length > 0) {
-                                name = name[0].toUpperCase() + name.substring(1);
-                                var fff = document.styleSheets[sSheet].href;
+                        if (name.length > 0) {
+                            name = name[0].toUpperCase() + name.substring(1);
+                            var fff = document.styleSheets[sSheet].href;
 
-                                if (fff && fff.indexOf('/') != -1) {
-                                    fff = fff.substring(fff.lastIndexOf('/') + 1);
-                                }
+                            if (fff && fff.indexOf('/') != -1) {
+                                fff = fff.substring(fff.lastIndexOf('/') + 1);
+                            }
 
-                                if (!this._internalList[val]) {
-                                    if (substyles.length > 1) {
-                                        this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', '')};
-                                    } else {
-                                        this._internalList[val] = {name: name, file: fff, attrs: ruleList[rule].style};
-                                    }
+                            if (!result[val]) {
+                                if (substyles.length > 1) {
+                                    result[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', '')};
+                                } else {
+                                    result[val] = {name: name, file: fff, attrs: ruleList[rule].style};
                                 }
                             }
                         }
@@ -103,6 +99,11 @@ vis.styleSelect = {
                 }
             }
         }
+        return result;
+    },
+    show: function (options) {
+        // Fill the list of styles
+        if (!this._internalList) this._internalList = vis.styleSelect.collectClasses();
 
         options.filterName  = options.filterName  || '';
         options.filterAttrs = options.filterAttrs || '';
@@ -175,21 +176,22 @@ vis.styleSelect = {
         }
 
         if (!$.fn.iconselectmenu) {
-            $.widget("custom.iconselectmenu", $.ui.selectmenu, {
+            $.widget('custom.iconselectmenu', $.ui.selectmenu, {
                 _renderItem: function (ul, item) {
-                    var li = $( "<li>", {text: item.label});
+                    var li = $('<li>', {text: item.label});
                     var styles = ul.data('styles');
 
                     if (item.disabled) {
-                        li.addClass( "ui-state-disabled" );
+                        li.addClass('ui-state-disabled');
                     }
 
-                    $("<span>", {
-                        style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
-                        "class": 'ui-corner-all ' + item.value
+                    $('<span>', {
+                        style:  'padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px;',
+                        'class': 'ui-corner-all ' + item.value
                     }).prependTo(li);
 
                     li.css('font-size', '16px');
+
                     if (styles[item.value] && styles[item.value].parentClass) li.addClass(styles[item.value].parentClass);
 
                     return li.appendTo( ul );
@@ -206,9 +208,9 @@ vis.styleSelect = {
                  if (options.onchange) options.onchange(ui.item.value);
 
                 var $text = $('#' + options.name + '_styles-button').find('.ui-selectmenu-text');
-                $("<span>", {
-                    style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
-                    "class": 'ui-corner-all vis-current-style ' + ui.item.value
+                $('<span>', {
+                    style:  'padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px;',
+                    'class': 'ui-corner-all vis-current-style ' + ui.item.value
                 }).prependTo($text);
 
                 $text.css('font-size', '16px');
@@ -216,20 +218,22 @@ vis.styleSelect = {
                 if (styles[ui.item.value] && styles[ui.item.value].parentClass) {
                     $text.parent().addClass(styles[ui.item.value].parentClass);
                 }            }
-        }).iconselectmenu("menuWidget").data('styles', styles);
+        }).iconselectmenu('menuWidget').data('styles', styles);
 
         $('#' + options.name + '_styles-menu').addClass('custom-vis-menu');
 
         if ($('#' + options.name + '_styles-button .vis-current-style').length) {
             $('#' + options.name + '_styles-button .vis-current-style').remove();
-            $('#' + options.name + '_styles').val(options.style);
-            $('#' + options.name + '_styles').iconselectmenu('refresh');
+
+            $('#' + options.name + '_styles')
+                .val(options.style)
+                .iconselectmenu('refresh');
         }
 
         var $text = $('#' + options.name + '_styles-button').find('.ui-selectmenu-text');
-        $("<span>", {
-            style:  "padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px",
-            "class": 'ui-corner-all vis-current-style ' + options.style
+        $('<span>', {
+            style:  'padding: 0px; margin; 0px; z-index: auto; display: inline-block; margin-right: 10px; position: relative; width: 50px; height: 20px;',
+            'class': 'ui-corner-all vis-current-style ' + options.style
         }).prependTo($text);
 
         $text.css('font-size', '16px');
@@ -246,15 +250,15 @@ var colorSelect = {
     settings: {
         onselect:    null,
         onselectArg: null,
-        result:      "",
+        result:      '',
         current:     null,   // current value
         parent:      $('body'), 
-        elemName:    "idialog_",
+        elemName:    'idialog_',
         zindex:      5050
     },
-    _selectText: "",
-    _cancelText: "",    
-    _titleText:  "",
+    _selectText: '',
+    _cancelText: '',
+    _titleText:  '',
     
     show:  function (options) {
         var i = 0;
@@ -319,7 +323,7 @@ var colorSelect = {
 // Create multiselect if no default widget loaded
 if (!$().multiselect) {
     (function ($, undefined) {
-        $.widget("dash.multiselect", {
+        $.widget('dash.multiselect', {
             // default options
             options: {
                 multiple: true
@@ -341,7 +345,7 @@ if (!$().multiselect) {
                 this.table.empty();
                 var div = "";
                 this.element.find("option").each(function () {
-                    div += '<tr class="ui-widget-content"><td><input type="checkbox" '+($(this).is(':selected') ? 'checked' : '')+' data-value="'+$(this).attr('value')+'">'+$(this).html()+'</td>';
+                    div += '<tr class="ui-widget-content"><td><input type="checkbox" ' + ($(this).is(':selected') ? 'checked' : '') + ' data-value="' + $(this).attr('value') + '">' + $(this).html() + '</td>';
                     console.log($(this).attr('value'));
                 });
                 this.table.html(div);

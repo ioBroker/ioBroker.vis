@@ -360,7 +360,13 @@ vis = $.extend(true, vis, {
     editClass: function (widAttr) {
         var that = this;
         if (!this.styleClasses) {
-            this.styleClasses = ['vis-green-gray'];
+            this.styleClasses = [];
+            var classes = vis.styleSelect.collectClasses();
+            var reg = /^vis-style-/;
+            for (var c in classes) {
+                if (reg.test(c) && this.styleClasses.indexOf(c) === -1) this.styleClasses.push(c);
+            }
+            classes = null;
         }
 
         return this.editAutoComplete(widAttr, this.styleClasses);
@@ -2073,7 +2079,7 @@ vis = $.extend(true, vis, {
         this.showInspect(view, this.activeWidgets);
 
         // snap objects to the grid, elsewise cannot move
-        if (this.views[view].settings.snapType == 2) {
+        /*if (this.views[view].settings.snapType == 2) {
             this.gridWidth = parseInt(this.views[view].settings.gridSize, 10);
 
             if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
@@ -2091,18 +2097,18 @@ vis = $.extend(true, vis, {
             }
             // show grid
 
-        }
+        }*/
 
         // Put all view names in the select element
         var $inspect_views = $('#inspect_views');
         $inspect_views.html('');
-        // TODO
+        
         var views = this.getViewsOfWidget(this.activeWidgets[0]);
         for (var v in this.views) {
             if (v != this.activeView) {
                 var selected = '';
-                for (var i = 0; i < views.length; i++) {
-                    if (views[i] == v) {
+                for (var k = 0; k < views.length; k++) {
+                    if (views[k] == v) {
                         selected = 'selected';
                         break;
                     }

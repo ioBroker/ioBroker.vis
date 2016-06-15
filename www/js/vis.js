@@ -737,10 +737,12 @@ var vis = {
         }
 
         var $view = $('#visview_' + view);
-        if ($view.html() === undefined) {
+        if (!$view.length) {
 
             $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
+
+            $view = $('#visview_' + view);
 
             $view.css(this.views[view].settings.style);
             if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
@@ -1269,12 +1271,13 @@ var vis = {
             }
         }
 
-        var $view = $('#visview_' + view);
+        var $view;
         // If really changed
         if (this.activeView !== view) {
             if (effect) {
-                //console.log("effect");
                 this.renderView(view, true, true);
+
+                $view = $('#visview_' + view);
 
                 // Get the view, if required, from Container
                 if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
@@ -1317,6 +1320,8 @@ var vis = {
 
                 this.renderView(view, true);
 
+                $view = $('#visview_' + view);
+
                 // Get the view, if required, from Container
                 if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
@@ -1328,6 +1333,8 @@ var vis = {
         } else {
             this.renderView(view);
 
+            $view = $('#visview_' + view);
+            
             // Get the view, if required, from Container
             if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
         }
