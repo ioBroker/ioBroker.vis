@@ -759,6 +759,7 @@ vis = $.extend(true, vis, {
             for (var wid in this.views[this.activeView].widgets) {
                 if (this.activeWidgets.indexOf(wid) === -1) {
                     var $wid = $('#' + wid);
+                    if (!$wid.length) continue;
                     var data = $wid.position();
                     data.top = parseInt(data.top, 10);
                     data.bottom = data.top + parseInt($wid.height(), 10);
@@ -3189,6 +3190,7 @@ vis = $.extend(true, vis, {
         this.reRenderWidget(null, wid);
         if (this.activeWidgets.indexOf(wid) != -1) {
             var $wid = $('#' + wid);
+
             // User interaction
             if (!$('#wid_all_lock_d').hasClass('ui-state-active') && !this.widgets[wid].data._no_move) {
                 this.draggable($wid);

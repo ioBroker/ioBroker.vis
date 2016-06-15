@@ -195,15 +195,16 @@ vis = $.extend(true, vis, {
 
             line.push({input: '<div id="inspect_' + widAttr + '_desc"></div>'});
 
+            var $dialog = $('#dialog-select-member-' + widAttr);
             // Init select dialog
-            if (!$('#dialog-select-member-' + widAttr).length) {
-                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display:none"></div>');
+            if (!$dialog.length) {
+                $('body').append('<div id="dialog-select-member-' + widAttr + '" style="display: none"></div>');
                 $('#dialog-select-member-' + widAttr).selectId('init', {
                     filter: {
                         common: {
-                            history: {
-                                enabled: isHistory
-                            }
+                            history: isHistory ? {
+                                enabled: true
+                            } : undefined
                         }
                     },
                     texts: {
@@ -240,7 +241,14 @@ vis = $.extend(true, vis, {
                     zindex:  1001
                 });
             } else {
-                $('#dialog-select-member-' + widAttr).selectId('option', 'filterPresets',  {role: widgetFilter});
+                $dialog.selectId('option', 'filterPresets', {role: widgetFilter});
+                $dialog.selectId('option', 'filter', {
+                        common: {
+                            history: isHistory ? {
+                                enabled: true
+                            } : undefined
+                        }
+                });
             }
         }
 
@@ -1616,7 +1624,7 @@ vis = $.extend(true, vis, {
         if (widAttr === 'color') {
             wid_type = 'color';
         } else if (widAttr === 'oid' || widAttr.match(/^oid-/)) {
-            wid_type = 'id';
+            wid_type = wid_type || 'id';
         } else if (widAttr.match(/nav_view$/)) {
             wid_type = 'views';
         } else

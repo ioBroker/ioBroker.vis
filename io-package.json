@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.10.4",
+        "version": "0.10.5",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.10.5": {
+				"en":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
+				"de":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
+				"ru":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode"
+			},
 			"0.10.4": {
 				"en":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
 				"de":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
