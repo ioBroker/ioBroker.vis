@@ -730,9 +730,10 @@ vis = $.extend(true, vis, {
             $('#vis_container .vis-grid').remove();
         }
     },
-    editShowLeadingLines: function () {
+    editShowLeadingLines: function (isHide) {
         var $container;
         $('#vis_container .vis-leading-line').remove();
+        if (isHide) return;
         // there are following lines
         // horz-top
         // horz-bottom
@@ -4477,11 +4478,13 @@ vis = $.extend(true, vis, {
                     this.showWidgetHelper(widgetId, true);
                 }
             }
+            this.editShowLeadingLines();
 
             if (this.delayedSettings) clearTimeout(this.delayedSettings);
 
             var that = this;
             this.delayedSettings = setTimeout(function () {
+                that.editShowLeadingLines(true); // hide lines
                 // Save new settings
                 var activeWidgets = JSON.parse(JSON.stringify(that.activeWidgets));
                 that.activeWidgets = [];
