@@ -2421,6 +2421,7 @@ function main($) {
                         if (data) {
                             for (var id in data) {
                                 var obj = data[id];
+                                if (!obj) continue;
 
                                 try {
                                     if (vis.editMode) {
