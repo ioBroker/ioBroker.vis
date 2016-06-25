@@ -242,6 +242,9 @@
                     <li id="li_menu_file_manager" class="ui-state-default menu-item" role="tab" >
                         <a class="menu-tab-text"><span class="translate">File manager...</span></a>
                     </li>
+                    <li id="li_menu_setup_settings" class="ui-state-default menu-item setup-settings" role="tab">
+                        <a class="menu-tab-text"><span class="translate">Settings...</span></a>
+                    </li>
                     <li id="li_menu_object_browser" class="ui-state-default menu-item" role="tab" >
                         <a class="menu-tab-text"><span class="translate">Object browser...</span></a>
                     </li>
@@ -973,10 +976,26 @@
     <!--textarea style="width: 98%; height: 96%;resize: none;" id="dialog-edit-text-textarea"></textarea-->
     <div id="dialog-edit-text-textarea" style="width: 98%; height: 96%;"></div>
 </div>
-<div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden;display:none">
-    <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width:250px" /></td></tr></table>
+<div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden; display: none">
+    <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width: 250px" /></td></tr></table>
 </div>
-
+<div id="dialog-settings" class="translateT" title="VIS Settings" style="overflow: hidden; display: none">
+    <table><tr><td class="translate">Reload if sleep longer than:</td><td><select id="reloadOnSleep" style="width: 250px">
+        <option value="0" class="translate">never</option>
+        <option value="30" class="translate">30 seconds</option>
+        <option value="60" class="translate">1 minute</option>
+        <option value="300" class="translate">5 minutes</option>
+        <option value="600" class="translate">10 minutes</option>
+        <option value="1800" class="translate">30 minutes</option>
+        <option value="3600" class="translate">1 hour</option>
+        <option value="7200" class="translate">2 hours</option>
+        <option value="10800" class="translate">3 hours</option>
+        <option value="21600" class="translate">6 hours</option>
+        <option value="43200" class="translate">12 hours</option>
+        <option value="86400" class="translate">1 day</option>
+    </select>
+    </td></tr></table>
+</div>
 <div style="display: none" id="uploadPreview"></div>
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>

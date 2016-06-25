@@ -62,6 +62,7 @@ vis = $.extend(true, vis, {
     removeUnusedFields: function () {
         var regExp = /^gestures\-/;
         for (var view in this.views) {
+            if (view === '___settings') continue;
             for (var id in this.views[view].widgets) {
                 // Check all attributes
                 var data = this.views[view].widgets[id].data;
@@ -164,14 +165,20 @@ vis = $.extend(true, vis, {
     editInit: function () {
         var that = this;
         // Create debug variables
-        vis.states.attr({'dev1.val': 0});
-        vis.states.attr({'dev2.val': 0});
-        vis.states.attr({'dev3.val': 0});
-        vis.states.attr({'dev4.val': 0});
-        vis.states.attr({'dev5.val': 1});
-        vis.states.attr({'dev6.val': 'string'});
+        this.states.attr({'dev1.val': 0});
+        this.states.attr({'dev2.val': 0});
+        this.states.attr({'dev3.val': 0});
+        this.states.attr({'dev4.val': 0});
+        this.states.attr({'dev6.val': 'string'});
         this.editLoadConfig();
 
+        // create settings view if not exists
+        if (!this.views.___settings) {
+            this.views.___settings = {
+                reloadOnSleep: 30000
+            };
+        }
+        this.conn.setReloadTimeout(this.views.___settings.reloadOnSleep);
         this.$selectView           = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
         this.$selectActiveWidgets  = $('#select_active_widget');
@@ -220,7 +227,7 @@ vis = $.extend(true, vis, {
             $('#vis_wrap').width(parseInt($(window).width() - $('#pan_add_wid').width() - $('#pan_attr').width() - 1));
             that.editSaveConfig('size/pan_add_wid', $('#pan_add_wid').width());
             that.editSaveConfig('size/pan_attr',    $('#pan_attr').width());
-            if (vis.css_editor) vis.css_editor.resize();
+            if (that.css_editor) that.css_editor.resize();
         }
 
         layout();
@@ -964,6 +971,7 @@ vis = $.extend(true, vis, {
             that.calcCommonStyle(true);
             // We must re-render all opened views
             for (var view in that.views) {
+                if (view === '___settings') continue;
                 if ($('.vis-view #visview' + view).length &&
                     (that.views[view].settings.theme == theme || that.views[view].settings.theme == oldValue)) {
                     that.renderView(view, false);
@@ -1069,6 +1077,41 @@ vis = $.extend(true, vis, {
                         text: _('Cancel'),
                         click: function () {
                             $('#dialog-new-project').dialog('close');
+                        }
+                    }
+                ]
+            });
+        });
+        $('.setup-settings').click(function () {
+            $('#reloadOnSleep').val(that.views.___settings.reloadOnSleep);
+            $('#dialog-settings').dialog({
+                autoPen: true,
+                width:   700,
+                height:  190,
+                modal: true,
+                draggable: false,
+                resizable: false,
+                open:    function () {
+                    $('[aria-describedby="dialog-settings"]').css('z-index', 1002);
+                    //$('.ui-widget-overlay').css('z-index', 1001);
+                },
+                buttons: [
+                    {
+                        id: 'ok',
+                        text: _('Ok'),
+                        click: function () {
+                            if (that.views.___settings.reloadOnSleep != $('#reloadOnSleep').val()) {
+                                that.views.___settings.reloadOnSleep = $('#reloadOnSleep').val();
+                                that.conn.setReloadTimeout(that.views.___settings.reloadOnSleep);
+                                that.save();
+                            }
+                            $('#dialog-settings').dialog('close');
+                        }
+                    },
+                    {
+                        text: _('Cancel'),
+                        click: function () {
+                            $('#dialog-settings').dialog('close');
                         }
                     }
                 ]
@@ -1958,7 +2001,13 @@ vis = $.extend(true, vis, {
         if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
     editBuildSelectView: function () {
-        var keys = Object.keys(this.views);
+        var keys = [];
+        var k;
+        for (k in this.views) {
+            if (k === '___settings') continue;
+            keys.push(k);
+        }
+
 
         // case insensitive sorting
         keys.sort(function (a, b) {
@@ -2204,13 +2253,19 @@ vis = $.extend(true, vis, {
 
         this.editInitSelectView();
 
-        var keys = Object.keys(this.views);
-        var len = keys.length;
+        var keys = [];
         var i;
         var k;
+        for (k in this.views) {
+            if (k === '___settings') continue;
+            keys.push(k);
+        }
+        var len = keys.length;
 
-        keys.sort();
-
+        // case insensitive sorting
+        keys.sort(function (a, b) {
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
         for (i = 0; i < len; i++) {
             k = '<option value="' + keys[i] + '">' + keys[i] + '</option>';
             this.$selectView.append(k);
@@ -2820,7 +2875,7 @@ vis = $.extend(true, vis, {
         if (!name && name !== 0) {
             this.showMessage(_('Please enter the name for the new view!'));
             return false;
-        } else if (this.views[name]) {
+        } else if (this.views[name] || name === '___settings') {
             this.showMessage(_('The view with the same name yet exists!'));
             return false;
         } else {
@@ -2832,6 +2887,7 @@ vis = $.extend(true, vis, {
         var used = [];
         var key = 'w' + (('000000' + next).slice(-5));
         for (var view in this.views) {
+            if (view === '___settings') continue;
             for (var wid in this.views[view].widgets) {
                 wid = wid.split('_');
                 wid = wid[0];
@@ -2848,6 +2904,7 @@ vis = $.extend(true, vis, {
         // find view of this widget
         var view = null;
         for (var v in this.views) {
+            if (v === '___settings') continue;
             if (this.views[v] && this.views[v].widgets && this.views[v].widgets[id]) {
                 view = v;
                 break;
@@ -2868,6 +2925,7 @@ vis = $.extend(true, vis, {
             var wid = wids[0];
             var result = [];
             for (var v in this.views) {
+                if (v === '___settings') continue;
                 if (this.views[v].widgets[wid + '_' + v] !== undefined) {
                     result[result.length] = v;
                 }
@@ -3241,6 +3299,7 @@ vis = $.extend(true, vis, {
 
                 // First sync views
                 for (var v_ in this.views) {
+                    if (v_ === '___settings') continue;
                     isFound = false;
                     if (v_ == view) {
                         continue;

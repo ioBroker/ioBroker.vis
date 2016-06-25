@@ -45,6 +45,7 @@ var servConn = {
     _type:              'socket.io', // [SignalR | socket.io | local]
     _timeout:           0,           // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000,       // reconnect interval
+    _reloadInterval:    30,          // if connection was absent longer than 30 seconds
     _cmdData:           null,
     _cmdInstance:       null,
     _isSecure:          false,
@@ -66,6 +67,9 @@ var servConn = {
     getUser: function () {
         return this._user;
     },
+    setReloadTimeout: function (timeout){
+        this._reloadInterval = parseInt(timeout, 10);    
+    },
     _checkConnection: function (func, _arguments) {
         if (!this._isConnected) {
             console.log('No connection!');
@@ -84,7 +88,7 @@ var servConn = {
     _monitor:         function () {
         if (this._timer) return;
         var ts = (new Date()).getTime();
-        if (ts - this._lastTimer > 30000) {
+        if (this._reloadInterval && ts - this._lastTimer > this._reloadInterval * 1000) {
             // It seems, that PC was in a sleep => Reload page to request authentication anew
             location.reload();
         } else {
@@ -214,8 +218,8 @@ var servConn = {
                     var offlineTime = (new Date()).getTime() - that._disconnectedSince;
                     console.log('was offline for ' + (offlineTime / 1000) + 's');
 
-                    // reload whole page if no connection longer than one minute
-                    if (offlineTime > 60000) window.location.reload();
+                    // reload whole page if no connection longer than some period
+                    if (that._reloadInterval && offlineTime > that._reloadInterval * 1000) window.location.reload();
                     
                     that._disconnectedSince = null;
                 }
@@ -283,7 +287,7 @@ var servConn = {
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                 // reload whole page if no connection longer than one minute
-                if (offlineTime > 60000) {
+                if (that._reloadInterval && offlineTime > that._reloadInterval * 1000) {
                     window.location.reload();
                 }
                 // anyway "on connect" is called

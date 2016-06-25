@@ -468,6 +468,7 @@ vis = $.extend(true, vis, {
     editViewName: function (widAttr) {
         var views = [''];
         for (var v in this.views) {
+            if (v === '___settings') continue;
             views.push(v);
         }
 
@@ -2113,6 +2114,7 @@ vis = $.extend(true, vis, {
         
         var views = this.getViewsOfWidget(this.activeWidgets[0]);
         for (var v in this.views) {
+            if (v === '___settings') continue;
             if (v != this.activeView) {
                 var selected = '';
                 for (var k = 0; k < views.length; k++) {

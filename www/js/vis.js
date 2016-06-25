@@ -254,6 +254,7 @@ var vis = {
         }
 
         for (var view in this.views) {
+            if (view === '___settings') continue;
             for (var id in this.views[view].widgets) {
                 if (!this.views[view].widgets[id].widgetSet) {
 
@@ -292,6 +293,7 @@ var vis = {
         this.bindings   = {};
 
         for (var view in this.views) {
+            if (view === '___settings') continue;
             for (var id in this.views[view].widgets) {
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
@@ -652,6 +654,7 @@ var vis = {
         // render all views, that should be always rendered
         if (this.views && !this.editMode) {
             for (var view in this.views) {
+                if (view === '___settings') continue;
                 if (this.views[view].settings.alwaysRender) {
                     this.renderView(view, false, true);
                 }
@@ -1266,6 +1269,7 @@ var vis = {
         if (!this.views[view]) {
             view = null;
             for (var prop in this.views) {
+                if (prop === '___settings') continue;
                 view = prop;
                 break;
             }
@@ -1581,6 +1585,7 @@ var vis = {
             }
             var styles = {};
             for (var view in this.views) {
+                if (view === '___settings') continue;
                 if (!this.views[view] || !this.views[view].settings.theme) continue;
                 if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
                     styles[this.views[view].settings.theme]++;
@@ -2081,6 +2086,7 @@ var vis = {
 
         // First find all with best fitting width
         for (var view in this.views) {
+            if (view === '___settings') continue;
             if (this.views[view].settings && this.views[view].settings.useAsDefault) {
                 // If difference less than 20%
                 if (Math.abs(this.views[view].settings.sizex - w) / this.views[view].settings.sizex < 0.2) {
@@ -2102,6 +2108,7 @@ var vis = {
             difference = 10000;
 
             for (var view in this.views) {
+                if (view === '___settings') continue;
                 if (this.views[view].settings && this.views[view].settings.useAsDefault) {
                     // If difference less than 20%
                     if (this.views[view].settings.sizey && Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey)) < difference) {
@@ -2114,6 +2121,7 @@ var vis = {
 
         if (!result && resultRequiredOrX) {
             for (view in this.views) {
+                if (view === '___settings') continue;
                 return view;
             }
         }
@@ -2193,8 +2201,8 @@ if ('applicationCache' in window) {
         window.applicationCache.addEventListener('updateready', function (e) {
             if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
                 vis.showWaitScreen(true, null, _('Update found, loading new Files...'), 100);
-                $("#waitText").attr("id", "waitTextDisabled");
-                $(".vis-progressbar").hide();
+                $('#waitText').attr('id', 'waitTextDisabled');
+                $('.vis-progressbar').hide();
                 try {
                     window.applicationCache.swapCache();
                 } catch (_e) {
