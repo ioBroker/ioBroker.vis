@@ -499,13 +499,14 @@ div.jGrowl div.warn {
     right: 0;
     bottom: 0;
     overflow: hidden;
-    background-color: rgba(231,231,231,0.9) !important;
-    background-size: 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
     z-index: 5000;
 }
-
+.disconnect-light {
+    background-color: rgba(231,231,231,0.9);
+}
+.disconnect-dark {
+    background-color: rgba(25,25,25,0.9);
+}
 #server-disconnect > * {
     /* center child divs  */
     position: absolute;

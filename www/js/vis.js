@@ -637,6 +637,14 @@ var vis = {
             }
         }
 
+        if (this.views.___settings) {
+            if (this.views.___settings.reloadOnSleep !== undefined) this.conn.setReloadTimeout(this.views.___settings.reloadOnSleep);
+            if (this.views.___settings.darkReloadScreen) {
+                $('#server-disconnect').removeClass('disconnect-light').addClass('disconnect-dark');
+            }
+            if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
+        }
+
 
         // Navigation
         $(window).bind('hashchange', function (e) {
@@ -2439,13 +2447,13 @@ function main($) {
                                         vis.states[id + '.lc']  = obj.lc;
                                         if (obj.q !== undefined) vis.states[id + '.q'] = obj.q;
                                     } else {
-                                        var o = {};
-                                        o[id + '.val'] = obj.val;
-                                        o[id + '.ts']  = obj.ts;
-                                        o[id + '.ack'] = obj.ack;
-                                        o[id + '.lc']  = obj.lc;
-                                        if (obj.q !== undefined) o[id + '.q'] = obj.q;
-                                        vis.states.attr(o);
+                                        var oo = {};
+                                        oo[id + '.val'] = obj.val;
+                                        oo[id + '.ts']  = obj.ts;
+                                        oo[id + '.ack'] = obj.ack;
+                                        oo[id + '.lc']  = obj.lc;
+                                        if (obj.q !== undefined) oo[id + '.q'] = obj.q;
+                                        vis.states.attr(oo);
                                     }
                                 } catch (e) {
                                     vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
@@ -2845,7 +2853,7 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     }, timeout);
 }
 
-if (window.location.search == '?edit') {
+if (window.location.search === '?edit') {
     window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
 }

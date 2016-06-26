@@ -70,6 +70,9 @@ var servConn = {
     setReloadTimeout: function (timeout){
         this._reloadInterval = parseInt(timeout, 10);    
     },
+    setReconnectInterval: function (interval){
+        this._reconnectInterval = parseInt(interval, 10);
+    },
     _checkConnection: function (func, _arguments) {
         if (!this._isConnected) {
             console.log('No connection!');
@@ -90,7 +93,7 @@ var servConn = {
         var ts = (new Date()).getTime();
         if (this._reloadInterval && ts - this._lastTimer > this._reloadInterval * 1000) {
             // It seems, that PC was in a sleep => Reload page to request authentication anew
-            location.reload();
+            window.location.reload();
         } else {
             this._lastTimer = ts;
         }
@@ -136,11 +139,11 @@ var servConn = {
             this._connectInterval = setInterval(function () {
                 console.log('Trying connect...');
                 that._socket.connect();
-                that._countDown = 10;
+                that._countDown = Math.floor(that._reconnectInterval / 1000);
                 $('.splash-screen-text').html(that._countDown + '...').css('color', 'red');
-            }, 10000);
+            }, this._reconnectInterval);
 
-            this._countDown = 10;
+            this._countDown = Math.floor(this._reconnectInterval / 1000);
             $('.splash-screen-text').html(this._countDown + '...');
 
             this._countInterval = setInterval(function () {
@@ -183,8 +186,8 @@ var servConn = {
         var connLink = connOptions.connLink || window.localStorage.getItem('connLink');
 
         // Connection data from "/_socket/info.js"
-        if (!connLink && typeof socketUrl != 'undefined') connLink = socketUrl;
-        if (!connOptions.socketSession && typeof socketSession != 'undefined') connOptions.socketSession = socketSession;
+        if (!connLink && typeof socketUrl !== 'undefined') connLink = socketUrl;
+        if (!connOptions.socketSession && typeof socketSession !== 'undefined') connOptions.socketSession = socketSession;
 
         // if no remote data
         if (this._type === 'local') {
@@ -252,7 +255,8 @@ var servConn = {
                 if (that._connCallbacks.onReAuth) {
                     that._connCallbacks.onConnChange(that._isSecure);
                     if (typeof app !== 'undefined') app.onConnChange(that._isSecure);
-                    location.reload();
+                    console.warn('reauthenticate');
+                    window.location.reload();
                 }
             });
 

@@ -980,27 +980,49 @@
     <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width: 250px" /></td></tr></table>
 </div>
 <div id="dialog-settings" class="translateT" title="VIS Settings" style="overflow: hidden; display: none">
-    <table><tr><td class="translate">Reload if sleep longer than:</td><td><select id="reloadOnSleep" style="width: 250px">
-        <option value="0" class="translate">never</option>
-        <option value="30" class="translate">30 seconds</option>
-        <option value="60" class="translate">1 minute</option>
-        <option value="300" class="translate">5 minutes</option>
-        <option value="600" class="translate">10 minutes</option>
-        <option value="1800" class="translate">30 minutes</option>
-        <option value="3600" class="translate">1 hour</option>
-        <option value="7200" class="translate">2 hours</option>
-        <option value="10800" class="translate">3 hours</option>
-        <option value="21600" class="translate">6 hours</option>
-        <option value="43200" class="translate">12 hours</option>
-        <option value="86400" class="translate">1 day</option>
-    </select>
-    </td></tr></table>
+    <table>
+        <tr>
+            <td class="translate">Reload if sleep longer than:</td>
+            <td><select id="reloadOnSleep" style="width: 250px">
+                    <option value="0" class="translate">never</option>
+                    <option value="30" class="translate">30 seconds</option>
+                    <option value="60" class="translate">1 minute</option>
+                    <option value="300" class="translate">5 minutes</option>
+                    <option value="600" class="translate">10 minutes</option>
+                    <option value="1800" class="translate">30 minutes</option>
+                    <option value="3600" class="translate">1 hour</option>
+                    <option value="7200" class="translate">2 hours</option>
+                    <option value="10800" class="translate">3 hours</option>
+                    <option value="21600" class="translate">6 hours</option>
+                    <option value="43200" class="translate">12 hours</option>
+                    <option value="86400" class="translate">1 day</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">Reconnect interval:</td>
+            <td><select id="reconnectInterval" style="width: 250px">
+                <option value="1000" class="translate">1 second</option>
+                <option value="2000" class="translate">2 seconds</option>
+                <option value="5000" class="translate">5 seconds</option>
+                <option value="10000" class="translate">10 seconds</option>
+                <option value="20000" class="translate">20 seconds</option>
+                <option value="30000" class="translate">30 seconds</option>
+                <option value="60000" class="translate">1 minute</option>
+            </select>
+            </td>
+        </tr>
+        <tr>
+            <td class="translate">Dark reconnect screen:</td>
+            <td><input type="checkbox" id="darkReloadScreen"></td>
+        </tr>
+    </table>
 </div>
 <div style="display: none" id="uploadPreview"></div>
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>
 
-<div id="server-disconnect" style="left: calc(100% - 350px); padding: 10px; display: block; width: 170px; height: 14px; border-radius: 3px; text-align: center; position: fixed;" class="ui-state-error" >
+<div id="server-disconnect" style="left: calc(100% - 350px); padding: 10px; display: block; width: 170px; height: 14px; border-radius: 3px; text-align: center; position: fixed;" class="ui-state-error disconnect-light" >
     <span class="ui-icon ui-icon-alert" style="position: relative; top: 0;left: 0; display: inline-block; float: left; margin-right: .3em;"></span>
     <div class="translate" style="display: inline-block; position: relative;top: 0;left: 0;">No connection</div>
 </div>

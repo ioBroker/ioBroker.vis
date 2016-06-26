@@ -169,17 +169,17 @@ vis = $.extend(true, vis, {
         this.states.attr({'dev2.val': 0});
         this.states.attr({'dev3.val': 0});
         this.states.attr({'dev4.val': 0});
-        this.states.attr({'dev5.val': 1});
         this.states.attr({'dev6.val': 'string'});
         this.editLoadConfig();
 
         // create settings view if not exists
         if (!this.views.___settings) {
             this.views.___settings = {
-                reloadOnSleep: 30000
+                reloadOnSleep:      30, // seconds
+                reconnectInterval:  10000, // milliseconds
+                darkReloadScreen:   false
             };
         }
-        this.conn.setReloadTimeout(this.views.___settings.reloadOnSleep);
         this.$selectView           = $('#select_view');
         this.$copyWidgetSelectView = $('#rib_wid_copy_view');
         this.$selectActiveWidgets  = $('#select_active_widget');
@@ -1086,13 +1086,15 @@ vis = $.extend(true, vis, {
         });
         $('.setup-settings').click(function () {
             $('#reloadOnSleep').val(that.views.___settings.reloadOnSleep);
+            $('#darkReloadScreen').prop('checked', that.views.___settings.darkReloadScreen);
+            $('#reconnectInterval').val(that.views.___settings.reconnectInterval);
             $('#dialog-settings').dialog({
-                autoPen: true,
-                width:   700,
-                height:  190,
-                modal: true,
-                draggable: false,
-                resizable: false,
+                autoPen:    true,
+                width:      700,
+                height:     240,
+                modal:      true,
+                draggable:  false,
+                resizable:  false,
                 open:    function () {
                     $('[aria-describedby="dialog-settings"]').css('z-index', 1002);
                     //$('.ui-widget-overlay').css('z-index', 1001);
@@ -1102,8 +1104,21 @@ vis = $.extend(true, vis, {
                         id: 'ok',
                         text: _('Ok'),
                         click: function () {
+                            var changed = false;
                             if (that.views.___settings.reloadOnSleep != $('#reloadOnSleep').val()) {
                                 that.views.___settings.reloadOnSleep = $('#reloadOnSleep').val();
+                                changed = true;
+                            }
+                            if (that.views.___settings.reconnectInterval != $('#reconnectInterval').val()) {
+                                that.views.___settings.reconnectInterval = $('#reconnectInterval').val();
+                                that.conn.setReconnectInterval(that.views.___settings.reconnectInterval);
+                                changed = true;
+                            }
+                            if (that.views.___settings.darkReloadScreen != $('#darkReloadScreen').prop('checked')) {
+                                that.views.___settings.darkReloadScreen = $('#darkReloadScreen').prop('checked')
+                                changed = true;
+                            }
+                            if (changed) {
                                 that.conn.setReloadTimeout(that.views.___settings.reloadOnSleep);
                                 that.save();
                             }
