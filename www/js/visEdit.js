@@ -169,6 +169,7 @@ vis = $.extend(true, vis, {
         this.states.attr({'dev2.val': 0});
         this.states.attr({'dev3.val': 0});
         this.states.attr({'dev4.val': 0});
+        this.states.attr({'dev5.val': 1});
         this.states.attr({'dev6.val': 'string'});
         this.editLoadConfig();
 
@@ -769,6 +770,7 @@ vis = $.extend(true, vis, {
                     var $wid = $('#' + wid);
                     if (!$wid.length) continue;
                     var data = $wid.position();
+                    if (!data) continue;
                     data.top = parseInt(data.top, 10);
                     data.bottom = data.top + parseInt($wid.height(), 10);
                     data.middle = (data.bottom + data.top) / 2;
