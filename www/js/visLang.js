@@ -332,6 +332,11 @@ $.extend(systemDictionary, {
         "ru": "Перезагружать если нет соединения дольше:"
     },
     "never":                {"en": "never",             "de": "nie",                    "ru": "никогда"},
+    "1 second":             {"en": "1 second",          "de": "1 Sekunde",              "ru": "1 секунда"},
+    "2 seconds":            {"en": "2 seconds",         "de": "2 Sekunden",             "ru": "2 секунды"},
+    "5 seconds":            {"en": "5 seconds",         "de": "5 Sekunden",             "ru": "5 секунд"},
+    "10 seconds":           {"en": "10 seconds",        "de": "10 Sekunden",            "ru": "10 секунд"},
+    "20 seconds":           {"en": "20 seconds",        "de": "20 Sekunden",            "ru": "20 секунд"},
     "30 seconds":           {"en": "30 seconds",        "de": "30 Sekunden",            "ru": "30 секунд"},
     "1 minute":             {"en": "1 minute",          "de": "1 Minute",               "ru": "1 минута"},
     "5 minutes":            {"en": "5 minutes",         "de": "5 Minuten",              "ru": "5 минут"},
@@ -344,7 +349,9 @@ $.extend(systemDictionary, {
     "12 hours":             {"en": "12 hours",          "de": "12 Stunden",             "ru": "12 часов"},
     "1 day":                {"en": "1 day",             "de": "1 Tag",                  "ru": "1 день"},
     "VIS Settings":         {"en": "Project settings",  "de": "Projekteinstellungen",   "ru": "Настройки проекта"},
-
+    "Änderungen":           {"en": "Changes",           "de": "Änderungen",             "ru": "Изменения"},
+    "Reconnect interval:":  {"en": "Reconnect interval:", "de": "Wiederverbindungsintervall:",  "ru": "Интервал при установке соединения:"},
+    "Dark reconnect screen:": {"en": "Dark reconnect screen:", "de": "Dunkles Reconnect-Screen:", "ru": "Тёмный экран при соединении:"},
     "filter":               {"en": "Filter",            "de": "Filter",                 "ru": "Фильтр"},
     "navigation":           {"en": "Navigation",        "de": "Navigation",             "ru": "Навигация"},
     "static":               {"en": "Static",            "de": "Statisch",               "ru": "Статичное"},
