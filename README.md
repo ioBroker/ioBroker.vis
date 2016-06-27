@@ -158,8 +158,16 @@ E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Settings
+### Reload if sleep longer than
 There is a rule, that after some disconnection period the whole VIS page will be reloaded to synchronise the project.
 You can configure it in menu "Settings...". If you set interval to "never" so the page will be never reloaded.
+
+### Reconnect interval
+Set the interval between the connection attempts if disconnected. If you will set 2 seconds, it will try to establish the connection every 2 seconds.
+
+### Dark reconnect screen
+Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
+![Dark](img/dark_screen.png)
 
 ## Changelog
 ### 0.10.6 (2016-06-25)

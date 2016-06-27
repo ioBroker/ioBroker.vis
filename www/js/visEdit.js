@@ -1090,8 +1090,8 @@ vis = $.extend(true, vis, {
             $('#reconnectInterval').val(that.views.___settings.reconnectInterval);
             $('#dialog-settings').dialog({
                 autoPen:    true,
-                width:      700,
-                height:     240,
+                width:      800,
+                height:     300,
                 modal:      true,
                 draggable:  false,
                 resizable:  false,
