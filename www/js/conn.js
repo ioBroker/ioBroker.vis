@@ -1152,5 +1152,29 @@ var servConn = {
             }
             callback(err, result);
         });
+    },
+    readDirAsZip:       function (project, callback) {
+        if (!this._isConnected) {
+            console.log('No connection!');
+            return;
+        }
+        //socket.io
+        if (this._socket === null) {
+            console.log('socket.io not initialized');
+            return;
+        }
+        if (project.match(/\/$/)) project = project.substring(0, project.length - 1);
+        var that = this;
+        this._socket.emit('getObjectView', 'system', 'host', {startkey: 'system.host.', endkey: 'system.host.\u9999'}, function (err, res) {
+            that._socket.emit('sendToHost', res.rows[0].id, 'readDirAsZip', {
+                id: that.namespace,
+                name: project || 'main'
+            }, function (data) {
+                if (callback) {
+                    callback(data.error, data.data);
+                }
+            });
+
+        });
     }
 };
