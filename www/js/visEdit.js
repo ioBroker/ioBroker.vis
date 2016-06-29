@@ -173,7 +173,7 @@ vis = $.extend(true, vis, {
         this.editLoadConfig();
 
         // create settings view if not exists
-        if (!this.views.___settings) {
+        if (this.views && !this.views.___settings) {
             this.views.___settings = {
                 reloadOnSleep:      30, // seconds
                 reconnectInterval:  10000, // milliseconds
@@ -909,6 +909,41 @@ vis = $.extend(true, vis, {
         });
 
     },
+    editFileHandler: function(event) {
+        event.preventDefault();
+        var file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
+
+        var $dz = $('.vis-drop-zone').show();
+        if (!file || !file.name || !file.name.match(/\.zip$/)) {
+            $('.vis-drop-text').html(_('Invalid file extenstion!'));
+            $dz.addClass('vis-dropzone-error').animate({opacity: 0}, 1000, function () {
+                $dz.hide().removeClass('vis-dropzone-error').css({opacity: 1});
+                $('.vis-drop-text').html(_('Drop the files here'));
+            });
+            return false;
+        }
+
+        if (file.size > 50000000) {
+            $('.vis-drop-text').html(_('File is too big!'));
+            $dz.addClass('vis-dropzone-error').animate({opacity: 0}, 1000, function () {
+                $dz.hide().removeClass('vis-dropzone-error').css({opacity: 1});
+                $('.vis-drop-text').html(_('Drop the files here'));
+            });
+            return false;
+        }
+        $dz.hide();
+        var reader = new FileReader();
+        reader.onload = function (evt) {
+            $('.vis-file-name').html(file.name + ' [' + file.size + ' bytes]');
+            // string has form data:;base64,TEXT==
+            $('.vis-file-name').data('file', evt.target.result.split(',')[1]);
+            $('#start_import_project').prop('disabled', $('.vis-file-name').data('file') && !$('#name_import_project').val());
+        };
+        reader.readAsDataURL(file);
+    },
+    editAnonymize: function (name, data, files) {
+        return data;
+    },
     editInitMenu: function () {
         var that = this;
         $('#menu.sf-menu').superclick({
@@ -1136,7 +1171,126 @@ vis = $.extend(true, vis, {
 
         $('.export-normal').click(function () {
             that.conn.readDirAsZip(that.projectPrefix, function (err, data) {
+                if (err) {
+                    that.showError(err);
+                } else {
+                    var d = new Date();
+                    var date = d.getFullYear();
+                    var m = d.getMonth() + 1;
+                    if (m < 10) m = '0' + m;
+                    date += '-' + m;
+                    m = d.getDate();
+                    if (m < 10) m = '0' + m;
+                    date += '-' + m + '-';
+                    $('body').append('<a id="zip_download" href="data: application/zip;base64,' + data + '" download="' + date + that.projectPrefix.substring(0, that.projectPrefix.length - 1) + '.zip"></a>');
+                    document.getElementById('zip_download').click();
+                    document.getElementById('zip_download').remove();
+                }
+            });
+        });
+        $('.export-anonymized').click(function () {
+            that.conn.readDirAsZip(that.projectPrefix, that.editAnonymize, function (err, data) {
+                if (err) {
+                    that.showError(err);
+                } else {
+                    var d = new Date();
+                    var date = d.getFullYear();
+                    var m = d.getMonth() + 1;
+                    if (m < 10) m = '0' + m;
+                    date += '-' + m;
+                    m = d.getDate();
+                    if (m < 10) m = '0' + m;
+                    date += '-' + m + '-';
+                    $('body').append('<a id="zip_download" href="data: application/zip;base64,' + data + '" download="' + date + that.projectPrefix.substring(0, that.projectPrefix.length - 1) + '.zip"></a>');
+                    document.getElementById('zip_download').click();
+                    document.getElementById('zip_download').remove();
+                }
+            });
+        });
+        $('#name_import_project').on('change', function () {
+            $('#start_import_project').prop('disabled', $('.vis-file-name').data('file') && !$(this).val());
+        }).keyup(function () {
+            $(this).trigger('change');
+        });
+        $('.vis-drop-file').change(function (e) {
+            that.editFileHandler(e);
+        });
+        $('.vis-file-name').parent().click(function () {
+            $('.vis-drop-file').trigger('click');
+        });
+        $('.import-normal').click(function () {
+            $('#dialog_import_project').dialog({
+                autoOpen:   true,
+                width:      600,
+                height:     300,
+                modal:      true,
+                open: function (event, ui) {
+                    $('[aria-describedby="dialog_import_project"]').css('z-index', 1002);
+                    $('.ui-widget-overlay').css('z-index', 1001);
+                    $('#name_import_project').val(that.projectPrefix.substring(0, that.projectPrefix.length - 1));
+                    $('.vis-file-name').data('file', null).html(_('Drop files here or click to select one'));
+                    $('#start_import_project').prop('disabled', true);
+                    $('.vis-drop-file').val('');
 
+                    var $dropZone = $('#dialog_import_project');
+                    if (typeof(window.FileReader) !== 'undefined' && !$dropZone.data('installed')) {
+                        $dropZone.data('installed', true);
+                        var $dz = $('.vis-drop-zone');
+                        $('.vis-drop-text').html(_('Drop the files here'));
+                        $dropZone[0].ondragover = function() {
+                            $dz.unbind('click');
+                            $dz.show();
+                            return false;
+                        };
+                        $dz.click(function () {
+                            $dz.hide();
+                        });
+
+                        $dz[0].ondragleave = function() {
+                            $dz.hide();
+                            return false;
+                        };
+
+                        $dz[0].ondrop = function (e) {
+                            that.editFileHandler(e);
+                        }
+                    }
+                }
+            });
+        });
+        $('#start_import_project').click(function () {
+            $('#dialog_import_project').dialog('close');
+            // Check if the name exists
+            that.conn.readProjects(function (err, projects){
+                var text = '';
+                var name = $('#name_import_project').val();
+                if (projects.length) {
+                    for (var d = 0; d < projects.length; d++) {
+                        if (projects[d].name === name) {
+                            that.confirmMessage(_('Project "%s" yet exists. Do you want to overwrite it?', name), null, null, 700, function (result) {
+                                if (result) {
+                                    that.conn.writeDirAsZip(name, $('.vis-file-name').data('file'), function (err) {
+                                        $('.vis-file-name').data('file', null);
+                                        if (err) {
+                                            that.showError(err);
+                                        } else {
+                                            that.showMessage(_('ok'))
+                                        }
+                                    });
+                                }
+                            });
+                            return;
+                        }
+                    }
+                }
+                that.conn.writeDirAsZip(name, $('.vis-file-name').data('file'), function (err) {
+                    $('.vis-file-name').data('file', null);
+                    if (err) {
+                        that.showError(err);
+                    } else {
+                        that.showMessage(_('ok'))
+                    }
+                });
             });
         });
         
@@ -2568,7 +2722,12 @@ vis = $.extend(true, vis, {
             storage.set('visConfig', JSON.stringify(this.config));
         }
     },
-    confirmMessage: function (message, title, icon, callback) {
+    confirmMessage: function (message, title, icon, width, callback) {
+        if (typeof width === 'function') {
+            callback = width;
+            width = '400';
+        }
+
         if (!this.$dialogConfirm) {
             this.$dialogConfirm = $('#dialog-confirm');
             this.$dialogConfirm.dialog({
@@ -2577,6 +2736,7 @@ vis = $.extend(true, vis, {
                 open: function () {
                     $(this).parent().css({'z-index': 1001});
                 },
+                width: width,
                 buttons: [
                     {
                         text: _('Ok'),

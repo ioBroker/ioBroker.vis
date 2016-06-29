@@ -1153,7 +1153,33 @@ var servConn = {
             callback(err, result);
         });
     },
-    readDirAsZip:       function (project, callback) {
+    getLiveHost:        function (cb) {
+        var that = this;
+        this._socket.emit('getObjectView', 'system', 'host', {startkey: 'system.host.', endkey: 'system.host.\u9999'}, function (err, res) {
+            var _hosts = [];
+            for (var h = 0; h < res.rows.length; h++) {
+                _hosts.push(res.rows[h].id + '.alive');
+            }
+            if (!_hosts.length) {
+                cb('');
+                return;
+            }
+            that.getStates(_hosts, function (err, states) {
+                for (var h in states) {
+                    if (states[h].val) {
+                        cb(h.substring(0, h.length - '.alive'.length));
+                        return;
+                    }
+                }
+                cb('');
+            });
+        });
+    },
+    readDirAsZip:       function (project, processFunc, callback) {
+        if (!callback) {
+            callback = processFunc;
+            processFunc = undefined;
+        }
         if (!this._isConnected) {
             console.log('No connection!');
             return;
@@ -1165,14 +1191,49 @@ var servConn = {
         }
         if (project.match(/\/$/)) project = project.substring(0, project.length - 1);
         var that = this;
-        this._socket.emit('getObjectView', 'system', 'host', {startkey: 'system.host.', endkey: 'system.host.\u9999'}, function (err, res) {
-            that._socket.emit('sendToHost', res.rows[0].id, 'readDirAsZip', {
+        this.getLiveHost(function (host) {
+            if (!host) {
+                window.alert('No active host found');
+                return;
+            }
+            // to do find active host
+            that._socket.emit('sendToHost', host, 'readDirAsZip', {
                 id: that.namespace,
-                name: project || 'main'
+                name: project || 'main',
+                options: processFunc ? {
+                        processFunc: processFunc.toString()
+                    } : undefined
             }, function (data) {
-                if (callback) {
-                    callback(data.error, data.data);
-                }
+                if (data.error) console.error(data.error);
+                if (callback) callback(data.error, data.data);
+            });
+
+        });
+    },
+    writeDirAsZip:       function (project, base64, callback) {
+        if (!this._isConnected) {
+            console.log('No connection!');
+            return;
+        }
+        //socket.io
+        if (this._socket === null) {
+            console.log('socket.io not initialized');
+            return;
+        }
+        if (project.match(/\/$/)) project = project.substring(0, project.length - 1);
+        var that = this;
+        this.getLiveHost(function (host) {
+            if (!host) {
+                window.alert('No active host found');
+                return;
+            }
+            that._socket.emit('sendToHost', host, 'writeDirAsZip', {
+                id:   that.namespace,
+                name: project || 'main',
+                data: base64
+            }, function (data) {
+                if (data.error) console.error(data.error);
+                if (callback) callback(data.error);
             });
 
         });

@@ -8,8 +8,8 @@ var fmScriptEls =    document.getElementsByTagName('script');
 var fmThisScriptEl = fmScriptEls[fmScriptEls.length - 1];
 var fmFolder =       fmThisScriptEl.src.substr(0, fmThisScriptEl.src.lastIndexOf('/') + 1);
 
-//$("head").append('<script type="text/javascript" src="../lib/js/dropzone.js"></script>');
-$("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/>');
+//$('head').append('<script type="text/javascript" src="../lib/js/dropzone.js"></script>');
+$('head').append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/>');
 
 
 (function ($) {
@@ -227,13 +227,13 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             reader.onload = function () {
                 uploadArray.push({name: files[0].name, value: reader.result});
 
-                var type = files[0].name.split(".").pop().toLowerCase();
+                var type = files[0].name.split('.').pop().toLowerCase();
                 var icon = "undef";
-                var class_name = files[0].name.split(".")[0].replace(" ", "_");
+                var class_name = files[0].name.split('.')[0].replace(" ", "_");
 
                 if (o.img.indexOf(type) > -1) {
 
-                    $("#fm_add_dropzone").append(
+                    $('#fm_add_dropzone').append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
                         '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + reader.result + '"/></div>' +
                         '<div class="fm_prev_name">' + files[0].name + '</div>' +
@@ -243,7 +243,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 } else {
                     if (o.icons.indexOf(type) > -1) icon = type;
 
-                    $("#fm_add_dropzone").append(
+                    $('#fm_add_dropzone').append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
                         '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
                         '<div class="fm_prev_name">' + files[0].name + '</div>' +
@@ -262,8 +262,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
         function build(o, err) {
 
-            $(".fm-files").empty();
-            $("#fm_table_head").remove();
+            $('.fm-files').empty();
+            $('#fm_table_head').remove();
             $("#fm_bar_play, #fm_bar_stop, #fm_bar_down, #fm_bar_del").button('disable');
 
             if (o.data !== undefined && o.view == "table") {
@@ -275,29 +275,29 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     ' <button id="fm_table_head_datum" >' + fmTranslate('Date') + '</button>' +
                     '</div>').insertAfter('.fm-path-div');
 
-                $("#fm_table_head_name").button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
-                    $("#fm_th_name").trigger("click");
+                $('#fm_table_head_name').button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
+                    $('#fm_th_name').trigger('click');
                 });
-                $("#fm_table_head_type").button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
-                    $("#fm_th_type").trigger("click");
+                $('#fm_table_head_type').button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
+                    $('#fm_th_type').trigger('click');
                 });
-                $("#fm_table_head_size").button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
-                    $("#fm_th_size_roh").trigger("click");
+                $('#fm_table_head_size').button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
+                    $('#fm_th_size_roh').trigger('click');
                 });
-                $("#fm_table_head_datum").button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
-                    $("#fm_th_datum").trigger("click");
+                $('#fm_table_head_datum').button({icons: {primary: "ui-icon-carat-2-n-s"}}).click(function () {
+                    $('#fm_th_datum').trigger('click');
                 });
 
-                $(".fm-files").append(
+                $('.fm-files').append(
                         '<table id="fm_table"  width="560px">' +
                         ' <tbody width="560px" class="fm_file_table">' +
                         '  <tr id="fm_tr_head" class="ui-state-default ui-corner-top">' +
                         '   <th id="fm_th_icon"  class="fm_th" width="24px"></td>' +
-                        '   <th id="fm_th_name" class="fm_th" >' + fmTranslate("Name") + '</td>' +
-                        '   <th id="fm_th_type" class="fm_th" class="fm_td_hide">' + fmTranslate("Type") + '</td>' +
+                        '   <th id="fm_th_name" class="fm_th" >' + fmTranslate('Name') + '</td>' +
+                        '   <th id="fm_th_type" class="fm_th" class="fm_td_hide">' + fmTranslate('Type') + '</td>' +
                         '   <th id="fm_th_size_roh" class="fm_th" class="fm_td_hide">Size_roh</td>' +
-                        '   <th id="fm_th_size" class="fm_th"  style="text-align:right" width="70px">' + fmTranslate("Size") + '</td>' +
-                        '   <th id="fm_th_datum" class="fm_th" style="text-align:right" width="220px">' + fmTranslate("Datum") + '</td>' +
+                        '   <th id="fm_th_size" class="fm_th"  style="text-align:right" width="70px">' + fmTranslate('Size') + '</td>' +
+                        '   <th id="fm_th_datum" class="fm_th" style="text-align:right" width="220px">' + fmTranslate('Datum') + '</td>' +
                         '   <th class="fm_th" width="10px"></td>' +
                         '  </tr>' +
                         ' </tbody>' +
@@ -326,11 +326,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     if (this.stats.nlink > 1 || this.isDir) {
                         date = this.stats.ctime.split('T')[0];
-                        time = this.stats.ctime.split('T')[1].split(".")[0];
-                        type = this.file.split(".")[1] || "";
+                        time = this.stats.ctime.split('T')[1].split('.')[0];
+                        type = this.file.split('.')[1] || "";
                         filter = "fm_folderFilter";
 
-                        $(".fm_file_table").append(
+                        $('.fm_file_table').append(
                             '<tr class="fm_tr_folder ' + filter + ' fm_tr ui-state-default no_background">' +
                             '<td width="24px"><img src="' + fmFolder + 'icon/mine/24/folder-brown.png"/></td>' +
                             '<td>' + this.file + '</td>' +
@@ -344,8 +344,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         var icons = ['zip', 'prg', 'js', 'png', 'svg', 'jpg', 'gif', 'bmp', 'css', 'mp3', 'wav'];
                         var icon = 'undef';
                         date = this.stats.ctime.split('T')[0];
-                        time = this.stats.ctime.split('T')[1].split(".")[0];
-                        type = this.file.split(".").pop() || "";
+                        time = this.stats.ctime.split('T')[1].split('.')[0];
+                        type = this.file.split('.').pop() || "";
                         filter = '';
 
                         if (icons.indexOf(type) > -1) icon = type;
@@ -367,13 +367,13 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 $('#fm_th_name, #fm_th_type, #fm_th_size, #fm_th_datum')
                     .mouseenter(function () {
-                        $(this).addClass("ui-state-focus");
+                        $(this).addClass('ui-state-focus');
                     })
                     .mouseleave(function () {
-                        $(this).removeClass("ui-state-focus");
+                        $(this).removeClass('ui-state-focus');
                     })
                     .click(function () {
-                        $(this).effect("highlight");
+                        $(this).effect('highlight');
                     });
 
                 // sort Table _____________________________________________________
@@ -406,38 +406,38 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             inverse = !inverse;
                         });
                     });
-                $("#fm_th_name").trigger("click");
-                $("#fm_th_type").trigger("click");
+                $('#fm_th_name').trigger('click');
+                $('#fm_th_type').trigger('click');
 
                 // sort Table----------------------------------------------------------
 
                 $(".fm_tr > *").click(function (e) {
 
-                    $(".fm_table_selected").addClass("ui-state-default no_background");
-                    $(".fm_table_selected").removeClass("fm_table_selected ui-state-highlight");
-                    if ($(e.target).hasClass("fm_tr")) {
+                    $('.fm_table_selected').addClass("ui-state-default no_background");
+                    $('.fm_table_selected').removeClass("fm_table_selected ui-state-highlight");
+                    if ($(e.target).hasClass('fm_tr')) {
                         $(this).addClass("fm_table_selected ui-state-highlight");
                         $(this).removeClass("ui-state-default no_background");
                     } else {
-                        $(this).parent(".fm_tr").addClass("fm_table_selected ui-state-highlight");
-                        $(this).parent(".fm_tr").removeClass("ui-state-default no_background");
+                        $(this).parent('.fm_tr').addClass("fm_table_selected ui-state-highlight");
+                        $(this).parent('.fm_tr').removeClass("ui-state-default no_background");
                     }
 
-                    var type = $($(".fm_table_selected").children().toArray()[2]).text();
-                    var name = $($(".fm_table_selected").children().toArray()[1]).text();
+                    var type = $($('.fm_table_selected').children().toArray()[2]).text();
+                    var name = $($('.fm_table_selected').children().toArray()[1]).text();
 
                     if (!type) {
                         selType = "folder";
                         selFile = name;
-                        $("#fm_bar_down").button('disable');
-                        $("#fm_bar_del").button('enable');
+                        $('#fm_bar_down').button('disable');
+                        $('#fm_bar_del').button('enable');
 
                     } else {
                         selType = "file";
                         selFile = name;
-                        $("#fm_inp_save").val(selFile.split(".")[0]);
-                        $("#fm_bar_down").button('enable');
-                        $("#fm_bar_del").button('enable');
+                        $('#fm_inp_save').val(selFile.split('.')[0]);
+                        $('#fm_bar_down').button('enable');
+                        $('#fm_bar_del').button('enable');
                     }
 
                     if (o.audio.indexOf(type) > -1) {
@@ -447,13 +447,13 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     }
                 });
 
-                $(".fm_tr_folder").dblclick(function () {
+                $('.fm_tr_folder').dblclick(function () {
                     o.path += $((this).children[1]).text() + "/";
                     load(o.path);
                 });
 
-                if (document.getElementById("script_scrollbar")) {
-                    $(".fm-files").css({
+                if (document.getElementById('script_scrollbar')) {
+                    $('.fm-files').css({
                         height: "auto",
                         overflow: "visible"
                     });
@@ -465,7 +465,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     $('#fm_scroll_pane').perfectScrollbar('update');
 
                 } else {
-                    $(".fm-files").css({
+                    $('.fm-files').css({
                         height: "calc(100% - 188px) "
                     });
                 }
@@ -487,7 +487,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     if (this.stats.nlink > 1 || this.isDir) {
                         var type = "_";
-                        $(".fm-files").append(
+                        $('.fm-files').append(
                                 '<div class="fm_prev_container fm_folderFilter" data-sort="' + type + '">' +
                                 '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/folder-brown.png"/></div>' +
                                 '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -495,8 +495,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                 '</div>');
 
                     } else {
-                        var name   = this.file.split(".")[0];
-                        var _type  = (this.file.split(".")[1] || "").toLowerCase();
+                        var name   = this.file.split('.')[0];
+                        var _type  = (this.file.split('.')[1] || "").toLowerCase();
                         var icon   = "undef";
                         var filter = "";
                         if (o.fileFilter && o.fileFilter.length && o.fileFilter.indexOf(_type) == -1) {
@@ -507,7 +507,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             // if image
                             if (o.img.indexOf(_type) > -1) {
 
-                                $(".fm-files").append(
+                                $('.fm-files').append(
                                     '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                     '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + path + this.file + '"/></div>' +
                                     '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -519,7 +519,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     icon = _type;
                                 }
 
-                                $(".fm-files").append(
+                                $('.fm-files').append(
                                         '<div class="fm_prev_container ' + filter + '" data-sort="' + _type + '">' +
                                         '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
                                         '<div class="fm_prev_name">' + this.file + '</div>' +
@@ -543,9 +543,9 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     div.append(itm);
                 });
 
-                if (document.getElementById("script_scrollbar")) {
+                if (document.getElementById('script_scrollbar')) {
 
-                    $(".fm-files").css({
+                    $('.fm-files').css({
                         height: "auto",
                         overflow: "visible"
                     });
@@ -558,36 +558,36 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 } else {
                     if (o.mode == 'show') {
-                        $(".fm-files").css({
+                        $('.fm-files').css({
                             height: "calc(100% - 80px)"
                         });
 
                     } else {
-                        $(".fm-files").css({
+                        $('.fm-files').css({
                             height: "calc(100% - 151px)"
                         });
                     }
                 }
 
-                $(".fm_prev_overlay").click(function () {
-                    var type = $(this).parent().data("sort");
+                $('.fm_prev_overlay').click(function () {
+                    var type = $(this).parent().data('sort');
 
-                    $(".fm_prev_selected").removeClass("fm_prev_selected");
-                    $(this).addClass("fm_prev_selected");
+                    $('.fm_prev_selected').removeClass('fm_prev_selected');
+                    $(this).addClass('fm_prev_selected');
 
                     if (type == "_") {
                         selType = "folder";
                         selFile = $(this).prev().text();
 
-                        $("#fm_bar_down").button('disable');
-                        $("#fm_bar_del").button('enable');
+                        $('#fm_bar_down').button('disable');
+                        $('#fm_bar_del').button('enable');
 
                     } else {
                         selType = "file";
                         selFile = $(this).prev().text();
-                        $("#fm_inp_save").val(selFile.split(".")[0]);
-                        $("#fm_bar_down").button('enable');
-                        $("#fm_bar_del").button('enable');
+                        $('#fm_inp_save').val(selFile.split('.')[0]);
+                        $('#fm_bar_down').button('enable');
+                        $('#fm_bar_del').button('enable');
                     }
 
                     if (o.audio.indexOf(type) > -1) {
@@ -597,8 +597,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     }
                 });
 
-                $(".fm_prev_overlay").dblclick(function () {
-                    var type = $(this).parent().data("sort");
+                $('.fm_prev_overlay').dblclick(function () {
+                    var type = $(this).parent().data('sort');
 
                     if (type == "_") {
                         o.path += $(this).prev().text() + "/";
@@ -610,32 +610,32 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 });
             }
 
-            if ($("#fm_bar_all").hasClass("ui-state-error")) {
-                $(".fm_folderFilter").show();
-                $(".fm_fileFilter").show();
+            if ($('#fm_bar_all').hasClass('ui-state-error')) {
+                $('.fm_folderFilter').show();
+                $('.fm_fileFilter').show();
             } else {
-                $(".fm_fileFilter").hide();
+                $('.fm_fileFilter').hide();
                 if (o.folderFilter) {
-                    $(".fm_folderFilter").hide();
+                    $('.fm_folderFilter').hide();
                 }
             }
-            if ($("#fm_bar_background").hasClass("ui-state-error")) {
-                $(".fm-files").removeClass('fm-dark-background').addClass('fm-light-background');
-            } else if ($("#fm_bar_background").hasClass("ui-state-highlight ")) {
-                $(".fm-files").removeClass('fm-light-background').addClass('fm-dark-background');
+            if ($('#fm_bar_background').hasClass('ui-state-error')) {
+                $('.fm-files').removeClass('fm-dark-background').addClass('fm-light-background');
+            } else if ($('#fm_bar_background').hasClass('ui-state-highlight')) {
+                $('.fm-files').removeClass('fm-light-background').addClass('fm-dark-background');
             }
 
-            if (o.view == "prev" && $("#fm_bar_all").hasClass("ui-state-error")) {
-                $(".fm_fileFilter").css({display: "inline-table"});
+            if (o.view == "prev" && $('#fm_bar_all').hasClass('ui-state-error')) {
+                $('.fm_fileFilter').css({display: "inline-table"});
             }
             // BF: Workaround against wrong path
             if (o.path == o.root ||
                 o.path == '/') {
 
-                $("#fm_bar_back").trigger("mouseleave");
-                $("#fm_bar_back").button("option", "disabled", true);
+                $('#fm_bar_back').trigger('mouseleave');
+                $('#fm_bar_back').button("option", "disabled", true);
             } else {
-                $("#fm_bar_back").button("option", "disabled", false);
+                $('#fm_bar_back').button("option", "disabled", false);
             }
 
             if (o.currentFile) {
@@ -653,7 +653,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         }
 
         function filter(o) {
-            var isAll = $("#fm_bar_all").hasClass("ui-state-error");
+            var isAll = $('#fm_bar_all').hasClass('ui-state-error');
             $('.fm_prev_container').each(function () {
                 if (o.filter) {
                     var filter = o.filter.toLowerCase();
@@ -678,7 +678,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             });
         }
 
-        $("body").append(
+        $('body').append(
                 '<div id="dialog_fm" class="fm_dialog" style="text-align: center" title="' + fmTranslate('File manager') + '">' +
                 '    <input class="focus_dummy" style="border:none;height: 1px;padding: 1px;width: 1px;background: transparent; display: flex;" type="button"/>' +
                 '    <div class="fm_iconbar ui-state-default ui-corner-all">' +
@@ -716,7 +716,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         // hide show all button if no filter set
         if (!o.fileFilter || !o.fileFilter.length) $('#fm_bar_all').hide();
 
-        $("#dialog_fm").dialog({
+        $('#dialog_fm').dialog({
             height:    $(window).height() - 100,
             width:     835,
             minWidth:  672,
@@ -724,7 +724,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             resizable: true,
             modal:     true,
             close: function () {
-                $("#dialog_fm").remove();
+                $('#dialog_fm').remove();
             },
             resize: function () {
                 $('#fm_bar_filter').clearSearch('update');
@@ -754,18 +754,18 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
         }
 
         if (o.mode == "show") {
-            $(".fm-buttonbar").hide();
+            $('.fm-buttonbar').hide();
         }
         if (o.mode == "save") {
-            $("#fm_btn_open").hide();
+            $('#fm_btn_open').hide();
         }
         if (o.mode == "open") {
-            $("#fm_save_wrap").hide();
-            $("#fm_btn_save").hide();
+            $('#fm_save_wrap').hide();
+            $('#fm_btn_save').hide();
         }
 
-        $(".fm_bar_icon").button();
-        $("#fm_bar_back")
+        $('.fm_bar_icon').button();
+        $('#fm_bar_back')
             .button()
             .click(function () {
                 var path_arry = o.path.split('/');
@@ -780,8 +780,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 // Workaround for wrong path
                 if (o.path == o.root ||
                     o.path == '/') {
-                    $("#fm_bar_back").trigger('mouseleave');
-                    $("#fm_bar_back").button("option", "disabled", true);
+                    $('#fm_bar_back').trigger('mouseleave');
+                    $('#fm_bar_back').button("option", "disabled", true);
                 }
 
                 load(o.path);
@@ -789,17 +789,17 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
 //        $("#fm_bar_play, #fm_bar_stop, #fm_bar_down").button('disable');
 
-        if (document.getElementById("script_scrollbar")) {
-            $(".fm-files").wrap('<div id="fm_scroll_pane" class="ui-state-default no_background"></div>');
+        if (document.getElementById('script_scrollbar')) {
+            $('.fm-files').wrap('<div id="fm_scroll_pane" class="ui-state-default no_background"></div>');
 
-            $(".fm-files").css({
+            $('.fm-files').css({
                 minHeight: "100%",
                 height: "auto",
                 width: "calc(100% - 4px)",
                 border: "none"
             });
 
-            $("#fm_scroll_pane").perfectScrollbar({
+            $('#fm_scroll_pane').perfectScrollbar({
                 wheelSpeed: 40,
                 suppressScrollX: true
             });
@@ -810,7 +810,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
         load(o.path);
 
-        $("#fm_bar_all")
+        $('#fm_bar_all')
             .button({
                 icons: {
                     primary: "ui-icon-gear"
@@ -821,21 +821,21 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 $(this).toggleClass('ui-state-error');
                 if ($(this).hasClass('ui-state-error')) {
 
-                    $(".fm_fileFilter").show();
-                    $(".fm_folderFilter").show();
+                    $('.fm_fileFilter').show();
+                    $('.fm_folderFilter').show();
                     if (o.view == "prev") {
-                        $(".fm_fileFilter").css({display: "inline-table"});
+                        $('.fm_fileFilter').css({display: "inline-table"});
                     }
                 } else {
-                    $(".fm_fileFilter").hide();
+                    $('.fm_fileFilter').hide();
                     if (o.folderFilter) {
-                        $(".fm_folderFilter").hide();
+                        $('.fm_folderFilter').hide();
                     }
                 }
-                $(this).removeClass("ui-state-focus");
+                $(this).removeClass('ui-state-focus');
             });
 
-        $("#fm_bar_background")
+        $('#fm_bar_background')
             .button({
                 icons: {
                     primary: "ui-icon-alert"
@@ -843,40 +843,40 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
             })
             .click(function () {
                 if ($(this).hasClass('ui-state-error')) {
-                    $(".fm-files").removeClass('fm-dark-background no_background').addClass('fm-light-background');
+                    $('.fm-files').removeClass('fm-dark-background no_background').addClass('fm-light-background');
                     $(this).removeClass('ui-state-error').addClass('ui-state-highlight');
                 } else if ($(this).hasClass('ui-state-highlight')) {
                     $(this).removeClass('ui-state-error ui-state-highlight');
-                    $(".fm-files").removeClass('fm-light-background fm-dark-background').addClass('no_background');
+                    $('.fm-files').removeClass('fm-light-background fm-dark-background').addClass('no_background');
                 } else {
                     $(this).removeClass('ui-state-highlight').addClass('ui-state-error');
-                    $(".fm-files").removeClass('no_background fm-light-background').addClass('fm-dark-background');
+                    $('.fm-files').removeClass('no_background fm-light-background').addClass('fm-dark-background');
                 }
 
-                config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
+                config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
                 if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
             });
         if (config.background == 'fm-dark-background') {
-            $("#fm_bar_background").addClass('ui-state-error');
-            $(".fm-files").addClass(config.background).removeClass('no_background');
+            $('#fm_bar_background').addClass('ui-state-error');
+            $('.fm-files').addClass(config.background).removeClass('no_background');
         } else if (config.background == 'fm-light-background') {
-            $("#fm_bar_background").addClass('ui-state-highlight');
-            $(".fm-files").addClass(config.background).removeClass('no_background');
+            $('#fm_bar_background').addClass('ui-state-highlight');
+            $('.fm-files').addClass(config.background).removeClass('no_background');
         }
 
         if (config.all) {
-            $("#fm_bar_all").addClass("ui-state-error");
+            $('#fm_bar_all').addClass('ui-state-error');
         }
 
-        $(".fm_bar_icon")
+        $('.fm_bar_icon')
             .mouseenter(function () {
-                $(this).addClass("ui-state-focus");
+                $(this).addClass('ui-state-focus');
             })
             .mouseleave(function () {
-                $(this).removeClass("ui-state-focus");
+                $(this).removeClass('ui-state-focus');
             })
             .click(function () {
-                var id = $(this).attr("id");
+                var id = $(this).attr('id');
 
 
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -910,10 +910,10 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                     var files = [];
 
-                    $(".fm_dropbox_text").click(function () {
-                        $("#fm_open_file").trigger('click');
+                    $('.fm_dropbox_text').click(function () {
+                        $('#fm_open_file').trigger('click');
                     });
-                    $("#fm_open_file").change(function (event) {
+                    $('#fm_open_file').change(function (event) {
                         try {
                             $.each(event.target.files, function () {
                                 files.push(this);
@@ -948,7 +948,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                         }
                     });
                     try {
-                        $("#btn_fm_add_ok").button().click(function () {
+                        $('#btn_fm_add_ok').button().click(function () {
                             function upload() {
                                 try {
                                     var name = uploadArray[0].name.split('.');
@@ -958,7 +958,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                                     fmConn.writeFile64(o.path + name, uploadArray[0].value.split('base64,')[1], function (err, data) {
 
                                         // TODO Leerzeichem im Dateinmaen Berucksichtigen (da in classen keine leertzeichen sein dürfen)
-                                        var class_name = uploadArray[0].name.split(".")[0].replace(" ", "_");
+                                        var class_name = uploadArray[0].name.split('.')[0].replace(" ", "_");
                                         $("." + class_name).remove();
 
                                         uploadArray.shift();
@@ -981,7 +981,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             upload();
                         });
 
-                        $("#btn_fm_add_close").button().click(function () {
+                        $('#btn_fm_add_close').button().click(function () {
                             $('#dialog_fm_add').remove();
                             load(o.path);
                         });
@@ -1010,8 +1010,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             }
                         });
 
-                        $("#fm_btn_folder").button().click(function () {
-                            var new_folder = $("#fm_inp_folder").val();
+                        $('#fm_btn_folder').button().click(function () {
+                            var new_folder = $('#fm_inp_folder').val();
                             $('#dialog_fm_folder').remove();
 
                             if (new_folder !== '' || new_folder !== undefined) {
@@ -1031,11 +1031,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if (id == "fm_bar_down") {
+                if (id === 'fm_bar_down') {
                     try {
                         fmConn.readFile64(o.path + selFile, function (err, data) {
                             console.log(data);
-                            $("body").append('<a id="fm_download" href=" data:' + data.mime + ';base64,' + data.data + '" download="' + selFile + '"></a>');
+                            $('body').append('<a id="fm_download" href=" data:' + data.mime + ';base64,' + data.data + '" download="' + selFile + '"></a>');
                             document.getElementById('fm_download').click();
                             document.getElementById('fm_download').remove();
                         });
@@ -1044,10 +1044,10 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     }
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if (id == "fm_bar_rename") {
+                if (id === 'fm_bar_rename') {
                     try {
                         $('#dialog_fm').append(
-                                '<div id="dialog_fm_rename" style="text-align:center" title="' + fmTranslate('Neuer Name') + '">' +
+                                '<div id="dialog_fm_rename" style="text-align: center" title="' + fmTranslate('Neuer Name') + '">' +
                                 '<br>' +
                                 '<input type="text" id="fm_inp_rename" style="width: 360px" value="' + selFile + '"/>' +
                                 '<br><br><button style="width: 150px;" id="fm_btn_rename">' + fmTranslate('OK') + '</button>' +
@@ -1063,8 +1063,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                             }
                         });
 
-                        $("#fm_btn_rename").button().click(function () {
-                            var new_name = $("#fm_inp_rename").val();
+                        $('#fm_btn_rename').button().click(function () {
+                            var new_name = $('#fm_inp_rename').val();
                             $('#dialog_fm_rename').remove();
 
                             if (new_name !== "" || new_name !== undefined) {
@@ -1083,7 +1083,7 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     }
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if (id == "fm_bar_del") {
+                if (id === 'fm_bar_del') {
                     try {
                         fmConn.unlink(o.path + selFile, function (err) {
                             if (err) {
@@ -1098,8 +1098,8 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
 
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if (id == "fm_bar_list") {
-                    o.view = "table";
+                if (id === 'fm_bar_list') {
+                    o.view = 'table';
                     build(o);
                 }
                 if (id == "fm_bar_prev") {
@@ -1107,11 +1107,11 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                     build(o);
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                if (id == "fm_bar_play") {
+                if (id === 'fm_bar_play') {
                     if (document.getElementById('fm_sound_play')) {
                         document.getElementById('fm_sound_play').remove();
                     }
-                    $("#dialog_fm").append('<audio id="fm_sound_play" src="' + o.path.split(o.root)[1] + selFile + '"></audio>');
+                    $('#dialog_fm').append('<audio id="fm_sound_play" src="' + o.path.split(o.root)[1] + selFile + '"></audio>');
                     document.getElementById('fm_sound_play').play();
 
                 }
@@ -1120,28 +1120,28 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-                $(this).effect("highlight");
+                $(this).effect('highlight');
             });
 
 
-        $("#fm_btn_cancel").button().click(function () {
+        $('#fm_btn_cancel').button().click(function () {
             config.path = o.path;
             config.view = o.view;
-            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
-            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
+            config.all  = $('#fm_bar_all').hasClass('ui-state-error');
+            config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
             if (typeof storage != 'undefined') storage.set('visFM', JSON.stringify(config));
 
-            $("#dialog_fm").remove();
+            $('#dialog_fm').remove();
         });
 
-        $("#fm_btn_open").button().click(function () {
-            $("#dialog_fm").remove();
+        $('#fm_btn_open').button().click(function () {
+            $('#dialog_fm').remove();
 
             config.path = o.path;
             config.view = o.view;
-            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
-            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
+            config.all  = $('#fm_bar_all').hasClass('ui-state-error');
+            config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
             if (typeof storage != 'undefined') {
                 storage.set('visFM', JSON.stringify(config));
             }
@@ -1151,14 +1151,14 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 file: selFile
             }, o.userArg);
         });
-        $("#fm_btn_save").button().click(function () {
-            var file = $("#fm_inp_save").val();
-            $("#dialog_fm").remove();
+        $('#fm_btn_save').button().click(function () {
+            var file = $('#fm_inp_save').val();
+            $('#dialog_fm').remove();
 
             config.path = o.path;
             config.view = o.view;
-            config.all  = $("#fm_bar_all").hasClass("ui-state-error");
-            config.background = $("#fm_bar_background").hasClass('ui-state-error') ? 'fm-dark-background' : ($("#fm_bar_background").hasClass('ui-state-highlight') ? 'fm-light-background' : '');
+            config.all  = $('#fm_bar_all').hasClass('ui-state-error');
+            config.background = $('#fm_bar_background').hasClass('ui-state-error') ? 'fm-dark-background' : ($('#fm_bar_background').hasClass('ui-state-highlight') ? 'fm-light-background' : '');
 
             if (typeof storage != 'undefined') {
                 storage.set('visFM', JSON.stringify(config));
@@ -1169,11 +1169,6 @@ $("head").append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/
                 file: file
             }, o.userArg);
         });
-
-        if (window.location.href.indexOf("37.120.169.17") >= 0){
-            $("#fm_bar_rename").remove();
-            $("#fm_bar_del").remove();
-        }
     };
 })
 (jQuery);

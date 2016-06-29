@@ -118,9 +118,24 @@
             <td class="table-no-space"><button id="start_import_view" class="translateB">import view</button></td>
         </tr>
     </table>
-
-
 </div>
+<div style="display: none;overflow: hidden" id="dialog_import_project" title="import project" class="translateT">
+    <div class="vis-drop-zone" style="display: none">
+        <div style="padding-top: 20%" class="translate vis-drop-text"></div>
+        <input type="file" class="vis-drop-file" style="display: none">
+    </div>
+    <div style="width: 100%; height: 150px; padding-top: 20px; text-align: center; cursor: pointer">
+        <span class="vis-file-name translate">Drop files here or click to select one</span>
+    </div>
+    <table style="padding: 20px; width: 100%;">
+        <tr class="table-no-space">
+            <td class="translate table-no-space">Project name: </td>
+            <td class="table-no-space"><input type="text" id="name_import_project"></td>
+            <td class="table-no-space"><button id="start_import_project" class="translateB">import project</button></td>
+        </tr>
+    </table>
+</div>
+
 <div style="display: none;" id="dialog_export_widgets" title="export widgets title" class="translateT">
     <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
               id="textarea_export_widgets"></textarea>
@@ -237,10 +252,11 @@
                         </ul>
                     </li>
                     <li id="li_menu_export" class="ui-state-default menu-item" role="tab">
-                        <a class="menu-tab-text"><span class="translate">Project export</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <a class="menu-tab-text"><span class="translate">Project export/import</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
                         <ul class="ui-widget-content">
-                            <li class="ui-state-default menu-item export-normal">Normal</li>
-                            <li class="ui-state-default menu-item export-anonymized">Anonymized</li>
+                            <li class="ui-state-default menu-item export-normal">Export normal</li>
+                            <li class="ui-state-default menu-item export-anonymized">Export anonymized</li>
+                            <li class="ui-state-default menu-item import-normal">Import</li>
                         </ul>
                     </li>
                     <li id="li_menu_new_project" class="ui-state-default menu-item project-new" role="tab">
