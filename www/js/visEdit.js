@@ -937,12 +937,31 @@ vis = $.extend(true, vis, {
             $('.vis-file-name').html(file.name + ' [' + file.size + ' bytes]');
             // string has form data:;base64,TEXT==
             $('.vis-file-name').data('file', evt.target.result.split(',')[1]);
-            $('#start_import_project').prop('disabled', $('.vis-file-name').data('file') && !$('#name_import_project').val());
+            $('#start_import_project').prop('disabled', !$('.vis-file-name').data('file') || !$('#name_import_project').val());
         };
         reader.readAsDataURL(file);
     },
-    editAnonymize: function (name, data, files) {
-        return data;
+    editFillProjects: function () {
+        var that = this;
+        // fill projects
+        this.conn.readProjects(function (err, projects){
+            var text = '';
+            if (projects.length) {
+                for (var d = 0; d < projects.length; d++) {
+                    text += '<li class="ui-state-default project-select ' + (projects[d].name + '/' === that.projectPrefix ? 'ui-state-active' : '') +
+                        ' menu-item" data-project="' + projects[d].name + '"><a>' + projects[d].name + (projects[d].readOnly ? ' (' + _('readOnly') + ')' : '') + '</a></li>\n';
+                    if (projects[d].name + '/' === that.projectPrefix) {
+                        $('#vis_access_mode').prop('checked', projects[d].mode & 0x60);
+                    }
+                }
+                $('#menu_projects').html(text);
+                $('.project-select').unbind('click').click(function () {
+                    window.location.href = 'edit.html?' + $(this).attr('data-project');
+                });
+            } else {
+                $('#li_menu_projects').hide();
+            }
+        });
     },
     editInitMenu: function () {
         var that = this;
@@ -1050,26 +1069,8 @@ vis = $.extend(true, vis, {
         //    $('#dialog_setup').dialog('open');
         //});
 
-
         // fill projects
-        this.conn.readProjects(function (err, projects){
-            var text = '';
-            if (projects.length) {
-                for (var d = 0; d < projects.length; d++) {
-                    text += '<li class="ui-state-default project-select ' + (projects[d].name + '/' === that.projectPrefix ? 'ui-state-active' : '') +
-                        ' menu-item" data-project="' + projects[d].name + '"><a>' + projects[d].name + (projects[d].readOnly ? ' (' + _('readOnly') + ')' : '') + '</a></li>\n';
-                    if (projects[d].name + '/' === that.projectPrefix) {
-                        $('#vis_access_mode').prop('checked', projects[d].mode & 0x60);
-                    }
-                }
-                $('#menu_projects').html(text);
-                $('.project-select').unbind('click').click(function () {
-                    window.location.href = 'edit.html?' + $(this).attr('data-project');
-                });
-            } else {
-                $('#li_menu_projects').hide();
-            }
-        });
+        this.editFillProjects();
 
         $('#new-project-name').keypress(function(e) {
             if (e.which == 13) {
@@ -1170,7 +1171,7 @@ vis = $.extend(true, vis, {
         });
 
         $('.export-normal').click(function () {
-            that.conn.readDirAsZip(that.projectPrefix, function (err, data) {
+            that.conn.readDirAsZip(that.projectPrefix, false, function (err, data) {
                 if (err) {
                     that.showError(err);
                 } else {
@@ -1189,7 +1190,7 @@ vis = $.extend(true, vis, {
             });
         });
         $('.export-anonymized').click(function () {
-            that.conn.readDirAsZip(that.projectPrefix, that.editAnonymize, function (err, data) {
+            that.conn.readDirAsZip(that.projectPrefix, true, function (err, data) {
                 if (err) {
                     that.showError(err);
                 } else {
@@ -1208,7 +1209,7 @@ vis = $.extend(true, vis, {
             });
         });
         $('#name_import_project').on('change', function () {
-            $('#start_import_project').prop('disabled', $('.vis-file-name').data('file') && !$(this).val());
+            $('#start_import_project').prop('disabled', !$('.vis-file-name').data('file') || !$(this).val());
         }).keyup(function () {
             $(this).trigger('change');
         });
@@ -1274,7 +1275,20 @@ vis = $.extend(true, vis, {
                                         if (err) {
                                             that.showError(err);
                                         } else {
-                                            that.showMessage(_('ok'))
+                                            if (name === that.projectPrefix.substring(0, that.projectPrefix.length - 1)) {
+                                                // reload project
+                                                window.location.reload();
+                                            } else {
+                                                that.confirmMessage(_('Project "%s" was succseffully imported. Open it?', name), null, null, 700, function (result) {
+                                                    if (result) {
+                                                        var url = window.location.href.split('#')[0].split('?')[0];
+                                                        window.location = url + '?' + name;
+                                                    } else {
+                                                        // fill projects
+                                                        that.editFillProjects();
+                                                    }
+                                                });
+                                            }
                                         }
                                     });
                                 }

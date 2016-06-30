@@ -1175,10 +1175,10 @@ var servConn = {
             });
         });
     },
-    readDirAsZip:       function (project, processFunc, callback) {
+    readDirAsZip:       function (project, useConvert, callback) {
         if (!callback) {
-            callback = processFunc;
-            processFunc = undefined;
+            callback = useConvert;
+            useConvert = undefined;
         }
         if (!this._isConnected) {
             console.log('No connection!');
@@ -1200,9 +1200,9 @@ var servConn = {
             that._socket.emit('sendToHost', host, 'readDirAsZip', {
                 id: that.namespace,
                 name: project || 'main',
-                options: processFunc ? {
-                        processFunc: processFunc.toString()
-                    } : undefined
+                options: {
+                    settings: useConvert
+                }
             }, function (data) {
                 if (data.error) console.error(data.error);
                 if (callback) callback(data.error, data.data);
