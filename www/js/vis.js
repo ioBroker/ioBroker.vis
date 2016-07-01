@@ -2514,6 +2514,7 @@ function main($) {
                                 systemLang = vis.args.lang || config.language || systemLang;
                                 vis.language = systemLang;
                                 vis.dateFormat = config.dateFormat;
+                                vis.isFloatComma = config.isFloatComma;
                                 translateAll();
                                 if (vis.isFirstTime) {
                                     // Init edit dialog

@@ -376,6 +376,7 @@ vis = $.extend(true, vis, {
                 height:   600,
                 modal:    true,
                 open: function (event, ui) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
                     $('#start_import_view').unbind('click').click(function () {
@@ -623,9 +624,10 @@ vis = $.extend(true, vis, {
             }
             $('body').append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">data-vis-prev=\'' + text + '\'</textarea></div>');
             $('#dec_html_code').dialog({
-                width: 800,
+                width:  800,
                 height: 600,
-                open: function () {
+                open: function (event) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $(this).parent().css({'z-index': 1001});
                 },
                 close: function () {
@@ -932,11 +934,13 @@ vis = $.extend(true, vis, {
             return false;
         }
         $dz.hide();
+        var that = this;
         var reader = new FileReader();
         reader.onload = function (evt) {
-            $('.vis-file-name').html(file.name + ' [' + file.size + ' bytes]');
+            $('.vis-file-name').html('<img src="img/zip.png" /><br><span style="color: black; font-weight: bold">[' + that.editGetReadableSize(file.size) + ']</span><br><span style="color: black; font-weight: bold">' + file.name + '</span>');
             // string has form data:;base64,TEXT==
             $('.vis-file-name').data('file', evt.target.result.split(',')[1]);
+            $('.vis-import-text-drop-plus').hide();
             // try to extract project name from 2016-05-09-project.zip
             var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
             if (m && !$('#name_import_project').val()) $('#name_import_project').val(m[1]);
@@ -966,6 +970,18 @@ vis = $.extend(true, vis, {
                 $('#li_menu_projects').hide();
             }
         });
+    },
+    editGetReadableSize: function (bytes) {
+        var text;
+        if (bytes < 1024) {
+            text = bytes + ' ' + _('bytes');
+        } else if (bytes < 1024 * 1024) {
+            text = Math.round(bytes * 10 / 1024) / 10 + ' ' + _('Kb');
+        } else {
+            text = Math.round(bytes * 10 / (1024 * 1024)) / 10 + ' ' + _('Mb');
+        }
+        if (this.isFloatComma) text = text.replace('.', ',');
+        return text;
     },
     editInitMenu: function () {
         var that = this;
@@ -1220,22 +1236,26 @@ vis = $.extend(true, vis, {
         $('.vis-drop-file').change(function (e) {
             that.editFileHandler(e);
         });
-        $('.vis-file-name').parent().click(function () {
+        $('.vis-import-text-drop').click(function () {
             $('.vis-drop-file').trigger('click');
         });
+        $('#start_import_project').button();
         $('.import-normal').click(function () {
             $('#dialog_import_project').dialog({
                 autoOpen:   true,
+                resizable:  false,
                 width:      600,
-                height:     300,
+                height:     320,
                 modal:      true,
                 open: function (event, ui) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $('[aria-describedby="dialog_import_project"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
-                    $('#name_import_project').val();
+                    $('#name_import_project').val('');
                     $('.vis-file-name').data('file', null).html(_('Drop files here or click to select one'));
                     $('#start_import_project').prop('disabled', true);
                     $('.vis-drop-file').val('');
+                    $('.vis-import-text-drop-plus').show();
 
                     var $dropZone = $('#dialog_import_project');
                     if (typeof(window.FileReader) !== 'undefined' && !$dropZone.data('installed')) {
@@ -2692,6 +2712,7 @@ vis = $.extend(true, vis, {
                     height: 600,
                     modal: true,
                     open: function (event, ui) {
+                        $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                         $('[aria-describedby="dialog_import_view"]').css('z-index', 1002);
                         $('.ui-widget-overlay').css('z-index', 1001);
                         $('#start_import_view').unbind('click').click(function () {
@@ -2751,7 +2772,8 @@ vis = $.extend(true, vis, {
             this.$dialogConfirm.dialog({
                 autoOpen: false,
                 modal:    true,
-                open: function () {
+                open: function (event) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $(this).parent().css({'z-index': 1001});
                 },
                 width: width,

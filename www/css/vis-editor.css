@@ -907,6 +907,24 @@ td > .select_active_widget :nth-child(2) {
     background: #faa !important;
     color: #f00;
 }
+.vis-import-text-drop {
+    width: calc(100% - 6px);
+    height: 150px;
+    padding-top: 20px;
+    text-align: center;
+    cursor: pointer;
+    border: 3px dashed #c6c6c6;
+    border-radius: 15px;
+    color: #c6c6c6;
+}
+.vis-import-text-drop-plus {
+    position: absolute;
+    top: 30px;
+    left: calc(50% - 40px);
+    font-size: 100px;
+    font-weight: bold;
+    opacity: 0.2;
+}
 /* --------- vis preview icons ------------------- */
 .vis-preview-informers-container {
     position:   absolute;

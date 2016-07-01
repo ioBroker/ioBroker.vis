@@ -326,6 +326,27 @@ $.extend(systemDictionary, {
     "Create new project":   {"en": "Create new project", "de": "Neues Projekt",         "ru": "Создать новый проект"},
     "No connection":        {"en": "No connection",     "de": "Verbindungsfehler",      "ru": "Связь прервана"},
     "Settings...":          {"en": "Settings...",       "de": "Einstellungen...",       "ru": "Настройки..."},
+    "Project&nbsp;name:":   {"en": "Project&nbsp;name:", "de": "Projektname:",          "ru": "Имя&nbsp;нового&nbsp;проекта:"},
+    "Project export/import": {"en": "Project export/import", "de": "Projekt-Export/import", "ru": "Им/экспорт проекта"},
+    "import&nbsp;project":  {"en": "Import&nbsp;project", "de": "Import&nbsp;projekt",  "ru": "Импорт&nbsp;проекта"},
+    "import project":       {"en": "Import project",    "de": "Projektimport",          "ru": "Импорт проекта"},
+    "Drop the files here":  {"en": "Drop the files here", "de": "Hier hinzufügen",      "ru": "Добавить..."},
+    "bytes":                {"en": "bytes",             "de": "Bytes",                  "ru": "байт"},
+    "Kb":                   {"en": "Kb",                "de": "Kb",                     "ru": "Кб"},
+    "Mb":                   {"en": "Kb",                "de": "Mb",                     "ru": "Мб"},
+    "Export normal":        {"en": "Export (normal)",   "de": "Exportieren (normal)",   "ru": "Экспорт (обычный)"},
+    "Export anonymized":    {"en": "Export (anonymized)", "de": "Exportieren (anonymized)", "ru": "Экспорт (анонимный)"},
+    "Import":               {"en": "Import",            "de": "Import",                 "ru": "Импорт"},
+    "Drop files here or click to select one": {
+        "en": "Drop files here or click to select one...",
+        "de": "Dateien hereinziehen oder klicken um mit Dialog auszuwählen...",
+        "ru": "Перетащите файл сюда или нажмите, что бы выбрать..."
+    },
+    "Invalid file extenstion!": {
+        "en": "Invalid file extenstion!",
+        "de": "Invalid Dateiextenstion!",
+        "ru": "Неправильный тип файла!"
+    },
     "Reload if sleep longer than:": {
         "en": "Reload if sleep longer than:",
         "de": "Neuladen falls keine Verbindung länger als:",
