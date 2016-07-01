@@ -937,6 +937,10 @@ vis = $.extend(true, vis, {
             $('.vis-file-name').html(file.name + ' [' + file.size + ' bytes]');
             // string has form data:;base64,TEXT==
             $('.vis-file-name').data('file', evt.target.result.split(',')[1]);
+            // try to extract project name from 2016-05-09-project.zip
+            var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
+            if (m && !$('#name_import_project').val()) $('#name_import_project').val(m[1]);
+            
             $('#start_import_project').prop('disabled', !$('.vis-file-name').data('file') || !$('#name_import_project').val());
         };
         reader.readAsDataURL(file);
@@ -1228,7 +1232,7 @@ vis = $.extend(true, vis, {
                 open: function (event, ui) {
                     $('[aria-describedby="dialog_import_project"]').css('z-index', 1002);
                     $('.ui-widget-overlay').css('z-index', 1001);
-                    $('#name_import_project').val(that.projectPrefix.substring(0, that.projectPrefix.length - 1));
+                    $('#name_import_project').val();
                     $('.vis-file-name').data('file', null).html(_('Drop files here or click to select one'));
                     $('#start_import_project').prop('disabled', true);
                     $('.vis-drop-file').val('');
