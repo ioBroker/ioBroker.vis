@@ -637,14 +637,19 @@ var vis = {
             }
         }
 
-        if (this.views.___settings) {
+        if (this.views && this.views.___settings) {
             if (this.views.___settings.reloadOnSleep !== undefined) this.conn.setReloadTimeout(this.views.___settings.reloadOnSleep);
             if (this.views.___settings.darkReloadScreen) {
                 $('#server-disconnect').removeClass('disconnect-light').addClass('disconnect-dark');
             }
             if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
+            // first of all add custom scripts
+            if (this.views.___settings.scripts) {
+                var script = document.createElement('script');
+                script.innerHTML = this.views.___settings.scripts;
+                document.head.appendChild(script);
+            }
         }
-
 
         // Navigation
         $(window).bind('hashchange', function (e) {
