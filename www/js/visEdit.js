@@ -187,6 +187,7 @@ vis = $.extend(true, vis, {
         this.editInitDialogs();
         this.editInitMenu();
         this.editInitCSSEditor();
+        this.editInitScriptEditor();
 
         $('#pan_attr').tabs({
             //activate: function(event, ui) {
@@ -2326,7 +2327,7 @@ vis = $.extend(true, vis, {
         });
         this.editBuildSelectView();
     },
-    editInitCSSEditor:function(){
+    editInitCSSEditor: function () {
         var that      = this;
 
         var file      = 'vis-common-user';
@@ -2459,6 +2460,87 @@ vis = $.extend(true, vis, {
                     $('#css_file_save').button('disable');
                 });
             }
+        }).button('disable');
+    },
+    editInitScriptEditor: function () {
+        var that      = this;
+        var editor    = ace.edit('script_editor');
+        var timer     = null;
+
+        //editor.setTheme('ace/theme/monokai');
+        editor.getSession().setMode('ace/mode/javascript');
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion:  true
+        });
+        editor.$blockScrolling = Infinity;
+        editor.getSession().setUseWrapMode(true);
+
+        if (this.views && this.views.___settings && this.views.___settings.scripts) {
+            editor.setValue(this.views.___settings.scripts);
+        }
+
+        editor.getSession().on('change', function(e) {
+            if (timer !== null) return;
+            timer = setTimeout(function () {
+                timer = null;
+                $('#script_file_save').button('enable');
+
+                // Trigger autosave after 2 seconds
+                setTimeout(function () {
+                    $('#script_file_save').trigger('click');
+                }, 2000);
+            }, 400);
+        });
+
+        $('#script_editor_tab').click(function(){
+            editor.focus();
+        });
+
+        $('#pan_attr').resize(function(){
+            editor.resize();
+        });
+
+        $('#script_find').change(function(){
+            editor.find($(this).val(),{
+                backwards: false,
+                wrap: false,
+                caseSensitive: false,
+                wholeWord: false,
+                regExp: false
+            });
+        });
+
+        $('#script_find_prev').button({
+            icons: {
+                primary: 'ui-icon-arrowthick-1-n'
+            },
+            text: false
+        }).click(function(){
+            editor.findPrevious();
+        });
+
+        $('#script_find_next').button({
+            icons: {
+                primary: 'ui-icon-arrowthick-1-s'
+            },
+            text: false
+        }).click(function(){
+            editor.findNext();
+        });
+
+        $('#script_file_save').button({
+            icons: {
+                primary: 'ui-icon-disk'
+            },
+            text: false
+        }).click(function() {
+            that.views.___settings = !that.views.___settings || {};
+            that.views.___settings.scripts = editor.getValue();
+
+            that.saveRemote(function () {
+                $('#script_file_save').button('disable');
+            });
         }).button('disable');
     },
     editInitNext: function () {

@@ -769,7 +769,9 @@
                 <li>
                     <a id="cssEditor_tab" href="#tab_css_edit" style="padding: 2px 4px 2px 4px" class="translate">CSS</a>
                 </li>
-
+                <li>
+                    <a id="script_editor_tab" href="#tab_script_edit" style="padding: 2px 4px 2px 4px" class="translate">Scripts</a>
+                </li>
             </ul>
             <div class="tab_attr ui-widget-content" id="tab_view_attr">
                 <div id="view_inspector">
@@ -979,6 +981,16 @@
                     <button id="css_file_save" class="translateT" disabled title="Save CSS"></button>
                 </div>
                 <div id="css_editor"></div>
+            </div>
+            <div class="tab_attr ui-widget-content" id="tab_script_edit">
+                <div id="script_editor_head">
+                    <span class="translate" style="padding-top: 3px">Find:</span>
+                    <input id="script_find"/>
+                    <button id="script_find_prev" class="translateT" title="Find previous"></button>
+                    <button id="script_find_next" class="translateT" title="Find next"></button>
+                    <button id="script_file_save" class="translateT" disabled title="Save scripts"></button>
+                </div>
+                <div id="script_editor"></div>
 
             </div>
         </div>

@@ -786,6 +786,28 @@ td > .select_active_widget :nth-child(2) {
 #css_file_save{
     margin-left: 10px;
 }
+#script_editor_head {
+    height: 30px;
+    display: flex;
+    padding: 2px;
+    /* line-height: 25px; */
+    /* display: none; */
+}
+#script_editor {
+    height: calc(100% - 30px);
+    width: 100%;
+}
+#script_find{
+    margin-left: 10px;
+    /* display: inline-block; */
+    /* height: 22px; */
+    /* position: relative; */
+    /* top: -8px; */
+    width: calc(100% - 210px);
+}
+#script_file_save{
+    margin-left: 10px;
+}
 
 .view-select-menu {
     height: calc(100% - 100px);

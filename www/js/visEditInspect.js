@@ -932,7 +932,7 @@ vis = $.extend(true, vis, {
                                 $(this).parent().css({left: 0});
                             }
                         }
-                        editor.getSession().setMode("ace/mode/html");
+                        editor.getSession().setMode('ace/mode/html');
                         editor.setOptions({
                             enableBasicAutocompletion: true,
                             enableLiveAutocompletion:  true

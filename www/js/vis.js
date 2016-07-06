@@ -132,7 +132,7 @@ var vis = {
     bindings:               {},
     bindingsCache:          {},
     commonStyle:            null,
-    _setValue: function (id, state) {
+    _setValue: function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
         this.conn.setState(id, state[id + '.val'], function (err) {
@@ -146,8 +146,17 @@ var vis = {
 
                 // If error set value back, but we need generate the edge
                 if (err) {
-                    state[id + '.val'] = oldValue;
-                    that.states.attr(state);
+                    if (isJustCreated) {
+                        that.states.removeAttr(id + '.val');
+                        that.states.removeAttr(id + '.q');
+                        that.states.removeAttr(id + '.from');
+                        that.states.removeAttr(id + '.ts');
+                        that.states.removeAttr(id + '.lc');
+                        that.states.removeAttr(id + '.ack');
+                    } else {
+                        state[id + '.val'] = oldValue;
+                        that.states.attr(state);
+                    }
                 }
 
                 // Inform other widgets, that does not support canJS
@@ -166,6 +175,7 @@ var vis = {
         var d = new Date();
         var t = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2) + " " + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2) + ':' + ('0' + d.getSeconds()).slice(-2);
         var o = {};
+        var created = false;
         if (this.states.attr(id + '.val') != val) {
             o[id + '.lc'] = t;
         } else {
@@ -176,14 +186,17 @@ var vis = {
         o[id + '.ack'] = false;
 
         // Create this value
-        if (this.states.attr(id + '.val') === undefined) this.states.attr(o);
+        if (this.states.attr(id + '.val') === undefined) {
+            created = true;
+            this.states.attr(o);
+        }
 
         var that = this;
 
         // if no de-bounce running
         if (!this.statesDebounce[id]) {
             // send control command
-            this._setValue(id, o);
+            this._setValue(id, o, created);
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: _setTimeout(function () {
@@ -643,12 +656,6 @@ var vis = {
                 $('#server-disconnect').removeClass('disconnect-light').addClass('disconnect-dark');
             }
             if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
-            // first of all add custom scripts
-            if (this.views.___settings.scripts) {
-                var script = document.createElement('script');
-                script.innerHTML = this.views.___settings.scripts;
-                document.head.appendChild(script);
-            }
         }
 
         // Navigation
@@ -2434,6 +2441,16 @@ function main($) {
                 // first of all try to load views
                 vis.loadRemote(function () {
                     vis.IDs = vis.IDs || [];
+
+                    // first of all add custom scripts
+                    if (vis.editMode && vis.views && this.views.___settings) {
+                        if (vis.views.___settings.scripts) {
+                            var script = document.createElement('script');
+                            script.innerHTML = this.views.___settings.scripts;
+                            document.head.appendChild(script);
+                        }
+                    }
+
                     // Read all states from server
                     vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
                         if (error) {
