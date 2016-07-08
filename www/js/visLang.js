@@ -337,6 +337,9 @@ $.extend(systemDictionary, {
     "Export normal":        {"en": "Export (normal)",   "de": "Exportieren (normal)",   "ru": "Экспорт (обычный)"},
     "Export anonymized":    {"en": "Export (anonymized)", "de": "Exportieren (anonymized)", "ru": "Экспорт (анонимный)"},
     "Import":               {"en": "Import",            "de": "Import",                 "ru": "Импорт"},
+    "Scripts":              {"en": "Scripts",           "de": "Skripte",                "ru": "Скрипты"},
+    "Find:":                {"en": "Find:",             "de": "Suchen:",                "ru": "Найти:"},
+    "Save scripts":         {"en": "Save scripts",      "de": "Speichern",              "ru": "Сохранить"},
     "Drop files here or click to select one": {
         "en": "Drop files here or click to select one...",
         "de": "Dateien hereinziehen oder klicken um mit Dialog auszuwählen...",

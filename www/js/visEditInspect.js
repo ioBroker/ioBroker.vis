@@ -1245,7 +1245,7 @@ vis = $.extend(true, vis, {
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
 
             var groupName = group;
-            if (groupName.indexOf('_§') != -1) {
+            if (groupName.indexOf('_§') !== -1) {
                 var m = groupName.match(/^([\w_]+)_§([0-9]+)/);
                 groupName = _('group_' + m[1]) + '[' + m[2] + ']';
             } else {
@@ -1274,7 +1274,7 @@ vis = $.extend(true, vis, {
 
                 var title = _(widAttr + '_tooltip');
                 var icon;
-                if (title == widAttr + '_tooltip') {
+                if (title === widAttr + '_tooltip') {
                     title = '';
                     icon = '';
                 } else {
