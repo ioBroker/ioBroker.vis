@@ -462,6 +462,9 @@ $.extend(systemDictionary, {
     "<":                    {"en": "<",                 "de": "<",                      "ru": "<"},
     ">":                    {"en": ">",                 "de": ">",                      "ru": ">"},
     "consist":              {"en": "consist",           "de": "bestehend aus",          "ru": "содержит"},
+    "not consist":          {"en": "not consist",       "de": "bestehend nicht aus",    "ru": "не содержит"},
+    "exist":                {"en": "exist",             "de": "existiert",              "ru": "существует"},
+    "not exist":            {"en": "not exist",         "de": "nicht existiert",        "ru": "не существует"},
     "group_visibility":     {"en": "Visibility",        "de": "Sichtbarkeit",           "ru": "Видимость"},
     "visibility-oid":       {"en": "Object ID",         "de": "Object ID",              "ru": "ID Объекта"},
     "visibility-oid_tooltip": {

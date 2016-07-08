@@ -468,11 +468,11 @@ var vis = {
                                     }
                                 }
                             }
-                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
-                            if (data[attr] != 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
+                            if (data[attr] !== 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
 
                             // Visibility binding
-                            if (attr == 'visibility-oid' && data['visibility-oid']) {
+                            if (attr === 'visibility-oid' && data['visibility-oid']) {
                                 var oid = data['visibility-oid'];
                                 if (!this.visibility[oid]) this.visibility[oid] = [];
                                 this.visibility[oid].push({view: view, widget: id});
@@ -963,12 +963,12 @@ var vis = {
 
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return false;
+            if (val === undefined) return (condition === 'not exist') ? true : false;
 
             var condition = this.views[view].widgets[widget].data['signals-cond-' + index];
             var value     = this.views[view].widgets[widget].data['signals-val-'  + index];
 
-            if (!condition || value === undefined) return false;
+            if (!condition || value === undefined) return (condition === 'not exist') ? true : false;
 
             var t = typeof val;
             if (t == 'boolean' || val === 'false' || val === 'true') {
@@ -1008,6 +1008,16 @@ var vis = {
                     value = value.toString();
                     val   = val.toString();
                     return (val.toString().indexOf(value) !== -1);
+                case 'not consist':
+                    value = value.toString();
+                    val   = val.toString();
+                    return (val.toString().indexOf(value) === -1);
+                case 'exist':
+                    if (value === 'null') return true;
+                    return false;
+                case 'not exist':
+                    if (value === 'null') return false;
+                    return true;
                 default:
                     console.log('Unknown signals condition for ' + widget + ': ' + condition);
                     return false;
@@ -1534,22 +1544,22 @@ var vis = {
         }
     },
     isWidgetHidden: function (view, widget, val) {
-        var oid = this.views[view].widgets[widget].data['visibility-oid'];
+        var oid       = this.views[view].widgets[widget].data['visibility-oid'];
+        var condition = this.views[view].widgets[widget].data['visibility-cond'];
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return false;
+            if (val === undefined) return (condition === 'not exist') ? true : false;
 
-            var condition = this.views[view].widgets[widget].data['visibility-cond'];
-            var value     = this.views[view].widgets[widget].data['visibility-val'];
+            var value = this.views[view].widgets[widget].data['visibility-val'];
 
-            if (!condition || value === undefined) return false;
+            if (!condition || value === undefined) return (condition === 'not exist') ? true : false;
 
             var t = typeof val;
-            if (t == 'boolean' || val === 'false' || val === 'true') {
+            if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
-            } else if (t == 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            }  else if (t == 'object') {
+            }  else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
@@ -1583,12 +1593,22 @@ var vis = {
                     value = value.toString();
                     val   = val.toString();
                     return (val.toString().indexOf(value) === -1);
+                case 'not consist':
+                    value = value.toString();
+                    val   = val.toString();
+                    return (val.toString().indexOf(value) !== -1);
+                case 'exist':
+                    if (val === 'null') return false;
+                    return true;
+                case 'not exist':
+                    if (val === 'null') return true;
+                    return false;
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);
                     return false;
             }
         } else {
-            return false;
+            return (condition === 'not exist') ? true : false;
         }
     },
     isWidgetFilteredOut: function (view, widget) {

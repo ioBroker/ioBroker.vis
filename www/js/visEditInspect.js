@@ -800,7 +800,7 @@ vis = $.extend(true, vis, {
             // oid
             this.addToInspect(this.activeWidgets, {name: 'signals-oid-'  + i, type: 'id'},   group);
             // condition
-            this.addToInspect(this.activeWidgets, {name: 'signals-cond-' + i, type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='}, group);
+            this.addToInspect(this.activeWidgets, {name: 'signals-cond-' + i, type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '=='}, group);
             // value
             this.addToInspect(this.activeWidgets, {name: 'signals-val-'  + i, default: true},   group);
 
@@ -2048,7 +2048,7 @@ vis = $.extend(true, vis, {
 
         group = 'visibility';
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
-        this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==','!=','<=','>=','<','>','consist'], default: '=='},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
         this.addToInspect('delimiter', group);
 
