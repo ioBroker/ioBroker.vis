@@ -1,43 +1,48 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.10.6",
+        "version": "0.10.7",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.10.7": {
+				"en":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
+				"de":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
+				"ru":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n"
+			},
 			"0.10.6": {
-				"en":                   "add settings to reload vis",
-				"de":                   "add settings to reload vis",
-				"ru":                   "add settings to reload vis"
+				"en":               "add settings to reload vis",
+				"de":               "add settings to reload vis",
+				"ru":               "add settings to reload vis"
 			},
 			"0.10.5": {
-				"en":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
-				"de":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
-				"ru":                   "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode"
+				"en":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
+				"de":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
+				"ru":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode"
 			},
 			"0.10.4": {
-				"en":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
-				"de":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
-				"ru":                   "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews"
+				"en":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
+				"de":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
+				"ru":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews"
 			},
             "0.10.3": {
-				"en":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"de":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"ru":                   "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active"
+				"en":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
+				"de":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
+				"ru":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active"
 			},
             "0.10.2": {
-				"en":                   "fix widgets with timestamps",
-				"de":                   "fix widgets with timestamps",
-				"ru":                   "fix widgets with timestamps"
+				"en":               "fix widgets with timestamps",
+				"de":               "fix widgets with timestamps",
+				"ru":               "fix widgets with timestamps"
 			},
 			"0.10.1": {
-				"en":                   "change version",
-				"de":                   "change version",
-				"ru":                   "change version"
+				"en":               "change version",
+				"de":               "change version",
+				"ru":               "change version"
 			},
 			"0.10.0": {
-				"en":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
-				"de":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
-				"ru":                   "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings"
+				"en":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
+				"de":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
+				"ru":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings"
 			}
         },
         "desc": {

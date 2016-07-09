@@ -169,10 +169,16 @@ Set the interval between the connection attempts if disconnected. If you will se
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
 ![Dark](img/dark_screen.png)
 
-## Changelog
-### 0.10.6 (2016-06-25)
+## Changelog### 0.10.7 (2016-07-09)
 * (bluefox) add settings to reload vis
-### 0.10.5 (2016-06-15)
+* (bluefox) add dark reload screen
+* (bluefox) fix reload interval
+* (bluefox) export/import
+* (bluefox) add global script
+* (bluefox) add 'not exist'/'not consist'/'exist' to signal and visibility
+* (bluefox) fix oids in editor
+
+### 0.10.5 (2016-06-15)
 * (bluefox) fix select ID dialog
 * (bluefox) add align help lines
 * (bluefox) never store data in non-edit mode
@@ -224,7 +230,8 @@ Sometimes (in the night) it is required to have dark loading screen. With this o
 * (bluefox) add new flag "render always" in this case this view will be rendered in any way.
 * (bluefox) add about dialog
 * (bluefox) remove bind(this) to enable it run on iPad1
-### 0.9.2 (2016-02-29)
+
+### 0.9.2 (2016-02-29)
 * (bluefox) allow onChange for OIDs too
 * (bluefox) show reconnecting process
 * (pmant) use new gestures lib
