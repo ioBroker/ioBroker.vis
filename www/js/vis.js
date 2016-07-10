@@ -2463,7 +2463,7 @@ function main($) {
                     vis.IDs = vis.IDs || [];
 
                     // first of all add custom scripts
-                    if (vis.editMode && vis.views && this.views.___settings) {
+                    if (!vis.editMode && vis.views && this.views.___settings) {
                         if (vis.views.___settings.scripts) {
                             var script = document.createElement('script');
                             script.innerHTML = this.views.___settings.scripts;
