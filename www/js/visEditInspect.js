@@ -428,9 +428,9 @@ vis = $.extend(true, vis, {
                 0.114 * (b * b)
             );
             if (hsp > 127.5) {
-                $('#' + element).css("color", "#000000");
+                $('#' + element).css('color', '#000000');
             } else {
-                $('#' + element).css("color", "#FFFFFF");
+                $('#' + element).css('color', '#FFFFFF');
             }
         }catch (err){}
     },
@@ -671,6 +671,7 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group].css_opacity       = {input: '<input type="text" id="inspect_css_opacity"/>'};
+        this.groups[group].css_cursor        = this.editAutoComplete('css_cursor', ['', 'pointer', 'auto', 'alias', 'all-scroll', 'cell', 'context-menu', 'col-resize', 'copy', 'crosshair', 'default', 'e-resize', 'ew-resize', 'grab', 'grabbing', 'help', 'move', 'n-resize', 'ne-resize', 'nesw-resize', 'ns-resize', 'nw-resize', 'nwse-resize', 'no-drop', 'none', 'not-allowed', 'progress', 'row-resize', 's-resize', 'se-resize', 'sw-resize', 'text', 'vertical-text', 'w-resize', 'wait', 'zoom-in', 'zoom-out', 'initial', 'inherit']);
 
         for(var attr in this.groups[group]) {
             this.groups[group][attr].css = true;

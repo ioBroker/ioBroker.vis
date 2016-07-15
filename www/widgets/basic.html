@@ -198,7 +198,9 @@
                 "de": "Geteilt mir Semikolon\x0Az.B.: Licht;Steuerung",
                 "ru": "Разделять точкой запятой\x0Aнапример: Свет;Управление"
             },
-            "Select ID":        {"en": "Select ID",                 "de": "ID auswählen",           "ru": "Выбрать ID"}
+            "Select ID":        {"en": "Select ID",                 "de": "ID auswählen",           "ru": "Выбрать ID"},
+            "redirect_url":     {"en": "Redirect URL",              "de": "Weiterleiten nach Logout", "ru": "Перейти на URL после выхода"},
+            "in_app_close":     {"en": "Close mobile APP",          "de": "Mobiles APP schliessen", "ru": "Закрыть мобильное приложение"}
         });
     }
 
@@ -217,6 +219,11 @@
         },
         "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "вчера"},
         "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;часов назад"},
+        "This option works only in APP": {
+            "en": "This option works only in APP",
+            "de": "Funktioniert nur im APP",
+            "ru": "Работает только в мобильном приложении"
+        }
     });
 
     vis.binds.stateful = {
@@ -370,6 +377,7 @@
 
             function fInterval($that) {
                 vis.binds.basic.pressedNext = true;
+                vis.binds.basic.pressed = null;
                 var oid = $that.attr('data-oid');
                 if (!vis.editMode) {
                     var step = parseFloat($that.attr('data-vis-step'));
@@ -392,6 +400,12 @@
                 vis.binds.basic.pressedNext = false;
                 var $this = $(this);
                 var oid = $this.attr('data-oid');
+
+                if (vis.binds.basic.pressed) {
+                    clearInterval(vis.binds.basic.pressed);
+                    vis.binds.basic.pressed = null;
+                }
+
                 vis.binds.basic.pressed = setTimeout(fInterval, delay, $this);
             }
 
@@ -400,7 +414,11 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    clearTimeout(vis.binds.basic.pressed);
+                    if (vis.binds.basic.pressed) {
+                        clearInterval(vis.binds.basic.pressed);
+                        vis.binds.basic.pressed = null;
+                    }
+
                     if (vis.binds.basic.pressedNext) {
                         vis.binds.basic.pressedNext = false;
                         return;
@@ -425,10 +443,16 @@
                 $(el).on('mousedown', intervalStart)
                     .on('touchstart', intervalStart)
                     .on('touchend', function () {
-                        clearTimeout(vis.binds.basic.pressed);
+                        if (vis.binds.basic.pressed) {
+                            clearInterval(vis.binds.basic.pressed);
+                            vis.binds.basic.pressed = null;
+                        }
                     })
                     .on('mouseup', function () {
-                        clearTimeout(vis.binds.basic.pressed);
+                        if (vis.binds.basic.pressed) {
+                            clearInterval(vis.binds.basic.pressed);
+                            vis.binds.basic.pressed = null;
+                        }
                     });
             }
         },
@@ -1433,11 +1457,37 @@
 
             return result;
         },
+        logout: function (el, data) {
+            if (vis.editMode) return;
+            var $el = $(el);
+            $el.data('redirect', data.redirect_url);
+            $el.data('app', data.in_app_close);
+
+            $el.click(function () {
+                if ($(this).data('app')) {
+                    if (typeof logout === 'function') {
+                        logout();
+                    } else {
+                        vis.showMessage(_('This option works only in APP'));
+                    }
+                } else if ($(this).data('redirect')) {
+                    var redirect = $(this).data('redirect');
+                    vis.conn.logout(function() {
+                        window.location = redirect;
+                    });
+                } else {
+                    vis.conn.logout(function(){
+                        window.location.reload();
+                    });
+                }
+            });
+        }
     };
 
     $(document).mouseup(function () {
         if (vis.binds.basic.pressed) {
             clearInterval(vis.binds.basic.pressed);
+            vis.binds.basic.pressed = null;
         }
     });
 
@@ -2252,8 +2302,8 @@
         data-vis-type="tools"
         data-vis-prev='<img src="widgets/basic/img/Prev_HtmlLogout.png"></img>'
         data-vis-name="HTML logout"
-        data-vis-attrs="html[<button>Logout</button>]/text">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 70px; height: 30px;cursor: pointer" id="<%= this.data.attr('wid') %>" onclick="vis.editMode ? console.log('editMode') : vis.conn.logout(function(){location.reload()})">
+        data-vis-attrs="html[<button style=^cursor: pointer^>Logout</button>]/text;redirect_url;in_app_close/checkbox">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 70px; height: 30px; cursor: pointer" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.logout(el, this.data) %> >
         <div class="vis-widget-body">
             <%== this.data.attr('html') %>
         </div>
