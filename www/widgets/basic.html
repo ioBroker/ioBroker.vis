@@ -1885,7 +1885,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : (typeof app !== 'undefined' ? app.replaceFilePathSrc(vis.states.attr(this.data.oid + '.val')) : (vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
+                <%== this.data.attr("html_prepend") %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : (typeof app !== 'undefined' ? app.replaceFilePathSrc(vis.states.attr(this.data.oid + '.val')) : vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
