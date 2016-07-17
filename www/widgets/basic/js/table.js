@@ -309,6 +309,9 @@ vis.binds.table = {
         // read actual table as json string
         var tableJson = options.table_oid ? vis.states.attr(options.table_oid + '.val') : (options.static_value || '');
         var table = [];
+        if (typeof app !== 'undefined' && app.replaceFilePathJson) {
+            tableJson = app.replaceFilePathJson(tableJson);
+        }
         if (tableJson && (typeof tableJson == "string")) {
             try {
                 table = JSON.parse(tableJson);
