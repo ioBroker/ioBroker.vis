@@ -1903,7 +1903,7 @@
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %>
-                <img src="<%= (typeof app !== 'undefined' ? app.replaceFilePathImg(vis.states.attr(this.data.oid + '.val')) : (vis.states.attr(this.data.oid + '.val')) || '' %>" width="100%" />
+                <img src="<%= (typeof app !== 'undefined' ? app.replaceFilePathImg(vis.states.attr(this.data.oid + '.val')) : (vis.states.attr(this.data.oid + '.val'))) || '' %>" width="100%" />
                  <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + ".val" ), data.attr("refreshInterval")) %> />
                 <%== this.data.attr("html_append") %>
             </div>
