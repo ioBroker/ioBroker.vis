@@ -1418,9 +1418,9 @@ var vis = {
             }
 
             if (data) {
-                if (typeof data == 'string') {
+                if (typeof data === 'string') {
                     try {
-                        that.views = JSON.parse(data);
+                        that.views = JSON.parse(data.trim());
                     } catch (e) {
                         console.log('Cannot parse views file "' + that.projectPrefix + 'vis-views.json"');
                         window.alert('Cannot parse views file "' + that.projectPrefix + 'vis-views.json');

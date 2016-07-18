@@ -252,12 +252,12 @@ var servConn = {
             });
 
             this._socket.on('reauthenticate', function () {
-                if (that._connCallbacks.onReAuth) {
-                    that._connCallbacks.onConnChange(that._isSecure);
-                    if (typeof app !== 'undefined') app.onConnChange(that._isSecure);
-                    console.warn('reauthenticate');
-                    window.location.reload();
+                if (that._connCallbacks.onConnChange) {
+                    that._connCallbacks.onConnChange(false);
+                    if (typeof app !== 'undefined') app.onConnChange(false);
                 }
+                console.warn('reauthenticate');
+                window.location.reload();
             });
 
             this._socket.on('connect_error', function () {
