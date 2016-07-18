@@ -1327,7 +1327,15 @@ vis = $.extend(true, vis, {
                     if (err) {
                         that.showError(err);
                     } else {
-                        that.showMessage(_('ok'))
+                        that.confirmMessage(_('Project "%s" was succseffully imported. Open it?', name), null, null, 700, function (result) {
+                            if (result) {
+                                var url = window.location.href.split('#')[0].split('?')[0];
+                                window.location = url + '?' + name;
+                            } else {
+                                // fill projects
+                                that.editFillProjects();
+                            }
+                        });
                     }
                 });
             });

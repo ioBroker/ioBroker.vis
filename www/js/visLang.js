@@ -340,6 +340,11 @@ $.extend(systemDictionary, {
     "Scripts":              {"en": "Scripts",           "de": "Skripte",                "ru": "Скрипты"},
     "Find:":                {"en": "Find:",             "de": "Suchen:",                "ru": "Найти:"},
     "Save scripts":         {"en": "Save scripts",      "de": "Speichern",              "ru": "Сохранить"},
+    'Project "%s" was succseffully imported. Open it?': {
+        "en": 'Project "%s" was succseffully imported. Open it?',
+        "de": 'Projekt "%s" war erfolgreich importiert. Aufmachen?',
+        "ru": 'Проект "%s" был успешно импортирован. Открыть?'
+    },
     "Drop files here or click to select one": {
         "en": "Drop files here or click to select one...",
         "de": "Dateien hereinziehen oder klicken um mit Dialog auszuwählen...",

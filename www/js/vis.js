@@ -617,19 +617,21 @@ var vis = {
                 if (!this.activeView) {
                     if (!this.editMode) {
                         window.alert(_('error - View doesn\'t exist'));
-                        if (typeof app === 'undefined') window.location.href = './edit.html';
+                        if (typeof app === 'undefined') {
+                            // try to find first view
+                            window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
+                        }
                     } else {
                         this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
                         this.activeView = 'DemoView';
                         //vis.showWaitScreen(false);
                     }
                 }
-            } else
-            if (!this.activeView) {
+            } else if (!this.activeView) {
                 if (!this.editMode) {
                     if (typeof app === 'undefined') {
                         window.alert(_('error - View doesn\'t exist'));
-                        window.location.href = 'edit.html';
+                        window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
                     }
                 } else {
                     // All views were deleted, but file exists. Create demo View
@@ -645,7 +647,7 @@ var vis = {
                 this.activeView = hash;
             } else {
                 window.alert(_("error - View doesn't exist"));
-                if (typeof app === 'undefined') window.location.href = "./edit.html";
+                if (typeof app === 'undefined') window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
                 $.error("vis Error can't find view");
             }
         }
@@ -688,7 +690,7 @@ var vis = {
             if (typeof app !== 'undefined') {
                 this.showMessage(_('no views found!'));
             } else {
-                window.location.href = './edit.html' + window.location.search;
+                window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
             }
         } else {
             if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
@@ -2271,7 +2273,7 @@ window.onpopstate = function () {
         vis.urlParams[decode(match[1])] = decode(match[2]);
     }
 
-    vis.editMode = (window.location.href.indexOf('edit.html') != -1 || vis.urlParams.edit === '');
+    vis.editMode = (window.location.href.indexOf('edit.html') !== -1 || vis.urlParams.edit === '');
 };
 window.onpopstate();
 
@@ -2896,7 +2898,7 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     }, timeout);
 }
 
-if (window.location.search === '?edit') {
+/*if (window.location.search === '?edit') {
     window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
     location.href = './edit.html' + window.location.hash;
-}
+}*/
