@@ -927,13 +927,13 @@
 
             setTimeout(function () {
                 $("div#vis_container").find("select[id$='_multiselect']").each(function () {
-                    if ($(this).css("display") == "none") {
+                    if ($(this).css('display') === 'none') {
                         $(this).multiselect('disable').next().removeClass("ui-state-disabled").unbind('click touchstart', false);
                     }
                 });
             }, 200);
             setTimeout(function () {
-                $("div#vis_container").find("a[href]").each(function () {
+                $('div#vis_container').find('a[href]').each(function () {
                     $(this).on('click touchstart', function (e) {});
                 });
             }, 200);
@@ -948,8 +948,8 @@
 
             if (activeVal !== null) {
                 if (activeVal.toString() == val.toString()) {
-                    $this.find(".imgToggleFalse").hide();
-                    $this.find(".imgToggleTrue").show();
+                    $this.find('.imgToggleFalse').hide();
+                    $this.find('.imgToggleTrue').show();
                 }
             } else {
                 if (val === 'false') val = false;
@@ -967,27 +967,27 @@
 
                 }
                 if (val > 0) {
-                    $this.find(".imgToggleFalse").hide();
-                    $this.find(".imgToggleTrue").show();
+                    $this.find('.imgToggleFalse').hide();
+                    $this.find('.imgToggleTrue').show();
                 }
             }
 
             vis.states.bind(oid, function (e, val) {
                 if (activeVal !== null) {
                     if (activeVal.toString() == val.toString()) {
-                        $this.find(".imgToggleFalse").hide();
-                        $this.find(".imgToggleTrue").show();
+                        $this.find('.imgToggleFalse').hide();
+                        $this.find('.imgToggleTrue').show();
                     } else {
-                        $this.find(".imgToggleTrue").hide();
-                        $this.find(".imgToggleFalse").show();
+                        $this.find('.imgToggleTrue').hide();
+                        $this.find('.imgToggleFalse').show();
                     }
                 } else {
                     if (val === true || val === 'true' || parseFloat(val) > 0) {
-                        $this.find(".imgToggleFalse").hide();
-                        $this.find(".imgToggleTrue").show();
+                        $this.find('.imgToggleFalse').hide();
+                        $this.find('.imgToggleTrue').show();
                     } else {
-                        $this.find(".imgToggleTrue").hide();
-                        $this.find(".imgToggleFalse").show();
+                        $this.find('.imgToggleTrue').hide();
+                        $this.find('.imgToggleFalse').show();
                     }
                 }
             });
