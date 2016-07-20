@@ -1237,6 +1237,17 @@ var vis = {
 
             if (widget.style && !widgetData._no_style) {
                 $wid = $wid || $('#' + id);
+
+                // fix position
+                for (var attr in widget.style) {
+                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
+                        var val = widget.style[attr];
+                        if (val !== '0' && val !== 0 && val !== null && val !== '' && val.toString().match(/^[-+]\d+$/)) {
+                            widget.style[attr] = val + 'px';
+                        }
+                    }
+                }
+
                 $wid.css(widget.style);
             }
 
