@@ -1562,23 +1562,27 @@ vis = $.extend(true, vis, {
             $.each(that.activeWidgets, function () {
                 var _data = {
                     wid: this,
-                    top: parseInt($('#' + this).css('top'))
+                    height: $('#' + this).height(),
+                    top: $('#' + this).position().top
                 };
+                _data.bottom = _data.top + _data.height;
                 data.push(_data);
             });
 
-            function sortByTop(a, b) {
-                var aName = a.top;
-                var bName = b.top;
+            function sortByBottom(a, b) {
+                var aName = a.bottom;
+                var bName = b.bottom;
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             }
 
-            data.sort(sortByTop);
-            var top = data.pop().top;
+            data.sort(sortByBottom);
+            var bottom = data.pop().bottom;
 
             $.each(data, function () {
-                $('#' + this.wid).css('top', top + 'px');
-                that.views[that.activeView].widgets[this.wid].style.top = top + 'px';
+                $('#' + this.wid).css('top', (bottom - this.height) + 'px');
+
+                that.views[that.activeView].widgets[this.wid].style.top = (bottom - this.height) + 'px';
+
                 that.showWidgetHelper(this.wid, true);
             });
             that.save();
