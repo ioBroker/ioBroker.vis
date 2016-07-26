@@ -1,8 +1,10 @@
  	
 ##notion:
-* Export import of whole projects
+* destroy unused pages after X seconds
 
-* Show leading lines when moving or resizing the widgets
+* show last update time for most of widgets
+
+* user depended views- and widget-visibility
 
 * Wizard
 

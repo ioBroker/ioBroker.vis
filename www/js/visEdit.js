@@ -3037,8 +3037,8 @@ vis = $.extend(true, vis, {
             exportW.push(this.views[this.activeView].widgets[widgets[i]]);
         }
 
-        $('#textarea_export_widgets').text(JSON.stringify(exportW));
-        document.getElementById('textarea_export_widgets').select();
+        $('#textarea_export_widgets').val(JSON.stringify(exportW)).select();
+
         $('#dialog_export_widgets').dialog({
             autoOpen: true,
             width:    800,
