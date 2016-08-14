@@ -169,7 +169,11 @@ Set the interval between the connection attempts if disconnected. If you will se
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.10.7 (2016-07-09)
+## Changelog
+### 0.10.8 (2016-08-14)
+* (bluefox) support of web-sockets force
+
+### 0.10.7 (2016-07-09)
 * (bluefox) add settings to reload vis
 * (bluefox) add dark reload screen
 * (bluefox) fix reload interval

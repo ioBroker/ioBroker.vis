@@ -188,6 +188,10 @@ var servConn = {
         // Connection data from "/_socket/info.js"
         if (!connLink && typeof socketUrl !== 'undefined') connLink = socketUrl;
         if (!connOptions.socketSession && typeof socketSession !== 'undefined') connOptions.socketSession = socketSession;
+        if (connOptions.socketForceWebSockets === undefined &&
+            typeof socketForceWebSockets !== 'undefined') {
+            connOptions.socketForceWebSockets = socketForceWebSockets;
+        }
 
         // if no remote data
         if (this._type === 'local') {
@@ -213,7 +217,10 @@ var servConn = {
                 query:                          'key=' + connOptions.socketSession,
                 'reconnection limit':           10000,
                 'max reconnection attempts':    Infinity,
-                reconnection:                   false
+                reconnection:                   false,
+                upgrade:                        !connOptions.socketForceWebSockets,
+                rememberUpgrade:                connOptions.socketForceWebSockets,
+                transports:                     connOptions.socketForceWebSockets ? ['websocket'] : undefined
             });
 
             this._socket.on('connect', function () {

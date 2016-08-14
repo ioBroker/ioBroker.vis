@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.10.7",
+        "version": "0.10.8",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.10.8": {
+				"en":               "support of web-socket force",
+				"de":               "support of web-socket force",
+				"ru":               "support of web-socket force"
+			},
 			"0.10.7": {
 				"en":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
 				"de":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
@@ -63,7 +68,7 @@
         ],
         "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "license":                  "CC BY-NC",
-        "dependencies":             ["web"],
+        "dependencies":             [{"web": ">=1.5.4"}],
         "restartAdapters":          ["vis"],
         "singleton":                true,
         "type":                     "vis",
