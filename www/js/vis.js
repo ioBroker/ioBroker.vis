@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.10.7',
+    version: '0.10.8',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -728,7 +728,7 @@ var vis = {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
                 $(this).html('<span style="color: red">' + _('error: view not found.') + '</span>');
-            } else if (cview == view) {
+            } else if (cview === view) {
                 $(this).html('<span style="color: red">' + _('error: view container recursion.') + '</span>');
             } else {
                 $(this).html('');
@@ -1360,7 +1360,10 @@ var vis = {
                                         that.renderWidget(view, id);
                                 }
                             }
+                            that.destroyUnusedViews();
                         });
+                    } else {
+                        that.destroyUnusedViews();
                     }
                 });
             } else {
@@ -1374,6 +1377,8 @@ var vis = {
 
                 $view.show();
                 $('#visview_' + this.activeView).hide();
+
+                this.destroyUnusedViews();
             }
             // remember last click for debounce
             this.lastChange = (new Date()).getTime();
@@ -1384,6 +1389,8 @@ var vis = {
             
             // Get the view, if required, from Container
             if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
+
+            this.destroyUnusedViews();
         }
         this.activeView = view;
 
@@ -1398,7 +1405,7 @@ var vis = {
             $(window).trigger('viewChanged', view);
         }
 
-        if (window.location.hash.slice(1) != view) {
+        if (window.location.hash.slice(1) !== view) {
             if (history && history.pushState) {
                 history.pushState({}, '', '#' + view);
             }
@@ -2245,6 +2252,42 @@ var vis = {
         //    - *none* - no aggregation
 
         this.conn.getHistory(id, options, callback);
+    },
+    findAndDestoryViews: function () {
+        if (this.destroyTimeout) {
+            clearTimeout(this.destroyTimeout);
+            this.destroyTimeout = null;
+        }
+        var containers = [];
+        var $createdViews = $('.vis-view');
+        for (var view in this.views) {
+            if (view === '___settings') continue;
+            if (this.views[view].settings.alwaysRender || view === this.activeView) {
+                if (containers.indexOf(view) === -1) containers.push(view);
+                var $containers = $('#visview_' + view).find('.vis-view-container');
+                $containers.each(function () {
+                    var cview = $(this).attr('data-vis-contains');
+                    if (containers.indexOf(cview) === -1) containers.push(cview);
+                });
+            }
+        }
+
+        $createdViews.each(function () {
+            var view = $(this).attr('id').substring('visview_'.length);
+            // If this view is used as container
+            if (containers.indexOf(view) !== -1) return;
+
+            console.debug('Destroy ' + view);
+
+            $(this).remove();
+        });
+    },
+    destroyUnusedViews: function () {
+        if (this.destroyTimeout) clearTimeout(this.destroyTimeout);
+        this.destroyTimeout = _setTimeout(function (that) {
+            that.destroyTimeout = null;
+            that.findAndDestoryViews();
+        }, 30000, this);
     }
 };
 

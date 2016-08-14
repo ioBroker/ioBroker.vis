@@ -748,15 +748,17 @@ vis = $.extend(true, vis, {
         // there are following lines
         // horz-top
         // horz-bottom
-        // horz-center
+        // horz-middle
         // vert-left
         // vert-right
-        // vert-middle
+        // vert-center
         var line = 0;
+        var l;
         for (var i = 0; i < this.activeWidgets.length; i++) {
             var $awid = $('#' + this.activeWidgets[i]);
             var aData = $awid.position();
-            aData.top = parseInt(aData.top, 10);
+
+            aData.top    = parseInt(aData.top, 10);
             aData.bottom = aData.top + parseInt($awid.height(), 10);
             aData.middle = (aData.bottom + aData.top) / 2;
 
@@ -768,13 +770,23 @@ vis = $.extend(true, vis, {
                 horz: [],
                 vert: []
             };
+            var isLeft   = false;
+            var isRight  = false;
+            var isTop    = false;
+            var isBottom = false;
             for (var wid in this.views[this.activeView].widgets) {
                 if (this.activeWidgets.indexOf(wid) === -1) {
                     var $wid = $('#' + wid);
                     if (!$wid.length) continue;
                     var data = $wid.position();
                     if (!data) continue;
-                    data.top = parseInt(data.top, 10);
+
+                    isLeft   = false;
+                    isRight  = false;
+                    isTop    = false;
+                    isBottom = false;
+
+                    data.top    = parseInt(data.top, 10);
                     data.bottom = data.top + parseInt($wid.height(), 10);
                     data.middle = (data.bottom + data.top) / 2;
 
@@ -782,69 +794,88 @@ vis = $.extend(true, vis, {
                     data.right  = data.left + parseInt($wid.width(), 10);
                     data.center = (data.left + data.right) / 2;
 
-                    if (aData.left === data.left) {
+                    if (aData.left   === data.left) {
                         if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
+                        isLeft = true;
                     }
-                    if (aData.left === data.center) {
+                    if (aData.left   === data.right) {
                         if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
+                        isLeft = true;
                     }
-                    if (aData.left === data.right) {
+                    if (aData.left   === data.center) {
                         if (lines.horz.indexOf(aData.left) === -1) lines.horz.push(aData.left);
-                    }
-                    if (aData.center === data.left) {
-                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
-                    }
-                    if (aData.center === data.center) {
-                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
-                    }
-                    if (aData.center === data.right) {
-                        if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
-                    }
-                    if (aData.right === data.left) {
-                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
-                    }
-                    if (aData.right === data.center) {
-                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
-                    }
-                    if (aData.right === data.right) {
-                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                        isLeft = true;
                     }
 
+                    if (aData.right  === data.left) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                        isRight  = true;
+                    }
+                    if (aData.right  === data.right) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                        isRight  = true;
+                    }
+                    if (aData.right  === data.center) {
+                        if (lines.horz.indexOf(aData.right) === -1) lines.horz.push(aData.right);
+                        isRight  = true;
+                    }
 
-                    if (aData.top === data.top) {
+                    if (!isRight || !isLeft) {
+                        if (aData.center === data.left) {
+                            if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                        }
+                        if (aData.center === data.right) {
+                            if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                        }
+                        if (aData.center === data.center) {
+                            if (lines.horz.indexOf(aData.center) === -1) lines.horz.push(aData.center);
+                        }
+                    }
+
+                    if (aData.top    === data.top) {
                         if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                        isTop = true;
                     }
-                    if (aData.top === data.middle) {
+                    if (aData.top    === data.bottom) {
                         if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                        isTop = true;
                     }
-                    if (aData.top === data.top) {
+                    if (aData.top    === data.middle) {
                         if (lines.vert.indexOf(aData.top) === -1) lines.vert.push(aData.top);
+                        isTop = true;
                     }
-                    if (aData.middle === data.top) {
-                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
-                    }
-                    if (aData.middle === data.middle) {
-                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
-                    }
-                    if (aData.middle === data.top) {
-                        if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
-                    }
+
                     if (aData.bottom === data.top) {
                         if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
-                    }
-                    if (aData.bottom === data.middle) {
-                        if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                        isBottom = true;
                     }
                     if (aData.bottom === data.bottom) {
                         if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                        isBottom = true;
+                    }
+                    if (aData.bottom === data.middle) {
+                        if (lines.vert.indexOf(aData.bottom) === -1) lines.vert.push(aData.bottom);
+                        isBottom = true;
+                    }
+
+                    if (!isTop || !isBottom) {
+                        if (aData.middle === data.top) {
+                            if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                        }
+                        if (aData.middle === data.bottom) {
+                            if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                        }
+                        if (aData.middle === data.middle) {
+                            if (lines.vert.indexOf(aData.middle) === -1) lines.vert.push(aData.middle);
+                        }
                     }
                 }
             }
-            for (var l = 0; l < lines.horz.length; l++) {
+            for (l = 0; l < lines.horz.length; l++) {
                 $container = $container || $('#vis_container');
                 $container.append('<div class="vis-leading-line" style="top: 0; bottom: 0; left: ' + lines.horz[l] + 'px; width: 1px"></div>');
             }
-            for (var l = 0; l < lines.vert.length; l++) {
+            for (l = 0; l < lines.vert.length; l++) {
                 $container = $container || $('#vis_container');
                 $container.append('<div class="vis-leading-line" style="left: 0; right: 0; top: ' + lines.vert[l] + 'px; height: 1px"></div>');
             }

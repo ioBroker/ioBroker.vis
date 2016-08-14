@@ -172,6 +172,8 @@ Sometimes (in the night) it is required to have dark loading screen. With this o
 ## Changelog
 ### 0.10.8 (2016-08-14)
 * (bluefox) support of web-sockets force
+* (bluefox) destory unused views after 30 seconds
+* (bluefox) do not show middle leading lines if top and bottom are shown
 
 ### 0.10.7 (2016-07-09)
 * (bluefox) add settings to reload vis
