@@ -1063,7 +1063,7 @@ vis = $.extend(true, vis, {
         if (this.config.editorTheme) {
             $('#commonTheme').remove();
             $('head').prepend('<link rel="stylesheet" type="text/css" href="../../lib/css/themes/jquery-ui/' + this.config.editorTheme + '/jquery-ui.min.css" id="commonTheme"/>');
-            $('[data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
+            $('li .menu-item [data-theme=' + this.config.editorTheme + ']').addClass('ui-state-active');
         }
 
         $('#ul_theme li a').click(function () {
@@ -1092,7 +1092,7 @@ vis = $.extend(true, vis, {
             }, 300);
 
             // Select active theme in menu
-            $('[data-theme=' + theme + ']').addClass('ui-state-active');
+            $('li .menu-item [data-theme=' + theme + ']').addClass('ui-state-active');
 
             that.save();
         });
