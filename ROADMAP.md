@@ -1,6 +1,5 @@
  	
 ##notion:
-* destroy unused pages after X seconds
 
 * show last update time for most of widgets
 
