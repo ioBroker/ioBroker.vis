@@ -170,10 +170,11 @@ Sometimes (in the night) it is required to have dark loading screen. With this o
 ![Dark](img/dark_screen.png)
 
 ## Changelog
-### 0.10.8 (2016-08-14)
+### 0.10.9 (2016-09-04)
 * (bluefox) support of web-sockets force
 * (bluefox) destory unused views after 30 seconds
 * (bluefox) do not show middle leading lines if top and bottom are shown
+* (bluefox) let timestamp and lastchange to show time as interval
 
 ### 0.10.7 (2016-07-09)
 * (bluefox) add settings to reload vis

@@ -96,7 +96,7 @@
                 "de": "Datumformat",
                 "ru": "Формат даты"
             },
-
+            "show_interval":    {"en": "As interval",               "de": "Als Intervall",          "ru": "Как интервал"},
             "hide_effect":      {"en": "Hide effect",               "de": "Verbergeneffekt",        "ru": "Эффект скрытия"},
             "hide_duration":    {"en": "Hide duration(ms)",         "de": "Verbergendauer",         "ru": "Длительность скрытия(мс)"},
             "hide_options":     {"en": "Hide options",              "de": "Verbergenoptionen",      "ru": "Опции скрытия"},
@@ -297,12 +297,12 @@
                     if (val === 'false' || val === false) val = 0;
 
                     var src = srcArr[val];
-                    if (src) $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                 }, refreshInterval);
             }
         },
         value: function (values, oid) {
-            if (oid != 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
+            if (oid !== 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
                 var val = vis.states.attr(oid + '.val');
                 if (val === 'true'  || val === true)  val = 1;
                 if (val === 'false' || val === false) val = 0;
@@ -503,7 +503,7 @@
                 }
             });
             if (!vis.editMode) {
-                if (parseFloat(vis.states.attr(oid + ".val")) != 0 && vis.states.attr(oid + ".val") !== false) {
+                if (parseFloat(vis.states.attr(oid + ".val")) !== 0 && vis.states.attr(oid + ".val") !== false) {
                     $this.hide();
                 }
             }
@@ -539,7 +539,7 @@
                 val = false;
             } else if (val === 'true') {
                 val = true;
-            } else if (typeof val == 'string') {
+            } else if (typeof val === 'string') {
                 var f = parseFloat(val);
                 if (f == val) {
                     val = f;
@@ -684,7 +684,7 @@
                 val = false;
             } else if (val === 'true') {
                 val = true;
-            } else if (typeof val == 'string') {
+            } else if (typeof val === 'string') {
                 var f = parseFloat(val);
                 if (f == val) {
                     val = f;
@@ -699,7 +699,7 @@
 
             $this.val(val ? 1 : 0);
             if (!vis.editMode) {
-                if (oid != 'nothing_selected') {
+                if (oid !== 'nothing_selected') {
                     $this.change(function () {
                         var val = $this.find('option:selected').val();
                         if (invert) val = !val;
@@ -707,7 +707,7 @@
                     });
                 }
             }
-            if (oid != 'nothing_selected') {
+            if (oid !== 'nothing_selected') {
 
             }
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
@@ -715,7 +715,7 @@
                     newVal = false;
                 } else if (newVal === 'true') {
                     newVal = true;
-                } else if (typeof newVal == 'string') {
+                } else if (typeof newVal === 'string') {
                     var f = parseFloat(newVal);
                     if (f == newVal) {
                         newVal = f;
@@ -729,7 +729,7 @@
                     oldVal = false;
                 } else if (oldVal === 'true') {
                     oldVal = true;
-                } else if (typeof oldVal == 'string') {
+                } else if (typeof oldVal === 'string') {
                     var f = parseFloat(oldVal);
                     if (f == oldVal) {
                         oldVal = f;
@@ -742,7 +742,7 @@
 
                 if (newVal == oldVal) return;
 
-                if (newVal === 'false' || newVal === false || parseFloat(newVal) == 0) {
+                if (newVal === 'false' || newVal === false || parseFloat(newVal) === 0) {
                     if ($this.find('option[value="1"]').prop('selected')) {
                         $this.find('option[value="1"]').prop('selected', false);
                         $this.find('option[value="0"]').prop('selected', true);
@@ -784,7 +784,7 @@
                         if (!oidFalse && oidTrue) oidFalse = oidTrue;
                         if (!urlFalse && urlTrue) urlFalse = urlTrue;
 
-                        if (!oid || oid == 'nothing_selected') {
+                        if (!oid || oid === 'nothing_selected') {
                             val = !$(this).data('state');
                             // remember state
                             $(this).data('state', val);
@@ -827,7 +827,7 @@
                         }
 
                         // show new state
-                        if (!oid || oid == 'nothing_selected') {
+                        if (!oid || oid === 'nothing_selected') {
                             var img = $(this).data('img-class');
                             if (val) {
                                 if ($(this).data('as-button')) $(this).addClass('ui-state-active');
@@ -877,8 +877,8 @@
                 if (refreshOnViewChange) {
                     var widgetView = vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
-                        if (view == widgetView) {
-                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (view === widgetView) {
+                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                         }
                     });
                 }
@@ -886,15 +886,15 @@
                     var $this = $(el).parent().find('iframe');
                     refreshInterval = parseInt(refreshInterval, 10);
                     setInterval(function () {
-                        if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
+                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                         }
                     }, refreshInterval);
                 }
                 if (refreshOnWakeUp) {
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
-                        $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                     });
                 }
             }
@@ -905,7 +905,7 @@
                 var $this = $(el);
                 refreshInterval = parseInt(refreshInterval, 10);
                 setInterval(function () {
-                    if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
+                    if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
                         $this.html(html);
                     }
                 }, refreshInterval);
@@ -920,15 +920,15 @@
                 if (refreshOnViewChange) {
                     var widgetView = vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
-                        if (view == widgetView) {
-                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (view === widgetView) {
+                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                         }
                     });
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
-                        if ($this.is(':visible') && $this.parents(':hidden').length == 0) {
-                            $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
+                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                         }
                     }, refreshInterval);
                 }
@@ -937,7 +937,7 @@
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
                         //console.log("wakeup refresh!");
-                        $this.attr('src', src + ((src.indexOf('?') != -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
                         //console.log($this.attr('src'));
                     });
                 }
@@ -1071,8 +1071,8 @@
             }else {
                 val = parseFloat(val);
             }
-            if (data.factor !== undefined && data.factor != '') val = val * parseFloat(data.factor);
-            if (data.digits !== undefined && data.digits != '') val = val.toFixed(parseFloat(data.digits, 10));
+            if (data.factor !== undefined && data.factor !== '') val = val * parseFloat(data.factor);
+            if (data.digits !== undefined && data.digits !== '') val = val.toFixed(parseFloat(data.digits, 10));
 
             if (data.attr('is_tdp')) {
                 val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? ".," : ",.");
@@ -1112,18 +1112,217 @@
 	        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
 	    },
 
-        formatDate: function (dateObj, format, _ignoreOld) {
-            if (typeof format === 'boolean') format = _ignoreOld;
+        formatIntervalHelper: function (value, type) {
+            var singular;
+	        var plural;
+            var special24;
+            if (vis.language === 'de') {
+                if (type === 'seconds') {
+                    singular = 'Sekunde';
+                    plural   = 'Sekunden';
+                } else if (type === 'minutes') {
+                    singular = 'Minute';
+                    plural   = 'Minuten';
+                } else if (type === 'hours') {
+                    singular = 'Stunde';
+                    plural   = 'Stunden';
+                } else if (type === 'days') {
+                    singular = 'Tag';
+                    plural   = 'Tagen';
+                }
+            } else
+            if (vis.language === 'ru') {
+                if (type === 'seconds') {
+                    singular  = 'секунду';
+                    plural    = 'секунд';
+                    special24 = 'секунды';
+                } else if (type === 'minutes') {
+                    singular  = 'минуту';
+                    plural    = 'минут';
+                    special24 = 'минуты';
+                } else if (type === 'hours') {
+                    singular  = 'час';
+                    plural    = 'часов';
+                    special24 = 'часа';
+                } else if (type === 'days') {
+                    singular  = 'день';
+                    plural    = 'дней';
+                    special24 = 'дня';
+                }
+            } else {
+                if (type === 'seconds') {
+                    singular = 'second';
+                    plural   = 'seconds';
+                } else if (type === 'minutes') {
+                    singular = 'minute';
+                    plural   = 'minutes';
+                } else if (type === 'hours') {
+                    singular = 'hour';
+                    plural   = 'hours';
+                } else if (type === 'days') {
+                    singular = 'day';
+                    plural   = 'days';
+                }
+            }
+
+	        if (value === 1) {
+                if (vis.language === 'de') {
+                    return 'einer ' + singular;
+                } else if (vis.language === 'ru') {
+                    if (type === 'days' || type === 'hours') {
+                        return 'один ' + singular;
+                    } else {
+                        return 'одну ' + singular;
+                    }
+                } else {
+                    return 'one ' + singular;
+                }
+            } else {
+                if (vis.language === 'de') {
+                    return value + ' ' + plural;
+                } else if (vis.language === 'ru') {
+                    var d = value % 10;
+                    if (d === 1 && value !== 11) {
+                        return value + ' ' + singular;
+                    } else
+                    if (d >= 2 && d <= 4 && value > 20) {
+                        return value + ' ' + special24;
+                    } else {
+                        return value + ' ' + plural;
+                    }
+                } else {
+                    return value + ' ' + plural;
+                }
+            }
+        },
+        formatInterval: function (timestamp) {
+            var diff = new Date().getTime() - timestamp;
+            diff = Math.round(diff / 1000);
+            var text;
+            if (diff <= 60) {
+                if (vis.language === 'de') {
+                    text = 'vor ' + vis.binds.basic.formatIntervalHelper(diff, 'seconds');
+                } else if (vis.language === 'ru') {
+                    text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' назад';
+                } else {
+                    text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' ago';
+                }
+            } else if (diff < 3600) {
+                var m = Math.floor(diff / 60);
+                var s = diff - m * 60;
+                text = '';
+                if (vis.language === 'de') {
+                    text = 'vor ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                } else if (vis.language === 'ru') {
+                    text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                } else {
+                    text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                }
+
+                if (m < 5) {
+                    // add seconds
+                    if (vis.language === 'de') {
+                        text += ' und ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    } else if (vis.language === 'ru') {
+                        text += ' и ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    } else {
+                        text += ' and ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    }
+                }
+
+                if (vis.language === 'de') {
+                    // nothing
+                } else if (vis.language === 'ru') {
+                    text += ' назад';
+                } else {
+                    text += ' ago';
+                }
+            } else if (diff < 3600 * 24) {
+                var h = Math.floor(diff / 3600);
+                var m = Math.floor((diff - h * 3600) / 60);
+                text = '';
+                if (vis.language === 'de') {
+                    text = 'vor ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                } else if (vis.language === 'ru') {
+                    text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+                } else {
+                    text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+                }
+
+                if (h < 10) {
+                    // add seconds
+                    if (vis.language === 'de') {
+                        text += ' und ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    } else if (vis.language === 'ru') {
+                        text += ' и ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    } else {
+                        text += ' and ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    }
+                }
+
+                if (vis.language === 'de') {
+                    // nothing
+                } else if (vis.language === 'ru') {
+                    text += ' назад';
+                } else {
+                    text += ' ago';
+                }
+            } else {
+                var d = Math.floor(diff / (3600 * 24));
+                var h = Math.floor((diff - d * (3600 * 24)) / 24);
+                text = '';
+                if (vis.language === 'de') {
+                    text = 'vor ' + vis.binds.basic.formatIntervalHelper(d, 'days');
+                } else if (vis.language === 'ru') {
+                    text = vis.binds.basic.formatIntervalHelper(d, 'days');
+                } else {
+                    text = vis.binds.basic.formatIntervalHelper(d, 'days');
+                }
+
+                if (d < 3) {
+                    // add seconds
+                    if (vis.language === 'de') {
+                        text += ' und ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    } else if (vis.language === 'ru') {
+                        text += ' и ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    } else {
+                        text += ' and ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    }
+                }
+
+                if (vis.language === 'de') {
+                    // nothing
+                } else if (vis.language === 'ru') {
+                    text += ' назад';
+                } else {
+                    text += ' ago';
+                }
+            }
+            return text;
+        },
+        startUpdateInterval: function () {
+            if (vis.binds.basic.updateInterval) return;
+            vis.binds.basic.updateInterval = setInterval(function () {
+                $('.time-interval').each(function () {
+                    $(this).html(vis.binds.basic.formatInterval($(this).data('time')))
+                });
+            }, 15000);
+        },
+        formatDate: function (dateObj, format, interval) {
+            if (typeof format === 'boolean') {
+                interval = format;
+                format = 'auto';
+            }
 
             if (format === 'auto') format = (vis.dateFormat || 'DD.MM.YYYY') + ' hh:mm:ss';
 
-            var format = format || vis.dateFormat || 'DD.MM.YYYY';
+            format = format || vis.dateFormat || 'DD.MM.YYYY';
 
             if (!dateObj) return '';
             var text = typeof dateObj;
             if (text === 'string') {
                 var pos = dateObj.indexOf('.');
-                if (pos != -1) dateObj = dateObj.substring(0, pos);
+                if (pos !== -1) dateObj = dateObj.substring(0, pos);
                 return dateObj;
             }
             if (text !== 'object') {
@@ -1140,41 +1339,45 @@
                     dateObj = new Date(dateObj);
                 }
             }
+            if (interval) {
+                vis.binds.basic.startUpdateInterval();
+                return '<span class="time-interval" data-time="' + dateObj.getTime() + '">' + vis.binds.basic.formatInterval(dateObj.getTime()) + '</span>';
+            }
 
             var v;
 
             // Year
-            if (format.indexOf('YYYY') != -1 || format.indexOf('JJJJ') != -1 || format.indexOf('ГГГГ') != -1) {
+            if (format.indexOf('YYYY') !== -1 || format.indexOf('JJJJ') !== -1 || format.indexOf('ГГГГ') !== -1) {
                 v = dateObj.getFullYear();
                 format = format.replace('YYYY', v);
                 format = format.replace('JJJJ', v);
                 format = format.replace('ГГГГ', v);
-            } else if (format.indexOf('YY') != -1 || format.indexOf('JJ') != -1 || format.indexOf('ГГ') != -1) {
+            } else if (format.indexOf('YY') !== -1 || format.indexOf('JJ') !== -1 || format.indexOf('ГГ') !== -1) {
                 v = dateObj.getFullYear() % 100;
                 format = format.replace('YY', v);
                 format = format.replace('JJ', v);
                 format = format.replace('ГГ', v);
             }
             // Month
-            if (format.indexOf('MM') != -1 || format.indexOf('ММ') != -1) {
+            if (format.indexOf('MM') !== -1 || format.indexOf('ММ') !== -1) {
                 v =  dateObj.getMonth() + 1;
                 if (v < 10) v = '0' + v;
                 format = format.replace('MM', v);
                 format = format.replace('ММ', v);
-            } else if (format.indexOf('M') != -1 || format.indexOf('М') != -1) {
+            } else if (format.indexOf('M') !== -1 || format.indexOf('М') !== -1) {
                 v =  dateObj.getMonth() + 1;
                 format = format.replace('M', v);
                 format = format.replace('М', v);
             }
 
             // Day
-            if (format.indexOf('DD') != -1 || format.indexOf('TT') != -1 || format.indexOf('ДД') != -1) {
+            if (format.indexOf('DD') !== -1 || format.indexOf('TT') !== -1 || format.indexOf('ДД') !== -1) {
                 v =  dateObj.getDate();
                 if (v < 10) v = '0' + v;
                 format = format.replace('DD', v);
                 format = format.replace('TT', v);
                 format = format.replace('ДД', v);
-            } else if (format.indexOf('D') != -1 || format.indexOf('TT') != -1 || format.indexOf('Д') != -1) {
+            } else if (format.indexOf('D') !== -1 || format.indexOf('TT') !== -1 || format.indexOf('Д') !== -1) {
                 v =  dateObj.getDate();
                 format = format.replace('D', v);
                 format = format.replace('T', v);
@@ -1182,13 +1385,13 @@
             }
 
             // hours
-            if (format.indexOf('hh') != -1 || format.indexOf('SS') != -1 || format.indexOf('чч') != -1) {
+            if (format.indexOf('hh') !== -1 || format.indexOf('SS') !== -1 || format.indexOf('чч') !== -1) {
                 v =  dateObj.getHours();
                 if (v < 10) v = '0' + v;
                 format = format.replace('hh', v);
                 format = format.replace('SS', v);
                 format = format.replace('чч', v);
-            } else if (format.indexOf('h') != -1 || format.indexOf('S') != -1 || format.indexOf('ч') != -1) {
+            } else if (format.indexOf('h') !== -1 || format.indexOf('S') !== -1 || format.indexOf('ч') !== -1) {
                 v =  dateObj.getHours();
                 format = format.replace('h', v);
                 format = format.replace('S', v);
@@ -1196,19 +1399,19 @@
             }
 
             // minutes
-            if (format.indexOf('mm') != -1 || format.indexOf('мм') != -1) {
+            if (format.indexOf('mm') !== -1 || format.indexOf('мм') !== -1) {
                 v =  dateObj.getMinutes();
                 if (v < 10) v = '0' + v;
                 format = format.replace('mm', v);
                 format = format.replace('мм', v);
-            } else if (format.indexOf('m') != -1 ||  format.indexOf('м') != -1) {
+            } else if (format.indexOf('m') !== -1 ||  format.indexOf('м') !== -1) {
                 v =  dateObj.getMinutes();
                 format = format.replace('m', v);
                 format = format.replace('v', v);
             }
 
             // milliseconds
-            if (format.indexOf('sss') != -1 || format.indexOf('ссс') != -1) {
+            if (format.indexOf('sss') !== -1 || format.indexOf('ссс') !== -1) {
                 v =  dateObj.getMilliseconds();
                 if (v < 10) {
                     v = '00' + v;
@@ -1220,12 +1423,12 @@
             }
 
             // seconds
-            if (format.indexOf('ss') != -1 || format.indexOf('сс') != -1) {
+            if (format.indexOf('ss') !== -1 || format.indexOf('сс') !== -1) {
                 v =  dateObj.getSeconds();
                 if (v < 10) v = '0' + v;
                 format = format.replace('ss', v);
                 format = format.replace('cc', v);
-            } else if (format.indexOf('s') != -1 || format.indexOf('с') != -1) {
+            } else if (format.indexOf('s') !== -1 || format.indexOf('с') !== -1) {
                 v =  dateObj.getHours();
                 format = format.replace('s', v);
                 format = format.replace('с', v);
@@ -1234,7 +1437,7 @@
             return format;
         },
         detectScreen: function (el) {
-            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) == -1) {
+            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) === -1) {
                 vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
             }
 
@@ -1350,15 +1553,15 @@
                 };
 
                 recognition.onerror = function(event) {
-                    if (event.error == 'no-speech') {
+                    if (event.error === 'no-speech') {
                         $('#info_no_speech').show();
                         ignore_onend = true;
                     }
-                    if (event.error == 'audio-capture') {
+                    if (event.error === 'audio-capture') {
                         $('#info_no_microphone').show();
                         ignore_onend = true;
                     }
-                    if (event.error == 'not-allowed') {
+                    if (event.error === 'not-allowed') {
                         if (event.timeStamp - start_timestamp < 100) {
                             $('#info_blocked').show();
                         } else {
@@ -1561,34 +1764,34 @@
                 var scaleHeight = parseFloat(this.data.attr('scaleHeight')) || 1;
                 var strokeWidth = parseInt(this.data.attr('strokeWidth'), 10) || 0;
 
-                if (this.data.svgType == 'triangle') {
+                if (this.data.svgType === 'triangle') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 3) + '"/>';
-                } else if (this.data.svgType == 'line') {
+                } else if (this.data.svgType === 'line') {
                     svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
-                } else if (this.data.svgType == 'circle') {
+                } else if (this.data.svgType === 'circle') {
                     svg = '<circle transform="scale(' + scaleWidth + ', ' + scaleHeight + ') rotate(' + rotate + ')" cx="0" cy="0" r="' + (50 - parseInt(strokeWidth, 10) / 2) + '" />';
-                } else if (this.data.svgType == 'pentagone') {
+                } else if (this.data.svgType === 'pentagone') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 5) + '"/>';
-                } else if (this.data.svgType == 'square') {
+                } else if (this.data.svgType === 'square') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 4) + '"/>';
-                } else if (this.data.svgType == 'hexagone') {
+                } else if (this.data.svgType === 'hexagone') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 6) + '"/>';
-                } else if (this.data.svgType == 'octagone') {
+                } else if (this.data.svgType === 'octagone') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 8) + '"/>';
-                } else if (this.data.svgType == 'star') {
+                } else if (this.data.svgType === 'star') {
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 5, 144) + '"/>';
-                } else if (this.data.svgType == 'arrow') {
+                } else if (this.data.svgType === 'arrow') {
                     var points = vis.binds.basic.circlePoints(50 - strokeWidth * 4, 3, true);
                     var text = '';
                     for (var p = 0; p < points.length; p++) {
                         text += points.x + ',' + points.y;
-                        if (points.length == p - 2) {
+                        if (points.length === p - 2) {
                             text += '0,0';
                         }
                     }
@@ -1866,8 +2069,8 @@
         data-vis-attrs="oid;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
-                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') != -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + ".val"))) : (vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
+            <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
+                <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + ".val"))) : (vis.states.attr(this.data.oid + ".val")) %><%== this.data.attr("html_append") %>
             </div>
         </div>
     </div>
@@ -1917,11 +2120,11 @@
         data-vis-type="val,timestamp"
         data-vis-name="Timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
-        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
@@ -1934,11 +2137,11 @@
         data-vis-type="val,timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
         data-vis-name="Last change Timestamp"
-        data-vis-attrs="oid;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
-                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date')) %><%== this.data.attr('html_append') %>
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
             </div>
         </div>
     </div>
@@ -2193,19 +2396,19 @@
         data-vis-name="Red Number"
         data-vis-prev='<img src="widgets/basic/img/Prev_RedNumber.png"></img>'
         data-vis-attrs="oid;type[circle]/select,circle,pin;html_prepend;html_append_singular;html_append_plural">
-    <% if (this.data.attr('type') == 'pin') { %>
+    <% if (this.data.attr('type') === 'pin') { %>
         <div class="vis-widget <%== this.data.attr('class') %>" style="width: 33px; height: 61px; padding-left: 4px" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
             <div class="vis-widget-body" >
                 <img src="widgets/basic/img/pin_red5.svg" style="width: 100%; height: 100%">
                 <div style="position:absolute; top: 22%; width: 95%; text-align: center">
-                    <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + ".val"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                    <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + ".val"), 10) === 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
                 </div>
             </div>
         </div>
     <% } else { %>
-        <div class="vis-widget <%== this.data.attr('class') %>" style="padding:3px;width:auto;min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color: rgb(214, 69, 69); color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
+        <div class="vis-widget <%== this.data.attr('class') %>" style="padding: 3px; width: auto; min-width: 21px; height: 21px; border-radius:16px; border: 3px solid white; background-color: rgb(214, 69, 69); color:white; font:normal normal normal 20px/normal Helvetica; text-align: center;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.hideOnFalse(el) %>>
             <div class="vis-widget-body" >
-                <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + ".val"), 10) == 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
+                <%== this.data.attr("html_prepend") %><%= parseInt(vis.states.attr(this.data.oid + '.val'), 10) %><%== (parseInt(vis.states.attr(this.data.oid + ".val"), 10) === 1 ? this.data.attr("html_append_singular") : this.data.attr("html_append_plural")) %>
             </div>
         </div>
     <% } %>
