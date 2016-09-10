@@ -2,7 +2,7 @@
 <script type="text/javascript" src="widgets/basic/js/table.js"></script>
 
 <script type="text/javascript">
-    "use strict";
+    'use strict';
 
     if (vis.editMode) {
         // Add words for basic widgets
@@ -200,7 +200,33 @@
             },
             "Select ID":        {"en": "Select ID",                 "de": "ID auswählen",           "ru": "Выбрать ID"},
             "redirect_url":     {"en": "Redirect URL",              "de": "Weiterleiten nach Logout", "ru": "Перейти на URL после выхода"},
-            "in_app_close":     {"en": "Close mobile APP",          "de": "Mobiles APP schliessen", "ru": "Закрыть мобильное приложение"}
+            "in_app_close":     {"en": "Close mobile APP",          "de": "Mobiles APP schliessen", "ru": "Закрыть мобильное приложение"},
+            "en-US":            {"en": "english",                   "de": "Englisch",               "ru": "английский"},
+            "ru-RU":            {"en": "russian",                   "de": "Russisch",               "ru": "русский"},
+            "continuous":       {"en": "Continuous",                "de": "Immer zuhören",          "ru": "Непрерывно"},
+            "keywords":         {"en": "Keywords",                  "de": "Schlüsselworte",         "ru": "Ключевые слова"},
+            "noImage":          {"en": "No image",                  "de": "Kein Bild",              "ru": "Без картинки"},
+            "imageInactive":    {"en": "Inactive",                  "de": "Inaktiv",                "ru": "Не активно"},
+            "imageActive":      {"en": "Active",                    "de": "Aktiv",                  "ru": "Активно"},
+            "imageStarted":     {"en": "Started",                   "de": "Gestartet",              "ru": "Запущено"},
+            "imageDetected":    {"en": "Detected",                  "de": "Gefunden",               "ru": "Обнаружено"},
+            "imageSent":        {"en": "Sent",                      "de": "Gesedet",                "ru": "Отослано"},
+            "imageHeightPx":    {"en": "Height (px)",               "de": "Höhe (px)",              "ru": "Высота (px)"},
+            "imageWidthPx":     {"en": "Width (px)",                "de": "Breite (px)",            "ru": "Ширина (px)"},
+            "noText":           {"en": "No help text",              "de": "Keine Hilfetext",        "ru": "Без текста помощи"},
+            "noResults":        {"en": "No results",                "de": "Keine Ergebnise",        "ru": "Без результатов"},
+            "keyWordColor":     {"en": "Key word color",            "de": "Schlüsselworte-Farbe",   "ru": "Цвет ключевых слов"},
+            "keyWordColor_tooltip": {
+                "en": "Text color, if key word found",
+                "de": "Textfarbe, wenn im Text Schlüsselwort gefunden ist.",
+                "ru": "Цвет текста, когда обнаружено ключевое слово"
+            },
+            "textSentColor":    {"en": "Text sent color",           "de": "Gesendet-Farbe",         "ru": "Цвет отосланного текста"},
+            "textSentColor_tooltip": {
+                "en": "Text color, when text sent to processing it",
+                "de": "Textfarbe, wenn Text ist für Abarbeitung gesendet.",
+                "ru": "Цвет текста, когда текст отослан на обработку"
+            }
         });
     }
 
@@ -223,6 +249,46 @@
             "en": "This option works only in APP",
             "de": "Funktioniert nur im APP",
             "ru": "Работает только в мобильном приложении"
+        },
+        "info_start": {
+            "en": "Click on the microphone icon and begin speaking.",
+            "de": "Klicken Sie das Mikrophon an und sagen Sie etwas.",
+            "ru": "Нажмите на микрофон и начинайте говорить."
+        },
+        "info_speak_now": {
+            "en": "Speak now.",
+            "de": "Sage etwas.",
+            "ru": "Говорите."
+        },
+        "info_no_speech": {
+            "en": "No speech was detected. You may need to adjust your <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\">microphone settings</a>.",
+            "de": "No speech was detected. You may need to adjust your <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\">microphone settings</a>.",
+            "ru": "Речи не обнаружено. Может надо настроить микрофон <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\">Настройки микрофона</a>."
+        },
+        "info_no_microphone": {
+            "en": "No microphone was found. Ensure that a microphone is installed and that <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\"> microphone settings</a> are configured correctly.",
+            "de": "No microphone was found. Ensure that a microphone is installed and that <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\"> microphone settings</a> are configured correctly.",
+            "ru": "No microphone was found. Ensure that a microphone is installed and that <a href=\"//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892\"> microphone settings</a> are configured correctly."
+        },
+        "info_allow": {
+            "en": "Click the \"Allow\" button above to enable your microphone.",
+            "de": "Click the \"Allow\" button above to enable your microphone.",
+            "ru": "Нажмите на кнопку \"разрешить\" сверху, что бы активировать микрофон."
+        },
+        "info_denied": {
+            "en": "Permission to use microphone was denied.",
+            "de": "Permission to use microphone was denied.",
+            "ru": "Доступ к микрофону был запрещён."
+        },
+        "info_blocked": {
+            "en": "Permission to use microphone is blocked. To change, go to chrome://settings/contentExceptions#media-stream",
+            "de": "Permission to use microphone is blocked. To change, go to chrome://settings/contentExceptions#media-stream",
+            "ru": "Доступ к микрофону блокирован. Что бы изменить настройки идите <a href=\"chrome://settings/contentExceptions#media-stream\">сюда</a>"
+        },
+        "info_upgrade": {
+            "en": "Web Speech API is not supported by this browser. Upgrade to<a href=\"//www.google.com/chrome\">Chrome</a> version 25 or later.",
+            "de": "Web Speech API is not supported by this browser. Upgrade to<a href=\"//www.google.com/chrome\">Chrome</a> version 25 or later.",
+            "ru": "Web Speech API не поддерживается этим браузером. Обновите до <a href=\"//www.google.com/chrome\">Chrome</a> версии 25 или новее."
         }
     });
 
@@ -1528,103 +1594,226 @@
             });
         },
         speech2text: function (wid, view, data, style) {
-            var final_transcript = '';
-            var recognition;
-            var ignore_onend = false;
+            var $div = $('#' + wid);
+            // if nothing found => wait
+            if (!$div.length) {
+                return setTimeout(function () {
+                    vis.binds.basic.speech2text(wid, view, data, style);
+                }, 100);
+            }
 
             if (typeof webkitSpeechRecognition === 'undefined') {
                 console.error('Browser does not support speech 2 text');
+                $div.find('.mic-info-text').html(_('info_upgrade'));
                 return;
             }
 
-            var words = null;
-            if (data.keywords) {
-                words =  data.keywords.toLowerCase().split(/[\s,;]+/g);
+            var _data ={
+                continuous:     data.continuous === true || data.continuous === 'true',
+                oid:            data.oid,
+                language:       data.language,
+                finalTranscript: '',
+                lastText:       '',
+                recognition:    null,
+                ignoreOnEnd:    false,
+                timer:          null,
+                words:          data.keywords ? data.keywords.toLowerCase().split(/[\s,;]+/g) : null,
+                textSentColor:  data.textSentColor,
+                keyWordColor:   data.keyWordColor,
+                imageInactive:  data.imageInactive,
+                imageActive:    data.imageActive    || data.imageInactive,
+                imageStarted:   data.imageStarted   || data.imageInactive,
+                imageDetected:  data.imageDetected  || data.imageInactive,
+                imageSent:      data.imageSent      || data.imageInactive
+            };
+            data = null;
+
+            function findKeyWord(text) {
+                var found = false;
+                if (_data.words) {
+                    found = false;
+                    var wwords = text.toLowerCase().split(' ');
+                    for (var w = 0; w < _data.words.length; w++) {
+                        var pos = wwords.indexOf(_data.words[w]);
+                        if (pos !== -1) {
+                            var offset = 0;
+                            for (var p = 0; p < pos; p++) {
+                                offset += wwords[p].length + 1;
+                            }
+                            text = text.substring(0, offset) + '<b>' + text.substring(offset, offset + wwords[pos].length) + '</b>' + text.substring(offset + wwords[pos].length);
+                            found = true;
+                            break;
+                        }
+                    }
+                } else {
+                    return true;
+                }
+                return found ? text : false;
             }
 
             function startRecognition() {
-                recognition = new webkitSpeechRecognition();
-                recognition.continuous     = data.continuous === true || data.continuous === 'true';
-                recognition.interimResults = true;
-                recognition.maxAlternatives = 1;
+                if (_data.recognition) return;
 
-                recognition.onstart = function() {
-                    $('#info_speak_now').show();
+                _data.recognition                 = new webkitSpeechRecognition();
+                _data.recognition.continuous      = _data.continuous;
+                _data.recognition.interimResults  = true;
+                _data.recognition.maxAlternatives = 1;
+                var startTimestamp = new Date();
+                var $text   = $div.find('.mic-info-text');
+                var $result = $div.find('.mic-results');
+                var $image  = $div.find('.mic-image');
+
+                _data.recognition.onstart = function() {
+                    $text.html(_('info_speak_now')).show();
+                    $image.attr('src', _data.imageActive);
+                    $result.hide();
                 };
 
-                recognition.onerror = function(event) {
+                _data.recognition.onerror  = function(event) {
+                    $result.hide();
+                    $text.show();
+                    $image.attr('src', _data.imageInactive);
                     if (event.error === 'no-speech') {
-                        $('#info_no_speech').show();
-                        ignore_onend = true;
+                        $text.html(_('info_no_speech'));
+                        _data.ignoreOnEnd = true;
                     }
                     if (event.error === 'audio-capture') {
-                        $('#info_no_microphone').show();
-                        ignore_onend = true;
+                        $text.html(_('info_no_microphone'));
+                        _data.ignoreOnEnd = true;
                     }
                     if (event.error === 'not-allowed') {
-                        if (event.timeStamp - start_timestamp < 100) {
-                            $('#info_blocked').show();
+                        if (event.timeStamp - startTimestamp < 100) {
+                            $text.html(_('info_blocked'));
                         } else {
-                            $('#info_denied').show();
+                            $text.html(_('info_denied'));
                         }
-                        ignore_onend = true;
+                        _data.ignoreOnEnd = true;
                     }
                 };
 
-                recognition.onend = function() {
-                    console.log('onend');
-                    recognition.stop();
-                    recognition = null;
-                    setTimeout(startRecognition, 1000);
+                _data.recognition.onend    = function() {
+                    //console.log('onend');
+                    _data.recognition.stop();
+                    _data.recognition = null;
+                    if (!_data.ignoreOnEnd) {
+                        setTimeout(function () {
+                            $image.attr('src', _data.imageInactive);
+                            if (_data.continuous) {
+                                $result.hide();
+                                $text.html(_('info_speak_now')).show();
+                                startRecognition();
+                            } else {
+                                $result.hide();
+                                $text.html(_('info_start')).show();
+                            }
+                        }, 1000);
+                    }
                 };
 
-                recognition.onresult = function(event) {
-                    var interim_transcript = '';
+                _data.recognition.onresult = function(event) {
+                    var interimTranscript = '';
 
                     if (typeof event.results === 'undefined') {
-                        recognition.onend = null;
-                        recognition.stop();
+                        _data.recognition.onend = null;
+                        _data.recognition.stop();
                         return;
                     }
 
                     for (var i = event.resultIndex; i < event.results.length; ++i) {
                         if (event.results[i].isFinal) {
-                            final_transcript   += event.results[i][0].transcript;
+                            _data.finalTranscript += event.results[i][0].transcript;
                         } else {
-                            interim_transcript += event.results[i][0].transcript;
+                            interimTranscript += event.results[i][0].transcript;
                         }
                     }
-                    console.log(interim_transcript);
-                    //final_transcript = capitalize(final_transcript);
-                    $('#' + wid).find('.final').html(final_transcript);
-                    $('#' + wid).find('.interim').html(interim_transcript);
 
-                    if (final_transcript) {
-                        var found = true;
-                        if (words) {
-                            found = false;
-                            var wwords = final_transcript.toLowerCase().split(' ');
-                            for (var w = 0; w < words.length; w++) {
-                                if (wwords.indexOf(words[w]) !== -1) {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        }
+                    if ($image.attr('src') == _data.imageActive) $image.attr('src', _data.imageStarted);
+
+                    //final_transcript = capitalize(final_transcript);
+                    $text.hide();
+                    var text = _data.finalTranscript || interimTranscript;
+                    var found = findKeyWord(text);
+
+                    if (!_data.originalColor) _data.originalColor = $result.css('color');
+
+                    if (found) {
+                        text = found;
+                        if ($image.attr('src') == _data.imageStarted) $image.attr('src', _data.imageDetected);
+                        $result.addClass('mic-keyword-found');
+                        if (_data.keyWordColor) $result.css({color: _data.keyWordColor});
+                    }
+
+                    $result.html(text).show();
+
+                    if (_data.finalTranscript) {
+                        if (_data.timer) clearTimeout(_data.timer);
+
                         if (found) {
-                            console.log(final_transcript);
-                            vis.setValue(data.oid, final_transcript);
+                            $image.attr('src', _data.imageSent);
+                            if (_data.textSentColor) $result.css({color: _data.textSentColor});
+                            $result.addClass('mic-text-sent');
+                            vis.setValue(_data.oid, _data.finalTranscript);
                         }
-                        final_transcript = '';
+
+                        _data.finalTranscript = '';
+                        _data.lastText = '';
+
+                        setTimeout(function () {
+                            $image.attr('src', _data.imageActive);
+                            $result.css({color: _data.originalColor});
+                            $result.hide().removeClass('mic-keyword-found mic-text-sent');
+                            $text.html(_('info_speak_now')).show();
+                        }, 1000);
+                    } else {
+                        _data.lastText = interimTranscript;
+
+                        if (_data.timer) clearTimeout(_data.timer);
+                        _data.timer = setTimeout(function () {
+                            _data.timer = null;
+                            _data.recognition.onend = null;
+                            _data.recognition.stop();
+                            _data.recognition = null;
+
+                            var found = findKeyWord(_data.lastText);
+                            if (found) {
+                                $image.attr('src', _data.imageSent);
+                                if (_data.textSentColor) $result.css({color: _data.textSentColor});
+                                $result.addClass('mic-text-sent');
+                                vis.setValue(_data.oid, _data.finalTranscript);
+                            }
+
+                            _data.finalTranscript = '';
+                            _data.lastText = '';
+
+                            setTimeout(function () {
+                                $image.attr('src', _data.imageActive);
+                                $result.css({color: _data.originalColor});
+                                $result.hide().removeClass('mic-keyword-found mic-text-sent');
+                                $text.html(_('info_speak_now')).show();
+                                startRecognition();
+                            }, 1000);
+                        }, 3000);
                     }
                 };
 
-                recognition.lang = data.language;
-                if (!vis.editMode)
-                    recognition.start();
-            }
+                _data.recognition.lang     = _data.language;
 
-            startRecognition();
+                _data.recognition.start();
+            }
+            if (_data.continuous) {
+                if (!vis.editMode) {
+                    startRecognition();
+                } else {
+                    $div.find('.mic-info-text').html(_('info_start'));
+                }
+            } else {
+                $div.find('.mic-info-text').html(_('info_start'));
+                if (!vis.editMode) {
+                    $div.click(function () {
+                        startRecognition();
+                    });
+                }
+            }
         },
         getTimeInterval: function (oldTime, hoursToShow) {
             var result = '';
@@ -1725,7 +1914,6 @@
         };
     }
 </script>
-
 
 <!-- Basic Widgets -->
 
@@ -2572,53 +2760,28 @@
     </div>
 </script>
 
-<!--script id="tplSpeech2Text"
-                 type="text/ejs"
-                 class="vis-tpl"
-                 data-vis-set="basic"
-                 data-vis-type="val"
-                 data-vis-prev='<div id="prev_tplValueGesture" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev" style="height: 22px; border: 1px solid rgb(199, 199, 199); text-align: center; padding-top: 8px !important; padding-left: 2px !important; padding-right: 2px !important; background: lightgray; font-size: 14px; font-weight: normal;">25,5</div></div>'
-                 data-vis-name="Gesture indicator"
-                 data-vis-no-gestures="true"
-                 data-vis-attrs="oid;language/select,,en-US,de,ru-RU;keywords">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="height: 50px; width: 100px" id="<%= this.data.attr('wid') %>">
+<script id="tplSpeech2Text"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val"
+        data-vis-prev='<img src="widgets/basic/img/Prev_Speech2Text.png"></img>'
+        data-vis-name="Speech to text"
+        data-vis-no-gestures="true"
+        data-vis-attrs="oid;continuous/checkbox;language/select,,en-US,de,ru-RU;keywords;"
+        data-vis-attrs0="group.image;noImage/checkbox;imageInactive[widgets~basic~img~micInactive.svg]/image;imageActive[widgets~basic~img~micActive.svg]/image;imageStarted[widgets~basic~img~micStarted.svg]/image;imageDetected[widgets~basic~img~micDetected.svg]/image;imageSent[widgets~basic~img~micSent.svg]/image;imageHeightPx[70]/slider,0,200,1;imageWidthPx[70]/slider,0,200,1;"
+        data-vis-attrs1="group.text;noText/checkbox;noResults/checkbox;keyWordColor[#FFB051]/color;textSentColor[#7E88D3]/color;">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="height: 77px; width: 500px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
-            <div id="info">
-                <p id="info_start">
-                    Click on the microphone icon and begin speaking for as long as you like.
-                </p>
-                <p id="info_speak_now" style="display:none">
-                    Speak now.
-                </p>
-                <p id="info_no_speech" style="display:none">
-                    No speech was detected. You may need to adjust your <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">microphone settings</a>.
-                </p>
-                <p id="info_no_microphone" style="display:none">
-                    No microphone was found. Ensure that a microphone is installed and that
-                    <a href="//support.google.com/chrome/bin/answer.py?hl=en&amp;answer=1407892">
-                        microphone settings</a> are configured correctly.
-                </p>
-                <p id="info_allow" style="display:none">
-                    Click the "Allow" button above to enable your microphone.
-                </p>
-                <p id="info_denied" style="display:none">
-                    Permission to use microphone was denied.
-                </p>
-                <p id="info_blocked" style="display:none">
-                    Permission to use microphone is blocked. To change, go to
-                    chrome://settings/contentExceptions#media-stream
-                </p>
-                <p id="info_upgrade" style="display:none">
-                    Web Speech API is not supported by this browser. Upgrade to
-                    <a href="//www.google.com/chrome">Chrome</a> version 25 or later.
-                </p>
-            </div>
-            <div id="results">
-                <span class="final"></span>
-                <span class="interim"></span>
-            </div>
+            <table style="height: 100%; width: 100%"><tr>
+                <td style="<%= this.data.attr('noImage') ? 'display: none' : '' %>"><img class="mic-image" style="height: <%= this.data.attr('imageHeightPx') %>px; width: <%= this.data.attr('imageWidthPx') %>px" src="<%= this.data.attr('imageInactive') %>" /></td>
+                <td class="mic-text" style="width: 100%">
+                    <div class="mic-info-text" style="<%= this.data.attr('noText')    ? 'display: none' : '' %>"></div>
+                    <div class="mic-results"   style="<%= this.data.attr('noResults') ? 'display: none' : '' %>"></div>
+                </td>
+            </tr></table>
         </div>
     </div>
     <% vis.binds.basic.speech2text(this.data.wid, this.view, this.data, this.style); %>
-</script-->
+</script>
 

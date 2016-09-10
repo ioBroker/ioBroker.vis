@@ -51,8 +51,8 @@ var servConn = {
     _isSecure:          false,
     _defaultMode:       0x644,
     _useStorage:        false,
-    _objects:           null,        // used if _useStorage == true
-    _enums:             null,        // used if _useStorage == true
+    _objects:           null,        // used if _useStorage === true
+    _enums:             null,        // used if _useStorage === true
     namespace:          'vis.0',
 
     getType:          function () {
@@ -206,8 +206,8 @@ var servConn = {
             var url;
             if (connLink) {
                 url = connLink;
-                if (typeof connLink != 'undefined') {
-                    if (connLink[0] == ':') connLink = location.protocol + '://' + location.hostname + connLink;
+                if (typeof connLink !== 'undefined') {
+                    if (connLink[0] === ':') connLink = location.protocol + '://' + location.hostname + connLink;
                 }
             } else {
                 url = location.protocol + '//' + location.host;
@@ -322,15 +322,15 @@ var servConn = {
             });
 
             this._socket.on('stateChange', function (id, state) {
-                if (!id || state === null || typeof state != 'object') return;
+                if (!id || state === null || typeof state !== 'object') return;
 
-                if (that._connCallbacks.onCommand && id == that.namespace + '.control.command') {
+                if (that._connCallbacks.onCommand && id === that.namespace + '.control.command') {
                     if (state.ack) return;
 
                     if (state.val &&
-                        typeof state.val == 'string' &&
-                        state.val[0] == '{' &&
-                        state.val[state.val.length - 1] == '}') {
+                        typeof state.val === 'string' &&
+                        state.val[0] === '{' &&
+                        state.val[state.val.length - 1] === '}') {
                         try {
                             state.val = JSON.parse(state.val);
                         } catch (e) {
@@ -350,9 +350,9 @@ var servConn = {
                             that.setState(id, {val: '', ack: true});
                         }
                     }
-                } else if (id == that.namespace + '.control.data') {
+                } else if (id === that.namespace + '.control.data') {
                     that._cmdData = state.val;
-                } else if (id == that.namespace + '.control.instance') {
+                } else if (id === that.namespace + '.control.instance') {
                     that._cmdInstance = state.val;
                 } else if (that._connCallbacks.onUpdate) {
                     that._connCallbacks.onUpdate(id, state);
@@ -421,7 +421,7 @@ var servConn = {
                 app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), callback);
             } else {
                 var adapter = this.namespace;
-                if (filename[0] == '/') {
+                if (filename[0] === '/') {
                     var p = filename.split('/');
                     adapter = p[1];
                     p.splice(0, 2);
@@ -439,41 +439,41 @@ var servConn = {
     getMimeType: function (ext) {
         if (ext.indexOf('.') !== -1) ext = ext.toLowerCase().match(/\.[^.]+$/);
         var _mimeType;
-        if (ext == '.css') {
+        if (ext === '.css') {
             _mimeType = 'text/css';
-        } else if (ext == '.bmp') {
+        } else if (ext === '.bmp') {
             _mimeType = 'image/bmp';
-        } else if (ext == '.png') {
+        } else if (ext === '.png') {
             _mimeType = 'image/png';
-        } else if (ext == '.jpg') {
+        } else if (ext === '.jpg') {
             _mimeType = 'image/jpeg';
-        } else if (ext == '.jpeg') {
+        } else if (ext === '.jpeg') {
             _mimeType = 'image/jpeg';
-        } else if (ext == '.gif') {
+        } else if (ext === '.gif') {
             _mimeType = 'image/gif';
-        } else if (ext == '.tif') {
+        } else if (ext === '.tif') {
             _mimeType = 'image/tiff';
-        } else if (ext == '.js') {
+        } else if (ext === '.js') {
             _mimeType = 'application/javascript';
-        } else if (ext == '.html') {
+        } else if (ext === '.html') {
             _mimeType = 'text/html';
-        } else if (ext == '.htm') {
+        } else if (ext === '.htm') {
             _mimeType = 'text/html';
-        } else if (ext == '.json') {
+        } else if (ext === '.json') {
             _mimeType = 'application/json';
-        } else if (ext == '.xml') {
+        } else if (ext === '.xml') {
             _mimeType = 'text/xml';
-        } else if (ext == '.svg') {
+        } else if (ext === '.svg') {
             _mimeType = 'image/svg+xml';
-        } else if (ext == '.eot') {
+        } else if (ext === '.eot') {
             _mimeType = 'application/vnd.ms-fontobject';
-        } else if (ext == '.ttf') {
+        } else if (ext === '.ttf') {
             _mimeType = 'application/font-sfnt';
-        } else if (ext == '.woff') {
+        } else if (ext === '.woff') {
             _mimeType = 'application/font-woff';
-        } else if (ext == '.wav') {
+        } else if (ext === '.wav') {
             _mimeType = 'audio/wav';
-        } else if (ext == '.mp3') {
+        } else if (ext === '.mp3') {
             _mimeType = 'audio/mpeg3';
         } else {
             _mimeType = 'text/javascript';
@@ -500,7 +500,7 @@ var servConn = {
             });
         } else {
             var adapter = this.namespace;
-            if (filename[0] == '/') {
+            if (filename[0] === '/') {
                 var p = filename.split('/');
                 adapter = p[1];
                 p.splice(0, 2);
@@ -519,7 +519,7 @@ var servConn = {
         }
     },
     writeFile:        function (filename, data, mode, callback) {
-        if (typeof mode == 'function') {
+        if (typeof mode === 'function') {
             callback = mode;
             mode = null;
         }
@@ -529,12 +529,12 @@ var servConn = {
         } else {
             if (!this._checkConnection('writeFile', arguments)) return;
 
-            if (typeof data == 'object') data = JSON.stringify(data, null, 2);
+            if (typeof data === 'object') data = JSON.stringify(data, null, 2);
 
             var parts = filename.split('/');
             var adapter = parts[1];
             parts.splice(0, 2);
-            if (adapter == 'vis') {
+            if (adapter === 'vis') {
                 this._socket.emit('writeFile', adapter, parts.join('/'), data, mode ? {mode: this._defaultMode} : {}, callback);
             } else {
                 this._socket.emit('writeFile', this.namespace, filename, data, mode ? {mode: this._defaultMode} : {}, callback);
@@ -608,7 +608,7 @@ var servConn = {
             return callback(null, []);
         }else {
 
-            if (typeof IDs == 'function') {
+            if (typeof IDs === 'function') {
                 callback = IDs;
                 IDs = null;
             }
@@ -649,7 +649,7 @@ var servConn = {
                 var children = [];
                 var len      = items[i].length + 1;
                 var name     = items[i] + '.';
-                while (j < items.length && items[j].substring(0, len) == name) {
+                while (j < items.length && items[j].substring(0, len) === name) {
                     children.push(items[j++]);
                 }
 
@@ -751,17 +751,17 @@ var servConn = {
     getChildren:      function (id, useCache, callback) {
         if (!this._checkConnection('getChildren', arguments)) return;
 
-        if (typeof id == 'function') {
+        if (typeof id === 'function') {
             callback = id;
             id = null;
             useCache = false;
         }
-        if (typeof id == 'boolean') {
+        if (typeof id === 'boolean') {
             callback = useCache;
             useCache = id;
             id = null;
         }
-        if (typeof useCache == 'function') {
+        if (typeof useCache === 'function') {
             callback = useCache;
             useCache = false;
         }
@@ -815,12 +815,12 @@ var servConn = {
                     }
                     var list = [];
 
-                    var count = id.split('.');
+                    var count = id.split('.').length;
 
                     // find direct children
                     for (var _id in data) {
                         var parts = _id.split('.');
-                        if (count + 1 == parts.length) {
+                        if (count + 1 === parts.length) {
                             list.push(_id);
                         }
                     }
@@ -848,7 +848,7 @@ var servConn = {
                                 var children = [];
                                 var len  = items[k].length + 1;
                                 var name = items[k] + '.';
-                                while (j < items.length && items[j].substring(0, len) == name) {
+                                while (j < items.length && items[j].substring(0, len) === name) {
                                     children.push(items[j++]);
                                 }
 
@@ -865,17 +865,17 @@ var servConn = {
         }.bind(this));
     },
     getObject:        function (id, useCache, callback) {
-        if (typeof id == 'function') {
+        if (typeof id === 'function') {
             callback = id;
             id = null;
             useCache = false;
         }
-        if (typeof id == 'boolean') {
+        if (typeof id === 'boolean') {
             callback = useCache;
             useCache = id;
             id = null;
         }
-        if (typeof useCache == 'function') {
+        if (typeof useCache === 'function') {
             callback = useCache;
             useCache = false;
         }
@@ -905,17 +905,17 @@ var servConn = {
         }.bind(this));
     },
     getEnums:         function (enumName, useCache, callback) {
-        if (typeof enumName == 'function') {
+        if (typeof enumName === 'function') {
             callback = enumName;
             enumName = null;
             useCache = false;
         }
-        if (typeof enumName == 'boolean') {
+        if (typeof enumName === 'boolean') {
             callback = useCache;
             useCache = enumName;
             enumName = null;
         }
-        if (typeof useCache == 'function') {
+        if (typeof useCache === 'function') {
             callback = useCache;
             useCache = false;
         }
@@ -1102,7 +1102,7 @@ var servConn = {
         this.readDir('/' + this.namespace + '/' + projectDir, function (err, dirs) {
             // find vis-views.json
             for (var f = 0; f < dirs.length; f++) {
-                if (dirs[f].file == 'vis-views.json' && (!dirs[f].acl || dirs[f].acl.read)) {
+                if (dirs[f].file === 'vis-views.json' && (!dirs[f].acl || dirs[f].acl.read)) {
                     return callback(err, {name: projectDir, readOnly: (dirs[f].acl && !dirs[f].acl.write), mode: dirs[f].acl ? dirs[f].acl.permissions : 0});
                 }
             }
