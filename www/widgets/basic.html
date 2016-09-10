@@ -226,7 +226,10 @@
                 "en": "Text color, when text sent to processing it",
                 "de": "Textfarbe, wenn Text ist für Abarbeitung gesendet.",
                 "ru": "Цвет текста, когда текст отослан на обработку"
-            }
+            },
+            "speechMode":       {"en": "Speech mode",               "de": "Sprachmodus",            "ru": "Режим речи"},
+            "single":           {"en": "single",                    "de": "Ein mal",                "ru": "Одиночный"},
+            "startstop":        {"en": "start/stop",                "de": "Start/Stop",             "ru": "Старт/стоп"}
         });
     }
 
@@ -1609,7 +1612,8 @@
             }
 
             var _data ={
-                continuous:     data.continuous === true || data.continuous === 'true',
+                continuous:     data.speechMode === 'continuous' || data.speechMode === 'startstop',
+                speechMode:     data.speechMode,
                 oid:            data.oid,
                 language:       data.language,
                 finalTranscript: '',
@@ -1624,7 +1628,10 @@
                 imageActive:    data.imageActive    || data.imageInactive,
                 imageStarted:   data.imageStarted   || data.imageInactive,
                 imageDetected:  data.imageDetected  || data.imageInactive,
-                imageSent:      data.imageSent      || data.imageInactive
+                imageSent:      data.imageSent      || data.imageInactive,
+                $text:          $div.find('.mic-info-text'),
+                $result:        $div.find('.mic-results'),
+                $image:         $div.find('.mic-image')
             };
             data = null;
 
@@ -1652,59 +1659,68 @@
             }
 
             function startRecognition() {
-                if (_data.recognition) return;
+                if (_data.recognition) {
+                    if (_data.speechMode === 'startstop') {
+                        _data.recognition.onend = null;
+                        _data.recognition.stop();
+                        _data.recognition = null;
+                        _data.$text.html(_('info_start')).show();
+                        _data.$image.attr('src', _data.imageInactive);
+                        _data.$result.hide();
+                    }
+                    return;
+                }
 
                 _data.recognition                 = new webkitSpeechRecognition();
                 _data.recognition.continuous      = _data.continuous;
                 _data.recognition.interimResults  = true;
                 _data.recognition.maxAlternatives = 1;
                 var startTimestamp = new Date();
-                var $text   = $div.find('.mic-info-text');
-                var $result = $div.find('.mic-results');
-                var $image  = $div.find('.mic-image');
+
 
                 _data.recognition.onstart = function() {
-                    $text.html(_('info_speak_now')).show();
-                    $image.attr('src', _data.imageActive);
-                    $result.hide();
+                    _data.$text.html(_('info_speak_now')).show();
+                    _data.$image.attr('src', _data.imageActive);
+                    _data.$result.hide();
                 };
 
                 _data.recognition.onerror  = function(event) {
-                    $result.hide();
-                    $text.show();
-                    $image.attr('src', _data.imageInactive);
+                    debugger;
+                    _data.$result.hide();
+                    _data.$text.show();
+                    _data.$image.attr('src', _data.imageInactive);
                     if (event.error === 'no-speech') {
-                        $text.html(_('info_no_speech'));
-                        _data.ignoreOnEnd = true;
+                        _data.$text.html(_('info_no_speech'));
+                        //_data.ignoreOnEnd = true;
                     }
                     if (event.error === 'audio-capture') {
-                        $text.html(_('info_no_microphone'));
+                        _data.$text.html(_('info_no_microphone'));
                         _data.ignoreOnEnd = true;
                     }
                     if (event.error === 'not-allowed') {
                         if (event.timeStamp - startTimestamp < 100) {
-                            $text.html(_('info_blocked'));
+                            _data.$text.html(_('info_blocked'));
                         } else {
-                            $text.html(_('info_denied'));
+                            _data.$text.html(_('info_denied'));
                         }
                         _data.ignoreOnEnd = true;
                     }
                 };
 
                 _data.recognition.onend    = function() {
-                    //console.log('onend');
+                    console.log('onend');
                     _data.recognition.stop();
                     _data.recognition = null;
                     if (!_data.ignoreOnEnd) {
                         setTimeout(function () {
-                            $image.attr('src', _data.imageInactive);
+                            _data.$image.attr('src', _data.imageInactive);
                             if (_data.continuous) {
-                                $result.hide();
-                                $text.html(_('info_speak_now')).show();
+                                _data.$result.hide();
+                                _data.$text.html(_('info_speak_now')).show();
                                 startRecognition();
                             } else {
-                                $result.hide();
-                                $text.html(_('info_start')).show();
+                                _data.$result.hide();
+                                _data.$text.html(_('info_start')).show();
                             }
                         }, 1000);
                     }
@@ -1727,31 +1743,31 @@
                         }
                     }
 
-                    if ($image.attr('src') == _data.imageActive) $image.attr('src', _data.imageStarted);
+                    if (_data.$image.attr('src') == _data.imageActive) _data.$image.attr('src', _data.imageStarted);
 
                     //final_transcript = capitalize(final_transcript);
-                    $text.hide();
+                    _data.$text.hide();
                     var text = _data.finalTranscript || interimTranscript;
                     var found = findKeyWord(text);
 
-                    if (!_data.originalColor) _data.originalColor = $result.css('color');
+                    if (!_data.originalColor) _data.originalColor = _data.$result.css('color');
 
                     if (found) {
                         text = found;
-                        if ($image.attr('src') == _data.imageStarted) $image.attr('src', _data.imageDetected);
-                        $result.addClass('mic-keyword-found');
-                        if (_data.keyWordColor) $result.css({color: _data.keyWordColor});
+                        if (_data.$image.attr('src') == _data.imageStarted) _data.$image.attr('src', _data.imageDetected);
+                        _data.$result.addClass('mic-keyword-found');
+                        if (_data.keyWordColor) _data.$result.css({color: _data.keyWordColor});
                     }
 
-                    $result.html(text).show();
+                    _data.$result.html(text).show();
 
                     if (_data.finalTranscript) {
                         if (_data.timer) clearTimeout(_data.timer);
 
                         if (found) {
-                            $image.attr('src', _data.imageSent);
-                            if (_data.textSentColor) $result.css({color: _data.textSentColor});
-                            $result.addClass('mic-text-sent');
+                            _data.$image.attr('src', _data.imageSent);
+                            if (_data.textSentColor) _data.$result.css({color: _data.textSentColor});
+                            _data.$result.addClass('mic-text-sent');
                             vis.setValue(_data.oid, _data.finalTranscript);
                         }
 
@@ -1759,10 +1775,10 @@
                         _data.lastText = '';
 
                         setTimeout(function () {
-                            $image.attr('src', _data.imageActive);
-                            $result.css({color: _data.originalColor});
-                            $result.hide().removeClass('mic-keyword-found mic-text-sent');
-                            $text.html(_('info_speak_now')).show();
+                            _data.$image.attr('src', _data.imageActive);
+                            _data.$result.css({color: _data.originalColor});
+                            _data.$result.hide().removeClass('mic-keyword-found mic-text-sent');
+                            _data.$text.html(_('info_speak_now')).show();
                         }, 1000);
                     } else {
                         _data.lastText = interimTranscript;
@@ -1776,9 +1792,9 @@
 
                             var found = findKeyWord(_data.lastText);
                             if (found) {
-                                $image.attr('src', _data.imageSent);
-                                if (_data.textSentColor) $result.css({color: _data.textSentColor});
-                                $result.addClass('mic-text-sent');
+                                _data.$image.attr('src', _data.imageSent);
+                                if (_data.textSentColor) _data.$result.css({color: _data.textSentColor});
+                                _data.$result.addClass('mic-text-sent');
                                 vis.setValue(_data.oid, _data.finalTranscript);
                             }
 
@@ -1786,10 +1802,10 @@
                             _data.lastText = '';
 
                             setTimeout(function () {
-                                $image.attr('src', _data.imageActive);
-                                $result.css({color: _data.originalColor});
-                                $result.hide().removeClass('mic-keyword-found mic-text-sent');
-                                $text.html(_('info_speak_now')).show();
+                                _data.$image.attr('src', _data.imageActive);
+                                _data.$result.css({color: _data.originalColor});
+                                _data.$result.hide().removeClass('mic-keyword-found mic-text-sent');
+                                _data.$text.html(_('info_speak_now')).show();
                                 startRecognition();
                             }, 1000);
                         }, 3000);
@@ -1800,7 +1816,7 @@
 
                 _data.recognition.start();
             }
-            if (_data.continuous) {
+            if (_data.speechMode === 'continuous') {
                 if (!vis.editMode) {
                     startRecognition();
                 } else {
@@ -2768,7 +2784,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_Speech2Text.png"></img>'
         data-vis-name="Speech to text"
         data-vis-no-gestures="true"
-        data-vis-attrs="oid;continuous/checkbox;language/select,,en-US,de,ru-RU;keywords;"
+        data-vis-attrs="oid;speechMode[single]/select,single,startstop,continuous;language/select,,en-US,de,ru-RU;keywords;"
         data-vis-attrs0="group.image;noImage/checkbox;imageInactive[widgets~basic~img~micInactive.svg]/image;imageActive[widgets~basic~img~micActive.svg]/image;imageStarted[widgets~basic~img~micStarted.svg]/image;imageDetected[widgets~basic~img~micDetected.svg]/image;imageSent[widgets~basic~img~micSent.svg]/image;imageHeightPx[70]/slider,0,200,1;imageWidthPx[70]/slider,0,200,1;"
         data-vis-attrs1="group.text;noText/checkbox;noResults/checkbox;keyWordColor[#FFB051]/color;textSentColor[#7E88D3]/color;">
     <div class="vis-widget <%== this.data.attr('class') %>" style="height: 77px; width: 500px" id="<%= this.data.attr('wid') %>">
