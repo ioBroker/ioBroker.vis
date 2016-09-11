@@ -360,6 +360,11 @@ $.extend(systemDictionary, {
         "de": "Neuladen falls keine Verbindung länger als:",
         "ru": "Перезагружать если нет соединения дольше:"
     },
+    "Destroy inactive view after (sec):": {
+        "en": "Destroy inactive view after (sec):",
+        "de": "Löschen aus RAM nicht aktive Views nach (Sek):",
+        "ru": "Стирать из памяти неактивные страницы после (сек):"
+    },
     "never":                {"en": "never",             "de": "nie",                    "ru": "никогда"},
     "1 second":             {"en": "1 second",          "de": "1 Sekunde",              "ru": "1 секунда"},
     "2 seconds":            {"en": "2 seconds",         "de": "2 Sekunden",             "ru": "2 секунды"},

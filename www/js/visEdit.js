@@ -177,7 +177,8 @@ vis = $.extend(true, vis, {
             this.views.___settings = {
                 reloadOnSleep:      30, // seconds
                 reconnectInterval:  10000, // milliseconds
-                darkReloadScreen:   false
+                darkReloadScreen:   false,
+                destroyViewsAfter:  30  // seconds
             };
         }
         this.$selectView           = $('#select_view');
@@ -1175,6 +1176,7 @@ vis = $.extend(true, vis, {
             $('#reloadOnSleep').val(that.views.___settings.reloadOnSleep);
             $('#darkReloadScreen').prop('checked', that.views.___settings.darkReloadScreen);
             $('#reconnectInterval').val(that.views.___settings.reconnectInterval);
+            $('#destroyViewsAfter').val(that.views.___settings.destroyViewsAfter);
             $('#dialog-settings').dialog({
                 autoPen:    true,
                 width:      800,
@@ -1194,6 +1196,10 @@ vis = $.extend(true, vis, {
                             var changed = false;
                             if (that.views.___settings.reloadOnSleep != $('#reloadOnSleep').val()) {
                                 that.views.___settings.reloadOnSleep = $('#reloadOnSleep').val();
+                                changed = true;
+                            }
+                            if (that.views.___settings.destroyViewsAfter != $('#destroyViewsAfter').val()) {
+                                that.views.___settings.destroyViewsAfter = $('#destroyViewsAfter').val();
                                 changed = true;
                             }
                             if (that.views.___settings.reconnectInterval != $('#reconnectInterval').val()) {

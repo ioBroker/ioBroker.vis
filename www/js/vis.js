@@ -658,6 +658,7 @@ var vis = {
                 $('#server-disconnect').removeClass('disconnect-light').addClass('disconnect-dark');
             }
             if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
+            if (this.views.___settings.destroyViewsAfter !== undefined) this.views.___settings.destroyViewsAfter = parseInt(this.views.___settings.destroyViewsAfter, 10);
         }
 
         // Navigation
@@ -2284,10 +2285,16 @@ var vis = {
     },
     destroyUnusedViews: function () {
         if (this.destroyTimeout) clearTimeout(this.destroyTimeout);
-        this.destroyTimeout = _setTimeout(function (that) {
-            that.destroyTimeout = null;
-            that.findAndDestoryViews();
-        }, 30000, this);
+        var timeout = 30000;
+        if (this.views.___settings && this.views.___settings.destroyViewsAfter !== undefined) {
+            timeout = this.views.___settings.destroyViewsAfter * 1000;
+        }
+        if (timeout) {
+            this.destroyTimeout = _setTimeout(function (that) {
+                that.destroyTimeout = null;
+                that.findAndDestoryViews();
+            }, timeout, this);
+        }
     }
 };
 
