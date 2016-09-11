@@ -78,13 +78,13 @@ vis = $.extend(true, vis, {
         // remove all unused fields
         this.removeUnusedFields();
 
-        if (typeof mode == 'function') {
+        if (typeof mode === 'function') {
             callback = mode;
             mode     = null;
         }
         if (typeof app !== 'undefined') {
             console.warn('Do not allow save of views from Cordova!');
-            if (typeof callback == 'function') callback();
+            if (typeof callback === 'function') callback();
             return;
         }
 
@@ -92,7 +92,7 @@ vis = $.extend(true, vis, {
         if (this.permissionDenied) {
             if (this.showHint) this.showHint(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _('permissionError'),
                 5000, 'ui-state-error');
-            if (typeof callback == 'function') callback();
+            if (typeof callback === 'function') callback();
             return;
         }
 
@@ -104,7 +104,7 @@ vis = $.extend(true, vis, {
             }, 1000);
         } else {
             if (!this.saveRemoteActive) this.saveRemoteActive = 30;
-            if (this.saveRemoteActive == 10) {
+            if (this.saveRemoteActive === 10) {
                 console.log('possible no connection');
                 this.saveRemoteActive = 0;
                 return;
@@ -112,7 +112,7 @@ vis = $.extend(true, vis, {
             // Sync widget before it will be saved
             if (this.activeWidgets) {
                 for (var t = 0; t < this.activeWidgets.length; t++) {
-                    if (this.activeWidgets[t].indexOf('_') != -1 && this.syncWidgets) {
+                    if (this.activeWidgets[t].indexOf('_') !== -1 && this.syncWidgets) {
                         this.syncWidgets(this.activeWidgets);
                         break;
                     }
@@ -127,14 +127,14 @@ vis = $.extend(true, vis, {
                 }
             }
             viewsToSave = JSON.stringify(viewsToSave, null, 2);
-            if (this.lastSave == viewsToSave) {
-                if (typeof callback == 'function') callback(null);
+            if (this.lastSave === viewsToSave) {
+                if (typeof callback === 'function') callback(null);
                 return;
             }
 
             this.conn.writeFile(this.projectPrefix + 'vis-views.json', viewsToSave, mode, function (err) {
                 if (err) {
-                    if (err == 'permissionError') {
+                    if (err === 'permissionError') {
                         that.permissionDenied = true;
                     }
                     that.showMessage(_('Cannot save file "%s": ', that.projectPrefix + 'vis-views.json') + _(err), _('Error'), 'alert', 430);
@@ -142,14 +142,14 @@ vis = $.extend(true, vis, {
                     that.lastSave = viewsToSave;
                 }
                 that.saveRemoteActive = 0;
-                if (typeof callback == 'function') callback(err);
+                if (typeof callback === 'function') callback(err);
 
                 // If not yet checked => check if project css file exists
                 if (!that.cssChecked) {
                     that.conn.readFile(that.projectPrefix + 'vis-user.css', function (_err, data) {
                         that.cssChecked = true;
                         // Create vis-user.css file if not exist
-                        if (err != 'permissionError' && (_err || data === null || data === undefined)) {
+                        if (err !== 'permissionError' && (_err || data === null || data === undefined)) {
                             // Create empty css file
                             that.conn.writeFile(that.projectPrefix + 'vis-user.css', '', function (___err) {
                                 if (___err) {
@@ -194,7 +194,7 @@ vis = $.extend(true, vis, {
             //    // Find out index
             //    //var i = 0;
             //    //$(this).find('a').each(function () {
-            //    //    if ($(this).attr('href') == ui.newPanel.selector) {
+            //    //    if ($(this).attr('href') === ui.newPanel.selector) {
             //    //        return false;
             //    //    }
             //    //    i++;
@@ -342,7 +342,7 @@ vis = $.extend(true, vis, {
             that.importWidgets();
         });
 
-        if (this.conn.getType() == 'local') {
+        if (this.conn.getType() === 'local') {
             // @SJ cannot select menu and dialogs if it is enabled
             //$('#wid_all_lock_function').trigger('click');
             $('#ribbon_tab_datei').show();
@@ -410,7 +410,7 @@ vis = $.extend(true, vis, {
             // Update background-xxx if changed background and vice versa
             if (attr.match(/^background-/)) {
                 $('#inspect_view_css_background').val($('#visview_' + that.activeView).css('background'));
-            } else if (attr == 'background') {
+            } else if (attr === 'background') {
                 $('.vis-inspect-view-css').each(function () {
                     var attr = $(this).attr('id').slice(17);
                     if (attr.match(/^background-/)) {
@@ -443,7 +443,7 @@ vis = $.extend(true, vis, {
                     $('#screen_size_y').prop('disabled', true).val('').trigger('change');
                     $('.vis-screen-default').prop('disabled', true).prop('checked', false);
                     $('.rib_tool_resolution_toggle').button('disable');
-                } else if (val == 'user') {
+                } else if (val === 'user') {
                     $('#screen_size_x').prop('disabled', false);
                     $('#screen_size_y').prop('disabled', false);
                     $('.vis-screen-default').prop('disabled', false);
@@ -667,9 +667,9 @@ vis = $.extend(true, vis, {
          }, 10000);*/
 
         // Instances (Actually not used)
-        /*if (typeof storage !== 'undefined' && local == false) {
+        /*if (typeof storage !== 'undefined' && local === false) {
             // Show what's new
-            if (storage.get('lastVersion') != this.version) {
+            if (storage.get('lastVersion') !== this.version) {
                 // Read
                 storage.set('lastVersion', this.version);
                 // Read io-addon.json
@@ -683,13 +683,13 @@ vis = $.extend(true, vis, {
                             if (ioaddon.whatsNew) {
                                 for (var i = 0; i < ioaddon.whatsNew.length; i++) {
                                     var text = ioaddon.whatsNew[i];
-                                    if (typeof text != 'string') {
+                                    if (typeof text !== 'string') {
                                         text = ioaddon.whatsNew[i][that.language] || ioaddon.whatsNew[i]['en'];
                                     }
                                     // Remove modifier information like (Bluefox) or (Hobbyquaker)
-                                    if (text[0] == '(') {
+                                    if (text[0] === '(') {
                                         var j = text.indexOf(')');
-                                        if (j != -1) {
+                                        if (j !== -1) {
                                             text = text.substring(j + 1);
                                         }
                                     }
@@ -1041,7 +1041,7 @@ vis = $.extend(true, vis, {
                 // Find out index
                 var i = 0;
                 $(this).find('a').each(function () {
-                    if ($(this).attr('href') == ui.newPanel.selector) {
+                    if ($(this).attr('href') === ui.newPanel.selector) {
                         return false;
                     }
                     i++;
@@ -1081,7 +1081,7 @@ vis = $.extend(true, vis, {
             for (var view in that.views) {
                 if (view === '___settings') continue;
                 if ($('.vis-view #visview' + view).length &&
-                    (that.views[view].settings.theme == theme || that.views[view].settings.theme == oldValue)) {
+                    (that.views[view].settings.theme === theme || that.views[view].settings.theme === oldValue)) {
                     that.renderView(view, false);
                 }
             }
@@ -1104,7 +1104,7 @@ vis = $.extend(true, vis, {
             $('[data-language=' + that.language + ']').removeClass('ui-state-active');
             that.language = $(this).data('language');
             $(this).addClass('ui-state-active');
-            if (typeof systemLang != 'undefined') systemLang = that.language;
+            if (typeof systemLang !== 'undefined') systemLang = that.language;
             setTimeout(function () {
                 translateAll();
             }, 0);
@@ -1152,7 +1152,7 @@ vis = $.extend(true, vis, {
                                 return;
                             }
                             $('.project-select').each(function () {
-                                if ($(this).data('project') == name) {
+                                if ($(this).data('project') === name) {
                                     window.alert(_('Project yet exists!'));
                                 }
                             });
@@ -1498,28 +1498,26 @@ vis = $.extend(true, vis, {
                 return;
             }
 
-            $.each(that.activeWidgets, function () {
-                var _data = {
-                    wid:  this,
-                    left: parseInt($('#' + this).css('left'))
-                };
-                data.push(_data);
-            });
-
-            function sortByLeft(a, b) {
-                var aName = a.left;
-                var bName = b.left;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                data.push({
+                    wid: that.activeWidgets[w],
+                    pos: parseInt($('#' + that.activeWidgets[w]).position().left, 10)
+                });
             }
 
-            data.sort(sortByLeft);
-            var left = data.shift().left;
-
-            $.each(data, function () {
-                $('#' + this.wid).css('left', left  + 'px');
-                that.views[that.activeView].widgets[this.wid].style.left = left + 'px';
-                that.showWidgetHelper(this.wid, true);
+            data.sort(function (a, b) {
+                var aName = a.pos;
+                var bName = b.pos;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             });
+            var pos = data.shift().pos;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                $('#' + data[ww].wid).css('left', pos  + 'px');
+                that.views[that.activeView].widgets[data[ww].wid].style.left = pos + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
+
             that.save();
         });
         $('#wid_align_right').click(function () {
@@ -1528,28 +1526,30 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
-            $.each(that.activeWidgets, function () {
-                var _data = {
-                    wid:  this,
-                    left: parseInt($('#' + this).css('left'))
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                var $w = $('#' + that.activeWidgets[w]);
+                var obj = {
+                    wid:  that.activeWidgets[w],
+                    pos:  parseInt($w.position().left, 10),
+                    size: $w.width()
                 };
-                data.push(_data);
-            });
-
-            function sortByLeft(a, b) {
-                var aName = a.left;
-                var bName = b.left;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+                obj.pos += obj.size;
+                data.push(obj);
             }
 
-            data.sort(sortByLeft);
-            var left = data.pop().left;
-
-            $.each(data, function(){
-                $('#' + this.wid).css('left', left + 'px');
-                that.views[that.activeView].widgets[this.wid].style.left = left + 'px';
-                that.showWidgetHelper(this.wid, true);
+            data.sort(function (a, b) {
+                var aName = a.pos;
+                var bName = b.pos;
+                return ((aName < bName) ? 1 : ((aName > bName) ? -1 : 0));
             });
+            var pos = data.shift().pos;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                var $ww = $('#' + data[ww].wid);
+                $ww.css('left', pos - data[ww].size);
+                that.views[that.activeView].widgets[data[ww].wid].style.left = (pos - data[ww].size) + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
             that.save();
         });
         $('#wid_align_top').click(function () {
@@ -1558,28 +1558,27 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
-            $.each(that.activeWidgets, function () {
-                var _data = {
-                    wid: this,
-                    top: parseInt($('#' + this).css('top'))
-                };
-                data.push(_data);
-            });
 
-            function sortByTop(a, b) {
-                var aName = a.top;
-                var bName = b.top;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                data.push({
+                    wid: that.activeWidgets[w],
+                    pos: parseInt($('#' + that.activeWidgets[w]).position().top, 10)
+                });
             }
 
-            data.sort(sortByTop);
-            var top = data.shift().top;
-
-            $.each(data, function () {
-                $('#' + this.wid).css('top', top + 'px');
-                that.views[that.activeView].widgets[this.wid].style.top = top + 'px';
-                that.showWidgetHelper(this.wid, true);
+            data.sort(function (a, b) {
+                var aName = a.pos;
+                var bName = b.pos;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             });
+            var pos = data.shift().pos;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                $('#' + data[ww].wid).css('top', top  + 'px');
+                that.views[that.activeView].widgets[data[ww].wid].style.top = pos + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
+
             that.save();
         });
         $('#wid_align_bottom').click(function () {
@@ -1589,33 +1588,32 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
-
-            $.each(that.activeWidgets, function () {
-                var _data = {
-                    wid: this,
-                    height: $('#' + this).height(),
-                    top: $('#' + this).position().top
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                var $w = $('#' + that.activeWidgets[w]);
+                var obj = {
+                    wid:  that.activeWidgets[w],
+                    pos:  parseInt($w.position().top),
+                    size: $w.height()
                 };
-                _data.bottom = _data.top + _data.height;
-                data.push(_data);
-            });
-
-            function sortByBottom(a, b) {
-                var aName = a.bottom;
-                var bName = b.bottom;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+                obj.pos += obj.size;
+                data.push(obj);
             }
 
-            data.sort(sortByBottom);
-            var bottom = data.pop().bottom;
-
-            $.each(data, function () {
-                $('#' + this.wid).css('top', (bottom - this.height) + 'px');
-
-                that.views[that.activeView].widgets[this.wid].style.top = (bottom - this.height) + 'px';
-
-                that.showWidgetHelper(this.wid, true);
+            data.sort(function (a, b) {
+                var aName = a.pos;
+                var bName = b.pos;
+                return ((aName < bName) ? 1 : ((aName > bName) ? -1 : 0));
             });
+
+            var pos = data.shift().pos;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                var $ww = $('#' + data[ww].wid);
+                $ww.css('top', pos - data[ww].size);
+                that.views[that.activeView].widgets[data[ww].wid].style.top = (pos - data[ww].size) + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
+
             that.save();
         });
         $('#wid_align_vc').click(function () {
@@ -1624,22 +1622,31 @@ vis = $.extend(true, vis, {
                 return;
             }
 
-            var min_top = 9999;
-            var max_bottom = 0;
-            var middle;
-            $.each(that.activeWidgets, function () {
-                var top = parseInt($('#' + this).css('top'));
-                var bottom = top + $('#' + this).height();
-                if (min_top > top) min_top = top;
-                if (max_bottom < bottom) max_bottom = bottom;
-            });
-            middle = min_top + (max_bottom - min_top) / 2;
-            $.each(that.activeWidgets, function () {
-                var top = middle - ($('#' + this).height() / 2);
-                $('#' + this).css('top', top + 'px');
-                that.views[that.activeView].widgets[this].style.top = top + 'px';
-                that.showWidgetHelper(this.wid, true);
-            });
+            var min  = 99990;
+            var max  = -90000;
+            var data = [];
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                var $w = $('#' + that.activeWidgets[w]);
+                var obj = {
+                    $w:     $w,
+                    wid:    that.activeWidgets[w],
+                    pos:    parseInt($w.position().top, 10),
+                    size:   $w.height()
+                };
+                if (min > obj.pos) min = obj.pos;
+                obj.pos += obj.size;
+                if (max < obj.pos) max = obj.pos;
+                data.push(obj);
+            }
+
+            var middle = (max + min) / 2;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                var pos = middle - (data[ww].size / 2);
+                data[ww].$w.css('top', pos + 'px');
+                that.views[that.activeView].widgets[data[ww].wid].style.top = pos + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
             that.save();
         });
         $('#wid_align_hc').click(function () {
@@ -1648,23 +1655,31 @@ vis = $.extend(true, vis, {
                 return;
             }
 
-            var min_left = 9999;
-            var max_right = 0;
-            var middle;
-            $.each(that.activeWidgets, function () {
-                var left = parseInt($('#' + this).css('left'));
-                var right = left + $('#' + this).width();
-                if (min_left > left) min_left = left;
-                if (max_right < right) max_right = right;
-            });
-            middle = min_left + (max_right - min_left) / 2;
-            $.each(that.activeWidgets, function () {
-                var left = middle - ($('#' + this).width() / 2);
-                $('#' + this).css('left', left + 'px');
-                that.views[that.activeView].widgets[this].style.left = left + 'px';
-                that.showWidgetHelper(this.wid, true);
-            });
-            that.save();
+            var min  = 99990;
+            var max  = -90000;
+            var data = [];
+            for (var w = 0; w < that.activeWidgets.length; w++) {
+                var $w = $('#' + that.activeWidgets[w]);
+                var obj = {
+                    $w:     $w,
+                    wid:    that.activeWidgets[w],
+                    pos:    parseInt($w.position().left, 10),
+                    size:   $w.width()
+                };
+                if (min > obj.pos) min = obj.pos;
+                obj.pos += obj.size;
+                if (max < obj.pos) max = obj.pos;
+                data.push(obj);
+            }
+
+            var middle = (max + min) / 2;
+
+            for (var ww = 0; ww < data.length; ww++) {
+                var pos = middle - (data[ww].size / 2);
+                data[ww].$w.css('left', pos + 'px');
+                that.views[that.activeView].widgets[data[ww].wid].style.left = pos + 'px';
+                that.showWidgetHelper(data[ww].wid, true);
+            }
         });
         $('#wid_dis_h').click(function () {
             if (that.activeWidgets.length < 2) {
@@ -1765,7 +1780,7 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
-            if (that.alignType != 'wid_align_width') {
+            if (that.alignType !== 'wid_align_width') {
                 that.alignIndex = 0;
                 that.alignValues = [];
                 for (var t = 0; t < that.activeWidgets.length; t++) {
@@ -1791,8 +1806,8 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
-            if (that.alignType != 'wid_align_height') {
-                that.alignIndex = 0;
+            if (that.alignType !== 'wid_align_height') {
+                that.alignIndex  = 0;
                 that.alignValues = [];
                 for (var t = 0; t < that.activeWidgets.length; t++) {
                     var h = $('#' + that.activeWidgets[t]).height();
@@ -1958,9 +1973,9 @@ vis = $.extend(true, vis, {
                     that._saveTimer = null;
                 }
 
-                if (that.config['button/closeMode'] == 'refresh') {
+                if (that.config['button/closeMode'] === 'refresh') {
                     that.conn.sendCommand('*', 'refresh', null, false);
-                } else if (that.config['button/closeMode'] == 'play') {
+                } else if (that.config['button/closeMode'] === 'play') {
                     try {
                         var win = window.open(document.location.protocol + '//' + document.location.host + document.location.pathname.replace('edit', 'index') + window.location.search + '#' + that.activeView, 'vis-runtime');
                         if (win) {
@@ -2046,7 +2061,7 @@ vis = $.extend(true, vis, {
             $that.data('timer', setTimeout(function () {
                 $that.data('timer', null);
                 var val = $that.val();
-                if ($that.attr('type') == 'number') {
+                if ($that.attr('type') === 'number') {
                     if ($that.attr('step') == '0.1') {
                         val = val.replace(',', '.');
                         that.setValue($that.attr('id').split('_')[1], parseFloat(val));
@@ -2237,7 +2252,7 @@ vis = $.extend(true, vis, {
                     var data = {};
                     if (attrs) {
                         attrs = attrs.split(';');
-                        if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                        if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
                     }
                     if (renderVisible) data.renderVisible = true;
 
@@ -2395,11 +2410,11 @@ vis = $.extend(true, vis, {
         $('#select_css_file').selectmenu({
             change: function (event, ui) {
                 // Save file
-                if (file == 'vis-user') {
+                if (file === 'vis-user') {
                     that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
                         $('#css_file_save').button('disable');
                     });
-                } else if (file == 'vis-common-user') {
+                } else if (file === 'vis-common-user') {
                     that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
                         $('#css_file_save').button('disable');
                     });
@@ -2492,13 +2507,13 @@ vis = $.extend(true, vis, {
             },
             text: false
         }).click(function() {
-            if ($('#select_css_file').val() == 'vis-user') {
+            if ($('#select_css_file').val() === 'vis-user') {
                 that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
                     $('#css_file_save').button('disable');
                 });
             }
 
-            if ($('#select_css_file').val() == 'vis-common-user') {
+            if ($('#select_css_file').val() === 'vis-common-user') {
                 that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
                     $('#css_file_save').button('disable');
                 });
@@ -2666,7 +2681,7 @@ vis = $.extend(true, vis, {
                     $('.' + tpl + '_prev').css('display', 'inline-block');
 
                     // Remove filter
-                    if ($filter_set.val() && $filter_set.val() != '*') {
+                    if ($filter_set.val() && $filter_set.val() !== '*') {
                         $filter_set.val('*');
                         var textToShow = $filter_set.find(':selected').text();
                         $filter_set.parent().find('span').find('input').val(textToShow);
@@ -2684,7 +2699,7 @@ vis = $.extend(true, vis, {
         $('.widget-filters').each(function () {
             var keywords = $(this).data('keywords').split(' ');
             for (var k = 0; k < keywords.length; k++) {
-                if (that.filterList.indexOf(keywords[k]) == -1) that.filterList.push(keywords[k]);
+                if (that.filterList.indexOf(keywords[k]) === -1) that.filterList.push(keywords[k]);
             }
         });
 
@@ -2697,12 +2712,12 @@ vis = $.extend(true, vis, {
                 var value = $filter_set.val().toLowerCase();
                 that.editSaveConfig('select/filter_set', value);
                 $('.widget-filters').each(function () {
-                    if (value !== '' && value !== '*' && $select_set.val() != 'all') {
+                    if (value !== '' && value !== '*' && $select_set.val() !== 'all') {
                         $select_set.val('all');
                         $select_set.selectmenu('refresh');
                     }
                     var keywords = $(this).data('keywords');
-                    if (value === '' || value === '*' || keywords.indexOf(value) != -1) {
+                    if (value === '' || value === '*' || keywords.indexOf(value) !== -1) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -2715,7 +2730,7 @@ vis = $.extend(true, vis, {
             minLength: 0,
             source: function (request, response) {
                 var data = $.grep(that.filterList, function (value) {
-                    return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                    return value.substring(0, request.term.length).toLowerCase() === request.term.toLowerCase();
                 });
                 data = data.slice(0, 50);
                 response(data);
@@ -2730,7 +2745,7 @@ vis = $.extend(true, vis, {
             }
             filterWidgets();
         }).bind('dblclick', function () {
-            if ($filter_set.val() && $filter_set.val() != '*') {
+            if ($filter_set.val() && $filter_set.val() !== '*') {
                 $filter_set.val('*');
                 var textToShow = $filter_set.find(':selected').text();
                 $filter_set.parent().find('span').find('input').val(textToShow);
@@ -2743,7 +2758,7 @@ vis = $.extend(true, vis, {
             $('.' + this.config['select/select_set'] + '_prev').show();
         }
 
-        if (this.config['select/filter_set'] && this.config['select/filter_set'] != '*') {
+        if (this.config['select/filter_set'] && this.config['select/filter_set'] !== '*') {
             $filter_set.val(this.config['select/filter_set']);
             var textToShow = $filter_set.find(':selected').text();
             $filter_set.parent().find('span').find('input').val(textToShow);
@@ -2778,8 +2793,8 @@ vis = $.extend(true, vis, {
         $('.view-edit-button').each(function () {
             var type = $(this).attr('data-type');
 
-            if (type == 'color') {
-                if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
+            if (type === 'color') {
+                if ((typeof colorSelect !== 'undefined' && $().farbtastic)) {
                     $(this).button({
                         text: false,
                         icons: {
@@ -2824,7 +2839,7 @@ vis = $.extend(true, vis, {
             });
         }
 
-        if (this.conn.getType() == 'local') {
+        if (this.conn.getType() === 'local') {
             $('#export_local_view').click(function () {
                 that.exportView(true);
             }).show();
@@ -2869,7 +2884,7 @@ vis = $.extend(true, vis, {
         // Selected view, selected menu page,
         // Selected widget or view page
         // Selected filter
-        if (typeof storage != 'undefined') {
+        if (typeof storage !== 'undefined') {
             try {
                 var stored = storage.get('visConfig');
                 this.config = stored ? JSON.parse(stored) : {};
@@ -2882,7 +2897,7 @@ vis = $.extend(true, vis, {
     editSaveConfig: function (attr, value) {
         if (attr) this.config[attr] = value;
 
-        if (typeof storage != 'undefined') {
+        if (typeof storage !== 'undefined') {
             storage.set('visConfig', JSON.stringify(this.config));
         }
     },
@@ -2990,7 +3005,7 @@ vis = $.extend(true, vis, {
         var that = this;
         this.confirmMessage(_('Really delete view %s?', view), null, 'help', function (result) {
             if (result) {
-                if (view == that.activeView) that.nextView();
+                if (view === that.activeView) that.nextView();
 
                 if (that.views[view]) delete that.views[view];
                 that.saveRemote(function () {
@@ -3283,7 +3298,7 @@ vis = $.extend(true, vis, {
     delWidgetHelper: function (id, isAll) {
         if (!id) return;
 
-        if (isAll && id.indexOf('_') != -1) {
+        if (isAll && id.indexOf('_') !== -1) {
             var views = this.getViewsOfWidget(id);
             var wids = id.split('_', 2);
             for (var i = 0; i < views.length; i++) {
@@ -3317,15 +3332,15 @@ vis = $.extend(true, vis, {
             /*var widgets = [];
             // Delete old from array
             for (var w in this.widgets) {
-                if (w != id) widgets[w] = this.widgets[w];
+                if (w !== id) widgets[w] = this.widgets[w];
             }
             this.widgets = widgets;*/
         }
         var pos = this.activeWidgets.indexOf(id);
-        if (pos != -1) this.activeWidgets.splice(pos, 1);
+        if (pos !== -1) this.activeWidgets.splice(pos, 1);
     },
     delWidgets: function (widgets, noSave) {
-        if (typeof widgets != 'object') widgets = null;
+        if (typeof widgets !== 'object') widgets = null;
 
         if (!widgets) {
             // Store array, because it will be modified in delWidgetHelper
@@ -3367,7 +3382,7 @@ vis = $.extend(true, vis, {
                     }
                 } else {
                     // Simple click on some widget
-                    if (that.activeWidgets.length != 1 || that.activeWidgets[0] != widgetId) {
+                    if (that.activeWidgets.length !== 1 || that.activeWidgets[0] !== widgetId) {
                         that.inspectWidgets([widgetId]);
                     }
                 }
@@ -3512,7 +3527,7 @@ vis = $.extend(true, vis, {
                     style.left = firstOffsetX - style.left + offsetX;
                 }
             }
-            if (activeView == targetView) {
+            if (activeView === targetView) {
                 if (offsetX === undefined) {
                     style.top  = parseInt(style.top,  10);
                     style.left = parseInt(style.left, 10);
@@ -3594,7 +3609,7 @@ vis = $.extend(true, vis, {
     },
     reRenderWidgetEdit: function (wid) {
         this.reRenderWidget(null, wid);
-        if (this.activeWidgets.indexOf(wid) != -1) {
+        if (this.activeWidgets.indexOf(wid) !== -1) {
             var $wid = $('#' + wid);
 
             // User interaction
@@ -3606,7 +3621,7 @@ vis = $.extend(true, vis, {
             }
 
             // If only one selected
-            if (this.activeWidgets.length == 1 && !this.widgets[wid].data._no_resize) this.resizable($wid);
+            if (this.activeWidgets.length === 1 && !this.widgets[wid].data._no_resize) this.resizable($wid);
         }
     },
     getObjDesc: function (id) {
@@ -3633,7 +3648,7 @@ vis = $.extend(true, vis, {
 
                 var isFound = false;
                 for (var j = 0; j < views.length; j++) {
-                    if (views[j] == view) {
+                    if (views[j] === view) {
                         isFound = true;
                         break;
                     }
@@ -3648,12 +3663,12 @@ vis = $.extend(true, vis, {
                 for (var v_ in this.views) {
                     if (v_ === '___settings') continue;
                     isFound = false;
-                    if (v_ == view) {
+                    if (v_ === view) {
                         continue;
                     }
 
                     for (var k = 0; k < views.length; k++) {
-                        if (views[k] == v_) {
+                        if (views[k] === v_) {
                             isFound = true;
                             break;
                         }
@@ -3677,7 +3692,7 @@ vis = $.extend(true, vis, {
                 }
 
 
-                if (views.length < 2 && (widgets[i].indexOf('_') != -1)) {
+                if (views.length < 2 && (widgets[i].indexOf('_') !== -1)) {
                     // rename this widget from "wid_view" to "wid"
                     var _wids = widgets[i].split('_', 2);
                     this.renameWidget(widgets[i], _wids[0]);
@@ -3715,8 +3730,8 @@ vis = $.extend(true, vis, {
             if (!pos.left && !pos.top) {
                 pos.left = $widget[0].style.left;
                 pos.top  = $widget[0].style.top + $widget[0].offsetTop;
-                if (typeof pos.left == 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
-                if (typeof pos.top  == 'string') pos.top  = parseInt(pos.top.replace('px', ''), 10);
+                if (typeof pos.left === 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
+                if (typeof pos.top  === 'string') pos.top  = parseInt(pos.top.replace('px', ''), 10);
             }
 
             if (!$('#widget_helper_' + wid).length) {
@@ -3769,7 +3784,7 @@ vis = $.extend(true, vis, {
                 },
                 unselecting: function (e, ui) {
                     var pos = that.activeWidgets.indexOf(ui.unselecting.id);
-                    if (pos != -1) {
+                    if (pos !== -1) {
                         that.activeWidgets.splice(pos, 1);
                         that.showWidgetHelper(ui.unselecting.id, false);
                     }
@@ -3834,7 +3849,7 @@ vis = $.extend(true, vis, {
             // Try to find this resolution in the list
             var res = this.views[view].settings.sizex + 'x' + this.views[view].settings.sizey;
             $('#screen_size option').each(function () {
-                if ($(this).attr('value') == res) {
+                if ($(this).attr('value') === res) {
                     $(this).attr('selected', true);
                     res = null;
                     return false;
@@ -3843,7 +3858,7 @@ vis = $.extend(true, vis, {
             if (!res) {
                 $('#screen_size_x').prop('disabled', true);
                 $('#screen_size_y').prop('disabled', true);
-            } else if (res == 'x') {
+            } else if (res === 'x') {
                 $('#screen_size_x').prop('disabled', true);
                 $('#screen_size_y').prop('disabled', true);
                 $('#screen_size').val('');
@@ -3855,7 +3870,7 @@ vis = $.extend(true, vis, {
 
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
-            $('.rib_tool_resolution_toggle').button((res == 'x') ? 'disable' : 'enable');
+            $('.rib_tool_resolution_toggle').button((res === 'x') ? 'disable' : 'enable');
 
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
             $('#snap_type').val(this.views[view].settings.snapType || 0).selectmenu('refresh');
@@ -3880,14 +3895,14 @@ vis = $.extend(true, vis, {
 
         if (this.views[view].widgets) {
             for (var widget in this.views[view].widgets) {
-                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) != -1) ? 'selected' :'')+ '>' + this.getWidgetName(view, widget) + '</option>');
+                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) !== -1) ? 'selected' :'')+ '>' + this.getWidgetName(view, widget) + '</option>');
             }
         }
 
         this.$selectActiveWidgets.multiselect('refresh');
 
         // Show current view
-        if (this.$selectView.val() != view) {
+        if (this.$selectView.val() !== view) {
             this.$selectView.val(view);
             this.$selectView.selectmenu('refresh');
         }
@@ -4231,7 +4246,7 @@ vis = $.extend(true, vis, {
                 var data = {};
                 if (attrs) {
                     attrs = attrs.split(';');
-                    if (attrs.indexOf('oid') != -1) data.oid = 'nothing_selected';
+                    if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
                 }
                 if (renderVisible) data.renderVisible = true;
                 //tpl, data, style, wid, view, noSave, noAnimate
@@ -4269,7 +4284,7 @@ vis = $.extend(true, vis, {
         // Prepare coordinates
         var positions = [];
         for (var w in this.views[view].widgets) {
-            if (w == id || !this.views[view].widgets[w].tpl) {
+            if (w === id || !this.views[view].widgets[w].tpl) {
                 continue;
             }
 
@@ -4394,7 +4409,7 @@ vis = $.extend(true, vis, {
                     widgets[widget].data.filterkey) {
                     var isFound = false;
                     for (var z = 0; z < this.views[this.activeView].filterList.length; z++) {
-                        if (this.views[this.activeView].filterList[z] == widgets[widget].data.filterkey) {
+                        if (this.views[this.activeView].filterList[z] === widgets[widget].data.filterkey) {
                             isFound = true;
                             break;
                         }
@@ -4415,7 +4430,7 @@ vis = $.extend(true, vis, {
             var list = [];
             for (var widget in widgets) {
                 if (widgets[widget] && widgets[widget].data) {
-                    if (tpl === undefined || tpl === null || tpl == widgets[widget].tpl){
+                    if (tpl === undefined || tpl === null || tpl === widgets[widget].tpl){
                         list.push(widget);
                     }
                 }
@@ -4555,7 +4570,7 @@ vis = $.extend(true, vis, {
     _saveTimer: null, // Timeout to save the configuration
     _saveToServer: function () {
         if (!this.undoHistory || !this.undoHistory.length ||
-            (JSON.stringify(this.views[this.activeView]) != JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
+            (JSON.stringify(this.views[this.activeView]) !== JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
             this.undoHistory = this.undoHistory || [];
             $('#button_undo').removeClass('ui-state-disabled');
             if (this.undoHistory.push($.extend(true, {}, this.views[this.activeView])) > this.undoHistoryMaxLength) {
@@ -4828,38 +4843,39 @@ vis = $.extend(true, vis, {
         if (!$focused.length && this.activeWidgets.length) {
             var what = null;
             var shift = 0;
+            key = parseInt(key, 10);
             if (isSize) {
-                if (key == 39) {
+                if (key === 39) {
                     //Right
                     what = 'width';
                     shift = 1;
-                } else if (key == 37) {
+                } else if (key === 37) {
                     // Left
                     what = 'width';
                     shift = -1;
-                } else if (key == 40) {
+                } else if (key === 40) {
                     // Down
                     what = 'height';
                     shift = 1;
-                } else if (key == 38) {
+                } else if (key === 38) {
                     // Up
                     what = 'height';
                     shift = -1;
                 }
             } else {
-                if (key == 39) {
+                if (key === 39) {
                     //Right
                     what = 'left';
                     shift = 1;
-                } else if (key == 37) {
+                } else if (key === 37) {
                     // Left
                     what = 'left';
                     shift = -1;
-                } else if (key == 40) {
+                } else if (key === 40) {
                     // Down
                     what = 'top';
                     shift = 1;
-                } else if (key == 38) {
+                } else if (key === 38) {
                     // Up
                     what = 'top';
                     shift = -1;
@@ -4897,7 +4913,7 @@ vis = $.extend(true, vis, {
                 for (var i = 0, len = activeWidgets.length; i < len; i++) {
                     var mWidget = document.getElementById(activeWidgets[i]);
 
-                    if ((what == 'top' || what == 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
+                    if ((what === 'top' || what === 'left') && mWidget._customHandlers && mWidget._customHandlers.onMoveEnd) {
                         mWidget._customHandlers.onMoveEnd(mWidget, activeWidgets[i]);
                     } else if (mWidget._customHandlers && mWidget._customHandlers.onCssEdit) {
                         mWidget._customHandlers.onCssEdit(mWidget, activeWidgets[i]);
@@ -4954,7 +4970,7 @@ vis = $.extend(true, vis, {
         for (var w = 0; w < widgets.length; w++) {
             $('#' + widgets[w]).addClass('vis-widget-edit-locked').removeClass('ui-selectee ui-selected').unbind('click');
             this.views[view].widgets[widgets[w]].data.locked = true;
-            if (activeWidgets && activeWidgets.indexOf(widgets[w]) != -1) {
+            if (activeWidgets && activeWidgets.indexOf(widgets[w]) !== -1) {
                 activeWidgets.splice(activeWidgets.indexOf(widgets[w]), 1);
             }
         }
@@ -4998,7 +5014,7 @@ vis = $.extend(true, vis, {
 
         // Find all widgets in this square
         var $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
-            if (widgets.indexOf($(this).attr('id')) != -1) return false;
+            if (widgets.indexOf($(this).attr('id')) !== -1) return false;
             var offset = $(this).position();
             var tl = {x: offset.left, y: offset.top}; // top left
             var br = {x: offset.left + $(this).outerWidth(), y: offset.top + $(this).outerHeight()};  // bottom right
@@ -5163,7 +5179,7 @@ vis = $.extend(true, vis, {
             }
             if (isHit) {
                 $list = $('#visview_' + this.activeView + ' .vis-widget').filter(function() {
-                    return that.activeWidgets.indexOf($(this).attr('id')) != -1;
+                    return that.activeWidgets.indexOf($(this).attr('id')) !== -1;
                 });
             } else {
                 // Remove selection
@@ -5184,10 +5200,10 @@ vis = $.extend(true, vis, {
             });
         }
 
-        if ($list.length == 1) {
+        if ($list.length === 1) {
             var wid = $($list[0]).attr('id');
             $('#context_menu_paste').data('widgets', wid);
-            if (this.activeWidgets.length == 1 && wid == this.activeWidgets[0]) {
+            if (this.activeWidgets.length === 1 && wid === this.activeWidgets[0]) {
                 $('#context_menu_select').hide();
             } else {
                 $('#context_menu_select').show();
@@ -5456,7 +5472,7 @@ $(document).keydown(function (e) {
 $(window).on('paste', function (e) {
     vis.paste();
 }).on('copy cut', function (e) {
-    vis.copy(e.type == 'cut');
+    vis.copy(e.type === 'cut');
 });
 
 window.onbeforeunload = function () {
