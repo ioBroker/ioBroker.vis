@@ -1176,6 +1176,7 @@ vis = $.extend(true, vis, {
             $('#reloadOnSleep').val(that.views.___settings.reloadOnSleep);
             $('#darkReloadScreen').prop('checked', that.views.___settings.darkReloadScreen);
             $('#reconnectInterval').val(that.views.___settings.reconnectInterval);
+            if (that.views.___settings.destroyViewsAfter === undefined) that.views.___settings.destroyViewsAfter = 30;
             $('#destroyViewsAfter').val(that.views.___settings.destroyViewsAfter);
             $('#dialog-settings').dialog({
                 autoPen:    true,
