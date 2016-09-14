@@ -140,35 +140,41 @@ var servConn = {
                 console.log('Trying connect...');
                 that._socket.connect();
                 that._countDown = Math.floor(that._reconnectInterval / 1000);
-                $('.splash-screen-text').html(that._countDown + '...').css('color', 'red');
+                if (typeof $ !== 'undefined') {
+                    $('.splash-screen-text').html(that._countDown + '...').css('color', 'red');
+                }
             }, this._reconnectInterval);
 
             this._countDown = Math.floor(this._reconnectInterval / 1000);
-            $('.splash-screen-text').html(this._countDown + '...');
+            if (typeof $ !== 'undefined') {
+                $('.splash-screen-text').html(this._countDown + '...');
+            }
 
             this._countInterval = setInterval(function () {
                 that._countDown--;
-                $('.splash-screen-text').html(that._countDown + '...');
+                if (typeof $ !== 'undefined') {
+                    $('.splash-screen-text').html(that._countDown + '...');
+                }
             }, 1000);
         }
     },
     init:             function (connOptions, connCallbacks, objectsRequired) {
         var that = this; // support of old safary
+        // init namespace
+        if (typeof socketNamespace !== 'undefined') this.namespace = socketNamespace;
+
+        connOptions = connOptions || {};
+        if (!connOptions.name) connOptions.name = this.namespace;
+
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
         // - do not create "_socket/info.js" file in "www" directory
         // - create "_socket/info.js" file with
         //   var socketUrl = "local"; var socketSession = ""; sysLang="en";
         //   in this case you can overwrite browser language settings
-        if (document.URL.split('/local/')[1] || typeof socketUrl === 'undefined' || socketUrl === 'local') {
+        if (document.URL.split('/local/')[1] || (typeof socketUrl === 'undefined' && !connOptions.connLink) || (typeof socketUrl !== 'undefined' && socketUrl === 'local')) {
             this._type = 'local';
         }
-
-        // init namespace
-        if (typeof socketNamespace !== 'undefined') this.namespace = socketNamespace;
-
-        connOptions = connOptions || {};
-        if (!connOptions.name) connOptions.name = this.namespace;
 
         if (typeof session !== 'undefined') {
             var user = session.get('user');
@@ -242,7 +248,8 @@ var servConn = {
                     clearInterval(that._countInterval);
                     that._countInterval = null;
                 }
-                $('#server-disconnect').hide();
+                var elem = document.getElementById('server-disconnect');
+                if (elem) elem.style.display = 'none';
 
                 that._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
@@ -286,12 +293,14 @@ var servConn = {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     setTimeout(function () {
-                        $('#server-disconnect').show();
+                        var elem = document.getElementById('server-disconnect');
+                        if (elem) elem.style.display = '';
                         that._connCallbacks.onConnChange(that._isConnected);
                         if (typeof app !== 'undefined') app.onConnChange(that._isConnected);
                     }, 5000);
                 } else {
-                    $('#server-disconnect').show();
+                    var elem = document.getElementById('server-disconnect');
+                    if (elem) elem.style.display = '';
                 }
 
                 // reconnect
@@ -610,15 +619,14 @@ var servConn = {
     },
     // callback(err, data)
     getStates:        function (IDs, callback) {
+        if (typeof IDs === 'function') {
+            callback = IDs;
+            IDs = null;
+        }
+
         if (this._type === 'local') {
             return callback(null, []);
-        }else {
-
-            if (typeof IDs === 'function') {
-                callback = IDs;
-                IDs = null;
-            }
-
+        } else {
             if (!this._checkConnection('getStates', arguments)) return;
 
             this.gettingStates = this.gettingStates || 0;
