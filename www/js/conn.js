@@ -15,7 +15,7 @@
 /* global storage */
 /* jshint -W097 */// jshint strict:false
 
-"use strict";
+'use strict';
 
 // The idea of servConn is to use this class later in every addon.
 // The addon just must say, what must be loaded (values, objects, indexes) and
@@ -247,7 +247,13 @@ var servConn = {
                 that._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
+                    var wait = setTimeout(function() {
+                        console.error('No answer from server')
+                        window.location.reload();
+                    }, 3000);
+
                     that._socket.emit('authenticate', function (isOk, isSecure) {
+                        clearTimeout(wait);
                         console.log((new Date()).toISOString() + ' Authenticated: ' + isOk);
                         if (isOk) {
                             that._onAuth(objectsRequired, isSecure);
