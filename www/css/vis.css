@@ -127,6 +127,14 @@
     -webkit-animation-timing-function: linear;
 }
 
+#dialog-message {
+    padding-left: 15px;
+}
+
+.ui-selectable-helper {
+    opacity: 0.1 !important;
+    background: red !important;
+}
 .noTitle .ui-dialog-titlebar {
     display: none;
     margin-top: 30px;

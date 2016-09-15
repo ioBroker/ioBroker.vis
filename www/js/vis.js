@@ -98,7 +98,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.10.10',
+    version: '0.10.11',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -1477,7 +1477,23 @@ var vis = {
     onWakeUp: function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon, width) {
+    showMessage: function (message, title, icon, width, callback) {
+        if (typeof icon === 'number') {
+            callback = width;
+            width = icon;
+            icon = null;
+        }
+        if (typeof title === 'function') {
+            callback = title;
+            title = null;
+        } else if (typeof icon === 'function') {
+            callback = icon;
+            icon = null;
+        } else if (typeof width === 'function') {
+            callback = width;
+            width = null;
+        }
+
         if (!this.$dialogMessage) {
             this.$dialogMessage = $('#dialog-message');
             this.$dialogMessage.dialog({
@@ -1485,12 +1501,35 @@ var vis = {
                 modal:    true,
                 open: function () {
                     $(this).parent().css({'z-index': 1003});
+                    var callback = $(this).data('callback');
+                    if (callback) {
+                        $(this).find('#dialog_message_cancel').show();
+                    } else {
+                        $(this).find('#dialog_message_cancel').hide();
+                    }
                 },
                 buttons: [
                     {
                         text: _('Ok'),
                         click: function () {
+                            var callback = $(this).data('callback');
                             $(this).dialog('close');
+                            if (typeof callback === 'function') {
+                                callback(true);
+                                $(this).data('callback', null);
+                            }
+                        }
+                    },
+                    {
+                        id:  'dialog_message_cancel',
+                        text: _('Cancel'),
+                        click: function () {
+                            var callback = $(this).data('callback');
+                            $(this).dialog('close');
+                            if (typeof callback === 'function') {
+                                callback(false);
+                                $(this).data('callback', null);
+                            }
                         }
                     }
                 ]
@@ -1503,6 +1542,9 @@ var vis = {
             this.$dialogMessage.dialog('option', 'width', 300);
         }
         $('#dialog-message-text').html(message);
+
+        this.$dialogMessage.data('callback', callback ? callback : null);
+
         if (icon) {
             $('#dialog-message-icon')
                 .show()

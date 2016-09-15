@@ -2249,7 +2249,7 @@ vis = $.extend(true, vis, {
 
                     // Widget attributes default values
                     var attrs = $tpl.attr('data-vis-attrs');
-                    // Combine atrributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                    // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
                     var t = 0;
                     var attr;
                     while ((attr = $tpl.attr('data-vis-attrs' + t))) {
@@ -3126,8 +3126,8 @@ vis = $.extend(true, vis, {
                         return;
                     }
                     var activeWidgets = [];
-                    for (var widget = 0;widget < importObject.length; widget++) {
-                        if (vis.binds.bars && vis.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
+                    for (var widget = 0; widget < importObject.length; widget++) {
+                        if (that.binds.bars && that.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
                             importObject[widget] = that.binds.bars.convertOldBars(importObject[widget]);
                         }
                         //(tpl, data, style, wid, view, noSave, noAnimate)
@@ -3137,8 +3137,10 @@ vis = $.extend(true, vis, {
                             style:      importObject[widget].style,
                             noSave:     true,
                             noAnimate: true
-                        }));
+                        }, true));
                     }
+                    // update widget select
+                    that.updateSelectWidget();
 
                     that.saveRemote(function () {
                         //that.renderView(that.activeView);
@@ -3402,7 +3404,7 @@ vis = $.extend(true, vis, {
             $wid.addClass('vis-widget-edit-locked').removeClass('ui-selectee').unbind('click');
         }
     },
-    addWidget: function (options) {
+    addWidget: function (options, isCopied) {
         // tpl, data, style, wid, view, noSave, noAnimate
         if (!options.view) options.view = this.activeView;
 
@@ -3476,6 +3478,18 @@ vis = $.extend(true, vis, {
             if (!options.noAnimate) {
                 this.actionHighlightWidget(widgetId);
             }
+        }
+
+        if (!isCopied) {
+            // mark all groups as disabled
+            options.data.g_fixed              = false;
+            options.data.g_visibility         = false;
+            options.data.g_css_font_text      = false;
+            options.data.g_css_background     = false;
+            options.data.g_css_shadow_padding = false;
+            options.data.g_css_border         = false;
+            options.data.g_gestures           = false;
+            options.data.g_signals            = false;
         }
 
         if (!options.noSave) this.save();
@@ -3556,7 +3570,7 @@ vis = $.extend(true, vis, {
                     data:   data, 
                     style:  style, 
                     noSave: true
-                }));
+                }, true));
             } else {
                 if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
                     this.renderView(targetView, true, true);
@@ -3568,7 +3582,7 @@ vis = $.extend(true, vis, {
                     wid:    this.nextWidget(), 
                     view:   targetView, 
                     noSave: true
-                }));
+                }, true));
             }
 
             if (this.activeView === targetView) {
@@ -3604,7 +3618,7 @@ vis = $.extend(true, vis, {
                 wid:    newId, 
                 view:   view,
                 noSave: true
-            });
+            }, true);
             this.$selectActiveWidgets
                 .append('<option value=' + newId + '">' + this.getWidgetName(view, newId) + '</option>')
                 .multiselect('refresh');
@@ -3694,7 +3708,7 @@ vis = $.extend(true, vis, {
                             wid:    wid + '_' + v_, 
                             view:   v_,
                             noSave: true
-                        });
+                        }, true);
                     }
                 }
 
@@ -3805,6 +3819,20 @@ vis = $.extend(true, vis, {
             $('.vis-widget-edit-locked').removeClass('ui-selectee');
         }
     },
+    updateSelectWidget: function (view) {
+        view = view || this.activeView;
+        this.$selectActiveWidgets.html('');//('<option value="none">' + _('none selected') + '</option>');
+
+        if (this.views[view].widgets) {
+            var w = this.views[view].widgets;
+            for (var widget in w) {
+                if (!w.hasOwnProperty(widget)) continue;
+                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) !== -1) ? 'selected' : '')+ '>' + this.getWidgetName(view, widget) + '</option>');
+            }
+        }
+
+        this.$selectActiveWidgets.multiselect('refresh');
+    },
     // Init all edit fields for one view
     changeViewEdit: function (view, noChange) {
         var that = this;
@@ -3898,15 +3926,7 @@ vis = $.extend(true, vis, {
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
         }
 
-        this.$selectActiveWidgets.html('');//('<option value="none">' + _('none selected') + '</option>');
-
-        if (this.views[view].widgets) {
-            for (var widget in this.views[view].widgets) {
-                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) !== -1) ? 'selected' :'')+ '>' + this.getWidgetName(view, widget) + '</option>');
-            }
-        }
-
-        this.$selectActiveWidgets.multiselect('refresh');
+        this.updateSelectWidget(view);
 
         // Show current view
         if (this.$selectView.val() !== view) {

@@ -103,7 +103,7 @@ vis = $.extend(true, vis, {
                 text: false,
                 title: _('Select object ID'),
                 click: function () {
-                    var wdata = $(this).data('data-wdata');
+                    var wdata = $(this).data('wdata');
 
                     $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
                         if (oldId != newId) {
@@ -180,7 +180,7 @@ vis = $.extend(true, vis, {
                 }
             };
             line[0].onchange = function (val) {
-                var wdata = $(this).data('data-wdata');
+                var wdata = $(this).data('wdata');
                 $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
                 var userOnchange = $(this).data('onchange');
                 if (userOnchange) {
@@ -449,7 +449,7 @@ vis = $.extend(true, vis, {
                 text: false,
                 title: _('Select color'),
                 click: function (/*event*/) {
-                    var wdata = $(this).data('data-wdata');
+                    var wdata = $(this).data('wdata');
                     var _settings = {
                         current: $('#inspect_' + wdata.attr).val(),
                         onselectArg: wdata,
@@ -574,7 +574,7 @@ vis = $.extend(true, vis, {
                 text: false,
                 title: _('Select image'),
                 click: function (/*event*/) {
-                    var wdata = $(this).data('data-wdata');
+                    var wdata = $(this).data('wdata');
                     var defPath = ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/');
 
                     var current = that.widgets[wdata.widgets[0]].data[wdata.attr];
@@ -663,19 +663,20 @@ vis = $.extend(true, vis, {
         var group = 'css_common';
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group].css_left   = {input: '<input type="text" id="inspect_css_left"/>'};
-        this.groups[group].css_top    = {input: '<input type="text" id="inspect_css_top"/>'};
-        this.groups[group].css_width  = {input: '<input type="text" id="inspect_css_width"/>'};
-        this.groups[group].css_height = {input: '<input type="text" id="inspect_css_height"/>'};
+        this.groups[group].css_left          = {input: '<input type="text" id="inspect_css_left"/>'};
+        this.groups[group].css_top           = {input: '<input type="text" id="inspect_css_top"/>'};
+        this.groups[group].css_width         = {input: '<input type="text" id="inspect_css_width"/>'};
+        this.groups[group].css_height        = {input: '<input type="text" id="inspect_css_height"/>'};
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group].css_opacity       = {input: '<input type="text" id="inspect_css_opacity"/>'};
         this.groups[group].css_cursor        = this.editAutoComplete('css_cursor', ['', 'pointer', 'auto', 'alias', 'all-scroll', 'cell', 'context-menu', 'col-resize', 'copy', 'crosshair', 'default', 'e-resize', 'ew-resize', 'grab', 'grabbing', 'help', 'move', 'n-resize', 'ne-resize', 'nesw-resize', 'ns-resize', 'nw-resize', 'nwse-resize', 'no-drop', 'none', 'not-allowed', 'progress', 'row-resize', 's-resize', 'se-resize', 'sw-resize', 'text', 'vertical-text', 'w-resize', 'wait', 'zoom-in', 'zoom-out', 'initial', 'inherit']);
 
-        for(var attr in this.groups[group]) {
-            this.groups[group][attr].css = true;
-            this.groups[group][attr].attrName = attr;
+        for (var attr in this.groups[group]) {
+            if (!this.groups[group].hasOwnProperty(attr)) continue;
+            this.groups[group][attr].css       = true;
+            this.groups[group][attr].attrName  = attr;
             this.groups[group][attr].attrIndex = '';
         }
     },
@@ -725,7 +726,7 @@ vis = $.extend(true, vis, {
         if (value && typeof value != 'object') {
             var e = value.substring(value.length - 2);
             if (e != 'px' && e != 'em') {
-                var wdata = $(elem).data('data-wdata');
+                var wdata = $(elem).data('wdata');
                 for (var t = 0; t < wdata.widgets.length; t++) {
                     this.views[wdata.view].widgets[wdata.widgets[t]].style[wdata.attr.substring(4)] = value + 'px';
                     $('#' + wdata.widgets[t]).css(wdata.attr.substring(4), value + 'px');
@@ -902,7 +903,7 @@ vis = $.extend(true, vis, {
             text: false,
             title: _('Select color'),
             click: function (/*event*/) {
-                var wdata = $(this).data('data-wdata');
+                var wdata = $(this).data('wdata');
                 var data = {};
                 if (that.config['dialog-edit-text']) {
                     data = JSON.parse(that.config['dialog-edit-text']);
@@ -1238,11 +1239,12 @@ vis = $.extend(true, vis, {
     // Render edit panel
     showInspect: function (view, widgets) {
         var $widgetAttrs = $('#widget_attrs');
-        var that = this;
+        var that   = this;
         var depends = [];
-        var values = {};
+        var values  = {};
         var widAttr;
         for (var group in this.groups) {
+            if (!this.groups.hasOwnProperty(group)) continue;
             if (this.groupsState[group] === undefined) this.groupsState[group] = false;
 
             var groupName = group;
@@ -1253,140 +1255,170 @@ vis = $.extend(true, vis, {
                 groupName = _('group_' + group);
             }
 //            $widgetAttrs.append('<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3" style="background: url(this.groupsIcons[group]) no-repeat center center;">' + (this.groupsIcons[group] ? '<img class="vis-group-icon" src="' + this.groupsIcons[group] + '"/><div>' + groupName + '</div>' : groupName) + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>');
-            var gText = '<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="3"';
+            var gText = '<tr data-group="' + group + '" class="ui-state-default vis-inspect-group"><td colspan="2"';
             if (this.groupsIcons[group]) {
-                gText += ' style="background: url(' + (this.groupsIcons[group] || '')+ ') no-repeat left center; padding-left: 30px"'
+                gText += ' style="background: url(' + (this.groupsIcons[group] || '') + ') no-repeat left center; padding-left: 30px"'
             }
-            gText += '>' + groupName + '</td><td><button class="group-control" data-group="' + group + '">' + group + '</button></td>';
+            gText += '>' + groupName + '</td>';
+            var isGroupEnabledObj = group === 'common' || group === 'css_common' ? true : this.findCommonValue(widgets, 'g_' + group);
+            var isGroupEnabled = false;
+            var isGroupEnabledIndeterminate = false;
+            if (typeof isGroupEnabledObj === 'object' && isGroupEnabledObj.values) {
+                for (var g = 0; g < isGroupEnabledObj.values.length; g++) {
+                    if (isGroupEnabledObj.values[g] !== false) {
+                        isGroupEnabled = true;
+                        isGroupEnabledIndeterminate = true;
+                        break;
+                    }
+                }
+            } else {
+                isGroupEnabled = isGroupEnabledObj;
+            }
+            isGroupEnabled = isGroupEnabled !== false;
+            this.groups[group].___enabled = isGroupEnabled;
+            if (group === 'common' || group === 'css_common') {
+                gText += '<td></td>';
+            } else {
+                gText += '<td><input type="checkbox" ' + (!isGroupEnabledIndeterminate && isGroupEnabled ? 'checked ' : '') + ' data-indeterminate="' + isGroupEnabledIndeterminate + '" class="group-enable" data-group="' + group + '"/></td>';
+            }
+            if (isGroupEnabled) {
+                gText += '<td><button class="group-control" data-group="' + group + '">' + group + '</button></td>';
+            } else {
+                gText += '<td></td>';
+            }
             $widgetAttrs.append(gText);
 
-            for (var widAttr in this.groups[group]) {
-                var line = this.groups[group][widAttr];
-                if (line === 'delimiter') {
-                    $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header"></td></tr>');
-                    continue;
-                }
-                if (line === 'delimiterInGroup') {
-                    $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header group-' + group + '"></td></tr>');
-                    continue;
-                }
-                if (line[0]) line = line[0];
-                if (typeof line === 'string') line = {input: line};
+            if (isGroupEnabled) {
+                for (widAttr in this.groups[group]) {
+                    if (widAttr === '___enabled') continue;
 
-                var title = _(widAttr + '_tooltip');
-                var icon;
-                if (title === widAttr + '_tooltip') {
-                    title = '';
-                    icon = '';
-                } else {
-                    icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
-                }
+                    var line = this.groups[group][widAttr];
+                    if (line === 'delimiter') {
+                        $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header"></td></tr>');
+                        continue;
+                    }
+                    if (line === 'delimiterInGroup') {
+                        $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header group-' + group + '"></td></tr>');
+                        continue;
+                    }
+                    if (line[0]) line = line[0];
+                    if (typeof line === 'string') line = {input: line};
 
-                var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + widAttr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
-
-                if (!line.button && !line.css) {
-                    text += ' colspan="3"';
-                } else if (!line.css){
-                    if (!line.button && !line.css) text += ' colspan="2"';
-                } else if (!line.button){
-                    text += ' colspan="2"';
-                }
-
-                text += '>' + (line.input || '') + '</td>';
-
-                if (line.button) {
-                    if (!line.button.html) {
-                        text += '<td><button id="inspect_' + widAttr + '_btn">' + (line.button.text || line.button.title || '') + '</button></td>';
+                    var title = _(widAttr + '_tooltip');
+                    var icon;
+                    if (title === widAttr + '_tooltip') {
+                        title = '';
+                        icon = '';
                     } else {
-                        text += '<td>' + line.button.html + '</td>';
+                        icon = '<div class="ui-icon ui-icon-notice" style="float: right"/>';
+                    }
+
+                    var text = '<tr class="vis-edit-td-caption group-' + group + '" id="td_' + widAttr + '"><td ' + (title ? 'title="' + title + '"' : '') + '>' + (icon ? '<i>' : '') + _(line.attrName) + (line.attrIndex !== '' ? ('[' + line.attrIndex + ']') : '') + ':' + (icon ? '</i>' : '') + '</td><td class="vis-edit-td-field"';
+
+                    if (!line.button && !line.css) {
+                        text += ' colspan="3"';
+                    } else if (!line.css) {
+                        if (!line.button && !line.css) text += ' colspan="2"';
+                    } else if (!line.button) {
+                        text += ' colspan="2"';
+                    }
+
+                    text += '>' + (line.input || '') + '</td>';
+
+                    if (line.button) {
+                        if (!line.button.html) {
+                            text += '<td><button id="inspect_' + widAttr + '_btn">' + (line.button.text || line.button.title || '') + '</button></td>';
+                        } else {
+                            text += '<td>' + line.button.html + '</td>';
+                        }
+                    }
+                    if (line.css) {
+                        text += '<td><input id="steal_' + widAttr + '" type="checkbox" data-vis-steal="' + widAttr.substring(4) + '" class="vis-steal-css"/><label class="vis-steal-label" for="steal_' + widAttr + '">steal</label></td>';
+                    }
+
+                    text += '</tr>';
+
+                    $widgetAttrs.append(text);
+
+                    // Init button
+                    if (line.button) {
+                        // If init function specified => call it
+                        if (typeof line.button.code === 'function') {
+                            line.button.code(line.button);
+                        } else {
+                            // init button
+                            var $btn = $widgetAttrs.find('#inspect_' + widAttr + '_btn').button({
+                                text: line.button.text || false,
+                                icons: {
+                                    primary: line.button.icon || ''
+                                }
+                            }).css({width: line.button.width || 22, height: line.button.height || 22});
+                            if (line.button.click) $btn.click(line.button.click);
+                            if (line.button.data)  $btn.data('data-custom', line.button.data);
+
+                            $btn.data('wdata', {
+                                attr:    widAttr,
+                                widgets: widgets,
+                                view:    view
+                            });
+                        }
+                    }
+
+                    // Init value
+                    var $input = $widgetAttrs.find('#inspect_' + widAttr);
+
+                    if ($input.attr('type') === 'text' || $input.prop('tagName') === 'TEXTAREA') $input.addClass('vis-edit-textbox');
+
+                    // Set the value
+                    this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
+
+                    var wdata = {
+                        attr: widAttr,
+                        widgets: widgets,
+                        view: view,
+                        type: line.type,
+                        css: line.css,
+                        onChangeWidget: line.onChangeWidget
+                    };
+                    if (line.onchange) wdata.onchange = line.onchange;
+
+                    $input.addClass('vis-inspect-widget');
+                    $input.data('wdata', wdata);
+
+                    if (this.groups[group][widAttr][0]) {
+                        for (var i = 1; i < this.groups[group][widAttr].length; i++) {
+                            text = '<tr class="vis-edit-td-caption group-' + group + '"><td></td><td class="vis-edit-td-field" colspan="2">' + this.groups[group][widAttr][i].input + '</td>';
+                            $widgetAttrs.append(text);
+                        }
+                    }
+                    // Collect list of attribute names on which depends other attributes
+                    if (line.depends) {
+                        for (var u = 0; u < line.depends.length; u++) {
+                            if (depends.indexOf(line.depends[u]) === -1) depends.push(line.depends[u]);
+                        }
                     }
                 }
-                if (line.css) {
-                    text += '<td><input id="steal_' + widAttr + '" type="checkbox" data-vis-steal="' + widAttr.substring(4) + '" class="vis-steal-css"/><label class="vis-steal-label" for="steal_' + widAttr + '">steal</label></td>';
-                }
-
-                text += '</tr>';
-
-                $widgetAttrs.append(text);
-
-                // Init button
-                if (line.button) {
-                    // If init function specified => call it
-                    if (typeof line.button.code === 'function') {
-                        line.button.code(line.button);
-                    } else {
-                        // init button
-                        var $btn = $('#inspect_' + widAttr + '_btn').button({
-                            text: line.button.text || false,
-                            icons: {
-                                primary: line.button.icon || ''
-                            }
-                        }).css({width: line.button.width || 22, height: line.button.height || 22});
-                        if (line.button.click) $btn.click(line.button.click);
-                        if (line.button.data)  $btn.data('data-custom', line.button.data);
-
-                        $btn.data('data-wdata', {
-                            attr:    widAttr,
-                            widgets: widgets,
-                            view:    view
-                        });
-                    }
-                }
-
-                // Init value
-                var $input = $('#inspect_' + widAttr);
-
-                if ($input.attr('type') === 'text' || $input.prop("tagName") === 'TEXTAREA') $input.addClass('vis-edit-textbox');
-
-                // Set the value
-                this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
-
-                var wdata = {
-                    attr:           widAttr,
-                    widgets:        widgets,
-                    view:           view,
-                    type:           line.type,
-                    css:            line.css,
-                    onChangeWidget: line.onChangeWidget
-                };
-                if (line.onchange) wdata.onchange = line.onchange;
-
-                $input.addClass('vis-inspect-widget');
-                $input.data('data-wdata', wdata);
-
-                if (this.groups[group][widAttr][0]) {
-                    for (var i = 1; i < this.groups[group][widAttr].length; i++) {
-                        text = '<tr class="vis-edit-td-caption group-' + group + '"><td></td><td class="vis-edit-td-field" colspan="2">' + this.groups[group][widAttr][i].input + '</td>';
-                        $widgetAttrs.append(text);
-                    }
-                }
-                // Collect list of attribute names on which depends other attributes
-                if (line.depends) {
-                    for (var u = 0; u < line.depends.length; u++) {
-                        if (depends.indexOf(line.depends[u]) === -1) depends.push(line.depends[u]);
-                    }
-                }
+                // Hide elements
+                if (!this.groupsState[group]) $widgetAttrs.find('.group-' + group).hide();
             }
-
-            // Hide elements
-            if (!this.groupsState[group]) $('.group-' + group).hide();
         }
 
         // Init all elements together
         for (group in this.groups) {
+            if (!this.groups[group].___enabled) continue;
             for (widAttr in this.groups[group]) {
                 var line_ = this.groups[group][widAttr];
-                var $input_ = $('#inspect_' + widAttr);
-                var wdata_ = $input_.data('data-wdata');
-                if (depends.length) $input_.data('data-depends', depends);
+                var $input_ = $widgetAttrs.find('#inspect_' + widAttr);
+                var wdata_ = $input_.data('wdata');
+                if (depends.length) $input_.data('depends', depends);
 
                 if (line_[0]) line_ = line_[0];
                 if (typeof line_ === 'string') line_ = {input: line_};
                 if (typeof line_.init === 'function') {
                     if (wdata_.css) {
-                        var cwidAttr = widAttr.substring(4);
-                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
-                        line_.init.call($input_[0], cwidAttr, values[cwidAttr]);
+                        var cwidAttr_ = widAttr.substring(4);
+                        if (values[cwidAttr_] === undefined) values[cwidAttr_] = this.findCommonValue(widgets, cwidAttr_);
+                        line_.init.call($input_[0], cwidAttr_, values[cwidAttr_]);
                     } else {
                         if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
                         line_.init.call($input_[0], widAttr, values[widAttr]);
@@ -1407,10 +1439,10 @@ vis = $.extend(true, vis, {
         }
         this.initStealHandlers();
 
-        $('.vis-inspect-widget').change(function () {
+        $widgetAttrs.find('.vis-inspect-widget').change(function () {
             var $this   = $(this);
-            var wdata   = $this.data('data-wdata');
-            var depends = $this.data('data-depends');
+            var wdata   = $this.data('wdata');
+            var depends = $this.data('depends');
             var diff    = $this.data('different');
 
             // Set flag, that value was modified
@@ -1439,12 +1471,13 @@ vis = $.extend(true, vis, {
                         that.reRenderWidgetEdit(wdata.widgets[i]);
                     }
                 } else {
+                    var _val;
                     if ($this.attr('type') === 'checkbox') {
-                        that.widgets[wdata.widgets[i]].data[wdata.attr] = $this.prop('checked');
+                        _val = $this.prop('checked');
                     } else {
-                        that.widgets[wdata.widgets[i]].data[wdata.attr] = $this.val();
+                        _val = $this.val();
                     }
-                    that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = that.widgets[wdata.widgets[i]].data[wdata.attr];
+                    that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = that.widgets[wdata.widgets[i]].data[wdata.attr] = _val;
                 }
 
                 // Some user adds ui-draggable and ui-resizable as class to widget.
@@ -1508,7 +1541,7 @@ vis = $.extend(true, vis, {
             }
         });
 
-        $('.group-control').each(function () {
+        $widgetAttrs.find('.group-control').each(function () {
             var group = $(this).attr('data-group');
             $(this).button({
                 text: false,
@@ -1541,6 +1574,91 @@ vis = $.extend(true, vis, {
                 }
                 that.editSaveConfig('groupsState', that.groupsState);
             });
+        });
+
+        function deleteAttrs(group, widgets, view, value) {
+            var isCss = group.substring(0, 4) === 'css_';
+
+            for (var i = 0; i < widgets.length; i++) {
+                if (!value) {
+                    var cssChanged = false;
+                    var $style;
+                    if (isCss) $style = $('#' + wdata.widgets[i]).prop('style');
+
+                    for (var attr in that.groups[group]) {
+                        if (!that.groups[group].hasOwnProperty(attr)) continue;
+                        if (isCss) {
+                            if (that.views[view].widgets[widgets[i]].style) {
+                                attr = attr.substring(4);
+                                delete that.views[view].widgets[widgets[i]].style[attr];
+                                cssChanged = true;
+                                $style.removeProperty(attr);
+                            }
+                        } else {
+                            delete that.views[view].widgets[widgets[i]].data[attr];
+                        }
+                    }
+
+                    if (cssChanged && $('#' + that.views[view].widgets[widgets[i]].tpl).attr('data-vis-update-style')) {
+                        that.reRenderWidgetEdit(widgets[i]);
+                    }
+                }
+                that.widgets[widgets[i]].data['g_' + group] = value;
+                that.views[view].widgets[widgets[i]].data['g_' + group] = value;
+            }
+            that.save();
+            // Rebuild attr list
+            that.inspectWidgets();
+        }
+
+        $widgetAttrs.find('.group-enable').change(function () {
+            var $this = $(this);
+            var group = $this.attr('data-group');
+            var wdata = $this.data('wdata');
+            var checked = $this.prop('checked');
+            // Set flag, that value was modified
+            var isCss = group.substring(0, 4) === 'css_';
+            var isEmpty = true;
+            if (!checked) {
+                // check all attributes in this group and if some are not empty, ask
+                for (var i = 0; i < wdata.widgets.length; i++) {
+                    for (var attr in that.groups[group]) {
+                        var val;
+                        if (isCss) {
+                            val = that.views[wdata.view].widgets[wdata.widgets[i]].style[attr.substring(4)];
+                        } else {
+                            val = that.views[wdata.view].widgets[wdata.widgets[i]].data[attr];
+                        }
+                        if (val !== undefined && val !== null && val !== '') {
+                            isEmpty = false;
+                            break;
+                        }
+                    }
+                    if (!isEmpty) break;
+                }
+
+                if (!isEmpty) {
+                    vis.showMessage(_('Some field are not empty. Sure?'), _('Are you sure?'), 450, function (result) {
+                        if (result) {
+                            deleteAttrs(group, wdata.widgets, wdata.view, false);
+                        } else {
+                            $this.prop('checked', true);
+                        }
+                    });
+                } else {
+                    deleteAttrs(group, wdata.widgets, wdata.view, false);
+                }
+            } else {
+                deleteAttrs(group, wdata.widgets, wdata.view, true);
+            }
+        }).each(function() {
+            $(this).data('wdata', {
+                widgets: widgets,
+                view:    view
+            });
+            if ($(this).data('indeterminate')) {
+                $(this).prop('indeterminate', true)
+            }
         });
     },
     extractAttributes: function (_wid_attr, widget) {
@@ -1772,6 +1890,8 @@ vis = $.extend(true, vis, {
 
         return allWidgetsAttr;
     },
+    // If only one widget, it returns the value
+    // If array of widgets, ot returns object {values, widgetValues}, where values are all found different values and widgetValues is array with values for every widget
     findCommonValue: function (widgets, attr, isStyle) {
         var widgetValues = [];
         var values = [];
@@ -1783,7 +1903,7 @@ vis = $.extend(true, vis, {
             widgetValues[i] = val;
             if (values.indexOf(val) === -1) values.push(val);
         }
-        if (values.length == 1) {
+        if (values.length === 1) {
             return values[0];
         } else {
             return {
@@ -1849,7 +1969,19 @@ vis = $.extend(true, vis, {
     },
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
-
+        /*var oldView;
+        var that = this;
+        $('.vis-widget[data-zmodified="true"]').each(function () {
+            var wid = $(this).attr('id');
+            $(this).removeAttr('data-zmodified');
+            oldView = oldView || that.getViewOfWidget(wid);
+            var zIndex = that.views[oldView].widgets[wid] && that.views[oldView].widgets[wid].style && that.views[oldView].widgets[wid].style['z-index'];
+            if (!zIndex && zIndex !== '0' && zIndex !== 0) {
+                $(this).prop('style').removeProperty('z-index');
+            } else {
+                $(this).css('z-index', zIndex);
+            }
+        });*/
         // Deselect all elements
         $(':focus').blur();
 
@@ -1872,7 +2004,6 @@ vis = $.extend(true, vis, {
             var pos = this.activeWidgets.indexOf(delWidget);
             if (pos != -1) this.activeWidgets.splice(pos, 1);
         }
-        var that = this;
         var wid  = this.activeWidgets[0] || 'none';
         // find view
         var view = this.getViewOfWidget(wid);
@@ -2074,7 +2205,7 @@ vis = $.extend(true, vis, {
         if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
             this.editGestures();
         }
-        if ($widgetTpl.attr('data-vis-no-signals') !== 'true') {
+        if ($widgetTpl.attr('data-vis-no-signals')  !== 'true') {
             this.editSignalIcons();
         }
 
@@ -2164,5 +2295,11 @@ vis = $.extend(true, vis, {
         }
         $widgetAttrs.show();
 
+        // modify by all selected widgets the z-index
+        /*for (var w = 0; w < this.activeWidgets.length; w++) {
+            $('#' + this.activeWidgets[w])
+                .attr('data-zmodified', 'true')
+                .css('z-index', 700);
+        }*/
     }
 });
