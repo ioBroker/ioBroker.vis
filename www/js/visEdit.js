@@ -2654,9 +2654,44 @@ vis = $.extend(true, vis, {
         // set max height of select menu and autocomplete
         $('#inspect_view_theme-menu').css('max-height', '300px');
 
+        var $inspectGroups = $('#inspect_view_group');
+
+        $inspectGroups.multiselect({
+            maxWidth:           180,
+            height:             260,
+            noneSelectedText:   _('All groups'),
+            selectedText:       function (numChecked, numTotal, checkedItems) {
+                var text = '';
+                for (var i = 0; i < checkedItems.length; i++) {
+                    text += (!text ? '' : ',') + checkedItems[i].title;
+                }
+                return text;
+            },
+            multiple:           true,
+            checkAllText:       _('Check all'),
+            uncheckAllText:     _('Uncheck all'),
+            close:              function () {
+                if ($inspectGroups.data('changed')) {
+                    $inspectGroups.data('changed', false);
+                    that.save();
+                }
+            }
+            //noneSelectedText: _("Select options")
+        }).change(function () {
+            that.views[that.activeView].settings.group = $(this).val();
+            that.save();
+        }).data('changed', false);
+
+        $inspectGroups.next().css('width', '100%');
+
+        $('#inspect_view_group-menu').css('max-height', '300px');
+
+        $('#inspect_view_group_action').change(function () {
+            that.views[that.activeView].settings.group_action = $(this).val();
+            that.save();
+        });
+
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-
         var $select_set = $('#select_set');
         //$select_set.html('');
         $select_set.append('<option value="all">*</option>');
@@ -3132,10 +3167,10 @@ vis = $.extend(true, vis, {
                         }
                         //(tpl, data, style, wid, view, noSave, noAnimate)
                         activeWidgets.push(that.addWidget({
-                            tpl:        importObject[widget].tpl,
-                            data:       importObject[widget].data,
-                            style:      importObject[widget].style,
-                            noSave:     true,
+                            tpl:       importObject[widget].tpl,
+                            data:      importObject[widget].data,
+                            style:     importObject[widget].style,
+                            noSave:    true,
                             noAnimate: true
                         }, true));
                     }
@@ -3303,6 +3338,9 @@ vis = $.extend(true, vis, {
             }
             return result;
         }
+    },
+    getUserGroups: function () {
+        return this.userGroups;
     },
     delWidgetHelper: function (id, isAll) {
         if (!id) return;
@@ -3879,6 +3917,7 @@ vis = $.extend(true, vis, {
             });
         }
 
+        var viewGroups;
         // View (Resolution) settings
         if (this.views[view] && this.views[view].settings) {
             // Try to find this resolution in the list
@@ -3920,11 +3959,26 @@ vis = $.extend(true, vis, {
 
             this.editSetGrid();
 
+            // show groups
+            viewGroups = this.views[view].settings.group || [];
+            $('#inspect_view_group_action').val(this.views[view].settings.group_action);
         } else {
             $('#screen_size').val('').selectmenu('refresh');
             $('#screen_size_x').val(this.views[view].settings.sizex || '').trigger('change');
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
+            viewGroups = [];
         }
+        // fill groups
+        var $inspectGroups = $('#inspect_view_group');
+        $inspectGroups.html('');
+        var groups = this.getUserGroups();
+        for (var g in groups) {
+            if (!groups.hasOwnProperty(g)) continue;
+            var val = g.substring('system.group.'.length);
+            $inspectGroups.append('<option value="' + val + '" ' + ((viewGroups.indexOf(val) !== -1) ? 'selected' : '') + '>' + (groups[g] && groups[g].common ? groups[g].common.name || val : val) + '</option>');
+        }
+        $inspectGroups.multiselect('refresh');
+        $inspectGroups.next().css('width', 'calc(100% - 5px)');
 
         this.updateSelectWidget(view);
 
@@ -4347,7 +4401,7 @@ vis = $.extend(true, vis, {
         return {left: x, top: y};
     },
     // Check overlapping
-    checkPosition: function (positions, x, y, widgetWidth, widgetHeight) {
+    checkPosition:    function (positions, x, y, widgetWidth, widgetHeight) {
         for (var i = 0; i < positions.length; i++) {
             var s = positions[i];
 
@@ -4425,7 +4479,7 @@ vis = $.extend(true, vis, {
             });
     },
     // collect all filter keys for given view
-    updateFilter: function () {
+    updateFilter:     function () {
         if (this.activeView && this.views) {
             var widgets = this.views[this.activeView].widgets;
             this.views[this.activeView].filterList = [];
@@ -4451,7 +4505,7 @@ vis = $.extend(true, vis, {
             return [];
         }
     },
-    getWidgetIds: function (tpl) {
+    getWidgetIds:     function (tpl) {
         if (this.activeView && this.views) {
             var widgets = this.views[this.activeView].widgets;
             var list = [];
@@ -4510,7 +4564,7 @@ vis = $.extend(true, vis, {
         $('#vis_container').removeClass('vis-steal-cursor');
 
     },
-    stealCssMode: function () {
+    stealCssMode:     function () {
         var that = this;
         if (this.selectable) $('#visview_' + this.activeView).selectable('disable');
 
@@ -4533,7 +4587,7 @@ vis = $.extend(true, vis, {
         });
         $('#vis_container').addClass('vis-steal-cursor');
     },
-    stealCss: function (e) {
+    stealCss:         function (e) {
         if (this.isStealCss) {
             var that = this;
             var src  = '#' + e.currentTarget.id;
@@ -4594,8 +4648,8 @@ vis = $.extend(true, vis, {
         }
         return css;
     },
-    _saveTimer: null, // Timeout to save the configuration
-    _saveToServer: function () {
+    _saveTimer:       null, // Timeout to save the configuration
+    _saveToServer:    function () {
         if (!this.undoHistory || !this.undoHistory.length ||
             (JSON.stringify(this.views[this.activeView]) !== JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
             this.undoHistory = this.undoHistory || [];
@@ -4614,7 +4668,7 @@ vis = $.extend(true, vis, {
             }*/
         });
     },
-    save: function (cb) {
+    save:             function (cb) {
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
@@ -4628,7 +4682,7 @@ vis = $.extend(true, vis, {
         $('#saving_progress').show();
         if (cb) cb();
     },
-    undo: function () {
+    undo:             function () {
         if (this.undoHistory.length <= 1) return;
 
         var activeWidgets = this.activeWidgets;
@@ -4691,7 +4745,7 @@ vis = $.extend(true, vis, {
             });
         }
     },
-    showHint: function (content, life, type, onShow) {
+    showHint:         function (content, life, type, onShow) {
         if (!$.jGrowl) {
             this.showMessage(content);
             return;
@@ -4717,7 +4771,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    selectAll: function () {
+    selectAll:        function () {
         // Select all widgets on view
         var $focused = $(':focus');
 
@@ -4736,7 +4790,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    deselectAll: function () {
+    deselectAll:      function () {
         // Select all widgets on view
         var $focused = $(':focus');
         if (!$focused.length && this.activeView) {
@@ -4746,7 +4800,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    paste: function () {
+    paste:            function () {
         var $focused = $(':focus');
         if (!$focused.length) {
             if (this.clipboard && this.clipboard.length) {
@@ -4756,7 +4810,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    copy: function (isCut, widgets) {
+    copy:             function (isCut, widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var $clipboard_content = $('#clipboard_content');
@@ -4814,7 +4868,7 @@ vis = $.extend(true, vis, {
             $('#clipboard_content').remove();
         }
     },
-    onButtonDelete: function (widgets) {
+    onButtonDelete:   function (widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
             widgets = widgets || JSON.parse(JSON.stringify(this.activeWidgets));
@@ -4864,7 +4918,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    onButtonArrows: function (key, isSize, factor) {
+    onButtonArrows:   function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidgets.length) {
@@ -4960,7 +5014,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    onPageClosing: function () {
+    onPageClosing:    function () {
         // If not saved
         if (this._saveTimer || !$('#css_file_save').prop('disabled')) {
             if (window.confirm(_('Changes are not saved. Are you sure?'))) {
@@ -4989,7 +5043,7 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
-    lockWidgets: function (view, widgets) {
+    lockWidgets:      function (view, widgets) {
         view = view || this.activeView;
         // Disable selecte for all widgets
         var activeWidgets = $('#context_menu_paste').data('old-widgets');
@@ -5003,7 +5057,7 @@ vis = $.extend(true, vis, {
         }
         if (activeWidgets) $('#context_menu_paste').data('old-widgets', activeWidgets.join(' '));
     },
-    unlockWidgets: function (view, widgets) {
+    unlockWidgets:    function (view, widgets) {
         view = view || this.activeView;
         // Enable select for all widgets
         for (var w = 0; w < widgets.length; w++) {
@@ -5014,7 +5068,7 @@ vis = $.extend(true, vis, {
             this.bindWidgetClick(view, widgets[w]);
         }
     },
-    bringTo: function (widgets, isToFront) {
+    bringTo:          function (widgets, isToFront) {
         widgets = widgets || this.activeWidgets;
         var x = {min: 10000, max: -10000};
         var y = {min: 10000, max: -10000};
@@ -5132,7 +5186,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    hideContextMenu: function (e) {
+    hideContextMenu:  function (e) {
         if (e) {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -5148,7 +5202,7 @@ vis = $.extend(true, vis, {
         }, 200);
         $('#context_menu').hide();
     },
-    showContextMenu: function (options) {
+    showContextMenu:  function (options) {
         var that = this;
         var offset;
         var range;

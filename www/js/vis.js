@@ -89,6 +89,11 @@ if (typeof systemDictionary !== 'undefined') {
             "en": "Insufficient permissions",
             "de": "Nicht genügend Zugriffsrechte",
             "ru": "Недостаточно прав"
+        },
+        "View disabled for user %s": {
+            "en": "View disabled for user <b>%s</b>",
+            "de": "View ist für Anwender <b>%s</b> deaktiviert",
+            "ru": "Страница недоступна для пользователя <b>%s</b>"
         }
     });
 }
@@ -761,11 +766,25 @@ var vis = {
         } else {
             this.viewsActiveFilter[view] = [];
         }
-
+        //noinspection JSJQueryEfficiency
         var $view = $('#visview_' + view);
+        // apply group policies
+        if (!this.editMode && this.views[view].settings.group && this.views[view].settings.group.length) {
+            if (this.views[view].settings.group_action === 'hide') {
+                if (!this.isUserMemeberOf(this.conn.getUser(), this.views[view].settings.group)) {
+                    if (!$view.length) {
+                        $('#vis_container').append('<div id="visview_' + view + '" class="vis-view vis-user-disabled"></div>');
+                        $view = $('#visview_' + view);
+                    }
+                    $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', this.conn.getUser()) + '</div>');
+                    return;
+                }
+            }
+        }
+
         if (!$view.length) {
 
-            $('#vis_container').append('<div style="display:none;" id="visview_' + view + '" class="vis-view"></div>');
+            $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
             this.addViewStyle(view, this.views[view].settings.theme);
 
             $view = $('#visview_' + view);
@@ -792,7 +811,6 @@ var vis = {
 
             if (this.editMode) {
                 if (this.binds.jqueryui) this.binds.jqueryui._disable();
-
                 this.droppable(view);
             }
         }
@@ -835,6 +853,15 @@ var vis = {
         setTimeout(function(){
             $('#visview_' + view).trigger('rendered');
         }, 0);
+
+        // apply group policies
+        if (!this.editMode && this.views[view].settings.group && this.views[view].settings.group.length) {
+            if (this.views[view].settings.group_action !== 'hide') {
+                if (!this.isUserMemeberOf(this.conn.getUser(), this.views[view].settings.group)) {
+                    $view.addClass('vis-user-disabled');
+                }
+            }
+        }
     },
     addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
@@ -1189,6 +1216,16 @@ var vis = {
             }
         });
     },
+    isUserMemeberOf: function (user, groups) {
+        if (!this.userGroups) return true;
+        if (typeof groups !== 'object') groups = [groups];
+        for (var g = 0; g < groups.length; g++) {
+            var group = this.userGroups['system.group.' + groups[g]];
+            if (!group || !group.common || !group.common.members || !group.common.members.length) continue;
+            if (group.common.members.indexOf('system.user.' + user) !== -1) return true;
+        }
+        return false;
+    },
     renderWidget: function (view, id) {
         var $view = $('#visview_' + view);
         if (!$view.length) return;
@@ -1198,6 +1235,16 @@ var vis = {
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
         try {
+            var groups;
+            if (!this.editMode && widget.data['visibility-groups'] && widget.data['visibility-groups'].length) {
+                groups = widget.data['visibility-groups'];
+
+                if (widget.data['visibility-groups-action'] === 'hide') {
+                    if (!this.isUserMemeberOf(this.conn.getUser(), groups)) return;
+                    groups = null;
+                }
+            }
+
             this.widgets[id] = {
                 wid: id,
                 data: new can.Map($.extend({
@@ -1292,6 +1339,12 @@ var vis = {
             $(document).trigger('wid_added', id);
         } catch (e) {
             this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        }
+
+        if (groups && $wid && $wid.length) {
+            if (!this.isUserMemeberOf(this.conn.getUser(), groups)) {
+                $wid.addClass('vis-user-disabled');
+            }
         }
     },
     changeView: function (view, hideOptions, showOptions, sync) {
@@ -2656,19 +2709,23 @@ function main($) {
                             console.log('Possibly not authenticated, wait for request from server');
                             // Possibly not authenticated, wait for request from server
                         } else {
-                            // Get Server language
-                            vis.conn.getConfig(function (err, config) {
-                                systemLang = vis.args.lang || config.language || systemLang;
-                                vis.language = systemLang;
-                                vis.dateFormat = config.dateFormat;
-                                vis.isFloatComma = config.isFloatComma;
-                                translateAll();
-                                if (vis.isFirstTime) {
-                                    // Init edit dialog
-                                    if (vis.editMode && vis.editInit) vis.editInit();
-                                    vis.isFirstTime = false;
-                                    vis.init();
-                                }
+                            // Get groups info
+                            vis.conn.getGroups(function (err, groups) {
+                                vis.userGroups = groups || {};
+                                // Get Server language
+                                vis.conn.getConfig(function (err, config) {
+                                    systemLang = vis.args.lang || config.language || systemLang;
+                                    vis.language = systemLang;
+                                    vis.dateFormat = config.dateFormat;
+                                    vis.isFloatComma = config.isFloatComma;
+                                    translateAll();
+                                    if (vis.isFirstTime) {
+                                        // Init edit dialog
+                                        if (vis.editMode && vis.editInit) vis.editInit();
+                                        vis.isFirstTime = false;
+                                        vis.init();
+                                    }
+                                });
                             });
 
                             // If metaIndex required, load it

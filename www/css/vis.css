@@ -257,10 +257,17 @@ a.ui-dialog-titlebar-restore {
     width: 100%;
     font-weight: bold;
 }
-
-
-
-
+.vis-user-disabled {
+    background: gray !important;
+    opacity: 0.3 !important;
+    pointer-events: none;
+}
+.vis-view-disabled-text {
+    font-size: 24px;
+    position: absolute;
+    left: calc(50% - 150px);
+    top: calc(50% - 12px);
+}
 div#tabs {
 
     height: 100%;

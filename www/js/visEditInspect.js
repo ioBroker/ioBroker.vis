@@ -106,7 +106,7 @@ vis = $.extend(true, vis, {
                     var wdata = $(this).data('wdata');
 
                     $('#dialog-select-member-' + wdata.attr).selectId('show', that.views[wdata.view].widgets[wdata.widgets[0]].data[wdata.attr], function (newId, oldId) {
-                        if (oldId != newId) {
+                        if (oldId !== newId) {
                             $('#inspect_' + wdata.attr).val(newId).trigger('change');
 
                             if ($('#inspect_min').length) {
@@ -123,7 +123,7 @@ vis = $.extend(true, vis, {
 
                             if ($('#inspect_oid-working').length) {
                                 if (that.objects[newId] && that.objects[newId].common && that.objects[newId].common.workingID) {
-                                    if (that.objects[newId].common.workingID.indexOf('.') != -1) {
+                                    if (that.objects[newId].common.workingID.indexOf('.') !== -1) {
                                         $('#inspect_oid-working').val(that.objects[newId].common.workingID).trigger('change');
                                     } else {
                                         var parts = newId.split('.');
@@ -152,7 +152,7 @@ vis = $.extend(true, vis, {
                              // Try to find Function of the device and fill the Filter field
                              var $filterkey = $('#inspect_filterkey');
                              if ($filterkey.length) {
-                             if ($filterkey.val() == '') {
+                             if ($filterkey.val() === '') {
                              var oid = newId;
                              var func = null;
                              if (that.metaIndex && that.metaIndex['ENUM_FUNCTIONS']) {
@@ -160,7 +160,7 @@ vis = $.extend(true, vis, {
                              for (var t = 0; t < that.metaIndex['ENUM_FUNCTIONS'].length; t++) {
                              var list = that.objects[that.metaIndex['ENUM_FUNCTIONS'][t]];
                              for (var z = 0; z < list['Channels'].length; z++) {
-                             if (list['Channels'][z] == oid) {
+                             if (list['Channels'][z] === oid) {
                              func = list.Name;
                              break;
                              }
@@ -332,7 +332,7 @@ vis = $.extend(true, vis, {
                     minLength: 0,
                     source: function (request, response) {
                         var _data = $.grep(that.fontNames, function (value) {
-                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                            return value.substring(0, request.term.length).toLowerCase() === request.term.toLowerCase();
                         });
 
                         response(_data);
@@ -388,7 +388,7 @@ vis = $.extend(true, vis, {
                     minLength: 0,
                     source: function (request, response) {
                         var _data = $.grep(values, function (value) {
-                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                            return value.substring(0, request.term.length).toLowerCase() === request.term.toLowerCase();
                         });
 
                         response(_data);
@@ -443,7 +443,7 @@ vis = $.extend(true, vis, {
                 that._editSetFontColor('inspect_' + widAttr);
             }
         };
-        if ((typeof colorSelect != 'undefined' && $().farbtastic)) {
+        if ((typeof colorSelect !== 'undefined' && $().farbtastic)) {
             line.button = {
                 icon: 'ui-icon-note',
                 text: false,
@@ -501,7 +501,7 @@ vis = $.extend(true, vis, {
             'size',
             'slide'
         ], null, function (_widAttr, data) {
-            if (_widAttr.indexOf('_effect') != -1) {
+            if (_widAttr.indexOf('_effect') !== -1) {
                 var eff = _widAttr.replace('_effect', '_options');
                 var $elem = $('#inspect_' + eff);
                 if ($elem.length) {
@@ -612,19 +612,19 @@ vis = $.extend(true, vis, {
             options.unshift();
             if (funcs[0] === 'vis') funcs.unshift();
             if (funcs[0] === 'binds') funcs.unshift();
-            if (funcs.length == 1) {
+            if (funcs.length === 1) {
                 if (typeof this.binds[funcs[0]] === 'function') {
                     return this.binds[funcs[0]](widAttr, options);
                 } else {
                     console.log('No function: vis.binds.' + funcs.join('.'));
                 }
-            } else if (funcs.length == 2) {
+            } else if (funcs.length === 2) {
                 if (this.binds[funcs[0]] && typeof this.binds[funcs[0]][funcs[1]] === 'function') {
                     return this.binds[funcs[0]][funcs[1]](widAttr, options);
                 } else {
                     console.log('No function: vis.binds.' + funcs.join('.'));
                 }
-            } else if (funcs.length == 3) {
+            } else if (funcs.length === 3) {
                 if (this.binds[funcs[0]] && this.binds[funcs[0]][funcs[1]] && typeof this.binds[funcs[0]][funcs[1]][funcs[2]] === 'function') {
                     return this.binds[funcs[0]][funcs[1]][funcs[2]](widAttr, options);
                 } else {
@@ -723,9 +723,9 @@ vis = $.extend(true, vis, {
         }
     },
     editDimensionOnChangeHelper: function (elem, value) {
-        if (value && typeof value != 'object') {
+        if (value && typeof value !== 'object') {
             var e = value.substring(value.length - 2);
-            if (e != 'px' && e != 'em') {
+            if (e !== 'px' && e !== 'em') {
                 var wdata = $(elem).data('wdata');
                 for (var t = 0; t < wdata.widgets.length; t++) {
                     this.views[wdata.view].widgets[wdata.widgets[t]].style[wdata.attr.substring(4)] = value + 'px';
@@ -987,11 +987,11 @@ vis = $.extend(true, vis, {
     },
     // add font name to font selector (used in adapters, eg. vis-google-fonts
     addFont: function (fontName) {
-        if (this.fontNames.indexOf(fontName) == -1) this.fontNames.push(fontName);
+        if (this.fontNames.indexOf(fontName) === -1) this.fontNames.push(fontName);
     },
     // find states with requested roles of device
     findByRoles: function (stateId, roles) {
-        if (typeof roles != 'object') {
+        if (typeof roles !== 'object') {
             roles = [roles];
         } else {
             roles = JSON.parse(JSON.stringify(roles));
@@ -1011,7 +1011,7 @@ vis = $.extend(true, vis, {
                 this.objects[id].common &&
                 this.objects[id].type === 'state') {
                 for (var r = 0; r < roles.length; r++) {
-                    if (this.objects[id].common.role == roles[r]) {
+                    if (this.objects[id].common.role === roles[r]) {
                         result[roles[r]] = id;
                         roles.splice(r, 1);
                         break;
@@ -1031,7 +1031,7 @@ vis = $.extend(true, vis, {
                     this.objects[id].type === 'state') {
 
                     for (var r = 0; r < roles.length; r++) {
-                        if (this.objects[id].common.role == roles[r]) {
+                        if (this.objects[id].common.role === roles[r]) {
                             result[roles[r]] = id;
                             roles.splice(r, 1);
                             break;
@@ -1096,7 +1096,7 @@ vis = $.extend(true, vis, {
             this.groups[widAttr || group]['delimiterInGroup' + d] = 'delimiterInGroup';
             return;
         }
-        if (typeof widAttr != 'object') {
+        if (typeof widAttr !== 'object') {
             widAttr = {name: widAttr};
         }
         if (widAttr.clearName === undefined) widAttr.clearName = widAttr.name;
@@ -1124,7 +1124,7 @@ vis = $.extend(true, vis, {
                 if (widgetData && (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined) && !widAttr.name.match(/^gestures-/)) {
                     widgetData[widAttr.name] = widAttr.default;
                     this.reRenderList = this.reRenderList || [];
-                    if (this.reRenderList.indexOf(widgets[i]) == -1) this.reRenderList.push(widgets[i]);
+                    if (this.reRenderList.indexOf(widgets[i]) === -1) this.reRenderList.push(widgets[i]);
                 }
             }
         }
@@ -1144,6 +1144,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'select-views':
                 line = '<select multiple="multiple" id="inspect_' + widAttr.name + '" class="select-views"></select>';
+                break;
+            case 'groups':
+                line = '<select multiple="multiple" id="inspect_' + widAttr.name + '" class="select-groups"></select>';
                 break;
             case 'color':
                 line = this.editColor(widAttr.name);
@@ -1463,7 +1466,7 @@ vis = $.extend(true, vis, {
                         }
                     }
                     $widget.css(css, val);
-                    if (that.activeWidgets.indexOf(wdata.widgets[i]) != -1) {
+                    if (that.activeWidgets.indexOf(wdata.widgets[i]) !== -1) {
                         that.showWidgetHelper(wdata.widgets[i], true);
                     }
 
@@ -1484,11 +1487,11 @@ vis = $.extend(true, vis, {
                 // The result is DashUI tries to remove draggable and resizable properties and fails
                 if (wdata.attr === 'class') {
                     var val = that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr];
-                    if (val.indexOf('ui-draggable') != -1 || val.indexOf('ui-resizable') != -1) {
+                    if (val.indexOf('ui-draggable') !== -1 || val.indexOf('ui-resizable') !== -1) {
                         var vals = val.split(' ');
                         val = '';
                         for (var j = 0; j < vals.length; j++) {
-                            if (vals[j] && vals[j] != 'ui-draggable' && vals[j] != 'ui-resizable') {
+                            if (vals[j] && vals[j] !== 'ui-draggable' && vals[j] !== 'ui-resizable') {
                                 val += ((val) ? ' ' : '') + vals[j];
                             }
                         }
@@ -1531,7 +1534,7 @@ vis = $.extend(true, vis, {
                 if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
 
                 // Rebuild attr list
-                if (changed || (depends && depends.indexOf(wdata.attr) != -1)) that.inspectWidgets();
+                if (changed || (depends && depends.indexOf(wdata.attr) !== -1)) that.inspectWidgets();
             }
 
             //Update containers
@@ -1561,7 +1564,7 @@ vis = $.extend(true, vis, {
                         //close others
                         $('.group-control').each(function () {
                             var _group = $(this).attr('data-group');
-                            if (_group != group && that.groupsState[_group]) {
+                            if (_group !== group && that.groupsState[_group]) {
                                 that.groupsState[_group] = false;
                                 $('.group-control[data-group="' + _group + '"]').button('option', {icons: {primary: "ui-icon-triangle-1-s"}});
                                 $('.group-' + _group).hide();
@@ -1712,7 +1715,7 @@ vis = $.extend(true, vis, {
         if (wid_repeats) {
             wid_repeats = wid_repeats.substring(1, wid_repeats.length - 1);
             var parts = wid_repeats.split('-', 2);
-            if (parts.length == 2) {
+            if (parts.length === 2) {
                 wid_repeats = {
                     start: parseInt(parts[0], 10),
                     end:   parseInt(parts[1], 10)
@@ -1753,9 +1756,9 @@ vis = $.extend(true, vis, {
          } else*/
         if (widAttr === 'sound') {
             wid_type = 'sound';
-        } else if (widAttr.indexOf('_effect') != -1) {
+        } else if (widAttr.indexOf('_effect') !== -1) {
             wid_type = 'effect';
-        } else if (widAttr.indexOf('_eff_opt') != -1) {
+        } else if (widAttr.indexOf('_eff_opt') !== -1) {
             wid_type = 'effect-options';
         }
         if (wid_type === 'nselect') {
@@ -1830,7 +1833,7 @@ vis = $.extend(true, vis, {
                 if (widgetAttrs[j].match(/^group\./)) {
                     group = widgetAttrs[j].substring('group.'.length);
                     // extract group mode
-                    if (group.indexOf('/') != -1) {
+                    if (group.indexOf('/') !== -1) {
                         var parts = group.split('/');
                         group     = parts[0];
                         groupMode = parts[1] || 'normal';
@@ -1878,7 +1881,7 @@ vis = $.extend(true, vis, {
                         var d1 = allWidgetsAttr[group][name].default;
                         delete allWidgetsAttr[group][name].default;
                         delete attrs[group][name].default;
-                        if (JSON.stringify(allWidgetsAttr[group][name]) != JSON.stringify(attrs[group][name])){
+                        if (JSON.stringify(allWidgetsAttr[group][name]) !== JSON.stringify(attrs[group][name])){
                             delete allWidgetsAttr[group][name];
                         } else {
                             allWidgetsAttr[group][name].default = d1;
@@ -1932,7 +1935,7 @@ vis = $.extend(true, vis, {
                         var data = $.grep(this.element.data('value').values, function (value) {
                             if (value === undefined || value === null) return false;
                             value = value.toString();
-                            return value.substring(0, request.term.length).toLowerCase() == request.term.toLowerCase();
+                            return value.substring(0, request.term.length).toLowerCase() === request.term.toLowerCase();
                         });
                         response(data);
                     },
@@ -1969,8 +1972,8 @@ vis = $.extend(true, vis, {
     },
     inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
-        /*var oldView;
         var that = this;
+        /*var oldView;
         $('.vis-widget[data-zmodified="true"]').each(function () {
             var wid = $(this).attr('id');
             $(this).removeAttr('data-zmodified');
@@ -2002,7 +2005,7 @@ vis = $.extend(true, vis, {
         }
         if (typeof delWidget === 'string') {
             var pos = this.activeWidgets.indexOf(delWidget);
-            if (pos != -1) this.activeWidgets.splice(pos, 1);
+            if (pos !== -1) this.activeWidgets.splice(pos, 1);
         }
         var wid  = this.activeWidgets[0] || 'none';
         // find view
@@ -2017,7 +2020,7 @@ vis = $.extend(true, vis, {
             this.alignIndex = 0;
 
             var s = JSON.stringify(this.activeWidgets);
-            if (JSON.stringify(this.views[this.activeView].activeWidgets) != s) {
+            if (JSON.stringify(this.views[this.activeView].activeWidgets) !== s) {
                 this.views[this.activeView].activeWidgets = JSON.parse(s);
                 // Store selected widgets
                 this.save();
@@ -2039,7 +2042,7 @@ vis = $.extend(true, vis, {
             // Deselect unselected widgets
             for (i = 0; i < deselect.length; i++) {
                 this.showWidgetHelper(deselect[i], false);
-                var $widget = $('#' + deselect[i]);
+                $widget = $('#' + deselect[i]);
                 $widget.removeClass('ui-selected');
 
                 if ($widget.hasClass('ui-draggable')) {
@@ -2059,8 +2062,8 @@ vis = $.extend(true, vis, {
                 }
             }
             // disable resize if widget not more selected alone
-            if (this.oldActiveWidgets.length == 1 && this.activeWidgets.length != 1) {
-                var $widget = $('#' + this.oldActiveWidgets[0]);
+            if (this.oldActiveWidgets.length === 1 && this.activeWidgets.length !== 1) {
+                $widget = $('#' + this.oldActiveWidgets[0]);
                 if ($widget.hasClass('ui-resizable')) {
                     try {
                         $widget.resizable('destroy');
@@ -2076,7 +2079,7 @@ vis = $.extend(true, vis, {
                     $widget = $('#' + select[p]);
                     this.showWidgetHelper(select[p], true);
 
-                    if(!$("#wid_all_lock_d").hasClass("ui-state-active")) {
+                    if(!$('#wid_all_lock_d').hasClass("ui-state-active")) {
                         this.draggable($widget);
                     }
                 } catch (e) {
@@ -2098,7 +2101,7 @@ vis = $.extend(true, vis, {
                 $('#export_widgets').button('disable');
             }
 
-            if (this.activeWidgets.length == 1) {
+            if (this.activeWidgets.length === 1) {
                 try {
                     $widget = $('#' + this.activeWidgets[0]);
                     if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
@@ -2129,11 +2132,11 @@ vis = $.extend(true, vis, {
         if (!wid || wid === 'none') {
             // Switch tabs to View settings
             $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
-            $('#widget_tab').text(_("Widget"));
+            $('#widget_tab').text(_('Widget'));
             return false;
         }
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_('Widget') + ": " + ((this.activeWidgets.length == 1) ? wid : this.activeWidgets.length));
+        $('#widget_tab').text(_('Widget') + ": " + ((this.activeWidgets.length === 1) ? wid : this.activeWidgets.length));
 
         var widget = this.views[this.activeView].widgets[wid];
 
@@ -2182,10 +2185,13 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-groups', type: 'groups'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-groups-action', type: 'select', options: ['hide', 'disabled'], default: 'hide'}, group);
+
         this.addToInspect('delimiter', group);
 
         // Edit all attributes
-        group = 'common';
+        //group = 'common';
         for (group in this.actualAttrs) {
             for (var attr in this.actualAttrs[group]) {
                 this.addToInspect(this.activeWidgets, this.actualAttrs[group][attr], group);
@@ -2241,58 +2247,99 @@ vis = $.extend(true, vis, {
         }*/
 
         // Put all view names in the select element
-        var $inspect_views = $('#inspect_views');
-        $inspect_views.html('');
-        
-        var views = this.getViewsOfWidget(this.activeWidgets[0]);
-        for (var v in this.views) {
-            if (v === '___settings') continue;
-            if (v != this.activeView) {
-                var selected = '';
-                for (var k = 0; k < views.length; k++) {
-                    if (views[k] == v) {
-                        selected = 'selected';
-                        break;
+        var $inspectViews = $('#inspect_views');
+        if ($inspectViews.length) {
+            $inspectViews.html('');
+
+            var views = this.getViewsOfWidget(this.activeWidgets[0]);
+            for (var v in this.views) {
+                if (v === '___settings') continue;
+                if (v !== this.activeView) {
+                    var selected = '';
+                    for (var k = 0; k < views.length; k++) {
+                        if (views[k] === v) {
+                            selected = 'selected';
+                            break;
+                        }
+                    }
+                    $inspectViews.append('<option value="' + v + '" ' + selected + '>' + v + '</option>');
+                }
+            }
+
+            $inspectViews.multiselect({
+                maxWidth:           180,
+                height:             260,
+                noneSelectedText:   _('Single view'),
+                selectedText:       function (numChecked, numTotal, checkedItems) {
+                    var text = '';
+                    for (var i = 0; i < checkedItems.length; i++) {
+                        text += (!text ? '' : ',') + checkedItems[i].title;
+                    }
+                    return text;
+                },
+                multiple:           true,
+                checkAllText:       _('Check all'),
+                uncheckAllText:     _('Uncheck all'),
+                close:              function () {
+                    if ($inspectViews.data('changed')) {
+                        $inspectViews.data('changed', false);
+                        that.syncWidgets(that.activeWidgets, $(this).val());
+                        that.save();
                     }
                 }
-                $inspect_views.append('<option value="' + v + '" ' + selected + '>' + v + '</option>');
-            }
+                //noneSelectedText: _("Select options")
+            }).change(function () {
+                $inspectViews.data('changed', true);
+            }).data('changed', false);
+
+            $inspectViews.next().css('width', '100%');
         }
 
-        $inspect_views.multiselect({
-            maxWidth:           180,
-            height:             260,
-            noneSelectedText:   _('Single view'),
-            selectedText:       function (numChecked, numTotal, checkedItems) {
-                var text = '';
-                for (var i = 0; i < checkedItems.length; i++) {
-                    text += (!text ? '' : ",") + checkedItems[i].title;
-                }
-                return text;
-            },
-            multiple:           true,
-            checkAllText:       _('Check all'),
-            uncheckAllText:     _('Uncheck all'),
-            close:              function () {
-                if ($inspect_views.data('changed')) {
-                    $inspect_views.data('changed', false);
-                    that.syncWidgets(that.activeWidgets, $(this).val());
-                    that.save();
-                }
-            }
-            //noneSelectedText: _("Select options")
-        }).change(function () {
-            $('#inspect_views').data('changed', true);
-            //that.syncWidgets(that.activeWidgets, $(this).val());
-            //that.save();
-        }).data('changed', false);
+        // Put all view names in the select element
+        var $inspectGroups = $('#inspect_visibility-groups');
+        if ($inspectGroups.length) {
+            $inspectGroups.html('');
 
-        $inspect_views.next().css('width', '100%');
+            var groups    = this.getUserGroups();
+            var widGroups = this.findCommonValue(this.activeWidgets, 'visibility-groups');
+            if (widGroups && !(widGroups instanceof Array)) widGroups = widGroups.values;
+            widGroups = widGroups || [];
+            for (var g in groups) {
+                var val = g.substring('system.group.'.length);
+                $inspectGroups.append('<option value="' + val + '" ' + ((widGroups.indexOf(val) !== -1) ? 'selected' : '') + '>' + (groups[g] && groups[g].common ?  groups[g].common.name || val : val) + '</option>');
+            }
+
+            $inspectGroups.multiselect({
+                maxWidth:           180,
+                height:             260,
+                noneSelectedText:   _('All groups'),
+                selectedText:       function (numChecked, numTotal, checkedItems) {
+                    var text = '';
+                    for (var i = 0; i < checkedItems.length; i++) {
+                        text += (!text ? '' : ',') + checkedItems[i].title;
+                    }
+                    return text;
+                },
+                multiple:           true,
+                checkAllText:       _('Check all'),
+                uncheckAllText:     _('Uncheck all'),
+                close:              function () {
+                    if ($inspectGroups.data('changed')) {
+                        $inspectGroups.data('changed', false);
+                        that.save();
+                    }
+                }
+                //noneSelectedText: _("Select options")
+            }).change(function () {
+                $inspectGroups.data('changed', true);
+            }).data('changed', false);
+
+            $inspectGroups.next().css('width', '100%');
+        }
 
         // If tab Widget is not selected => select it
-        if ($('#menu_body').tabs('option', 'active') == 1) {
-            $('#menu_body').tabs({'active': 2});
-        }
+        var $menu = $('#menu_body');
+        if ($menu.tabs('option', 'active') === 1) $menu.tabs({'active': 2});
         $widgetAttrs.show();
 
         // modify by all selected widgets the z-index

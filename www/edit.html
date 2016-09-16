@@ -105,7 +105,7 @@
 </div>
 <div style="display: none;text-align: center" id="dialog_about" title="About" class="translateT"></div>
 <div style="display: none;" id="dialog_export_view" title="export view" class="translateT">
-    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+    <textarea rows="60" cols="160" style="width: calc(100% - 5px); height: calc(100% - 5px); font-size: 11px;"
               id="textarea_export_view"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_view" title="import view" class="translateT">
@@ -138,7 +138,7 @@
 </div>
 
 <div style="display: none;" id="dialog_export_widgets" title="export widgets title" class="translateT">
-    <textarea rows="60" cols="160" style="width: 99%; height: 98%; font-size: 11px;"
+    <textarea rows="60" cols="160" style="width: calc(100% - 5px); height: calc(100% - 5px); font-size: 11px;"
               id="textarea_export_widgets"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_widgets" title="import widgets" class="translateT">
@@ -823,6 +823,21 @@
                                     </select>
                                 </td>
                             </tr>
+                            <tr class="group-view-css-common">
+                                <td><label class="vis-edit-td-caption translate" for="inspect_view_group">visibility-groups</label></td>
+                                <td class="vis-edit-td-field" colspan="2">
+                                    <select multiple="multiple" id="inspect_view_group" class="vis-edit-textbox" style="width: 100%"></select>
+                                </td>
+                            </tr>
+                            <tr class="group-view-css-common">
+                                <td><label class="vis-edit-td-caption translate" for="inspect_view_group_action">visibility-groups-action</label></td>
+                                <td class="vis-edit-td-field" colspan="2">
+                                    <select id="inspect_view_group_action" class="vis-edit-textbox" style="width: 100%">
+                                        <option value="hide" class="translate">hide</option>
+                                        <option value="disabled" class="translate">disabled</option>
+                                    </select>
+                                </td>
+                            </tr>
                             <tr>
                                 <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
                             </tr>
@@ -1004,8 +1019,8 @@
     </p>
 </div>
 <div id="dialog-edit-text" title="Edit text" style="display: none">
-    <!--textarea style="width: 98%; height: 96%;resize: none;" id="dialog-edit-text-textarea"></textarea-->
-    <div id="dialog-edit-text-textarea" style="width: 98%; height: 96%;"></div>
+    <!--textarea style="width: calc(100% - 5px); height: 96%;resize: none;" id="dialog-edit-text-textarea"></textarea-->
+    <div id="dialog-edit-text-textarea" style="width: calc(100% - 5px); height: 96%;"></div>
 </div>
 <div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden; display: none">
     <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width: 250px" /></td></tr></table>

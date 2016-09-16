@@ -690,15 +690,13 @@ var servConn = {
         if (!this._checkConnection('getObjects', arguments)) return;
         var that = this;
         this._socket.emit('getObjects', function (err, data) {
-
             // Read all enums
             that._socket.emit('getObjectView', 'system', 'enum', {startkey: 'enum.', endkey: 'enum.\u9999'}, function (err, res) {
                 if (err) {
                     callback(err);
                     return;
                 }
-                var result = {};
-                var enums  = {};
+                var enums = {};
                 for (var i = 0; i < res.rows.length; i++) {
                     data[res.rows[i].id] = res.rows[i].value;
                     enums[res.rows[i].id] = res.rows[i].value;
@@ -710,7 +708,6 @@ var servConn = {
                         callback(err);
                         return;
                     }
-                    var result = {};
                     for (var i = 0; i < res.rows.length; i++) {
                         data[res.rows[i].id] = res.rows[i].value;
                     }
@@ -727,7 +724,6 @@ var servConn = {
                             callback(err);
                             return;
                         }
-                        var result = {};
                         for (var i = 0; i < res.rows.length; i++) {
                             data[res.rows[i].id] = res.rows[i].value;
                         }
@@ -738,7 +734,6 @@ var servConn = {
                                 callback(err);
                                 return;
                             }
-                            var result = {};
                             for (var i = 0; i < res.rows.length; i++) {
                                 data[res.rows[i].id] = res.rows[i].value;
                             }
@@ -747,10 +742,12 @@ var servConn = {
                                 that._fillChildren(data);
                                 that._objects = data;
                                 that._enums   = enums;
+                                that._groups  = groups;
 
                                 if (typeof storage !== 'undefined') {
                                     storage.set('objects',  data);
                                     storage.set('enums',    enums);
+                                    storage.set('groups',   groups);
                                     storage.set('timeSync', (new Date()).getTime());
                                 }
                             }
@@ -802,7 +799,6 @@ var servConn = {
                 callback(err);
                 return;
             }
-            var result = {};
             for (var i = 0; i < res.rows.length; i++) {
                 data[res.rows[i].id] = res.rows[i].value;
             }
@@ -812,7 +808,6 @@ var servConn = {
                     callback(err);
                     return;
                 }
-                var result = {};
                 for (var i = 0; i < res.rows.length; i++) {
                     data[res.rows[i].id] = res.rows[i].value;
                 }
@@ -823,7 +818,6 @@ var servConn = {
                         callback(err);
                         return;
                     }
-                    var result = {};
                     for (var i = 0; i < res.rows.length; i++) {
                         data[res.rows[i].id] = res.rows[i].value;
                     }
@@ -918,6 +912,60 @@ var servConn = {
             return callback(null, obj);
         }.bind(this));
     },
+    getGroups:        function (groupName, useCache, callback) {
+        if (typeof groupName === 'function') {
+            callback = groupName;
+            groupName = null;
+            useCache = false;
+        }
+        if (typeof groupName === 'boolean') {
+            callback = useCache;
+            useCache = groupName;
+            groupName = null;
+        }
+        if (typeof useCache === 'function') {
+            callback = useCache;
+            useCache = false;
+        }
+        groupName = groupName || '';
+
+        // If cache used
+        if (this._useStorage && useCache) {
+            if (typeof storage !== 'undefined') {
+                var groups = this._groups || storage.get('groups');
+                if (groups) return callback(null, groups);
+            } else if (this._groups) {
+                return callback(null, this._groups);
+            }
+        }
+
+        if (this._type === 'local') {
+            return callback(null, []);
+        } else {
+            var that = this;
+            // Read all enums
+            this._socket.emit('getObjectView', 'system', 'group', {startkey: 'system.group.' + groupName, endkey: 'system.group.' + groupName + '\u9999'}, function (err, res) {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                var groups = {};
+                for (var i = 0; i < res.rows.length; i++) {
+                    var obj = res.rows[i].value;
+                    groups[obj._id] = obj;
+                }
+                if (that._useStorage) {
+                    that._groups  = groups;
+
+                    if (typeof storage !== 'undefined') {
+                        storage.set('groups', groups);
+                    }
+                }
+                
+                callback(null, groups);
+            }.bind(this));
+        }  
+    },
     getEnums:         function (enumName, useCache, callback) {
         if (typeof enumName === 'function') {
             callback = enumName;
@@ -949,7 +997,7 @@ var servConn = {
         } else {
 
             enumName = enumName ? enumName + '.' : '';
-
+            var that = this;
             // Read all enums
             this._socket.emit('getObjectView', 'system', 'enum', {startkey: 'enum.' + enumName, endkey: 'enum.' + enumName + '\u9999'}, function (err, res) {
                 if (err) {
@@ -961,7 +1009,7 @@ var servConn = {
                     var obj = res.rows[i].value;
                     enums[obj._id] = obj;
                 }
-                if (this._useStorage && typeof storage !== 'undefined') {
+                if (that._useStorage && typeof storage !== 'undefined') {
                     storage.set('enums', enums);
                 }
                 callback(null, enums);

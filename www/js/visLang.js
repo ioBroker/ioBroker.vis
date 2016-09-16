@@ -493,6 +493,20 @@ $.extend(systemDictionary, {
         "ru": "Например 'Значение объекта' >= 'Значения для условия"
     },
     "visibility-val":       {"en": "Value for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
+    "visibility-groups":    {"en": "Only for groups",   "de": "Nur für Gruppen",        "ru": "Только для групп"},
+    "visibility-groups_tooltip":    {
+        "en": "Select groups, that can view or control this widget",
+        "de": "Selektiere die Gruppen, die dieses Widget sehen oder steuern dürfen",
+        "ru": "Выберите группы, которые могут видеть или управлять этим виджетом"
+    },
+    "visibility-groups-action": {"en": "Group action",  "de": "Groupaktion",            "ru": "Реакция на группу"},
+    "visibility-groups-action_tooltip":    {
+        "en": "If current user not in the given groups, what should happen?",
+        "de": "Falls aktueller Anwender nicht in den gesetzten Gruppen ist, was muss passieren?",
+        "ru": "Если пользователь не в указанных группах, что должно произойти?"
+    },
+    "All groups":           {"en": "all groups",        "de": "Alle Gruppen",           "ru": "всех групп"},
+    "hide":                 {"en": "hide",              "de": "verbergen",              "ru": "скрыть"},
 
     "group_signals":        {"en": "Notification icons", "de": "Signalbilder",         "ru": "Иконки сигналов"},
     "signals-oid-0":        {"en": "Object ID [0]",     "de": "Objekt ID [0]",         "ru": "ID объекта [0]"},
