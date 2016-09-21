@@ -659,12 +659,61 @@ vis = $.extend(true, vis, {
             }
         };
     },
+    editEnableAbsolute: function () {
+        var val = $('#inspect_css_position').val();
+        if (val === 'relative' || val === 'static' || val === 'sticky') {
+            // disable
+            $('#inspect_css_left').val('').prop('disabled', true);
+            $('#inspect_css_top').val('').prop('disabled', true);
+            $('#inspect_css_display').prop('disabled', false);
+        } else {
+            // enable
+            $('#inspect_css_left').prop('disabled', false);
+            $('#inspect_css_top').prop('disabled', false);
+            $('#inspect_css_display').val('').prop('disabled', true);
+        }
+    },
     editCssCommon: function () {
+        var that = this;
         var group = 'css_common';
         this.groups[group] = this.groups[group] || {};
 
-        this.groups[group].css_left          = {input: '<input type="text" id="inspect_css_left"/>'};
-        this.groups[group].css_top           = {input: '<input type="text" id="inspect_css_top"/>'};
+        this.groups[group].css_position      = this.editSelect('css_position', ['', /*'absolute', 'fixed',*/ 'relative', /*'static', */'sticky'], true, function () {
+            $(this).data('old-value', $(this).val());
+        }, function () {
+            var val = $('#inspect_css_position').val();
+            var oldVal = $(this).data('old-value');
+
+            if (val === 'relative' || val === 'static' || val === 'sticky') {
+                if (oldVal !== 'relative' && oldVal !== 'static' && oldVal !== 'sticky') {
+                    $(this).data('old-value', val);
+                    // disable
+                    $('#inspect_css_left').val('').prop('disabled', true).trigger('change');
+                    $('#inspect_css_top').val('').prop('disabled', true).trigger('change');
+                    setTimeout(function () {
+                        for (var r = 0; r < that.activeWidgets.length; r++) {
+                            that.reRenderWidgetEdit(that.activeWidgets[r]);
+                        }
+                    } , 100);
+                }
+            } else {
+                if (oldVal === 'relative' || oldVal === 'static' || oldVal === 'sticky') {
+                    $(this).data('old-value', val);
+                    // enable
+                    $('#inspect_css_left').prop('disabled', false).val('0px').trigger('change');
+                    $('#inspect_css_top').prop('disabled', false).val('0px').trigger('change');
+
+                    setTimeout(function () {
+                        for (var r = 0; r < that.activeWidgets.length; r++) {
+                            that.reRenderWidgetEdit(that.activeWidgets[r]);
+                        }
+                    } , 100);
+                }
+            }
+        });
+        this.groups[group].css_display       = this.editSelect('css_display', ['', /*'inline', 'block', */'inline-block'/*, 'flex', 'list-item', 'run-in'*/], true, this.editEnableAbsolute);
+        this.groups[group].css_left          = {input: '<input type="text" id="inspect_css_left"/>', init: this.editEnableAbsolute};
+        this.groups[group].css_top           = {input: '<input type="text" id="inspect_css_top"/>', init: this.editEnableAbsolute};
         this.groups[group].css_width         = {input: '<input type="text" id="inspect_css_width"/>'};
         this.groups[group].css_height        = {input: '<input type="text" id="inspect_css_height"/>'};
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');

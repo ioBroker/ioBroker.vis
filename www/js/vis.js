@@ -903,7 +903,7 @@ var vis = {
     reRenderWidget: function (view, widget) {
         var $widget = $('#' + widget);
         var updateContainers = $widget.find('.vis-view-container').length;
-        $widget.remove();
+
         this.renderWidget(view || this.activeView, widget);
 
         if (updateContainers) this.updateContainers(view || this.activeView);
@@ -1232,6 +1232,19 @@ var vis = {
 
         var widget = this.views[view].widgets[id];
 
+        // if widget has relative position => insert it into relative div
+        if (this.editMode && widget && widget.style && (widget.style.position === 'relative' || widget.style.position === 'static' || widget.style.position === 'sticky')) {
+            if (this.views[view].settings && this.views[view].settings.sizex) {
+                var $relativeView = $view.find('.vis-edit-relative');
+                if (!$relativeView.length) {
+                    $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
+                    $view = $view.find('.vis-edit-relative');
+                } else {
+                    $view = $relativeView;
+                }
+            }
+        }
+
         //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
         try {
@@ -1262,21 +1275,34 @@ var vis = {
         var widgetData = this.widgets[id].data;
 
         try {
+            //noinspection JSJQueryEfficiency
+            var $widget = $('#' + id);
+            var canWidget;
             // Append html element to view
             if (widget.data && widget.data.oid) {
-                $view.append(can.view(widget.tpl, {
-                    val: this.states.attr(widget.data.oid + '.val'),
-                    //ts:  this.states.attr(widget.data.oid + '.ts'),
-                    //ack: this.states.attr(widget.data.oid + '.ack'),
-                    //lc:  this.states.attr(widget.data.oid + '.lc'),
-                    data: widgetData,
-                    view: view
-                }));
+                if ($widget.length) {
+                    canWidget = can.view(widget.tpl, {
+                        val: this.states.attr(widget.data.oid + '.val'),
+                        //ts:  this.states.attr(widget.data.oid + '.ts'),
+                        //ack: this.states.attr(widget.data.oid + '.ack'),
+                        //lc:  this.states.attr(widget.data.oid + '.lc'),
+                        data: widgetData,
+                        view: view
+                    });
+                    $widget.replaceWith(canWidget);
+                } else {
+                    $view.append(canWidget);
+                }
             } else if (widget.tpl) {
-                $view.append(can.view(widget.tpl, {
+                canWidget = can.view(widget.tpl, {
                     data: widgetData,
                     view: view
-                }));
+                });
+                if ($widget.length) {
+                    $widget.replaceWith(canWidget);
+                } else {
+                    $view.append(canWidget);
+                }
             } else {
                 console.error('Widget "' + id + '" is invalid. Please delete it.');
                 return;

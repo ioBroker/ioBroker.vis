@@ -621,7 +621,7 @@ vis = $.extend(true, vis, {
                     .replace('<div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div>', '')
                     .replace('<div></div>', '');
 
-                html = '<div id="prev_' + that.views[that.activeView].widgets[widID].tpl + '" style="position: relative; text-align: initial;padding: 4px ">' + html.toString() + '</div>';
+                html = '<div id="prev_' + that.views[that.activeView].widgets[widID].tpl + '" style="position: relative; text-align: initial; padding: 4px ">' + html.toString() + '</div>';
                 text += html;
             }
             $('body').append('<div id="dec_html_code"><textarea style="width: 100%; height: 100%">data-vis-prev=\'' + text + '\'</textarea></div>');
@@ -3481,7 +3481,22 @@ vis = $.extend(true, vis, {
         this.views[options.view].widgets[widgetId] = this.views[options.view].widgets[widgetId] || {};
 
         if (isViewExist) {
-            $('#visview_' + options.view).append(can.view(options.tpl, {
+            var $view = $('#visview_' + options.view);
+            var position = this.widgets[widgetId].style ? this.widgets[widgetId].style.position : '';
+            // if widget has relative position => insert it into relative div
+            if (this.editMode && (position === 'relative' || position === 'static' || position === 'sticky')) {
+                if (this.views[view].settings && this.views[view].settings.sizex) {
+                    var $relativeView = $view.find('.vis-edit-relative');
+                    if (!$relativeView.length) {
+                        $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
+                        $view = $view.find('.vis-edit-relative');
+                    } else {
+                        $view = $relativeView;
+                    }
+                }
+            }
+
+            $view.append(can.view(options.tpl, {
                 val:  this.states.attr(this.widgets[widgetId].data.oid + '.val'),
                 /*ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
                 ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
@@ -4024,11 +4039,6 @@ vis = $.extend(true, vis, {
         var origX, origY;
         var that = this;
         var draggableOptions;
-        if (obj.attr('data-vis-draggable')) draggableOptions = JSON.parse(obj.attr('data-vis-draggable'));
-
-        if (!draggableOptions) draggableOptions = {};
-
-        if (draggableOptions.disabled) return;
 
         draggableOptions = {
             cancel: false,
@@ -4126,7 +4136,7 @@ vis = $.extend(true, vis, {
                 var moveY = ui.position.top  - origY;
 
                 var xDiff;
-                var yDiff
+                var yDiff;
                 // if grid enabled
                 if (grid) {
                     xDiff = ui.position.left % grid;
@@ -4152,6 +4162,8 @@ vis = $.extend(true, vis, {
                 origY = ui.position.top;
 
                 for (var i = 0; i < that.activeWidgets.length; i++) {
+                    var position = that.views[that.activeView].widgets[that.activeWidgets[i]].style['position'];
+                    if (position === 'relative' || position === 'static' || position === 'sticky') continue;
                     var mWidget  = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
                     var pos = {
@@ -4202,98 +4214,116 @@ vis = $.extend(true, vis, {
 
             draggableOptions.grid = [this.gridWidth, this.gridWidth];
         }
-        obj.draggable(draggableOptions);
+
+        obj.each(function () {
+            var $this = $(this);
+            var wid = $this.attr('id');
+            if (that.views[that.activeView].widgets[wid].style['position'] === 'relative') return;
+
+            if ($this.attr('data-vis-draggable')) draggableOptions = JSON.parse($this.attr('data-vis-draggable'));
+            if (!draggableOptions) draggableOptions = {};
+
+            if (draggableOptions.disabled) return;
+
+            $this.draggable(draggableOptions);
+        });
     },
     resizable: function (obj) {
-        var resizableOptions;
         var that = this;
-        if (obj.attr('data-vis-resizable')) resizableOptions = JSON.parse(obj.attr('data-vis-resizable'));
 
-        // Why resizable brings the flag position: relative within?
-        obj.css({position: 'absolute'});
+        this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
+        if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
 
-        if (!resizableOptions) resizableOptions = {};
+        var stop   = function (event, ui) {
+            var widget = ui.helper.attr('id');
+            var w = ui.size.width;
+            var h = ui.size.height;
+            if (typeof w === 'string' && w.indexOf('px') === -1) {
+                w += 'px';
+            } else {
+                w = w.toFixed(0) + 'px';
+            }
+            if (typeof h === 'string' && h.indexOf('px') === -1) {
+                h += 'px';
+            } else {
+                h = h.toFixed(0) + 'px';
+            }
 
-        if (resizableOptions.disabled !== true) {
-            resizableOptions.disabled = false;
+            $('#inspect_css_width').val(w);
+            $('#inspect_css_height').val(h);
+            if (!that.views[that.activeView].widgets[widget]) return;
 
-            this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
-            if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
+            if (!that.views[that.activeView].widgets[widget].style) that.views[that.activeView].widgets[widget].style = {};
 
-            obj.resizable($.extend({
-                stop: function (event, ui) {
-                    var widget = ui.helper.attr('id');
-                    var w = ui.size.width;
-                    var h = ui.size.height;
-                    if (typeof w === 'string' && w.indexOf('px') === -1) {
-                        w += 'px';
+            that.views[that.activeView].widgets[widget].style.width  = w;
+            that.views[that.activeView].widgets[widget].style.height = h;
+
+            if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
+                that.reRenderWidgetEdit(widget);
+            }
+            var w = parseInt(ui.element.outerWidth(),  10);
+            var h = parseInt(ui.element.outerHeight(), 10);
+            $('.widget-helper').css({
+                width:  w + 2,
+                height: h + 2
+            });
+            that.save();
+            $('#vis_container .vis-leading-line').remove();
+        };
+        var resize = function (event, ui) {
+            var grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
+            // if grid enabled
+            var w = parseInt(ui.element.outerWidth(),  10);
+            var h = parseInt(ui.element.outerHeight(), 10);
+
+            if (that.views[that.activeView].settings.snapType == 2 && grid) {
+                // snap size to grid
+                var pos = ui.element.position();
+                var wDiff = (w + pos.left) % grid;
+                var hDiff = (h + pos.top)  % grid;
+                if (wDiff) {
+                    if (wDiff < grid / 2) {
+                        ui.element.width((w + wDiff));
                     } else {
-                        w = w.toFixed(0) + 'px';
+                        ui.element.width((w + grid - wDiff));
                     }
-                    if (typeof h === 'string' && h.indexOf('px') === -1) {
-                        h += 'px';
-                    } else {
-                        h = h.toFixed(0) + 'px';
-                    }
-
-                    $('#inspect_css_width').val(w);
-                    $('#inspect_css_height').val(h);
-                    if (!that.views[that.activeView].widgets[widget]) return;
-
-                    if (!that.views[that.activeView].widgets[widget].style) that.views[that.activeView].widgets[widget].style = {};
-
-                    that.views[that.activeView].widgets[widget].style.width  = w;
-                    that.views[that.activeView].widgets[widget].style.height = h;
-
-                    if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
-                        that.reRenderWidgetEdit(widget);
-                    }
-                    var w = parseInt(ui.element.outerWidth(),  10);
-                    var h = parseInt(ui.element.outerHeight(), 10);
-                    $('.widget-helper').css({
-                        width:  w + 2,
-                        height: h + 2
-                    });
-                    that.save();
-                    $('#vis_container .vis-leading-line').remove();
-                },
-                resize: function (event, ui) {
-                    var grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
-                    // if grid enabled
-                    var w = parseInt(ui.element.outerWidth(),  10);
-                    var h = parseInt(ui.element.outerHeight(), 10);
-
-                    if (that.views[that.activeView].settings.snapType == 2 && grid) {
-                        // snap size to grid
-                        var pos = ui.element.position();
-                        var wDiff = (w + pos.left) % grid;
-                        var hDiff = (h + pos.top)  % grid;
-                        if (wDiff) {
-                            if (wDiff < grid / 2) {
-                                ui.element.width((w + wDiff));
-                            } else {
-                                ui.element.width((w + grid - wDiff));
-                            }
-                            //$('.widget-helper').css('width', (w + grid - wDiff + 2));
-                        }
-
-                        if (hDiff) {
-                            if (hDiff < grid / 2) {
-                                ui.element.height((h + hDiff));
-                            } else {
-                                ui.element.height((h + grid - hDiff));
-                            }
-                            //$('.widget-helper').css('height', (h + grid - hDiff - 2));
-                        }
-                    }
-                    $('.widget-helper').css({
-                        width:  w + 2,
-                        height: h + 2
-                    });
-                    that.editShowLeadingLines();
+                    //$('.widget-helper').css('width', (w + grid - wDiff + 2));
                 }
-            }, resizableOptions));
-        }
+
+                if (hDiff) {
+                    if (hDiff < grid / 2) {
+                        ui.element.height((h + hDiff));
+                    } else {
+                        ui.element.height((h + grid - hDiff));
+                    }
+                    //$('.widget-helper').css('height', (h + grid - hDiff - 2));
+                }
+            }
+            $('.widget-helper').css({
+                width:  w + 2,
+                height: h + 2
+            });
+            that.editShowLeadingLines();
+        };
+        obj.each(function () {
+            var $this = $(this);
+            var wid = $this.attr('id');
+            var position = that.views[that.activeView].widgets[wid].style['position'];
+            if (position === 'relative' || position === 'static' || position === 'sticky') return;
+            var resizableOptions;
+            if (obj.attr('data-vis-resizable')) resizableOptions = JSON.parse(obj.attr('data-vis-resizable'));
+
+            if (!resizableOptions) resizableOptions = {};
+            if (resizableOptions.disabled !== true) resizableOptions.disabled = false;
+            if (resizableOptions.disabled) return;
+
+            // Why resizable brings the flag position: relative within?
+            $this.css({position: 'absolute'});
+
+            resizableOptions.stop   = stop;
+            resizableOptions.resize = resize;
+            $this.resizable(resizableOptions);
+        });
     },
     droppable: function (view) {
         var $view = $('#visview_' + view);
