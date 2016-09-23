@@ -169,7 +169,11 @@ Set the interval between the connection attempts if disconnected. If you will se
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.10.12 (2016-09-16)
+## Changelog### 0.10.13 (2016-09-23)
+* (bluefox) fixed errors for iPad 1
+* (bluefox) start wokring on relative positions
+
+### 0.10.12 (2016-09-16)
 * (bluefox) group specific visibility of widgets and views
 
 ### 0.10.11 (2016-09-15)

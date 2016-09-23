@@ -255,7 +255,7 @@ var servConn = {
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
                     var wait = setTimeout(function() {
-                        console.error('No answer from server')
+                        console.error('No answer from server');
                         window.location.reload();
                     }, 3000);
 
@@ -653,6 +653,7 @@ var servConn = {
         var items = [];
 
         for (var id in objects) {
+            if (!objects.hasOwnProperty(id)) continue;
             items.push(id);
         }
         items.sort();
@@ -742,12 +743,10 @@ var servConn = {
                                 that._fillChildren(data);
                                 that._objects = data;
                                 that._enums   = enums;
-                                that._groups  = groups;
 
                                 if (typeof storage !== 'undefined') {
                                     storage.set('objects',  data);
                                     storage.set('enums',    enums);
-                                    storage.set('groups',   groups);
                                     storage.set('timeSync', (new Date()).getTime());
                                 }
                             }
@@ -834,7 +833,7 @@ var servConn = {
                     }
                     list.sort();
 
-                    if (this._useStorage && typeof storage !== 'undefined') {
+                    if (that._useStorage && typeof storage !== 'undefined') {
                         var objects = storage.get('objects') || {};
 
                         for (var id_ in data) {
@@ -868,9 +867,9 @@ var servConn = {
                     }
 
                     if (callback) callback(err, list);
-                }.bind(this));
-            }.bind(this));
-        }.bind(this));
+                });
+            });
+        });
     },
     getObject:        function (id, useCache, callback) {
         if (typeof id === 'function') {
@@ -899,18 +898,20 @@ var servConn = {
             }
         }
 
+        var that = this;
+
         this._socket.emit('getObject', id, function (err, obj) {
             if (err) {
                 callback(err);
                 return;
             }
-            if (this._useStorage && typeof storage !== 'undefined') {
+            if (that._useStorage && typeof storage !== 'undefined') {
                 var objects = storage.get('objects') || {};
                 objects[id] = obj;
                 storage.set('objects', objects);
             }
             return callback(null, obj);
-        }.bind(this));
+        });
     },
     getGroups:        function (groupName, useCache, callback) {
         if (typeof groupName === 'function') {
@@ -938,7 +939,6 @@ var servConn = {
                 return callback(null, this._groups);
             }
         }
-
         if (this._type === 'local') {
             return callback(null, []);
         } else {
@@ -963,8 +963,8 @@ var servConn = {
                 }
                 
                 callback(null, groups);
-            }.bind(this));
-        }  
+            });
+        }
     },
     getEnums:         function (enumName, useCache, callback) {
         if (typeof enumName === 'function') {
@@ -1013,7 +1013,7 @@ var servConn = {
                     storage.set('enums', enums);
                 }
                 callback(null, enums);
-            }.bind(this));
+            });
         }
     },
     // return time when the objects were synchronized
@@ -1027,12 +1027,10 @@ var servConn = {
     addObject:        function (objId, obj, callback) {
         if (!this._isConnected) {
             console.log('No connection!');
-            return;
-        }
+        } else
         //socket.io
         if (this._socket === null) {
             console.log('socket.io not initialized');
-            return;
         }
     },
     delObject:        function (objId) {
@@ -1235,7 +1233,7 @@ var servConn = {
             }
             that.getStates(_hosts, function (err, states) {
                 for (var h in states) {
-                    if (states[h].val) {
+                    if (states.hasOwnProperty(h) && states[h].val) {
                         cb(h.substring(0, h.length - '.alive'.length));
                         return;
                     }

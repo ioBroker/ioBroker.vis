@@ -571,11 +571,11 @@ vis = $.extend(true, vis, {
         $('#snap_type').selectmenu({
             change: function () {
                 var aw = JSON.stringify(that.activeWidgets);
-                that.views[that.activeView].settings.snapType = $(this).val();
+                that.views[that.activeView].settings.snapType = parseInt($(this).val(), 10);
 
-                $('#grid_size').prop('disabled', that.views[that.activeView].settings.snapType != 2);
+                $('#grid_size').prop('disabled', that.views[that.activeView].settings.snapType !== 2);
 
-                if (that.views[that.activeView].settings.snapType == 2 && !$('#grid_size').val()) $('#grid_size').val(10).trigger('change');
+                if (that.views[that.activeView].settings.snapType === 2 && !$('#grid_size').val()) $('#grid_size').val(10).trigger('change');
                 that.editSetGrid();
                 that.save();
                 that.inspectWidgets([]);
@@ -708,7 +708,7 @@ vis = $.extend(true, vis, {
     },
     editSetGrid: function () {
         var grid = parseInt(this.views[this.activeView].settings.gridSize, 10);
-        if (this.views[this.activeView].settings.snapType == 2 && grid > 2) {
+        if (this.views[this.activeView].settings.snapType === 2 && grid > 2) {
             var $grid = $('#vis_container .vis-grid');
             if (!$grid.length) {
                 $('#vis_container').prepend('<div class="vis-grid"></div>');
@@ -2943,6 +2943,65 @@ vis = $.extend(true, vis, {
             storage.set('visConfig', JSON.stringify(this.config));
         }
     },
+    /**
+     * Change order of widgets in th e view.
+     *
+     * @view {string} view name. If empty then activeView
+     * @wid {string} widget name.
+     * @direction {string} "next" or "prev". If no orderWid will be given, so the order will change according to actual position.
+     * @orderWid {string} optional name of widget after (next) or before (prev) of which
+     */
+    editWidgetOrder: function (view, wid, direction, orderWid) {
+        view = view || this.activeView;
+        if (!orderWid) {
+            if (direction === 'next' || direction === 'n') {
+                for (var w in this.views[view].widgets) {
+                    if (!this.views[view].widgets.hasOwnProperty(w)) continue;
+                    if (orderWid === true) {
+                        var position = this.views[view].widgets[w].style.position;
+                        if (position === 'relative' || position === 'static' || position === 'sticky') {
+                            orderWid = w;
+                            break;
+                        }
+                    }
+                    if (w === wid) orderWid = true;
+                }
+            } else {
+                for (var w in this.views[view].widgets) {
+                    if (!this.views[view].widgets.hasOwnProperty(w)) continue;
+                    if (w === wid) break;
+
+                    var position = this.views[view].widgets[w].style.position;
+                    if (position === 'relative' || position === 'static' || position === 'sticky') {
+                        orderWid = w;
+                    }
+                }
+            }
+        }
+
+        if (orderWid && orderWid !== true && this.views[view].widgets[orderWid]) {
+            var newOrder = {};
+            for (var w in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(w)) continue;
+                if (w === wid) continue;
+                if (w === orderWid) {
+                    if (direction === 'next' || direction === 'n') {
+                        newOrder[w] = this.views[view].widgets[w];
+                        newOrder[wid] = this.views[view].widgets[wid];
+                        $('#' + wid).detach().insertAfter('#' + w);
+                    } else {
+                        newOrder[wid] = this.views[view].widgets[wid];
+                        newOrder[w] = this.views[view].widgets[w];
+                        $('#' + wid).detach().insertBefore('#' + w);
+                    }
+                } else {
+                    newOrder[w] = this.views[view].widgets[w];
+                }
+            }
+            this.views[view].widgets = null;
+            this.views[view].widgets = newOrder;
+        }
+    },
     confirmMessage: function (message, title, icon, width, callback) {
         if (typeof width === 'function') {
             callback = width;
@@ -3447,14 +3506,14 @@ vis = $.extend(true, vis, {
         if (!options.view) options.view = this.activeView;
 
         var isSelectWidget = (options.wid === undefined);
-        var isViewExist    = (document.getElementById('visview_' + options.view) !== null);
+        var $view          =  $('#visview_' + options.view);
         var renderVisible  = options.data.renderVisible;
 
         if (renderVisible) delete options.data.renderVisible;
 
-        if (isSelectWidget && !isViewExist) {
+        if (isSelectWidget && !$view.length) {
             this.renderView(options.view, true, false);
-            isViewExist = true;
+            $view = $('#visview_' + options.view);
         }
 
         var widgetId = options.wid || this.nextWidget();
@@ -3480,12 +3539,11 @@ vis = $.extend(true, vis, {
         this.views[options.view].widgets = this.views[options.view].widgets || {};
         this.views[options.view].widgets[widgetId] = this.views[options.view].widgets[widgetId] || {};
 
-        if (isViewExist) {
-            var $view = $('#visview_' + options.view);
-            var position = this.widgets[widgetId].style ? this.widgets[widgetId].style.position : '';
+        if ($view.length) {
+            var position = options.style ? options.style.position : '';
             // if widget has relative position => insert it into relative div
             if (this.editMode && (position === 'relative' || position === 'static' || position === 'sticky')) {
-                if (this.views[view].settings && this.views[view].settings.sizex) {
+                if (this.views[options.view].settings && this.views[options.view].settings.sizex) {
                     var $relativeView = $view.find('.vis-edit-relative');
                     if (!$relativeView.length) {
                         $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
@@ -3963,7 +4021,7 @@ vis = $.extend(true, vis, {
 
             $('#grid_size').val(this.views[view].settings.gridSize || '').trigger('change');
             $('#snap_type').val(this.views[view].settings.snapType || 0).selectmenu('refresh');
-            $('#grid_size').prop('disabled', this.views[view].settings.snapType != 2);
+            $('#grid_size').prop('disabled', this.views[view].settings.snapType !== 2);
 
             if (this.views[view].settings.sizex) {
                 $('.vis-screen-default').prop('checked', this.views[view].settings.useAsDefault);
@@ -4205,10 +4263,10 @@ vis = $.extend(true, vis, {
                 that.editShowLeadingLines();
             }
         };
-        if (this.views[this.activeView].settings.snapType == 1) {
+        if (this.views[this.activeView].settings.snapType === 1) {
             draggableOptions.snap = '#vis_container div.vis-widget';
         } else
-        if (this.views[this.activeView].settings.snapType == 2) {
+        if (this.views[this.activeView].settings.snapType === 2) {
             this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
             if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
 
@@ -4236,8 +4294,8 @@ vis = $.extend(true, vis, {
 
         var stop   = function (event, ui) {
             var widget = ui.helper.attr('id');
-            var w = ui.size.width;
-            var h = ui.size.height;
+            var w = ui.element.width();
+            var h = ui.element.height();
             if (typeof w === 'string' && w.indexOf('px') === -1) {
                 w += 'px';
             } else {
@@ -4261,8 +4319,8 @@ vis = $.extend(true, vis, {
             if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
                 that.reRenderWidgetEdit(widget);
             }
-            var w = parseInt(ui.element.outerWidth(),  10);
-            var h = parseInt(ui.element.outerHeight(), 10);
+            w = parseInt(ui.element.outerWidth(),  10);
+            h = parseInt(ui.element.outerHeight(), 10);
             $('.widget-helper').css({
                 width:  w + 2,
                 height: h + 2
@@ -4272,37 +4330,39 @@ vis = $.extend(true, vis, {
         };
         var resize = function (event, ui) {
             var grid = parseInt(that.views[that.activeView].settings.gridSize, 10);
-            // if grid enabled
-            var w = parseInt(ui.element.outerWidth(),  10);
-            var h = parseInt(ui.element.outerHeight(), 10);
 
-            if (that.views[that.activeView].settings.snapType == 2 && grid) {
+            // if grid enabled
+            if (that.views[that.activeView].settings.snapType === 2 && grid) {
+                var oldSize = ui.oldSize || ui.originalSize;
+
                 // snap size to grid
-                var pos = ui.element.position();
-                var wDiff = (w + pos.left) % grid;
-                var hDiff = (h + pos.top)  % grid;
-                if (wDiff) {
+                var pos = ui.originalPosition;
+                var wDiff = (ui.size.width + pos.left) % grid;
+                var hDiff = (ui.size.height + pos.top) % grid;
+
+                if (wDiff && oldSize.width !== ui.size.width) {
                     if (wDiff < grid / 2) {
-                        ui.element.width((w + wDiff));
+                        ui.element.width(ui.size.width - wDiff);
                     } else {
-                        ui.element.width((w + grid - wDiff));
+                        ui.element.width(ui.size.width + grid - wDiff);
                     }
                     //$('.widget-helper').css('width', (w + grid - wDiff + 2));
                 }
 
-                if (hDiff) {
+                if (hDiff && oldSize.height !== ui.size.height) {
                     if (hDiff < grid / 2) {
-                        ui.element.height((h + hDiff));
+                        ui.element.height(ui.size.height - hDiff);
                     } else {
-                        ui.element.height((h + grid - hDiff));
+                        ui.element.height(ui.size.height + grid - hDiff);
                     }
                     //$('.widget-helper').css('height', (h + grid - hDiff - 2));
                 }
             }
             $('.widget-helper').css({
-                width:  w + 2,
-                height: h + 2
+                width:  ui.size.width  + 2,
+                height: ui.size.height + 2
             });
+            ui.oldSize = {width: ui.size.width, height:  ui.size.height};
             that.editShowLeadingLines();
         };
         obj.each(function () {
@@ -4954,6 +5014,7 @@ vis = $.extend(true, vis, {
         if (!$focused.length && this.activeWidgets.length) {
             var what = null;
             var shift = 0;
+            var direction = 'n';
             key = parseInt(key, 10);
             if (isSize) {
                 if (key === 39) {
@@ -4982,6 +5043,7 @@ vis = $.extend(true, vis, {
                     // Left
                     what = 'left';
                     shift = -1;
+                    direction = 'p';
                 } else if (key === 40) {
                     // Down
                     what = 'top';
@@ -4990,6 +5052,7 @@ vis = $.extend(true, vis, {
                     // Up
                     what = 'top';
                     shift = -1;
+                    direction = 'p';
                 }
             }
 
@@ -4998,17 +5061,22 @@ vis = $.extend(true, vis, {
             for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
                 var widgetId = this.activeWidgets[i];
                 var $actualWidget = $('#' + widgetId);
-                if (this.views[this.activeView].widgets[widgetId].style[what] === undefined && $actualWidget.length) {
-                    this.views[this.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
-                }
-
-                this.views[this.activeView].widgets[widgetId].style[what] = (parseInt(this.views[this.activeView].widgets[widgetId].style[what], 10) + shift) + 'px';
-
-                if ($actualWidget.length) {
-                    var setCss = {};
-                    setCss[what] = this.views[this.activeView].widgets[widgetId].style[what];
-                    $actualWidget.css(setCss);
+                var position = this.views[this.activeView].widgets[widgetId].style.position;
+                if (!isSize && (position === 'relative' || position === 'static' || position === 'sticky')) {
+                    this.editWidgetOrder(null, widgetId, direction);
                     this.showWidgetHelper(widgetId, true);
+                } else {
+                    if (this.views[this.activeView].widgets[widgetId].style[what] === undefined && $actualWidget.length) {
+                        this.views[this.activeView].widgets[widgetId].style[what] = $actualWidget.css(what);
+                    }
+
+                    this.views[this.activeView].widgets[widgetId].style[what] = (parseInt(this.views[this.activeView].widgets[widgetId].style[what], 10) + shift) + 'px';
+                    if ($actualWidget.length) {
+                        var setCss = {};
+                        setCss[what] = this.views[this.activeView].widgets[widgetId].style[what];
+                        $actualWidget.css(setCss);
+                        this.showWidgetHelper(widgetId, true);
+                    }
                 }
             }
             this.editShowLeadingLines();
