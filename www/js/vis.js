@@ -1277,18 +1277,25 @@ var vis = {
         try {
             //noinspection JSJQueryEfficiency
             var $widget = $('#' + id);
+            if ($widget.length) {
+                var destroy = $widget.data('destroy');
+                if (typeof destroy === 'function') destroy(id, $widget);
+                
+                $widget.html('<div></div>').attr('id', id + '_removed');
+            }
+
             var canWidget;
             // Append html element to view
             if (widget.data && widget.data.oid) {
+                canWidget = can.view(widget.tpl, {
+                    val: this.states.attr(widget.data.oid + '.val'),
+                    //ts:  this.states.attr(widget.data.oid + '.ts'),
+                    //ack: this.states.attr(widget.data.oid + '.ack'),
+                    //lc:  this.states.attr(widget.data.oid + '.lc'),
+                    data: widgetData,
+                    view: view
+                });
                 if ($widget.length) {
-                    canWidget = can.view(widget.tpl, {
-                        val: this.states.attr(widget.data.oid + '.val'),
-                        //ts:  this.states.attr(widget.data.oid + '.ts'),
-                        //ack: this.states.attr(widget.data.oid + '.ack'),
-                        //lc:  this.states.attr(widget.data.oid + '.lc'),
-                        data: widgetData,
-                        view: view
-                    });
                     $widget.replaceWith(canWidget);
                 } else {
                     $view.append(canWidget);
