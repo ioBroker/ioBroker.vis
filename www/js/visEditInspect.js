@@ -57,6 +57,7 @@
 //              slider,min,max,step - Default step is ((max - min) / 100)
 //              select,value1,value2,... - dropdown select
 //              nselect,value1,value2,... - same as select, but without translation of items
+//              auto,value1,value2,... - autocomplete
 //              style,fileFilter,nameFilter,attrFilter
 //              custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
 //              group.name - define new or old group. All following attributes belongs to new group till new group.xyz
@@ -688,6 +689,7 @@ vis = $.extend(true, vis, {
                 if (oldVal !== 'relative' && oldVal !== 'static' && oldVal !== 'sticky') {
                     $(this).data('old-value', val);
                     // disable
+                    $('#inspect_css_display').prop('disabled', false);
                     $('#inspect_css_left').val('').prop('disabled', true).trigger('change');
                     $('#inspect_css_top').val('').prop('disabled', true).trigger('change');
                     setTimeout(function () {
@@ -702,6 +704,7 @@ vis = $.extend(true, vis, {
                     // enable
                     $('#inspect_css_left').prop('disabled', false).val('0px').trigger('change');
                     $('#inspect_css_top').prop('disabled', false).val('0px').trigger('change');
+                    $('#inspect_css_display').prop('disabled', true);
 
                     setTimeout(function () {
                         for (var r = 0; r < that.activeWidgets.length; r++) {

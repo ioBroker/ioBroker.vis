@@ -365,6 +365,11 @@ $.extend(systemDictionary, {
         "de": "Löschen aus RAM nicht aktive Views:",
         "ru": "Стирать из памяти неактивные страницы:"
     },
+    "Changes are not saved. Are you sure?": {
+        "en": "Changes are not saved. Are you sure?",
+        "de": "Änderungen sind nicht gespeichert. Sicher?",
+        "ru": "Изменения не сохранены. Вы уверены?"
+    },
     "never":                {"en": "never",             "de": "nie",                    "ru": "никогда"},
     "1 second":             {"en": "1 second",          "de": "1 Sekunde",              "ru": "1 секунда"},
     "2 seconds":            {"en": "2 seconds",         "de": "2 Sekunden",             "ru": "2 секунды"},
@@ -583,6 +588,8 @@ $.extend(systemDictionary, {
         "ru": "Не могу открыть новое всплывающее окно"
     },
 
+    "css_position":         {"en": "position",          "de": "position",               "ru": "position"},
+    "css_display":          {"en": "display",           "de": "display",                "ru": "display"},
     "css_left":             {"en": "left",              "de": "left",                   "ru": "left"},
     "css_top":              {"en": "top",               "de": "top",                    "ru": "top"},
     "css_width":            {"en": "width",             "de": "width",                  "ru": "width"},

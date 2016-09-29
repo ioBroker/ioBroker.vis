@@ -1231,9 +1231,10 @@ var vis = {
         if (!$view.length) return;
 
         var widget = this.views[view].widgets[id];
+        var isRelative = widget && widget.style && (widget.style.position === 'relative' || widget.style.position === 'static' || widget.style.position === 'sticky');
 
         // if widget has relative position => insert it into relative div
-        if (this.editMode && widget && widget.style && (widget.style.position === 'relative' || widget.style.position === 'static' || widget.style.position === 'sticky')) {
+        if (this.editMode && isRelative) {
             if (this.views[view].settings && this.views[view].settings.sizex) {
                 var $relativeView = $view.find('.vis-edit-relative');
                 if (!$relativeView.length) {
@@ -1280,8 +1281,12 @@ var vis = {
             if ($widget.length) {
                 var destroy = $widget.data('destroy');
                 if (typeof destroy === 'function') destroy(id, $widget);
-                
-                $widget.html('<div></div>').attr('id', id + '_removed');
+                if (isRelative && !$view.find('#' + id).length) {
+                    $widget.remove();
+                    $widget.length = 0;
+                } else {
+                    $widget.html('<div></div>').attr('id', id + '_removed');
+                }
             }
 
             var canWidget;
