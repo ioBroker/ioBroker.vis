@@ -1233,7 +1233,7 @@ var servConn = {
             }
             that.getStates(_hosts, function (err, states) {
                 for (var h in states) {
-                    if (states.hasOwnProperty(h) && states[h].val) {
+                    if (states.hasOwnProperty(h) && (states[h].val === 'true' || states[h].val === true)) {
                         cb(h.substring(0, h.length - '.alive'.length));
                         return;
                     }

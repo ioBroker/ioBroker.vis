@@ -2387,7 +2387,7 @@ var vis = {
 
         this.conn.getHistory(id, options, callback);
     },
-    findAndDestoryViews: function () {
+    findAndDestroyViews: function () {
         if (this.destroyTimeout) {
             clearTimeout(this.destroyTimeout);
             this.destroyTimeout = null;
@@ -2405,7 +2405,7 @@ var vis = {
                 });
             }
         }
-
+        var that = this;
         $createdViews.each(function () {
             var view = $(this).attr('id').substring('visview_'.length);
             // If this view is used as container
@@ -2413,6 +2413,38 @@ var vis = {
 
             console.debug('Destroy ' + view);
 
+            // Get all widgets and try to destroy them
+            for (var wid in that.views[view].widgets) {
+                if (!that.views[view].widgets.hasOwnProperty(wid)) continue;
+                var $widget = $('#' + wid);
+                if ($widget.length) {
+                    try {
+                        // get array of bound OIDs
+                        var bound = $widget.data('bound');
+                        if (bound) {
+                            var bindHandler = $widget.data('bindHandler');
+                            for (var b = 0; b < bound.length; b++) {
+                                if (typeof bindHandler === 'function') {
+                                    that.states.unbind(bound[b], bindHandler);
+                                } else {
+                                    that.states.unbind(bound[b], bindHandler[b]);
+                                }
+                            }
+                            $widget.data('bindHandler', null);
+                            $widget.data('bound', null);
+                        }
+                        // If destroy function exists => destroy it
+                        var destroy = $widget.data('destroy');
+                        if (typeof destroy === 'function') {
+
+                            destroy(wid, $widget);
+                        }
+                    } catch (e) {
+                        console.error('Cannot destroy "' + wid + '": ' + e);
+                    }
+                }
+            }
+            
             $(this).remove();
         });
     },
@@ -2425,7 +2457,7 @@ var vis = {
         if (timeout) {
             this.destroyTimeout = _setTimeout(function (that) {
                 that.destroyTimeout = null;
-                that.findAndDestoryViews();
+                that.findAndDestroyViews();
             }, timeout, this);
         }
     }
