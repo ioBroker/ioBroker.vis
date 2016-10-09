@@ -167,6 +167,9 @@ Set the interval between the connection attempts if disconnected. If you will se
 
 ### Dark reconnect screen
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
+
+Notice that this settings is valid only for reconnection and not for the first connect.
+
 ![Dark](img/dark_screen.png)
 
 ## Changelog
