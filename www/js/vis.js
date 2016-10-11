@@ -260,7 +260,7 @@ var vis = {
         // Convert visConfig.widgetSets to object for easier dependency search
         var widgetSetsObj = {};
         for (var i = 0; i < visConfig.widgetSets.length; i++) {
-            if (typeof visConfig.widgetSets[i] == "object") {
+            if (typeof visConfig.widgetSets[i] === 'object') {
                 if (!visConfig.widgetSets[i].depends) {
                     visConfig.widgetSets[i].depends = [];
                 }
@@ -279,7 +279,7 @@ var vis = {
                     // Views are not yet converted and have no widgetSet information)
                     return null;
 
-                } else if (widgetSets.indexOf(this.views[view].widgets[id].widgetSet) == -1) {
+                } else if (widgetSets.indexOf(this.views[view].widgets[id].widgetSet) === -1) {
 
                     var wset = this.views[view].widgets[id].widgetSet;
                     widgetSets.push(wset);
@@ -287,7 +287,7 @@ var vis = {
                     // Add dependencies
                     if (widgetSetsObj[wset]) {
                         for (var u = 0, ulen = widgetSetsObj[wset].depends.length; u < ulen; u++) {
-                            if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) == -1) {
+                            if (widgetSets.indexOf(widgetSetsObj[wset].depends[u]) === -1) {
                                 widgetSets.push(widgetSetsObj[wset].depends[u]);
                             }
                         }
@@ -473,7 +473,7 @@ var vis = {
                                     }
                                 }
                             }
-                        } else if (attr !== 'oidTrueValue' && attr != 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
+                        } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
                             if (data[attr] !== 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
 
                             // Visibility binding
@@ -496,7 +496,7 @@ var vis = {
                 // build bindings for styles
                 if (style) {
                     for (var css in style) {
-                        if (typeof style[css] == 'string') {
+                        if (typeof style[css] === 'string') {
                             var oids = this.extractBinding(style[css]);
                             if (oids) {
                                 for (var t = 0; t < oids.length; t++) {
@@ -546,7 +546,7 @@ var vis = {
                         continue;
                     }
                 } else {
-                    if (widgetSets && widgetSets.indexOf(name) == -1) widgetSets.push(name);
+                    if (widgetSets && widgetSets.indexOf(name) === -1) widgetSets.push(name);
                 }
 
                 arrSets[arrSets.length] = name;
@@ -618,7 +618,7 @@ var vis = {
             this.activeView = this.findNearestResolution(true);
 
             // Create default view in demo mode
-            if (typeof io == 'undefined') {
+            if (typeof io === 'undefined') {
                 if (!this.activeView) {
                     if (!this.editMode) {
                         window.alert(_('error - View doesn\'t exist'));
@@ -821,7 +821,7 @@ var vis = {
             if (!that.views[cview]) {
                 $(this).append('error: view not found.');
                 return false;
-            } else if (cview == view) {
+            } else if (cview === view) {
                 $(this).append('error: view container recursion.');
                 return false;
             }
@@ -866,7 +866,7 @@ var vis = {
     addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
 
-        if (this.calcCommonStyle() == theme) return;
+        if (this.calcCommonStyle() === theme) return;
 
         $.ajax({
             url: ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
@@ -934,7 +934,7 @@ var vis = {
                 }
             }, parseInt(showDuration) + 10);
 
-        } else if (filter == "$") {
+        } else if (filter === '$') {
             // hide all
             for (widget in widgets) {
                 mWidget = document.getElementById(widget);
@@ -1001,11 +1001,11 @@ var vis = {
             if (!condition || value === undefined) return (condition === 'not exist') ? true : false;
 
             var t = typeof val;
-            if (t == 'boolean' || val === 'false' || val === 'true') {
+            if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
-            } else if (t == 'number') {
+            } else if (t === 'number') {
                 value = parseFloat(value);
-            }  else if (t == 'object') {
+            }  else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
@@ -1013,19 +1013,19 @@ var vis = {
                 case '==':
                     value = value.toString();
                     val   = val.toString();
-                    if (val   == '1') val   = 'true';
-                    if (value == '1') value = 'true';
-                    if (val   == '0') val   = 'false';
-                    if (value == '0') value = 'false';
-                    return value == val;
+                    if (val   === '1') val   = 'true';
+                    if (value === '1') value = 'true';
+                    if (val   === '0') val   = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
                 case '!=':
                     value = value.toString();
                     val   = val.toString();
-                    if (val   == '1') val   = 'true';
-                    if (value == '1') value = 'true';
-                    if (val   == '0') val   = 'false';
-                    if (value == '0') value = 'false';
-                    return value != val;
+                    if (val   === '1') val   = 'true';
+                    if (value === '1') value = 'true';
+                    if (val   === '0') val   = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
                 case '>=':
                     return val >= value;
                 case '<=':
@@ -1108,7 +1108,7 @@ var vis = {
                                     newVal = null;
                                     return;
                                 }
-                            } else if (gesture == 'swiping' || gesture == 'rotating' || gesture == 'pinching') {
+                            } else if (gesture === 'swiping' || gesture === 'rotating' || gesture === 'pinching') {
                                 if (newVal === null){
                                     $indicator = $('#' + wdata['gestures-indicator']);
                                     // create default indicator
@@ -1141,7 +1141,7 @@ var vis = {
                                     });
 
                                     $(document).on('mouseup.gesture touchend.gesture', function () {
-                                        if (newVal != null) {
+                                        if (newVal !== null) {
                                             that.setValue(oid, newVal);
                                             newVal = null;
                                         }
@@ -1270,7 +1270,7 @@ var vis = {
             return;
         }
         // Register oid to detect changes
-        // if (widget.data.oid != 'nothing_selected')
+        // if (widget.data.oid !== 'nothing_selected')
         //   $.homematic("advisState", widget.data.oid, widget.data.hm_wid);
 
         var widgetData = this.widgets[id].data;
@@ -1399,7 +1399,7 @@ var vis = {
         }
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
-        if (hideOptions.effect == 'show') effect = false;
+        if (hideOptions.effect === 'show') effect = false;
 
         if (!this.views[view]) {
             view = null;
@@ -1427,7 +1427,7 @@ var vis = {
                         if (that.views[view].rerender) {
                             that.views[view].rerender = false;
                             for (var id in that.views[view].widgets) {
-                                if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
+                                if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
                                     that.views[view].widgets[id].renderVisible)
                                     that.renderWidget(view, id);
                             }
@@ -1447,7 +1447,7 @@ var vis = {
                                         continue;
                                     }
 
-                                    if (that.views[view].widgets[id].tpl.substring(0, 5) == "tplHq" ||
+                                    if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
                                         that.views[view].widgets[id].renderVisible)
                                         that.renderWidget(view, id);
                                 }
@@ -1520,7 +1520,7 @@ var vis = {
         this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
             if (err) {
                 window.alert(that.projectPrefix + 'vis-views.json ' + err);
-                if (err == 'permissionError') {
+                if (err === 'permissionError') {
                     that.showWaitScreen(true, '', _('Loading stopped', location.protocol + '//' + location.host, location.protocol + '//' + location.host), 0);
                     // do nothing any more
                     return;
@@ -1569,6 +1569,10 @@ var vis = {
         this.wakeUpCallbacks.push(callback);
     },
     showMessage: function (message, title, icon, width, callback) {
+        // load some theme to show message
+        if (!this.editMode && !$('#commonTheme').length) {
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+        }
         if (typeof icon === 'number') {
             callback = width;
             width = icon;
@@ -1681,8 +1685,8 @@ var vis = {
     },
     registerOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-            if (this.onChangeCallbacks[i].callback == callback &&
-                this.onChangeCallbacks[i].arg == arg) {
+            if (this.onChangeCallbacks[i].callback === callback &&
+                this.onChangeCallbacks[i].arg === arg) {
                 return;
             }
         }
@@ -1690,8 +1694,8 @@ var vis = {
     },
     unregisterOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-            if (this.onChangeCallbacks[i].callback == callback &&
-                (arg === undefined || this.onChangeCallbacks[i].arg == arg)) {
+            if (this.onChangeCallbacks[i].callback === callback &&
+                (arg === undefined || this.onChangeCallbacks[i].arg === arg)) {
                 this.onChangeCallbacks.slice(i, 1);
                 return;
             }
@@ -1722,19 +1726,19 @@ var vis = {
                 case '==':
                     value = value.toString();
                     val   = val.toString();
-                    if (val   == '1') val   = 'true';
-                    if (value == '1') value = 'true';
-                    if (val   == '0') val   = 'false';
-                    if (value == '0') value = 'false';
-                    return value != val;
+                    if (val   === '1') val   = 'true';
+                    if (value === '1') value = 'true';
+                    if (val   === '0') val   = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
                 case '!=':
                     value = value.toString();
                     val   = val.toString();
-                    if (val   == '1') val   = 'true';
-                    if (value == '1') value = 'true';
-                    if (val   == '0') val   = 'false';
-                    if (value == '0') value = 'false';
-                    return value == val;
+                    if (val   === '1') val   = 'true';
+                    if (value === '1') value = 'true';
+                    if (val   === '0') val   = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
                 case '>=':
                     return val < value;
                 case '<=':
@@ -1778,13 +1782,15 @@ var vis = {
                 return this.commonStyle;
             }
             var styles = {};
-            for (var view in this.views) {
-                if (view === '___settings') continue;
-                if (!this.views[view] || !this.views[view].settings.theme) continue;
-                if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
-                    styles[this.views[view].settings.theme]++;
-                } else {
-                    styles[this.views[view].settings.theme] = 1;
+            if (this.views) {
+                for (var view in this.views) {
+                    if (view === '___settings') continue;
+                    if (!this.views[view] || !this.views[view].settings.theme) continue;
+                    if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
+                        styles[this.views[view].settings.theme]++;
+                    } else {
+                        styles[this.views[view].settings.theme] = 1;
+                    }
                 }
             }
             var max = 0;
@@ -1819,7 +1825,7 @@ var vis = {
             isSeconds = true;
             duration = true;
         }
-        if (typeof isSeconds != 'boolean') {
+        if (typeof isSeconds !== 'boolean') {
             _format = isSeconds;
             isSeconds = false;
         }
@@ -1828,12 +1834,12 @@ var vis = {
 
         if (!dateObj) return '';
         var text = typeof dateObj;
-        if (text == 'string') {
+        if (text === 'string') {
             var pos = dateObj.indexOf('.');
-            if (pos != -1) dateObj = dateObj.substring(0, pos);
+            if (pos !== -1) dateObj = dateObj.substring(0, pos);
             return dateObj;
         }
-        if (text != 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
+        if (text !== 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
         if (duration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
 
         var validFormatChars = 'YJГMDДhSчmмsс';
@@ -1849,12 +1855,12 @@ var vis = {
                 case 'JJ':
                 case 'ГГ':
                     v = dateObj.getFullYear();
-                    if (s.length == 2) v %= 100;
+                    if (s.length === 2) v %= 100;
                     break;
                 case 'MM':
                 case 'M':
                     v = dateObj.getMonth() + 1;
-                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
                 case 'DD':
                 case 'TT':
@@ -1863,7 +1869,7 @@ var vis = {
                 case 'ДД':
                 case 'Д':
                     v = dateObj.getDate();
-                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
                 case 'hh':
                 case 'SS':
@@ -1872,14 +1878,14 @@ var vis = {
                 case 'чч':
                 case 'ч':
                     v = dateObj.getHours();
-                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
                 case 'mm':
                 case 'm':
                 case 'мм':
                 case 'м':
                     v = dateObj.getMinutes();
-                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
                 case 'sss':
                 case 'ccc':
@@ -1896,7 +1902,7 @@ var vis = {
                 case 'cc':
                 case 'c':
                     v = dateObj.getSeconds();
-                    if ((v < 10) && (s.length == 2)) v = '0' + v;
+                    if ((v < 10) && (s.length === 2)) v = '0' + v;
                     v = v.toString();
                     break;
             }
@@ -1924,9 +1930,9 @@ var vis = {
         if (oid) {
             for (var p = 0; p < oid.length; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
-                if (_oid[0] == '{') continue;
+                if (_oid[0] === '{') continue;
                 // If first symbol '"' => it is JSON
-                if (_oid && _oid[0] == '"') continue;
+                if (_oid && _oid[0] === '"') continue;
                 var parts = _oid.split(';');
                 result = result || [];
                 var systemOid = parts[0].trim();
@@ -1935,11 +1941,11 @@ var vis = {
                 var test1 = visOid.substring(visOid.length - 4);
                 var test2 = visOid.substring(visOid.length - 3);
 
-                if (visOid && test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+                if (visOid && test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
                     visOid = visOid + '.val';
                 }
 
-                var isSeconds = (test2 == '.ts' || test2 == '.lc');
+                var isSeconds = (test2 === '.ts' || test2 === '.lc');
 
                 var test1 = systemOid.substring(systemOid.length - 4);
                 var test2 = systemOid.substring(systemOid.length - 3);
@@ -1950,7 +1956,7 @@ var vis = {
                     systemOid = systemOid.substring(0, systemOid.length - 3);
                 }
                 var operations = null;
-                var isEval = visOid.match(/[\d\w_\.]+:[\d\w_\.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') != -1) && (visOid.indexOf('::') == -1);
+                var isEval = visOid.match(/[\d\w_\.]+:[\d\w_\.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
                 if (isEval) {
                     var xx = visOid.split(':', 2);
@@ -1972,14 +1978,14 @@ var vis = {
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
-                        if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') != -1 && parts[u].indexOf('::') == -1) {
+                        if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                             var _systemOid = parts[u].trim();
                             var _visOid    = _systemOid;
 
                             var test1 = _visOid.substring(_visOid.length - 4);
                             var test2 = _visOid.substring(_visOid.length - 3);
 
-                            if (test1 !== '.val' && test2 != '.ts' && test2 != '.lc' && test1 != '.ack') {
+                            if (test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
                                 _visOid = _visOid + '.val';
                             }
 
@@ -2038,14 +2044,14 @@ var vis = {
                                 }
                             } else
                             // date formatting
-                            if (parse[1] == 'date') {
+                            if (parse[1] === 'date') {
                                 operations = operations || [];
                                 parse[2] = parse[2].trim();
                                 parse[2] = parse[2].substring(1, parse[2].length - 1);
                                 operations.push({op: parse[1], arg: parse[2]});
                             } else
                             // value formatting
-                            if (parse[1] == 'value') {
+                            if (parse[1] === 'value') {
                                 operations = operations || [];
                                 var param = (parse[2]===undefined) ? '(2)' : parse[2];
                                 param = param.trim();
@@ -2153,7 +2159,7 @@ var vis = {
                             }
                             string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                         }
-                        if (oids[t].operations[k].formula.indexOf('widget.') != -1) {
+                        if (oids[t].operations[k].formula.indexOf('widget.') !== -1) {
                             string += 'var widget = ' + JSON.stringify(widget) + ';';
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
@@ -2328,7 +2334,7 @@ var vis = {
         this.resolutionTimer = setTimeout(function () {
             that.resolutionTimer = null;
             var view = that.findNearestResolution();
-            if (view && view != that.activeView) {
+            if (view && view !== that.activeView) {
                 that.changeView(view);
             }
         }, 200);
@@ -2524,7 +2530,7 @@ function main($) {
     if (args) {
         vis.projectPrefix = 'main/';
         var pos = args.indexOf('#');
-        if (pos != -1) {
+        if (pos !== -1) {
             args = args.substring(0, pos);
         }
         args = args.split('&');
@@ -2614,10 +2620,10 @@ function main($) {
 
         if (availVersionArr[0] > instVersionArr[0]) {
             updateAvailable = true;
-        } else if (availVersionArr[0] == instVersionArr[0]) {
+        } else if (availVersionArr[0] === instVersionArr[0]) {
             if (availVersionArr[1] > instVersionArr[1]) {
                 updateAvailable = true;
-            } else if (availVersionArr[1] == instVersionArr[1]) {
+            } else if (availVersionArr[1] === instVersionArr[1]) {
                 if (availVersionArr[2] > instVersionArr[2]) {
                     updateAvailable = true;
                 }
@@ -2667,6 +2673,7 @@ function main($) {
 
     vis.conn.init(null, {
         mayReconnect: typeof app !== 'undefined' ? app.mayReconnect : null,
+        onAuthError:  typeof app !== 'undefined' ? app.onAuthError  : null,
         onConnChange: function (isConnected) {
             //console.log("onConnChange isConnected="+isConnected);
             if (isConnected) {
@@ -2908,7 +2915,7 @@ function main($) {
                         var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
 
                         widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
-                        if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type == 'data') {
+                        if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type === 'data') {
                             vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
                         }
                         vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
@@ -2975,7 +2982,7 @@ function main($) {
             $('#login-mask').fadeIn(300);
             // When clicking on the button close or the mask layer the popup closed
             $('#login-password').keypress(function (e) {
-                if (e.which == 13) {
+                if (e.which === 13) {
                     $('.login-button').trigger('click');
                 }
             });
@@ -2996,7 +3003,7 @@ function main($) {
         },
         onCommand:    function (instance, command, data) {
             var parts;
-            if (!instance || (instance != vis.instance && instance != 'FFFFFFFF' && instance.indexOf('*') === -1)) return false;
+            if (!instance || (instance !== vis.instance && instance !== 'FFFFFFFF' && instance.indexOf('*') === -1)) return false;
             if (command) {
                 if (vis.editMode && command !== 'tts' && command !== 'playSound') return;
                 // external Commands
@@ -3042,7 +3049,7 @@ function main($) {
                             // force read from server
                             href += '?' + (new Date()).getTime();
 
-                            if (typeof Audio != 'undefined') {
+                            if (typeof Audio !== 'undefined') {
                                 var snd = new Audio(href); // buffers automatically when created
                                 snd.play();
                             } else {
@@ -3077,7 +3084,7 @@ function main($) {
             if ($.fn.selectId) $.fn.selectId('objectAll', id, obj);
         },
         onError:      function (err) {
-            if (err.arg == 'vis.0.control.instance' || err.arg == 'vis.0.control.data' || err.arg == 'vis.0.control.command') {
+            if (err.arg === 'vis.0.control.instance' || err.arg === 'vis.0.control.data' || err.arg === 'vis.0.control.command') {
                 console.warn('Cannot set ' + err.arg + ', because of insufficient permissions');
             } else {
                 vis.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);

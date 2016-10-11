@@ -235,7 +235,7 @@ var servConn = {
                     console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                     // reload whole page if no connection longer than some period
-                    if (that._reloadInterval && offlineTime > that._reloadInterval * 1000) window.location.reload();
+                    if (that._reloadInterval && offlineTime > that._reloadInterval * 1000 && !that.authError) window.location.reload();
                     
                     that._disconnectedSince = null;
                 }
@@ -254,13 +254,19 @@ var servConn = {
                 that._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
-                    var wait = setTimeout(function() {
+                    that.waitConnect = setTimeout(function() {
                         console.error('No answer from server');
-                        window.location.reload();
+                        if (!that.authError) {
+                            window.location.reload();
+                        }
                     }, 3000);
 
                     that._socket.emit('authenticate', function (isOk, isSecure) {
-                        clearTimeout(wait);
+                        if (that.waitConnect) {
+                            clearTimeout(that.waitConnect);
+                            that.waitConnect = null;
+                        }
+
                         console.log((new Date()).toISOString() + ' Authenticated: ' + isOk);
                         if (isOk) {
                             that._onAuth(objectsRequired, isSecure);
@@ -271,13 +277,25 @@ var servConn = {
                 }, 50);
             });
 
-            this._socket.on('reauthenticate', function () {
+            this._socket.on('reauthenticate', function (err) {
                 if (that._connCallbacks.onConnChange) {
                     that._connCallbacks.onConnChange(false);
-                    if (typeof app !== 'undefined') app.onConnChange(false);
+                    if (typeof app !== 'undefined' && !that.authError) app.onConnChange(false);
                 }
                 console.warn('reauthenticate');
-                window.location.reload();
+                if (that.waitConnect) {
+                    clearTimeout(that.waitConnect);
+                    that.waitConnect = null;
+                }
+
+                if (connCallbacks.onAuthError) {
+                    if (!that.authError) {
+                        that.authError = true;
+                        connCallbacks.onAuthError(err);
+                    }
+                } else {
+                    window.location.reload();
+                }
             });
 
             this._socket.on('connect_error', function () {
@@ -385,6 +403,27 @@ var servConn = {
                     that._connCallbacks.onError(err);
                 } else {
                     console.log('permissionError');
+                }
+            });
+
+            this._socket.on('error', function (err) {
+                if (err === 'Invalid password or user name') {
+                    console.warn('reauthenticate');
+                    if (that.waitConnect) {
+                        clearTimeout(that.waitConnect);
+                        that.waitConnect = null;
+                    }
+
+                    if (connCallbacks.onAuthError) {
+                        if (!that.authError) {
+                            that.authError = true;
+                            connCallbacks.onAuthError(err);
+                        }
+                    } else {
+                        window.location.reload();
+                    }
+                } else {
+                    alert(err);
                 }
             });
         }
