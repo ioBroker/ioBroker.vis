@@ -249,6 +249,7 @@
         },
         "yesterday":              {"en": "yesterday", "de": "gestern", "ru": "вчера"},
         "for&nbsp;%s&nbsp;hours": {"en": "for&nbsp;%s&nbsp;hours", "de": "vor&nbsp;%s&nbsp;Stunden", "ru": "%s&nbsp;часов назад"},
+        "click to create":        {"en": "click to create", "de": "klicken um zu erzeugen", "ru": "нажать что бы создать"},
         "This option works only in APP": {
             "en": "This option works only in APP",
             "de": "Funktioniert nur im APP",
@@ -1534,6 +1535,24 @@
                 }
             }, 100);
         },
+        createScreenText: function () {
+            setTimeout(function () {
+                console.log('a');
+                $('.basic-click-create-instance').unbind('click').click(function () {
+                    if (!vis.instance) {
+                        if (typeof storage !== 'undefined') {
+                            vis.instance = (Math.random() * 4294967296).toString(16);
+                            vis.instance = '0000000' + vis.instance;
+                            vis.instance = vis.instance.substring(vis.instance.length - 8);
+                            $('#vis_instance').val(vis.instance);
+                            storage.set(vis.storageKeyInstance, vis.instance);
+                            $(this).html(vis.instance).removeClass('basic-click-create-instance').css({'font-weight': 'inherit', cursor: 'inherit'});
+                        }
+                    }
+                });
+            }, 500);
+            return '<span class="basic-click-create-instance" style="font-weight: bold; cursor: pointer">' + _('click to create') + '</span>';
+        },
         isFalse: function (val, min, max) {
             if (min !== undefined && min !== null && min !== '') {
                 if (max !== undefined && max !== null && max !== '') {
@@ -2744,25 +2763,6 @@
     %>
 </script-->
 
-<script id="tplScreenResolution"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-prev='<img src="widgets/basic/img/Prev_ScreenResolution.png"></img>'
-        data-vis-set="basic"
-        data-vis-type="tools"
-        data-vis-name="Screen Resolution"
-        data-vis-attrs="">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width:150px; height:75px; border: 1px solid #888; font-size: 12px; opacity: 0.8" id="<%= this.data.attr('wid') %>">
-		<div id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
-			Default view: <span class='vis-resolution-default-view'></span><br>
-			Width: <span class='vis-resolution-width'></span><br>
-			Height: <span class='vis-resolution-height'></span><br>
-			Instance: <span><%= vis.instance %></span>
-		</div>
-		<%= vis.binds.basic.detectScreen() %>
-    </div>
-</script>
-
 <script id="tplValueGesture"
         type="text/ejs"
         class="vis-tpl"
@@ -2803,4 +2803,24 @@
     </div>
     <% vis.binds.basic.speech2text(this.data.wid, this.view, this.data, this.style); %>
 </script>
+
+<script id="tplScreenResolution"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ScreenResolution.png"></img>'
+        data-vis-set="basic"
+        data-vis-type="tools"
+        data-vis-name="Screen Resolution"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:170px; height:75px; border: 1px solid #888; font-size: 12px; opacity: 0.8" id="<%= this.data.attr('wid') %>">
+		<div id="div_<%= this.data.attr('wid') %>" style="padding: 10px">
+			Default view: <span class='vis-resolution-default-view'></span><br>
+			Width: <span class='vis-resolution-width'></span><br>
+			Height: <span class='vis-resolution-height'></span><br>
+			Instance: <span><%== vis.instance ? vis.instance : vis.binds.basic.createScreenText() %></span>
+		</div>
+		<%= vis.binds.basic.detectScreen() %>
+    </div>
+</script>
+
 
