@@ -5123,15 +5123,6 @@ vis = $.extend(true, vis, {
         }
         return null;
     },
-    generateInstance: function () {
-        if (typeof storage !== 'undefined') {
-            this.instance = (Math.random() * 4294967296).toString(16);
-            this.instance = '0000000' + this.instance;
-            this.instance = this.instance.substring(this.instance.length - 8);
-            $('#vis_instance').val(this.instance);
-            storage.set(this.storageKeyInstance, this.instance);
-        }
-    },
     bindInstanceEdit: function () {
         var that = this;
         if (!this.instance) this.generateInstance();

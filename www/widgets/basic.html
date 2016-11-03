@@ -1537,16 +1537,16 @@
         },
         createScreenText: function () {
             setTimeout(function () {
-                console.log('a');
                 $('.basic-click-create-instance').unbind('click').click(function () {
                     if (!vis.instance) {
-                        if (typeof storage !== 'undefined') {
-                            vis.instance = (Math.random() * 4294967296).toString(16);
-                            vis.instance = '0000000' + vis.instance;
-                            vis.instance = vis.instance.substring(vis.instance.length - 8);
-                            $('#vis_instance').val(vis.instance);
-                            storage.set(vis.storageKeyInstance, vis.instance);
-                            $(this).html(vis.instance).removeClass('basic-click-create-instance').css({'font-weight': 'inherit', cursor: 'inherit'});
+                        vis.generateInstance();
+                        if (vis.instance) {
+                            $(this).html(vis.instance).removeClass('basic-click-create-instance').css({
+                                'font-weight': 'inherit',
+                                cursor: 'inherit'
+                            });
+                        } else {
+                            window.alert('Cannot generate!');
                         }
                     }
                 });

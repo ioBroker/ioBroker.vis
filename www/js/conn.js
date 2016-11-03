@@ -93,7 +93,7 @@ var servConn = {
         var ts = (new Date()).getTime();
         if (this._reloadInterval && ts - this._lastTimer > this._reloadInterval * 1000) {
             // It seems, that PC was in a sleep => Reload page to request authentication anew
-            window.location.reload();
+            this.reload();
         } else {
             this._lastTimer = ts;
         }
@@ -156,6 +156,14 @@ var servConn = {
                     $('.splash-screen-text').html(that._countDown + '...');
                 }
             }, 1000);
+        }
+    },
+    reload: function () {
+        if (window.location.host === 'iobroker.net' ||
+            window.location.host === 'iobroker.biz') {
+            window.location = '/';
+        } else {
+            window.location.reload();
         }
     },
     init:             function (connOptions, connCallbacks, objectsRequired) {
@@ -235,7 +243,7 @@ var servConn = {
                     console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                     // reload whole page if no connection longer than some period
-                    if (that._reloadInterval && offlineTime > that._reloadInterval * 1000 && !that.authError) window.location.reload();
+                    if (that._reloadInterval && offlineTime > that._reloadInterval * 1000 && !that.authError) that.reload();
                     
                     that._disconnectedSince = null;
                 }
@@ -257,7 +265,7 @@ var servConn = {
                     that.waitConnect = setTimeout(function() {
                         console.error('No answer from server');
                         if (!that.authError) {
-                            window.location.reload();
+                            that.reload();
                         }
                     }, 3000);
 
@@ -294,7 +302,7 @@ var servConn = {
                         connCallbacks.onAuthError(err);
                     }
                 } else {
-                    window.location.reload();
+                    that.reload();
                 }
             });
 
@@ -332,7 +340,7 @@ var servConn = {
 
                 // reload whole page if no connection longer than one minute
                 if (that._reloadInterval && offlineTime > that._reloadInterval * 1000) {
-                    window.location.reload();
+                    that.reload();
                 }
                 // anyway "on connect" is called
             });
@@ -420,7 +428,7 @@ var servConn = {
                             connCallbacks.onAuthError(err);
                         }
                     } else {
-                        window.location.reload();
+                        that.reload();
                     }
                 } else {
                     alert(err);
