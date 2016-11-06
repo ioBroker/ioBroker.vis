@@ -173,6 +173,13 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 0.10.15 (2016-11-06)
+* (bluefox) remove weather-adapter.html
+* (bluefox) clean config.js
+* (bluefox) remove old widgets
+* (bluefox) improve authentication in app
+* (bluefox) allow creation of instance from helper widget
+
 ### 0.10.14 (2016-10-09)
 * (bluefox) fix rendering of widgets
 * (bluefox) working on relative positions.
