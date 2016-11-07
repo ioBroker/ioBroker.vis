@@ -172,7 +172,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 0.11.0 (2016-11-07)
+
+
 ### 0.10.15 (2016-11-06)
 * (bluefox) remove weather-adapter.html
 * (bluefox) clean config.js
