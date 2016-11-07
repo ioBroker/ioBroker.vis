@@ -136,6 +136,12 @@ var vis = {
     signals:                {},
     bindings:               {},
     bindingsCache:          {},
+    subscribing:            {
+        IDs:         [],
+        byViews:     {},
+        active:      [],
+        activeViews: []
+    },
     commonStyle:            null,
     _setValue: function (id, state, isJustCreated) {
         var that = this;
@@ -299,20 +305,25 @@ var vis = {
     },
     // Return as array used widgetSets or null if no information about it
     getUsedObjectIDs: function () {
-        var widgetSets = [];
-
         if (!this.views) {
             console.log('Check why views are not yet loaded!');
             return null;
         }
 
+        var views       = {};
         var IDs         = [];
         this.visibility = {};
         this.bindings   = {};
 
         for (var view in this.views) {
+            if (!this.views.hasOwnProperty(view)) continue;
+
             if (view === '___settings') continue;
+
+            views[view] = [];
+
             for (var id in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(id)) continue;
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
@@ -392,6 +403,7 @@ var vis = {
                 }
 
                 for (var attr in data) {
+                    if (!data.hasOwnProperty(attr)) continue;
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];
@@ -455,6 +467,7 @@ var vis = {
                             for (var t = 0; t < oids.length; t++) {
                                 if (oids[t].systemOid) {
                                     if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
+                                    if (views[view].indexOf(oids[t].systemOid) === -1) views[view].push(oids[t].systemOid);
                                     if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
                                     oids[t].type   = 'data';
                                     oids[t].attr   = attr;
@@ -468,13 +481,17 @@ var vis = {
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
                                         if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
+                                        if (views[view].indexOf(oids[t].operations[0].arg[w].systemOid) === -1) views[view].push(oids[t].operations[0].arg[w].systemOid);
                                         if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
                                         this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
                                     }
                                 }
                             }
                         } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
-                            if (data[attr] !== 'nothing_selected' && IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                            if (data[attr] !== 'nothing_selected') {
+                                if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
+                                if (views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
+                            }
 
                             // Visibility binding
                             if (attr === 'visibility-oid' && data['visibility-oid']) {
@@ -495,25 +512,28 @@ var vis = {
 
                 // build bindings for styles
                 if (style) {
-                    for (var css in style) {
-                        if (typeof style[css] === 'string') {
-                            var oids = this.extractBinding(style[css]);
-                            if (oids) {
-                                for (var t = 0; t < oids.length; t++) {
-                                    if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
-                                    if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                    for (var cssAttr in style) {
+                        if (!style.hasOwnProperty(cssAttr)) continue;
+                        if (typeof style[cssAttr] === 'string') {
+                            var objIDs = this.extractBinding(style[cssAttr]);
+                            if (objIDs) {
+                                for (var tt = 0; tt < objIDs.length; tt++) {
+                                    if (IDs.indexOf(objIDs[tt].systemOid) === -1) IDs.push(objIDs[tt].systemOid);
+                                    if (views[view].indexOf(objIDs[tt].systemOid) === -1) views[view].push(objIDs[tt].systemOid);
+                                    if (!this.bindings[objIDs[tt].systemOid]) this.bindings[objIDs[tt].systemOid] = [];
 
-                                    oids[t].type   = 'style';
-                                    oids[t].attr   = css;
-                                    oids[t].view   = view;
-                                    oids[t].widget = id;
+                                    objIDs[tt].type   = 'style';
+                                    objIDs[tt].attr   = cssAttr;
+                                    objIDs[tt].view   = view;
+                                    objIDs[tt].widget = id;
 
-                                    this.bindings[oids[t].systemOid].push(oids[t]);
-                                    if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                                        for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
-                                            if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
-                                            if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
-                                            this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
+                                    this.bindings[objIDs[tt].systemOid].push(objIDs[tt]);
+                                    if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
+                                        for (var w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
+                                            if (IDs.indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) IDs.push(objIDs[tt].operations[0].arg[w].systemOid);
+                                            if (views[view].indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) views[view].push(objIDs[tt].operations[0].arg[w].systemOid);
+                                            if (!this.bindings[objIDs[tt].operations[0].arg[w].systemOid]) this.bindings[objIDs[tt].operations[0].arg[w].systemOid] = [];
+                                            this.bindings[objIDs[tt].operations[0].arg[w].systemOid].push(objIDs[tt]);
                                         }
                                     }
                                 }
@@ -523,13 +543,13 @@ var vis = {
                 }
             }
         }
-        return IDs;
+        return {IDs: IDs, byViews: views};
     },
     loadWidgetSets: function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
-        // If widgets are preloaded
+        // If widgets are pre-loaded
         if (this.binds && this.binds.stateful !== undefined) {
             this.toLoadSetsCount = 0;
         } else {
@@ -745,8 +765,16 @@ var vis = {
             }
         });
     },
-    renderView: function (view, noThemeChange, hidden) {
+    renderView: function (view, noThemeChange, hidden, callback) {
         var that = this;
+
+        if (typeof noThemeChange === 'function') {
+            callback = noThemeChange;
+            noThemeChange = undefined;
+        } else if (typeof hidden === 'function') {
+            callback = hidden;
+            hidden = undefined;
+        }
 
         if (!this.editMode && !$('#commonTheme').length) {
             $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
@@ -754,114 +782,123 @@ var vis = {
 
         if (!this.views[view] || !this.views[view].settings) {
             window.alert('Cannot render view ' + view + '. Invalid settings');
+            if (callback) callback(view);
             return false;
         }
 
-        var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
+        this.subscribeStates(view, function () {
+            var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
 
-        this.views[view].settings.theme = this.views[view].settings.theme || 'redmond';
+            that.views[view].settings.theme = that.views[view].settings.theme || 'redmond';
 
-        if (this.views[view].settings.filterkey) {
-            this.viewsActiveFilter[view] = this.views[view].settings.filterkey.split(',');
-        } else {
-            this.viewsActiveFilter[view] = [];
-        }
-        //noinspection JSJQueryEfficiency
-        var $view = $('#visview_' + view);
-        // apply group policies
-        if (!this.editMode && this.views[view].settings.group && this.views[view].settings.group.length) {
-            if (this.views[view].settings.group_action === 'hide') {
-                if (!this.isUserMemeberOf(this.conn.getUser(), this.views[view].settings.group)) {
-                    if (!$view.length) {
-                        $('#vis_container').append('<div id="visview_' + view + '" class="vis-view vis-user-disabled"></div>');
-                        $view = $('#visview_' + view);
-                    }
-                    $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', this.conn.getUser()) + '</div>');
-                    return;
-                }
+            if (that.views[view].settings.filterkey) {
+                that.viewsActiveFilter[view] = that.views[view].settings.filterkey.split(',');
+            } else {
+                that.viewsActiveFilter[view] = [];
             }
-        }
+            //noinspection JSJQueryEfficiency
+            var $view = $('#visview_' + view);
 
-        if (!$view.length) {
-
-            $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
-            this.addViewStyle(view, this.views[view].settings.theme);
-
-            $view = $('#visview_' + view);
-
-            $view.css(this.views[view].settings.style);
-            if (this.views[view].settings.style.background_class) $view.addClass(this.views[view].settings.style.background_class);
-
-            this.setViewSize(view);
-            this.views[view].rerender = true;
-
-            // Render all simple widgets
-            for (var id in this.views[view].widgets) {
-                // Try to complete the widgetSet information to optimize the loading of widgetSets
-                if (!this.views[view].widgets[id].widgetSet) {
-                    var obj = $('#' + this.views[view].widgets[id].tpl);
-                    if (obj) {
-                        this.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
-                        isViewsConverted = true;
+            // apply group policies
+            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                if (that.views[view].settings.group_action === 'hide') {
+                    if (!that.isUserMemeberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                        if (!$view.length) {
+                            $('#vis_container').append('<div id="visview_' + view + '" class="vis-view vis-user-disabled"></div>');
+                            $view = $('#visview_' + view);
+                        }
+                        $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
+                        if (callback) callback(view);
+                        return;
                     }
                 }
-
-                if (!this.views[view].widgets[id].renderVisible) this.renderWidget(view, id);
             }
 
-            if (this.editMode) {
-                if (this.binds.jqueryui) this.binds.jqueryui._disable();
-                this.droppable(view);
-            }
-        }
+            if (!$view.length) {
 
-        // move views in container
-        $view.find('div[id$="container"]').each(function () {
-            var cview = $(this).attr('data-vis-contains');
-            if (!that.views[cview]) {
-                $(this).append('error: view not found.');
-                return false;
-            } else if (cview === view) {
-                $(this).append('error: view container recursion.');
-                return false;
+                $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
+                that.addViewStyle(view, that.views[view].settings.theme);
+
+                $view = $('#visview_' + view);
+
+                $view.css(that.views[view].settings.style);
+                if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
+
+                that.setViewSize(view);
+                that.views[view].rerender = true;
+
+                // Render all simple widgets
+                for (var id in that.views[view].widgets) {
+                    // Try to complete the widgetSet information to optimize the loading of widgetSets
+                    if (!that.views[view].widgets[id].widgetSet) {
+                        var obj = $('#' + that.views[view].widgets[id].tpl);
+                        if (obj) {
+                            that.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
+                            isViewsConverted = true;
+                        }
+                    }
+
+                    if (!that.views[view].widgets[id].renderVisible) that.renderWidget(view, id);
+                }
+
+                if (that.editMode) {
+                    if (that.binds.jqueryui) that.binds.jqueryui._disable();
+                    that.droppable(view);
+                }
             }
-            that.renderView(cview, true);
-            $('#visview_' + cview)
-                .appendTo(this)
-                .show();
+
+            // move views in container
+            $view.find('.vis-view-container').each(function () {
+                var cview = $(this).attr('data-vis-contains');
+                if (!that.views[cview]) {
+                    $(this).append('error: view not found.');
+                    return false;
+                } else if (cview === view) {
+                    $(this).append('error: view container recursion.');
+                    return false;
+                }
+
+                var thisView = this;
+                that.renderView(cview, true, function (_view) {
+                    $('#visview_' + _view)
+                        .appendTo(thisView)
+                        .show();
+                });
+            });
+
+            if (!hidden) {
+                $view.show();
+
+                if (that.views[view].rerender) {
+                    that.views[view].rerender = false;
+                    // render all copmlex widgets, like hqWidgets or bars
+                    for (var _id in that.views[view].widgets) {
+                        if (that.views[view].widgets[_id].renderVisible) that.renderWidget(view, _id);
+                    }
+                }
+            }
+
+            // Store modified view
+            if (isViewsConverted && that.saveRemote) that.saveRemote();
+
+            if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
+                $('.vis-widget').addClass('vis-widget-lock');
+            }
+
+            setTimeout(function () {
+                $('#visview_' + view).trigger('rendered');
+                if (callback) callback(view);
+            }, 0);
+
+            // apply group policies
+            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                if (that.views[view].settings.group_action !== 'hide') {
+                    if (!that.isUserMemeberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                        $view.addClass('vis-user-disabled');
+                    }
+                }
+            }
         });
-
-        if (!hidden) {
-            $view.show();
-
-            if (this.views[view].rerender) {
-                this.views[view].rerender = false;
-                // render all copmlex widgets, like hqWidgets or bars
-                for (var _id in this.views[view].widgets) {
-                    if (this.views[view].widgets[_id].renderVisible) this.renderWidget(view, _id);
-                }
-            }
-        }
-
-        // Store modified view
-        if (isViewsConverted && this.saveRemote) this.saveRemote();
-
-        if (this.editMode && $('#wid_all_lock_function').prop('checked')) {
-            $('.vis-widget').addClass('vis-widget-lock');
-        }
-
-        setTimeout(function(){
-            $('#visview_' + view).trigger('rendered');
-        }, 0);
-
-        // apply group policies
-        if (!this.editMode && this.views[view].settings.group && this.views[view].settings.group.length) {
-            if (this.views[view].settings.group_action !== 'hide') {
-                if (!this.isUserMemeberOf(this.conn.getUser(), this.views[view].settings.group)) {
-                    $view.addClass('vis-user-disabled');
-                }
-            }
-        }
     },
     addViewStyle: function (view, theme) {
         var _view = 'visview_' + view;
@@ -1412,104 +1449,115 @@ var vis = {
 
         var $view;
         // If really changed
+        var waitRender = false;
         if (this.activeView !== view) {
             if (effect) {
-                this.renderView(view, true, true);
+                waitRender = true;
+                this.renderView(view, true, true, function (_view) {
+                    var $view = $('#visview_' + _view);
 
-                $view = $('#visview_' + view);
+                    // Get the view, if required, from Container
+                    if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
-                // Get the view, if required, from Container
-                if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
-
-                // If hide and show at the same time
-                if (sync) {
-                    $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-                        if (that.views[view].rerender) {
-                            that.views[view].rerender = false;
-                            for (var id in that.views[view].widgets) {
-                                if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
-                                    that.views[view].widgets[id].renderVisible)
-                                    that.renderWidget(view, id);
-                            }
-                        }
-                    }).dequeue();
-                }
-
-                $('#visview_' + this.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
-                    // If first hide, than show
-                    if (!sync) {
-                        $('#visview_' + view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-                            if (that.views[view].rerender) {
-                                that.views[view].rerender = false;
-                                for (var id in that.views[view].widgets) {
-                                    if (!that.views[view].widgets[id] && !that.views[view].widgets[id].tpl) {
-                                        console.error('Widget "' + id + '" is invalid. Please delete it.');
-                                        continue;
-                                    }
-
-                                    if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
-                                        that.views[view].widgets[id].renderVisible)
-                                        that.renderWidget(view, id);
+                    // If hide and show at the same time
+                    if (sync) {
+                        $('#visview_' + _view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+                            if (that.views[_view].rerender) {
+                                that.views[_view].rerender = false;
+                                for (var id in that.views[_view].widgets) {
+                                    if (!that.views[_view].widgets.hasOwnProperty(id)) continue;
+                                    if (that.views[_view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
+                                        that.views[_view].widgets[id].renderVisible)
+                                        that.renderWidget(_view, id);
                                 }
                             }
-                            that.destroyUnusedViews();
-                        });
-                    } else {
-                        that.destroyUnusedViews();
+                        }).dequeue();
                     }
+
+                    that.afterRenderView(_view);
+
+                    $('#visview_' + that.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
+                        // If first hide, than show
+                        if (!sync) {
+                            $('#visview_' + _view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
+                                if (that.views[view].rerender) {
+                                    that.views[view].rerender = false;
+                                    for (var id in that.views[view].widgets) {
+                                        if (!that.views[view].widgets[id] && !that.views[view].widgets[id].tpl) {
+                                            console.error('Widget "' + id + '" is invalid. Please delete it.');
+                                            continue;
+                                        }
+
+                                        if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
+                                            that.views[view].widgets[id].renderVisible)
+                                            that.renderWidget(view, id);
+                                    }
+                                }
+                                that.destroyUnusedViews();
+                            });
+                        } else {
+                            that.destroyUnusedViews();
+                        }
+                    });
                 });
             } else {
+                waitRender = true;
+                this.renderView(view, true, function (_view) {
+                    var $view = $('#visview_' + _view);
 
-                this.renderView(view, true);
+                    // Get the view, if required, from Container
+                    if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
-                $view = $('#visview_' + view);
+                    $view.show();
+                    $('#visview_' + that.activeView).hide();
 
-                // Get the view, if required, from Container
-                if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
-
-                $view.show();
-                $('#visview_' + this.activeView).hide();
-
-                this.destroyUnusedViews();
+                    that.afterRenderView(_view);
+                    that.destroyUnusedViews();
+                });
             }
             // remember last click for debounce
             this.lastChange = (new Date()).getTime();
         } else {
-            this.renderView(view);
+            waitRender = true;
+            this.renderView(view, function (_view) {
+                var $view = $('#visview_' + _view);
 
-            $view = $('#visview_' + view);
-            
-            // Get the view, if required, from Container
-            if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
+                // Get the view, if required, from Container
+                if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
-            this.destroyUnusedViews();
+                that.afterRenderView(_view);
+                that.destroyUnusedViews();
+            });
         }
-        this.activeView = view;
+        if (!waitRender) this.afterRenderView();
+    },
+    afterRenderView: function (view) {
+         this.activeView = view;
 
-        /*$('#visview_' + view).find('div[id$="container"]').each(function () {
-         $('#visview_' + $(this).attr('data-vis-contains')).show();
-         });*/
+         /*$('#visview_' + view).find('.vis-view-container').each(function () {
+          $('#visview_' + $(this).attr('data-vis-contains')).show();
+          });*/
 
-        this.updateContainers(view);
+         this.updateContainers(view);
 
-        if (!this.editMode) {
-            this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
-            $(window).trigger('viewChanged', view);
-        }
+         if (!this.editMode) {
+             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
+             $(window).trigger('viewChanged', view);
+         }
 
-        if (window.location.hash.slice(1) !== view) {
-            if (history && history.pushState) {
-                history.pushState({}, '', '#' + view);
-            }
-        }
+         if (window.location.hash.slice(1) !== view) {
+             if (history && history.pushState) {
+                 history.pushState({}, '', '#' + view);
+             }
+         }
 
-        // Navigation-Widgets
-        for (var i = 0; i < this.navChangeCallbacks.length; i++) {
-            this.navChangeCallbacks[i](view);
-        }
+         // Navigation-Widgets
+         for (var i = 0; i < this.navChangeCallbacks.length; i++) {
+             this.navChangeCallbacks[i](view);
+         }
 
-        // --------- Editor -----------------
-        if (this.editMode) this.changeViewEdit(view);
+         // --------- Editor -----------------
+         if (this.editMode) this.changeViewEdit(view);
     },
     loadRemote: function (callback, callbackArg) {
         var that = this;
@@ -1539,7 +1587,9 @@ var vis = {
                 } else {
                     that.views = data;
                 }
-                that.IDs = that.getUsedObjectIDs();
+                var _data = that.getUsedObjectIDs();
+                that.subscribing.IDs     = _data.IDs;
+                that.subscribing.byViews = _data.byViews;
             } else {
                 that.views = null;
             }
@@ -1818,32 +1868,42 @@ var vis = {
         if (typeof value !== "number") value = parseFloat(value);
         return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatDate: function formatDate(dateObj, isSeconds, _format) {
-
-        var duration = false;
-        if ((typeof isSeconds === 'string') && (isSeconds.toLowerCase() === 'duration')) {
-            isSeconds = true;
-            duration = true;
+    formatDate: function formatDate(dateObj, isDuration, _format) {
+        // copied from js-controller/lib/adapter.js
+        if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
+            isDuration  = true;
         }
-        if (typeof isSeconds !== 'boolean') {
-            _format = isSeconds;
-            isSeconds = false;
+        if (typeof isDuration !== 'boolean') {
+            _format    = isDuration;
+            isDuration = false;
         }
-
-        var format = _format || 'DD.MM.YYYY';
 
         if (!dateObj) return '';
-        var text = typeof dateObj;
-        if (text === 'string') {
-            var pos = dateObj.indexOf('.');
-            if (pos !== -1) dateObj = dateObj.substring(0, pos);
-            return dateObj;
-        }
-        if (text !== 'object') dateObj = isSeconds ? new Date(dateObj * 1000) : new Date(dateObj);
-        if (duration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
+        var type = typeof dateObj;
+        if (type === 'string') dateObj = new Date(dateObj);
 
-        var validFormatChars = 'YJГMDДhSчmмsс';
-        var s = "", result = '';
+        if (type !== 'object') {
+            var j = parseInt(dateObj, 10);
+            if (j == dateObj) {
+                // may this is interval
+                if (j < 946681200) {
+                    isDuration = true;
+                    dateObj = new Date(dateObj);
+                } else {
+                    // if less 2000.01.01 00:00:00
+                    dateObj = (j < 946681200000) ? new Date(j * 1000) : new Date(j);
+                }
+            } else {
+                dateObj = new Date(dateObj);
+            }
+        }
+        var format = _format || that.dateFormat || 'DD.MM.YYYY';
+
+        if (isDuration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
+
+        var validFormatChars = 'YJГMМDTДhSчmмsс';
+        var s      = '';
+        var result = '';
 
         function put(s) {
             var v = '';
@@ -1859,6 +1919,8 @@ var vis = {
                     break;
                 case 'MM':
                 case 'M':
+                case 'ММ':
+                case 'М':
                     v = dateObj.getMonth() + 1;
                     if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
@@ -1887,16 +1949,6 @@ var vis = {
                     v = dateObj.getMinutes();
                     if ((v < 10) && (s.length === 2)) v = '0' + v;
                     break;
-                case 'sss':
-                case 'ccc':
-                    v = dateObj.getMilliseconds();
-                    if (v < 10) {
-                        v = '00' + v;
-                    } else if (v < 100) {
-                        v = '0' + v;
-                    }
-                    v = v.toString();
-                    break;
                 case 'ss':
                 case 's':
                 case 'cc':
@@ -1905,6 +1957,15 @@ var vis = {
                     if ((v < 10) && (s.length === 2)) v = '0' + v;
                     v = v.toString();
                     break;
+                case 'sss':
+                case 'ссс':
+                    v = dateObj.getMilliseconds();
+                    if (v < 10) {
+                        v = '00' + v;
+                    } else if (v < 100) {
+                        v = '0' + v;
+                    }
+                    v = v.toString();
             }
             return result += v;
         }
@@ -2233,13 +2294,7 @@ var vis = {
                         value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
                         break;
                     case 'date':
-                        var number = parseInt(value, 10);
-                        // This seconds or milliseconds
-                        if (number.toString() == value) {
-                            value = this.formatDate(value, oids[t].isSeconds, oids[t].operations[k].arg);
-                        } else {
-                            value = this.formatDate(value, false, oids[t].operations[k].arg);
-                        }
+                        value = this.formatDate(value, oids[t].operations[k].arg);
                         break;
                     case 'min':
                         value = parseFloat(value);
@@ -2366,8 +2421,8 @@ var vis = {
     },
     createDemoStates: function () {
         // Create demo variables
-        vis.states.attr({'demoTemperature.val': 25.4});
-        vis.states.attr({'demoHumidity.val': 55});
+        this.states.attr({'demoTemperature.val': 25.4});
+        this.states.attr({'demoHumidity.val': 55});
     },
     getHistory: function (id, options, callback) {
         // Possible options:
@@ -2452,6 +2507,7 @@ var vis = {
             }
             
             $(this).remove();
+            that.unsubscribeStates(view);
         });
     },
     destroyUnusedViews: function () {
@@ -2474,6 +2530,189 @@ var vis = {
             this.instance = this.instance.substring(this.instance.length - 8);
             $('#vis_instance').val(this.instance);
             storage.set(this.storageKeyInstance, this.instance);
+        }
+    },
+    subscribeStates: function (view, callback) {
+        if (!view || this.editMode) {
+            if (callback) callback();
+            return;
+        }
+
+        // view yet active
+        if (this.subscribing.activeViews.indexOf(view) !== -1) {
+            if (callback) callback();
+            return;
+        }
+
+        this.subscribing.activeViews.push(view);
+        // subscribe
+        var oids = [];
+        for (var i = 0; i < this.subscribing.byViews[view].length; i++) {
+            if (this.subscribing.active.indexOf(this.subscribing.byViews[view][i]) === -1) {
+                this.subscribing.active.push(this.subscribing.byViews[view][i]);
+                oids.push(this.subscribing.byViews[view][i]);
+            }
+        }
+        if (oids.length) {
+            var that = this;
+            this.conn.getStates(oids, function (error, data) {
+                if (error) that.showError(error);
+
+                that.updateStates(data);
+                that.conn._socket.emit('subscribe', oids);
+                if (callback) callback();
+            });
+        } else {
+            if (callback) callback();
+        }
+    },
+    unsubscribeStates: function (view) {
+        if (!view || this.editMode) return;
+
+        // view yet active
+        var pos = this.subscribing.activeViews.indexOf(view);
+        if (pos === -1) return;
+        this.subscribing.activeViews.splice(pos, 1);
+
+        // unsubscribe
+        var oids = [];
+        // check every OID
+        for (var i = 0; i < this.subscribing.byViews[view].length; i++) {
+            var id = this.subscribing.byViews[view][i];
+
+            pos = this.subscribing.active.indexOf(id);
+            if (pos !== -1) {
+                var isUsed = false;
+                // Is OID is used something else
+                for (var v = 0; v < this.subscribing.activeViews.length; v++) {
+                    if (this.subscribing.byViews[this.subscribing.activeViews[v]].indexOf(id) !== -1) {
+                        isUsed = true;
+                        break;
+                    }
+                }
+                if (!isUsed) {
+                    oids.push(id);
+                    this.subscribing.active.splice(pos, 1);
+                }
+            }
+        }
+        if (oids.length) this.conn._socket.emit('unsubscribe', oids);
+    },
+    updateState: function (id, state) {
+        if (this.editMode) {
+            this.states[id + '.val'] = state.val;
+            this.states[id + '.ts']  = state.ts;
+            this.states[id + '.ack'] = state.ack;
+            this.states[id + '.lc']  = state.lc;
+            if (state.q !== undefined) this.states[id + '.q'] = state.q;
+        } else {
+            var o = {};
+            // Check new model
+            o[id + '.val'] = state.val;
+            o[id + '.ts']  = state.ts;
+            o[id + '.ack'] = state.ack;
+            o[id + '.lc']  = state.lc;
+            if (state.q !== undefined) o[id + '.q'] = state.q;
+            try {
+                this.states.attr(o);
+            } catch (e) {
+                this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+            }
+        }
+
+        if (!this.editMode && this.visibility[id]) {
+            for (var i = 0; i < this.visibility[id].length; i++) {
+                var mWidget = document.getElementById(this.visibility[id][i].widget);
+                if (!mWidget) continue;
+                if (this.isWidgetHidden(this.visibility[id][i].view, this.visibility[id][i].widget, state.val) ||
+                    this.isWidgetFilteredOut(this.visibility[id][i].view, this.visibility[id][i].widget)) {
+                    $(mWidget).hide();
+                    if (mWidget &&
+                        mWidget._customHandlers &&
+                        mWidget._customHandlers.onHide) {
+                        mWidget._customHandlers.onHide(mWidget, id);
+                    }
+                } else {
+                    $(mWidget).show();
+                    if (mWidget &&
+                        mWidget._customHandlers &&
+                        mWidget._customHandlers.onShow) {
+                        mWidget._customHandlers.onShow(mWidget, id);
+                    }
+                }
+            }
+        }
+
+        // process signals
+        if (!this.editMode && this.signals[id]) {
+            for (var s = 0; s < this.signals[id].length; s++) {
+                var signal = this.signals[id][s];
+                var mWidget = document.getElementById(signal.widget);
+
+                if (!mWidget) continue;
+
+                if (this.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
+                    $(mWidget).find('.this-signal[data-index="' + signal.index + '"]').show();
+                } else {
+                    $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').hide();
+                }
+            }
+        }
+
+        // Bindings on every element
+        if (!this.editMode && this.bindings[id]) {
+            for (var i = 0; i < this.bindings[id].length; i++) {
+                var widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
+                var value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+
+                widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
+                if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
+                    this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
+                }
+                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].widget);
+            }
+        }
+
+        // Inform other widgets, that do not support canJS
+        for (var j = 0, len = this.onChangeCallbacks.length; j < len; j++) {
+            this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
+        }
+        if (this.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
+    },
+    updateStates: function (data) {
+        if (data) {
+            for (var id in data) {
+                if (!data.hasOwnProperty(id)) continue;
+                var obj = data[id];
+                if (!obj) continue;
+
+                try {
+                    if (this.editMode) {
+                        this.states[id + '.val'] = obj.val;
+                        this.states[id + '.ts']  = obj.ts;
+                        this.states[id + '.ack'] = obj.ack;
+                        this.states[id + '.lc']  = obj.lc;
+                        if (obj.q !== undefined) this.states[id + '.q'] = obj.q;
+                    } else {
+                        var oo = {};
+                        oo[id + '.val'] = obj.val;
+                        oo[id + '.ts']  = obj.ts;
+                        oo[id + '.ack'] = obj.ack;
+                        oo[id + '.lc']  = obj.lc;
+                        if (obj.q !== undefined) oo[id + '.q'] = obj.q;
+                        this.states.attr(oo);
+                    }
+                } catch (e) {
+                    this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                }
+
+                if (!this.editMode && this.bindings[id]) {
+                    for (var i = 0; i < this.bindings[id].length; i++) {
+                        var widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
+                        widget[this.bindings[id][i].type][this.bindings[id][i].attr] = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+                    }
+                }
+            }
         }
     }
 };
@@ -2704,7 +2943,8 @@ function main($) {
 
                 // first of all try to load views
                 vis.loadRemote(function () {
-                    vis.IDs = vis.IDs || [];
+                    vis.subscribing.IDs     = vis.subscribing.IDs || [];
+                    vis.subscribing.byViews = vis.subscribing.byViews || {};
 
                     // first of all add custom scripts
                     if (!vis.editMode && vis.views && this.views.___settings) {
@@ -2716,75 +2956,48 @@ function main($) {
                     }
 
                     // Read all states from server
-                    vis.conn.getStates(vis.editMode ? null: vis.IDs, function (error, data) {
+                    vis.conn.getStates(vis.editMode ? null: vis.subscribing.active, function (error, data) {
                         if (error) {
                             vis.showError(error);
                         }
-                        if (data) {
-                            for (var id in data) {
-                                var obj = data[id];
-                                if (!obj) continue;
+                        vis.updateStates(data);
 
-                                try {
-                                    if (vis.editMode) {
-                                        vis.states[id + '.val'] = obj.val;
-                                        vis.states[id + '.ts']  = obj.ts;
-                                        vis.states[id + '.ack'] = obj.ack;
-                                        vis.states[id + '.lc']  = obj.lc;
-                                        if (obj.q !== undefined) vis.states[id + '.q'] = obj.q;
-                                    } else {
-                                        var oo = {};
-                                        oo[id + '.val'] = obj.val;
-                                        oo[id + '.ts']  = obj.ts;
-                                        oo[id + '.ack'] = obj.ack;
-                                        oo[id + '.lc']  = obj.lc;
-                                        if (obj.q !== undefined) oo[id + '.q'] = obj.q;
-                                        vis.states.attr(oo);
-                                    }
-                                } catch (e) {
-                                    vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                                }
-
-                                if (!vis.editMode && vis.bindings[id]) {
-                                    for (var i = 0; i < vis.bindings[id].length; i++) {
-                                        var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
-                                        widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
-                                    }
-                                }
-                            }
+                        if (vis.subscribing.active.length) {
+                            vis.conn._socket.emit('subscribe', vis.subscribing.active);
                         }
-
                         // Create non-existing IDs
-                        if (vis.IDs) {
+                        if (vis.subscribing.IDs) {
                             var now = new Date().getTime() / 1000;
-                            for (var id in vis.IDs) {
-                                if (vis.states[vis.IDs[id] + '.val'] === undefined) {
-                                    if (!vis.IDs[id] || !vis.IDs[id].match(/^dev\d+$/)) {
-                                        console.log('Create inner vis object ' + vis.IDs[id]);
+
+                            for (var j = 0; j < vis.subscribing.IDs.length; j++) {
+                                var _id = vis.subscribing.IDs[j];
+                                if (vis.states[_id + '.val'] === undefined) {
+                                    if (!_id || !_id.match(/^dev\d+$/)) {
+                                        console.log('Create inner vis object ' + _id);
                                     }
                                     if (vis.editMode) {
-                                        vis.states[id + '.val'] = 0;
-                                        vis.states[id + '.ts']  = now;
-                                        vis.states[id + '.ack'] = false;
-                                        vis.states[id + '.lc']  = now;
+                                        vis.states[_id + '.val'] = 0;
+                                        vis.states[_id + '.ts']  = now;
+                                        vis.states[_id + '.ack'] = false;
+                                        vis.states[_id + '.lc']  = now;
                                     } else {
                                         var o = {};
-                                        o[id + '.val'] = 0;
-                                        o[id + '.ts']  = now;
-                                        o[id + '.ack'] = false;
-                                        o[id + '.lc']  = now;
+                                        o[_id + '.val'] = 0;
+                                        o[_id + '.ts']  = now;
+                                        o[_id + '.ack'] = false;
+                                        o[_id + '.lc']  = now;
 
                                         try {
                                             vis.states.attr(o);
                                         } catch (e) {
-                                            vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                                            vis.conn.logError('Error: can\'t create states object for ' + _id + '(' + e + ')');
                                         }
                                     }
 
-                                    if (!vis.editMode && vis.bindings[id]) {
-                                        for (var i = 0; i < vis.bindings[id].length; i++) {
-                                            var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
-                                            widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
+                                    if (!vis.editMode && vis.bindings[_id]) {
+                                        for (var k = 0; k < vis.bindings[_id].length; k++) {
+                                            var _widget = vis.views[vis.bindings[_id][k].view].widgets[vis.bindings[_id][k].widget];
+                                            _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
                                         }
                                     }
                                 }
@@ -2824,8 +3037,10 @@ function main($) {
                                     vis.objects = data;
                                     // Detect if objects are loaded
                                     for (var ob in data) {
-                                        vis.objectSelector = true;
-                                        break;
+                                        if (data.hasOwnProperty(ob)) {
+                                            vis.objectSelector = true;
+                                            break;
+                                        }
                                     }
                                     if (vis.editMode && vis.objectSelector) {
                                         vis.inspectWidgets(true);
@@ -2856,86 +3071,8 @@ function main($) {
             window.location.reload();
         },
         onUpdate:     function (id, state) {
-            _setTimeout(function (id, state) {
-                if (vis.editMode) {
-                    vis.states[id + '.val'] = state.val;
-                    vis.states[id + '.ts']  = state.ts;
-                    vis.states[id + '.ack'] = state.ack;
-                    vis.states[id + '.lc']  = state.lc;
-                    if (state.q !== undefined) vis.states[id + '.q'] = state.q;
-                } else {
-                    var o = {};
-                    // Check new model
-                    o[id + '.val'] = state.val;
-                    o[id + '.ts']  = state.ts;
-                    o[id + '.ack'] = state.ack;
-                    o[id + '.lc']  = state.lc;
-                    if (state.q !== undefined) o[id + '.q'] = state.q;
-                    try {
-                        vis.states.attr(o);
-                    } catch (e) {
-                        vis.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
-                    }
-                }
-
-                if (!vis.editMode && vis.visibility[id]) {
-                    for (var i = 0; i < vis.visibility[id].length; i++) {
-                        var mWidget = document.getElementById(vis.visibility[id][i].widget);
-                        if (!mWidget) continue;
-                        if (vis.isWidgetHidden(vis.visibility[id][i].view, vis.visibility[id][i].widget, state.val) ||
-                            vis.isWidgetFilteredOut(vis.visibility[id][i].view, vis.visibility[id][i].widget)) {
-                            $(mWidget).hide();
-                            if (mWidget &&
-                                mWidget._customHandlers &&
-                                mWidget._customHandlers.onHide) {
-                                mWidget._customHandlers.onHide(mWidget, id);
-                            }
-                        } else {
-                            $(mWidget).show();
-                            if (mWidget &&
-                                mWidget._customHandlers &&
-                                mWidget._customHandlers.onShow) {
-                                mWidget._customHandlers.onShow(mWidget, id);
-                            }
-                        }
-                    }
-                }
-
-                // process signals
-                if (!vis.editMode && vis.signals[id]) {
-                    for (var s = 0; s < vis.signals[id].length; s++) {
-                        var signal = vis.signals[id][s];
-                        var mWidget = document.getElementById(signal.widget);
-
-                        if (!mWidget) continue;
-
-                        if (vis.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
-                            $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').show();
-                        } else {
-                            $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').hide();
-                        }
-                    }
-                }
-
-                // Bindings on every element
-                if (!vis.editMode && vis.bindings[id]) {
-                    for (var i = 0; i < vis.bindings[id].length; i++) {
-                        var widget = vis.views[vis.bindings[id][i].view].widgets[vis.bindings[id][i].widget];
-                        var value = vis.formatBinding(vis.bindings[id][i].format, vis.bindings[id][i].view, vis.bindings[id][i].widget, widget);
-
-                        widget[vis.bindings[id][i].type][vis.bindings[id][i].attr] = value;
-                        if (vis.widgets[vis.bindings[id][i].widget] && vis.bindings[id][i].type === 'data') {
-                            vis.widgets[vis.bindings[id][i].widget][vis.bindings[id][i].type + '.' + vis.bindings[id][i].attr] = value;
-                        }
-                        vis.reRenderWidget(vis.bindings[id][i].view, vis.bindings[id][i].widget);
-                    }
-                }
-
-                // Inform other widgets, that do not support canJS
-                for (var j = 0, len = vis.onChangeCallbacks.length; j < len; j++) {
-                    vis.onChangeCallbacks[j].callback(vis.onChangeCallbacks[j].arg, id, state.val, state.ack);
-                }
-                if (vis.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
+            _setTimeout(function (_id, _state) {
+                vis.updateState(_id, _state);
             }, 0, id, state);
         },
         onAuth:       function (message, salt) {
@@ -3099,7 +3236,7 @@ function main($) {
                 vis.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', err.command, err.arg), _('Insufficient permissions'), 'alert', 600);
             }
         }
-    }, vis.editMode);
+    }, vis.editMode, vis.editMode);
 
     if (!vis.editMode) {
         // Listen for resize changes

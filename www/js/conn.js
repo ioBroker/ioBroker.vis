@@ -53,6 +53,7 @@ var servConn = {
     _useStorage:        false,
     _objects:           null,        // used if _useStorage === true
     _enums:             null,        // used if _useStorage === true
+    _autoSubscribe:     true,
     namespace:          'vis.0',
 
     getType:          function () {
@@ -113,7 +114,7 @@ var servConn = {
             this._monitor();
         }
 
-        this._socket.emit('subscribe', '*');
+        if (this._autoSubscribe) this._socket.emit('subscribe', '*');
         if (objectsRequired) this._socket.emit('subscribeObjects', '*');
 
         if (this._isConnected === true) {
@@ -166,13 +167,15 @@ var servConn = {
             window.location.reload();
         }
     },
-    init:             function (connOptions, connCallbacks, objectsRequired) {
-        var that = this; // support of old safary
+    init:             function (connOptions, connCallbacks, objectsRequired, autoSubscribe) {
+        var that = this; // support of old safari
         // init namespace
         if (typeof socketNamespace !== 'undefined') this.namespace = socketNamespace;
 
         connOptions = connOptions || {};
         if (!connOptions.name) connOptions.name = this.namespace;
+
+        if (autoSubscribe !== undefined) this._autoSubscribe = autoSubscribe;
 
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
