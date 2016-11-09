@@ -704,7 +704,7 @@ var vis = {
             for (var view in this.views) {
                 if (view === '___settings') continue;
                 if (this.views[view].settings.alwaysRender) {
-                    this.renderView(view, false, true);
+                    this.renderView(view, true);
                 }
             }
         }
@@ -758,20 +758,37 @@ var vis = {
                 $(this).html('<span style="color: red">' + _('error: view container recursion.') + '</span>');
             } else {
                 $(this).html('');
-                that.renderView(cview, true);
+                that.renderView(cview);
                 $('#visview_' + cview)
                     .appendTo(this)
                     .show();
             }
         });
     },
-    renderView: function (view, noThemeChange, hidden, callback) {
+    renderViews: function (views, index, callback) {
+        if (typeof index === 'function') {
+            callback = index;
+            index = 0;
+        }
+        index = index || 0;
+
+        if (!views || index >= views.length) {
+            if (callback) callback(views);
+            return;
+        }
+        var item = views[index];
+        var that = this;
+        this.renderView(item.view, true, function () {
+            setTimeout(function () {
+                index++;
+                that.renderViews(views, index, callback)
+            }, 0);
+        });
+    },
+    renderView: function (view, hidden, callback) {
         var that = this;
 
-        if (typeof noThemeChange === 'function') {
-            callback = noThemeChange;
-            noThemeChange = undefined;
-        } else if (typeof hidden === 'function') {
+        if (typeof hidden === 'function') {
             callback = hidden;
             hidden = undefined;
         }
@@ -782,7 +799,11 @@ var vis = {
 
         if (!this.views[view] || !this.views[view].settings) {
             window.alert('Cannot render view ' + view + '. Invalid settings');
-            if (callback) callback(view);
+            if (callback) {
+                setTimeout(function () {
+                    callback(view);
+                }, 0);
+            }
             return false;
         }
 
@@ -808,12 +829,15 @@ var vis = {
                             $view = $('#visview_' + view);
                         }
                         $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
-                        if (callback) callback(view);
+                        if (callback) {
+                            setTimeout(function () {
+                                callback(view);
+                            }, 0);
+                        }
                         return;
                     }
                 }
             }
-
             if (!$view.length) {
 
                 $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
@@ -825,7 +849,6 @@ var vis = {
                 if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
 
                 that.setViewSize(view);
-                that.views[view].rerender = true;
 
                 // Render all simple widgets
                 for (var id in that.views[view].widgets) {
@@ -848,6 +871,7 @@ var vis = {
             }
 
             // move views in container
+            var containers = [];
             $view.find('.vis-view-container').each(function () {
                 var cview = $(this).attr('data-vis-contains');
                 if (!that.views[cview]) {
@@ -857,25 +881,24 @@ var vis = {
                     $(this).append('error: view container recursion.');
                     return false;
                 }
-
-                var thisView = this;
-                that.renderView(cview, true, function (_view) {
-                    $('#visview_' + _view)
-                        .appendTo(thisView)
-                        .show();
-                });
+                containers.push({thisView: this, view: cview});
             });
-
-            if (!hidden) {
-                $view.show();
-
-                if (that.views[view].rerender) {
-                    that.views[view].rerender = false;
-                    // render all copmlex widgets, like hqWidgets or bars
-                    for (var _id in that.views[view].widgets) {
-                        if (that.views[view].widgets[_id].renderVisible) that.renderWidget(view, _id);
+            var wait = false;
+            if (containers.length) {
+                wait = true;
+                that.renderViews(containers, function (_containers) {
+                    for (var c = 0; c < _containers.length; c++) {
+                        $('#visview_' + _containers[c].view)
+                            .appendTo(_containers[c].thisView)
+                            .show();
                     }
-                }
+                    if (!hidden) $view.show();
+
+                    //setTimeout(function () {
+                        $('#visview_' + view).trigger('rendered');
+                        if (callback) callback(view);
+                    //}, 0);
+                });
             }
 
             // Store modified view
@@ -885,10 +908,14 @@ var vis = {
                 $('.vis-widget').addClass('vis-widget-lock');
             }
 
-            setTimeout(function () {
-                $('#visview_' + view).trigger('rendered');
-                if (callback) callback(view);
-            }, 0);
+            if (!wait) {
+                if (!hidden) $view.show();
+
+                setTimeout(function () {
+                    $('#visview_' + view).trigger('rendered');
+                    if (callback) callback(view);
+                }, 0);
+            }
 
             // apply group policies
             if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
@@ -937,10 +964,38 @@ var vis = {
             this.preloadImages.cache.push(img);
         }
     },
+    destroyWidget: function (view, widget) {
+        var $widget = $('#' + widget);
+        if ($widget.length) {
+            try {
+                // get array of bound OIDs
+                var bound = $widget.data('bound');
+                if (bound) {
+                    var bindHandler = $widget.data('bindHandler');
+                    for (var b = 0; b < bound.length; b++) {
+                        if (typeof bindHandler === 'function') {
+                            this.states.unbind(bound[b], bindHandler);
+                        } else {
+                            this.states.unbind(bound[b], bindHandler[b]);
+                        }
+                    }
+                    $widget.data('bindHandler', null);
+                    $widget.data('bound', null);
+                }
+                // If destroy function exists => destroy it
+                var destroy = $widget.data('destroy');
+                if (typeof destroy === 'function') {
+                    destroy(widget, $widget);
+                }
+            } catch (e) {
+                console.error('Cannot destroy "' + widget + '": ' + e);
+            }
+        }
+    },
     reRenderWidget: function (view, widget) {
         var $widget = $('#' + widget);
         var updateContainers = $widget.find('.vis-view-container').length;
-
+        this.destroyWidget(view || this.activeView, widget);
         this.renderWidget(view || this.activeView, widget);
 
         if (updateContainers) this.updateContainers(view || this.activeView);
@@ -1447,52 +1502,27 @@ var vis = {
             }
         }
 
-        var $view;
         // If really changed
-        var waitRender = false;
         if (this.activeView !== view) {
             if (effect) {
-                waitRender = true;
-                this.renderView(view, true, true, function (_view) {
+                this.renderView(view, true, function (_view) {
                     var $view = $('#visview_' + _view);
 
                     // Get the view, if required, from Container
                     if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
+                    var oldView = that.activeView;
+                    that.postChangeView(_view);
+
                     // If hide and show at the same time
                     if (sync) {
-                        $('#visview_' + _view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-                            if (that.views[_view].rerender) {
-                                that.views[_view].rerender = false;
-                                for (var id in that.views[_view].widgets) {
-                                    if (!that.views[_view].widgets.hasOwnProperty(id)) continue;
-                                    if (that.views[_view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
-                                        that.views[_view].widgets[id].renderVisible)
-                                        that.renderWidget(_view, id);
-                                }
-                            }
-                        }).dequeue();
+                        $view.show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10)).dequeue();
                     }
 
-                    that.afterRenderView(_view);
-
-                    $('#visview_' + that.activeView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
+                    $('#visview_' + oldView).hide(hideOptions.effect, hideOptions.options, parseInt(hideOptions.duration, 10), function () {
                         // If first hide, than show
                         if (!sync) {
-                            $('#visview_' + _view).show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
-                                if (that.views[view].rerender) {
-                                    that.views[view].rerender = false;
-                                    for (var id in that.views[view].widgets) {
-                                        if (!that.views[view].widgets[id] && !that.views[view].widgets[id].tpl) {
-                                            console.error('Widget "' + id + '" is invalid. Please delete it.');
-                                            continue;
-                                        }
-
-                                        if (that.views[view].widgets[id].tpl.substring(0, 5) === 'tplHq' ||
-                                            that.views[view].widgets[id].renderVisible)
-                                            that.renderWidget(view, id);
-                                    }
-                                }
+                            $view.show(showOptions.effect, showOptions.options, parseInt(showOptions.duration, 10), function () {
                                 that.destroyUnusedViews();
                             });
                         } else {
@@ -1501,8 +1531,7 @@ var vis = {
                     });
                 });
             } else {
-                waitRender = true;
-                this.renderView(view, true, function (_view) {
+                this.renderView(view, function (_view) {
                     var $view = $('#visview_' + _view);
 
                     // Get the view, if required, from Container
@@ -1511,27 +1540,26 @@ var vis = {
                     $view.show();
                     $('#visview_' + that.activeView).hide();
 
-                    that.afterRenderView(_view);
+                    that.postChangeView(_view);
                     that.destroyUnusedViews();
                 });
             }
-            // remember last click for debounce
+            // remember last click for de-bounce
             this.lastChange = (new Date()).getTime();
         } else {
-            waitRender = true;
             this.renderView(view, function (_view) {
                 var $view = $('#visview_' + _view);
 
                 // Get the view, if required, from Container
                 if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
+                $view.show();
 
-                that.afterRenderView(_view);
+                that.postChangeView(_view);
                 that.destroyUnusedViews();
             });
         }
-        if (!waitRender) this.afterRenderView();
     },
-    afterRenderView: function (view) {
+    postChangeView: function (view) {
          this.activeView = view;
 
          /*$('#visview_' + view).find('.vis-view-container').each(function () {
@@ -2477,33 +2505,7 @@ var vis = {
             // Get all widgets and try to destroy them
             for (var wid in that.views[view].widgets) {
                 if (!that.views[view].widgets.hasOwnProperty(wid)) continue;
-                var $widget = $('#' + wid);
-                if ($widget.length) {
-                    try {
-                        // get array of bound OIDs
-                        var bound = $widget.data('bound');
-                        if (bound) {
-                            var bindHandler = $widget.data('bindHandler');
-                            for (var b = 0; b < bound.length; b++) {
-                                if (typeof bindHandler === 'function') {
-                                    that.states.unbind(bound[b], bindHandler);
-                                } else {
-                                    that.states.unbind(bound[b], bindHandler[b]);
-                                }
-                            }
-                            $widget.data('bindHandler', null);
-                            $widget.data('bound', null);
-                        }
-                        // If destroy function exists => destroy it
-                        var destroy = $widget.data('destroy');
-                        if (typeof destroy === 'function') {
-
-                            destroy(wid, $widget);
-                        }
-                    } catch (e) {
-                        console.error('Cannot destroy "' + wid + '": ' + e);
-                    }
-                }
+                that.destroyWidget(view, wid);
             }
             
             $(this).remove();

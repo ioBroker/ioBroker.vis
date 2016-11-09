@@ -96,7 +96,6 @@ vis = $.extend(true, vis, {
             return;
         }
 
-
         if (this.saveRemoteActive % 10) {
             this.saveRemoteActive--;
             setTimeout(function () {
@@ -118,6 +117,25 @@ vis = $.extend(true, vis, {
                     }
                 }
             }
+            // sort view names
+            var keys = [];
+            var k;
+            for (k in this.views) {
+                if (!this.views.hasOwnProperty(k)) continue;
+                if (k === '___settings') continue;
+                keys.push(k);
+            }
+
+            // case insensitive sorting
+            keys.sort(function (a, b) {
+                return a.toLowerCase().localeCompare(b.toLowerCase());
+            });
+            var views = {};
+            views.___settings = this.views.___settings;
+            for (k = 0; k < keys.length; k++) {
+                views[keys[k]] = this.views[keys[k]];
+            }
+            this.views = views;
 
             // replace all bounded variables with initial values
             var viewsToSave = JSON.parse(JSON.stringify(this.views));
@@ -1083,7 +1101,7 @@ vis = $.extend(true, vis, {
                 if (view === '___settings') continue;
                 if ($('.vis-view #visview' + view).length &&
                     (that.views[view].settings.theme === theme || that.views[view].settings.theme === oldValue)) {
-                    that.renderView(view, false);
+                    that.renderView(view);
                 }
             }
 
@@ -2286,15 +2304,16 @@ vis = $.extend(true, vis, {
         var keys = [];
         var k;
         for (k in this.views) {
+            if (!this.views.hasOwnProperty(k)) continue;
             if (k === '___settings') continue;
             keys.push(k);
         }
-
 
         // case insensitive sorting
         keys.sort(function (a, b) {
             return a.toLowerCase().localeCompare(b.toLowerCase());
         });
+
         var text = '<table class="table-no-space"><tr class="table-no-space">';
         for (var view = 0; view < keys.length; view++) {
             text += '<td class="table-no-space">';
@@ -2386,7 +2405,7 @@ vis = $.extend(true, vis, {
             }
         });
 
-        $('#view_select_tabs').on('click', '.view-select-tab', function () {
+        $('#view_select_tabs').unbind('click').on('click', '.view-select-tab', function () {
             var view = $(this).attr('id').replace('view_tab_', '');
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
             $(this).addClass('ui-tabs-active ui-state-active');
@@ -3514,7 +3533,7 @@ vis = $.extend(true, vis, {
         if (renderVisible) delete options.data.renderVisible;
 
         if (isSelectWidget && !$view.length) {
-            this.renderView(options.view, true, false);
+            this.renderView(options.view, false);
             $view = $('#visview_' + options.view);
         }
 
@@ -3686,7 +3705,7 @@ vis = $.extend(true, vis, {
                 }, true));
             } else {
                 if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
-                    this.renderView(targetView, true, true);
+                    this.renderView(targetView, true);
                 }
                 newWidgets.push(this.addWidget({
                     tpl:    tpl, 
