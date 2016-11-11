@@ -103,7 +103,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '0.11.0',
+    version: '0.11.1',
     requiredServerVersion:  '0.0.0',
 
     storageKeyViews:        'visViews',
@@ -315,14 +315,16 @@ var vis = {
         this.visibility = {};
         this.bindings   = {};
 
-        for (var view in this.views) {
+        var view;
+        var id;
+        for (view in this.views) {
             if (!this.views.hasOwnProperty(view)) continue;
 
             if (view === '___settings') continue;
 
             views[view] = [];
 
-            for (var id in this.views[view].widgets) {
+            for (id in this.views[view].widgets) {
                 if (!this.views[view].widgets.hasOwnProperty(id)) continue;
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
@@ -543,6 +545,33 @@ var vis = {
                 }
             }
         }
+
+        var changed;
+        do {
+            changed = false;
+            // Check containers
+            for (view in this.views) {
+                if (!this.views.hasOwnProperty(view)) continue;
+
+                if (view === '___settings') continue;
+
+                for (id in this.views[view].widgets) {
+                    if (!this.views[view].widgets.hasOwnProperty(id)) continue;
+
+                    // Add all OIDs from this view to parent
+                    if (this.views[view].widgets[id].tpl === 'tplContainerView' && this.views[view].widgets[id].data.contains_view) {
+                        var ids = views[this.views[view].widgets[id].data.contains_view];
+                        for (var a = 0; a < ids.length; a++) {
+                            if (views[view].indexOf(ids[a]) === -1) {
+                                views[view].push(ids[a]);
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+        } while (changed);
+
         return {IDs: IDs, byViews: views};
     },
     loadWidgetSets: function (callback) {
@@ -779,10 +808,7 @@ var vis = {
         var item = views[index];
         var that = this;
         this.renderView(item.view, true, function () {
-            setTimeout(function () {
-                index++;
-                that.renderViews(views, index, callback)
-            }, 0);
+            that.renderViews(views, index + 1, callback);
         });
     },
     renderView: function (view, hidden, callback) {
@@ -807,6 +833,7 @@ var vis = {
             return false;
         }
 
+        // collect all IDs, used in this view and in containers
         this.subscribeStates(view, function () {
             var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
 
@@ -2547,6 +2574,7 @@ var vis = {
         }
 
         this.subscribing.activeViews.push(view);
+
         // subscribe
         var oids = [];
         for (var i = 0; i < this.subscribing.byViews[view].length; i++) {
@@ -2557,6 +2585,7 @@ var vis = {
         }
         if (oids.length) {
             var that = this;
+            console.debug('Requets ' + oids.length + ' states.');
             this.conn.getStates(oids, function (error, data) {
                 if (error) that.showError(error);
 

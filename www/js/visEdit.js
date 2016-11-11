@@ -59,6 +59,33 @@ vis = $.extend(true, vis, {
     alignType:             '',
     widgetAccordeon:       false,
     saveRemoteActive:      0,
+    editIcons:             {
+        filter:     'vis-preview-filter',
+        ctrl:       'vis-preview-control',
+        control:    'vis-preview-control',
+        navigation: 'vis-preview-navigation',
+        nav:        'vis-preview-navigation',
+        timestamp:  'vis-preview-timestamp',
+        dialog:     'vis-preview-dialog',
+        static:     'vis-preview-static',
+        val:        'vis-preview-val',
+        value:      'vis-preview-val',
+        container:  'vis-preview-container',
+        rgb:        'vis-preview-rgb',
+        stateful:   'vis-preview-stateful',
+        table:      'vis-preview-table',
+        tools:      'vis-preview-tools',
+        bar:        'vis-preview-bar',
+        temperature: 'vis-preview-temperature',
+        window:     'vis-preview-window',
+        shutter:    'vis-preview-shutter',
+        door:       'vis-preview-door',
+        lamp:       'vis-preview-lamp',
+        checkbox:   'vis-preview-checkbox', // boolean value with control
+        dimmer:     'vis-preview-dimmer',
+        state:      'vis-preview-state',    // boolean value
+        lock:       'vis-preview-lock'
+    },
     removeUnusedFields: function () {
         var regExp = /^gestures\-/;
         for (var view in this.views) {
@@ -2125,6 +2152,49 @@ vis = $.extend(true, vis, {
         // show current project
         $('#current-project').html(that.projectPrefix.substring(0, that.projectPrefix.length - 1));
     },
+    editOneWidgetPreview: function (tplElem) {
+        var tpl           = $(tplElem).attr('id');
+        var $tpl          = $('#' + tpl);
+        var type          = $tpl.data('vis-type') || '';
+        var beta          = '';
+        var classTypes    = '';
+        var behaviorIcons = [];
+        var types;
+
+        if (type) {
+            types = type.split(',');
+            if (types.length < 2) types = type.split(';');
+            var noIconTypes = [];
+
+            for (var z = 0; z < types.length; z++) {
+                types[z] = types[z].trim();
+                classTypes += types[z] + ' ';
+
+                if (!this.editIcons[types[z]]) {
+                    noIconTypes.push(types[z]);
+                } else {
+                    behaviorIcons.push('<div class="vis-preview-informer ' + this.editIcons[types[z]] + '"></div>');
+                }
+                types[z] = _(types[z]);
+            }
+            type = '<div class="wid-prev-type">' + noIconTypes.join(',') + '</div>';
+        } else {
+            types = [];
+        }
+        if ($tpl.data('vis-beta')) {
+            beta = '<div style="color: red; width: 100%;  z-index: 100; top: 50% ; font-size: 15px;">!!! BETA !!!</div>';
+        }
+
+        var set = $tpl.data('vis-set');
+        classTypes += set + ' ' + $tpl.data('vis-name');
+        classTypes = classTypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
+
+        return '<div id="prev_container_' + tpl + '" class="wid-prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid-prev-name" >' + $tpl.data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>';
+        if ($tpl.data('vis-prev')) {
+            var content = $preview.append($tpl.data('vis-prev'));
+            $(content).children().last().addClass('wid-prev-content');
+        }
+    },
     editInitWidgetPreview: function () {
         var that = this;
         $('#btn_prev_zoom').hover(
@@ -2138,13 +2208,13 @@ vis = $.extend(true, vis, {
             if ($(this).hasClass('ui-state-active')) {
                 that.editSaveConfig('button/btn_prev_zoom', false);
                 $(this).removeClass('ui-state-active');
-                $('.wid_prev').removeClass('wid_prev_k');
-                $('.wid_prev_content').css('zoom', 1);
+                $('.wid-prev').removeClass('wid-prev-k');
+                $('.wid-prev-content').css('zoom', 1);
             } else {
                 that.editSaveConfig('button/btn_prev_zoom', true);
                 $(this).addClass('ui-state-active');
-                $('.wid_prev').addClass('wid_prev_k');
-                $('.wid_prev_content').css('zoom', 0.5);
+                $('.wid-prev').addClass('wid-prev-k');
+                $('.wid-prev-content').css('zoom', 0.5);
             }
         });
 
@@ -2159,92 +2229,38 @@ vis = $.extend(true, vis, {
             if ($(this).hasClass('ui-state-active')) {
                 that.editSaveConfig('button/btn_prev_type', false);
                 $(this).removeClass('ui-state-active');
-                $('.wid_prev_type').hide();
+                $('.wid-prev-type').hide();
             } else {
                 that.editSaveConfig('button/btn_prev_type', true);
                 $(this).addClass('ui-state-active');
-                $('.wid_prev_type').show();
+                $('.wid-prev-type').show();
             }
         });
-
-        var icons = {
-            filter:     'vis-preview-filter',
-            ctrl:       'vis-preview-control',
-            control:    'vis-preview-control',
-            navigation: 'vis-preview-navigation',
-            nav:        'vis-preview-navigation',
-            timestamp:  'vis-preview-timestamp',
-            dialog:     'vis-preview-dialog',
-            static:     'vis-preview-static',
-            val:        'vis-preview-val',
-            value:      'vis-preview-val',
-            container:  'vis-preview-container',
-            rgb:        'vis-preview-rgb',
-            stateful:   'vis-preview-stateful',
-            table:      'vis-preview-table',
-            tools:      'vis-preview-tools',
-            bar:        'vis-preview-bar',
-            temperature: 'vis-preview-temperature',
-            window:     'vis-preview-window',
-            shutter:    'vis-preview-shutter',
-            door:       'vis-preview-door',
-            lamp:       'vis-preview-lamp',
-            checkbox:   'vis-preview-checkbox', // boolean value with control
-            dimmer:     'vis-preview-dimmer',
-            state:      'vis-preview-state',    // boolean value
-            lock:      'vis-preview-lock'
-        };
 
         $.each(this.widgetSets, function () {
             var set = this.name || this;
             var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
 
-            $.each(tpl_list, function (i) {
-                var tpl           = $(tpl_list[i]).attr('id');
-                var type          = $('#' + tpl).data('vis-type') || '';
-                var beta          = '';
-                var classTypes    = '';
-                var behaviorIcons = [];
-                var types;
+            for(var i = 0; i < tpl_list.length; i++) {
+                var text = that.editOneWidgetPreview(tpl_list[i]);
+                $('#toolbox').append(text);
+                var tpl = $(tpl_list[i]).attr('id');
 
-                if (type) {
-                    var types = type.split(',');
-                    if (types.length < 2) types = type.split(';');
-                    var noIconTypes = [];
+                var $tpl     = $('#' + tpl);
+                var $preview = $('#prev_container_' + tpl);
+                var $prev    = $tpl.data('vis-prev');
 
-                    for (var z = 0; z < types.length; z++) {
-                        types[z] = types[z].trim();
-                        classTypes += types[z] + ' ';
-
-                        if (!icons[types[z]]) {
-                            noIconTypes.push(types[z]);
-                        } else {
-                            behaviorIcons.push('<div class="vis-preview-informer ' + icons[types[z]] + '"></div>');
-                        }
-                        types[z] = _(types[z]);
-                    }
-                    type = '<div class="wid_prev_type">' + noIconTypes.join(',') + '</div>';
-                } else {
-                    types = [];
-                }
-                if ($('#' + tpl).data('vis-beta')) {
-                    beta = '<div style="color: red; width: 100%;  z-index: 100; top: 50% ; font-size: 15px;">!!! BETA !!!</div>';
+                if ($prev) {
+                    var content = $preview.append($prev);
+                    $(content).children().last().addClass('wid-prev-content');
                 }
 
-                classTypes += set + ' ' + $('#' + tpl).data('vis-name');
-                classTypes = classTypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
+                var $panel = $('#panel_body');
 
-                $('#toolbox').append('<div id="prev_container_' + tpl + '" class="wid_prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid_prev_name" >' + $('#' + tpl).data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>');
-
-                if ($(tpl_list[i]).data('vis-prev')) {
-                    var content = $('#prev_container_' + tpl).append($(tpl_list[i]).data('vis-prev'));
-                    $(content).children().last().addClass('wid_prev_content');
-                }
-
-                $('#prev_container_' + tpl).draggable({
+                $preview.draggable({
                     helper:      'clone',
-                    appendTo:    $('#panel_body'),
-                    containment: $('#panel_body'),
+                    appendTo:    $panel,
+                    containment: $panel,
                     zIndex:      10000,
                     cursorAt:    {top: 0, left: 0},
 
@@ -2253,8 +2269,8 @@ vis = $.extend(true, vis, {
                             $(ui.helper).addClass('ui-state-highlight ui-corner-all').css({padding: '2px', 'font-size': '12px'});
 
                         } else {
-                            $(ui.helper).find('.wid_prev_type').remove();
-                            $(ui.helper).find('.wid_prev_name').remove();
+                            $(ui.helper).find('.wid-prev-type').remove();
+                            $(ui.helper).find('.wid-prev-name').remove();
                             $(ui.helper).css('border', 'none');
                             $(ui.helper).css('width',  'auto');
                         }
@@ -2262,39 +2278,42 @@ vis = $.extend(true, vis, {
                     }
                 });
                 // Add widget by double click
-                $('#prev_container_' + tpl).dblclick(function () {
-                    var tpl = $(this).data('tpl');
-                    var $tpl = $('#' + tpl);
-                    var renderVisible = $tpl.attr('data-vis-render-visible');
+                /*$('#prev_container_' + tpl).dblclick(function () {
+                 var tpl = $(this).data('tpl');
+                 var $tpl = $('#' + tpl);
+                 var renderVisible = $tpl.attr('data-vis-render-visible');
 
-                    // Widget attributes default values
-                    var attrs = $tpl.attr('data-vis-attrs');
-                    // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
-                    var t = 0;
-                    var attr;
-                    while ((attr = $tpl.attr('data-vis-attrs' + t))) {
-                        attrs += attr;
-                        t++;
-                    }
-                    var data = {};
-                    if (attrs) {
-                        attrs = attrs.split(';');
-                        if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
-                    }
-                    if (renderVisible) data.renderVisible = true;
+                 // Widget attributes default values
+                 var attrs = $tpl.attr('data-vis-attrs');
+                 // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                 var t = 0;
+                 var attr;
+                 while ((attr = $tpl.attr('data-vis-attrs' + t))) {
+                 attrs += attr;
+                 t++;
+                 }
+                 var data = {};
+                 if (attrs) {
+                 attrs = attrs.split(';');
+                 if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
+                 }
+                 if (renderVisible) data.renderVisible = true;
 
-                    var widgetId = that.addWidget({tpl: tpl, data: data});
+                 var widgetId = that.addWidget({tpl: tpl, data: data});
 
-                    that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
-                        .multiselect('refresh');
+                 that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
+                 .multiselect('refresh');
 
-                    setTimeout(function () {
-                        that.inspectWidgets();
-                    }, 50);
-                });
-            });
+                 setTimeout(function () {
+                 that.inspectWidgets();
+                 }, 50);
+                 });*/
+            }
         });
 
+        $('.wid-prev').dblclick(function () {
+            that.editShowWizard($(this).find('.wid-prev-content').attr('id'));
+        });
         if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
         if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
 
@@ -2738,9 +2757,9 @@ vis = $.extend(true, vis, {
                 var tpl = ui.item.value;
                 that.editSaveConfig('select/select_set', tpl);
                 if (tpl === 'all') {
-                    $('.wid_prev').css('display', 'inline-block');
+                    $('.wid-prev').css('display', 'inline-block');
                 } else {
-                    $('.wid_prev').hide();
+                    $('.wid-prev').hide();
                     $('.' + tpl + '_prev').css('display', 'inline-block');
 
                     // Remove filter
@@ -2817,7 +2836,7 @@ vis = $.extend(true, vis, {
         }).clearSearch();
 
         if (this.config['select/select_set'] !== 'all' && this.config['select/select_set']) {
-            $('.wid_prev').hide();
+            $('.wid-prev').hide();
             $('.' + this.config['select/select_set'] + '_prev').show();
         }
 
@@ -4411,7 +4430,7 @@ vis = $.extend(true, vis, {
         var that = this;
 
         $view.droppable({
-            accept: '.wid_prev',
+            accept: '.wid-prev',
             drop: function (event, ui) {
                 var tpl = $(ui.draggable).data('tpl');
                 var view_pos = $('#vis_container').position();
@@ -5548,6 +5567,70 @@ vis = $.extend(true, vis, {
                 for (var i = 0; i < widgets.length; i++) {
                     $('#' + widgets[i]).removeClass('vis-widgets-highlight');
                 }
+            }
+        });
+    },
+    editShowWizard:       function (tpl) {
+        tpl = tpl.replace('prev_', '');
+        //noinspection JSJQueryEfficiency
+        var $wizard = $('#dialog_wizard_select');
+        if (!$wizard.length) {
+            $('body').append('<div id="dialog_wizard" style="display: none">' +
+                    '<div id=dialog_wizard_preview></div>' +
+                '<div id="dialog_wizard_select"></div>' +
+                '</div>');
+            $wizard = $('#dialog_wizard_select');
+            $wizard.selectId('init', {
+                texts: {
+                    select:          _('Select'),
+                    cancel:          _('Cancel'),
+                    all:             _('All'),
+                    id:              _('ID'),
+                    name:            _('Name'),
+                    role:            _('Role'),
+                    room:            _('Room'),
+                    value:           _('Value'),
+                    selectid:        _('Select ID'),
+                    enum:            _('Members'),
+                    from:            _('from'),
+                    lc:              _('lc'),
+                    ts:              _('ts'),
+                    ack:             _('ack'),
+                    expand:          _('expand'),
+                    collapse:        _('collapse'),
+                    refresh:         _('refresh'),
+                    edit:            _('edit'),
+                    ok:              _('ok'),
+                    wait:            _('wait'),
+                    list:            _('list'),
+                    tree:            _('tree'),
+                    copyToClipboard: _('Copy to clipboard')
+                },
+                noDialog:      true,
+                noMultiselect: false,
+                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                imgPath: '/lib/css/fancytree/',
+                objects: this.objects,
+                states:  this.states,
+                zindex:  1001
+            });
+        }
+        var $dlg = $('#dialog_wizard');
+        $('#dialog_wizard_preview').html(this.editOneWidgetPreview($('#' + tpl)[0]));
+
+        $wizard.selectId('show', function (newId, oldId) {
+
+        });
+        $dlg.dialog({
+            autoOpen: true,
+            width:    '90%',
+            height:   600,
+            modal:    true,
+            open: function (event, ui) {
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
+                $('[aria-describedby="dialog_wizard"]').css('z-index', 1002);
+                $('.ui-widget-overlay').css('z-index', 1001);
+
             }
         });
     }

@@ -365,7 +365,7 @@ body {
     vertical-align: middle;
 }
 
-.wid_prev {
+.wid-prev {
     width:      130px;
     padding:    0;
     overflow:   hidden;
@@ -385,7 +385,7 @@ body {
     border-color: inherit;
 }
 
-.wid_prev_k {
+.wid-prev-k {
     width: 80px !important;
     font-size: 9px !important;
     /* padding: 0!important; */
@@ -394,7 +394,7 @@ body {
     font-weight: bolder !important;
 }
 
-.wid_prev_content {
+.wid-prev-content {
     padding-right: 0 !important;
     padding-left: 5px !important;
     padding-top: 0 !important;
@@ -406,14 +406,14 @@ body {
     display: inline-block;
 }
 
-.wid_prev_name {
+.wid-prev-name {
     width: 100%;
     text-align: center;
     font-family: Verdana, Arial, sans-serif;
     font-weight: normal;
 }
 
-.wid_prev_type {
+.wid-prev-type {
     display: none;
     width: 100%;
     text-align: center;
