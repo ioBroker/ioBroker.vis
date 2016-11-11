@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -1821,7 +1821,7 @@ vis = $.extend(true, vis, {
         // Extract min, max, step for number and slider
         if ((wid_type === 'number' || wid_type === 'slider') && wid_type_opt) {
             var old = wid_type_opt;
-            var wid_type_opt = {};
+            wid_type_opt = {};
             if (old[0] !== undefined) {
                 wid_type_opt.min = parseFloat(old[0]);
                 if (old[1] !== undefined) {

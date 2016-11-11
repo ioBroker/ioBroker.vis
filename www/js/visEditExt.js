@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2015 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -167,6 +167,7 @@ vis.styleSelect = {
         }
 
         var text = '';
+        //noinspection JSJQueryEfficiency
         if (!$('#' + options.name + '_styles').length) {
             text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
             for (var style_ in styles) {
@@ -201,7 +202,8 @@ vis.styleSelect = {
 
         $('#' + options.name).hide().after(text);
 
-        var $div = $('#' + options.name + '_styles').iconselectmenu({
+        var $styles = $('#' + options.name + '_styles');
+        $styles.iconselectmenu({
             width: '100%',
             style: 'dropdown',
             change: function (event, ui) {
@@ -217,16 +219,17 @@ vis.styleSelect = {
 
                 if (styles[ui.item.value] && styles[ui.item.value].parentClass) {
                     $text.parent().addClass(styles[ui.item.value].parentClass);
-                }            }
-        }).iconselectmenu('menuWidget').data('styles', styles);
+                }
+            }
+        }).iconselectmenu('menuWidget').data('styles', styles).addClass('selectmenu-overflow');
 
         $('#' + options.name + '_styles-menu').addClass('custom-vis-menu');
 
-        if ($('#' + options.name + '_styles-button .vis-current-style').length) {
-            $('#' + options.name + '_styles-button .vis-current-style').remove();
+        var $curStyle = $('#' + options.name + '_styles-button .vis-current-style');
+        if ($curStyle.length) {
+            $curStyle.remove();
 
-            $('#' + options.name + '_styles')
-                .val(options.style)
+            $styles.val(options.style)
                 .iconselectmenu('refresh');
         }
 

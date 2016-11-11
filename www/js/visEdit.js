@@ -2312,7 +2312,7 @@ vis = $.extend(true, vis, {
         });
 
         $('.wid-prev').dblclick(function () {
-            that.editShowWizard($(this).find('.wid-prev-content').attr('id'));
+            that.editShowWizard($(this).clone());
         });
         if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
         if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
@@ -5570,17 +5570,18 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    editShowWizard:       function (tpl) {
-        tpl = tpl.replace('prev_', '');
+    editShowWizard:       function ($tplElem) {
+        var tpl = $tplElem.attr('id').substring('prev_container_'.length);
+        $tplElem.attr('id', '');
+        var that = this;
+
         //noinspection JSJQueryEfficiency
-        var $wizard = $('#dialog_wizard_select');
-        if (!$wizard.length) {
+        var $dlg = $('#dialog_wizard');
+        if (!$dlg.length) {
             $('body').append('<div id="dialog_wizard" style="display: none">' +
-                    '<div id=dialog_wizard_preview></div>' +
-                '<div id="dialog_wizard_select"></div>' +
                 '</div>');
-            $wizard = $('#dialog_wizard_select');
-            $wizard.selectId('init', {
+            $dlg = $('#dialog_wizard');
+            $dlg.selectId('init', {
                 texts: {
                     select:          _('Select'),
                     cancel:          _('Cancel'),
@@ -5606,33 +5607,98 @@ vis = $.extend(true, vis, {
                     tree:            _('tree'),
                     copyToClipboard: _('Copy to clipboard')
                 },
-                noDialog:      true,
                 noMultiselect: false,
-                columns: ['image', 'name', 'type', 'role', 'enum', 'room', 'value'],
+                filter: {type: 'state'},
+                roleExactly: true,
+                columns: ['image', 'name', 'role', 'room', 'value'],
                 imgPath: '/lib/css/fancytree/',
                 objects: this.objects,
                 states:  this.states,
                 zindex:  1001
             });
         }
-        var $dlg = $('#dialog_wizard');
-        $('#dialog_wizard_preview').html(this.editOneWidgetPreview($('#' + tpl)[0]));
 
-        $wizard.selectId('show', function (newId, oldId) {
+        $dlg.selectId('show', function (newIds) {
+            if (!newIds || !newIds.length) return;
+            var $tpl = $('#' + tpl);
+            var renderVisible = $tpl.attr('data-vis-render-visible');
+            var widgets = [];
+            var append = '';
+            for (var i = 0; i < newIds.length; i++) {
+                var data = {};
+                var attrs = $dlg.data('attrs');
+                if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
+                if (renderVisible) data.renderVisible = true;
+                var oid = $dlg.find('.dialog-wizard-select').val();
+                if (oid) data[oid] = newIds[i];
 
+                var widgetId = that.addWidget({tpl: tpl, data: data});
+
+                append += '<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>';
+
+                widgets.push(widgetId);
+            }
+            that.$selectActiveWidgets.append(append)
+                .multiselect('refresh');
+
+            setTimeout(function () {
+                that.inspectWidgets(widgets);
+            }, 50);
         });
-        $dlg.dialog({
-            autoOpen: true,
-            width:    '90%',
-            height:   600,
-            modal:    true,
-            open: function (event, ui) {
-                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
-                $('[aria-describedby="dialog_wizard"]').css('z-index', 1002);
-                $('.ui-widget-overlay').css('z-index', 1001);
-
+        var $realDlg = $('[aria-describedby="dialog_wizard"]');
+        $realDlg.find('.ui-dialog-title').html(_('Wizard to create widgets...'));
+        $realDlg.find('.ui-button-text').each(function () {
+            var id = $(this).parent().attr('id');
+            if (id && id.indexOf('button-ok') !== -1) {
+                $(this).html(_('Generate'));
             }
         });
+        if (!$dlg.find('.dialog-wizard-preview').length) {
+            $dlg.find('div').first().css('height', 'calc(100% - 130px)');
+            $dlg.dialog('option', 'height', 700);
+            $dlg.prepend('<table><tr><td><div class="dialog-wizard-preview"></div></td><td class="padding-left: 15px">' +
+                '<label for="dialog-wizard-select">' + _('Attribute for OID:') + ' </label>' +
+                '<select class="dialog-wizard-select" id="dialog-wizard-select"></select><br>' +
+                '</td></tr></table>');
+        }
+
+        $dlg.find('.dialog-wizard-preview').html($tplElem);
+        var $widgetTpl = $('#' + tpl);
+        // fill attributes in select
+        var widgetAttrs = $widgetTpl.attr('data-vis-attrs');
+        // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+        var t = 0;
+        var attr;
+        while ((attr = $widgetTpl.attr('data-vis-attrs' + t))) {
+            widgetAttrs += attr;
+            t++;
+        }
+        if (widgetAttrs) {
+            widgetAttrs = widgetAttrs.split(';');
+        } else {
+            widgetAttrs = [];
+        }
+        $dlg.data('attrs', JSON.parse(JSON.stringify(widgetAttrs)));
+
+        var options = '<option value="">' + _('none') + '</option>';
+        attr = null;
+        for (var w = 0; w < widgetAttrs.length; w++) {
+            var pos = widgetAttrs[w].indexOf('/');
+            if (pos !== -1) widgetAttrs[w] = widgetAttrs[w].substring(0, pos);
+            pos = widgetAttrs[w].indexOf('[');
+            if (pos !== -1) widgetAttrs[w] = widgetAttrs[w].substring(0, pos);
+            if (widgetAttrs[w] === 'systemOid' ||
+                 widgetAttrs[w] === 'oidTrueValue' ||
+                 widgetAttrs[w] === 'oidFalseValue' ||
+                widgetAttrs[w].match(/oid\d{0,2}$/) ||
+                widgetAttrs[w].match(/^oid/) || widgetAttrs[w].match(/^signals-oid-/)) {
+                if (!attr) attr = widgetAttrs[w];
+                options += '<option value="' + widgetAttrs[w] + '">' + _(widgetAttrs[w]) + '</option>';
+            }
+
+        }
+        $dlg.find('.dialog-wizard-select').html(options);
+        if (attr) $dlg.find('.dialog-wizard-select').val(attr);
     }
 });
 

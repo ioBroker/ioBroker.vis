@@ -310,7 +310,7 @@ var vis = {
             return null;
         }
 
-        var views       = {};
+        var views       = this.editMode ? null : {};
         var IDs         = [];
         this.visibility = {};
         this.bindings   = {};
@@ -322,7 +322,7 @@ var vis = {
 
             if (view === '___settings') continue;
 
-            views[view] = [];
+            if (views) views[view] = [];
 
             for (id in this.views[view].widgets) {
                 if (!this.views[view].widgets.hasOwnProperty(id)) continue;
@@ -469,7 +469,7 @@ var vis = {
                             for (var t = 0; t < oids.length; t++) {
                                 if (oids[t].systemOid) {
                                     if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
-                                    if (views[view].indexOf(oids[t].systemOid) === -1) views[view].push(oids[t].systemOid);
+                                    if (views && views[view].indexOf(oids[t].systemOid) === -1) views[view].push(oids[t].systemOid);
                                     if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
                                     oids[t].type   = 'data';
                                     oids[t].attr   = attr;
@@ -483,7 +483,7 @@ var vis = {
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
                                         if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
-                                        if (views[view].indexOf(oids[t].operations[0].arg[w].systemOid) === -1) views[view].push(oids[t].operations[0].arg[w].systemOid);
+                                        if (views && views[view].indexOf(oids[t].operations[0].arg[w].systemOid) === -1) views[view].push(oids[t].operations[0].arg[w].systemOid);
                                         if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
                                         this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
                                     }
@@ -492,7 +492,7 @@ var vis = {
                         } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
                             if (data[attr] !== 'nothing_selected') {
                                 if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
-                                if (views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
+                                if (views && views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
                             }
 
                             // Visibility binding
@@ -521,7 +521,7 @@ var vis = {
                             if (objIDs) {
                                 for (var tt = 0; tt < objIDs.length; tt++) {
                                     if (IDs.indexOf(objIDs[tt].systemOid) === -1) IDs.push(objIDs[tt].systemOid);
-                                    if (views[view].indexOf(objIDs[tt].systemOid) === -1) views[view].push(objIDs[tt].systemOid);
+                                    if (views && views[view].indexOf(objIDs[tt].systemOid) === -1) views[view].push(objIDs[tt].systemOid);
                                     if (!this.bindings[objIDs[tt].systemOid]) this.bindings[objIDs[tt].systemOid] = [];
 
                                     objIDs[tt].type   = 'style';
@@ -533,7 +533,7 @@ var vis = {
                                     if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
                                         for (var w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
                                             if (IDs.indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) IDs.push(objIDs[tt].operations[0].arg[w].systemOid);
-                                            if (views[view].indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) views[view].push(objIDs[tt].operations[0].arg[w].systemOid);
+                                            if (views && views[view].indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) views[view].push(objIDs[tt].operations[0].arg[w].systemOid);
                                             if (!this.bindings[objIDs[tt].operations[0].arg[w].systemOid]) this.bindings[objIDs[tt].operations[0].arg[w].systemOid] = [];
                                             this.bindings[objIDs[tt].operations[0].arg[w].systemOid].push(objIDs[tt]);
                                         }
@@ -546,31 +546,33 @@ var vis = {
             }
         }
 
-        var changed;
-        do {
-            changed = false;
-            // Check containers
-            for (view in this.views) {
-                if (!this.views.hasOwnProperty(view)) continue;
+        if (views) {
+            var changed;
+            do {
+                changed = false;
+                // Check containers
+                for (view in this.views) {
+                    if (!this.views.hasOwnProperty(view)) continue;
 
-                if (view === '___settings') continue;
+                    if (view === '___settings') continue;
 
-                for (id in this.views[view].widgets) {
-                    if (!this.views[view].widgets.hasOwnProperty(id)) continue;
+                    for (id in this.views[view].widgets) {
+                        if (!this.views[view].widgets.hasOwnProperty(id)) continue;
 
-                    // Add all OIDs from this view to parent
-                    if (this.views[view].widgets[id].tpl === 'tplContainerView' && this.views[view].widgets[id].data.contains_view) {
-                        var ids = views[this.views[view].widgets[id].data.contains_view];
-                        for (var a = 0; a < ids.length; a++) {
-                            if (views[view].indexOf(ids[a]) === -1) {
-                                views[view].push(ids[a]);
-                                changed = true;
+                        // Add all OIDs from this view to parent
+                        if (this.views[view].widgets[id].tpl === 'tplContainerView' && this.views[view].widgets[id].data.contains_view) {
+                            var ids = views[this.views[view].widgets[id].data.contains_view];
+                            for (var a = 0; a < ids.length; a++) {
+                                if (views[view].indexOf(ids[a]) === -1) {
+                                    views[view].push(ids[a]);
+                                    changed = true;
+                                }
                             }
                         }
                     }
                 }
-            }
-        } while (changed);
+            } while (changed);
+        }
 
         return {IDs: IDs, byViews: views};
     },
