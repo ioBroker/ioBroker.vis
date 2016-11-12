@@ -3622,8 +3622,6 @@ vis = $.extend(true, vis, {
 
         if (options.style) $jWidget.css(options.style);
 
-        //if (isSelectWidget && this.binds.jqueryui) this.binds.jqueryui._disable();
-
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
             if (!options.noAnimate) {
@@ -5578,8 +5576,7 @@ vis = $.extend(true, vis, {
         //noinspection JSJQueryEfficiency
         var $dlg = $('#dialog_wizard');
         if (!$dlg.length) {
-            $('body').append('<div id="dialog_wizard" style="display: none">' +
-                '</div>');
+            $('body').append('<div id="dialog_wizard" style="display: none"></div>');
             $dlg = $('#dialog_wizard');
             $dlg.selectId('init', {
                 texts: {
@@ -5624,20 +5621,58 @@ vis = $.extend(true, vis, {
             var renderVisible = $tpl.attr('data-vis-render-visible');
             var widgets = [];
             var append = '';
+            // Go torough all selected OIDs
             for (var i = 0; i < newIds.length; i++) {
                 var data = {};
                 var attrs = $dlg.data('attrs');
+                var onlyAttrs = $dlg.data('onlyAttrs');
                 if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
                 if (renderVisible) data.renderVisible = true;
                 var oid = $dlg.find('.dialog-wizard-select').val();
-                if (oid) data[oid] = newIds[i];
+                var found = false;
+
+                if (oid) {
+                    data[oid] = newIds[i];
+                    // Try to find onChange handler
+                    for (var j = 0; j < attrs.length; j++) {
+                        var pos = attrs[j].indexOf('[');
+                        found = false;
+                        if (pos !== -1 && oid === attrs[j].substring(0, pos)) {
+                            found = true;
+                        } else {
+                            pos = attrs[j].indexOf('/');
+                            if (pos !== -1 && oid === attrs[j].substring(0, pos)) {
+                                found = true;
+                            }
+                        }
+                        if (found) {
+                            found = attrs[j].split('/')[2];
+                            break;
+                        }
+                    }
+                }
+                // Try to
+                /*if (that.objects[newIds[i]].common && that.objects[newIds[i]].common.name) {
+                    if (attrs.indexOf('title') !== -1) data.title = that.objects[newIds[i]].common.name;
+                    if (attrs.indexOf('descriptionLeft') !== -1) data.descriptionLeft = that.objects[newIds[i]].common.name;
+                    data.name = that.objects[newIds[i]].common.name;
+                }*/
 
                 var widgetId = that.addWidget({tpl: tpl, data: data});
 
+                // call default onChange handler
+                if (found) {
+                    if (vis.binds[$tpl.data('vis-set')] && vis.binds[$tpl.data('vis-set')][found]) {
+                        vis.binds[$tpl.data('vis-set')][found](widgetId, that.activeView, newIds[i], oid, false);
+                    }
+                }
+
+                // update select Widget element
                 append += '<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>';
 
                 widgets.push(widgetId);
             }
+
             that.$selectActiveWidgets.append(append)
                 .multiselect('refresh');
 
@@ -5654,7 +5689,7 @@ vis = $.extend(true, vis, {
             }
         });
         if (!$dlg.find('.dialog-wizard-preview').length) {
-            $dlg.find('div').first().css('height', 'calc(100% - 130px)');
+            $dlg.find('div').first().css('height', 'calc(100% - 140px)');
             $dlg.dialog('option', 'height', 700);
             $dlg.prepend('<table><tr><td><div class="dialog-wizard-preview"></div></td><td class="padding-left: 15px">' +
                 '<label for="dialog-wizard-select">' + _('Attribute for OID:') + ' </label>' +
@@ -5688,14 +5723,13 @@ vis = $.extend(true, vis, {
             pos = widgetAttrs[w].indexOf('[');
             if (pos !== -1) widgetAttrs[w] = widgetAttrs[w].substring(0, pos);
             if (widgetAttrs[w] === 'systemOid' ||
-                 widgetAttrs[w] === 'oidTrueValue' ||
-                 widgetAttrs[w] === 'oidFalseValue' ||
+                widgetAttrs[w] === 'oidTrueValue' ||
+                widgetAttrs[w] === 'oidFalseValue' ||
                 widgetAttrs[w].match(/oid\d{0,2}$/) ||
                 widgetAttrs[w].match(/^oid/) || widgetAttrs[w].match(/^signals-oid-/)) {
                 if (!attr) attr = widgetAttrs[w];
                 options += '<option value="' + widgetAttrs[w] + '">' + _(widgetAttrs[w]) + '</option>';
             }
-
         }
         $dlg.find('.dialog-wizard-select').html(options);
         if (attr) $dlg.find('.dialog-wizard-select').val(attr);

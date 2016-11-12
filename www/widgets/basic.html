@@ -312,8 +312,9 @@
                     $this.parent().find('div.vis-view').hide().appendTo($('#vis_container'));
                 }
                 if (vis.views[view]) {
-                    vis.renderView(view);
-                    $('#visview_' + view).appendTo($this).show();
+                    vis.renderView(view, false, function (_view) {
+                        $('#visview_' + _view).appendTo($this).show();
+                    });
                 }
             });
         },
@@ -386,8 +387,9 @@
     vis.binds.container = function (el, view) {
         var $this = $(el);
         if (vis.views[view]) {
-            vis.renderView(view);
-            $('#visview_' + view).appendTo($this).show();
+            vis.renderView(view, false, function (_view) {
+                $('#visview_' + _view).appendTo($this).show();
+            });
         }
     };
     vis.binds.basic = {

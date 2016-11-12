@@ -4,24 +4,25 @@
             soundOnClickInitialized: false,
             soundOnClick: function (el, url) {
                 if (vis.editMode) {
-                    jQuery(el).parent().parent().show();
+                    $(el).parent().parent().show();
                     return;
                 }
                 if (vis.binds.special.soundOnClickInitialized) {
                     return;
                 }
                 vis.binds.special.soundOnClickInitialized = true;
-                $("body").append('<audio id="sound_on_click" src="' + url + '"></audio>');
-                $("body").click(function (e) {
+                $('body')
+                .append('<audio id="sound_on_click" src="' + url + '"></audio>')
+                .click(function (e) {
                     var node = e.target;
 
                     for (var i = 0; i < 4 && node.parentNode; node = node.parentNode, i++) {
                         //console.log(node);
-                        if (node.nodeName == "BODY") return;
+                        if (node.nodeName === 'BODY') return;
                         var $node = $(node);
-                        if ($node.attr("id") == "vis_container") return;
-                        if ($node.hasClass("dashui-view")) return;
-                        if ($node.hasClass("ui-dialog")) return;
+                        if ($node.attr('id') === 'vis_container') return;
+                        if ($node.hasClass('dashui-view')) return;
+                        if ($node.hasClass('ui-dialog')) return;
 
                         var events = $._data(node, "events");
 
@@ -39,10 +40,10 @@
                 } else {
                     if (parseInt(delay, 10) > 0) {
                         setTimeout(function (_v) {
-                            vis.renderView(_v, true, true);
+                            vis.renderView(_v, true);
                         }, delay, view);
                     } else {
-                        vis.renderView(view, true, true);
+                        vis.renderView(view, true);
                     }
                 }
             },
