@@ -2045,8 +2045,8 @@ vis = $.extend(true, vis, {
 
         if (typeof addWidget === 'boolean') {
             onlyUpdate = addWidget;
-            addWidget = undefined;
-            delWidget = undefined;
+            addWidget  = undefined;
+            delWidget  = undefined;
         }
         if (addWidget) {
             if (typeof addWidget === 'object') {
@@ -2128,10 +2128,9 @@ vis = $.extend(true, vis, {
             // Select selected widgets
             for (var p = 0; p < select.length; p++) {
                 try {
-                    $widget = $('#' + select[p]);
-                    this.showWidgetHelper(select[p], true);
+                    $widget = this.showWidgetHelper(select[p], true);
 
-                    if(!$('#wid_all_lock_d').hasClass("ui-state-active")) {
+                    if (!$('#wid_all_lock_d').hasClass('ui-state-active')) {
                         this.draggable($widget);
                     }
                 } catch (e) {

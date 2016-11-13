@@ -852,7 +852,7 @@ var vis = {
             // apply group policies
             if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
                 if (that.views[view].settings.group_action === 'hide') {
-                    if (!that.isUserMemeberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
                         if (!$view.length) {
                             $('#vis_container').append('<div id="visview_' + view + '" class="vis-view vis-user-disabled"></div>');
                             $view = $('#visview_' + view);
@@ -868,7 +868,6 @@ var vis = {
                 }
             }
             if (!$view.length) {
-
                 $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
                 that.addViewStyle(view, that.views[view].settings.theme);
 
@@ -879,18 +878,19 @@ var vis = {
 
                 that.setViewSize(view);
 
-                // Render all simple widgets
+                // Render all widgets
                 for (var id in that.views[view].widgets) {
+                    if (!that.views[view].widgets.hasOwnProperty(id)) continue;
                     // Try to complete the widgetSet information to optimize the loading of widgetSets
-                    if (!that.views[view].widgets[id].widgetSet) {
+                    if (id[0] !== 'g' && !that.views[view].widgets[id].widgetSet) {
                         var obj = $('#' + that.views[view].widgets[id].tpl);
                         if (obj) {
-                            that.views[view].widgets[id].widgetSet = obj.attr("data-vis-set");
+                            that.views[view].widgets[id].widgetSet = obj.attr('data-vis-set');
                             isViewsConverted = true;
                         }
                     }
 
-                    if (!that.views[view].widgets[id].renderVisible) that.renderWidget(view, id);
+                    if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].groupped) that.renderWidget(view, id);
                 }
 
                 if (that.editMode) {
@@ -949,7 +949,7 @@ var vis = {
             // apply group policies
             if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
                 if (that.views[view].settings.group_action !== 'hide') {
-                    if (!that.isUserMemeberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
                         $view.addClass('vis-user-disabled');
                     }
                 }
@@ -1025,7 +1025,7 @@ var vis = {
         var $widget = $('#' + widget);
         var updateContainers = $widget.find('.vis-view-container').length;
         this.destroyWidget(view || this.activeView, widget);
-        this.renderWidget(view || this.activeView, widget);
+        this.renderWidget(view  || this.activeView, widget);
 
         if (updateContainers) this.updateContainers(view || this.activeView);
     },
@@ -1337,23 +1337,26 @@ var vis = {
             }
         });
     },
-    isUserMemeberOf: function (user, groups) {
+    isUserMemberOf: function (user, userGroups) {
         if (!this.userGroups) return true;
-        if (typeof groups !== 'object') groups = [groups];
-        for (var g = 0; g < groups.length; g++) {
-            var group = this.userGroups['system.group.' + groups[g]];
+        if (typeof userGroups !== 'object') userGroups = [userGroups];
+        for (var g = 0; g < userGroups.length; g++) {
+            var group = this.userGroups['system.group.' + userGroups[g]];
             if (!group || !group.common || !group.common.members || !group.common.members.length) continue;
             if (group.common.members.indexOf('system.user.' + user) !== -1) return true;
         }
         return false;
     },
-    renderWidget: function (view, id) {
+    renderWidget: function (view, id, groupId) {
         var $view = $('#visview_' + view);
         if (!$view.length) return;
 
         var widget = this.views[view].widgets[id];
         var isRelative = widget && widget.style && (widget.style.position === 'relative' || widget.style.position === 'static' || widget.style.position === 'sticky');
 
+        if (groupId) {
+            $view = $('#' + groupId);
+        } else
         // if widget has relative position => insert it into relative div
         if (this.editMode && isRelative) {
             if (this.views[view].settings && this.views[view].settings.sizex) {
@@ -1367,16 +1370,15 @@ var vis = {
             }
         }
 
-        //console.log("renderWidget("+view+","+id+")");
         // Add to the global array of widgets
         try {
-            var groups;
+            var userGroups;
             if (!this.editMode && widget.data['visibility-groups'] && widget.data['visibility-groups'].length) {
-                groups = widget.data['visibility-groups'];
+                userGroups = widget.data['visibility-groups'];
 
                 if (widget.data['visibility-groups-action'] === 'hide') {
-                    if (!this.isUserMemeberOf(this.conn.getUser(), groups)) return;
-                    groups = null;
+                    if (!this.isUserMemberOf(this.conn.getUser(), userGroups)) return;
+                    userGroups = null;
                 }
             }
 
@@ -1401,6 +1403,7 @@ var vis = {
             var $widget = $('#' + id);
             if ($widget.length) {
                 var destroy = $widget.data('destroy');
+
                 if (typeof destroy === 'function') destroy(id, $widget);
                 if (isRelative && !$view.find('#' + id).length) {
                     $widget.remove();
@@ -1496,12 +1499,17 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
+            if (id[0] === 'g') {
+                for (var w = 0; w < widget.data.members.length; w++) {
+                    this.renderWidget(view, widget.data.members[w], id);
+                }
+            }
         } catch (e) {
             this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
         }
 
-        if (groups && $wid && $wid.length) {
-            if (!this.isUserMemeberOf(this.conn.getUser(), groups)) {
+        if (userGroups && $wid && $wid.length) {
+            if (!this.isUserMemberOf(this.conn.getUser(), userGroups)) {
                 $wid.addClass('vis-user-disabled');
             }
         }
@@ -3041,9 +3049,9 @@ function main($) {
                             console.log('Possibly not authenticated, wait for request from server');
                             // Possibly not authenticated, wait for request from server
                         } else {
-                            // Get groups info
-                            vis.conn.getGroups(function (err, groups) {
-                                vis.userGroups = groups || {};
+                            // Get user groups info
+                            vis.conn.getGroups(function (err, userGroups) {
+                                vis.userGroups = userGroups || {};
                                 // Get Server language
                                 vis.conn.getConfig(function (err, config) {
                                     systemLang = vis.args.lang || config.language || systemLang;

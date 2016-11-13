@@ -86,7 +86,7 @@ vis = $.extend(true, vis, {
         state:      'vis-preview-state',    // boolean value
         lock:       'vis-preview-lock'
     },
-    removeUnusedFields: function () {
+    removeUnusedFields:     function () {
         var regExp = /^gestures\-/;
         for (var view in this.views) {
             if (view === '___settings') continue;
@@ -101,7 +101,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    saveRemote: function (mode, callback) {
+    saveRemote:             function (mode, callback) {
         // remove all unused fields
         this.removeUnusedFields();
 
@@ -207,7 +207,7 @@ vis = $.extend(true, vis, {
             });
         }
     },
-    editInit: function () {
+    editInit:               function () {
         var that = this;
         // Create debug variables
         this.states.attr({'dev1.val': 0});
@@ -364,7 +364,7 @@ vis = $.extend(true, vis, {
             });
             for (var i = that.activeWidgets.length - 1; i >= 0; i--) {
                 var pos = widgets.indexOf(that.activeWidgets[i]);
-                if (pos === -1) that.activeWidgets.splice(pos, 1);
+                if (pos === -1) that.activeWidgets.splice(i, 1);
             }
             for (var j = 0; j < widgets.length; j++) {
                 if (that.activeWidgets.indexOf(widgets[j]) === -1) {
@@ -751,7 +751,7 @@ vis = $.extend(true, vis, {
         }*/
         if (this.config.groupsState) this.groupsState = this.config.groupsState;
     },
-    editSetGrid: function () {
+    editSetGrid:            function () {
         var grid = parseInt(this.views[this.activeView].settings.gridSize, 10);
         if (this.views[this.activeView].settings.snapType === 2 && grid > 2) {
             var $grid = $('#vis_container .vis-grid');
@@ -787,9 +787,9 @@ vis = $.extend(true, vis, {
             $('#vis_container .vis-grid').remove();
         }
     },
-    editShowLeadingLines: function (isHide) {
+    editShowLeadingLines:   function (isHide) {
         var $container;
-        $('#vis_container .vis-leading-line').remove();
+        $('#vis_container').find('.vis-leading-line').remove();
         if (isHide) return;
         // there are following lines
         // horz-top
@@ -821,7 +821,7 @@ vis = $.extend(true, vis, {
             var isTop    = false;
             var isBottom = false;
             for (var wid in this.views[this.activeView].widgets) {
-                if (this.activeWidgets.indexOf(wid) === -1) {
+                if (this.activeWidgets.indexOf(wid) === -1 && !this.views[this.activeView].widgets[wid].groupped) {
                     var $wid = $('#' + wid);
                     if (!$wid.length) continue;
                     var data = $wid.position();
@@ -927,7 +927,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editUpdateAccordeon: function () {
+    editUpdateAccordeon:    function () {
         var that = this;
 
         if (that.widgetAccordeon) {
@@ -958,7 +958,7 @@ vis = $.extend(true, vis, {
         }
         that.editSaveConfig('widgetAccordeon', that.widgetAccordeon);
     },
-    editInitDialogs: function () {
+    editInitDialogs:        function () {
 		if (typeof fillAbout !== 'undefined') {
 			$('#dialog_about').html(fillAbout());
 			$('#dialog_about').dialog({
@@ -989,7 +989,7 @@ vis = $.extend(true, vis, {
         });
 
     },
-    editFileHandler: function(event) {
+    editFileHandler:        function(event) {
         event.preventDefault();
         var file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
 
@@ -1027,7 +1027,7 @@ vis = $.extend(true, vis, {
         };
         reader.readAsDataURL(file);
     },
-    editFillProjects: function () {
+    editFillProjects:       function () {
         var that = this;
         // fill projects
         this.conn.readProjects(function (err, projects){
@@ -1049,7 +1049,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    editGetReadableSize: function (bytes) {
+    editGetReadableSize:    function (bytes) {
         var text;
         if (bytes < 1024) {
             text = bytes + ' ' + _('bytes');
@@ -1061,7 +1061,7 @@ vis = $.extend(true, vis, {
         if (this.isFloatComma) text = text.replace('.', ',');
         return text;
     },
-    editInitMenu: function () {
+    editInitMenu:           function () {
         var that = this;
         $('#menu.sf-menu').superclick({
             hoverClass: 'sfHover',
@@ -1537,7 +1537,9 @@ vis = $.extend(true, vis, {
         });
 
         $('#rib_wid_copy_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
-            that.dupWidgets(null, $('#rib_wid_copy_view').val());
+            var widgets = that.dupWidgets(null, $('#rib_wid_copy_view').val());
+            that.save();
+            that.inspectWidgets(widgets);
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
         });
@@ -1991,7 +1993,6 @@ vis = $.extend(true, vis, {
             $('#rib_view_copy_tr').hide();
         });
 
-
         // Tools ----------------------------------------------------------------
         // Resolution -----------------
 
@@ -2152,7 +2153,7 @@ vis = $.extend(true, vis, {
         // show current project
         $('#current-project').html(that.projectPrefix.substring(0, that.projectPrefix.length - 1));
     },
-    editOneWidgetPreview: function (tplElem) {
+    editOneWidgetPreview:   function (tplElem) {
         var tpl           = $(tplElem).attr('id');
         var $tpl          = $('#' + tpl);
         var type          = $tpl.data('vis-type') || '';
@@ -2190,12 +2191,8 @@ vis = $.extend(true, vis, {
         classTypes = classTypes.toLowerCase().replace('ctrl', 'control').replace('val', 'value');
 
         return '<div id="prev_container_' + tpl + '" class="wid-prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid-prev-name" >' + $tpl.data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>';
-        if ($tpl.data('vis-prev')) {
-            var content = $preview.append($tpl.data('vis-prev'));
-            $(content).children().last().addClass('wid-prev-content');
-        }
     },
-    editInitWidgetPreview: function () {
+    editInitWidgetPreview:  function () {
         var that = this;
         $('#btn_prev_zoom').hover(
             function () {
@@ -2319,7 +2316,7 @@ vis = $.extend(true, vis, {
 
         if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
     },
-    editBuildSelectView: function () {
+    editBuildSelectView:    function () {
         var keys = [];
         var k;
         for (k in this.views) {
@@ -2343,7 +2340,7 @@ vis = $.extend(true, vis, {
         $('#view_select_tabs').html(text);
         $('#view_tab_' + this.activeView).addClass('ui-tabs-active ui-state-active');
     },
-    editInitSelectView: function () {
+    editInitSelectView:     function () {
         var that = this;
         $('#view_select_tabs_wrap').resize(function () {
             var o = {
@@ -2432,7 +2429,7 @@ vis = $.extend(true, vis, {
         });
         this.editBuildSelectView();
     },
-    editInitCSSEditor: function () {
+    editInitCSSEditor:      function () {
         var that      = this;
 
         var file      = 'vis-common-user';
@@ -2567,7 +2564,7 @@ vis = $.extend(true, vis, {
             }
         }).button('disable');
     },
-    editInitScriptEditor: function () {
+    editInitScriptEditor:   function () {
         var that      = this;
         var editor    = ace.edit('script_editor');
         var timer     = null;
@@ -2648,7 +2645,7 @@ vis = $.extend(true, vis, {
             });
         }).button('disable');
     },
-    editInitNext: function () {
+    editInitNext:           function () {
         // vis Editor Init
         var that = this;
 
@@ -2961,7 +2958,7 @@ vis = $.extend(true, vis, {
         $('#filter_set').clearSearch('update');
 
     },
-    editLoadConfig: function () {
+    editLoadConfig:         function () {
         // Read all positions, selected widgets for every view,
         // Selected view, selected menu page,
         // Selected widget or view page
@@ -2976,7 +2973,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editSaveConfig: function (attr, value) {
+    editSaveConfig:         function (attr, value) {
         if (attr) this.config[attr] = value;
 
         if (typeof storage !== 'undefined') {
@@ -2991,7 +2988,7 @@ vis = $.extend(true, vis, {
      * @direction {string} "next" or "prev". If no orderWid will be given, so the order will change according to actual position.
      * @orderWid {string} optional name of widget after (next) or before (prev) of which
      */
-    editWidgetOrder: function (view, wid, direction, orderWid) {
+    editWidgetOrder:        function (view, wid, direction, orderWid) {
         view = view || this.activeView;
         if (!orderWid) {
             if (direction === 'next' || direction === 'n') {
@@ -3042,7 +3039,7 @@ vis = $.extend(true, vis, {
             this.views[view].widgets = newOrder;
         }
     },
-    confirmMessage: function (message, title, icon, width, callback) {
+    confirmMessage:         function (message, title, icon, width, callback) {
         if (typeof width === 'function') {
             callback = width;
             width = '400';
@@ -3090,7 +3087,7 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.data('callback', callback);
         this.$dialogConfirm.dialog('open');
     },
-    addView: function (view) {
+    addView:                function (view) {
         var _view = view.replace(/\s/g, '_').replace(/\./g, '_');
         if (this[_view]) return false;
 
@@ -3115,7 +3112,7 @@ vis = $.extend(true, vis, {
             that.$copyWidgetSelectView.selectmenu('refresh');
         });
     },
-    renameView: function (oldName, newName) {
+    renameView:             function (oldName, newName) {
         var _newName = newName.replace(/\s/g, '_').replace(/\./g, '_');
         this.views[_newName] = $.extend(true, {}, this.views[oldName]);
         this.views[_newName].name = newName;
@@ -3123,26 +3120,28 @@ vis = $.extend(true, vis, {
         $('#vis_container').html('');
         delete this.views[oldName];
         this.activeView = _newName;
-        this.renderView(_newName);
-        this.changeView(_newName);
+        var that = this;
+        this.renderView(_newName, function () {
+            that.changeView(_newName);
 
-        // Rebuild tabs, select, selectCopyTo
-        $('#view_tab_' + oldName).attr('id', 'view_tab_' + _newName);
-        $('#view_tab_' + _newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + _newName).html(newName);
-        var $opt = this.$selectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', _newName);
-        this.$selectView.val(_newName);
-        this.$selectView.selectmenu('refresh');
+            // Rebuild tabs, select, selectCopyTo
+            $('#view_tab_' + oldName).attr('id', 'view_tab_' + _newName);
+            $('#view_tab_' + _newName).removeClass('sel_opt_' + oldName).addClass('ui-tabs-active ui-state-active sel_opt_' + _newName).html(newName);
+            var $opt = that.$selectView.find('option[value="' + oldName + '"]');
+            $opt.html(newName).attr('value', _newName);
+            that.$selectView.val(_newName);
+            that.$selectView.selectmenu('refresh');
 
-        $opt = this.$copyWidgetSelectView.find('option[value="' + oldName + '"]');
-        $opt.html(newName).attr('value', _newName);
-        this.$copyWidgetSelectView.val(_newName);
-        this.$copyWidgetSelectView.selectmenu('refresh');
-        this.saveRemote(function () {
+            $opt = that.$copyWidgetSelectView.find('option[value="' + oldName + '"]');
+            $opt.html(newName).attr('value', _newName);
+            that.$copyWidgetSelectView.val(_newName);
+            that.$copyWidgetSelectView.selectmenu('refresh');
+            that.saveRemote(function () {
 
+            });
         });
     },
-    delView: function (view) {
+    delView:                function (view) {
         var that = this;
         this.confirmMessage(_('Really delete view %s?', view), null, 'help', function (result) {
             if (result) {
@@ -3168,7 +3167,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    dupView: function (source, dest) {
+    dupView:                function (source, dest) {
         var _dest = dest.replace(/\s/g, '_').replace(/\./g, '_');
         this.views[_dest] = $.extend(true, {}, this.views[source]);
         this.views[_dest].name = dest;
@@ -3180,24 +3179,24 @@ vis = $.extend(true, vis, {
         }
         var that = this;
         this.saveRemote(function () {
-            that.renderView(_dest);
-            that.changeView(_dest);
-            $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
+            that.renderView(_dest, function (_view) {
+                that.changeView(_view);
+                $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
-            that.editBuildSelectView();
-            $('#view_tab_' + _dest).addClass('ui-tabs-active ui-state-active');
+                that.editBuildSelectView();
+                $('#view_tab_' + _view).addClass('ui-tabs-active ui-state-active');
 
-            that.$selectView.append('<option value="' + _dest + '">' + dest + '</option>');
-            that.$selectView.val(_dest);
-            that.$selectView.selectmenu('refresh');
+                that.$selectView.append('<option value="' + _view + '">' + dest + '</option>');
+                that.$selectView.val(_view);
+                that.$selectView.selectmenu('refresh');
 
-            that.$copyWidgetSelectView.append('<option value="' + _dest + '">'+ dest + '</option>');
-            that.$copyWidgetSelectView.val(_dest);
-            that.$copyWidgetSelectView.selectmenu('refresh');
-
+                that.$copyWidgetSelectView.append('<option value="' + _view + '">' + dest + '</option>');
+                that.$copyWidgetSelectView.val(_view);
+                that.$copyWidgetSelectView.selectmenu('refresh');
+            });
         });
     },
-    nextView: function () {
+    nextView:               function () {
         var $next = $('.view-select-tab.ui-state-active').next();
 
         if ($next.hasClass('view-select-tab')) {
@@ -3206,7 +3205,7 @@ vis = $.extend(true, vis, {
             $('.view-select-tab.ui-state-active').parent().children().first().trigger('click');
         }
     },
-    prevView: function () {
+    prevView:               function () {
         var $prev = $('.view-select-tab.ui-state-active').prev();
 
         if ($prev.hasClass('view-select-tab')) {
@@ -3215,13 +3214,28 @@ vis = $.extend(true, vis, {
             $('.view-select-tab.ui-state-active').parent().children().last().trigger('click');
         }
     },
-    exportWidgets: function (widgets) {
+    editGetWidgets:         function (view, widget, _result) {
+        view = view || this.activeView;
+        _result = _result || [];
+        if (_result.indexOf(widget) === -1) _result.push(widget);
+        if (widget[0] === 'g') {
+            var wid = this.views[view].widgets;
+            for (var j = 0; j < wid.data.members.length; j++) {
+                this.editGetWidgets(view, wid.data.members[j], _result);
+            }
+        }
+        return _result;
+    },
+    exportWidgets:          function (widgets) {
         this.removeUnusedFields();
 
         var exportW = [];
         widgets = widgets || this.activeWidgets;
         for (var i = 0; i < widgets.length; i++) {
-            exportW.push(this.views[this.activeView].widgets[widgets[i]]);
+            var list = this.editGetWidgets(null, widgets[i]);
+            for (var j = 0; j < list.length; j++) {
+                exportW.push(this.views[this.activeView].widgets[list[j]]);
+            }
         }
 
         $('#textarea_export_widgets').val(JSON.stringify(exportW)).select();
@@ -3237,7 +3251,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    importWidgets: function () {
+    importWidgets:          function () {
         $('#textarea_import_widgets').val('');
         var that = this;
 
@@ -3259,13 +3273,15 @@ vis = $.extend(true, vis, {
                         that.showMessage(_('invalid JSON') + '\n\n' + e, _('Error'));
                         return;
                     }
-                    var activeWidgets = [];
-                    for (var widget = 0; widget < importObject.length; widget++) {
+
+                    var widgets = [];
+                    // inverted order because of groups
+                    for (var widget = importObject.length - 1; widget >= 0; widget--) {
                         if (that.binds.bars && that.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
                             importObject[widget] = that.binds.bars.convertOldBars(importObject[widget]);
                         }
                         //(tpl, data, style, wid, view, noSave, noAnimate)
-                        activeWidgets.push(that.addWidget({
+                        widgets.push(that.addWidget({
                             tpl:       importObject[widget].tpl,
                             data:      importObject[widget].data,
                             style:     importObject[widget].style,
@@ -3274,18 +3290,17 @@ vis = $.extend(true, vis, {
                         }, true));
                     }
                     // update widget select
-                    that.updateSelectWidget();
+                    that.updateSelectActiveWidget();
 
                     that.saveRemote(function () {
-                        //that.renderView(that.activeView);
-                        that.inspectWidgets(activeWidgets);
+                        //that.renderView(that.activeView, function (_view) {that.inspectWidgets(activeWidgets);});
+                        that.inspectWidgets(widgets);
                     });
-
                 });
             }
         });
     },
-    exportView: function (isAll) {
+    exportView:             function (isAll) {
         var exportView = $.extend(true, {}, isAll ? this.views : this.views[this.activeView]);
         // Set to all widgets the new ID...
         var num = 1;
@@ -3312,7 +3327,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    importView: function (isAll) {
+    importView:             function (isAll) {
         var that = this;
         var name = this.checkNewViewName($('#name_import_view').val());
         var importObject;
@@ -3366,12 +3381,13 @@ vis = $.extend(true, vis, {
             // Remove active widgets
             if (this.views[_name].activeWidgets) delete this.views[_name].activeWidgets;
             this.saveRemote(function () {
-                that.renderView(_name);
-                that.changeView(_name);
+                that.renderView(_name, function (_view) {
+                    that.changeView(_view);
+                });
             });
         }
     },
-    checkNewViewName: function (name) {
+    checkNewViewName:       function (name) {
         if (name === undefined || name === null) name = '';
         if (name === 0) name = '0';
 
@@ -3387,13 +3403,14 @@ vis = $.extend(true, vis, {
             return name;
         }
     },
-    nextWidget: function () {
+    nextWidget:             function () {
         var next = 1;
         var used = [];
         var key = 'w' + (('000000' + next).slice(-5));
         for (var view in this.views) {
-            if (view === '___settings') continue;
+            if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
             for (var wid in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(wid)) continue;
                 wid = wid.split('_');
                 wid = wid[0];
                 used.push(wid);
@@ -3405,7 +3422,26 @@ vis = $.extend(true, vis, {
         }
         return key;
     },
-    getViewOfWidget: function (id) {
+    nextGroup:              function () {
+        var next = 1;
+        var used = [];
+        var key = 'g' + (('000000' + next).slice(-5));
+        for (var view in this.views) {
+            if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
+            for (var wid in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(wid)) continue;
+                wid = wid.split('_');
+                wid = wid[0];
+                used.push(wid);
+            }
+            while (used.indexOf(key) > -1) {
+                next++;
+                key = 'g' + (('000000' + next).slice(-5));
+            }
+        }
+        return key;
+    },
+    getViewOfWidget:        function (id) {
         // find view of this widget
         var view = null;
         for (var v in this.views) {
@@ -3417,7 +3453,7 @@ vis = $.extend(true, vis, {
         }
         return view;
     },
-    getViewsOfWidget: function (id) {
+    getViewsOfWidget:       function (id) {
         if (id.indexOf('_') === -1) {
             var view = this.getViewOfWidget(id);
             if (view) {
@@ -3438,10 +3474,10 @@ vis = $.extend(true, vis, {
             return result;
         }
     },
-    getUserGroups: function () {
+    getUserGroups:          function () {
         return this.userGroups;
     },
-    delWidgetHelper: function (id, isAll) {
+    delWidgetHelper:        function (id, isAll) {
         if (!id) return;
 
         if (isAll && id.indexOf('_') !== -1) {
@@ -3455,8 +3491,7 @@ vis = $.extend(true, vis, {
         }
 
         // Remove widget from the list
-        this.$selectActiveWidgets.find('option[value="' + id + '"]').remove();
-        this.$selectActiveWidgets.multiselect('refresh');
+        this.updateSelectActiveWidget(null, null, id);
 
         var view = this.getViewOfWidget(id);
 
@@ -3468,32 +3503,29 @@ vis = $.extend(true, vis, {
         if (widget_div && widget_div._customHandlers && widget_div._customHandlers.onDelete) {
             widget_div._customHandlers.onDelete(widget_div, id);
         }
+        if (this.views[view].widgets[id].data.members) {
+            var list = this.views[view].widgets[id].data.members;
+            for (var m = 0; m < list.length; m++) {
+                this.delWidgetHelper(list[m], isAll);
+            }
+        }
+
+        this.destroyWidget(view, id);
 
         $('#' + id).remove();
         if (view) delete this.views[view].widgets[id];
 
-        if (this.widgets[id]) {
-            delete this.widgets[id];
+        if (this.widgets[id]) delete this.widgets[id];
 
-            /*var widgets = [];
-            // Delete old from array
-            for (var w in this.widgets) {
-                if (w !== id) widgets[w] = this.widgets[w];
-            }
-            this.widgets = widgets;*/
-        }
         var pos = this.activeWidgets.indexOf(id);
         if (pos !== -1) this.activeWidgets.splice(pos, 1);
     },
-    delWidgets: function (widgets, noSave) {
+    delWidgets:             function (widgets, noSave) {
         if (typeof widgets !== 'object') widgets = null;
 
         if (!widgets) {
             // Store array, because it will be modified in delWidgetHelper
-            widgets = [];
-            for (var i = 0; i < this.activeWidgets.length; i++) {
-                widgets.push(this.activeWidgets[i]);
-            }
+            widgets = JSON.parse(JSON.stringify(this.activeWidgets));
         }
 
         for (var j = 0; j < widgets.length; j++) {
@@ -3503,13 +3535,14 @@ vis = $.extend(true, vis, {
 
         this.inspectWidgets([]);
     },
-    bindWidgetClick: function (view, id) {
+    bindWidgetClick:        function (view, id) {
         var that = this;
-        var $wid = $('#' + id);
         if (!this.views[view] || !this.views[view].widgets[id]) {
             console.warn('View:' + view + ', id: ' + id + ' not found');
             return;
         }
+        var $wid = $('#' + id);
+        if (this.views[view].widgets[id].groupped) return;
         if (!this.views[view].widgets[id].data.locked) {
             $('#' + id).unbind('click').click(function (e) {
                 if (that.dragging) return;
@@ -3541,7 +3574,7 @@ vis = $.extend(true, vis, {
             $wid.addClass('vis-widget-edit-locked').removeClass('ui-selectee').unbind('click');
         }
     },
-    addWidget: function (options, isCopied) {
+    addWidget:              function (options, isCopied) {
         // tpl, data, style, wid, view, noSave, noAnimate
         if (!options.view) options.view = this.activeView;
 
@@ -3552,11 +3585,19 @@ vis = $.extend(true, vis, {
         if (renderVisible) delete options.data.renderVisible;
 
         if (isSelectWidget && !$view.length) {
-            this.renderView(options.view, false);
-            $view = $('#visview_' + options.view);
+            var that = this;
+            this.renderView(options.view, false, function () {
+                that.addWidget(options, isCopied);
+            });
+            return;
         }
 
-        var widgetId = options.wid || this.nextWidget();
+        var widgetId;
+        if (options.data.members) {
+            widgetId = options.wid || this.nextGroup();
+        } else {
+            widgetId = options.wid || this.nextWidget();
+        }
         var $tpl = $('#' + options.tpl);
 
         // call custom init function
@@ -3576,36 +3617,11 @@ vis = $.extend(true, vis, {
 
         if (renderVisible) this.widgets[widgetId].renderVisible = true;
 
-        this.views[options.view].widgets = this.views[options.view].widgets || {};
+        this.views[options.view].widgets           = this.views[options.view].widgets || {};
         this.views[options.view].widgets[widgetId] = this.views[options.view].widgets[widgetId] || {};
 
-        if ($view.length) {
-            var position = options.style ? options.style.position : '';
-            // if widget has relative position => insert it into relative div
-            if (this.editMode && (position === 'relative' || position === 'static' || position === 'sticky')) {
-                if (this.views[options.view].settings && this.views[options.view].settings.sizex) {
-                    var $relativeView = $view.find('.vis-edit-relative');
-                    if (!$relativeView.length) {
-                        $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
-                        $view = $view.find('.vis-edit-relative');
-                    } else {
-                        $view = $relativeView;
-                    }
-                }
-            }
-
-            $view.append(can.view(options.tpl, {
-                val:  this.states.attr(this.widgets[widgetId].data.oid + '.val'),
-                /*ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
-                ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
-                lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),*/
-                data: this.widgets[widgetId].data,
-                view: options.view
-            }));
-        }
-
-        var $jWidget = $('#' + widgetId);
-        options.style = options.style || this.findFreePosition(options.view, widgetId, null, $jWidget.width(), $jWidget.height());
+        var findPos = !options.style;
+        options.style = options.style || {};
 
         if (this.views[options.view].widgets[widgetId].data !== undefined) {
             options.data = $.extend(options.data, this.views[options.view].widgets[widgetId].data, true);
@@ -3615,13 +3631,50 @@ vis = $.extend(true, vis, {
             tpl:       options.tpl,
             data:      options.data,
             style:     options.style,
-            widgetSet: $('#' + options.tpl).attr('data-vis-set')
+            widgetSet: $tpl.attr('data-vis-set')
         };
+        if (options.groupped) this.views[options.view].widgets[widgetId].groupped = true;
 
         if (renderVisible) this.views[options.view].widgets[widgetId].renderVisible = true;
 
-        if (options.style) $jWidget.css(options.style);
+        //if (options.style) $jWidget.css(options.style);
 
+        if ($view.length && !options.groupped) {
+            /*var position = options.style ? options.style.position : '';
+             // if widget has relative position => insert it into relative div
+             if (this.editMode && (position === 'relative' || position === 'static' || position === 'sticky')) {
+             if (this.views[options.view].settings && this.views[options.view].settings.sizex) {
+             var $relativeView = $view.find('.vis-edit-relative');
+             if (!$relativeView.length) {
+             $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
+             $view = $view.find('.vis-edit-relative');
+             } else {
+             $view = $relativeView;
+             }
+             }
+             }
+
+             var obj = {
+             //ts:   this.states.attr(this.widgets[widgetId].data.oid + '.ts'),
+             // ack:  this.states.attr(this.widgets[widgetId].data.oid + '.ack'),
+             // lc:   this.states.attr(this.widgets[widgetId].data.oid + '.lc'),
+             data: this.widgets[widgetId].data,
+             view: options.view
+             };
+             if (this.states[this.widgets[widgetId].data.oid + '.val'] !== undefined) {
+             obj.val = this.states.attr(this.widgets[widgetId].data.oid + '.val');
+             }
+             $view.append(can.view(options.tpl, obj));*/
+            this.reRenderWidgetEdit(options.view, widgetId);
+            if (findPos) {
+                var $widget = $('#' + widgetId);
+
+                var pos = this.findFreePosition(options.view, widgetId, null, $widget.width(), $widget.height());
+                $widget.css(pos);
+                this.views[options.view].widgets[widgetId].style.top  = pos.top;
+                this.views[options.view].widgets[widgetId].style.left = pos.left;
+            }
+        }
         if (isSelectWidget) {
             this.activeWidgets = [widgetId];
             if (!options.noAnimate) {
@@ -3645,13 +3698,18 @@ vis = $.extend(true, vis, {
 
         this.bindWidgetClick(options.view, widgetId);
 
-        if ($('#wid_all_lock_function').prop('checked')) {
-            $jWidget.addClass('vis-widget-lock');
-        }
-
         return widgetId;
     },
-    dupWidgets: function (widgets, targetView, offsetX, offsetY) {
+    dupWidgets:             function (widgets, targetView, offsetX, offsetY) {
+        if (typeof widgets === 'string') {
+            try {
+                widgets = JSON.parse(widgets);
+            } catch (e) {
+                console.error('Cannot parse clipboard');
+                return;
+            }
+        }
+
         if (!widgets)    widgets    = this.activeWidgets;
         if (!targetView) targetView = this.activeView;
 
@@ -3659,7 +3717,8 @@ vis = $.extend(true, vis, {
         var tpl;
         var data;
         var style;
-        var newWidgets = [];
+        var groupped;
+        var newWidgets   = [];
         var firstOffsetX = null;
         var firstOffsetY = null;
 
@@ -3673,6 +3732,7 @@ vis = $.extend(true, vis, {
                 tpl             = objWidget.tpl;
                 data            = objWidget.data;
                 style           = objWidget.style;
+                groupped        = objWidget.groupped;
                 widgets[i].view = this.activeView;
             } else {
                 // From active view
@@ -3680,6 +3740,7 @@ vis = $.extend(true, vis, {
                 tpl        = this.views[this.activeView].widgets[widgets[i]].tpl;
                 data       = $.extend({}, this.views[this.activeView].widgets[widgets[i]].data);
                 style      = $.extend({}, this.views[this.activeView].widgets[widgets[i]].style);
+                groupped   = this.views[this.activeView].widgets[widgets[i]].groupped;
             }
 
             if (offsetX !== undefined) {
@@ -3693,12 +3754,18 @@ vis = $.extend(true, vis, {
                     style.top  = parseInt(style.top, 10);
                     style.left = parseInt(style.left, 10);
 
-                    style.top = firstOffsetY  - style.top  + offsetY;
+                    style.top  = firstOffsetY - style.top  + offsetY;
                     style.left = firstOffsetX - style.left + offsetX;
                 }
             }
+            var obj = {
+                tpl:      tpl,
+                data:     data,
+                style:    style,
+                noSave:   true
+            };
             if (activeView === targetView) {
-                if (offsetX === undefined) {
+                if (!groupped && offsetX === undefined) {
                     style.top  = parseInt(style.top,  10);
                     style.left = parseInt(style.left, 10);
 
@@ -3712,48 +3779,31 @@ vis = $.extend(true, vis, {
                     // So use JSON.
                     widgets[i].widget = $.extend(true, {}, objWidget);
                 }
-
-                // addWidget Params: tpl, data, style, wid, view, noSave
-                newWidgets.push(this.addWidget({
-                    tpl:    tpl, 
-                    data:   data, 
-                    style:  style, 
-                    noSave: true
-                }, true));
             } else {
-                if ($('#vis_container').find('#visview_' + targetView).html() === undefined) {
+                if (!$('#vis_container').find('#visview_' + targetView).length) {
                     this.renderView(targetView, true);
                 }
-                newWidgets.push(this.addWidget({
-                    tpl:    tpl, 
-                    data:   data, 
-                    style:  style, 
-                    wid:    this.nextWidget(), 
-                    view:   targetView, 
-                    noSave: true
-                }, true));
+                obj.wid  = this.nextWidget();
+                obj.view = targetView;
             }
+            if (groupped) obj.groupped = groupped;
 
-            if (this.activeView === targetView) {
-                this.$selectActiveWidgets
-                    .append('<option value="' + newWidgets[newWidgets.length - 1] + '">' + newWidgets[newWidgets.length - 1] + ' (' + $('#' + this.views[this.activeView].widgets[newWidgets[newWidgets.length - 1]].tpl).attr('data-vis-name') + ')</option>')
-                    .multiselect('refresh');
-
+            // if group
+            if (obj.data.members) {
+                obj.data.members = this.dupWidgets(obj.data.members, targetView);
             }
+            newWidgets.push(this.addWidget(obj, true));
         }
+
+        if (this.activeView === targetView && !groupped) this.updateSelectActiveWidget(null, newWidgets);
+
         if (!widgets[0].widget) {
             this.showHint(_('Widget(s) copied to view %s', targetView) + '.', 30000);
-        } else {
-            this.activeWidgets = newWidgets;
         }
 
-        var that = this;
-        setTimeout(function () {
-            that.inspectWidgets();
-            that.save();
-        }, 200);
+        return newWidgets;
     },
-    renameWidget: function (oldId, newId) {
+    renameWidget:           function (oldId, newId) {
         // find view of this widget
         var view = this.getViewOfWidget(oldId);
 
@@ -3763,38 +3813,44 @@ vis = $.extend(true, vis, {
             this.addWidget({
                 tpl:    widgetData.tpl, 
                 data:   widgetData.data, 
-                style:  widgetData.style, 
+                style:  widgetData.style,
                 wid:    newId, 
                 view:   view,
                 noSave: true
             }, true);
-            this.$selectActiveWidgets
-                .append('<option value=' + newId + '">' + this.getWidgetName(view, newId) + '</option>')
-                .multiselect('refresh');
-
+            if (view === this.activeView) this.updateSelectActiveWidget(null, newId);
             this.delWidgetHelper(oldId, false);
         }
         this.inspectWidgets([newId]);
         this.save();
     },
-    reRenderWidgetEdit: function (wid) {
-        this.reRenderWidget(null, wid);
+    reRenderWidgetEdit:     function (view, wid) {
+        if (wid === undefined) {
+            wid = view;
+            view = this.activeView;
+        }
+        this.reRenderWidget(view, wid);
         if (this.activeWidgets.indexOf(wid) !== -1) {
             var $wid = $('#' + wid);
 
             // User interaction
-            if (!$('#wid_all_lock_d').hasClass('ui-state-active') && !this.widgets[wid].data._no_move) {
+            if (!$('#wid_all_lock_d').hasClass('ui-state-active') &&
+                !this.widgets[wid].data._no_move &&
+                !this.widgets[wid].groupped
+            ) {
                 this.draggable($wid);
             }
-            if ($('#wid_all_lock_function').prop('checked')) {
-                $wid.addClass('vis-widget-lock');
-            }
+            if ($('#wid_all_lock_function').prop('checked')) $wid.addClass('vis-widget-lock');
 
             // If only one selected
-            if (this.activeWidgets.length === 1 && !this.widgets[wid].data._no_resize) this.resizable($wid);
+            if (this.activeWidgets.length === 1 &&
+                !this.widgets[wid].data._no_resize &&
+                !this.widgets[wid].groupped) {
+                this.resizable($wid);
+            }
         }
     },
-    getObjDesc: function (id) {
+    getObjDesc:             function (id) {
         if (this.objects[id] && this.objects[id].common && this.objects[id].common.name) {
             return this.objects[id].common.name || id;
         }
@@ -3804,7 +3860,7 @@ vis = $.extend(true, vis, {
     // delete where it is no more exist,
     // create where it should exist and
     // sync data
-    syncWidgets: function (widgets, views) {
+    syncWidgets:            function (widgets, views) {
         for (var i = 0; i < widgets.length; i++) {
             // find view of this widget
             var view = this.getViewOfWidget(widgets[i]);
@@ -3873,53 +3929,51 @@ vis = $.extend(true, vis, {
         }
     },
     // adds extracted attributes to array
-    getWidgetName: function (view, widget) {
+    getWidgetName:          function (view, widget) {
         var widgetData = this.views[view].widgets[widget];
         var name = (widgetData && widgetData.data ? widgetData.data.name : '');
         name = name ? (name + '[' + widget + ']') : widget;
         if (widgetData) {
-            name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+            if (widget[0] === 'g') {
+                name += ' ('  + _('Group') + ')';
+            } else {
+                name += ' ('  + widgetData.widgetSet + ' - ' + $('#' + widgetData.tpl).attr('data-vis-name') + ')';
+            }
         }
         return name;
     },
-    showWidgetHelper: function (wid, isShow) {
+    showWidgetHelper:       function (wid, isShow) {
         var $widget = $('#' + wid);
 
         if ($widget.attr('data-vis-hide-helper') === 'true') isShow = false;
 
+        //noinspection JSJQueryEfficiency
+        var $helper = $('#widget_helper_' + wid);
         if (isShow) {
-            if (!$widget.length) {
+            if ($widget && !$widget.length) {
                 console.log('Cannot find in DOM ' + wid);
                 return;
             }
+            var pos = this.editWidgetsRect(null, wid);
 
-            var pos = {};//$widget.position();
-            pos.top  = $widget[0].offsetTop;
-            pos.left = $widget[0].offsetLeft;
-            // May be bug?
-            if (!pos.left && !pos.top) {
-                pos.left = $widget[0].style.left;
-                pos.top  = $widget[0].style.top + $widget[0].offsetTop;
-                if (typeof pos.left === 'string') pos.left = parseInt(pos.left.replace('px', ''), 10);
-                if (typeof pos.top  === 'string') pos.top  = parseInt(pos.top.replace('px', ''), 10);
-            }
-
-            if (!$('#widget_helper_' + wid).length) {
+            if (!$helper.length) {
                 $('#visview_' + this.activeView).append('<div id="widget_helper_' + wid + '" class="widget-helper"><div class="widget_inner_helper"></div></div>');
+                $helper = $('#widget_helper_' + wid);
             }
 
-            $('#widget_helper_' + wid).css({
-                    left:   parseInt(pos.left) - 2 + 'px' ,
-                    top:    parseInt(pos.top) - 2 + 'px' ,
-                    height: parseInt($widget.outerHeight()) + 2 + 'px',
-                    width:  parseInt($widget.outerWidth()) + 2 + 'px'
+            $helper.css({
+                    left:   parseInt(pos.left)   - 2 + 'px',
+                    top:    parseInt(pos.top)    - 2 + 'px',
+                    height: parseInt(pos.height) + 2 + 'px',
+                    width:  parseInt(pos.width)  + 2 + 'px'
                 }
             ).show();
         } else {
-            $('#widget_helper_' + wid).remove();
+            $helper.remove();
         }
+        return $widget;
     },
-    installSelectable: function (view, isDestroy) {
+    installSelectable:      function (view, isDestroy) {
         var that = this;
         view = view || this.activeView;
         if (this.selectable) {
@@ -3930,13 +3984,15 @@ vis = $.extend(true, vis, {
                 tolerance: 'fit',
                 cancel:    'div.vis-widget:not(.vis-widget-edit-locked)',
                 stop: function (e, ui) {
-                    if (!$('.ui-selected').length) {
+                    var $selected = $('.ui-selected');
+                    if (!$selected.length) {
                         that.inspectWidgets([]);
                     } else {
                         var newWidgets = [];
-                        $('.ui-selected').each(function () {
+                        $selected.each(function () {
                             var id = $(this).attr('id');
-                            if (id && !$(this).hasClass('vis-widget-edit-locked')) {
+                            if (id && !$(this).hasClass('vis-widget-edit-locked') &&
+                                !that.views[that.activeView].widgets[id].groupped) {
                                 newWidgets.push(id);
                             }
                         });
@@ -3947,6 +4003,7 @@ vis = $.extend(true, vis, {
                 selecting: function (e, ui) {
                     if (ui.selecting.id &&
                         that.activeWidgets.indexOf(ui.selecting.id) === -1 &&
+                        !that.views[that.activeView].widgets[ui.selecting.id].groupped &&
                         !that.views[that.activeView].widgets[ui.selecting.id].data.locked) {
                         that.activeWidgets.push(ui.selecting.id);
                         that.showWidgetHelper(ui.selecting.id, true);
@@ -3968,22 +4025,8 @@ vis = $.extend(true, vis, {
             $('.vis-widget-edit-locked').removeClass('ui-selectee');
         }
     },
-    updateSelectWidget: function (view) {
-        view = view || this.activeView;
-        this.$selectActiveWidgets.html('');//('<option value="none">' + _('none selected') + '</option>');
-
-        if (this.views[view].widgets) {
-            var w = this.views[view].widgets;
-            for (var widget in w) {
-                if (!w.hasOwnProperty(widget)) continue;
-                this.$selectActiveWidgets.append('<option value="' + widget + '" ' + ((this.activeWidgets.indexOf(widget) !== -1) ? 'selected' : '')+ '>' + this.getWidgetName(view, widget) + '</option>');
-            }
-        }
-
-        this.$selectActiveWidgets.multiselect('refresh');
-    },
     // Init all edit fields for one view
-    changeViewEdit: function (view, noChange) {
+    changeViewEdit:         function (view, noChange) {
         var that = this;
         this.installSelectable(view, true);
 
@@ -4070,7 +4113,7 @@ vis = $.extend(true, vis, {
 
             this.editSetGrid();
 
-            // show groups
+            // show userGroups
             viewGroups = this.views[view].settings.group || [];
             $('#inspect_view_group_action').val(this.views[view].settings.group_action);
         } else {
@@ -4079,19 +4122,19 @@ vis = $.extend(true, vis, {
             $('#screen_size_y').val(this.views[view].settings.sizey || '').trigger('change');
             viewGroups = [];
         }
-        // fill groups
+        // fill userGroups
         var $inspectGroups = $('#inspect_view_group');
         $inspectGroups.html('');
-        var groups = this.getUserGroups();
-        for (var g in groups) {
-            if (!groups.hasOwnProperty(g)) continue;
+        var userGroups = this.getUserGroups();
+        for (var g in userGroups) {
+            if (!userGroups.hasOwnProperty(g)) continue;
             var val = g.substring('system.group.'.length);
-            $inspectGroups.append('<option value="' + val + '" ' + ((viewGroups.indexOf(val) !== -1) ? 'selected' : '') + '>' + (groups[g] && groups[g].common ? groups[g].common.name || val : val) + '</option>');
+            $inspectGroups.append('<option value="' + val + '" ' + ((viewGroups.indexOf(val) !== -1) ? 'selected' : '') + '>' + (userGroups[g] && userGroups[g].common ? userGroups[g].common.name || val : val) + '</option>');
         }
         $inspectGroups.multiselect('refresh');
         $inspectGroups.next().css('width', 'calc(100% - 5px)');
 
-        this.updateSelectWidget(view);
+        this.updateSelectActiveWidget(view);
 
         // Show current view
         if (this.$selectView.val() !== view) {
@@ -4130,8 +4173,8 @@ vis = $.extend(true, vis, {
         }
         $('#inspect_view_theme').selectmenu('refresh');
     },
-    dragging: false,
-    draggable: function (obj) {
+    dragging:               false,
+    draggable:              function (obj) {
         var origX, origY;
         var that = this;
         var draggableOptions;
@@ -4324,7 +4367,7 @@ vis = $.extend(true, vis, {
             $this.draggable(draggableOptions);
         });
     },
-    resizable: function (obj) {
+    resizable:              function (obj) {
         var that = this;
 
         this.gridWidth = parseInt(this.views[that.activeView].settings.gridSize, 10);
@@ -4355,7 +4398,7 @@ vis = $.extend(true, vis, {
             that.views[that.activeView].widgets[widget].style.height = h;
 
             if ($('#' + that.views[that.activeView].widgets[widget].tpl).attr('data-vis-update-style')) {
-                that.reRenderWidgetEdit(widget);
+                that.reRenderWidgetEdit(that.activeView, widget);
             }
             w = parseInt(ui.element.outerWidth(),  10);
             h = parseInt(ui.element.outerHeight(), 10);
@@ -4423,7 +4466,7 @@ vis = $.extend(true, vis, {
             $this.resizable(resizableOptions);
         });
     },
-    droppable: function (view) {
+    droppable:              function (view) {
         var $view = $('#visview_' + view);
         var that = this;
 
@@ -4464,21 +4507,19 @@ vis = $.extend(true, vis, {
                     data:       data, 
                     style:      addPos,
                     noAnimate:  true
-                });
+                }, false);
 
-                that.$selectActiveWidgets.append('<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>')
-                    .multiselect('refresh');
+                if (view === that.activeView) that.updateSelectActiveWidget(null, widgetId);
 
                 setTimeout(function () {
-                    that.inspectWidgets();
+                    that.inspectWidgets([widgetId]);
                 }, 50);
-
             }
         });
 
     },
     // Find free place for new widget
-    findFreePosition: function (view, id, field, widgetWidth, widgetHeight) {
+    findFreePosition:       function (view, id, field, widgetWidth, widgetHeight) {
         var editPos = $('.ui-dialog:first').position();
         field = $.extend({x: 0, y: 0, width: editPos.left}, field);
         widgetWidth  = (widgetWidth || 60);
@@ -4493,9 +4534,7 @@ vis = $.extend(true, vis, {
         // Prepare coordinates
         var positions = [];
         for (var w in this.views[view].widgets) {
-            if (w === id || !this.views[view].widgets[w].tpl) {
-                continue;
-            }
+            if (w === id || !this.views[view].widgets[w].tpl) continue;
 
             if (this.views[view].widgets[w].tpl.indexOf('Image') === -1 &&
                 this.views[view].widgets[w].tpl.indexOf('image') === -1) {
@@ -4529,7 +4568,7 @@ vis = $.extend(true, vis, {
         return {left: x, top: y};
     },
     // Check overlapping
-    checkPosition:    function (positions, x, y, widgetWidth, widgetHeight) {
+    checkPosition:          function (positions, x, y, widgetWidth, widgetHeight) {
         for (var i = 0; i < positions.length; i++) {
             var s = positions[i];
 
@@ -4548,7 +4587,7 @@ vis = $.extend(true, vis, {
         }
         return true;
     },
-    actionHighlightWidget: function (id) {
+    actionHighlightWidget:  function (id) {
         if (id === 'none') return;
 
         var $jWidget = $('#' + id);
@@ -4607,7 +4646,7 @@ vis = $.extend(true, vis, {
             });
     },
     // collect all filter keys for given view
-    updateFilter:     function () {
+    updateFilter:           function () {
         if (this.activeView && this.views) {
             var widgets = this.views[this.activeView].widgets;
             this.views[this.activeView].filterList = [];
@@ -4633,7 +4672,7 @@ vis = $.extend(true, vis, {
             return [];
         }
     },
-    getWidgetIds:     function (tpl) {
+    getWidgetIds:           function (tpl) {
         if (this.activeView && this.views) {
             var widgets = this.views[this.activeView].widgets;
             var list = [];
@@ -4649,7 +4688,7 @@ vis = $.extend(true, vis, {
             return [];
         }
     },
-    initStealHandlers: function () {
+    initStealHandlers:      function () {
         var that = this;
         $('.vis-steal-css').each(function () {
             $(this).button({
@@ -4682,7 +4721,7 @@ vis = $.extend(true, vis, {
             });
         });
     },
-    stealCssModeStop: function () {
+    stealCssModeStop:       function () {
         this.isStealCss = false;
         $('#stealmode_content').remove();
 
@@ -4692,7 +4731,7 @@ vis = $.extend(true, vis, {
         $('#vis_container').removeClass('vis-steal-cursor');
 
     },
-    stealCssMode:     function () {
+    stealCssMode:           function () {
         var that = this;
         if (this.selectable) $('#visview_' + this.activeView).selectable('disable');
 
@@ -4715,7 +4754,7 @@ vis = $.extend(true, vis, {
         });
         $('#vis_container').addClass('vis-steal-cursor');
     },
-    stealCss:         function (e) {
+    stealCss:               function (e) {
         if (this.isStealCss) {
             var that = this;
             var src  = '#' + e.currentTarget.id;
@@ -4744,7 +4783,7 @@ vis = $.extend(true, vis, {
             });
         }
     },
-    combineCssShorthand: function (that, attr) {
+    combineCssShorthand:    function (that, attr) {
         var css;
         var parts = attr.split('-');
         var baseAttr = parts[0];
@@ -4776,8 +4815,8 @@ vis = $.extend(true, vis, {
         }
         return css;
     },
-    _saveTimer:       null, // Timeout to save the configuration
-    _saveToServer:    function () {
+    _saveTimer:             null, // Timeout to save the configuration
+    _saveToServer:          function () {
         if (!this.undoHistory || !this.undoHistory.length ||
             (JSON.stringify(this.views[this.activeView]) !== JSON.stringify(this.undoHistory[this.undoHistory.length - 1]))) {
             this.undoHistory = this.undoHistory || [];
@@ -4796,7 +4835,7 @@ vis = $.extend(true, vis, {
             }*/
         });
     },
-    save:             function (cb) {
+    save:                   function (cb) {
         if (this._saveTimer) {
             clearTimeout(this._saveTimer);
             this._saveTimer = null;
@@ -4810,7 +4849,7 @@ vis = $.extend(true, vis, {
         $('#saving_progress').show();
         if (cb) cb();
     },
-    undo:             function () {
+    undo:                   function () {
         if (this.undoHistory.length <= 1) return;
 
         var activeWidgets = this.activeWidgets;
@@ -4826,11 +4865,13 @@ vis = $.extend(true, vis, {
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
         }
 
-        this.renderView(this.activeView);
-        this.changeViewEdit(this.activeView, true);
-        this.inspectWidgets(activeWidgets);
+        var that = this;
+        this.renderView(this.activeView, function (_view) {
+            that.changeViewEdit(_view, true);
+            that.inspectWidgets(activeWidgets);
+        });
     },
-    getWidgetThumbnail: function (widget, maxWidth, maxHeight, callback) {
+    getWidgetThumbnail:     function (widget, maxWidth, maxHeight, callback) {
         var widObj = document.getElementById(widget);
         if (!widObj || !callback) {
             return;
@@ -4873,7 +4914,7 @@ vis = $.extend(true, vis, {
             });
         }
     },
-    showHint:         function (content, life, type, onShow) {
+    showHint:               function (content, life, type, onShow) {
         if (!$.jGrowl) {
             this.showMessage(content);
             return;
@@ -4899,7 +4940,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    selectAll:        function () {
+    selectAll:              function () {
         // Select all widgets on view
         var $focused = $(':focus');
 
@@ -4918,7 +4959,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    deselectAll:      function () {
+    deselectAll:            function () {
         // Select all widgets on view
         var $focused = $(':focus');
         if (!$focused.length && this.activeView) {
@@ -4928,17 +4969,17 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    paste:            function () {
+    paste:                  function () {
         var $focused = $(':focus');
         if (!$focused.length) {
             if (this.clipboard && this.clipboard.length) {
-                this.dupWidgets(this.clipboard);
+                var widgets = this.dupWidgets(this.clipboard);
                 this.save();                // Select main widget and add to selection the secondary ones
-                this.inspectWidgets();
+                this.inspectWidgets(widgets);
             }
         }
     },
-    copy:             function (isCut, widgets) {
+    copy:                   function (isCut, widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
             var $clipboard_content = $('#clipboard_content');
@@ -4996,7 +5037,7 @@ vis = $.extend(true, vis, {
             $('#clipboard_content').remove();
         }
     },
-    onButtonDelete:   function (widgets) {
+    onButtonDelete:         function (widgets) {
         var $focused = $(':focus');
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
             widgets = widgets || JSON.parse(JSON.stringify(this.activeWidgets));
@@ -5046,7 +5087,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    onButtonArrows:   function (key, isSize, factor) {
+    onButtonArrows:         function (key, isSize, factor) {
         factor = factor || 1;
         var $focused = $(':focus');
         if (!$focused.length && this.activeWidgets.length) {
@@ -5136,7 +5177,7 @@ vis = $.extend(true, vis, {
                         mWidget._customHandlers.onCssEdit(mWidget, activeWidgets[i]);
                     }
 
-                    if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(activeWidgets[i]);
+                    if (mWidget._customHandlers && mWidget._customHandlers.isRerender) that.reRenderWidgetEdit(that.activeView, activeWidgets[i]);
                 }
                 that.delayedSettings = null;
                 that.activeWidgets   = activeWidgets;
@@ -5150,7 +5191,7 @@ vis = $.extend(true, vis, {
             return false;
         }
     },
-    onPageClosing:    function () {
+    onPageClosing:          function () {
         // If not saved
         if (this._saveTimer || !$('#css_file_save').prop('disabled')) {
             if (window.confirm(_('Changes are not saved. Are you sure?'))) {
@@ -5161,7 +5202,7 @@ vis = $.extend(true, vis, {
         }
         return null;
     },
-    bindInstanceEdit: function () {
+    bindInstanceEdit:       function () {
         var that = this;
         if (!this.instance) this.generateInstance();
 
@@ -5170,7 +5211,7 @@ vis = $.extend(true, vis, {
             if (typeof storage !== 'undefined') storage.set(that.storageKeyInstance, that.instance);
         }).val(this.instance);
     },
-    lockWidgets:      function (view, widgets) {
+    lockWidgets:            function (view, widgets) {
         view = view || this.activeView;
         // Disable selecte for all widgets
         var activeWidgets = $('#context_menu_paste').data('old-widgets');
@@ -5184,7 +5225,7 @@ vis = $.extend(true, vis, {
         }
         if (activeWidgets) $('#context_menu_paste').data('old-widgets', activeWidgets.join(' '));
     },
-    unlockWidgets:    function (view, widgets) {
+    unlockWidgets:          function (view, widgets) {
         view = view || this.activeView;
         // Enable select for all widgets
         for (var w = 0; w < widgets.length; w++) {
@@ -5195,7 +5236,7 @@ vis = $.extend(true, vis, {
             this.bindWidgetClick(view, widgets[w]);
         }
     },
-    bringTo:          function (widgets, isToFront) {
+    bringTo:                function (widgets, isToFront) {
         widgets = widgets || this.activeWidgets;
         var x = {min: 10000, max: -10000};
         var y = {min: 10000, max: -10000};
@@ -5313,7 +5354,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    hideContextMenu:  function (e) {
+    hideContextMenu:        function (e) {
         if (e) {
             e.stopImmediatePropagation();
             e.preventDefault();
@@ -5321,7 +5362,7 @@ vis = $.extend(true, vis, {
         var that = this;
         setTimeout(function () {
             var oldWidgets = $('#context_menu_paste').data('old-widgets');
-            if (oldWidgets == 'null') return;
+            if (oldWidgets || oldWidgets === 'null') return;
 
             oldWidgets = oldWidgets.split(' ');
 
@@ -5329,7 +5370,7 @@ vis = $.extend(true, vis, {
         }, 200);
         $('#context_menu').hide();
     },
-    showContextMenu:  function (options) {
+    showContextMenu:        function (options) {
         var that = this;
         var offset;
         var range;
@@ -5337,24 +5378,26 @@ vis = $.extend(true, vis, {
 
         // Remove selectable to prevent widgets selection after click
         //if (this.selectable) $('#visview_' + this.activeView).selectable('destroy');
-        $('#context_menu_paste').data('old-widgets', this.activeWidgets.join(' '));
+        var $contextMenuPaste = $('#context_menu_paste');
+        var $contextMenu = $('#context_menu');
+        $contextMenuPaste.data('old-widgets', this.activeWidgets.join(' '));
 
-        $('#context_menu_paste').data('posX', options.left);
-        $('#context_menu_paste').data('posY', options.top);
+        $contextMenuPaste.data('posX', options.left);
+        $contextMenuPaste.data('posY', options.top);
 
-        if (!$('#context_menu_paste').data('inited')) {
-            $('#context_menu_paste').data('inited', true);
-            $('#context_menu_paste').click(function (e) {
+        if (!$contextMenuPaste.data('inited')) {
+            $contextMenuPaste.data('inited', true);
+            $contextMenuPaste.click(function (e) {
                 that.hideContextMenu(e);
-                var x = $('#context_menu_paste').data('posX');
-                var y = $('#context_menu_paste').data('posY');
+                var x = $(this).data('posX');
+                var y = $(this).data('posY');
                 // modify position of widget
-                that.dupWidgets(that.clipboard, that.activeView, x, y);
+                var widgets = that.dupWidgets(that.clipboard, that.activeView, x, y);
                 that.save();                // Select main widget and add to selection the secondary ones
-                that.inspectWidgets();
+                that.inspectWidgets(widgets);
             });
-            $('#context_menu').blur(function () {
-                $('#context_menu').hide();
+            $contextMenu.blur(function () {
+                $(this).hide();
             });
             $('#context_menu_import').click(function (e) {
                 that.hideContextMenu(e);
@@ -5370,14 +5413,15 @@ vis = $.extend(true, vis, {
         // If some widgets selected => find out if click on some widget
         if (this.activeWidgets && this.activeWidgets.length) {
             var isHit = false;
+
             // Find all widgets under the cursor
             for (var w = 0; w < this.activeWidgets.length; w++) {
                 var $wid = $('#' + this.activeWidgets[w]);
                 if (!$wid.length) continue;
                 offset = $wid.position();
                 range = {
-                    x: [ offset.left, offset.left + $wid.outerWidth()  ],
-                    y: [ offset.top,  offset.top  + $wid.outerHeight() ]
+                    x: [offset.left, offset.left + $wid.outerWidth() ],
+                    y: [offset.top,  offset.top  + $wid.outerHeight()]
                 };
                 if ((options.left >= range.x[0] && options.left <= range.x[1]) &&
                     (options.top  >= range.y[0] && options.top  <= range.y[1])) {
@@ -5393,7 +5437,17 @@ vis = $.extend(true, vis, {
                 // Remove selection
                 this.inspectWidgets([]);
             }
+
+            if ($list.length > 1) {
+                $('#context_menu_group').show();
+            } else {
+                $('#context_menu_group').hide();
+            }
+        } else {
+            $('#context_menu_group').hide();
         }
+
+        $('#context_menu_ungroup').hide();
 
         if (!$list.length) {
             // Find all widgets under the cursor
@@ -5410,7 +5464,7 @@ vis = $.extend(true, vis, {
 
         if ($list.length === 1) {
             var wid = $($list[0]).attr('id');
-            $('#context_menu_paste').data('widgets', wid);
+            $contextMenuPaste.data('widgets', wid);
             if (this.activeWidgets.length === 1 && wid === this.activeWidgets[0]) {
                 $('#context_menu_select').hide();
             } else {
@@ -5419,6 +5473,7 @@ vis = $.extend(true, vis, {
             wid = that.getWidgetName(that.activeView, wid);
             $('#context_menu_wid').append(wid).show();
 
+            if (wid[0] === 'g') $('#context_menu_ungroup').show();
         } else if ($list.length > 1) {
             var widgets = [];
             var text = '<li data-wid="">' +  _('all') + '</li>';
@@ -5427,12 +5482,12 @@ vis = $.extend(true, vis, {
                 text += '<li data-wid="' + wid + '" class="context-menu-common-item">' +  that.getWidgetName(that.activeView, wid) + '</li>';
                 widgets.push(wid);
             });
-            $('#context_menu_paste').data('widgets', widgets.join(' '));
+            $contextMenuPaste.data('widgets', widgets.join(' '));
             $('#context_menu_select').show();
 
             $('.context-submenu').append('<span class="context-menu-wid">...</span><ul class="context-menu-ul" style="min-width: 300px">'   + text + '</ul>');
         } else {
-            $('#context_menu_paste').data('widgets', '');
+            $contextMenuPaste.data('widgets', '');
             $('.context-submenu').hide();
         }
         if ($list.length > 0) {
@@ -5442,7 +5497,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.copy(false, widgets);
             });
@@ -5451,7 +5506,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.onButtonDelete(widgets);
             });
@@ -5460,7 +5515,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.inspectWidgets(widgets);
             });
@@ -5469,7 +5524,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.copy(true, widgets);
             });
@@ -5478,7 +5533,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.bringTo(widgets, true);
             });
@@ -5487,7 +5542,7 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 that.bringTo(widgets, false);
             });*/
@@ -5497,10 +5552,11 @@ vis = $.extend(true, vis, {
                 that.hideContextMenu(e);
                 var widgets = [$(this).data('wid')];
                 if (!widgets[0]) {
-                    widgets = $('#context_menu_paste').data('widgets').split(' ');
+                    widgets = $contextMenuPaste.data('widgets').split(' ');
                 }
                 var action = $(this).data('action');
                 if (!action) action = $(this).parent().parent().data('action');
+                var $context_menu_paste = $('#context_menu_paste');
                 switch(action) {
                     case 'lock':
                         that.lockWidgets(null, widgets);
@@ -5521,7 +5577,7 @@ vis = $.extend(true, vis, {
                         that.copy(false, widgets);
                         break;
                     case 'select':
-                        $('#context_menu_paste').data('old-widgets', 'null');
+                        $context_menu_paste.data('old-widgets', 'null');
                         that.inspectWidgets(widgets);
                         break;
                     case 'delete':
@@ -5530,23 +5586,31 @@ vis = $.extend(true, vis, {
                     case 'cut':
                         that.copy(true, widgets);
                         break;
+                    case 'group':
+                        that.editCreateGroup(null, widgets);
+                        $context_menu_paste.data('old-widgets', 'null');
+                        break;
+                    case 'ungroup':
+                        that.editDestroyGroup(null, widgets[0]);
+                        $context_menu_paste.data('old-widgets', 'null');
+                        break;
                 }
             });
         }
 
         // Enable paste if something in clipboard
         if (this.clipboard && this.clipboard.length) {
-            $('#context_menu_paste').removeClass('ui-state-disabled');
+            $contextMenuPaste.removeClass('ui-state-disabled');
         } else {
-            $('#context_menu_paste').addClass('ui-state-disabled');
+            $contextMenuPaste.addClass('ui-state-disabled');
         }
-        if (!$('#context_menu').data('inited')) {
-            $('#context_menu').data('inited', true);
+        if (!$contextMenu.data('inited')) {
+            $contextMenu.data('inited', true);
         } else {
-            $('#context_menu').menu('destroy');
+            $contextMenu.menu('destroy');
         }
 
-        $('#context_menu').css(options)
+        $contextMenu.css(options)
             .appendTo('#visview_' + this.activeView)
             .show()
             .focus()
@@ -5568,7 +5632,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    editShowWizard:       function ($tplElem) {
+    editShowWizard:         function ($tplElem) {
         var tpl = $tplElem.attr('id').substring('prev_container_'.length);
         $tplElem.attr('id', '');
         var that = this;
@@ -5620,8 +5684,7 @@ vis = $.extend(true, vis, {
             var $tpl = $('#' + tpl);
             var renderVisible = $tpl.attr('data-vis-render-visible');
             var widgets = [];
-            var append = '';
-            // Go torough all selected OIDs
+             // Go through all selected OIDs
             for (var i = 0; i < newIds.length; i++) {
                 var data = {};
                 var attrs = $dlg.data('attrs');
@@ -5667,14 +5730,10 @@ vis = $.extend(true, vis, {
                     }
                 }
 
-                // update select Widget element
-                append += '<option value="' + widgetId + '">' + that.getWidgetName(that.activeView, widgetId) + '</option>';
-
                 widgets.push(widgetId);
             }
 
-            that.$selectActiveWidgets.append(append)
-                .multiselect('refresh');
+            that.updateSelectActiveWidget(null, widgets);
 
             setTimeout(function () {
                 that.inspectWidgets(widgets);
@@ -5733,6 +5792,137 @@ vis = $.extend(true, vis, {
         }
         $dlg.find('.dialog-wizard-select').html(options);
         if (attr) $dlg.find('.dialog-wizard-select').val(attr);
+    },
+    editWidgetsRect:        function (view, widgets) {
+        if (typeof widgets !== 'object') widgets = [widgets];
+        var pos = {
+            top:    null,
+            left:   null,
+            width:  null,
+            height: null
+        };
+        // find common coordinates
+        for (var w = 0; w < widgets.length; w++) {
+            var $w = $('#' + widgets[w]);
+            var top  = $w[0].offsetTop;
+            var left = $w[0].offsetLeft;
+            // May be bug?
+            if (!left && !top) {
+                left = $w[0].style.left;
+                top  = $w[0].style.top + $w[0].offsetTop;
+                if (typeof left === 'string') left = parseInt(left.replace('px', ''), 10);
+                if (typeof top  === 'string') top  = parseInt(top.replace('px', ''), 10);
+            }
+            var height = $w.outerHeight();
+            var width  = $w.outerWidth();
+
+            if (pos.top === null) {
+                pos.top    = top;
+                pos.left   = left;
+                pos.height = top  + height;
+                pos.width  = left + width;
+            } else {
+                if (top  < pos.top)  pos.top  = top;
+                if (left < pos.left) pos.left = left;
+                if (top  + height > pos.height) pos.height = top  + height;
+                if (left + width  > pos.width)  pos.width  = left + width;
+            }
+        }
+        pos.width  = pos.width  - pos.left;
+        pos.height = pos.height - pos.top;
+        return pos;
+    },
+    editCreateGroup:        function (view, widgets, groupId) {
+        if (!view) view = this.activeView;
+        if (!groupId) groupId = this.nextGroup();
+
+        var rect = this.editWidgetsRect(view, widgets);
+        for (var w = 0; w < widgets.length; w++) {
+            var wRect = this.editWidgetsRect(view, widgets[w]);
+            wRect.top    = (wRect.top    - rect.top)    * 100 / rect.height;
+            wRect.left   = (wRect.left   - rect.left)   * 100 / rect.width;
+            wRect.width  = (wRect.width  / rect.width)  * 100;
+            wRect.height = (wRect.height / rect.height) * 100;
+            this.views[view].widgets[widgets[w]].style.top    = wRect.top    + '%';
+            this.views[view].widgets[widgets[w]].style.left   = wRect.left   + '%';
+            this.views[view].widgets[widgets[w]].style.width  = wRect.width  + '%';
+            this.views[view].widgets[widgets[w]].style.height = wRect.height + '%';
+            $('#' + widgets[w]).remove();
+            this.views[view].widgets[widgets[w]].groupped = true;
+        }
+        this.views[view].widgets[groupId] = {
+            tpl: '_tplGroup',
+            data: {
+                members: widgets
+            },
+            widgetSet: null,
+            style: {
+                top:    rect.top,
+                left:   rect.left,
+                width:  rect.width,
+                height: rect.height
+            }
+        };
+        if (this.activeView === view) this.updateSelectActiveWidget(null);
+        this.renderWidget(view, groupId);
+        this.inspectWidgets(groupId);
+        this.save();
+    },
+    editDestroyGroup:       function (view, groupId) {
+        if (!view) view = this.activeView;
+        if (groupId && this.views[view].widgets[groupId]) {
+            var widgets = this.views[view].widgets[groupId].data.members;
+            delete this.views[view].widgets[groupId];
+
+            var w;
+            var rect = this.editWidgetsRect(view, groupId);
+            for (w = 0; w < widgets.length; w++) {
+                if (this.views[view].widgets[widgets[w]].groupped !== undefined) delete this.views[view].widgets[widgets[w]].groupped;
+                var wRect = this.editWidgetsRect(view, widgets[w]);
+                this.views[view].widgets[widgets[w]].style.top    = (rect.top  + wRect.top)    + 'px';
+                this.views[view].widgets[widgets[w]].style.left   = (rect.left + wRect.left)   + 'px';
+                this.views[view].widgets[widgets[w]].style.width  = wRect.width  + 'px';
+                this.views[view].widgets[widgets[w]].style.height = wRect.height + 'px';
+            }
+            $('#' + groupId).remove();
+
+            for (w = 0; w < widgets.length; w++) {
+                this.renderWidget(view, widgets[w]);
+            }
+            if (this.activeView === view) {
+                this.updateSelectActiveWidget(null);
+                this.inspectWidgets(widgets);
+            }
+        }
+    },
+    updateSelectActiveWidget: function (view, added, removed) {
+        if (!view) view = this.activeView;
+        if (added   && typeof added   === 'string') added   = [added];
+        if (removed && typeof removed === 'string') removed = [removed];
+
+        if (removed) {
+            for (var r = 0; r < removed.length; r++) {
+                this.$selectActiveWidgets.find('option[value="' + removed[r] + '"]').remove();
+            }
+        }
+        if (added) {
+            for (var a = 0; a < added.length; a++) {
+                this.$selectActiveWidgets.append('<option value="' + added[a] + '">' + this.getWidgetName(view, added[a]) + '</option>')
+            }
+        }
+        if (!added && !removed) {
+            this.$selectActiveWidgets.html('');
+            if (this.views[view].widgets) {
+                var widgets = this.views[view].widgets;
+                for (var w in widgets) {
+                    if (!widgets.hasOwnProperty(w)) continue;
+                    if (widgets[w].groupped) continue;
+                    this.$selectActiveWidgets.append('<option value="' + w + '" ' + ((this.activeWidgets.indexOf(w) !== -1) ? 'selected' : '')+ '>' + this.getWidgetName(view, w) + '</option>');
+                }
+            }
+
+        }
+        this.$selectActiveWidgets.multiselect('refresh');
     }
 });
 

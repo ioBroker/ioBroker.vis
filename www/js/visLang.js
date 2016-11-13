@@ -70,6 +70,9 @@ $.extend(systemDictionary, {
     "Select color":         {"en": "Select color",      "de": "Farbe auswählen",        "ru": "Выбрать цвет"},
     "File manager...":      {"en": "File manager...",   "de": "Datei Manager...",       "ru": 'Проводник...'},
     "Copy to clipboard":    {"en": "Copy to clipboard", "de": "In den Zwischenpuffer kopieren",      "ru": "Копировать в буфер обмена"},
+    "Wizard to create widgets...": {"en": "Wizard to create widgets...", "de": "Wizard um Widgets zu erzeugen...", "ru": "Создать несколько виджетов..."},
+    "Generate":             {"en": "Generate",          "de": "Generieren",             "ru": "Создать"},
+    "Attribute for OID:":   {"en": "Attribute for OID:", "de": "Attribute für OID:",    "ru": "Атрибут для OID:"},
     'Confirm widget deletion': {
         'en': 'Confirm widget deletion',
         'de': 'Bestätigung',
