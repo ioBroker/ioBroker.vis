@@ -454,6 +454,16 @@ var servConn = {
             if (callback) callback(version);
         });
     },
+    subscribe:       function (idOrArray, callback) {
+        if (!this._checkConnection('subscribe', arguments)) return;
+
+        this._socket.emit('subscribe', idOrArray, callback);
+    },
+    unsubscribe:       function (idOrArray, callback) {
+        if (!this._checkConnection('unsubscribe', arguments)) return;
+
+        this._socket.emit('unsubscribe', idOrArray, callback);
+    },
     _checkAuth:       function (callback) {
         if (!this._isConnected) {
             console.log('No connection!');

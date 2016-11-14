@@ -356,11 +356,13 @@
                         clearTimeout($dlg.data('timer'));
                         $dlg.data('timer', null);
                     }
+                    vis.destroyUnusedViews();
                 }
             }, options));
 
+            if (persistent) $dlg.find('.vis-view-container').data('persistent', persistent);
+
             if (!vis.editMode) {
-                console.log('A');
                 $(el).parent().find('div.vis-widget-body').on('click touchend', function (event) {
                     event.stopPropagation();
                     // Protect against two events

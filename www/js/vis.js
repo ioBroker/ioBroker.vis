@@ -2529,6 +2529,17 @@ var vis = {
                     var cview = $(this).attr('data-vis-contains');
                     if (containers.indexOf(cview) === -1) containers.push(cview);
                 });
+                // check dialogs too
+                var $dialogs = $('.vis-widget-dialog');
+                $dialogs.each(function () {
+                    if ($(this).is(':visible')) {
+                        var $containers = $(this).find('.vis-view-container');
+                        $containers.each(function () {
+                            var cview = $(this).attr('data-vis-contains');
+                            if (containers.indexOf(cview) === -1) containers.push(cview);
+                        });
+                    }
+                });
             }
         }
         var that = this;
@@ -2536,6 +2547,8 @@ var vis = {
             var view = $(this).attr('id').substring('visview_'.length);
             // If this view is used as container
             if (containers.indexOf(view) !== -1) return;
+
+            if ($(this).data('persistent')) return;
 
             console.debug('Destroy ' + view);
 
@@ -2600,7 +2613,7 @@ var vis = {
                 if (error) that.showError(error);
 
                 that.updateStates(data);
-                that.conn._socket.emit('subscribe', oids);
+                that.conn.subscribe(oids);
                 if (callback) callback();
             });
         } else {
@@ -2637,7 +2650,7 @@ var vis = {
                 }
             }
         }
-        if (oids.length) this.conn._socket.emit('unsubscribe', oids);
+        if (oids.length) this.conn.unsubscribe(oids);
     },
     updateState: function (id, state) {
         if (this.editMode) {
@@ -2987,6 +3000,8 @@ function main($) {
                     vis.subscribing.IDs     = vis.subscribing.IDs || [];
                     vis.subscribing.byViews = vis.subscribing.byViews || {};
 
+                    vis.conn.subscribe([vis.conn.namespace + '.control.instance', vis.conn.namespace + '.control.data', vis.conn.namespace + '.control.command']);
+
                     // first of all add custom scripts
                     if (!vis.editMode && vis.views && this.views.___settings) {
                         if (vis.views.___settings.scripts) {
@@ -3004,7 +3019,7 @@ function main($) {
                         vis.updateStates(data);
 
                         if (vis.subscribing.active.length) {
-                            vis.conn._socket.emit('subscribe', vis.subscribing.active);
+                            vis.conn.subscribe(vis.subscribing.active);
                         }
                         // Create non-existing IDs
                         if (vis.subscribing.IDs) {
@@ -3204,9 +3219,14 @@ function main($) {
                         return false;
                     case 'changeView':
                         parts = data.split('/');
-                        //if (parts[1]) {
-                        // Todo switch to desired project
-                        //}
+                        if (parts[1]) {
+                            // detect actual project
+                            var actual = this.projectPrefix ? this.projectPrefix.substring(0, this.projectPrefix.length - 1) : 'main';
+                            if (parts[0] !== actual) {
+                                document.location.href = 'index.html?' + actual + '#' + parts[1];
+                                return;
+                            }
+                        }
                         vis.changeView(parts[1] || parts[0]);
                         break;
                     case 'refresh':

@@ -3544,7 +3544,7 @@ vis = $.extend(true, vis, {
         var $wid = $('#' + id);
         if (this.views[view].widgets[id].groupped) return;
         if (!this.views[view].widgets[id].data.locked) {
-            $('#' + id).unbind('click').click(function (e) {
+            $wid.unbind('click').click(function (e) {
                 if (that.dragging) return;
 
                 var widgetId = $(this).attr('id');

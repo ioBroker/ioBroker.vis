@@ -313,9 +313,10 @@
                 }
                 if (vis.views[view]) {
                     vis.renderView(view, false, function (_view) {
-                        $('#visview_' + _view).appendTo($this).show();
+                        $('#visview_' + _view).appendTo($this).show().data('persistent', persistent);
                     });
                 }
+                vis.destroyUnusedViews();
             });
         },
         iframe: function (el, srcArr, refreshInterval) {
@@ -2129,7 +2130,7 @@
                 }
             %>
             <iframe class="vis-widget-element" <%= this.data.attr('noSandbox') ? '' : 'sandbox="allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"' %> data-oid="<%= this.data.attr('oid') %>" src="<%== vis.binds.stateful.value(srcArr, data.attr('oid')) %>" style="position: absolute; border: 0; padding:0; margin:0; width: 100%; height:100%;"></iframe>
-            <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr("refreshInterval")) %> />
+            <div <%= (el) -> vis.binds.stateful.iframe(el, srcArr, data.attr('refreshInterval')) %> />
         </div>
     </div>
 </script>
@@ -2168,17 +2169,14 @@
         <%
             var viewArr = [];
             var i = 0;
-            while(data.attr("contains_view_" + i) !== undefined) {
-                viewArr.push(data.attr("contains_view_" + i));
+            while (data.attr('contains_view_' + i) !== undefined) {
+                viewArr.push(data.attr('contains_view_' + i));
                 i++;
             }
         %>
         <div class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent')) %> />
         </div>
-        <!--div data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> dui.binds.stateful.view(el, viewArr, data.attr("persistent")) %> />
-        </div-->
     </div>
 </script>
 
