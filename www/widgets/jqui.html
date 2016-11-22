@@ -406,9 +406,10 @@
             }
         },
         dialogAutoClose: function (el, timeout) {
-            var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
+            if (timeout === true || timeout === 'true') timeout = 10000;
+            if (timeout === null || timeout === undefined || timeout === '') return;
 
-            if (timeout === true || timeout === 'true') timeout = 100;
+            var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
 
             $dialog.on('dialogopen', function () {
                 $dialog.find('input').on('click', function () {
@@ -1205,7 +1206,7 @@
         data-vis-prev='<img src="widgets/jqui/img/Prev_JquiDialog.png"></img>'
         data-vis-name="HTML - Dialog"
         data-vis-attrs="html/text;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr('html') %>
@@ -1225,7 +1226,7 @@
         data-vis-type="static,dialog"
         data-vis-name="Icon - Dialog"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;invert_icon/checkbox;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;html_dialog/text;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;persistent/checkbox;preload/checkbox;closeOnClick/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = '';
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1251,7 +1252,7 @@
         data-vis-type="container,dialog"
         data-vis-name="container - HTML - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px; border: 1px solid #000; background: #fff; cursor: pointer" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr('html') %>
@@ -1260,6 +1261,7 @@
             <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container"></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogAutoClose(el, data.attr('autoclose')) %> />
     </div>
 </script>
 
@@ -1271,7 +1273,7 @@
         data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerDialogExternal.png"></img>'
         data-vis-name="container - ext cmd - view in jqui Dialog"
         data-vis-attrs="html/text;contains_view/views;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 194px; height: 68px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body" style="display:none; width: 190px; height: 64px; background-color: #333; color: #eee; cursor: pointer; border: 2px dashed red; opacity:0.8;">
             <b>External Container Dialog</b><br/>
@@ -1283,6 +1285,7 @@
             </div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogAutoClose(el, data.attr('autoclose')) %> />
     </div>
 </script>
 
@@ -1294,7 +1297,7 @@
         data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerIconDialog.png"></img>'
         data-vis-name="container - Icon - view in jqui Dialog"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;setId/id;setValue;"
-        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;invert_icon/checkbox;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <%
     var styles = '';
     if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
@@ -1310,6 +1313,7 @@
             <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container"></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogAutoClose(el, data.attr('autoclose')) %> />
     </div>
 </script>
 
@@ -1321,7 +1325,7 @@
         data-vis-prev='<img src="widgets/jqui/img/Prev_ContainerButtonDialog.png"></img>'
         data-vis-name="container - Button - view in jqui Dialog"
         data-vis-attrs="html_prepend/text;html_append/text;buttontext[Text];setId/id;setValue;no_style/checkbox;"
-        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
+        data-vis-attrs0="group.dialog;contains_view/views;title;noHeader/checkbox;autoclose/slider,0,30000,100;modal/checkbox;dialog_width;dialog_height;padding[5]/slider,0,100,1;dialog_top;dialog_left;overflowX/nselect,,visible,hidden,scroll,auto,initial,inherit;overflowY/nselect,,visible,hidden,scroll,auto,initial,inherit">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div id="<%= this.data.attr('wid') %>_body" class="vis-widget-body">
             <%== this.data.attr('html_prepend') %>
@@ -1332,6 +1336,7 @@
             <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container"></div>
         </div>
         <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogContainer(el, data) %> />
+        <div class="popup-helper" <%= (el) -> vis.binds.jqueryui.dialogAutoClose(el, data.attr('autoclose')) %> />
     </div>
 </script>
 
@@ -1706,7 +1711,7 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 735px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-vis-step="<%= this.data.attr('step') %>" data-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-vis-step="<%= this.data.attr('step') %>" data-val="<%= this.data.attr('active_value') %>" <%= (el) -> vis.binds.basic.increment(el,data.minmax,data.repeat_delay,data.repeat_interval); vis.binds.jqueryui.classes(el, null, data.minmax) %>>
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="<%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
         </div>

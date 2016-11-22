@@ -1951,6 +1951,12 @@
                 }
             }
         };
+        vis.binds.basic.onAttrChanged = function (widgetID, view, newId, attr, isCss) {
+            if (vis.binds.basic.groupTimer) clearTimeout(vis.binds.basic.groupTimer);
+            vis.binds.basic.groupTimer = setTimeout(function () {
+                vis.inspectWidgets(vis.activeViewDiv, vis.activeView, this.activeWidgets);
+            }, 2000);
+        };
     }
 </script>
 
@@ -2827,6 +2833,8 @@
 <script id="_tplGroup"
         type="text/ejs"
         class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-attrs="group.objects;attrCount[1]/slider,0,20,1;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: visible" id="<%= this.data.attr('wid') %>"></div>
 </script>

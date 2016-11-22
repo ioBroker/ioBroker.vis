@@ -179,6 +179,17 @@ body {
     width: 100%;
 }
 
+#widget_attrs_fix .vis-edit-textbox-with-button {
+    width: calc(100% - 30px);
+}
+.vis-edit-percent-calc {
+    margin-top: -2px !important;
+    margin-left: 4px !important;
+}
+.vis-edit-percent-calc .ui-button-text {
+    padding: 0 !important;
+    font-size: 10px;
+}
 #snap_type {
     width: 60px;
 }
@@ -1035,4 +1046,25 @@ td > .select_active_widget :nth-child(2) {
 }
 .vis-preview-lock {
     background-image: url("../icon/lockIcon.png");
+}
+
+/*-------------------------- group-editor ------------------------------ */
+.group-edit-header {
+    padding: 5px;
+    position: absolute;
+    width: 250px;
+    height: 20px;
+    background: rgba(117, 175, 255, 0.69);
+    font-size: 20px;
+    top: 0;
+    right: 0;
+    z-index: 999;
+}
+.group-edit-close {
+    float: right;
+}
+
+/*------------------------- context menu ------------------------------------*/
+.ui-menu-item {
+    font-size: 12px !important;
 }
