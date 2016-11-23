@@ -2129,6 +2129,13 @@ vis = $.extend(true, vis, {
             fixed: 'icon/groupFixed.png'
         };
 
+        if (view !== viewDiv) {
+            // disable group resize
+            var $group = $('#' + viewDiv);
+            if ($group.hasClass('vis-resize-group')) {
+                $group.resizable('destroy').removeClass('vis-resize-group');
+            }
+        }
         if (!onlyUpdate) {
             this.alignIndex = 0;
 
@@ -2245,8 +2252,14 @@ vis = $.extend(true, vis, {
             // Switch tabs to View settings
             $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
             $('#widget_tab').text(_('Widget'));
+
+            if (view !== viewDiv) {
+                // enable group resize of nothing selected
+                this.editResizeGroup(viewDiv, view);
+            }
             return false;
         }
+
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
         $('#widget_tab').text(_('Widget') + ': ' + ((this.activeWidgets.length === 1) ? wid : this.activeWidgets.length));
 

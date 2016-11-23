@@ -145,7 +145,7 @@ vis = {
         activeViews: []
     },
     commonStyle: null,
-    _setValue: function (id, state, isJustCreated) {
+    _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
         this.conn.setState(id, state[id + '.val'], function (err) {
@@ -179,7 +179,7 @@ vis = {
             }
         });
     },
-    setValue: function (id, val) {
+    setValue:           function (id, val) {
         if (!id) {
             console.log('ID is null for val=' + val);
             return;
@@ -225,7 +225,7 @@ vis = {
             this.statesDebounce[id].state = o;
         }
     },
-    loadWidgetSet: function (name, callback) {
+    loadWidgetSet:      function (name, callback) {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
@@ -257,7 +257,7 @@ vis = {
         });
     },
     // Return as array used widgetSets or null if no information about it
-    getUsedWidgetSets: function () {
+    getUsedWidgetSets:  function () {
         var widgetSets = [];
 
         if (!this.views) {
@@ -280,8 +280,9 @@ vis = {
         }
 
         for (var view in this.views) {
-            if (view === '___settings') continue;
+            if (!this.views.hasOwnProperty(view) ||  view === '___settings') continue;
             for (var id in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(id)) continue;
                 if (!this.views[view].widgets[id].widgetSet) {
 
                     // Views are not yet converted and have no widgetSet information)
@@ -306,7 +307,7 @@ vis = {
         return widgetSets;
     },
     // Return as array used widgetSets or null if no information about it
-    getUsedObjectIDs: function () {
+    getUsedObjectIDs:   function () {
         if (!this.views) {
             console.log('Check why views are not yet loaded!');
             return null;
@@ -329,8 +330,15 @@ vis = {
             for (id in this.views[view].widgets) {
                 if (!this.views[view].widgets.hasOwnProperty(id)) continue;
                 // Check all attributes
-                var data = this.views[view].widgets[id].data;
+                var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
+
+                // fix error in naming
+                if (this.views[view].widgets[id].groupped) {
+                    this.views[view].widgets[id].grouped = true;
+                    delete this.views[view].widgets[id].groupped;
+                }
+
                 // rename hqWidgets => hqwidgets
                 if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
                     this.views[view].widgets[id].widgetSet = 'hqwidgets';
@@ -456,6 +464,7 @@ vis = {
                     }
 
                     if (typeof data[attr] === 'string') {
+                        var m;
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
                             for (var t = 0; t < oids.length; t++) {
@@ -471,13 +480,12 @@ vis = {
                                     this.bindings[oids[t].systemOid].push(oids[t]);
                                 }
 
-
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                                    for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
-                                        if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
-                                        if (views && views[view].indexOf(oids[t].operations[0].arg[w].systemOid) === -1) views[view].push(oids[t].operations[0].arg[w].systemOid);
-                                        if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
-                                        this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
+                                    for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
+                                        if (IDs.indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) IDs.push(oids[t].operations[0].arg[ww].systemOid);
+                                        if (views && views[view].indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) views[view].push(oids[t].operations[0].arg[ww].systemOid);
+                                        if (!this.bindings[oids[t].operations[0].arg[ww].systemOid]) this.bindings[oids[t].operations[0].arg[ww].systemOid] = [];
+                                        this.bindings[oids[t].operations[0].arg[ww].systemOid].push(oids[t]);
                                     }
                                 }
                             }
@@ -504,6 +512,10 @@ vis = {
                                     index: parseInt(attr.substring('signals-oid-'.length), 10)
                                 });
                             }
+                        } else if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
+                            var _id = 'groupAttr' + m[1];
+                            if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
+                            if (views && views[view].indexOf(data[_id]) === -1) views[view].push(data[_id]);
                         }
                     }
                 }
@@ -572,7 +584,7 @@ vis = {
 
         return {IDs: IDs, byViews: views};
     },
-    loadWidgetSets: function (callback) {
+    loadWidgetSets:     function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
@@ -617,14 +629,14 @@ vis = {
             if (callback) callback.call(this);
         }
     },
-    bindInstance: function () {
+    bindInstance:       function () {
         if (typeof app !== 'undefined' && app.settings) {
             this.instance = app.settings.instance;
         }
         if (typeof storage !== 'undefined') this.instance = this.instance || storage.get(this.storageKeyInstance);
         if (this.editMode) this.bindInstanceEdit();
     },
-    init: function () {
+    init:               function () {
         if (this.initialized) return;
 
         if (typeof storage !== 'undefined') {
@@ -642,7 +654,7 @@ vis = {
         //this.loadRemote(this.loadWidgetSets, this.initNext);
         this.loadWidgetSets(this.initNext);
     },
-    initNext: function () {
+    initNext:           function () {
         this.showWaitScreen(false);
         var that = this;
         // First start.
@@ -748,7 +760,7 @@ vis = {
 
         if (this.activeView) this.changeView(this.activeViewDiv, this.activeView);
     },
-    initViewObject: function () {
+    initViewObject:     function () {
         if (!this.editMode) {
             if (typeof app !== 'undefined') {
                 this.showMessage(_('no views found!'));
@@ -772,22 +784,21 @@ vis = {
             }
         }
     },
-    setViewSize: function (viewDiv, view) {
+    setViewSize:        function (viewDiv, view) {
         var $view = $('#visview_' + viewDiv);
-        // Because of background, set the width and height of the view
-        var width = parseInt(this.views[view].settings.sizex, 10);
-        var height = parseInt(this.views[view].settings.sizey, 10);
+        var width;
+        var height;
+        if (this.views[view]) {
+            // Because of background, set the width and height of the view
+            width  = parseInt(this.views[view].settings.sizex, 10);
+            height = parseInt(this.views[view].settings.sizey, 10);
+        }
         var $vis_container = $('#vis_container');
-        if (!width || width < $vis_container.width()) {
-            width = '100%';
-        }
-        if (!height || height < $vis_container.height()) {
-            height = '100%';
-        }
-        $view.css({width: width});
-        $view.css({height: height});
+        if (!width  || width < $vis_container.width())   width  = '100%';
+        if (!height || height < $vis_container.height()) height = '100%';
+        $view.css({width: width, height: height});
     },
-    updateContainers: function (viewDiv, view) {
+    updateContainers:   function (viewDiv, view) {
         var that = this;
         // Set ths views for containers
         $('#visview_' + viewDiv).find('.vis-view-container').each(function () {
@@ -815,7 +826,7 @@ vis = {
             }
         });
     },
-    renderViews: function (viewDiv, views, index, callback) {
+    renderViews:        function (viewDiv, views, index, callback) {
         if (typeof index === 'function') {
             callback = index;
             index = 0;
@@ -832,17 +843,17 @@ vis = {
             that.renderViews(viewDiv, views, index + 1, callback);
         });
     },
-    renderView: function (viewDiv, view, hidden, callback) {
+    renderView:         function (viewDiv, view, hidden, callback) {
             var that = this;
 
             if (typeof hidden === 'function') {
                 callback = hidden;
-                hidden = undefined;
+                hidden   = undefined;
             }
             if (typeof view === 'boolean') {
                 callback = hidden;
-                hidden = undefined;
-                view = viewDiv;
+                hidden   = undefined;
+                view     = viewDiv;
             }
             if (!this.editMode && !$('#commonTheme').length) {
                 $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
@@ -939,7 +950,7 @@ vis = {
                                 }
                             }
 
-                            if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].groupped) that.renderWidget(viewDiv, view, id);
+                            if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].grouped) that.renderWidget(viewDiv, view, id);
                         }
                     }
 
@@ -1004,7 +1015,7 @@ vis = {
                 }
             });
         },
-    addViewStyle: function (viewDiv, view, theme) {
+    addViewStyle:       function (viewDiv, view, theme) {
         var _view = 'visview_' + viewDiv;
 
         if (this.calcCommonStyle() === theme) return;
@@ -1030,7 +1041,7 @@ vis = {
             }
         });
     },
-    preloadImages: function (srcs) {
+    preloadImages:      function (srcs) {
         if (!this.preloadImages.cache) {
             this.preloadImages.cache = [];
         }
@@ -1041,7 +1052,7 @@ vis = {
             this.preloadImages.cache.push(img);
         }
     },
-    destroyWidget: function (viewDiv, view, widget) {
+    destroyWidget:      function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         if ($widget.length) {
             try {
@@ -1069,18 +1080,18 @@ vis = {
             }
         }
     },
-    reRenderWidget: function (viewDiv, view, widget) {
+    reRenderWidget:     function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         var updateContainers = $widget.find('.vis-view-container').length;
-        view = view || this.activeView;
-        viewDiv = viewDiv || view;
+        view    = view    || this.activeView;
+        viewDiv = viewDiv || this.activeViewDiv;
 
         this.destroyWidget(viewDiv, view, widget);
-        this.renderWidget(viewDiv, view, widget);
+        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : null);
 
         if (updateContainers) this.updateContainers(viewDiv, view);
     },
-    changeFilter: function (viewDiv, view, filter, showEffect, showDuration, hideEffect, hideDuration) {
+    changeFilter:       function (viewDiv, view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.activeView;
         var widgets = this.views[view].widgets;
         var that = this;
@@ -1165,7 +1176,7 @@ vis = {
             this.binds.bars.filterChanged(viewDiv, view, filter);
         }
     },
-    isSignalVisible: function (view, widget, index, val) {
+    isSignalVisible:    function (view, widget, index, val) {
         var oid = this.views[view].widgets[widget].data['signals-oid-' + index];
 
         if (oid) {
@@ -1231,7 +1242,7 @@ vis = {
             return false;
         }
     },
-    addSignalIcon: function (view, wid, data, index) {
+    addSignalIcon:      function (view, wid, data, index) {
         // show icon
         var display = (this.editMode || this.isSignalVisible(view, wid, index)) ? '' : 'none';
         if (this.editMode && data['signals-hide-edit-' + index]) display = 'none';
@@ -1239,7 +1250,7 @@ vis = {
         $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0) + '%; left: ' + (data['signals-horz-' + index] || 0) + '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
             (data['signals-text-' + index] ? ('<div class="vis-signal-text " style="' + (data['signals-text-style-' + index] || '') + '">' + data['signals-text-' + index] + '</div>') : '') + '</div>');
     },
-    addGestures: function (id, wdata) {
+    addGestures:        function (id, wdata) {
         // gestures
         var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
         var $$wid = $$('#' + id);
@@ -1395,7 +1406,7 @@ vis = {
             }
         });
     },
-    isUserMemberOf: function (user, userGroups) {
+    isUserMemberOf:     function (user, userGroups) {
         if (!this.userGroups) return true;
         if (typeof userGroups !== 'object') userGroups = [userGroups];
         for (var g = 0; g < userGroups.length; g++) {
@@ -1405,7 +1416,7 @@ vis = {
         }
         return false;
     },
-    renderWidget: function (viewDiv, view, id, groupId) {
+    renderWidget:       function (viewDiv, view, id, groupId) {
         var $view;
 
         if (!groupId) {
@@ -1417,7 +1428,7 @@ vis = {
 
         var widget = this.views[view].widgets[id];
 
-        if (groupId) {
+        if (groupId && widget) {
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
@@ -1484,7 +1495,7 @@ vis = {
 
         var widgetData = this.widgets[id].data;
 
-        try {
+        //try {
             //noinspection JSJQueryEfficiency
             var $widget = $('#' + id);
             if ($widget.length) {
@@ -1597,9 +1608,9 @@ vis = {
                     this.renderWidget(viewDiv, view, widget.data.members[w], id);
                 }
             }
-        } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        }
+        //} catch (e) {
+        //    this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        //}
 
         if (userGroups && $wid && $wid.length) {
             if (!this.isUserMemberOf(this.conn.getUser(), userGroups)) {
@@ -1607,8 +1618,11 @@ vis = {
             }
         }
     },
-    changeView: function (viewDiv, view, hideOptions, showOptions, sync, callback) {
+    changeView:         function (viewDiv, view, hideOptions, showOptions, sync, callback) {
         var that = this;
+
+        if (!view && viewDiv) view = viewDiv;
+
         if (typeof hideOptions === 'function') {
             callback = hideOptions;
             hideOptions = undefined;
@@ -1641,6 +1655,7 @@ vis = {
         }
 
         if (!this.views[view]) {
+            //noinspection JSUnusedAssignment
             view = null;
             for (var prop in this.views) {
                 if (prop === '___settings') continue;
@@ -1712,7 +1727,7 @@ vis = {
             });
         }
     },
-    postChangeView: function (viewDiv, view, callback) {
+    postChangeView:     function (viewDiv, view, callback) {
             this.activeView = view;
             this.activeViewDiv = viewDiv;
             /*$('#visview_' + viewDiv).find('.vis-view-container').each(function () {
@@ -1744,7 +1759,7 @@ vis = {
                 callback(viewDiv, view);
             }
         },
-    loadRemote: function (callback, callbackArg) {
+    loadRemote:         function (callback, callbackArg) {
         var that = this;
         if (!this.projectPrefix) {
             if (callback) callback.call(that, callbackArg);
@@ -1782,8 +1797,8 @@ vis = {
             if (callback) callback.call(that, callbackArg);
         });
     },
-    wakeUpCallbacks: [],
-    initWakeUp: function () {
+    wakeUpCallbacks:    [],
+    initWakeUp:         function () {
         var that = this;
         var oldTime = (new Date()).getTime();
         setInterval(function () {
@@ -1800,10 +1815,10 @@ vis = {
             }
         }, 2500);
     },
-    onWakeUp: function (callback) {
+    onWakeUp:           function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon, width, callback) {
+    showMessage:        function (message, title, icon, width, callback) {
         // load some theme to show message
         if (!this.editMode && !$('#commonTheme').length) {
             $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
@@ -1885,11 +1900,11 @@ vis = {
         }
         this.$dialogMessage.dialog('open');
     },
-    showError: function (error) {
+    showError:          function (error) {
         this.showMessage(error, _('Error'), 'alert', 400);
     },
-    waitScreenVal: 0,
-    showWaitScreen: function (isShow, appendText, newText, step) {
+    waitScreenVal:      0,
+    showWaitScreen:     function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
         if (!waitScreen && isShow) {
             $('body').append('<div id="waitScreen" class="vis-wait-screen"><div id="waitDialog" class="waitDialog"><div class="vis-progressbar"></div><div class="vis-wait-text" id="waitText"></div></div></div>');
@@ -1918,7 +1933,7 @@ vis = {
             $(waitScreen).remove();
         }
     },
-    registerOnChange: function (callback, arg) {
+    registerOnChange:   function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback === callback &&
                 this.onChangeCallbacks[i].arg === arg) {
@@ -1936,7 +1951,7 @@ vis = {
             }
         }
     },
-    isWidgetHidden: function (view, widget, val) {
+    isWidgetHidden:     function (view, widget, val) {
         var oid = this.views[view].widgets[widget].data['visibility-oid'];
         var condition = this.views[view].widgets[widget].data['visibility-cond'];
         if (oid) {
@@ -2010,7 +2025,7 @@ vis = {
         this.viewsActiveFilter[view].length > 0 &&
         this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
     },
-    calcCommonStyle: function (recalc) {
+    calcCommonStyle:    function (recalc) {
         if (!this.commonStyle || recalc) {
             if (this.editMode) {
                 this.commonStyle = this.config.editorTheme || 'redmond';
@@ -2019,6 +2034,7 @@ vis = {
             var styles = {};
             if (this.views) {
                 for (var view in this.views) {
+                    if (!this.views.hasOwnProperty(view)) continue;
                     if (view === '___settings') continue;
                     if (!this.views[view] || !this.views[view].settings.theme) continue;
                     if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
@@ -2039,7 +2055,7 @@ vis = {
         }
         return this.commonStyle;
     },
-    formatValue: function formatValue(value, decimals, _format) {
+    formatValue:        function formatValue(value, decimals, _format) {
         if (typeof decimals !== 'number') {
             decimals = 2;
             _format = decimals;
@@ -2053,7 +2069,7 @@ vis = {
         if (typeof value !== "number") value = parseFloat(value);
         return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatDate: function formatDate(dateObj, isDuration, _format) {
+    formatDate:         function formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
             isDuration = true;
@@ -2167,7 +2183,7 @@ vis = {
         put(s);
         return result;
     },
-    extractBinding: function (format) {
+    extractBinding:     function (format) {
         if (this.editMode) return null;
         if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
 
@@ -2193,8 +2209,8 @@ vis = {
 
                 var isSeconds = (test2 === '.ts' || test2 === '.lc');
 
-                var test1 = systemOid.substring(systemOid.length - 4);
-                var test2 = systemOid.substring(systemOid.length - 3);
+                test1 = systemOid.substring(systemOid.length - 4);
+                test2 = systemOid.substring(systemOid.length - 3);
 
                 if (test1 === '.val' || test1 === '.ack') {
                     systemOid = systemOid.substring(0, systemOid.length - 4);
@@ -2228,8 +2244,8 @@ vis = {
                             var _systemOid = parts[u].trim();
                             var _visOid = _systemOid;
 
-                            var test1 = _visOid.substring(_visOid.length - 4);
-                            var test2 = _visOid.substring(_visOid.length - 3);
+                            test1 = _visOid.substring(_visOid.length - 4);
+                            test2 = _visOid.substring(_visOid.length - 3);
 
                             if (test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
                                 _visOid = _visOid + '.val';
@@ -2352,7 +2368,7 @@ vis = {
 
         return result;
     },
-    formatBinding: function (format, view, wid, widget) {
+    formatBinding:      function (format, view, wid, widget) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
@@ -2569,7 +2585,7 @@ vis = {
 
         return result;
     },
-    orientationChange: function () {
+    orientationChange:  function () {
         if (this.resolutionTimer) return;
         var that = this;
         this.resolutionTimer = setTimeout(function () {
@@ -2580,7 +2596,7 @@ vis = {
             }
         }, 200);
     },
-    detectBounce: function (el, isUp) {
+    detectBounce:       function (el, isUp) {
         if (!this.isTouch) return false;
 
         // Protect against two events
@@ -2605,12 +2621,12 @@ vis = {
         $el.data(isUp ? 'lcu' : 'lc', now);
         return false;
     },
-    createDemoStates: function () {
+    createDemoStates:   function () {
         // Create demo variables
         this.states.attr({'demoTemperature.val': 25.4});
         this.states.attr({'demoHumidity.val': 55});
     },
-    getHistory: function (id, options, callback) {
+    getHistory:         function (id, options, callback) {
         // Possible options:
         // - **instance - (mandatory) sql.x or history.y
         // - **start** - (optional) time in ms - *new Date().getTime()*'
@@ -2634,7 +2650,7 @@ vis = {
 
         this.conn.getHistory(id, options, callback);
     },
-    destroyView: function (viewDiv, view) {
+    destroyView:        function (viewDiv, view) {
         var $view = $('#visview_' + viewDiv);
 
         console.debug('Destroy ' + view);
@@ -2704,7 +2720,7 @@ vis = {
             }, timeout, this);
         }
     },
-    generateInstance: function () {
+    generateInstance:   function () {
         if (typeof storage !== 'undefined') {
             this.instance = (Math.random() * 4294967296).toString(16);
             this.instance = '0000000' + this.instance;
@@ -2713,7 +2729,7 @@ vis = {
             storage.set(this.storageKeyInstance, this.instance);
         }
     },
-    subscribeStates: function (view, callback) {
+    subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {
             if (callback) callback();
             return;
@@ -2749,7 +2765,7 @@ vis = {
             if (callback) callback();
         }
     },
-    unsubscribeStates: function (view) {
+    unsubscribeStates:  function (view) {
         if (!view || this.editMode) return;
 
         // view yet active
@@ -2781,7 +2797,7 @@ vis = {
         }
         if (oids.length) this.conn.unsubscribe(oids);
     },
-    updateState: function (id, state) {
+    updateState:        function (id, state) {
         if (this.editMode) {
             this.states[id + '.val'] = state.val;
             this.states[id + '.ts'] = state.ts;
@@ -2862,7 +2878,7 @@ vis = {
         }
         if (this.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
     },
-    updateStates: function (data) {
+    updateStates:       function (data) {
         if (data) {
             for (var id in data) {
                 if (!data.hasOwnProperty(id)) continue;

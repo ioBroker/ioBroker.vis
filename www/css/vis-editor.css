@@ -190,6 +190,18 @@ body {
     padding: 0 !important;
     font-size: 10px;
 }
+.vis-resize-group .ui-resizable-e, .vis-resize-group .ui-resizable-s {
+    background: gray;
+    opacity: 0.5;
+}
+.vis-edit-group-widget {
+    background: white;
+}
+
+.vis-edit-group {
+    background: lightgrey;
+}
+
 #snap_type {
     width: 60px;
 }
