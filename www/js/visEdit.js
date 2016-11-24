@@ -3257,6 +3257,9 @@ vis = $.extend(true, vis, {
         }
         return _result;
     },
+    exportWidgetsAsZip:     function (view, widgets) {
+        // create image, get all widgets into widgets.txt
+    },
     exportWidgets:          function (widgets) {
         this.removeUnusedFields();
 
@@ -3512,7 +3515,7 @@ vis = $.extend(true, vis, {
     getUserGroups:          function () {
         return this.userGroups;
     },
-    delWidgetHelper:        function (viewDiv, view, id, isAll) {
+    delWidgetHelper:        function (viewDiv, view, id, isAll, groupId) {
         if (!id) return;
 
         if (isAll && id.indexOf('_') !== -1) {
@@ -3540,7 +3543,7 @@ vis = $.extend(true, vis, {
             var list = this.views[view].widgets[id].data.members;
             for (var m = 0; m < list.length; m++) {
                 if (list[m] !== id) {
-                    this.delWidgetHelper(viewDiv, view, list[m], isAll);
+                    this.delWidgetHelper(viewDiv, view, list[m], isAll, id);
                 }
             }
         }
@@ -3550,8 +3553,8 @@ vis = $.extend(true, vis, {
         $('#' + id).remove();
         if (this.views[view].widgets[id].grouped) {
             // find group
-            pos = this.views[view].widget[viewDiv].data.members.indexOf(id);
-            if (pos !== -1) this.views[view].widget[viewDiv].data.members.splice(pos, 1);
+            pos = this.views[view].widgets[groupId || viewDiv].data.members.indexOf(id);
+            if (pos !== -1) this.views[view].widgets[groupId || viewDiv].data.members.splice(pos, 1);
         }
         if (view) delete this.views[view].widgets[id];
 
@@ -3648,21 +3651,23 @@ vis = $.extend(true, vis, {
         }
 
         var widgetId;
-        if (options.data.members) {
+        if (!options.template && options.data.members) {
             widgetId = options.wid || this.nextGroup();
         } else {
             widgetId = options.wid || this.nextWidget();
         }
-        var $tpl = $('#' + options.tpl);
+        var $tpl;
+        if (!options.template) {
+            $tpl = $('#' + options.tpl);
 
-        // call custom init function
-        if (!options.noSave && $tpl.attr('data-vis-init')) {
-            var init = $tpl.attr('data-vis-init');
-            if (this.binds[$tpl.attr('data-vis-set')][init]) {
-                this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
+            // call custom init function
+            if (!options.noSave && $tpl.attr('data-vis-init')) {
+                var init = $tpl.attr('data-vis-init');
+                if (this.binds[$tpl.attr('data-vis-set')][init]) {
+                    this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
+                }
             }
         }
-
         this.widgets[widgetId] = {
             wid: widgetId,
             data: new can.Map($.extend({
@@ -3683,11 +3688,13 @@ vis = $.extend(true, vis, {
         }
 
         this.views[view].widgets[widgetId] = {
+//            template:  options.template,
             tpl:       options.tpl,
             data:      options.data,
             style:     options.style,
-            widgetSet: $tpl.attr('data-vis-set')
+            widgetSet: $tpl ? $tpl.attr('data-vis-set') : undefined
         };
+
         if (options.grouped || viewDiv !== view) this.views[view].widgets[widgetId].grouped = true;
         // if group edit
         if (viewDiv !== view) {
@@ -5784,6 +5791,33 @@ vis = $.extend(true, vis, {
             return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1]);
         });
     },
+    /*editCopyWidgetsToTemplate: function (view, name, obj) {
+        var widgets = this.views[views].widgets[name].data.members;
+        if (widgets) {
+            for (var w = 0; w < widgets.length; w++) {
+                obj[widgets[w]] = this.views[views].widgets[widgets[w]];
+                this.editCopyWidgetsToTemplate(view, widgets[w], obj);
+            }
+        }
+    },
+    editCreateTemplate:     function (viewDiv, view, groupId, name) {
+        this.views.__settings__ = this.views.__settings__ || {};
+        if (!name || (this.views.__settings__.templates[name])) {
+            name = 'template1';
+        }
+        this.views.__settings__.templates[name] = {
+            main: this.views[views].widgets[groupId]
+        };
+        var template = this.views.__settings__.templates[name];
+        this.editCopyWidgetsToTemplate(view, name, template);
+
+        this.addWidget(viewDiv, view, {
+            template:   name,
+            data:       JSON.parse(JSON.strinigfy(template.main.data)),
+            style:      JSON.parse(JSON.strinigfy(template.main.style)),
+            noAnimate:  true
+        });
+    },*/
     showContextMenu:        function (viewDiv, view, options) {
         var that = this;
         var offset;
@@ -5892,8 +5926,10 @@ vis = $.extend(true, vis, {
         // If selected only one and it is group => show ungroup
         if ($listSelected.length === 1 && $($listSelected[0]).attr('id')[0] === 'g') {
             $('#context_menu_ungroup').show();
+            $('#context_menu_group2template').show();
         } else {
             $('#context_menu_ungroup').hide();
+            $('#context_menu_group2template').hide();
         }
 
         // show title of menu
@@ -5992,6 +6028,12 @@ vis = $.extend(true, vis, {
                         break;
                     case 'ungroup':
                         that.editDestroyGroup(viewDiv, view, widgets[0]);
+                        break;
+                    case 'group2template':
+                        that.editCreateTemplate(viewDiv, view, widgets[0]);
+                        break;
+                    case 'template2group':
+                        that.editCreateGroupFromTemplate(viewDiv, view, widgets[0]);
                         break;
                 }
             });

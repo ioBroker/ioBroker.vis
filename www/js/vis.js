@@ -104,41 +104,41 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.11.2',
+    version: '0.12.0',
     requiredServerVersion: '0.0.0',
 
-    storageKeyViews: 'visViews',
+    storageKeyViews:    'visViews',
     storageKeySettings: 'visSettings',
     storageKeyInstance: 'visInstance',
 
-    instance: null,
-    urlParams: {},
-    settings: {},
-    views: null,
-    widgets: {},
-    activeView: '',
-    activeViewDiv: '',
-    widgetSets: visConfig.widgetSets,
-    initialized: false,
-    toLoadSetsCount: 0, // Count of widget sets that should be loaded
-    isFirstTime: true,
-    useCache: false,
-    authRunning: false,
-    cssChecked: false,
-    isTouch: 'ontouchstart' in document.documentElement,
-    binds: {},
-    onChangeCallbacks: [],
-    viewsActiveFilter: {},
-    projectPrefix: window.location.search ? window.location.search.slice(1) + '/' : 'main/',
+    instance:           null,
+    urlParams:          {},
+    settings:           {},
+    views:              null,
+    widgets:            {},
+    activeView:         '',
+    activeViewDiv:      '',
+    widgetSets:         visConfig.widgetSets,
+    initialized:        false,
+    toLoadSetsCount:    0, // Count of widget sets that should be loaded
+    isFirstTime:        true,
+    useCache:           false,
+    authRunning:        false,
+    cssChecked:         false,
+    isTouch:            'ontouchstart' in document.documentElement,
+    binds:              {},
+    onChangeCallbacks:  [],
+    viewsActiveFilter:  {},
+    projectPrefix:      window.location.search ? window.location.search.slice(1) + '/' : 'main/',
     navChangeCallbacks: [],
-    editMode: false,
-    language: (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
-    statesDebounce: {},
-    visibility: {},
-    signals: {},
-    bindings: {},
-    bindingsCache: {},
-    subscribing: {
+    editMode:           false,
+    language:           (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
+    statesDebounce:     {},
+    visibility:         {},
+    signals:            {},
+    bindings:           {},
+    bindingsCache:      {},
+    subscribing:        {
         IDs: [],
         byViews: {},
         active: [],
@@ -1055,6 +1055,14 @@ vis = {
     destroyWidget:      function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         if ($widget.length) {
+            var widgets = this.views[view].widgets[widget].data.members;
+
+            if (widgets) {
+                for (var w = 0; w < widgets.length; w++) {
+                    this.destroyWidget(viewDiv, view, widgets[w]);
+                }
+            }
+
             try {
                 // get array of bound OIDs
                 var bound = $widget.data('bound');

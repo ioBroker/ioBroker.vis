@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
-    <!-- vis Version 0.11.2 -->
+    <!-- vis Version 0.12.0 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -138,7 +138,8 @@
 </div>
 
 <div style="display: none;" id="dialog_export_widgets" title="export widgets title" class="translateT">
-    <textarea rows="60" cols="160" style="width: calc(100% - 15px); height: calc(100% - 15px); font-size: 11px;"
+    <div><span class="translate">Export as zip:</span><input id="dialog_export_widgets_as_zip" type="checkbox"/></div>
+    <textarea rows="60" cols="160" style="width: calc(100% - 15px); height: calc(100% - 45px); font-size: 11px;"
               id="textarea_export_widgets"></textarea>
 </div>
 <div style="display: none;" id="dialog_import_widgets" title="import widgets" class="translateT">
@@ -716,6 +717,14 @@
                     <span class="ui-icon ui-icon-arrow-4-diag"></span>
                     <span class="translate">Ungroup</span>
                 </li>
+                <!--li id="context_menu_group2template" class="context-menu-common-item" data-action="group2template">
+                    <span class="ui-icon ui-icon-arrow-4-diag"></span>
+                    <span class="translate">Make template</span>
+                </li>
+                <li id="context_menu_template2grpup" class="context-menu-common-item" data-action="template2group">
+                    <span class="ui-icon ui-icon-arrow-4-diag"></span>
+                    <span class="translate">Group from widget</span>
+                </li-->
                 <li id="context_menu_copy"    class="context-menu-action context-menu-common-item" data-action="copy">
                     <span class="ui-icon ui-icon-copy"></span>
                     <span class="translate">Copy</span>
