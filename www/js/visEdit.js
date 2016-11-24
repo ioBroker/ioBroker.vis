@@ -1896,14 +1896,18 @@ vis = $.extend(true, vis, {
 
         // All Widget ---------------------
         $('#wid_all_lock_function').button({icons: {primary: 'ui-icon-locked', secondary: null}, text: false}).click(function () {
-            if ($('#wid_all_lock_function').prop('checked')) {
+            var lock = $('#wid_all_lock_function').prop('checked');
+            if (lock) {
                 $('#vis_container').find('.vis-widget').addClass('vis-widget-lock');
                 $('#wid_all_lock_f').addClass('ui-state-focus');
+                if (that.activeView !== that.activeViewDiv) {
+                    $('#' + that.activeViewDiv).removeClass('vis-widget-lock');
+                }
             } else {
                 $('#vis_container').find('.vis-widget').removeClass('vis-widget-lock');
                 $('#wid_all_lock_f').removeClass('ui-state-focus');
             }
-            that.editSaveConfig('button/wid_all_lock_function', $('#wid_all_lock_function').prop('checked'));
+            that.editSaveConfig('button/wid_all_lock_function', lock);
         });
 
         // Enable by default widget lock function
@@ -3268,7 +3272,11 @@ vis = $.extend(true, vis, {
         for (var i = 0; i < widgets.length; i++) {
             var list = this.editGetWidgets(null, widgets[i]);
             for (var j = 0; j < list.length; j++) {
-                exportW.push(this.views[this.activeView].widgets[list[j]]);
+                var obj = JSON.parse(JSON.stringify(this.views[this.activeView].widgets[list[j]]));
+                if (this.activeView !== this.activeViewDiv && obj.grouped) {
+                    delete obj.grouped;
+                }
+                exportW.push(obj);
             }
         }
 
@@ -3732,6 +3740,11 @@ vis = $.extend(true, vis, {
              }
              $view.append(can.view(options.tpl, obj));*/
             this.reRenderWidgetEdit(viewDiv, view, widgetId);
+
+            if (viewDiv === view || viewDiv !== widgetId) {
+                $('#' + widgetId).addClass('vis-widget-lock');
+            }
+
             if (findPos) {
                 var $widget = $('#' + widgetId);
 
@@ -3932,7 +3945,9 @@ vis = $.extend(true, vis, {
             ) {
                 this.draggable(viewDiv, view, $wid);
             }
-            if ($('#wid_all_lock_function').prop('checked')) $wid.addClass('vis-widget-lock');
+            if ($('#wid_all_lock_function').prop('checked')) {
+                if (viewDiv === view || viewDiv !== wid) $wid.addClass('vis-widget-lock');
+            }
 
             // If only one selected
             if (this.activeWidgets.length === 1 &&

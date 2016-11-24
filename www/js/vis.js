@@ -994,6 +994,9 @@ vis = {
 
                 if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
                     $('.vis-widget').addClass('vis-widget-lock');
+                    if (viewDiv !== view) {
+                        $('#' + viewDiv).removeClass('vis-widget-lock');
+                    }
                 }
 
                 if (!wait) {
