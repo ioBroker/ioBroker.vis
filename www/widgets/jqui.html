@@ -348,6 +348,10 @@
                     $closeButton.unbind('touchend').on('touchend', function (event) {
                         event.stopPropagation();
                         $dlg.dialog('close');
+                        var $view = $dlg.find('.vis-view');
+                        if (!$view.data('persistent')) {
+                            vis.destroyView($view.data('view'), $view.data('view'));
+                        }
                         return false;
                     });
                 },
@@ -378,7 +382,7 @@
                             return false;
                         }
                         var $this = this;
-                        vis.renderView(cview, false, function (_view) {
+                        vis.renderView(cview, cview, false, function (_view) {
                             $('#visview_' + _view)
                                     .appendTo($this)
                                     .show();

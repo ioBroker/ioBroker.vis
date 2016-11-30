@@ -2261,7 +2261,7 @@ vis = $.extend(true, vis, {
         }
 
         $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_('Widget') + ': ' + ((this.activeWidgets.length === 1) ? wid : this.activeWidgets.length));
+        $('#widget_tab').text((this.activeWidgets.length === 1) ? wid : _('Widget') + ': ' + this.activeWidgets.length);
 
         if (!this.views[view]) {
             console.warn('No view "' + view + ' for ' + wid + ' found');

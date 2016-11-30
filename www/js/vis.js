@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.0',
+    version: '0.12.1',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -749,16 +749,20 @@ vis = {
 
         // If this function called earlier, it makes problems under FireFox.
         // render all views, that should be always rendered
+        var count = 0;
         if (this.views && !this.editMode) {
             for (var view in this.views) {
                 if (view === '___settings') continue;
                 if (this.views[view].settings.alwaysRender) {
-                    this.renderView(view, view, true);
+                    count++;
+                    this.renderView(view, view, true, function () {
+                        if (!--count && that.activeView) that.changeView(that.activeViewDiv, that.activeView);
+                    });
                 }
             }
         }
 
-        if (this.activeView) this.changeView(this.activeViewDiv, this.activeView);
+        if (!count && this.activeView) this.changeView(this.activeViewDiv, this.activeView);
     },
     initViewObject:     function () {
         if (!this.editMode) {
@@ -848,7 +852,8 @@ vis = {
 
             if (typeof hidden === 'function') {
                 callback = hidden;
-                hidden   = undefined;
+                hidden   = view;
+                view     = viewDiv;
             }
             if (typeof view === 'boolean') {
                 callback = hidden;
@@ -902,7 +907,10 @@ vis = {
                     }
                 }
                 if (!$view.length) {
-                    $('#vis_container').append('<div style="display: none;" id="visview_' + viewDiv + '" data-view="' + view + '" class="vis-view ' + (viewDiv !== view ? 'vis-edit-group' : '') + '"></div>');
+                    $('#vis_container').append('<div style="display: none;" id="visview_' + viewDiv + '" ' +
+                        'data-view="' + view + '" ' +
+                        'class="vis-view ' + (viewDiv !== view ? 'vis-edit-group' : '') + '" ' +
+                        (that.views[view].settings.alwaysRender ? 'data-persistent="true"' : '') + '></div>');
                     that.addViewStyle(viewDiv, view, that.views[view].settings.theme);
 
                     $view = $('#visview_' + viewDiv);
@@ -1199,6 +1207,10 @@ vis = {
 
             if (!condition || value === undefined) return (condition === 'not exist');
 
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
+
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
@@ -1242,7 +1254,7 @@ vis = {
                     val = val.toString();
                     return (val.toString().indexOf(value) === -1);
                 case 'exist':
-                    return (value === 'null');
+                    return (value !== 'null');
                 case 'not exist':
                     return (value === 'null');
                 default:
@@ -1462,6 +1474,8 @@ vis = {
                 if (!$relativeView.length) {
                     var ww = this.views[view].settings.sizex;
                     var hh = this.views[view].settings.sizey;
+                    if (parseFloat(ww).toString() === ww.toString()) ww = parseFloat(ww);
+                    if (parseFloat(hh).toString() === hh.toString()) hh = parseFloat(hh);
 
                     if (typeof ww === 'number' || ww[ww.length - 1] < '0' || ww[ww.length - 1] > '9') {
                         ww = ww + 'px';
@@ -1506,7 +1520,7 @@ vis = {
 
         var widgetData = this.widgets[id].data;
 
-        //try {
+        try {
             //noinspection JSJQueryEfficiency
             var $widget = $('#' + id);
             if ($widget.length) {
@@ -1619,9 +1633,9 @@ vis = {
                     this.renderWidget(viewDiv, view, widget.data.members[w], id);
                 }
             }
-        //} catch (e) {
-        //    this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
-        //}
+        } catch (e) {
+            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+        }
 
         if (userGroups && $wid && $wid.length) {
             if (!this.isUserMemberOf(this.conn.getUser(), userGroups)) {
@@ -1973,6 +1987,10 @@ vis = {
 
             if (!condition || value === undefined) return (condition === 'not exist');
 
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
+
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
@@ -2017,11 +2035,9 @@ vis = {
                     val = val.toString();
                     return (val.toString().indexOf(value) !== -1);
                 case 'exist':
-                    if (val === 'null') return false;
-                    return true;
+                    return val === 'null';
                 case 'not exist':
-                    if (val === 'null') return true;
-                    return false;
+                    return val !== 'null';
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);
                     return false;
@@ -2811,9 +2827,9 @@ vis = {
     updateState:        function (id, state) {
         if (this.editMode) {
             this.states[id + '.val'] = state.val;
-            this.states[id + '.ts'] = state.ts;
+            this.states[id + '.ts']  = state.ts;
             this.states[id + '.ack'] = state.ack;
-            this.states[id + '.lc'] = state.lc;
+            this.states[id + '.lc']  = state.lc;
             if (state.q !== undefined) this.states[id + '.q'] = state.q;
         } else {
             var o = {};
@@ -3102,7 +3118,7 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
+                if (data || vis.editMode) $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
                 $(document).trigger('vis-common-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -3118,7 +3134,9 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
+                if (data || vis.editMode) {
+                    $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
+                }
                 $(document).trigger('vis-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -3188,13 +3206,13 @@ function main($) {
                                         console.log('Create inner vis object ' + _id);
                                     }
                                     if (vis.editMode) {
-                                        vis.states[_id + '.val'] = 0;
+                                        vis.states[_id + '.val'] = 'null';
                                         vis.states[_id + '.ts']  = now;
                                         vis.states[_id + '.ack'] = false;
                                         vis.states[_id + '.lc']  = now;
                                     } else {
                                         var o = {};
-                                        o[_id + '.val'] = 0;
+                                        o[_id + '.val'] = 'null';
                                         o[_id + '.ts']  = now;
                                         o[_id + '.ack'] = false;
                                         o[_id + '.lc']  = now;

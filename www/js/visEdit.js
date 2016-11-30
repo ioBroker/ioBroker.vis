@@ -4160,8 +4160,9 @@ vis = $.extend(true, vis, {
         // remove all binds from all views
         $('.vis-widget').unbind('click').unbind('dblclick');
 
+        var $view = $('#visview_' + viewDiv);
         if (viewDiv !== view) {
-            $('#visview_' + viewDiv)
+            $view
                 .removeClass('.vis-widget-lock')
                     .find('#' + viewDiv)
                     .addClass('vis-edit-group-widget')
@@ -4169,7 +4170,11 @@ vis = $.extend(true, vis, {
                             that.bindWidgetClick(viewDiv, view, $(this).attr('id'));
                         });
         } else {
-            $('#visview_' + viewDiv + ' > .vis-widget').each(function () {
+            $view.find('> .vis-widget').each(function () {
+                that.bindWidgetClick(viewDiv, view, $(this).attr('id'));
+            });
+            // install on relative widgets too
+            $view.find('.vis-edit-relative').find('> .vis-widget').each(function () {
                 that.bindWidgetClick(viewDiv, view, $(this).attr('id'));
             });
         }

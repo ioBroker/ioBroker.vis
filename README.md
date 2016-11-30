@@ -172,7 +172,10 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.12.0 (2016-11-24)
+## Changelog### 0.12.1 (2016-11-30)
+* (bluefox) fix errors with containers
+
+### 0.12.0 (2016-11-24)
 * (bluefox) subscribe mode for faster state loading
 * (bluefox) add grouping
 
