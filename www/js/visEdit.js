@@ -2154,13 +2154,18 @@ vis = $.extend(true, vis, {
             if (!e.shiftKey && !e.altKey) {
                 var parentOffset = $(this).offset();
                 //or $(this).offset(); if you really just want the current element's offset
-                var relX = e.pageX - parentOffset.left;
-                var relY = e.pageY - parentOffset.top;
+                var options = {
+                    left: e.pageX - parentOffset.left,
+                    top:  e.pageY - parentOffset.top
+                };
 
-                relX += $(this).scrollLeft();
-                relY += $(this).scrollTop();
+                options.scrollLeft = $(this).scrollLeft();
+                options.scrollTop  = $(this).scrollTop();
 
-                that.showContextMenu(that.activeViewDiv, that.activeView, {left: relX, top: relY});
+                options.left += options.scrollLeft;
+                options.top  += options.scrollTop;
+
+                that.showContextMenu(that.activeViewDiv, that.activeView, options);
 
                 e.preventDefault();
             }
@@ -4537,6 +4542,10 @@ vis = $.extend(true, vis, {
                 origY = ui.position.top;
 
                 for (var i = 0; i < that.activeWidgets.length; i++) {
+                    if (!that.views[view].widgets[that.activeWidgets[i]])  {
+                        console.error('Something is wrong! "' + that.activeWidgets[i] + '" is not in "' + view + '"');
+                        continue;
+                    }
                     var position = that.views[view].widgets[that.activeWidgets[i]].style['position'];
                     if (position === 'relative' || position === 'static' || position === 'sticky') continue;
                     var mWidget  = document.getElementById(that.activeWidgets[i]);
@@ -5805,8 +5814,8 @@ vis = $.extend(true, vis, {
             if (viewDiv === id) return false;
 
             var range = {
-                x: [offset.left, offset.left + $(this).outerWidth()],
-                y: [offset.top,  offset.top  + $(this).outerHeight()]
+                x: [offset.left + options.scrollLeft, offset.left + options.scrollLeft + $(this).outerWidth()],
+                y: [offset.top  + options.scrollTop,  offset.top  + options.scrollTop  + $(this).outerHeight()]
             };
             return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1]);
         });
@@ -5855,6 +5864,7 @@ vis = $.extend(true, vis, {
         var $contextMenuPaste = $('#context_menu_paste');
 
         // remember position of click
+
         $contextMenuPaste.data('posX', options.left);
         $contextMenuPaste.data('posY', options.top);
 
@@ -5893,8 +5903,8 @@ vis = $.extend(true, vis, {
                 if (!$wid.length) continue;
                 offset = $wid.position();
                 range = {
-                    x: [offset.left, offset.left + $wid.outerWidth() ],
-                    y: [offset.top,  offset.top  + $wid.outerHeight()]
+                    x: [offset.left + options.scrollLeft, offset.left + options.scrollLeft + $wid.outerWidth() ],
+                    y: [offset.top  + options.scrollTop,  offset.top  + options.scrollTop  + $wid.outerHeight()]
                 };
                 if ((options.left >= range.x[0] && options.left <= range.x[1]) &&
                     (options.top  >= range.y[0] && options.top  <= range.y[1])) {
@@ -6093,11 +6103,11 @@ vis = $.extend(true, vis, {
         var h   = $contextMenu.height();
         var ww  = $contextMenu.width();
 
-        if (pos.top - h > 0) {
-            $contextMenu.css({top: pos.top - h});
+        if (options.top - h > options.scrollTop) {
+            $contextMenu.css({top: options.top - h});
         }
-        if (pos.left - ww > 0) {
-            $contextMenu.css({left: pos.left - ww});
+        if (options.left - ww > options.scrollLeft) {
+            $contextMenu.css({left: options.left - ww});
         }
 
         $contextMenu.focus();

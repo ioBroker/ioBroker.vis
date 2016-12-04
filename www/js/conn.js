@@ -434,7 +434,10 @@ var servConn = {
                         that.reload();
                     }
                 } else {
-                    alert(err);
+                    console.error('Socket error: ' + err);
+                    $('.splash-screen-text').css('color', '#002951');
+
+                    that.reconnect(connOptions);
                 }
             });
         }
