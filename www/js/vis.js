@@ -415,7 +415,7 @@ vis = {
                 }
 
                 for (var attr in data) {
-                    if (!data.hasOwnProperty(attr)) continue;
+                    if (!data.hasOwnProperty(attr) || !attr) continue;
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];
@@ -523,7 +523,7 @@ vis = {
                 // build bindings for styles
                 if (style) {
                     for (var cssAttr in style) {
-                        if (!style.hasOwnProperty(cssAttr)) continue;
+                        if (!style.hasOwnProperty(cssAttr) || !cssAttr) continue;
                         if (typeof style[cssAttr] === 'string') {
                             var objIDs = this.extractBinding(style[cssAttr]);
                             if (objIDs) {
@@ -1646,6 +1646,13 @@ vis = {
     changeView:         function (viewDiv, view, hideOptions, showOptions, sync, callback) {
         var that = this;
 
+        if (typeof view === 'object') {
+            callback = sync;
+            sync = showOptions;
+            hideOptions = showOptions;
+            view = viewDiv;
+        }
+
         if (!view && viewDiv) view = viewDiv;
 
         if (typeof hideOptions === 'function') {
@@ -1675,7 +1682,7 @@ vis = {
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
         if (hideOptions.effect === 'show') effect = false;
 
-        if (this.activeView !== this.activeViewDiv) {
+        if (this.editMode && this.activeView !== this.activeViewDiv) {
             this.destroyGroupEdit(this.activeViewDiv, this.activeView);
         }
 
@@ -2211,7 +2218,7 @@ vis = {
         return result;
     },
     extractBinding:     function (format) {
-        if (this.editMode) return null;
+        if (this.editMode || !format) return null;
         if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
 
         var oid = format.match(/{(.+?)}/g);
@@ -2570,6 +2577,7 @@ vis = {
 
         // First find all with best fitting width
         for (var view in this.views) {
+            if (!this.views.hasOwnProperty(view)) continue;
             if (view === '___settings') continue;
             if (this.views[view].settings && this.views[view].settings.useAsDefault) {
                 // If difference less than 20%
@@ -2579,7 +2587,7 @@ vis = {
             }
         }
 
-        for (var i in views) {
+        for (var i = 0; i < views.length; i++) {
             if (Math.abs(this.views[views[i]].settings.sizey - h) < difference) {
                 result = views[i];
                 difference = Math.abs(this.views[views[i]].settings.sizey - h);
@@ -2591,22 +2599,24 @@ vis = {
             var ratio = w / h;
             difference = 10000;
 
-            for (var view in this.views) {
-                if (view === '___settings') continue;
-                if (this.views[view].settings && this.views[view].settings.useAsDefault) {
+            for (var view_ in this.views) {
+                if (!this.views.hasOwnProperty(view_)) continue;
+                if (view_ === '___settings') continue;
+                if (this.views[view_].settings && this.views[view_].settings.useAsDefault) {
                     // If difference less than 20%
-                    if (this.views[view].settings.sizey && Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey)) < difference) {
-                        result = view;
-                        difference = Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey));
+                    if (this.views[view_].settings.sizey && Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey)) < difference) {
+                        result = view_;
+                        difference = Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey));
                     }
                 }
             }
         }
 
         if (!result && resultRequiredOrX) {
-            for (view in this.views) {
-                if (view === '___settings') continue;
-                return view;
+            for (var view__ in this.views) {
+                if (!this.views.hasOwnProperty(view__)) continue;
+                if (view__ === '___settings') continue;
+                return view__;
             }
         }
 
@@ -3030,11 +3040,11 @@ function main($) {
             if (type !== 'string' && type !== 'number') {
                 for (var o in attr) {
                     // allow only dev1, dev2, ... to be bound
-                    if (o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                    if (o && attr.hasOwnProperty(o) && o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                         return this.__attrs(attr, val);
                     }
                 }
-            } else if (arguments.length === 1) {
+            } else if (arguments.length === 1 && attr) {
                 if (attr.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                     can.__reading(this, attr);
                     return this._get(attr);
@@ -3052,7 +3062,7 @@ function main($) {
         vis.states.___bind = vis.states.bind;
         vis.states.bind = function (id, callback) {
             // allow only dev1, dev2, ... to be bound
-            if (id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+            if (id && id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                 return vis.states.___bind(id, callback);
             }
             //console.log('ERROR: binding in edit mode is not allowed on ' + id);
@@ -3423,7 +3433,7 @@ function main($) {
                     case 'playSound':
                         setTimeout(function () {
                             var href;
-                            if (data.match(/^http(s)?:\/\//)) {
+                            if (data && data.match(/^http(s)?:\/\//)) {
                                 href = data;
                             } else {
                                 href = location.protocol + '//' + location.hostname + ':' + location.port + data;

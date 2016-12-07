@@ -1089,7 +1089,7 @@
                 function check_pw() {
                     if (data._data.Password === $('#inp_NavPw').val()) {
                         $('#NavPwDialog').remove();
-                        vis.changeView(data.attr('nav_view'), {
+                        vis.changeView(data.attr('nav_view'), data.attr('nav_view'), {
                                     effect: data.attr('hide_effect'),
                                     options: {},
                                     duration: data.attr('hide_duration')

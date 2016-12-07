@@ -466,12 +466,13 @@ body {
     margin-top: -4px;
 }
 
-.wid_prev:after {
+.wid-prev:after {
     width: 100%;
     height: 100%;
     content: "";
     display: block;
     position: absolute;
+    cursor: pointer;
     top: 0;
     left: 0;
     z-index: 90;

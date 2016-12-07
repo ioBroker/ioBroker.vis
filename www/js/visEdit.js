@@ -2730,6 +2730,11 @@ vis = $.extend(true, vis, {
         var $select_set = $('#select_set');
         //$select_set.html('');
         $select_set.append('<option value="all">*</option>');
+        this.widgetSets.sort(function (a, b) {
+            if ((a.name || a) > (b.name || b)) return 1;
+            if ((a.name || a) < (b.name || b)) return -1;
+            return 0;
+        });
         for (var i = 0; i < this.widgetSets.length; i++) {
             // skip empty sets, like google fonts
             if (!$('.vis-tpl[data-vis-set="' + (this.widgetSets[i].name || this.widgetSets[i]) + '"]').length) continue;
