@@ -84,7 +84,7 @@ vis = $.extend(true, vis, {
         '"MS Serif", "New York", serif',
         '"Comic Sans MS", cursive'
     ],
-    editObjectID: function (widAttr, widgetFilter, isHistory, onChange) {
+    editObjectID:       function (widAttr, widgetFilter, isHistory, onChange) {
         var that = this;
         if (typeof isHistory === 'function') {
             onChange = isHistory;
@@ -255,7 +255,7 @@ vis = $.extend(true, vis, {
 
         return line;
     },
-    editWidgetNames: function (widAttr, options) {
+    editWidgetNames:    function (widAttr, options) {
         // options[0] all views
         var widgets =  [''];
         if (options && options[0] === 'all') {
@@ -270,7 +270,7 @@ vis = $.extend(true, vis, {
 
         return this.editSelect(widAttr, widgets, true);
     },
-    editSelect: function (widAttr, values, notTranslate, init, onchange) {
+    editSelect:         function (widAttr, values, notTranslate, init, onchange) {
         if (typeof notTranslate === 'function') {
             onchange = init;
             init = notTranslate;
@@ -295,7 +295,7 @@ vis = $.extend(true, vis, {
         line.input += '</select>';
         return line;
     },
-    editStyle: function (widAttr, options) {
+    editStyle:          function (widAttr, options) {
         var that = this;
         // options[0] fileFilter
         // options[1] nameFilter
@@ -323,7 +323,7 @@ vis = $.extend(true, vis, {
             }
         };
     },
-    editFontName: function (widAttr) {
+    editFontName:       function (widAttr) {
         var that = this;
         // Auto-complete
         return {
@@ -366,7 +366,7 @@ vis = $.extend(true, vis, {
 
         return this.editAutoComplete(widAttr, this.historyInstances);
     },
-    editClass: function (widAttr) {
+    editClass:          function (widAttr) {
         var that = this;
         if (!this.styleClasses) {
             this.styleClasses = [];
@@ -380,7 +380,7 @@ vis = $.extend(true, vis, {
 
         return this.editAutoComplete(widAttr, this.styleClasses);
     },
-    editAutoComplete: function (widAttr, values) {
+    editAutoComplete:   function (widAttr, values) {
         // Auto-complete
         return {
             input: '<input type="text" id="inspect_' + widAttr + '" class="vis-edit-textbox"/>',
@@ -405,7 +405,7 @@ vis = $.extend(true, vis, {
             }
         };
     },
-    _editSetFontColor: function(element) {
+    _editSetFontColor:  function (element) {
         try {
             var r;
             var b;
@@ -435,7 +435,7 @@ vis = $.extend(true, vis, {
             }
         }catch (err){}
     },
-    editColor: function (widAttr) {
+    editColor:          function (widAttr) {
         var that = this;
         var line = {
             input: '<input type="text" id="inspect_' + widAttr + '"/>',
@@ -466,7 +466,7 @@ vis = $.extend(true, vis, {
 
         return line;
     },
-    editViewName: function (widAttr) {
+    editViewName:       function (widAttr) {
         var views = [''];
         for (var v in this.views) {
             if (v === '___settings') continue;
@@ -475,14 +475,14 @@ vis = $.extend(true, vis, {
 
         return this.editAutoComplete(widAttr, views);
     },
-    editFilterName: function (widAttr) {
+    editFilterName:     function (widAttr) {
         var filters = this.updateFilter();
         filters.unshift('');
 
         //return this.editSelect(widAttr, filters, true);
         return this.editAutoComplete(widAttr, filters);
     },
-    editEffect: function (widAttr) {
+    editEffect:         function (widAttr) {
         var that = this;
         return this.editSelect(widAttr, [
             '',
@@ -516,7 +516,7 @@ vis = $.extend(true, vis, {
             }
         });
     },
-    editNumber: function (widAttr, options, onchange) {
+    editNumber:         function (widAttr, options, onchange) {
         // options = {min: ?,max: ?,step: ?}
         // Select
         var line = {
@@ -549,7 +549,7 @@ vis = $.extend(true, vis, {
         if (onchange) line.onchange = onchange;
         return line;
     },
-    editButton: function (widAttr, options, onchange) {
+    editButton:         function (widAttr, options, onchange) {
         // options = {min: ?,max: ?,step: ?}
         // Select
         var line = {
@@ -563,7 +563,7 @@ vis = $.extend(true, vis, {
         if (onchange) line.onchange = onchange;
         return line;
     },
-    editUrl: function (widAttr, filter) {
+    editUrl:            function (widAttr, filter) {
         var line = {
             input: '<input type="text" id="inspect_' + widAttr + '"/>'
         };
@@ -605,7 +605,7 @@ vis = $.extend(true, vis, {
         }
         return line;
     },
-    editCustom: function (widAttr, options) {
+    editCustom:         function (widAttr, options) {
         if (!options) {
             console.log('No path to custom function');
         } else {
@@ -641,7 +641,7 @@ vis = $.extend(true, vis, {
             return {};
         }
     },
-    editSlider: function (widAttr, options) {
+    editSlider:         function (widAttr, options) {
         options.min = (!options.min) ? 0 : options.min;
         options.max = (!options.max) ? 0 : options.max;
         options.step = (!options.step) ? (options.max - options.min) / 100 : options.step;
@@ -674,7 +674,7 @@ vis = $.extend(true, vis, {
             $('#inspect_css_display').val('').prop('disabled', true);
         }
     },
-    editCssCommon: function () {
+    editCssCommon:      function (viewDiv, view) {
         var that = this;
         var group = 'css_common';
         this.groups[group] = this.groups[group] || {};
@@ -694,7 +694,7 @@ vis = $.extend(true, vis, {
                     $('#inspect_css_top').val('').prop('disabled', true).trigger('change');
                     setTimeout(function () {
                         for (var r = 0; r < that.activeWidgets.length; r++) {
-                            that.reRenderWidgetEdit(that.activeWidgets[r]);
+                            that.reRenderWidgetEdit(viewDiv, view, that.activeWidgets[r]);
                         }
                     } , 100);
                 }
@@ -708,17 +708,19 @@ vis = $.extend(true, vis, {
 
                     setTimeout(function () {
                         for (var r = 0; r < that.activeWidgets.length; r++) {
-                            that.reRenderWidgetEdit(that.activeWidgets[r]);
+                            that.reRenderWidgetEdit(viewDiv, view, that.activeWidgets[r]);
                         }
                     } , 100);
                 }
             }
         });
         this.groups[group].css_display       = this.editSelect('css_display', ['', /*'inline', 'block', */'inline-block'/*, 'flex', 'list-item', 'run-in'*/], true, this.editEnableAbsolute);
-        this.groups[group].css_left          = {input: '<input type="text" id="inspect_css_left"/>', init: this.editEnableAbsolute};
-        this.groups[group].css_top           = {input: '<input type="text" id="inspect_css_top"/>', init: this.editEnableAbsolute};
-        this.groups[group].css_width         = {input: '<input type="text" id="inspect_css_width"/>'};
-        this.groups[group].css_height        = {input: '<input type="text" id="inspect_css_height"/>'};
+
+        this.groups[group].css_left          = {input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_css_left"/><button class="vis-edit-percent-calc" data-attr="left"></button>', init: this.editEnableAbsolute};
+        this.groups[group].css_top           = {input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_css_top"/><button class="vis-edit-percent-calc" data-attr="top"></button>', init: this.editEnableAbsolute};
+        this.groups[group].css_width         = {input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_css_width"/><button class="vis-edit-percent-calc" data-attr="width"></button>'};
+        this.groups[group].css_height        = {input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_css_height"/><button class="vis-edit-percent-calc" data-attr="height"></button>'};
+
         this.groups[group]['css_z-index']    = this.editNumber('css_z-index');
         this.groups[group]['css_overflow-x'] = this.editSelect('css_overflow-x', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
@@ -732,7 +734,7 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
-    editCssFontText: function () {
+    editCssFontText:    function () {
         var group = 'css_font_text';
         this.groups[group] = this.groups[group] || {};
 
@@ -754,7 +756,7 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
-    editCssBackground: function () {
+    editCssBackground:  function () {
         var group = 'css_background';
         this.groups[group] = this.groups[group] || {};
 
@@ -777,7 +779,7 @@ vis = $.extend(true, vis, {
     editDimensionOnChangeHelper: function (elem, value) {
         if (value && typeof value !== 'object') {
             var e = value.substring(value.length - 2);
-            if (e !== 'px' && e !== 'em') {
+            if (e !== 'px' && e !== 'em' && value[value.length - 1] !== '%') {
                 var wdata = $(elem).data('wdata');
                 for (var t = 0; t < wdata.widgets.length; t++) {
                     this.views[wdata.view].widgets[wdata.widgets[t]].style[wdata.attr.substring(4)] = value + 'px';
@@ -786,7 +788,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    editCssBorder: function () {
+    editCssBorder:      function () {
         var group = 'css_border';
         var that = this;
         this.groups[group] = this.groups[group] || {};
@@ -833,7 +835,7 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
-    editCssAnimation: function () {
+    editCssAnimation:   function () {
         var group = 'css_animation';
         this.groups[group] = this.groups[group] || {};
 
@@ -846,7 +848,7 @@ vis = $.extend(true, vis, {
             this.groups[group][attr].attrIndex = '';
         }
     },
-    editSignalIcons: function () {
+    editSignalIcons:    function () {
         var group = 'signals';
         this.groups[group] = this.groups[group] || {};
         var i = 0;
@@ -887,19 +889,19 @@ vis = $.extend(true, vis, {
         }
 
     },
-    editGestures: function() {
+    editGestures:       function (view) {
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
         var gesturesAnalog = ['swiping', 'rotating', 'pinching'];
         var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'];
 
-        this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds('tplValueGesture')}, group);
+        this.addToInspect(this.activeWidgets, {name: 'gestures-indicator', type: 'auto', options: this.getWidgetIds(view, 'tplValueGesture')}, group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetX', default: 0, type: 'number'},   group);
         this.addToInspect(this.activeWidgets, {name: 'gestures-offsetY', default: 0, type: 'number'},   group);
         this.addToInspect('delimiterInGroup', group);
         var j;
         var gesture;
-        for (j = 0; j < gesturesAnalog.length; j++){
+        for (j = 0; j < gesturesAnalog.length; j++) {
             gesture = gesturesAnalog[j];
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',        type: 'id'},     group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',      default: ''},    group);
@@ -909,7 +911,7 @@ vis = $.extend(true, vis, {
             this.addToInspect('delimiterInGroup', group);
         }
 
-        for (j = 0; j < gestures.length; j++){
+        for (j = 0; j < gestures.length; j++) {
             gesture = gestures[j];
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},     group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},    group);
@@ -919,7 +921,7 @@ vis = $.extend(true, vis, {
         var that = this;
         // install handlers
         setTimeout(function () {
-            for (var j = 0; j < gesturesAnalog.length; j++){
+            for (var j = 0; j < gesturesAnalog.length; j++) {
                 gesture = gesturesAnalog[j];
                 $('#inspect_gestures-' + gesture + '-oid').change(function () {
                     var id  = $(this).attr('id');
@@ -928,13 +930,15 @@ vis = $.extend(true, vis, {
 
                     if (that.objects[val] && that.objects[val].common) {
                         if (that.objects[val].common.min !== undefined) {
-                            if ($('#inspect_gestures-' + g[1] + '-minimum').val() === '') {
-                                $('#inspect_gestures-' + g[1] + '-minimum').val(that.objects[val].common.min);
+                            var $min = $('#inspect_gestures-' + g[1] + '-minimum');
+                            if ($min.val() === '') {
+                                $min.val(that.objects[val].common.min);
                             }
                         }
                         if (that.objects[val].common.max !== undefined) {
-                            if ($('#inspect_gestures-' + g[1] + '-maximum').val() === '') {
-                                $('#inspect_gestures-' + g[1] + '-maximum').val(that.objects[val].common.max);
+                            var $max = $('#inspect_gestures-' + g[1] + '-maximum');
+                            if ($max.val() === '') {
+                                $max.val(that.objects[val].common.max);
                             }
                         }
                     }
@@ -944,7 +948,7 @@ vis = $.extend(true, vis, {
             }
         }, 300);
     },
-    editText: function (widAttr) {
+    editText:           function (widAttr) {
         var that = this;
         var line = {
             input: '<textarea id="inspect_' + widAttr + '"></textarea>'
@@ -1038,11 +1042,11 @@ vis = $.extend(true, vis, {
         return line;
     },
     // add font name to font selector (used in adapters, eg. vis-google-fonts
-    addFont: function (fontName) {
+    addFont:            function (fontName) {
         if (this.fontNames.indexOf(fontName) === -1) this.fontNames.push(fontName);
     },
     // find states with requested roles of device
-    findByRoles: function (stateId, roles) {
+    findByRoles:        function (stateId, roles) {
         if (typeof roles !== 'object') {
             roles = [roles];
         } else {
@@ -1095,7 +1099,7 @@ vis = $.extend(true, vis, {
         }
         return result;
     },
-    findByName: function (stateId, objName) {
+    findByName:         function (stateId, objName) {
         // try to detect other values
 
         // Go trough all channels of this device
@@ -1126,14 +1130,14 @@ vis = $.extend(true, vis, {
         }
         return false;
     },
-    hideShowAttr: function (widAttr, isShow) {
+    hideShowAttr:       function (widAttr, isShow) {
         if (isShow) {
             $('#td_' + widAttr).show();
         } else {
             $('#td_' + widAttr).hide();
         }
     },
-    addToInspect: function (widgets, widAttr, group, options, onchange) {
+    addToInspect:       function (widgets, widAttr, group, options, onchange) {
         if (widgets === 'delimiter') {
             this.groups[widAttr || group] = this.groups[widAttr || group] || {};
             var d = 0;
@@ -1278,12 +1282,14 @@ vis = $.extend(true, vis, {
             line[0].attrIndex      = widAttr.index;
             line[0].type           = widAttr.type;
             line[0].onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.title) line[0].attrTitle = widAttr.title;
             if (widAttr.depends && widAttr.depends.length) line[0].depends = widAttr.depends;
         } else {
             line.attrName       = widAttr.clearName;
             line.attrIndex      = widAttr.index;
             line.type           = widAttr.type;
             line.onChangeWidget = widAttr.onChangeWidget;
+            if (widAttr.title) line.attrTitle = widAttr.title;
             if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
         }
 
@@ -1292,7 +1298,7 @@ vis = $.extend(true, vis, {
         this.groups[group][widAttr.name] = line;
     },
     // Render edit panel
-    showInspect: function (view, widgets) {
+    showInspect:        function (viewDiv, view, widgets) {
         var $widgetAttrs = $('#widget_attrs');
         var that   = this;
         var depends = [];
@@ -1315,7 +1321,7 @@ vis = $.extend(true, vis, {
                 gText += ' style="background: url(' + (this.groupsIcons[group] || '') + ') no-repeat left center; padding-left: 30px"'
             }
             gText += '>' + groupName + '</td>';
-            var isGroupEnabledObj = group === 'common' || group === 'css_common' ? true : this.findCommonValue(widgets, 'g_' + group);
+            var isGroupEnabledObj = group === 'common' || group === 'css_common' ? true : this.findCommonValue(view, widgets, 'g_' + group);
             var isGroupEnabled = false;
             var isGroupEnabledIndeterminate = false;
             if (typeof isGroupEnabledObj === 'object' && isGroupEnabledObj.values) {
@@ -1359,7 +1365,9 @@ vis = $.extend(true, vis, {
                     if (line[0]) line = line[0];
                     if (typeof line === 'string') line = {input: line};
 
-                    var title = _(widAttr + '_tooltip');
+                    var title = line.attrTitle;
+
+                    title = title || _(widAttr + '_tooltip');
                     var icon;
                     if (title === widAttr + '_tooltip') {
                         title = '';
@@ -1422,10 +1430,14 @@ vis = $.extend(true, vis, {
                     // Init value
                     var $input = $widgetAttrs.find('#inspect_' + widAttr);
 
-                    if ($input.attr('type') === 'text' || $input.prop('tagName') === 'TEXTAREA') $input.addClass('vis-edit-textbox');
+                    if ($input.attr('type') === 'text' || $input.prop('tagName') === 'TEXTAREA') {
+                        if (!$input.hasClass('vis-edit-textbox-with-button')){
+                            $input.addClass('vis-edit-textbox');
+                        }
+                    }
 
                     // Set the value
-                    this.setAttrValue(this.activeWidgets, widAttr, line.css, values);
+                    this.setAttrValue(view, this.activeWidgets, widAttr, line.css, values);
 
                     var wdata = {
                         attr: widAttr,
@@ -1458,9 +1470,45 @@ vis = $.extend(true, vis, {
             }
         }
 
+        $('.vis-edit-percent-calc').each(function () {
+            var attr = $(this).data('attr');
+            var val = $('#inspect_css_' + attr).val();
+
+            if (val.toString().indexOf('%') === -1) {
+                $(this).html('px');
+            } else {
+                $(this).html('%');
+            }
+
+            $(this).button().css({width: 18, height: 18}).click(function () {
+                var attr   = $(this).data('attr');
+                var $input = $('#inspect_css_' + attr);
+                var val    = $input.val();
+                if (val.toString().indexOf('%') === -1) {
+                    // convert to %
+                    for (var i = 0; i < that.activeWidgets.length; i++) {
+                        var rect = that.editConvertToPercent(viewDiv, view, that.activeWidgets[i], viewDiv !== view ? viewDiv : null);
+                        that.views[view].widgets[that.activeWidgets[i]].style[attr] = rect[attr];
+                        $('#' + that.activeWidgets[i]).css(attr, rect[attr]);
+                    }
+                    that.setAttrValue(view, that.activeWidgets, 'css_' + attr, true, {});
+                    $(this).html('%');
+                } else {
+                    // convert to px
+                    for (var j = 0; j < that.activeWidgets.length; j++) {
+                        var pRect = that.editConvertToPx(viewDiv, view, that.activeWidgets[j], viewDiv !== view ? viewDiv : null);
+                        that.views[view].widgets[that.activeWidgets[j]].style[attr] = pRect[attr];
+                        $('#' + that.activeWidgets[j]).css(attr, pRect[attr]);
+                    }
+                    that.setAttrValue(view, that.activeWidgets, 'css_' + attr, true, {});
+                    $(this).html('px');
+                }
+            });
+        });
+
         // Init all elements together
         for (group in this.groups) {
-            if (!this.groups[group].___enabled) continue;
+            if (!this.groups.hasOwnProperty(group) || !this.groups[group].___enabled) continue;
             for (widAttr in this.groups[group]) {
                 var line_ = this.groups[group][widAttr];
                 var $input_ = $widgetAttrs.find('#inspect_' + widAttr);
@@ -1472,10 +1520,10 @@ vis = $.extend(true, vis, {
                 if (typeof line_.init === 'function') {
                     if (wdata_.css) {
                         var cwidAttr_ = widAttr.substring(4);
-                        if (values[cwidAttr_] === undefined) values[cwidAttr_] = this.findCommonValue(widgets, cwidAttr_);
+                        if (values[cwidAttr_] === undefined) values[cwidAttr_] = this.findCommonValue(view, widgets, cwidAttr_);
                         line_.init.call($input_[0], cwidAttr_, values[cwidAttr_]);
                     } else {
-                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(view, widgets, widAttr);
                         line_.init.call($input_[0], widAttr, values[widAttr]);
                     }
                 }
@@ -1483,10 +1531,10 @@ vis = $.extend(true, vis, {
                 if (typeof line_.onchange === 'function') {
                     if (wdata_.css) {
                         var cwidAttr = widAttr.substring(4);
-                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(widgets, cwidAttr);
+                        if (values[cwidAttr] === undefined) values[cwidAttr] = this.findCommonValue(view, widgets, cwidAttr);
                         line_.onchange.call($input_[0], values[cwidAttr]);
                     } else {
-                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(widgets, widAttr);
+                        if (values[widAttr] === undefined) values[widAttr] = this.findCommonValue(view, widgets, widAttr);
                         line_.onchange.call($input_[0], values[widAttr]);
                     }
                 }
@@ -1519,11 +1567,11 @@ vis = $.extend(true, vis, {
                     }
                     $widget.css(css, val);
                     if (that.activeWidgets.indexOf(wdata.widgets[i]) !== -1) {
-                        that.showWidgetHelper(wdata.widgets[i], true);
+                        that.showWidgetHelper(viewDiv, view, wdata.widgets[i], true);
                     }
 
                     if ($('#' + that.views[wdata.view].widgets[wdata.widgets[i]].tpl).attr('data-vis-update-style')) {
-                        that.reRenderWidgetEdit(wdata.widgets[i]);
+                        that.reRenderWidgetEdit(viewDiv, view, wdata.widgets[i]);
                     }
                 } else {
                     var _val;
@@ -1582,11 +1630,11 @@ vis = $.extend(true, vis, {
                     }
                 }
 
-                that.save();
-                if (!wdata.css) that.reRenderWidgetEdit(wdata.widgets[i]);
+                that.save(viewDiv, view);
+                if (!wdata.css) that.reRenderWidgetEdit(viewDiv, view, wdata.widgets[i]);
 
                 // Rebuild attr list
-                if (changed || (depends && depends.indexOf(wdata.attr) !== -1)) that.inspectWidgets();
+                if (changed || (depends && depends.indexOf(wdata.attr) !== -1)) that.inspectWidgets(viewDiv, view);
             }
 
             //Update containers
@@ -1631,7 +1679,7 @@ vis = $.extend(true, vis, {
             });
         });
 
-        function deleteAttrs(group, widgets, view, value) {
+        function deleteAttrs(group, widgets, viewDiv, view, value) {
             var isCss = group.substring(0, 4) === 'css_';
 
             for (var i = 0; i < widgets.length; i++) {
@@ -1655,15 +1703,15 @@ vis = $.extend(true, vis, {
                     }
 
                     if (cssChanged && $('#' + that.views[view].widgets[widgets[i]].tpl).attr('data-vis-update-style')) {
-                        that.reRenderWidgetEdit(widgets[i]);
+                        that.reRenderWidgetEdit(viewDiv, view, widgets[i]);
                     }
                 }
                 that.widgets[widgets[i]].data['g_' + group] = value;
                 that.views[view].widgets[widgets[i]].data['g_' + group] = value;
             }
-            that.save();
+            that.save(viewDiv, view);
             // Rebuild attr list
-            that.inspectWidgets();
+            that.inspectWidgets(viewDiv, view);
         }
 
         $widgetAttrs.find('.group-enable').change(function () {
@@ -1695,28 +1743,29 @@ vis = $.extend(true, vis, {
                 if (!isEmpty) {
                     vis.showMessage(_('Some field are not empty. Sure?'), _('Are you sure?'), 450, function (result) {
                         if (result) {
-                            deleteAttrs(group, wdata.widgets, wdata.view, false);
+                            deleteAttrs(group, wdata.widgets, wdata.viewDiv, wdata.view, false);
                         } else {
                             $this.prop('checked', true);
                         }
                     });
                 } else {
-                    deleteAttrs(group, wdata.widgets, wdata.view, false);
+                    deleteAttrs(group, wdata.widgets, wdata.viewDiv, wdata.view, false);
                 }
             } else {
-                deleteAttrs(group, wdata.widgets, wdata.view, true);
+                deleteAttrs(group, wdata.widgets, wdata.viewDiv, wdata.view, true);
             }
         }).each(function() {
             $(this).data('wdata', {
                 widgets: widgets,
-                view:    view
+                view:    view,
+                viewDiv: viewDiv
             });
             if ($(this).data('indeterminate')) {
                 $(this).prop('indeterminate', true)
             }
         });
     },
-    extractAttributes: function (_wid_attr, widget) {
+    extractAttributes:  function (_wid_attr, widget) {
 
         //returns array of all attributes with groups
         /*var oneAttr = {
@@ -1848,10 +1897,11 @@ vis = $.extend(true, vis, {
         } while (wid_repeats && ((++index) <= wid_repeats.end));
         return result;
     },
-    findCommonAttributes: function (widgets) {
+    findCommonAttributes: function (view, widgets) {
+        view = view || this.activeView;
         var allWidgetsAttr = null;
         for (var i = 0; i < widgets.length; i++) {
-            var widget = this.views[this.activeView].widgets[widgets[i]];
+            var widget = this.views[view].widgets[widgets[i]];
 
             if (!widget) {
                 console.log('inspectWidget ' + widgets[i] + ' undefined');
@@ -1947,11 +1997,12 @@ vis = $.extend(true, vis, {
     },
     // If only one widget, it returns the value
     // If array of widgets, ot returns object {values, widgetValues}, where values are all found different values and widgetValues is array with values for every widget
-    findCommonValue: function (widgets, attr, isStyle) {
+    findCommonValue:    function (view, widgets, attr, isStyle) {
+        view = view || this.activeView;
         var widgetValues = [];
         var values = [];
         for (var i = 0; i < widgets.length; i++) {
-            var widget = this.views[this.activeView].widgets[widgets[i]];
+            var widget = this.views[view].widgets[widgets[i]];
             var obj = isStyle ? widget.style : widget.data;
             var val = (isStyle && (!obj || obj[attr] === undefined)) ? '' : (obj ? obj[attr] : '');
 
@@ -1967,11 +2018,11 @@ vis = $.extend(true, vis, {
             };
         }
     },
-    setAttrValue: function (widgets, attr, isStyle, values) {
+    setAttrValue:       function (view, widgets, attr, isStyle, values) {
         var $input = $('#inspect_' + attr);
         if (isStyle && attr.substring(0, 4) === 'css_') attr = attr.substring(4);
 
-        if (values[attr] === undefined) values[attr] = this.findCommonValue(widgets, attr, isStyle);
+        if (values[attr] === undefined) values[attr] = this.findCommonValue(view, widgets, attr, isStyle);
         if ($input.attr('type') === 'checkbox') {
             if (typeof values[attr] === 'object') {
                 $input.prop('indeterminate', true);
@@ -2011,7 +2062,7 @@ vis = $.extend(true, vis, {
                 $input.val(values[attr]);
             }
         }
-        $input.keyup(function () {
+        $input.unbind('keyup').keyup(function () {
             var $this = $(this);
             var timer = $this.data('timer');
             if (timer) clearTimeout(timer);
@@ -2022,21 +2073,33 @@ vis = $.extend(true, vis, {
             }, 500));
         });
     },
-    inspectWidgets: function (addWidget, delWidget, onlyUpdate) {
+    inspectWidgets:     function (viewDiv, view, addWidget, delWidget, onlyUpdate) {
         if (this.isStealCss) return false;
         var that = this;
-        /*var oldView;
+
+        if (typeof viewDiv === 'object') {
+            addWidget = viewDiv;
+            viewDiv   = this.activeViewDiv;
+            view      = this.activeView;
+        }
+
+        var oldView;
         $('.vis-widget[data-zmodified="true"]').each(function () {
             var wid = $(this).attr('id');
+
             $(this).removeAttr('data-zmodified');
+
             oldView = oldView || that.getViewOfWidget(wid);
+
             var zIndex = that.views[oldView].widgets[wid] && that.views[oldView].widgets[wid].style && that.views[oldView].widgets[wid].style['z-index'];
+
             if (!zIndex && zIndex !== '0' && zIndex !== 0) {
                 $(this).prop('style').removeProperty('z-index');
             } else {
                 $(this).css('z-index', zIndex);
             }
-        });*/
+        });
+
         // Deselect all elements
         $(':focus').blur();
 
@@ -2060,22 +2123,27 @@ vis = $.extend(true, vis, {
             if (pos !== -1) this.activeWidgets.splice(pos, 1);
         }
         var wid  = this.activeWidgets[0] || 'none';
-        // find view
-        var view = this.getViewOfWidget(wid);
 
         this.groups = {};
         this.groupsIcons = {
             fixed: 'icon/groupFixed.png'
         };
 
+        if (view !== viewDiv) {
+            // disable group resize
+            var $group = $('#' + viewDiv);
+            if ($group.hasClass('vis-resize-group')) {
+                $group.resizable('destroy').removeClass('vis-resize-group');
+            }
+        }
         if (!onlyUpdate) {
             this.alignIndex = 0;
 
             var s = JSON.stringify(this.activeWidgets);
-            if (JSON.stringify(this.views[this.activeView].activeWidgets) !== s) {
-                this.views[this.activeView].activeWidgets = JSON.parse(s);
+            if (this.views[view] && JSON.stringify(this.views[view].activeWidgets) !== s) {
+                this.views[view].activeWidgets = JSON.parse(s);
                 // Store selected widgets
-                this.save();
+                this.save(viewDiv, view);
             }
 
             //this.$selectActiveWidgets.find('option[value="' + wid + '"]').prop('selected', true);
@@ -2093,7 +2161,7 @@ vis = $.extend(true, vis, {
 
             // Deselect unselected widgets
             for (i = 0; i < deselect.length; i++) {
-                this.showWidgetHelper(deselect[i], false);
+                this.showWidgetHelper(viewDiv, view, deselect[i], false);
                 $widget = $('#' + deselect[i]);
                 $widget.removeClass('ui-selected');
 
@@ -2101,7 +2169,7 @@ vis = $.extend(true, vis, {
                     try {
                         $widget.draggable('destroy');
                     } catch (e) {
-                        this.conn.logError('inspectWidget - Cannot destroy draggable ' + deselect[i] + ' ' + e);
+                        this.conn.logError('inspectWidgets - Cannot destroy draggable ' + deselect[i] + ' ' + e);
                     }
                 }
 
@@ -2109,7 +2177,7 @@ vis = $.extend(true, vis, {
                     try {
                         $widget.resizable('destroy');
                     } catch (e) {
-                        this.conn.logError('inspectWidget - Cannot destroy resizable ' + deselect[i] + ' ' + e);
+                        this.conn.logError('inspectWidgets - Cannot destroy resizable ' + deselect[i] + ' ' + e);
                     }
                 }
             }
@@ -2120,7 +2188,7 @@ vis = $.extend(true, vis, {
                     try {
                         $widget.resizable('destroy');
                     } catch (e) {
-                        this.conn.logError('inspectWidget - Cannot destroy resizable ' + deselect[i] + ' ' + e);
+                        this.conn.logError('inspectWidgets - Cannot destroy resizable ' + deselect[i] + ' ' + e);
                     }
                 }
             }
@@ -2128,10 +2196,10 @@ vis = $.extend(true, vis, {
             // Select selected widgets
             for (var p = 0; p < select.length; p++) {
                 try {
-                    $widget = this.showWidgetHelper(select[p], true);
+                    $widget = this.showWidgetHelper(viewDiv, view, select[p], true);
 
-                    if (!$('#wid_all_lock_d').hasClass('ui-state-active')) {
-                        this.draggable($widget);
+                    if ($widget && !$('#wid_all_lock_d').hasClass('ui-state-active')) {
+                        this.draggable(viewDiv, view, $widget);
                     }
                 } catch (e) {
                     console.log(e);
@@ -2156,7 +2224,7 @@ vis = $.extend(true, vis, {
                 try {
                     $widget = $('#' + this.activeWidgets[0]);
                     if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
-                        this.resizable($widget);
+                        this.resizable(viewDiv, view, $widget);
                     }
                 } catch (e) {
                     console.log(e);
@@ -2172,7 +2240,7 @@ vis = $.extend(true, vis, {
             // Disable copy widget if was active
             $('#rib_wid_copy_cancel').trigger('click');
 
-            this.actualAttrs = this.findCommonAttributes(this.activeWidgets);
+            this.actualAttrs = this.findCommonAttributes(view, this.activeWidgets);
         }
 
         var $widgetAttrs = $('#widget_attrs').hide();
@@ -2184,12 +2252,22 @@ vis = $.extend(true, vis, {
             // Switch tabs to View settings
             $('#pan_attr').tabs('option', 'disabled', [1]).tabs({active: 0});
             $('#widget_tab').text(_('Widget'));
+
+            if (view !== viewDiv) {
+                // enable group resize of nothing selected
+                this.editResizeGroup(viewDiv, view);
+            }
             return false;
         }
-        $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
-        $('#widget_tab').text(_('Widget') + ": " + ((this.activeWidgets.length === 1) ? wid : this.activeWidgets.length));
 
-        var widget = this.views[this.activeView].widgets[wid];
+        $('#pan_attr').tabs('option', 'disabled', []).tabs({active: 1});
+        $('#widget_tab').text((this.activeWidgets.length === 1) ? wid : _('Widget') + ': ' + this.activeWidgets.length);
+
+        if (!this.views[view]) {
+            console.warn('No view "' + view + ' for ' + wid + ' found');
+            return;
+        }
+        var widget = this.views[view].widgets[wid];
 
         if (!widget) {
             console.log('inspectWidget ' + wid + ' undefined');
@@ -2228,23 +2306,43 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, 'name',      group);
         this.addToInspect(this.activeWidgets, 'comment',   group);
         this.addToInspect(this.activeWidgets, {name: 'class',     type: 'class'}, group);
-        this.addToInspect(this.activeWidgets, {name: 'filterkey', type: 'auto', options: this.updateFilter()}, group);
+        this.addToInspect(this.activeWidgets, {name: 'filterkey', type: 'auto', options: this.updateFilter(view)}, group);
         this.addToInspect(this.activeWidgets, {name: 'views',     type: 'select-views'}, group);
         this.addToInspect(this.activeWidgets, {name: 'locked',    type: 'checkbox'}, group);
 
         group = 'visibility';
-        this.addToInspect(this.activeWidgets, {name: 'visibility-oid', type: 'id'},   group);
-        this.addToInspect(this.activeWidgets, {name: 'visibility-cond', type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '=='},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-oid',           type: 'id'},   group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-cond',          type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '=='},   group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-val', default: 1},     group);
-        this.addToInspect(this.activeWidgets, {name: 'visibility-groups', type: 'groups'}, group);
+        this.addToInspect(this.activeWidgets, {name: 'visibility-groups',        type: 'groups'}, group);
         this.addToInspect(this.activeWidgets, {name: 'visibility-groups-action', type: 'select', options: ['hide', 'disabled'], default: 'hide'}, group);
 
         this.addToInspect('delimiter', group);
 
+        // special case for group widget
+        group = 'common';
+        if ($widgetTpl.attr('id') === '_tplGroup' && this.activeWidgets.length === 1) {
+            var _wid = this.activeWidgets[0];
+            var id = 1;
+            var _data = this.views[view].widgets[_wid].data;
+            var maxCount = parseInt(_data.attrCount, 10);
+            if (maxCount) {
+                for (var a = 1; a <= maxCount; a++) {
+                    this.addToInspect(this.activeWidgets, {
+                        name:       'groupAttr' + a,
+                        type:       _data['attrType' + a],
+                        clearName:  _data['attrName' + a] || ('attrName' + a),
+                        title:      _('Use inside of group groupAttr%s', a)
+                    }, group);
+                }
+            }
+        }
+
         // Edit all attributes
-        //group = 'common';
         for (group in this.actualAttrs) {
+            if (!this.actualAttrs.hasOwnProperty(group)) continue;
             for (var attr in this.actualAttrs[group]) {
+                if (!this.actualAttrs[group].hasOwnProperty(attr)) continue;
                 this.addToInspect(this.activeWidgets, this.actualAttrs[group][attr], group);
             }
         }
@@ -2260,21 +2358,21 @@ vis = $.extend(true, vis, {
 
         this.addToInspect('delimiter', 'css_shadow_padding');
         if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
-            this.editGestures();
+            this.editGestures(view);
         }
         if ($widgetTpl.attr('data-vis-no-signals')  !== 'true') {
-            this.editSignalIcons();
+            this.editSignalIcons(view);
         }
 
         // Re-render all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {
             for (var r = 0; r < this.reRenderList.length; r++) {
-                this.reRenderWidgetEdit(this.reRenderList[r]);
+                this.reRenderWidgetEdit(viewDiv, view, this.reRenderList[r]);
             }
             this.reRenderList = [];
         }
 
-        this.showInspect(view, this.activeWidgets);
+        this.showInspect(viewDiv, view, this.activeWidgets);
 
         // snap objects to the grid, elsewise cannot move
         /*if (this.views[view].settings.snapType == 2) {
@@ -2307,8 +2405,8 @@ vis = $.extend(true, vis, {
                 if (v === '___settings') continue;
                 if (v !== this.activeView) {
                     var selected = '';
-                    for (var k = 0; k < views.length; k++) {
-                        if (views[k] === v) {
+                    for (var m = 0; m < views.length; m++) {
+                        if (views[m] === v) {
                             selected = 'selected';
                             break;
                         }
@@ -2335,7 +2433,7 @@ vis = $.extend(true, vis, {
                     if ($inspectViews.data('changed')) {
                         $inspectViews.data('changed', false);
                         that.syncWidgets(that.activeWidgets, $(this).val());
-                        that.save();
+                        that.save(viewDiv, view);
                     }
                 }
                 //noneSelectedText: _("Select options")
@@ -2352,7 +2450,7 @@ vis = $.extend(true, vis, {
             $inspectGroups.html('');
 
             var groups    = this.getUserGroups();
-            var widGroups = this.findCommonValue(this.activeWidgets, 'visibility-groups');
+            var widGroups = this.findCommonValue(view, this.activeWidgets, 'visibility-groups');
             if (widGroups && !(widGroups instanceof Array)) widGroups = widGroups.values;
             widGroups = widGroups || [];
             for (var g in groups) {
@@ -2377,7 +2475,7 @@ vis = $.extend(true, vis, {
                 close:              function () {
                     if ($inspectGroups.data('changed')) {
                         $inspectGroups.data('changed', false);
-                        that.save();
+                        that.save(viewDiv, view);
                     }
                 }
                 //noneSelectedText: _("Select options")
@@ -2394,10 +2492,19 @@ vis = $.extend(true, vis, {
         $widgetAttrs.show();
 
         // modify by all selected widgets the z-index
-        /*for (var w = 0; w < this.activeWidgets.length; w++) {
-            $('#' + this.activeWidgets[w])
-                .attr('data-zmodified', 'true')
-                .css('z-index', 700);
-        }*/
+        if (this.views[view]) {
+            for (var w in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(w)) continue;
+                if (this.activeWidgets.indexOf(w) !== -1) {
+                    $('#' + w)
+                        .attr('data-zmodified', 'true')
+                        .css('z-index', 700);
+                } else {
+                    $('#' + w)
+                        .attr('data-zmodified', 'true')
+                        .css('z-index', this.views[view].widgets[w].style['z-index'] || 0);
+                }
+            }
+        }
     }
 });

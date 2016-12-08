@@ -19,10 +19,10 @@
                 if (!vis.editMode) {
                     $($view).swipe({
                         swipeLeft: function () {
-                            vis.changeView(data['Left_nav_view'], {effect: data['Left-out_effect'], options: {direction: data['Left-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect:  data['Left-in_effect'], options: {direction:  data['Left-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
+                            vis.changeView(data['Left_nav_view'], (data['Left_nav_view'], {effect: data['Left-out_effect'], options: {direction: data['Left-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect:  data['Left-in_effect'], options: {direction:  data['Left-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
                         },
                         swipeRight: function () {
-                            vis.changeView(data['Right_nav_view'], {effect: data['Right-out_effect'], options: {direction: data['Right-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect: data['Right-in_effect'], options: {direction: data['Right-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
+                            vis.changeView(data['Right_nav_view'], data['Right_nav_view'], {effect: data['Right-out_effect'], options: {direction: data['Right-out_eff_opt'], queue: false}, duration: $this.attr('duration')}, {effect: data['Right-in_effect'], options: {direction: data['Right-in_eff_opt'], queue: false}, duration: $this.attr('duration')}, true)
                         }
                     });
                 }

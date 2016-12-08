@@ -17,9 +17,7 @@
 /* global $ */
 /* global systemDictionary */
 
-
 'use strict';
-
 
 // Languages
 $.extend(systemDictionary, {
@@ -343,6 +341,30 @@ $.extend(systemDictionary, {
     "Scripts":              {"en": "Scripts",           "de": "Skripte",                "ru": "Скрипты"},
     "Find:":                {"en": "Find:",             "de": "Suchen:",                "ru": "Найти:"},
     "Save scripts":         {"en": "Save scripts",      "de": "Speichern",              "ru": "Сохранить"},
+    "group_objects":        {"en": "Attributes",        "de": "Attributen",             "ru": "Атрибуты"},
+    "attrCount":            {"en": "Count",             "de": "Anzahl",                 "ru": "Количество"},
+    "attrName":             {"en": "Attribute name",    "de": "Attributname",           "ru": "Имя атрибута"},
+    "attrType":             {"en": "Attribute type",    "de": "Attributetyp",           "ru": "Тип атрибута"},
+    "ctr":                  {"en": "control",           "de": "Steuern",                "ru": "Управлять"},
+    "gauge":                {"en": "gauge",             "de": "gauge",                  "ru": "Круглая шкала"},
+    "chart":                {"en": "chart",             "de": "chart",                  "ru": "График"},
+    "barchart":             {"en": "barchart",          "de": "barchart",               "ru": "barchart"},
+    "id":                   {"en": "Object ID",         "de": "Objekt ID",              "ru": "ID объекта"},
+    "image":                {"en": "Image",             "de": "Bild",                   "ru": "картинка"},
+    "widget":               {"en": "Widget",            "de": "Widget",                 "ru": "элемент"},
+    "history":              {"en": "History",           "de": "History",                "ru": "история"},
+    "attrName1":            {"en": "Attribute 1",       "de": "Attribut 1",             "ru": "Параметр 1"},
+    "attrName2":            {"en": "Attribute 2",       "de": "Attribut 2",             "ru": "Параметр 2"},
+    "attrName3":            {"en": "Attribute 3",       "de": "Attribut 3",             "ru": "Параметр 3"},
+    "attrName4":            {"en": "Attribute 4",       "de": "Attribut 4",             "ru": "Параметр 4"},
+    "attrName5":            {"en": "Attribute 5",       "de": "Attribut 5",             "ru": "Параметр 5"},
+    "attrName6":            {"en": "Attribute 6",       "de": "Attribut 6",             "ru": "Параметр 6"},
+    "attrName7":            {"en": "Attribute 7",       "de": "Attribut 7",             "ru": "Параметр 7"},
+    "Use inside of group groupAttr%s": {
+        "en": "Use inside of group groupAttr%s",
+        "de": "Benutze groupAttr%s innerhalb von der Gruppe",
+        "ru": "Используй в группе groupAttr%s"
+    },
     'Project "%s" was succseffully imported. Open it?': {
         "en": 'Project "%s" was succseffully imported. Open it?',
         "de": 'Projekt "%s" war erfolgreich importiert. Aufmachen?',
@@ -461,12 +483,22 @@ $.extend(systemDictionary, {
         "de": "Projekt ist noch nicht gespeichert.",
         "ru": "Проект не сохранён."
     },
-    "Clipboard:":           {"en": "Clipboard:", "de": "Zwischenablage:", "ru": "Буфер обмена:"},
-    "Click to hide":        {"en": "Click to hide", "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
+    "Clipboard:":           {"en": "Clipboard:",        "de": "Zwischenablage:",        "ru": "Буфер обмена:"},
+    "Click to hide":        {"en": "Click to hide",     "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
     "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
     "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget herumschieben", "ru": "Дективировать перенос виджетов мышкой"},
-    "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp", "ru": "Показать тип элемента"},
-    "Small widgets":        {"en": "Small widgets", "de": "Kleine Widgets", "ru": "Показать маленькие элементы"},
+    "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp",     "ru": "Показать тип элемента"},
+    "Small widgets":        {"en": "Small widgets",     "de": "Kleine Widgets",         "ru": "Показать маленькие элементы"},
+    "to group":             {"en": "Group",             "de": "Gruppieren",             "ru": "Объеденить"},
+    "Ungroup":              {"en": "Ungroup",           "de": "Gruppe aufheben",        "ru": "Разъеденить"},
+    "Group":                {"en": "Group",             "de": "Gruppe",                 "ru": "Группа"},
+    "Edit group:":          {"en": "Edit group:",       "de": "Gruppe editieren:",      "ru": "Редактировать:"},
+    "%s widgets":           {"en": "%s widgets",        "de": "%s Widgets",             "ru": "%s элемента(ов)"},
+    "Widget(s) copied to view %s": {
+        "en": "Widget(s) copied to view %s",
+        "de": "Widget(s) sind zur Seite %s kopiert",
+        "ru": "Элемент(а) скопированы на страницу %s"
+    },
     "Select more than one widget and try again.": {
         "en": "Select more than one widget and try again.",
         "de": "Es muss mehr als ein Widget seleketiert werden.",

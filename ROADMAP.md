@@ -3,9 +3,7 @@
 
 * show last update time for most of widgets
 
-* user depended views- and widget-visibility
-
-* Wizard
+* excpert mode
 
 * Build in help for widgets
 

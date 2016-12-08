@@ -172,12 +172,17 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.11.2 (2016-11-12)
+## Changelog### 0.12.3 (2016-12-07)
 
-### 0.11.1 (2016-11-11)
+### 0.12.2 (2016-12-04)
+* (bluefox) fix errors with grouping
 
-### 0.11.0 (2016-11-07)
+### 0.12.1 (2016-11-30)
+* (bluefox) fix errors with containers
 
+### 0.12.0 (2016-11-24)
+* (bluefox) subscribe mode for faster state loading
+* (bluefox) add grouping
 
 ### 0.10.15 (2016-11-06)
 * (bluefox) remove weather-adapter.html

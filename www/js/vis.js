@@ -102,48 +102,50 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
     systemLang = visConfig.language || systemLang;
 }
 
-var vis = {
-    version: '0.11.2',
-    requiredServerVersion:  '0.0.0',
+var vis;
+vis = {
+    version: '0.12.3',
+    requiredServerVersion: '0.0.0',
 
-    storageKeyViews:        'visViews',
-    storageKeySettings:     'visSettings',
-    storageKeyInstance:     'visInstance',
+    storageKeyViews:    'visViews',
+    storageKeySettings: 'visSettings',
+    storageKeyInstance: 'visInstance',
 
-    instance:               null,
-    urlParams:              {},
-    settings:               {},
-    views:                  null,
-    widgets:                {},
-    activeView:             '',
-    widgetSets:             visConfig.widgetSets,
-    initialized:            false,
-    toLoadSetsCount:        0, // Count of widget sets that should be loaded
-    isFirstTime:            true,
-    useCache:               false,
-    authRunning:            false,
-    cssChecked:             false,
-    isTouch:                'ontouchstart' in document.documentElement,
-    binds:                  {},
-    onChangeCallbacks:      [],
-    viewsActiveFilter:      {},
-    projectPrefix:          window.location.search ? window.location.search.slice(1) + '/' : 'main/',
-    navChangeCallbacks:     [],
-    editMode:               false,
-    language:               (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
-    statesDebounce:         {},
-    visibility:             {},
-    signals:                {},
-    bindings:               {},
-    bindingsCache:          {},
-    subscribing:            {
-        IDs:         [],
-        byViews:     {},
-        active:      [],
+    instance:           null,
+    urlParams:          {},
+    settings:           {},
+    views:              null,
+    widgets:            {},
+    activeView:         '',
+    activeViewDiv:      '',
+    widgetSets:         visConfig.widgetSets,
+    initialized:        false,
+    toLoadSetsCount:    0, // Count of widget sets that should be loaded
+    isFirstTime:        true,
+    useCache:           false,
+    authRunning:        false,
+    cssChecked:         false,
+    isTouch:            'ontouchstart' in document.documentElement,
+    binds:              {},
+    onChangeCallbacks:  [],
+    viewsActiveFilter:  {},
+    projectPrefix:      window.location.search ? window.location.search.slice(1) + '/' : 'main/',
+    navChangeCallbacks: [],
+    editMode:           false,
+    language:           (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
+    statesDebounce:     {},
+    visibility:         {},
+    signals:            {},
+    bindings:           {},
+    bindingsCache:      {},
+    subscribing:        {
+        IDs: [],
+        byViews: {},
+        active: [],
         activeViews: []
     },
-    commonStyle:            null,
-    _setValue: function (id, state, isJustCreated) {
+    commonStyle: null,
+    _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
         this.conn.setState(id, state[id + '.val'], function (err) {
@@ -177,7 +179,7 @@ var vis = {
             }
         });
     },
-    setValue: function (id, val) {
+    setValue:           function (id, val) {
         if (!id) {
             console.log('ID is null for val=' + val);
             return;
@@ -193,7 +195,7 @@ var vis = {
             o[id + '.lc'] = this.states.attr(id + '.lc');
         }
         o[id + '.val'] = val;
-        o[id + '.ts']  = t;
+        o[id + '.ts'] = t;
         o[id + '.ack'] = false;
 
         // Create this value
@@ -223,15 +225,15 @@ var vis = {
             this.statesDebounce[id].state = o;
         }
     },
-    loadWidgetSet: function (name, callback) {
+    loadWidgetSet:      function (name, callback) {
         var url = './widgets/' + name + '.html?visVersion=' + this.version;
         var that = this;
         $.ajax({
-            url:      url,
-            type:     'GET',
+            url: url,
+            type: 'GET',
             dataType: 'html',
-            cache:    this.useCache,
-            success:  function (data) {
+            cache: this.useCache,
+            success: function (data) {
                 setTimeout(function () {
                     try {
                         $('head').append(data);
@@ -255,7 +257,7 @@ var vis = {
         });
     },
     // Return as array used widgetSets or null if no information about it
-    getUsedWidgetSets: function () {
+    getUsedWidgetSets:  function () {
         var widgetSets = [];
 
         if (!this.views) {
@@ -278,8 +280,9 @@ var vis = {
         }
 
         for (var view in this.views) {
-            if (view === '___settings') continue;
+            if (!this.views.hasOwnProperty(view) ||  view === '___settings') continue;
             for (var id in this.views[view].widgets) {
+                if (!this.views[view].widgets.hasOwnProperty(id)) continue;
                 if (!this.views[view].widgets[id].widgetSet) {
 
                     // Views are not yet converted and have no widgetSet information)
@@ -304,16 +307,16 @@ var vis = {
         return widgetSets;
     },
     // Return as array used widgetSets or null if no information about it
-    getUsedObjectIDs: function () {
+    getUsedObjectIDs:   function () {
         if (!this.views) {
             console.log('Check why views are not yet loaded!');
             return null;
         }
 
-        var views       = this.editMode ? null : {};
-        var IDs         = [];
+        var views = this.editMode ? null : {};
+        var IDs = [];
         this.visibility = {};
-        this.bindings   = {};
+        this.bindings = {};
 
         var view;
         var id;
@@ -329,6 +332,13 @@ var vis = {
                 // Check all attributes
                 var data  = this.views[view].widgets[id].data;
                 var style = this.views[view].widgets[id].style;
+
+                // fix error in naming
+                if (this.views[view].widgets[id].groupped) {
+                    this.views[view].widgets[id].grouped = true;
+                    delete this.views[view].widgets[id].groupped;
+                }
+
                 // rename hqWidgets => hqwidgets
                 if (this.views[view].widgets[id].widgetSet === 'hqWidgets') {
                     this.views[view].widgets[id].widgetSet = 'hqwidgets';
@@ -375,7 +385,7 @@ var vis = {
                 if (this.views[view].widgets[id].tpl === 'tplHmWindow') {
                     this.views[view].widgets[id].tpl = 'tplValueBool';
                     this.views[view].widgets[id].data.html_false = this.views[view].widgets[id].data.html_closed;
-                    this.views[view].widgets[id].data.html_true  = this.views[view].widgets[id].data.html_open;
+                    this.views[view].widgets[id].data.html_true = this.views[view].widgets[id].data.html_open;
                     delete this.views[view].widgets[id].data.html_closed;
                     delete this.views[view].widgets[id].data.html_open;
                 }
@@ -405,65 +415,56 @@ var vis = {
                 }
 
                 for (var attr in data) {
-                    if (!data.hasOwnProperty(attr)) continue;
+                    if (!data.hasOwnProperty(attr) || !attr) continue;
                     /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                     if (attr === 'state_id') {
                         data.state_oid = data[attr];
                         delete data[attr];
                         attr = 'state_oid';
-                    } else
-                    if (attr === 'number_id') {
+                    } else if (attr === 'number_id') {
                         data.number_oid = data[attr];
                         delete data[attr];
                         attr = 'number_oid';
-                    } else
-                    if (attr === 'toggle_id') {
+                    } else if (attr === 'toggle_id') {
                         data.toggle_oid = data[attr];
                         delete data[attr];
                         attr = 'toggle_oid';
-                    } else
-                    if (attr === 'set_id') {
+                    } else if (attr === 'set_id') {
                         data.set_oid = data[attr];
                         delete data[attr];
                         attr = 'set_oid';
-                    } else
-                    if (attr === 'temp_id') {
+                    } else if (attr === 'temp_id') {
                         data.temp_oid = data[attr];
                         delete data[attr];
                         attr = 'temp_oid';
-                    } else
-                    if (attr === 'drive_id') {
+                    } else if (attr === 'drive_id') {
                         data.drive_oid = data[attr];
                         delete data[attr];
                         attr = 'drive_oid';
-                    } else
-                    if (attr === 'content_id') {
+                    } else if (attr === 'content_id') {
                         data.content_oid = data[attr];
                         delete data[attr];
                         attr = 'content_oid';
-                    } else
-                    if (attr === 'dialog_id') {
+                    } else if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    } else
-                    if (attr === 'max_value_id') {
+                    } else if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
                         delete data[attr];
                         attr = 'max_value_oid';
-                    } else
-                    if (attr === 'dialog_id') {
+                    } else if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    } else
-                    if (attr === 'weoid') {
+                    } else if (attr === 'weoid') {
                         data.woeid = data[attr];
                         delete data[attr];
                         attr = 'woeid';
                     }
 
                     if (typeof data[attr] === 'string') {
+                        var m;
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
                             for (var t = 0; t < oids.length; t++) {
@@ -471,21 +472,20 @@ var vis = {
                                     if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
                                     if (views && views[view].indexOf(oids[t].systemOid) === -1) views[view].push(oids[t].systemOid);
                                     if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
-                                    oids[t].type   = 'data';
-                                    oids[t].attr   = attr;
-                                    oids[t].view   = view;
+                                    oids[t].type = 'data';
+                                    oids[t].attr = attr;
+                                    oids[t].view = view;
                                     oids[t].widget = id;
 
                                     this.bindings[oids[t].systemOid].push(oids[t]);
                                 }
 
-
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                                    for (var w = 0; w < oids[t].operations[0].arg.length; w++) {
-                                        if (IDs.indexOf(oids[t].operations[0].arg[w].systemOid) === -1) IDs.push(oids[t].operations[0].arg[w].systemOid);
-                                        if (views && views[view].indexOf(oids[t].operations[0].arg[w].systemOid) === -1) views[view].push(oids[t].operations[0].arg[w].systemOid);
-                                        if (!this.bindings[oids[t].operations[0].arg[w].systemOid]) this.bindings[oids[t].operations[0].arg[w].systemOid] = [];
-                                        this.bindings[oids[t].operations[0].arg[w].systemOid].push(oids[t]);
+                                    for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
+                                        if (IDs.indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) IDs.push(oids[t].operations[0].arg[ww].systemOid);
+                                        if (views && views[view].indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) views[view].push(oids[t].operations[0].arg[ww].systemOid);
+                                        if (!this.bindings[oids[t].operations[0].arg[ww].systemOid]) this.bindings[oids[t].operations[0].arg[ww].systemOid] = [];
+                                        this.bindings[oids[t].operations[0].arg[ww].systemOid].push(oids[t]);
                                     }
                                 }
                             }
@@ -506,8 +506,16 @@ var vis = {
                             if (attr.match(/^signals-oid-/) && data[attr]) {
                                 var oid = data[attr];
                                 if (!this.signals[oid]) this.signals[oid] = [];
-                                this.signals[oid].push({view: view, widget: id, index: parseInt(attr.substring('signals-oid-'.length), 10)});
+                                this.signals[oid].push({
+                                    view: view,
+                                    widget: id,
+                                    index: parseInt(attr.substring('signals-oid-'.length), 10)
+                                });
                             }
+                        } else if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
+                            var _id = 'groupAttr' + m[1];
+                            if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
+                            if (views && views[view].indexOf(data[_id]) === -1) views[view].push(data[_id]);
                         }
                     }
                 }
@@ -515,7 +523,7 @@ var vis = {
                 // build bindings for styles
                 if (style) {
                     for (var cssAttr in style) {
-                        if (!style.hasOwnProperty(cssAttr)) continue;
+                        if (!style.hasOwnProperty(cssAttr) || !cssAttr) continue;
                         if (typeof style[cssAttr] === 'string') {
                             var objIDs = this.extractBinding(style[cssAttr]);
                             if (objIDs) {
@@ -524,9 +532,9 @@ var vis = {
                                     if (views && views[view].indexOf(objIDs[tt].systemOid) === -1) views[view].push(objIDs[tt].systemOid);
                                     if (!this.bindings[objIDs[tt].systemOid]) this.bindings[objIDs[tt].systemOid] = [];
 
-                                    objIDs[tt].type   = 'style';
-                                    objIDs[tt].attr   = cssAttr;
-                                    objIDs[tt].view   = view;
+                                    objIDs[tt].type = 'style';
+                                    objIDs[tt].attr = cssAttr;
+                                    objIDs[tt].view = view;
                                     objIDs[tt].widget = id;
 
                                     this.bindings[objIDs[tt].systemOid].push(objIDs[tt]);
@@ -576,7 +584,7 @@ var vis = {
 
         return {IDs: IDs, byViews: views};
     },
-    loadWidgetSets: function (callback) {
+    loadWidgetSets:     function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
         var arrSets = [];
 
@@ -621,14 +629,14 @@ var vis = {
             if (callback) callback.call(this);
         }
     },
-    bindInstance: function () {
+    bindInstance:       function () {
         if (typeof app !== 'undefined' && app.settings) {
             this.instance = app.settings.instance;
         }
         if (typeof storage !== 'undefined') this.instance = this.instance || storage.get(this.storageKeyInstance);
         if (this.editMode) this.bindInstanceEdit();
     },
-    init: function () {
+    init:               function () {
         if (this.initialized) return;
 
         if (typeof storage !== 'undefined') {
@@ -646,7 +654,7 @@ var vis = {
         //this.loadRemote(this.loadWidgetSets, this.initNext);
         this.loadWidgetSets(this.initNext);
     },
-    initNext: function () {
+    initNext:           function () {
         this.showWaitScreen(false);
         var that = this;
         // First start.
@@ -667,6 +675,7 @@ var vis = {
         if (!hash) {
             // Take first view in the list
             this.activeView = this.findNearestResolution(true);
+            this.activeViewDiv = this.activeView;
 
             // Create default view in demo mode
             if (typeof io === 'undefined') {
@@ -678,9 +687,12 @@ var vis = {
                             window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
                         }
                     } else {
-                        this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                        this.views.DemoView = this.createDemoView ? this.createDemoView() : {
+                            settings: {style: {}},
+                            widgets: {}
+                        };
                         this.activeView = 'DemoView';
-                        //vis.showWaitScreen(false);
+                        this.activeViewDiv = this.activeView;
                     }
                 }
             } else if (!this.activeView) {
@@ -694,13 +706,18 @@ var vis = {
                     //window.alert("unexpected error - this should not happen :(");
                     //$.error("this should not happen :(");
                     // create demoView
-                    this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                    this.views.DemoView = this.createDemoView ? this.createDemoView() : {
+                        settings: {style: {}},
+                        widgets: {}
+                    };
                     this.activeView = 'DemoView';
+                    this.activeViewDiv = this.activeView;
                 }
             }
         } else {
             if (this.views[hash]) {
                 this.activeView = hash;
+                this.activeViewDiv = this.activeView;
             } else {
                 window.alert(_("error - View doesn't exist"));
                 if (typeof app === 'undefined') window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
@@ -719,7 +736,8 @@ var vis = {
 
         // Navigation
         $(window).bind('hashchange', function (e) {
-            that.changeView(window.location.hash.slice(1));
+            var view = window.location.hash.slice(1);
+            that.changeView(view, view);
         });
 
         this.bindInstance();
@@ -731,18 +749,22 @@ var vis = {
 
         // If this function called earlier, it makes problems under FireFox.
         // render all views, that should be always rendered
+        var count = 0;
         if (this.views && !this.editMode) {
             for (var view in this.views) {
                 if (view === '___settings') continue;
                 if (this.views[view].settings.alwaysRender) {
-                    this.renderView(view, true);
+                    count++;
+                    this.renderView(view, view, true, function () {
+                        if (!--count && that.activeView) that.changeView(that.activeViewDiv, that.activeView);
+                    });
                 }
             }
         }
 
-        if (this.activeView) this.changeView(this.activeView);
+        if (!count && this.activeView) this.changeView(this.activeViewDiv, this.activeView);
     },
-    initViewObject: function () {
+    initViewObject:     function () {
         if (!this.editMode) {
             if (typeof app !== 'undefined') {
                 this.showMessage(_('no views found!'));
@@ -752,7 +774,10 @@ var vis = {
         } else {
             if (window.confirm(_('no views found on server.\nCreate new %s ?', this.projectPrefix + 'vis-views.json'))) {
                 this.views = {};
-                this.views.DemoView = this.createDemoView ? this.createDemoView() : {settings: {style: {}}, widgets: {}};
+                this.views.DemoView = this.createDemoView ? this.createDemoView() : {
+                    settings: {style: {}},
+                    widgets: {}
+                };
                 if (this.saveRemote) {
                     this.saveRemote(true, function () {
                         //window.location.reload();
@@ -763,40 +788,49 @@ var vis = {
             }
         }
     },
-    setViewSize: function (view) {
-        var $view = $('#visview_' + view);
-        // Because of background, set the width and height of the view
-        var width = parseInt(this.views[view].settings.sizex, 10);
-        var height = parseInt(this.views[view].settings.sizey, 10);
+    setViewSize:        function (viewDiv, view) {
+        var $view = $('#visview_' + viewDiv);
+        var width;
+        var height;
+        if (this.views[view]) {
+            // Because of background, set the width and height of the view
+            width  = parseInt(this.views[view].settings.sizex, 10);
+            height = parseInt(this.views[view].settings.sizey, 10);
+        }
         var $vis_container = $('#vis_container');
-        if (!width || width < $vis_container.width()) {
-            width = '100%';
-        }
-        if (!height || height < $vis_container.height()) {
-            height = '100%';
-        }
-        $view.css({width: width});
-        $view.css({height: height});
+        if (!width  || width < $vis_container.width())   width  = '100%';
+        if (!height || height < $vis_container.height()) height = '100%';
+        $view.css({width: width, height: height});
     },
-    updateContainers: function (view) {
+    updateContainers:   function (viewDiv, view) {
         var that = this;
         // Set ths views for containers
-        $('#visview_' + view).find('.vis-view-container').each(function () {
+        $('#visview_' + viewDiv).find('.vis-view-container').each(function () {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
-                $(this).html('<span style="color: red">' + _('error: view not found.') + '</span>');
+                $(this).html('<span style="color: red" class="container-error">' + _('error: view not found.') + '</span>');
             } else if (cview === view) {
-                $(this).html('<span style="color: red">' + _('error: view container recursion.') + '</span>');
+                $(this).html('<span style="color: red" class="container-error">' + _('error: view container recursion.') + '</span>');
             } else {
-                $(this).html('');
-                that.renderView(cview);
-                $('#visview_' + cview)
-                    .appendTo(this)
-                    .show();
+                if ($(this).find('.container-error').length) {
+                    $(this).html('');
+                }
+                var targetView = this;
+                if (!$(this).find('.vis-widget:first').length) {
+                    that.renderView(cview, cview, function (_viewDiv) {
+                        $('#visview_' + _viewDiv)
+                            .appendTo(targetView)
+                            .show();
+                    });
+                } else {
+                    $('#visview_' + cview)
+                        .appendTo(targetView)
+                        .show();
+                }
             }
         });
     },
-    renderViews: function (views, index, callback) {
+    renderViews:        function (viewDiv, views, index, callback) {
         if (typeof index === 'function') {
             callback = index;
             index = 0;
@@ -804,160 +838,196 @@ var vis = {
         index = index || 0;
 
         if (!views || index >= views.length) {
-            if (callback) callback(views);
+            if (callback) callback(viewDiv, views);
             return;
         }
         var item = views[index];
         var that = this;
-        this.renderView(item.view, true, function () {
-            that.renderViews(views, index + 1, callback);
+        this.renderView(this.views[item.view] ? item.view : viewDiv, item.view, true, function () {
+            that.renderViews(viewDiv, views, index + 1, callback);
         });
     },
-    renderView: function (view, hidden, callback) {
-        var that = this;
+    renderView:         function (viewDiv, view, hidden, callback) {
+            var that = this;
 
-        if (typeof hidden === 'function') {
-            callback = hidden;
-            hidden = undefined;
-        }
-
-        if (!this.editMode && !$('#commonTheme').length) {
-            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
-        }
-
-        if (!this.views[view] || !this.views[view].settings) {
-            window.alert('Cannot render view ' + view + '. Invalid settings');
-            if (callback) {
-                setTimeout(function () {
-                    callback(view);
-                }, 0);
+            if (typeof hidden === 'function') {
+                callback = hidden;
+                hidden   = view;
+                view     = viewDiv;
             }
-            return false;
-        }
-
-        // collect all IDs, used in this view and in containers
-        this.subscribeStates(view, function () {
-            var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
-
-            that.views[view].settings.theme = that.views[view].settings.theme || 'redmond';
-
-            if (that.views[view].settings.filterkey) {
-                that.viewsActiveFilter[view] = that.views[view].settings.filterkey.split(',');
-            } else {
-                that.viewsActiveFilter[view] = [];
+            if (typeof view === 'boolean') {
+                callback = hidden;
+                hidden   = undefined;
+                view     = viewDiv;
             }
-            //noinspection JSJQueryEfficiency
-            var $view = $('#visview_' + view);
+            if (!this.editMode && !$('#commonTheme').length) {
+                $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+            }
 
-            // apply group policies
-            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
-                if (that.views[view].settings.group_action === 'hide') {
-                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
-                        if (!$view.length) {
-                            $('#vis_container').append('<div id="visview_' + view + '" class="vis-view vis-user-disabled"></div>');
-                            $view = $('#visview_' + view);
-                        }
-                        $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
-                        if (callback) {
-                            setTimeout(function () {
-                                callback(view);
-                            }, 0);
-                        }
-                        return;
-                    }
+            if (!this.views[view] || !this.views[view].settings) {
+                window.alert('Cannot render view ' + view + '. Invalid settings');
+                if (callback) {
+                    setTimeout(function () {
+                        callback(viewDiv, view);
+                    }, 0);
                 }
+                return false;
             }
-            if (!$view.length) {
-                $('#vis_container').append('<div style="display: none;" id="visview_' + view + '" class="vis-view"></div>');
-                that.addViewStyle(view, that.views[view].settings.theme);
 
-                $view = $('#visview_' + view);
+            // collect all IDs, used in this view and in containers
+            this.subscribeStates(view, function () {
+                var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
 
-                $view.css(that.views[view].settings.style);
-                if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
+                that.views[view].settings.theme = that.views[view].settings.theme || 'redmond';
 
-                that.setViewSize(view);
+                if (that.views[view].settings.filterkey) {
+                    that.viewsActiveFilter[view] = that.views[view].settings.filterkey.split(',');
+                } else {
+                    that.viewsActiveFilter[view] = [];
+                }
+                //noinspection JSJQueryEfficiency
+                var $view = $('#visview_' + viewDiv);
 
-                // Render all widgets
-                for (var id in that.views[view].widgets) {
-                    if (!that.views[view].widgets.hasOwnProperty(id)) continue;
-                    // Try to complete the widgetSet information to optimize the loading of widgetSets
-                    if (id[0] !== 'g' && !that.views[view].widgets[id].widgetSet) {
-                        var obj = $('#' + that.views[view].widgets[id].tpl);
-                        if (obj) {
-                            that.views[view].widgets[id].widgetSet = obj.attr('data-vis-set');
-                            isViewsConverted = true;
+                // apply group policies
+                if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                    if (that.views[view].settings.group_action === 'hide') {
+                        if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                            if (!$view.length) {
+                                $('#vis_container').append('<div id="visview_' + viewDiv + '" class="vis-view vis-user-disabled"></div>');
+                                $view = $('#visview_' + viewDiv);
+                            }
+                            $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
+                            if (callback) {
+                                setTimeout(function () {
+                                    callback(viewDiv, view);
+                                }, 0);
+                            }
+                            return;
                         }
                     }
-
-                    if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].groupped) that.renderWidget(view, id);
                 }
+                if (!$view.length) {
+                    $('#vis_container').append('<div style="display: none;" id="visview_' + viewDiv + '" ' +
+                        'data-view="' + view + '" ' +
+                        'class="vis-view ' + (viewDiv !== view ? 'vis-edit-group' : '') + '" ' +
+                        (that.views[view].settings.alwaysRender ? 'data-persistent="true"' : '') + '></div>');
+                    that.addViewStyle(viewDiv, view, that.views[view].settings.theme);
 
-                if (that.editMode) {
-                    if (that.binds.jqueryui) that.binds.jqueryui._disable();
-                    that.droppable(view);
-                }
-            }
+                    $view = $('#visview_' + viewDiv);
 
-            // move views in container
-            var containers = [];
-            $view.find('.vis-view-container').each(function () {
-                var cview = $(this).attr('data-vis-contains');
-                if (!that.views[cview]) {
-                    $(this).append('error: view not found.');
-                    return false;
-                } else if (cview === view) {
-                    $(this).append('error: view container recursion.');
-                    return false;
-                }
-                containers.push({thisView: this, view: cview});
-            });
-            var wait = false;
-            if (containers.length) {
-                wait = true;
-                that.renderViews(containers, function (_containers) {
-                    for (var c = 0; c < _containers.length; c++) {
-                        $('#visview_' + _containers[c].view)
-                            .appendTo(_containers[c].thisView)
-                            .show();
+                    $view.css(that.views[view].settings.style);
+                    if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
+
+                    var id;
+                    if (viewDiv !== view && that.editMode) {
+                        //noinspection JSJQueryEfficiency
+                        var $widget = $('#' + viewDiv);
+                        if (!$widget.length) {
+                            that.renderWidget(view, view, viewDiv);
+                            $widget = $('#' + viewDiv);
+                        }
+                        $view.append('<div class="group-edit-header" data-view="' + viewDiv + '">' + _('Edit group:') + ' <b>' + viewDiv + '</b><button class="group-edit-close"></button></div>');
+                        $view.find('.group-edit-close').button({
+                            icons: {
+                                primary: 'ui-icon-close'
+                            },
+                            text: false
+                        }).data('view', view).css({width: 20, height: 20}).click(function () {
+                            var view = $(this).data('view');
+                            that.changeView(view, view);
+                        });
+
+                        $widget.appendTo($view);
+                        $widget.css({top: 0, left: 0});
+                        /*$widget.unbind('click dblclick');
+                         $widget.find('.vis-widget').each(function () {
+                         var id = $(this).attr('id');
+                         that.bindWidgetClick(view, id, true);
+                         });*/
+                    } else {
+                        that.setViewSize(viewDiv, view);
+                        // Render all widgets
+                        for (id in that.views[view].widgets) {
+                            if (!that.views[view].widgets.hasOwnProperty(id)) continue;
+                            // Try to complete the widgetSet information to optimize the loading of widgetSets
+                            if (id[0] !== 'g' && !that.views[view].widgets[id].widgetSet) {
+                                var obj = $('#' + that.views[view].widgets[id].tpl);
+                                if (obj) {
+                                    that.views[view].widgets[id].widgetSet = obj.attr('data-vis-set');
+                                    isViewsConverted = true;
+                                }
+                            }
+
+                            if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].grouped) that.renderWidget(viewDiv, view, id);
+                        }
                     }
+
+                    if (that.editMode) {
+                        if (that.binds.jqueryui) that.binds.jqueryui._disable();
+                        that.droppable(viewDiv, view);
+                    }
+                }
+
+                // move views in container
+                var containers = [];
+                $view.find('.vis-view-container').each(function () {
+                    var cview = $(this).attr('data-vis-contains');
+                    if (!that.views[cview]) {
+                        $(this).append('error: view not found.');
+                        return false;
+                    } else if (cview === view) {
+                        $(this).append('error: view container recursion.');
+                        return false;
+                    }
+                    containers.push({thisView: this, view: cview});
+                });
+                var wait = false;
+                if (containers.length) {
+                    wait = true;
+                    that.renderViews(viewDiv, containers, function (_viewDiv, _containers) {
+                        for (var c = 0; c < _containers.length; c++) {
+                            $('#visview_' + _containers[c].view)
+                                .appendTo(_containers[c].thisView)
+                                .show();
+                        }
+                        if (!hidden) $view.show();
+
+                        $('#visview_' + _viewDiv).trigger('rendered');
+                        if (callback) callback(_viewDiv, view);
+                    });
+                }
+
+                // Store modified view
+                if (isViewsConverted && that.saveRemote) that.saveRemote();
+
+                if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
+                    $('.vis-widget').addClass('vis-widget-lock');
+                    if (viewDiv !== view) {
+                        $('#' + viewDiv).removeClass('vis-widget-lock');
+                    }
+                }
+
+                if (!wait) {
                     if (!hidden) $view.show();
 
-                    //setTimeout(function () {
-                        $('#visview_' + view).trigger('rendered');
-                        if (callback) callback(view);
-                    //}, 0);
-                });
-            }
+                    setTimeout(function () {
+                        $('#visview_' + viewDiv).trigger('rendered');
+                        if (callback) callback(viewDiv, view);
+                    }, 0);
+                }
 
-            // Store modified view
-            if (isViewsConverted && that.saveRemote) that.saveRemote();
-
-            if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
-                $('.vis-widget').addClass('vis-widget-lock');
-            }
-
-            if (!wait) {
-                if (!hidden) $view.show();
-
-                setTimeout(function () {
-                    $('#visview_' + view).trigger('rendered');
-                    if (callback) callback(view);
-                }, 0);
-            }
-
-            // apply group policies
-            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
-                if (that.views[view].settings.group_action !== 'hide') {
-                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
-                        $view.addClass('vis-user-disabled');
+                // apply group policies
+                if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                    if (that.views[view].settings.group_action !== 'hide') {
+                        if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                            $view.addClass('vis-user-disabled');
+                        }
                     }
                 }
-            }
-        });
-    },
-    addViewStyle: function (view, theme) {
-        var _view = 'visview_' + view;
+            });
+        },
+    addViewStyle:       function (viewDiv, view, theme) {
+        var _view = 'visview_' + viewDiv;
 
         if (this.calcCommonStyle() === theme) return;
 
@@ -965,24 +1035,24 @@ var vis = {
             url: ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/jquery-ui.min.css',
             cache: false,
             success: function (data) {
-                $('#' + view + '_style').remove();
+                $('#' + viewDiv + '_style').remove();
                 data = data.replace('.ui-helper-hidden', '#' + _view + ' .ui-helper-hidden');
                 data = data.replace(/(}.)/g, '}#' + _view + ' .');
                 data = data.replace(/,\./g, ',#' + _view + ' .');
                 data = data.replace(/images/g, ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + theme + '/images');
                 var $view = $('#' + _view);
-                $view.append('<style id="' + view + '_style">' + data + '</style>');
+                $view.append('<style id="' + viewDiv + '_style">' + data + '</style>');
 
-                $('#' + view + '_style_common_user').remove();
-                $view.append('<style id="' + view + '_style_common_user" class="vis-common-user">' + $('#vis-common-user').html() + '</style>');
+                $('#' + viewDiv + '_style_common_user').remove();
+                $view.append('<style id="' + viewDiv + '_style_common_user" class="vis-common-user">' + $('#vis-common-user').html() + '</style>');
 
-                $('#' + view + '_style_user').remove();
-                $view.append('<style id="' + view + '_style_user" class="vis-user">' + $('#vis-user').html() + '</style>');
+                $('#' + viewDiv + '_style_user').remove();
+                $view.append('<style id="' + viewDiv + '_style_user" class="vis-user">' + $('#vis-user').html() + '</style>');
 
             }
         });
     },
-    preloadImages: function (srcs) {
+    preloadImages:      function (srcs) {
         if (!this.preloadImages.cache) {
             this.preloadImages.cache = [];
         }
@@ -993,9 +1063,17 @@ var vis = {
             this.preloadImages.cache.push(img);
         }
     },
-    destroyWidget: function (view, widget) {
+    destroyWidget:      function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         if ($widget.length) {
+            var widgets = this.views[view].widgets[widget].data.members;
+
+            if (widgets) {
+                for (var w = 0; w < widgets.length; w++) {
+                    this.destroyWidget(viewDiv, view, widgets[w]);
+                }
+            }
+
             try {
                 // get array of bound OIDs
                 var bound = $widget.data('bound');
@@ -1021,22 +1099,27 @@ var vis = {
             }
         }
     },
-    reRenderWidget: function (view, widget) {
+    reRenderWidget:     function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         var updateContainers = $widget.find('.vis-view-container').length;
-        this.destroyWidget(view || this.activeView, widget);
-        this.renderWidget(view  || this.activeView, widget);
+        view    = view    || this.activeView;
+        viewDiv = viewDiv || this.activeViewDiv;
 
-        if (updateContainers) this.updateContainers(view || this.activeView);
+        this.destroyWidget(viewDiv, view, widget);
+        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : null);
+
+        if (updateContainers) this.updateContainers(viewDiv, view);
     },
-    changeFilter: function (filter, showEffect, showDuration, hideEffect, hideDuration) {
-        var widgets = this.views[this.activeView].widgets;
+    changeFilter:       function (viewDiv, view, filter, showEffect, showDuration, hideEffect, hideDuration) {
+        view = view || this.activeView;
+        var widgets = this.views[view].widgets;
         var that = this;
         var widget;
         var mWidget;
         if (!filter) {
             // show all
             for (widget in widgets) {
+                if (!widgets.hasOwnProperty(widget)) continue;
                 if (widgets[widget].data.filterkey) {
                     $('#' + widget).show(showEffect, null, parseInt(showDuration));
                 }
@@ -1058,6 +1141,7 @@ var vis = {
         } else if (filter === '$') {
             // hide all
             for (widget in widgets) {
+                if (!widgets.hasOwnProperty(widget)) continue;
                 mWidget = document.getElementById(widget);
                 if (mWidget &&
                     mWidget._customHandlers &&
@@ -1069,6 +1153,7 @@ var vis = {
         } else {
             this.viewsActiveFilter[this.activeView] = filter.split(',');
             for (widget in widgets) {
+                if (!widgets.hasOwnProperty(widget)) continue;
                 //console.log(widgets[widget]);
                 if (widgets[widget].data.filterkey) {
                     if (this.viewsActiveFilter[this.activeView].length > 0 &&
@@ -1090,6 +1175,7 @@ var vis = {
 
                 // Show complex widgets like hqWidgets or bars
                 for (var widget in widgets) {
+                    if (!widgets.hasOwnProperty(widget)) continue;
                     mWidget = document.getElementById(widget);
                     if (mWidget &&
                         mWidget._customHandlers &&
@@ -1106,45 +1192,49 @@ var vis = {
         }
 
         if (this.binds.bars && this.binds.bars.filterChanged) {
-            this.binds.bars.filterChanged(this.activeView, filter);
+            this.binds.bars.filterChanged(viewDiv, view, filter);
         }
     },
-    isSignalVisible: function (view, widget, index, val) {
+    isSignalVisible:    function (view, widget, index, val) {
         var oid = this.views[view].widgets[widget].data['signals-oid-' + index];
 
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return (condition === 'not exist') ? true : false;
+            if (val === undefined) return (condition === 'not exist');
 
             var condition = this.views[view].widgets[widget].data['signals-cond-' + index];
-            var value     = this.views[view].widgets[widget].data['signals-val-'  + index];
+            var value = this.views[view].widgets[widget].data['signals-val-' + index];
 
-            if (!condition || value === undefined) return (condition === 'not exist') ? true : false;
+            if (!condition || value === undefined) return (condition === 'not exist');
+
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
 
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
             } else if (t === 'number') {
                 value = parseFloat(value);
-            }  else if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
             switch (condition) {
                 case '==':
                     value = value.toString();
-                    val   = val.toString();
-                    if (val   === '1') val   = 'true';
+                    val = val.toString();
+                    if (val === '1') val = 'true';
                     if (value === '1') value = 'true';
-                    if (val   === '0') val   = 'false';
+                    if (val === '0') val = 'false';
                     if (value === '0') value = 'false';
                     return value === val;
                 case '!=':
                     value = value.toString();
-                    val   = val.toString();
-                    if (val   === '1') val   = 'true';
+                    val = val.toString();
+                    if (val === '1') val = 'true';
                     if (value === '1') value = 'true';
-                    if (val   === '0') val   = 'false';
+                    if (val === '0') val = 'false';
                     if (value === '0') value = 'false';
                     return value !== val;
                 case '>=':
@@ -1157,18 +1247,16 @@ var vis = {
                     return val < value;
                 case 'consist':
                     value = value.toString();
-                    val   = val.toString();
+                    val = val.toString();
                     return (val.toString().indexOf(value) !== -1);
                 case 'not consist':
                     value = value.toString();
-                    val   = val.toString();
+                    val = val.toString();
                     return (val.toString().indexOf(value) === -1);
                 case 'exist':
-                    if (value === 'null') return true;
-                    return false;
+                    return (value !== 'null');
                 case 'not exist':
-                    if (value === 'null') return false;
-                    return true;
+                    return (value === 'null');
                 default:
                     console.log('Unknown signals condition for ' + widget + ': ' + condition);
                     return false;
@@ -1177,46 +1265,46 @@ var vis = {
             return false;
         }
     },
-    addSignalIcon: function (view, wid, data, index) {
+    addSignalIcon:      function (view, wid, data, index) {
         // show icon
         var display = (this.editMode || this.isSignalVisible(view, wid, index)) ? '' : 'none';
         if (this.editMode && data['signals-hide-edit-' + index]) display = 'none';
 
-        $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0)+ '%; left: ' + (data['signals-horz-' + index] || 0)+ '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
+        $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0) + '%; left: ' + (data['signals-horz-' + index] || 0) + '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
             (data['signals-text-' + index] ? ('<div class="vis-signal-text " style="' + (data['signals-text-style-' + index] || '') + '">' + data['signals-text-' + index] + '</div>') : '') + '</div>');
     },
-    addGestures: function (id, wdata) {
+    addGestures:        function (id, wdata) {
         // gestures
         var gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
-        var $$wid   = $$('#' + id);
-        var $wid    = $('#' + id);
+        var $$wid = $$('#' + id);
+        var $wid = $('#' + id);
         var offsetX = parseInt(wdata['gestures-offsetX']) || 0;
         var offsetY = parseInt(wdata['gestures-offsetY']) || 0;
-        var that    = this;
+        var that = this;
 
         gestures.forEach(function (gesture) {
             if (wdata && wdata['gestures-' + gesture + '-oid']) {
                 var oid = wdata['gestures-' + gesture + '-oid'];
                 if (oid) {
-                    var val      = wdata['gestures-' + gesture + '-value'];
-                    var delta    = parseInt(wdata['gestures-' + gesture + '-delta'])     || 10;
-                    var limit    = parseFloat(wdata['gestures-' + gesture + '-limit'])   || false;
-                    var max      = parseFloat(wdata['gestures-' + gesture + '-maximum']) || 100;
-                    var min      = parseFloat(wdata['gestures-' + gesture + '-minimum']) || 0;
+                    var val = wdata['gestures-' + gesture + '-value'];
+                    var delta = parseInt(wdata['gestures-' + gesture + '-delta']) || 10;
+                    var limit = parseFloat(wdata['gestures-' + gesture + '-limit']) || false;
+                    var max = parseFloat(wdata['gestures-' + gesture + '-maximum']) || 100;
+                    var min = parseFloat(wdata['gestures-' + gesture + '-minimum']) || 0;
                     var valState = that.states.attr(oid + '.val');
-                    var newVal   = null;
+                    var newVal = null;
                     var $indicator;
-                    if (valState !== undefined){
-                        $wid.on('touchmove', function(evt) {
+                    if (valState !== undefined) {
+                        $wid.on('touchmove', function (evt) {
                             evt.preventDefault();
                         });
 
                         $wid.css({
-                            '-webkit-user-select':  'none',
-                            '-khtml-user-select':   'none',
-                            '-moz-user-select':     'none',
-                            '-ms-user-select':      'none',
-                            'user-select':          'none'
+                            '-webkit-user-select': 'none',
+                            '-khtml-user-select': 'none',
+                            '-moz-user-select': 'none',
+                            '-ms-user-select': 'none',
+                            'user-select': 'none'
                         });
                         $$wid[gesture](function (data) {
                             valState = that.states.attr(oid + '.val');
@@ -1230,7 +1318,7 @@ var vis = {
                                     return;
                                 }
                             } else if (gesture === 'swiping' || gesture === 'rotating' || gesture === 'pinching') {
-                                if (newVal === null){
+                                if (newVal === null) {
                                     $indicator = $('#' + wdata['gestures-indicator']);
                                     // create default indicator
                                     if (!$indicator.length) {
@@ -1239,14 +1327,14 @@ var vis = {
                                             $('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
                                             $indicator = $('#gestureIndicator');
 
-                                            $indicator.on('gestureUpdate', function(event, evData) {
+                                            $indicator.on('gestureUpdate', function (event, evData) {
                                                 if (evData.val === null) {
                                                     $(this).hide();
                                                 } else {
                                                     $(this).html(evData.val);
                                                     $(this).css({
-                                                        left: parseInt(evData.x) - $(this).width()  / 2 + 'px',
-                                                        top:  parseInt(evData.y) - $(this).height() / 2 + 'px'
+                                                        left: parseInt(evData.x) - $(this).width() / 2 + 'px',
+                                                        top: parseInt(evData.y) - $(this).height() / 2 + 'px'
                                                     }).show();
                                                 }
                                             });
@@ -1254,11 +1342,11 @@ var vis = {
                                     }
 
                                     $('#vis_container').css({
-                                        '-webkit-user-select':  'none',
-                                        '-khtml-user-select':   'none',
-                                        '-moz-user-select':     'none',
-                                        '-ms-user-select':      'none',
-                                        'user-select':          'none'
+                                        '-webkit-user-select': 'none',
+                                        '-khtml-user-select': 'none',
+                                        '-moz-user-select': 'none',
+                                        '-ms-user-select': 'none',
+                                        'user-select': 'none'
                                     });
 
                                     $(document).on('mouseup.gesture touchend.gesture', function () {
@@ -1270,16 +1358,16 @@ var vis = {
                                         $(document).off('mouseup.gesture touchend.gesture');
 
                                         $('#vis_container').css({
-                                            '-webkit-user-select':  'text',
-                                            '-khtml-user-select':   'text',
-                                            '-moz-user-select':     'text',
-                                            '-ms-user-select':      'text',
-                                            'user-select':          'text'
+                                            '-webkit-user-select': 'text',
+                                            '-khtml-user-select': 'text',
+                                            '-moz-user-select': 'text',
+                                            '-ms-user-select': 'text',
+                                            'user-select': 'text'
                                         });
                                     });
                                 }
                                 var swipeDelta, indicatorX, indicatorY = 0;
-                                switch (gesture){
+                                switch (gesture) {
                                     case 'swiping':
                                         swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
                                         swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
@@ -1290,7 +1378,7 @@ var vis = {
                                     case 'rotating':
                                         swipeDelta = data.touch.delta;
                                         swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                        if (data.touch.touches[0].y < data.touch.touches[1].y){
+                                        if (data.touch.touches[0].y < data.touch.touches[1].y) {
                                             indicatorX = data.touch.touches[1].x;
                                             indicatorY = data.touch.touches[1].y;
                                         } else {
@@ -1317,19 +1405,23 @@ var vis = {
 
                                 newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
                                 newVal = Math.max(min, Math.min(max, newVal));
-                                $indicator.trigger('gestureUpdate', {val: newVal, x: indicatorX + offsetX, y: indicatorY + offsetY});
+                                $indicator.trigger('gestureUpdate', {
+                                    val: newVal,
+                                    x: indicatorX + offsetX,
+                                    y: indicatorY + offsetY
+                                });
                                 return;
                             } else if (limit !== false) {
                                 newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1);
                                 if (parseFloat(val) > 0 && newVal > limit) {
                                     newVal = limit;
-                                } else if (parseFloat(val) < 0 && newVal < limit){
+                                } else if (parseFloat(val) < 0 && newVal < limit) {
                                     newVal = limit;
                                 }
                             } else {
                                 newVal = val;
                             }
-                            that.setValue(oid,newVal);
+                            that.setValue(oid, newVal);
                             newVal = null;
                         });
                     }
@@ -1337,7 +1429,7 @@ var vis = {
             }
         });
     },
-    isUserMemberOf: function (user, userGroups) {
+    isUserMemberOf:     function (user, userGroups) {
         if (!this.userGroups) return true;
         if (typeof userGroups !== 'object') userGroups = [userGroups];
         for (var g = 0; g < userGroups.length; g++) {
@@ -1347,22 +1439,52 @@ var vis = {
         }
         return false;
     },
-    renderWidget: function (view, id, groupId) {
-        var $view = $('#visview_' + view);
+    renderWidget:       function (viewDiv, view, id, groupId) {
+        var $view;
+
+        if (!groupId) {
+            $view = $('#visview_' + viewDiv);
+        } else {
+            $view = $('#' + groupId);
+        }
         if (!$view.length) return;
 
         var widget = this.views[view].widgets[id];
+
+        if (groupId && widget) {
+            widget = JSON.parse(JSON.stringify(widget));
+            var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
+            if (aCount) {
+                for (var a in widget.data) {
+                    if (widget.data.hasOwnProperty(a) && typeof widget.data[a] === 'string') {
+                        for (var u = 1; u <= aCount; u++) {
+                            widget.data[a] = widget.data[a].replace('groupAttr' + u, this.views[view].widgets[groupId].data['groupAttr' + u] || '');
+                        }
+                    }
+                }
+            }
+        }
+
         var isRelative = widget && widget.style && (widget.style.position === 'relative' || widget.style.position === 'static' || widget.style.position === 'sticky');
 
-        if (groupId) {
-            $view = $('#' + groupId);
-        } else
         // if widget has relative position => insert it into relative div
-        if (this.editMode && isRelative) {
+        if (this.editMode && isRelative && viewDiv === view) {
             if (this.views[view].settings && this.views[view].settings.sizex) {
                 var $relativeView = $view.find('.vis-edit-relative');
                 if (!$relativeView.length) {
-                    $view.append('<div class="vis-edit-relative" style="width: ' + this.views[view].settings.sizex + 'px; height: ' + this.views[view].settings.sizey + 'px"></div>');
+                    var ww = this.views[view].settings.sizex;
+                    var hh = this.views[view].settings.sizey;
+                    if (parseFloat(ww).toString() === ww.toString()) ww = parseFloat(ww);
+                    if (parseFloat(hh).toString() === hh.toString()) hh = parseFloat(hh);
+
+                    if (typeof ww === 'number' || ww[ww.length - 1] < '0' || ww[ww.length - 1] > '9') {
+                        ww = ww + 'px';
+                    }
+                    if (typeof hh === 'number' || hh[hh.length - 1] < '0' || hh[hh.length - 1] > '9') {
+                        hh = hh + 'px';
+                    }
+
+                    $view.append('<div class="vis-edit-relative" style="width: ' + ww + '; height: ' + hh + '"></div>');
                     $view = $view.find('.vis-edit-relative');
                 } else {
                     $view = $relativeView;
@@ -1417,25 +1539,28 @@ var vis = {
             // Append html element to view
             if (widget.data && widget.data.oid) {
                 canWidget = can.view(widget.tpl, {
-                    val: this.states.attr(widget.data.oid + '.val'),
-                    //ts:  this.states.attr(widget.data.oid + '.ts'),
-                    //ack: this.states.attr(widget.data.oid + '.ack'),
-                    //lc:  this.states.attr(widget.data.oid + '.lc'),
-                    data: widgetData,
-                    view: view
+                    val:     this.states.attr(widget.data.oid + '.val'),
+                    data:    widgetData,
+                    viewDiv: viewDiv,
+                    view:    view
                 });
                 if ($widget.length) {
+                    if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
                     $widget.replaceWith(canWidget);
+                    // shift widget to group if required
                 } else {
                     $view.append(canWidget);
                 }
             } else if (widget.tpl) {
                 canWidget = can.view(widget.tpl, {
-                    data: widgetData,
-                    view: view
+                    data:    widgetData,
+                    viewDiv: viewDiv,
+                    view:    view
                 });
                 if ($widget.length) {
+                    if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
                     $widget.replaceWith(canWidget);
+                    // shift widget to group if required
                 } else {
                     $view.append(canWidget);
                 }
@@ -1450,9 +1575,10 @@ var vis = {
 
                 // fix position
                 for (var attr in widget.style) {
+                    if (!widget.style.hasOwnProperty(attr)) continue;
                     if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
                         var val = widget.style[attr];
-                        if (val !== '0' && val !== 0 && val !== null && val !== '' && val.toString().match(/^[-+]\d+$/)) {
+                        if (val !== '0' && val !== 0 && val !== null && val !== '' && val.toString().match(/^[-+]?\d+$/)) {
                             widget.style[attr] = val + 'px';
                         }
                     }
@@ -1490,7 +1616,7 @@ var vis = {
 
             // If edit mode, bind on click event to open this widget in edit dialog
             if (this.editMode) {
-                this.bindWidgetClick(view, id);
+                this.bindWidgetClick(viewDiv, view, id);
 
                 // @SJ cannot select menu and dialogs if it is enabled
                 /*if ($('#wid_all_lock_f').hasClass("ui-state-active")) {
@@ -1499,9 +1625,12 @@ var vis = {
             }
 
             $(document).trigger('wid_added', id);
+
             if (id[0] === 'g') {
                 for (var w = 0; w < widget.data.members.length; w++) {
-                    this.renderWidget(view, widget.data.members[w], id);
+                    if (widget.data.members[w] === id) continue;
+
+                    this.renderWidget(viewDiv, view, widget.data.members[w], id);
                 }
             }
         } catch (e) {
@@ -1514,8 +1643,31 @@ var vis = {
             }
         }
     },
-    changeView: function (view, hideOptions, showOptions, sync) {
+    changeView:         function (viewDiv, view, hideOptions, showOptions, sync, callback) {
         var that = this;
+
+        if (typeof view === 'object') {
+            callback = sync;
+            sync = showOptions;
+            hideOptions = showOptions;
+            view = viewDiv;
+        }
+
+        if (!view && viewDiv) view = viewDiv;
+
+        if (typeof hideOptions === 'function') {
+            callback = hideOptions;
+            hideOptions = undefined;
+        }
+        if (typeof showOptions === 'function') {
+            callback = showOptions;
+            showOptions = undefined;
+        }
+        if (typeof sync === 'function') {
+            callback = sync;
+            sync = undefined;
+        }
+
         var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && hideOptions.effect;
         if (!effect) {
             effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && showOptions.effect;
@@ -1530,7 +1682,12 @@ var vis = {
         showOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, showOptions);
         if (hideOptions.effect === 'show') effect = false;
 
+        if (this.editMode && this.activeView !== this.activeViewDiv) {
+            this.destroyGroupEdit(this.activeViewDiv, this.activeView);
+        }
+
         if (!this.views[view]) {
+            //noinspection JSUnusedAssignment
             view = null;
             for (var prop in this.views) {
                 if (prop === '___settings') continue;
@@ -1540,16 +1697,16 @@ var vis = {
         }
 
         // If really changed
-        if (this.activeView !== view) {
+        if (this.activeView !== viewDiv) {
             if (effect) {
-                this.renderView(view, true, function (_view) {
-                    var $view = $('#visview_' + _view);
+                this.renderView(viewDiv, view, true, function (_viewDiv, _view) {
+                    var $view = $('#visview_' + _viewDiv);
 
                     // Get the view, if required, from Container
                     if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
                     var oldView = that.activeView;
-                    that.postChangeView(_view);
+                    that.postChangeView(_viewDiv, _view, callback);
 
                     // If hide and show at the same time
                     if (sync) {
@@ -1568,63 +1725,73 @@ var vis = {
                     });
                 });
             } else {
-                this.renderView(view, function (_view) {
-                    var $view = $('#visview_' + _view);
+                this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
+                    var $view = $('#visview_' + _viewDiv);
 
                     // Get the view, if required, from Container
                     if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
                     $view.show();
-                    $('#visview_' + that.activeView).hide();
+                    var $oldView = $('#visview_' + that.activeViewDiv);
 
-                    that.postChangeView(_view);
+                    if ($oldView.hasClass('vis-edit-group')) {
+                        that.destroyView(that.activeViewDiv, that.activeView);
+                    } else {
+                        $oldView.hide();
+                    }
+
+                    that.postChangeView(_viewDiv, _view, callback);
                     that.destroyUnusedViews();
                 });
             }
             // remember last click for de-bounce
             this.lastChange = (new Date()).getTime();
         } else {
-            this.renderView(view, function (_view) {
-                var $view = $('#visview_' + _view);
+            this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
+                var $view = $('#visview_' + _viewDiv);
 
                 // Get the view, if required, from Container
                 if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
                 $view.show();
 
-                that.postChangeView(_view);
+                that.postChangeView(_viewDiv, _view, callback);
                 that.destroyUnusedViews();
             });
         }
     },
-    postChangeView: function (view) {
-         this.activeView = view;
+    postChangeView:     function (viewDiv, view, callback) {
+            this.activeView = view;
+            this.activeViewDiv = viewDiv;
+            /*$('#visview_' + viewDiv).find('.vis-view-container').each(function () {
+             $('#visview_' + $(this).attr('data-vis-contains')).show();
+             });*/
 
-         /*$('#visview_' + view).find('.vis-view-container').each(function () {
-          $('#visview_' + $(this).attr('data-vis-contains')).show();
-          });*/
+            this.updateContainers(viewDiv, view);
 
-         this.updateContainers(view);
+            if (!this.editMode) {
+                this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
+                $(window).trigger('viewChanged', viewDiv);
+            }
 
-         if (!this.editMode) {
-             this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
-             $(window).trigger('viewChanged', view);
-         }
+            if (window.location.hash.slice(1) !== view) {
+                if (history && history.pushState) {
+                    history.pushState({}, '', '#' + viewDiv);
+                }
+            }
 
-         if (window.location.hash.slice(1) !== view) {
-             if (history && history.pushState) {
-                 history.pushState({}, '', '#' + view);
-             }
-         }
+            // Navigation-Widgets
+            for (var i = 0; i < this.navChangeCallbacks.length; i++) {
+                this.navChangeCallbacks[i](viewDiv, view);
+            }
 
-         // Navigation-Widgets
-         for (var i = 0; i < this.navChangeCallbacks.length; i++) {
-             this.navChangeCallbacks[i](view);
-         }
-
-         // --------- Editor -----------------
-         if (this.editMode) this.changeViewEdit(view);
-    },
-    loadRemote: function (callback, callbackArg) {
+            // --------- Editor -----------------
+            if (this.editMode) {
+                this.changeViewEdit(viewDiv, view, false, callback);
+            } else if (typeof callback === 'function') {
+                callback(viewDiv, view);
+            }
+        },
+    loadRemote:         function (callback, callbackArg) {
         var that = this;
         if (!this.projectPrefix) {
             if (callback) callback.call(that, callbackArg);
@@ -1653,7 +1820,7 @@ var vis = {
                     that.views = data;
                 }
                 var _data = that.getUsedObjectIDs();
-                that.subscribing.IDs     = _data.IDs;
+                that.subscribing.IDs = _data.IDs;
                 that.subscribing.byViews = _data.byViews;
             } else {
                 that.views = null;
@@ -1662,8 +1829,8 @@ var vis = {
             if (callback) callback.call(that, callbackArg);
         });
     },
-    wakeUpCallbacks: [],
-    initWakeUp: function () {
+    wakeUpCallbacks:    [],
+    initWakeUp:         function () {
         var that = this;
         var oldTime = (new Date()).getTime();
         setInterval(function () {
@@ -1680,10 +1847,10 @@ var vis = {
             }
         }, 2500);
     },
-    onWakeUp: function (callback) {
+    onWakeUp:           function (callback) {
         this.wakeUpCallbacks.push(callback);
     },
-    showMessage: function (message, title, icon, width, callback) {
+    showMessage:        function (message, title, icon, width, callback) {
         // load some theme to show message
         if (!this.editMode && !$('#commonTheme').length) {
             $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
@@ -1708,7 +1875,7 @@ var vis = {
             this.$dialogMessage = $('#dialog-message');
             this.$dialogMessage.dialog({
                 autoOpen: false,
-                modal:    true,
+                modal: true,
                 open: function () {
                     $(this).parent().css({'z-index': 1003});
                     var callback = $(this).data('callback');
@@ -1731,7 +1898,7 @@ var vis = {
                         }
                     },
                     {
-                        id:  'dialog_message_cancel',
+                        id: 'dialog_message_cancel',
                         text: _('Cancel'),
                         click: function () {
                             var callback = $(this).data('callback');
@@ -1765,11 +1932,11 @@ var vis = {
         }
         this.$dialogMessage.dialog('open');
     },
-    showError: function (error) {
+    showError:          function (error) {
         this.showMessage(error, _('Error'), 'alert', 400);
     },
-    waitScreenVal: 0,
-    showWaitScreen: function (isShow, appendText, newText, step) {
+    waitScreenVal:      0,
+    showWaitScreen:     function (isShow, appendText, newText, step) {
         var waitScreen = document.getElementById("waitScreen");
         if (!waitScreen && isShow) {
             $('body').append('<div id="waitScreen" class="vis-wait-screen"><div id="waitDialog" class="waitDialog"><div class="vis-progressbar"></div><div class="vis-wait-text" id="waitText"></div></div></div>');
@@ -1798,7 +1965,7 @@ var vis = {
             $(waitScreen).remove();
         }
     },
-    registerOnChange: function (callback, arg) {
+    registerOnChange:   function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback === callback &&
                 this.onChangeCallbacks[i].arg === arg) {
@@ -1816,23 +1983,27 @@ var vis = {
             }
         }
     },
-    isWidgetHidden: function (view, widget, val) {
-        var oid       = this.views[view].widgets[widget].data['visibility-oid'];
+    isWidgetHidden:     function (view, widget, val) {
+        var oid = this.views[view].widgets[widget].data['visibility-oid'];
         var condition = this.views[view].widgets[widget].data['visibility-cond'];
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return (condition === 'not exist') ? true : false;
+            if (val === undefined) return (condition === 'not exist');
 
             var value = this.views[view].widgets[widget].data['visibility-val'];
 
-            if (!condition || value === undefined) return (condition === 'not exist') ? true : false;
+            if (!condition || value === undefined) return (condition === 'not exist');
+
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
 
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
             } else if (t === 'number') {
                 value = parseFloat(value);
-            }  else if (t === 'object') {
+            } else if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
@@ -1840,18 +2011,18 @@ var vis = {
             switch (condition) {
                 case '==':
                     value = value.toString();
-                    val   = val.toString();
-                    if (val   === '1') val   = 'true';
+                    val = val.toString();
+                    if (val === '1') val = 'true';
                     if (value === '1') value = 'true';
-                    if (val   === '0') val   = 'false';
+                    if (val === '0') val = 'false';
                     if (value === '0') value = 'false';
                     return value !== val;
                 case '!=':
                     value = value.toString();
-                    val   = val.toString();
-                    if (val   === '1') val   = 'true';
+                    val = val.toString();
+                    if (val === '1') val = 'true';
                     if (value === '1') value = 'true';
-                    if (val   === '0') val   = 'false';
+                    if (val === '0') val = 'false';
                     if (value === '0') value = 'false';
                     return value === val;
                 case '>=':
@@ -1864,24 +2035,22 @@ var vis = {
                     return val >= value;
                 case 'consist':
                     value = value.toString();
-                    val   = val.toString();
+                    val = val.toString();
                     return (val.toString().indexOf(value) === -1);
                 case 'not consist':
                     value = value.toString();
-                    val   = val.toString();
+                    val = val.toString();
                     return (val.toString().indexOf(value) !== -1);
                 case 'exist':
-                    if (val === 'null') return false;
-                    return true;
+                    return val === 'null';
                 case 'not exist':
-                    if (val === 'null') return true;
-                    return false;
+                    return val !== 'null';
                 default:
                     console.log('Unknown visibility condition for ' + widget + ': ' + condition);
                     return false;
             }
         } else {
-            return (condition === 'not exist') ? true : false;
+            return (condition === 'not exist');
         }
     },
     isWidgetFilteredOut: function (view, widget) {
@@ -1890,7 +2059,7 @@ var vis = {
         this.viewsActiveFilter[view].length > 0 &&
         this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
     },
-    calcCommonStyle: function (recalc) {
+    calcCommonStyle:    function (recalc) {
         if (!this.commonStyle || recalc) {
             if (this.editMode) {
                 this.commonStyle = this.config.editorTheme || 'redmond';
@@ -1899,6 +2068,7 @@ var vis = {
             var styles = {};
             if (this.views) {
                 for (var view in this.views) {
+                    if (!this.views.hasOwnProperty(view)) continue;
                     if (view === '___settings') continue;
                     if (!this.views[view] || !this.views[view].settings.theme) continue;
                     if (this.views[view].settings.theme && styles[this.views[view].settings.theme]) {
@@ -1919,7 +2089,7 @@ var vis = {
         }
         return this.commonStyle;
     },
-    formatValue: function formatValue(value, decimals, _format) {
+    formatValue:        function formatValue(value, decimals, _format) {
         if (typeof decimals !== 'number') {
             decimals = 2;
             _format = decimals;
@@ -1933,13 +2103,13 @@ var vis = {
         if (typeof value !== "number") value = parseFloat(value);
         return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatDate: function formatDate(dateObj, isDuration, _format) {
+    formatDate:         function formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
-            isDuration  = true;
+            isDuration = true;
         }
         if (typeof isDuration !== 'boolean') {
-            _format    = isDuration;
+            _format = isDuration;
             isDuration = false;
         }
 
@@ -1967,7 +2137,7 @@ var vis = {
         if (isDuration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
 
         var validFormatChars = 'YJГMМDTДhSчmмsс';
-        var s      = '';
+        var s = '';
         var result = '';
 
         function put(s) {
@@ -2047,8 +2217,8 @@ var vis = {
         put(s);
         return result;
     },
-    extractBinding: function (format) {
-        if (this.editMode) return null;
+    extractBinding:     function (format) {
+        if (this.editMode || !format) return null;
         if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
 
         var oid = format.match(/{(.+?)}/g);
@@ -2062,7 +2232,7 @@ var vis = {
                 var parts = _oid.split(';');
                 result = result || [];
                 var systemOid = parts[0].trim();
-                var visOid    = systemOid;
+                var visOid = systemOid;
 
                 var test1 = visOid.substring(visOid.length - 4);
                 var test2 = visOid.substring(visOid.length - 3);
@@ -2073,8 +2243,8 @@ var vis = {
 
                 var isSeconds = (test2 === '.ts' || test2 === '.lc');
 
-                var test1 = systemOid.substring(systemOid.length - 4);
-                var test2 = systemOid.substring(systemOid.length - 3);
+                test1 = systemOid.substring(systemOid.length - 4);
+                test2 = systemOid.substring(systemOid.length - 3);
 
                 if (test1 === '.val' || test1 === '.ack') {
                     systemOid = systemOid.substring(0, systemOid.length - 4);
@@ -2093,9 +2263,9 @@ var vis = {
                     operations.push({
                         op: 'eval',
                         arg: [{
-                            name:       xx[0],
-                            visOid:     visOid,
-                            systemOid:  systemOid
+                            name: xx[0],
+                            visOid: visOid,
+                            systemOid: systemOid
                         }]
                     });
                 }
@@ -2106,10 +2276,10 @@ var vis = {
                     if (isEval) {
                         if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                             var _systemOid = parts[u].trim();
-                            var _visOid    = _systemOid;
+                            var _visOid = _systemOid;
 
-                            var test1 = _visOid.substring(_visOid.length - 4);
-                            var test2 = _visOid.substring(_visOid.length - 3);
+                            test1 = _visOid.substring(_visOid.length - 4);
+                            test2 = _visOid.substring(_visOid.length - 3);
 
                             if (test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
                                 _visOid = _visOid + '.val';
@@ -2126,8 +2296,8 @@ var vis = {
                             var xx = _visOid.split(':', 2);
                             var yy = _systemOid.split(':', 2);
                             operations[0].arg.push({
-                                name:      xx[0],
-                                visOid:    xx[1],
+                                name: xx[0],
+                                visOid: xx[1],
                                 systemOid: yy[1]
                             });
                         } else {
@@ -2179,10 +2349,10 @@ var vis = {
                             // value formatting
                             if (parse[1] === 'value') {
                                 operations = operations || [];
-                                var param = (parse[2]===undefined) ? '(2)' : parse[2];
+                                var param = (parse[2] === undefined) ? '(2)' : parse[2];
                                 param = param.trim();
                                 param = param.substring(1, param.length - 1);
-                                operations.push({ op: parse[1], arg: param });
+                                operations.push({op: parse[1], arg: param});
                             } else
                             // operators have optional parameter
                             if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
@@ -2215,12 +2385,12 @@ var vis = {
                 }
 
                 result.push({
-                    visOid:     visOid,
-                    systemOid:  systemOid,
-                    token:      oid[p],
+                    visOid: visOid,
+                    systemOid: systemOid,
+                    token: oid[p],
                     operations: operations ? operations : undefined,
-                    format:     format,
-                    isSeconds:  isSeconds
+                    format: format,
+                    isSeconds: isSeconds
                 });
             }
         }
@@ -2232,7 +2402,7 @@ var vis = {
 
         return result;
     },
-    formatBinding: function (format, view, wid, widget) {
+    formatBinding:      function (format, view, wid, widget) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
@@ -2285,7 +2455,8 @@ var vis = {
                             }
                             string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                         }
-                        if (oids[t].operations[k].formula.indexOf('widget.') !== -1) {
+                        var formula = oids[t].operations[k].formula;
+                        if (formula && formula.indexOf('widget.') !== -1) {
                             string += 'var widget = ' + JSON.stringify(widget) + ';';
                         }
                         string += 'return ' + oids[t].operations[k].formula + ';';
@@ -2406,6 +2577,7 @@ var vis = {
 
         // First find all with best fitting width
         for (var view in this.views) {
+            if (!this.views.hasOwnProperty(view)) continue;
             if (view === '___settings') continue;
             if (this.views[view].settings && this.views[view].settings.useAsDefault) {
                 // If difference less than 20%
@@ -2415,7 +2587,7 @@ var vis = {
             }
         }
 
-        for (var i in views) {
+        for (var i = 0; i < views.length; i++) {
             if (Math.abs(this.views[views[i]].settings.sizey - h) < difference) {
                 result = views[i];
                 difference = Math.abs(this.views[views[i]].settings.sizey - h);
@@ -2427,39 +2599,41 @@ var vis = {
             var ratio = w / h;
             difference = 10000;
 
-            for (var view in this.views) {
-                if (view === '___settings') continue;
-                if (this.views[view].settings && this.views[view].settings.useAsDefault) {
+            for (var view_ in this.views) {
+                if (!this.views.hasOwnProperty(view_)) continue;
+                if (view_ === '___settings') continue;
+                if (this.views[view_].settings && this.views[view_].settings.useAsDefault) {
                     // If difference less than 20%
-                    if (this.views[view].settings.sizey && Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey)) < difference) {
-                        result = view;
-                        difference = Math.abs(ratio - (this.views[view].settings.sizex / this.views[view].settings.sizey));
+                    if (this.views[view_].settings.sizey && Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey)) < difference) {
+                        result = view_;
+                        difference = Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey));
                     }
                 }
             }
         }
 
         if (!result && resultRequiredOrX) {
-            for (view in this.views) {
-                if (view === '___settings') continue;
-                return view;
+            for (var view__ in this.views) {
+                if (!this.views.hasOwnProperty(view__)) continue;
+                if (view__ === '___settings') continue;
+                return view__;
             }
         }
 
         return result;
     },
-    orientationChange: function () {
+    orientationChange:  function () {
         if (this.resolutionTimer) return;
         var that = this;
         this.resolutionTimer = setTimeout(function () {
             that.resolutionTimer = null;
             var view = that.findNearestResolution();
             if (view && view !== that.activeView) {
-                that.changeView(view);
+                that.changeView(view, view);
             }
         }, 200);
     },
-    detectBounce: function (el, isUp) {
+    detectBounce:       function (el, isUp) {
         if (!this.isTouch) return false;
 
         // Protect against two events
@@ -2484,12 +2658,12 @@ var vis = {
         $el.data(isUp ? 'lcu' : 'lc', now);
         return false;
     },
-    createDemoStates: function () {
+    createDemoStates:   function () {
         // Create demo variables
         this.states.attr({'demoTemperature.val': 25.4});
         this.states.attr({'demoHumidity.val': 55});
     },
-    getHistory: function (id, options, callback) {
+    getHistory:         function (id, options, callback) {
         // Possible options:
         // - **instance - (mandatory) sql.x or history.y
         // - **start** - (optional) time in ms - *new Date().getTime()*'
@@ -2513,6 +2687,20 @@ var vis = {
 
         this.conn.getHistory(id, options, callback);
     },
+    destroyView:        function (viewDiv, view) {
+        var $view = $('#visview_' + viewDiv);
+
+        console.debug('Destroy ' + view);
+
+        // Get all widgets and try to destroy them
+        for (var wid in this.views[view].widgets) {
+            if (!this.views[view].widgets.hasOwnProperty(wid)) continue;
+            this.destroyWidget(viewDiv, view, wid);
+        }
+
+        $view.remove();
+        this.unsubscribeStates(view);
+    },
     findAndDestroyViews: function () {
         if (this.destroyTimeout) {
             clearTimeout(this.destroyTimeout);
@@ -2521,7 +2709,7 @@ var vis = {
         var containers = [];
         var $createdViews = $('.vis-view');
         for (var view in this.views) {
-            if (view === '___settings') continue;
+            if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
             if (this.views[view].settings.alwaysRender || view === this.activeView) {
                 if (containers.indexOf(view) === -1) containers.push(view);
                 var $containers = $('#visview_' + view).find('.vis-view-container');
@@ -2544,22 +2732,16 @@ var vis = {
         }
         var that = this;
         $createdViews.each(function () {
-            var view = $(this).attr('id').substring('visview_'.length);
+            var $this = $(this);
+            var view = $this.data('view');
+            var viewDiv = $this.attr('id').substring('visview_'.length);
             // If this view is used as container
-            if (containers.indexOf(view) !== -1) return;
+            if (containers.indexOf(viewDiv) !== -1) return;
+            if ($this.hasClass('vis-edit-group')) return;
 
-            if ($(this).data('persistent')) return;
+            if ($this.data('persistent')) return;
 
-            console.debug('Destroy ' + view);
-
-            // Get all widgets and try to destroy them
-            for (var wid in that.views[view].widgets) {
-                if (!that.views[view].widgets.hasOwnProperty(wid)) continue;
-                that.destroyWidget(view, wid);
-            }
-            
-            $(this).remove();
-            that.unsubscribeStates(view);
+            that.destroyView(viewDiv, view);
         });
     },
     destroyUnusedViews: function () {
@@ -2575,7 +2757,7 @@ var vis = {
             }, timeout, this);
         }
     },
-    generateInstance: function () {
+    generateInstance:   function () {
         if (typeof storage !== 'undefined') {
             this.instance = (Math.random() * 4294967296).toString(16);
             this.instance = '0000000' + this.instance;
@@ -2584,7 +2766,7 @@ var vis = {
             storage.set(this.storageKeyInstance, this.instance);
         }
     },
-    subscribeStates: function (view, callback) {
+    subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {
             if (callback) callback();
             return;
@@ -2620,7 +2802,7 @@ var vis = {
             if (callback) callback();
         }
     },
-    unsubscribeStates: function (view) {
+    unsubscribeStates:  function (view) {
         if (!view || this.editMode) return;
 
         // view yet active
@@ -2652,7 +2834,7 @@ var vis = {
         }
         if (oids.length) this.conn.unsubscribe(oids);
     },
-    updateState: function (id, state) {
+    updateState:        function (id, state) {
         if (this.editMode) {
             this.states[id + '.val'] = state.val;
             this.states[id + '.ts']  = state.ts;
@@ -2663,9 +2845,9 @@ var vis = {
             var o = {};
             // Check new model
             o[id + '.val'] = state.val;
-            o[id + '.ts']  = state.ts;
+            o[id + '.ts'] = state.ts;
             o[id + '.ack'] = state.ack;
-            o[id + '.lc']  = state.lc;
+            o[id + '.lc'] = state.lc;
             if (state.q !== undefined) o[id + '.q'] = state.q;
             try {
                 this.states.attr(o);
@@ -2723,7 +2905,7 @@ var vis = {
                 if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
                     this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
                 }
-                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].widget);
+                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
             }
         }
 
@@ -2733,7 +2915,7 @@ var vis = {
         }
         if (this.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
     },
-    updateStates: function (data) {
+    updateStates:       function (data) {
         if (data) {
             for (var id in data) {
                 if (!data.hasOwnProperty(id)) continue;
@@ -2743,16 +2925,16 @@ var vis = {
                 try {
                     if (this.editMode) {
                         this.states[id + '.val'] = obj.val;
-                        this.states[id + '.ts']  = obj.ts;
+                        this.states[id + '.ts'] = obj.ts;
                         this.states[id + '.ack'] = obj.ack;
-                        this.states[id + '.lc']  = obj.lc;
+                        this.states[id + '.lc'] = obj.lc;
                         if (obj.q !== undefined) this.states[id + '.q'] = obj.q;
                     } else {
                         var oo = {};
                         oo[id + '.val'] = obj.val;
-                        oo[id + '.ts']  = obj.ts;
+                        oo[id + '.ts'] = obj.ts;
                         oo[id + '.ack'] = obj.ack;
-                        oo[id + '.lc']  = obj.lc;
+                        oo[id + '.lc'] = obj.lc;
                         if (obj.q !== undefined) oo[id + '.q'] = obj.q;
                         this.states.attr(oo);
                     }
@@ -2858,11 +3040,11 @@ function main($) {
             if (type !== 'string' && type !== 'number') {
                 for (var o in attr) {
                     // allow only dev1, dev2, ... to be bound
-                    if (o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                    if (o && attr.hasOwnProperty(o) && o.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                         return this.__attrs(attr, val);
                     }
                 }
-            } else if (arguments.length === 1) {
+            } else if (arguments.length === 1 && attr) {
                 if (attr.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                     can.__reading(this, attr);
                     return this._get(attr);
@@ -2880,7 +3062,7 @@ function main($) {
         vis.states.___bind = vis.states.bind;
         vis.states.bind = function (id, callback) {
             // allow only dev1, dev2, ... to be bound
-            if (id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+            if (id && id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
                 return vis.states.___bind(id, callback);
             }
             //console.log('ERROR: binding in edit mode is not allowed on ' + id);
@@ -2946,7 +3128,7 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
+                if (data || vis.editMode) $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
                 $(document).trigger('vis-common-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -2962,7 +3144,9 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
-                $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
+                if (data || vis.editMode) {
+                    $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
+                }
                 $(document).trigger('vis-user');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -3032,13 +3216,13 @@ function main($) {
                                         console.log('Create inner vis object ' + _id);
                                     }
                                     if (vis.editMode) {
-                                        vis.states[_id + '.val'] = 0;
+                                        vis.states[_id + '.val'] = 'null';
                                         vis.states[_id + '.ts']  = now;
                                         vis.states[_id + '.ack'] = false;
                                         vis.states[_id + '.lc']  = now;
                                     } else {
                                         var o = {};
-                                        o[_id + '.val'] = 0;
+                                        o[_id + '.val'] = 'null';
                                         o[_id + '.ts']  = now;
                                         o[_id + '.ack'] = false;
                                         o[_id + '.lc']  = now;
@@ -3099,7 +3283,7 @@ function main($) {
                                         }
                                     }
                                     if (vis.editMode && vis.objectSelector) {
-                                        vis.inspectWidgets(true);
+                                        vis.inspectWidgets(vis.activeViewDiv, vis.activeView, true);
                                     }
                                 });
                             }
@@ -3227,7 +3411,8 @@ function main($) {
                                 return;
                             }
                         }
-                        vis.changeView(parts[1] || parts[0]);
+                        var view = parts[1] || parts[0];
+                        vis.changeView(view, view);
                         break;
                     case 'refresh':
                     case 'reload':
@@ -3248,7 +3433,7 @@ function main($) {
                     case 'playSound':
                         setTimeout(function () {
                             var href;
-                            if (data.match(/^http(s)?:\/\//)) {
+                            if (data && data.match(/^http(s)?:\/\//)) {
                                 href = data;
                             } else {
                                 href = location.protocol + '//' + location.hostname + ':' + location.port + data;
