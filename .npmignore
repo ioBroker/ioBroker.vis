@@ -5,3 +5,6 @@ node_modules
 cordova
 .idea
 .git
+test
+.travis.yml
+appveyor.yml
