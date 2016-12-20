@@ -224,7 +224,7 @@ var servConn = {
             if (connLink) {
                 url = connLink;
                 if (typeof connLink !== 'undefined') {
-                    if (connLink[0] === ':') connLink = location.protocol + '://' + location.hostname + connLink;
+                    if (connLink[0] === ':') connLink = location.protocol + '//' + location.hostname + connLink;
                 }
             } else {
                 url = location.protocol + '//' + location.host;
