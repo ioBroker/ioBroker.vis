@@ -675,11 +675,13 @@
             if (noJsStyle !== true && noJsStyle !== 'true') {
                 $this.multiselect('refresh');
             }
+            var id =  $this.attr('id');
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                $this.val(newVal);
+                var $select = $('#' + id);
+                $select.val(newVal);
                 if (noJsStyle !== true && noJsStyle !== 'true') {
-                    $this.multiselect('refresh');
+                    $select.multiselect('refresh');
                 }
             });
 
@@ -691,7 +693,7 @@
                 vis.bindWidgetClick($this.attr('data-view'), $this.attr('id').replace('_multiselect', ''));
                 $this.parent().parent().resize(function () {
                     if (noJsStyle !== true && noJsStyle !== 'true') {
-                        $this.multiselect('option', 'minWidth', $(this).width() - 7);
+                        $('#' + id).multiselect('option', 'minWidth', $(this).width() - 7);
                     }
                 });
             }
