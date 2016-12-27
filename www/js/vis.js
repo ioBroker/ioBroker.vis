@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.3',
+    version: '0.12.4',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1725,6 +1725,7 @@ vis = {
                     });
                 });
             } else {
+                $('#visview_' + that.activeViewDiv).hide();
                 this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
                     var $view = $('#visview_' + _viewDiv);
 

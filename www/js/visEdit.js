@@ -1549,8 +1549,8 @@ vis = $.extend(true, vis, {
         });
 
         $('#rib_wid_copy_ok').button({icons: {primary: 'ui-icon-check', secondary: null}, text: false}).click(function () {
-            var widgets = that.dupWidgets(that.activeViewDiv, that.activeView, $('#rib_wid_copy_view').val());
-            that.save(that.activeViewDiv, that.activeView);
+            var widgets = that.dupWidgets($('#rib_wid_copy_view').val(), $('#rib_wid_copy_view').val());
+            that.save($('#rib_wid_copy_view').val(), $('#rib_wid_copy_view').val());
             that.inspectWidgets(that.activeViewDiv, that.activeView, widgets);
             $('#rib_wid').show();
             $('#rib_wid_copy_tr').hide();
@@ -3557,7 +3557,7 @@ vis = $.extend(true, vis, {
         if (widgetDiv && widgetDiv._customHandlers && widgetDiv._customHandlers.onDelete) {
             widgetDiv._customHandlers.onDelete(widgetDiv, id);
         }
-        if (this.views[view].widgets[id].data.members) {
+        if (this.views[view].widgets[id] && this.views[view].widgets[id].data.members) {
             var list = this.views[view].widgets[id].data.members;
             for (var m = 0; m < list.length; m++) {
                 if (list[m] !== id) {
@@ -3569,7 +3569,7 @@ vis = $.extend(true, vis, {
         this.destroyWidget(viewDiv, view, id);
 
         $('#' + id).remove();
-        if (this.views[view].widgets[id].grouped) {
+        if (this.views[view].widgets[id] && this.views[view].widgets[id].grouped) {
             // find group
             pos = this.views[view].widgets[groupId || viewDiv].data.members.indexOf(id);
             if (pos !== -1) this.views[view].widgets[groupId || viewDiv].data.members.splice(pos, 1);
@@ -4093,8 +4093,8 @@ vis = $.extend(true, vis, {
             $helper.css({
                     left:   parseInt(pos.left)   - 2 + 'px',
                     top:    parseInt(pos.top)    - 2 + 'px',
-                    height: parseInt(pos.height) + 2 + 'px',
-                    width:  parseInt(pos.width)  + 2 + 'px'
+                    height: parseInt(pos.height) + 3 + 'px',
+                    width:  parseInt(pos.width)  + 3 + 'px'
                 }
             ).show();
         } else {
@@ -4470,7 +4470,7 @@ vis = $.extend(true, vis, {
                         var yDiff = pos.top  % grid;
                         if (xDiff) {
                             if (xDiff < grid / 2) {
-                                pos.left += xDiff;
+                                pos.left -= xDiff;
                             }  else {
                                 pos.left += grid - xDiff;
                             }
@@ -4479,7 +4479,7 @@ vis = $.extend(true, vis, {
 
                         if (yDiff) {
                             if (yDiff < grid / 2) {
-                                pos.top += yDiff;
+                                pos.top -= yDiff;
                             } else {
                                 pos.top += grid - yDiff;
                             }
@@ -4517,42 +4517,46 @@ vis = $.extend(true, vis, {
                     grid = 0;
                 }
 
-                var moveX = ui.position.left - origX;
-                var moveY = ui.position.top  - origY;
+                var elementPosition = ui.offset;
+                var parentPosition = ui.helper.parent().offset();
+                var position = {left: elementPosition.left - parentPosition.left, top: elementPosition.top - parentPosition.top};
+
+                var moveX = position.left - origX;
+                var moveY = position.top  - origY;
 
                 var xDiff;
                 var yDiff;
                 // if grid enabled
                 if (grid) {
-                    xDiff = ui.position.left % grid;
-                    yDiff = ui.position.top  % grid;
+                    xDiff = position.left % grid;
+                    yDiff = position.top  % grid;
                     if (xDiff) {
                         if (xDiff < grid / 2) {
-                            ui.position.left += xDiff;
+                            position.left += xDiff;
                         } else {
-                            ui.position.left += grid - xDiff;
+                            position.left += grid - xDiff;
                         }
                     }
 
                     if (yDiff) {
                         if (yDiff < grid / 2) {
-                            ui.position.top += yDiff;
+                            position.top += yDiff;
                         } else {
-                            ui.position.top += grid - yDiff;
+                            position.top += grid - yDiff;
                         }
                     }
                 }
 
-                origX = ui.position.left;
-                origY = ui.position.top;
+                origX = position.left;
+                origY = position.top;
 
                 for (var i = 0; i < that.activeWidgets.length; i++) {
                     if (!that.views[view].widgets[that.activeWidgets[i]])  {
                         console.error('Something is wrong! "' + that.activeWidgets[i] + '" is not in "' + view + '"');
                         continue;
                     }
-                    var position = that.views[view].widgets[that.activeWidgets[i]].style['position'];
-                    if (position === 'relative' || position === 'static' || position === 'sticky') continue;
+                    var _position = that.views[view].widgets[that.activeWidgets[i]].style['position'];
+                    if (_position === 'relative' || _position === 'static' || _position === 'sticky') continue;
                     var mWidget  = document.getElementById(that.activeWidgets[i]);
                     var $mWidget = $(mWidget);
                     var pos = {
@@ -4568,7 +4572,7 @@ vis = $.extend(true, vis, {
                         yDiff = y % grid;
                         if (xDiff) {
                             if (xDiff < grid / 2) {
-                                x += xDiff;
+                                x -= xDiff;
                             } else {
                                 x += grid - xDiff;
                             }
@@ -4576,7 +4580,7 @@ vis = $.extend(true, vis, {
 
                         if (yDiff) {
                             if (yDiff < grid / 2) {
-                                y += yDiff;
+                                y -= yDiff;
                             } else {
                                 y += grid - yDiff;
                             }
@@ -4662,37 +4666,36 @@ vis = $.extend(true, vis, {
 
         var stop   = function (event, ui) {
             var widget = ui.helper.attr('id');
-            var w = ui.element.width();
-            var h = ui.element.height();
-            if (typeof w === 'string' && w.indexOf('px') === -1) {
-                w += 'px';
-            } else {
-                w = w.toFixed(0) + 'px';
-            }
-            if (typeof h === 'string' && h.indexOf('px') === -1) {
-                h += 'px';
-            } else {
-                h = h.toFixed(0) + 'px';
-            }
-
             if (!that.views[view].widgets[widget]) return;
 
             if (!that.views[view].widgets[widget].style) that.views[view].widgets[widget].style = {};
 
-            w = parseInt(ui.element.innerWidth(),  10);
-            h = parseInt(ui.element.innerHeight(), 10);
+            var elementPosition = ui.element.offset();
+            var parentPosition = ui.element.parent().offset();
+            var position = {left: elementPosition.left - parentPosition.left, top: elementPosition.top - parentPosition.top};
+
+            position.top  = parseInt(position.top, 10);
+            position.left = parseInt(position.left, 10);
+            var w = parseInt(ui.element.innerWidth(),  10);
+            var h = parseInt(ui.element.innerHeight(), 10);
+
             $('.widget-helper').css({
-                width:  w + 2,
-                height: h + 2
+                top:    position.top   - 2,
+                left:   position.left  - 2,
+                width:  ui.size.width  + 3,
+                height: ui.size.height + 3
             });
 
             that.editApplySize(viewDiv, view, widget, w, h);
+            that.editApplyPosition(viewDiv, view, widget, position.top, position.left);
 
             if ($('#' + that.views[view].widgets[widget].tpl).attr('data-vis-update-style')) {
                 that.reRenderWidgetEdit(viewDiv, view, widget);
             }
             $('#inspect_css_width').val(that.views[view].widgets[widget].style.width);
-            $('#inspect_css_height').val(that.views[view].widgets[widget].style.width);
+            $('#inspect_css_height').val(that.views[view].widgets[widget].style.height);
+            $('#inspect_css_top').val(that.views[view].widgets[widget].style.top);
+            $('#inspect_css_left').val(that.views[view].widgets[widget].style.left);
 
             that.save();
             $('#vis_container').find('.vis-leading-line').remove();
@@ -4700,45 +4703,70 @@ vis = $.extend(true, vis, {
         var resize = function (event, ui) {
             var grid = parseInt(that.views[view].settings.gridSize, 10);
 
+            var elementPosition = ui.element.offset();
+            var parentPosition = ui.element.parent().offset();
+            var position = {left: elementPosition.left - parentPosition.left, top: elementPosition.top - parentPosition.top};
+
             // if grid enabled
             if (that.views[view].settings.snapType === 2 && grid) {
                 var oldSize = ui.oldSize || ui.originalSize;
 
-                // snap size to grid
-                var pos   = ui.originalPosition;
-                var wDiff = (ui.size.width  + pos.left) % grid;
-                var hDiff = (ui.size.height + pos.top)  % grid;
+                var pos   = position;
+                // Check if size or position was changed
+                /*if (position.top !== oldSize.top || position.left !== oldSize.left) {
+                    var lDiff = pos.left % grid;
+                    var tDiff = pos.top  % grid;
 
-                if (wDiff && oldSize.width  !== ui.size.width) {
-                    if (wDiff < grid / 2) {
-                        ui.element.width(ui.size.width - wDiff);
-                    } else {
-                        ui.element.width(ui.size.width + grid - wDiff);
+                    if (lDiff && oldSize.left  !== position.left) {
+                        if (lDiff < grid / 2) {
+                            ui.element.css({left: position.left - lDiff, width: ui.size.width + lDiff});
+                        } else {
+                            ui.element.css({left: position.left + grid - lDiff, width: ui.size.width + grid - lDiff});
+                        }
                     }
-                    //$('.widget-helper').css('width', (w + grid - wDiff + 2));
+                    if (tDiff && oldSize.top  !== position.top) {
+                        if (lDiff < grid / 2) {
+                            ui.element.css('top', position.top - tDiff);
+                        } else {
+                            ui.element.css('top', position.top + grid - tDiff);
+                        }
+                    }
+                } else */{
+                    // snap size to grid
+                    var wDiff = (ui.size.width  + pos.left) % grid;
+                    var hDiff = (ui.size.height + pos.top)  % grid;
+
+                    if (wDiff && oldSize.width  !== oldSize.width) {
+                        if (wDiff < grid / 2) {
+                            ui.element.width(oldSize.width - wDiff);
+                        } else {
+                            ui.element.width(oldSize.width + grid - wDiff);
+                        }
+                    }
+
+                    if (hDiff && oldSize.height !== oldSize.height) {
+                        if (hDiff < grid / 2) {
+                            ui.element.height(oldSize.height - hDiff);
+                        } else {
+                            ui.element.height(oldSize.height + grid - hDiff);
+                        }
+                    }
                 }
 
-                if (hDiff && oldSize.height !== ui.size.height) {
-                    if (hDiff < grid / 2) {
-                        ui.element.height(ui.size.height - hDiff);
-                    } else {
-                        ui.element.height(ui.size.height + grid - hDiff);
-                    }
-                    //$('.widget-helper').css('height', (h + grid - hDiff - 2));
-                }
             }
             $('.widget-helper').css({
-                width:  ui.size.width  + 2,
-                height: ui.size.height + 2
+                top:    position.top   - 2,
+                left:   position.left  - 2,
+                width:  ui.size.width  + 3,
+                height: ui.size.height + 3
             });
-            ui.oldSize = {width: ui.size.width, height:  ui.size.height};
+            ui.oldSize = {width: ui.size.width, height:  ui.size.height, top: position.top, left: position.left};
             that.editShowLeadingLines(viewDiv, view);
         };
         obj.each(function () {
             var $this = $(this);
             var wid = $this.attr('id');
             var position = that.views[view].widgets[wid].style['position'];
-            if (position === 'relative' || position === 'static' || position === 'sticky') return;
             var resizableOptions;
             if (obj.attr('data-vis-resizable')) resizableOptions = JSON.parse(obj.attr('data-vis-resizable'));
 
@@ -4747,10 +4775,13 @@ vis = $.extend(true, vis, {
             if (resizableOptions.disabled) return;
 
             // Why resizable brings the flag position: relative within?
-            $this.css({position: 'absolute'});
+            $this.css({position: position || 'absolute'});
 
             resizableOptions.stop   = stop;
             resizableOptions.resize = resize;
+            if ((position !== 'relative' && position !== 'static' && position !== 'sticky')) {
+                resizableOptions.handles = 'n, e, s, w, nw, ne, sw, se';
+            }
             $this.resizable(resizableOptions);
         });
     },

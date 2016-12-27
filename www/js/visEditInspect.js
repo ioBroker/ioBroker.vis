@@ -180,7 +180,7 @@ vis = $.extend(true, vis, {
                     });
                 }
             };
-            line[0].onchange = function (val) {
+            line[0].onchange = function (val, oldValue) {
                 var wdata = $(this).data('wdata');
                 $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
                 var userOnchange = $(this).data('onchange');
@@ -188,7 +188,7 @@ vis = $.extend(true, vis, {
                     for (var w = 0; w < wdata.widgets.length; w++) {
                         var widgetSet = $('#' + that.views[wdata.view].widgets[wdata.widgets[w]].tpl).attr('data-vis-set');
                         if (that.binds[widgetSet] && that.binds[widgetSet][userOnchange]) {
-                            return that.binds[widgetSet][userOnchange](wdata.widgets[w], wdata.view, that.widgets[wdata.widgets[w]].data[wdata.attr], wdata.attr, false);
+                            return that.binds[widgetSet][userOnchange](wdata.widgets[w], wdata.view, that.widgets[wdata.widgets[w]].data[wdata.attr], wdata.attr, false, oldValue);
                         }
                     }
                 }
@@ -1543,10 +1543,11 @@ vis = $.extend(true, vis, {
         this.initStealHandlers();
 
         $widgetAttrs.find('.vis-inspect-widget').change(function () {
-            var $this   = $(this);
-            var wdata   = $this.data('wdata');
-            var depends = $this.data('depends');
-            var diff    = $this.data('different');
+            var $this    = $(this);
+            var wdata    = $this.data('wdata');
+            var depends  = $this.data('depends');
+            var diff     = $this.data('different');
+            var oldValue = null;
 
             // Set flag, that value was modified
             if (diff) $this.data('different', false).removeClass('vis-edit-different');
@@ -1558,12 +1559,11 @@ vis = $.extend(true, vis, {
                         that.views[wdata.view].widgets[wdata.widgets[i]].style = {};
                     }
                     var val = $this.val();
+                    oldValue = that.views[wdata.view].widgets[wdata.widgets[i]].style[css];
                     that.views[wdata.view].widgets[wdata.widgets[i]].style[css] = val;
                     var $widget = $('#' + wdata.widgets[i]);
                     if (val !== '' && (css === 'left' || css === 'top')) {
-                        if (val.indexOf('%') === -1 && val.indexOf('px') === -1 && val.indexOf('em') === -1) {
-                            val += 'px';
-                        }
+                        if (val.indexOf('%') === -1 && val.indexOf('px') === -1 && val.indexOf('em') === -1) val += 'px';
                     }
                     $widget.css(css, val);
                     if (that.activeWidgets.indexOf(wdata.widgets[i]) !== -1) {
@@ -1580,6 +1580,7 @@ vis = $.extend(true, vis, {
                     } else {
                         _val = $this.val();
                     }
+                    oldValue = that.widgets[wdata.widgets[i]].data[wdata.attr];
                     that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = that.widgets[wdata.widgets[i]].data[wdata.attr] = _val;
                 }
 
@@ -1610,9 +1611,9 @@ vis = $.extend(true, vis, {
                 if (typeof wdata.onchange === 'function') {
                     if (wdata.css) {
                         var css = wdata.attr.substring(4);
-                        changed = wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css]) || false;
+                        changed = wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], oldValue) || false;
                     } else {
-                        changed = wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr]) || false;
+                        changed = wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr], oldValue) || false;
                     }
                 }
 
@@ -1622,9 +1623,9 @@ vis = $.extend(true, vis, {
                         var _changed;
                         if (wdata.css) {
                             var css = wdata.attr.substring(4);
-                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true);
+                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true, oldValue);
                         } else {
-                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false);
+                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false, oldValue);
                         }
                         if (!changed) changed = _changed;
                     }
