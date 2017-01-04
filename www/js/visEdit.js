@@ -804,6 +804,8 @@ vis = $.extend(true, vis, {
         var $container = $('#vis_container');
         $container.find('.vis-leading-line').remove();
         if (isHide) return;
+        var viewOffset = this.editGetViewOffset(view);
+
         // there are following lines
         // horz-top
         // horz-bottom
@@ -815,7 +817,9 @@ vis = $.extend(true, vis, {
         var l;
         for (var i = 0; i < this.activeWidgets.length; i++) {
             var $awid = $('#' + this.activeWidgets[i]);
-            var aData = $awid.position();
+            var aData = $awid.offset();
+            aData.top  -= viewOffset.top;
+            aData.left -= viewOffset.left;
 
             aData.top    = parseInt(aData.top, 10);
             aData.bottom = aData.top + parseInt($awid.height(), 10);
@@ -837,8 +841,11 @@ vis = $.extend(true, vis, {
                 if (this.activeWidgets.indexOf(wid) === -1 && !this.views[view].widgets[wid].grouped) {
                     var $wid = $('#' + wid);
                     if (!$wid.length) continue;
-                    var data = $wid.position();
+                    var data = $wid.offset();
                     if (!data) continue;
+
+                    data.top  -= viewOffset.top;
+                    data.left -= viewOffset.left;
 
                     isLeft   = false;
                     isRight  = false;
@@ -931,11 +938,10 @@ vis = $.extend(true, vis, {
                 }
             }
             for (l = 0; l < lines.horz.length; l++) {
-                $container.append('<div class="vis-leading-line" style="top: 0; bottom: 0; left: ' + lines.horz[l] + 'px; width: 1px"></div>');
+                $container.append('<div class="vis-leading-line" style="top: 0; bottom: -' + viewOffset.top + 'px; left: ' + lines.horz[l] + 'px; width: 1px"></div>');
             }
             for (l = 0; l < lines.vert.length; l++) {
-                $container = $container || $('#vis_container');
-                $container.append('<div class="vis-leading-line" style="left: 0; right: 0; top: ' + lines.vert[l] + 'px; height: 1px"></div>');
+                $container.append('<div class="vis-leading-line" style="left: 0; right: -' + viewOffset.left + 'px; top: ' + lines.vert[l] + 'px; height: 1px"></div>');
             }
         }
     },
@@ -1072,6 +1078,22 @@ vis = $.extend(true, vis, {
         }
         if (this.isFloatComma) text = text.replace('.', ',');
         return text;
+    },
+    editGetViewOffset:      function (view, viewDiv, widget) {
+        view = view || this.activeView;
+        viewDiv = viewDiv || this.activeViewDiv || this.activeView;
+        var viewOffset;
+        if (viewDiv !== view) {
+            viewOffset = $('#' + viewDiv).offset();
+        } else {
+            viewOffset = $('#visview_' + viewDiv).offset();
+        }
+        if (!widget) return viewOffset;
+        var aData = $('#' + widget).offset();
+        if (!aData) return null;
+        aData.left -= viewOffset.left;
+        aData.top  -= viewOffset.top;
+        return aData;
     },
     editInitMenu:           function () {
         var that = this;
@@ -1564,10 +1586,12 @@ vis = $.extend(true, vis, {
                 return;
             }
 
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 data.push({
                     wid: that.activeWidgets[w],
-                    pos: parseInt($('#' + that.activeWidgets[w]).position().left, 10)
+                    pos: parseInt($('#' + that.activeWidgets[w]).offset().left, 10) - viewOffset.left
                 });
             }
 
@@ -1592,11 +1616,14 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
+
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 var $w = $('#' + that.activeWidgets[w]);
                 var obj = {
                     wid:  that.activeWidgets[w],
-                    pos:  parseInt($w.position().left, 10),
+                    pos:  parseInt($w.offset().left, 10) - viewOffset.left,
                     size: $w.width()
                 };
                 obj.pos += obj.size;
@@ -1625,10 +1652,12 @@ vis = $.extend(true, vis, {
                 return;
             }
 
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 data.push({
                     wid: that.activeWidgets[w],
-                    pos: parseInt($('#' + that.activeWidgets[w]).position().top, 10)
+                    pos: parseInt($('#' + that.activeWidgets[w]).offset().top, 10) - viewOffset.top
                 });
             }
 
@@ -1654,11 +1683,13 @@ vis = $.extend(true, vis, {
                 that.showMessage(_('Select more than one widget and try again.'), _('Too less widgets'), 'info', 500);
                 return;
             }
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 var $w = $('#' + that.activeWidgets[w]);
                 var obj = {
                     wid:  that.activeWidgets[w],
-                    pos:  parseInt($w.position().top),
+                    pos:  parseInt($w.offset().top, 10) - viewOffset.top,
                     size: $w.height()
                 };
                 obj.pos += obj.size;
@@ -1691,12 +1722,14 @@ vis = $.extend(true, vis, {
             var min  = 99990;
             var max  = -90000;
             var data = [];
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 var $w = $('#' + that.activeWidgets[w]);
                 var obj = {
                     $w:     $w,
                     wid:    that.activeWidgets[w],
-                    pos:    parseInt($w.position().top, 10),
+                    pos:    parseInt($w.offset().top, 10) - viewOffset.top,
                     size:   $w.height()
                 };
                 if (min > obj.pos) min = obj.pos;
@@ -1724,12 +1757,14 @@ vis = $.extend(true, vis, {
             var min  = 99990;
             var max  = -90000;
             var data = [];
+            var viewOffset = that.editGetViewOffset();
+
             for (var w = 0; w < that.activeWidgets.length; w++) {
                 var $w = $('#' + that.activeWidgets[w]);
                 var obj = {
                     $w:     $w,
                     wid:    that.activeWidgets[w],
-                    pos:    parseInt($w.position().left, 10),
+                    pos:    parseInt($w.offset().left, 10) - viewOffset.left,
                     size:   $w.width()
                 };
                 if (min > obj.pos) min = obj.pos;
@@ -4862,7 +4897,7 @@ vis = $.extend(true, vis, {
                 this.views[view].widgets[w].tpl.indexOf('image') === -1) {
                 var $jW = $('#' + w);
                 if ($jW.length) {
-                    var s = $jW.position();
+                    var s    = $jW.position();
                     s.width  = $jW.width();
                     s.height = $jW.height();
 
@@ -5499,6 +5534,7 @@ vis = $.extend(true, vis, {
 
             var viewDiv = this.activeViewDiv;
             var view    = this.activeView;
+            var viewOffset = this.editGetViewOffset();
 
             for (var i = 0, len = this.activeWidgets.length; i < len; i++) {
                 var widgetId = this.activeWidgets[i];
@@ -5513,6 +5549,7 @@ vis = $.extend(true, vis, {
                     }
                     var value;
                     var oldValue;
+
                     if (what === 'width') {
                         oldValue = $actualWidget.innerWidth();
                         if (shift > 0) {
@@ -5542,28 +5579,28 @@ vis = $.extend(true, vis, {
                         this.editApplySize(viewDiv, view, widgetId, null, value);
                     } else
                     if (what === 'top') {
-                        oldValue = $actualWidget.position().top;
+                        oldValue = $actualWidget.offset().top - viewOffset.top;
                         if (shift > 0) {
                             value = Math.ceil(oldValue + shift)
                         } else {
                             value = Math.floor(oldValue + shift);
                         }
                         $actualWidget.css(what, value);
-                        if ($actualWidget.position().top === oldValue) {
+                        if ($actualWidget.offset().top - viewOffset.top === oldValue) {
                             value += shift;
                             $actualWidget.css(what, value);
                         }
                         this.editApplyPosition(viewDiv, view, widgetId, value, null);
                     } else
                     if (what === 'left') {
-                        oldValue = $actualWidget.position().left;
+                        oldValue = $actualWidget.offset().left - viewOffset.left;
                         if (shift > 0) {
                             value = Math.ceil(oldValue + shift);
                         } else {
                             value =  Math.floor(oldValue + shift);
                         }
                         $actualWidget.css(what, value);
-                        if ($actualWidget.position().left === oldValue) {
+                        if ($actualWidget.offset().left - viewOffset.left === oldValue) {
                             value += shift;
                             $actualWidget.css(what, value);
                         }
@@ -6530,25 +6567,30 @@ $(document).keydown(function (e) {
     if (e.which === 90 && (e.ctrlKey || e.metaKey)) {
         vis.undo();
         e.preventDefault();
-    } else if (e.which === 65 && (e.ctrlKey || e.metaKey)) {
+    } else
+    if (e.which === 65 && (e.ctrlKey || e.metaKey)) {
         // Ctrl+A
         if (vis.selectAll()) e.preventDefault();
-    } else if (e.which === 83 && (e.ctrlKey || e.metaKey)) {
+    } else
+    if (e.which === 83 && (e.ctrlKey || e.metaKey)) {
         // Ctrl+S
         e.preventDefault();
         vis.saveRemote();
-    } else if (e.which === 27) {
+    } else
+    if (e.which === 27) {
         // Esc
         if (vis.deselectAll()) e.preventDefault();
     } else if (e.which === 46) {
         // Capture Delete button
         if (vis.onButtonDelete()) e.preventDefault();
-    } else if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
+    } else
+    if (e.which === 37 || e.which === 38 || e.which === 40 || e.which === 39) {
         // Capture down, up, left, right for shift
         if (vis.onButtonArrows(e.which, e.shiftKey, (e.ctrlKey || e.metaKey ? 10 : 1))) {
             e.preventDefault();
         }
-    } else if (e.which === 113) {
+    } else
+    if (e.which === 113) {
         var $ribbon = $('#ribbon_tab_dev');
         $ribbon.toggle();
         vis.editSaveConfig(['show/ribbon_tab_dev'], $ribbon.is(':visible'));
@@ -6591,7 +6633,7 @@ $(document).keydown(function (e) {
         // Next View
         vis.nextView();
         e.preventDefault();
-    }
+    } else
     if (e.which === 34) {
         // Prev View
         vis.prevView();

@@ -1059,7 +1059,7 @@ vis = $.extend(true, vis, {
         var parts = stateId.split('.');
         parts.pop(); // remove state
         var channel = parts.join('.');
-        var reg = new RegExp("^" + channel.replace(/\./g, '\\.') + '\\.');
+        var reg = new RegExp('^' + channel.replace(/\./g, '\\.') + '\\.');
 
         // channels
         for (var id in this.objects) {
