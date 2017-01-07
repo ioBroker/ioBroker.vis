@@ -14,7 +14,7 @@ WEB visualisation for iobroker platform.
 ![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
 ![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
 
-[Online Demos](http://dashui.ccu.io)
+[Online Demos](https://iobroker.net:8080)
 
 ## Bindings of objects
 Normally most of widgets have ObjectID attribute. And this attribute can be bound with some value of object ID.
@@ -172,7 +172,8 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.12.4 (2016-12-27)
+## Changelog
+### 0.12.4 (2016-12-27)
 
 ### 0.12.3 (2016-12-07)
 
