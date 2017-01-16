@@ -2791,7 +2791,7 @@ vis = {
         }
         if (oids.length) {
             var that = this;
-            console.debug('Requets ' + oids.length + ' states.');
+            console.debug('[' + new Date().getTime() + '] Request ' + oids.length + ' states.');
             this.conn.getStates(oids, function (error, data) {
                 if (error) that.showError(error);
 
@@ -3197,10 +3197,10 @@ function main($) {
                     }
 
                     // Read all states from server
+                    console.debug('Request ' + (vis.editMode ? 'all' : vis.subscribing.active.length) + ' states.');
                     vis.conn.getStates(vis.editMode ? null: vis.subscribing.active, function (error, data) {
-                        if (error) {
-                            vis.showError(error);
-                        }
+                        if (error) vis.showError(error);
+
                         vis.updateStates(data);
 
                         if (vis.subscribing.active.length) {
