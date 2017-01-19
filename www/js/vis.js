@@ -749,20 +749,22 @@ vis = {
 
         // If this function called earlier, it makes problems under FireFox.
         // render all views, that should be always rendered
-        var count = 0;
+        var containers = [];
         if (this.views && !this.editMode) {
             for (var view in this.views) {
-                if (view === '___settings') continue;
+                if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
                 if (this.views[view].settings.alwaysRender) {
-                    count++;
-                    this.renderView(view, view, true, function () {
-                        if (!--count && that.activeView) that.changeView(that.activeViewDiv, that.activeView);
-                    });
+                    containers.push({view: view});
                 }
+            }
+            if (containers.length) {
+                this.renderViews(that.activeViewDiv, containers, function () {
+                    if (that.activeView) that.changeView(that.activeViewDiv, that.activeView);
+                });
             }
         }
 
-        if (!count && this.activeView) this.changeView(this.activeViewDiv, this.activeView);
+        if (!containers.length && this.activeView) this.changeView(this.activeViewDiv, this.activeView);
     },
     initViewObject:     function () {
         if (!this.editMode) {
