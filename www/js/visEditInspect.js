@@ -1604,6 +1604,7 @@ vis = $.extend(true, vis, {
                 // Update select widget dropdown
                 if (wdata.attr === 'name') {
                     that.$selectActiveWidgets.find('option[value="' + wdata.widgets[i] + '"]').text(that.getWidgetName(wdata.view, wdata.widgets[i]));
+                    that.sortSelectWidget();
                     that.$selectActiveWidgets.multiselect('refresh');
                 }
 
