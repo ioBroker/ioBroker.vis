@@ -6523,7 +6523,15 @@ vis = $.extend(true, vis, {
                 }
             }
         }
+        this.sortSelectWidget();
         this.$selectActiveWidgets.multiselect('refresh');
+    },
+    sortSelectWidget: function() {
+        this.$selectActiveWidgets.append(this.$selectActiveWidgets.find("option").remove().sort(function(a, b) {
+            var at = $(a).text().toLowerCase();
+            var bt = $(b).text().toLowerCase();
+            return (at > bt) ? 1 : ((at < bt) ? - 1 : 0);
+        }));
     }
 });
 
