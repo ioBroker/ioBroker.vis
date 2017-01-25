@@ -58,6 +58,7 @@
             "setValue":         {"en": "Set value",          "de": "Setze Wert",            "ru": "Записываемое значение"},
             "oid-2":            {"en": "OID Range max.",     "de": "OID Bereich max.",      "ru": "ID Объекта макс"},
             "oid-2-working":    {"en": "OID Working max.",   "de": "OID Working max.",      "ru": "ID working макс"},
+            "asString":         {"en": "As string",          "de": "Als String",            "ru": "Строковое значение"},
             "values":           {"en": "Values",             "de": "Werte",                 "ru": "Значения"},
             "values_tooltip":   {
                 "en": "Values divided by semicolon:\x0A0;1;2",
@@ -467,10 +468,11 @@
                 }
             });
         },
-        input: function (el, options) {
+        input: function (el, options, asString) {
             var $this  = $(el);
             var oid    = $this.attr('data-oid');
             var digits = options;
+            asString = asString === 'true' || asString === true;
             if (!$this.data('no-style')) {
                 $this.button().addClass('ui-state-default');
             } else {
@@ -488,12 +490,12 @@
             });
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                if (digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
+                if (!asString && digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
 
                 $this.val(newVal);
             });
             var val = vis.states[oid + '.val'];
-            if (digits && digits !== '') {
+            if (!asString && digits && digits !== '') {
                 val = parseFloat(vis.states[oid + '.val']).toFixed(digits);
             }
             $this.val(val);
@@ -591,13 +593,13 @@
             });
             $this.val(vis.states.attr(oid + '.val'));
         },
-        inputset: function (el, options) {
+        inputset: function (el, options, asString) {
             var digits    = options;
             var $this     = $(el);
             var input     = '#' + $this.attr('id').slice(0, -3) + 'input';
             var noJsStyle = $(el).data('no-style');
-
             var oid = $this.attr('data-oid');
+            asString = asString === 'true' || asString === true;
             if (!noJsStyle) $this.button();
 
             $this.css({'padding-left': 5, 'padding-right': 5});
@@ -630,14 +632,14 @@
                         height:         '95%'
                     });
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                if (digits && digits !== '') {
+                if (!asString && digits && digits !== '') {
                     newVal = parseFloat(newVal).toFixed(digits);
                 }
                 $(input).val(newVal);
 
             });
             var newVal = vis.states[oid + '.val'];
-            if (digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
+            if (!asString && digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
             $(input).val(newVal);
         },
         multiselect: function (el, options, isOpen) {
@@ -1416,11 +1418,11 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Input"
-        data-vis-attrs="label[Input];oid;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
+        data-vis-attrs="label[Input];oid;asString/checkbox;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:275px;height:44px;" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits); %> />
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits, data.asString); %> />
         </div>
     </div>
 </script>
@@ -1511,13 +1513,13 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputSet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 32px; overflow: visible;"> <div class="vis-widget-prev-body"> <label></label> <input type="text" value="Input" size="2" style="font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; padding-left: 5px; padding-right: 5px; text-align: left; outline: none; cursor: text;height:14px" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> <input type="button" style="padding-left: 5px; padding-right: 5px;" value="Set" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div></div>'
         data-vis-name="ctrl - Input + Set-Button"
-        data-vis-attrs="title;buttontext[Text];oid;unit;digits/slider,0,10,1;size/slider,1,50,1">
+        data-vis-attrs="title;buttontext[Text];oid;unit;asString/checkbox;digits/slider,0,10,1;size/slider,1,50,1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important"/>
+            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important; padding: 0 0; "/>
             <%== this.data.attr('unit') %>
-            <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%== this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits); %>/>
+            <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%== this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits, data.asString); %>/>
         </div>
     </div>
 </script>

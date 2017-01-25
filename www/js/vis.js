@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.4',
+    version: '0.12.5',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -421,43 +421,53 @@ vis = {
                         data.state_oid = data[attr];
                         delete data[attr];
                         attr = 'state_oid';
-                    } else if (attr === 'number_id') {
+                    } else
+                    if (attr === 'number_id') {
                         data.number_oid = data[attr];
                         delete data[attr];
                         attr = 'number_oid';
-                    } else if (attr === 'toggle_id') {
+                    } else
+                    if (attr === 'toggle_id') {
                         data.toggle_oid = data[attr];
                         delete data[attr];
                         attr = 'toggle_oid';
-                    } else if (attr === 'set_id') {
+                    } else
+                    if (attr === 'set_id') {
                         data.set_oid = data[attr];
                         delete data[attr];
                         attr = 'set_oid';
-                    } else if (attr === 'temp_id') {
+                    } else
+                    if (attr === 'temp_id') {
                         data.temp_oid = data[attr];
                         delete data[attr];
                         attr = 'temp_oid';
-                    } else if (attr === 'drive_id') {
+                    } else
+                    if (attr === 'drive_id') {
                         data.drive_oid = data[attr];
                         delete data[attr];
                         attr = 'drive_oid';
-                    } else if (attr === 'content_id') {
+                    } else
+                    if (attr === 'content_id') {
                         data.content_oid = data[attr];
                         delete data[attr];
                         attr = 'content_oid';
-                    } else if (attr === 'dialog_id') {
+                    } else
+                    if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    } else if (attr === 'max_value_id') {
+                    } else
+                    if (attr === 'max_value_id') {
                         data.max_value_oid = data[attr];
                         delete data[attr];
                         attr = 'max_value_oid';
-                    } else if (attr === 'dialog_id') {
+                    } else
+                    if (attr === 'dialog_id') {
                         data.dialog_oid = data[attr];
                         delete data[attr];
                         attr = 'dialog_oid';
-                    } else if (attr === 'weoid') {
+                    } else
+                    if (attr === 'weoid') {
                         data.woeid = data[attr];
                         delete data[attr];
                         attr = 'woeid';
@@ -489,7 +499,8 @@ vis = {
                                     }
                                 }
                             }
-                        } else if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
+                        } else
+                        if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
                             if (data[attr] !== 'nothing_selected') {
                                 if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                                 if (views && views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
@@ -497,22 +508,33 @@ vis = {
 
                             // Visibility binding
                             if (attr === 'visibility-oid' && data['visibility-oid']) {
-                                var oid = data['visibility-oid'];
-                                if (!this.visibility[oid]) this.visibility[oid] = [];
-                                this.visibility[oid].push({view: view, widget: id});
+                                var vid = data['visibility-oid'];
+                                if (vid.match(/^groupAttr(\d+)$/)) {
+                                    var vgroup = this.getWidgetGroup(view, id);
+                                    if (vgroup) vid = this.views[view].widgets[vgroup].data[vid];
+                                }
+
+                                if (!this.visibility[vid]) this.visibility[vid] = [];
+                                this.visibility[vid].push({view: view, widget: id});
                             }
 
                             // Signal binding
                             if (attr.match(/^signals-oid-/) && data[attr]) {
-                                var oid = data[attr];
-                                if (!this.signals[oid]) this.signals[oid] = [];
-                                this.signals[oid].push({
-                                    view: view,
+                                var sid = data[attr];
+                                if (sid.match(/^groupAttr(\d+)$/)) {
+                                    var group = this.getWidgetGroup(view, id);
+                                    if (group) sid = this.views[view].widgets[group].data[sid];
+                                }
+
+                                if (!this.signals[sid]) this.signals[sid] = [];
+                                this.signals[sid].push({
+                                    view:   view,
                                     widget: id,
-                                    index: parseInt(attr.substring('signals-oid-'.length), 10)
+                                    index:  parseInt(attr.substring('signals-oid-'.length), 10)
                                 });
                             }
-                        } else if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
+                        } else
+                        if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                             var _id = 'groupAttr' + m[1];
                             if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
                             if (views && views[view].indexOf(data[_id]) === -1) views[view].push(data[_id]);
@@ -583,6 +605,16 @@ vis = {
         }
 
         return {IDs: IDs, byViews: views};
+    },
+    getWidgetGroup:     function (view, widget) {
+        var widgets = this.views[view].widgets;
+        var members;
+        for (var w in widgets) {
+            if (!widgets.hasOwnProperty(w)) continue;
+            members = this.views[view].widgets[w].data.members;
+            if (members && members.indexOf(widget) !== -1) return w;
+        }
+        return null;
     },
     loadWidgetSets:     function (callback) {
         this.showWaitScreen(true, '<br>' + _('Loading Widget-Sets...') + ' <span id="widgetset_counter"></span>', null, 20);
@@ -1197,28 +1229,29 @@ vis = {
             this.binds.bars.filterChanged(viewDiv, view, filter);
         }
     },
-    isSignalVisible:    function (view, widget, index, val) {
-        var oid = this.views[view].widgets[widget].data['signals-oid-' + index];
+    isSignalVisible:    function (view, widget, index, val, widgetData) {
+        widgetData = widgetData || this.views[view].widgets[widget].data;
+        var oid = widgetData['signals-oid-' + index];
 
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
             if (val === undefined) return (condition === 'not exist');
 
-            var condition = this.views[view].widgets[widget].data['signals-cond-' + index];
-            var value = this.views[view].widgets[widget].data['signals-val-' + index];
+            var condition = widgetData['signals-cond-' + index];
+            var value     = widgetData['signals-val-' + index];
 
             if (!condition || value === undefined) return (condition === 'not exist');
 
-            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
-                return false;
-            }
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') return false;
 
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
-            } else if (t === 'number') {
+            } else
+            if (t === 'number') {
                 value = parseFloat(value);
-            } else if (t === 'object') {
+            } else
+            if (t === 'object') {
                 val = JSON.stringify(val);
             }
 
@@ -1269,7 +1302,7 @@ vis = {
     },
     addSignalIcon:      function (view, wid, data, index) {
         // show icon
-        var display = (this.editMode || this.isSignalVisible(view, wid, index)) ? '' : 'none';
+        var display = (this.editMode || this.isSignalVisible(view, wid, index, undefined, data)) ? '' : 'none';
         if (this.editMode && data['signals-hide-edit-' + index]) display = 'none';
 
         $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0) + '%; left: ' + (data['signals-horz-' + index] || 0) + '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
@@ -1595,7 +1628,7 @@ vis = {
             }
 
             if (!this.editMode) {
-                if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id)) {
+                if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id, undefined, widget.data)) {
                     var mWidget = document.getElementById(id);
                     $(mWidget).hide();
                     if (mWidget &&
@@ -1986,27 +2019,28 @@ vis = {
             }
         }
     },
-    isWidgetHidden:     function (view, widget, val) {
-        var oid = this.views[view].widgets[widget].data['visibility-oid'];
-        var condition = this.views[view].widgets[widget].data['visibility-cond'];
+    isWidgetHidden:     function (view, widget, val, widgetData) {
+        widgetData = widgetData || this.views[view].widgets[widget].data;
+        var oid = widgetData['visibility-oid'];
+        var condition = widgetData['visibility-cond'];
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
             if (val === undefined) return (condition === 'not exist');
 
-            var value = this.views[view].widgets[widget].data['visibility-val'];
+            var value = widgetData['visibility-val'];
 
             if (!condition || value === undefined) return (condition === 'not exist');
 
-            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
-                return false;
-            }
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') return false;
 
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
                 value = (value === 'true' || value === true || value === 1 || value === '1');
-            } else if (t === 'number') {
+            } else
+            if (t === 'number') {
                 value = parseFloat(value);
-            } else if (t === 'object') {
+            } else
+            if (t === 'object') {
                 val = JSON.stringify(val);
             }
 

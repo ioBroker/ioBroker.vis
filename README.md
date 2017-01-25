@@ -172,10 +172,10 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
-### 0.12.4 (2016-12-27)
-
-### 0.12.3 (2016-12-07)
+## Changelog### 0.12.5 (2017-01-25)
+* (pmant) add dropdown menu to views bar
+* (pmant) sort widgets widget selector by name
+* (bluefox) fix groupAttr in signals and visibility
 
 ### 0.12.2 (2016-12-04)
 * (bluefox) fix errors with grouping

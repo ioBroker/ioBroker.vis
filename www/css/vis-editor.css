@@ -1080,7 +1080,9 @@ td > .select_active_widget :nth-child(2) {
     z-index: 999;
 }
 .group-edit-close {
-    float: right;
+    position: absolute;
+    top: 5px;
+    right: 3px;
 }
 
 /*------------------------- context menu ------------------------------------*/
