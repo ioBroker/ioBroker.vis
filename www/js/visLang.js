@@ -59,7 +59,7 @@ $.extend(systemDictionary, {
     'rename_view':          {'en': 'Rename',            'de': 'Umbenennen',             'ru': 'Перемменовать'},
     'create_instance':      {'en': 'Create instance',   'de': 'Browser ID erzeugen',    'ru': 'Создать ID броузера'},
     "Object browser...":    {"en": "Object browser...", "de": "Objekt-Browser...",      "ru": "Просмотреть объекты..."},
-    'add_widget':           {'en': 'Add widget',        'de': 'Einfügen',               'ru': 'Добавить'},
+    'add_widget':           {'en': 'Add widget',        'de': 'Widget Einfügen',               'ru': 'Добавить'},
     'del_widget':           {'en': 'Delete widget',     'de': 'Löschen',                'ru': 'Удалить'},
     'dup_widget':           {'en': 'Copy to:',          'de': 'Kopieren nach:',         'ru': 'Копия в:'},
     'Clipboard: ':          {'en': 'Clipboard:',        'de': 'Zwischenablage:',        'ru': 'Буфер:'},
