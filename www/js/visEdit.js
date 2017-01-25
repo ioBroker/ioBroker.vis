@@ -2441,7 +2441,7 @@ vis = $.extend(true, vis, {
             tempList.val(this.activeView);
             tempList.selectmenu({
                 appendTo: "#view_select_list",
-                position: { my: "left top", at: "left bottom", of: "#view_select_list"},
+                position: { my: "left top", at: "left bottom", of: "#view_select_list", collision: "none" },
                 change: function (event, ui) {
                     var view = $(this).val();
                     that.changeView(view, view);
@@ -2450,9 +2450,13 @@ vis = $.extend(true, vis, {
                     tempList.selectmenu('destroy');
                     tempList.remove();
                 }
-            })
-                .selectmenu('open');
-
+            });
+            tempList.selectmenu('menuWidget').css('max-height', '400px')
+                .parent()
+                .css('height', 'calc(100vh - 135px)')
+                .css('overflow-x', 'hidden')
+                .css('overflow-y', 'scroll');
+            tempList.selectmenu('open');
         });
 
         $('#view_select_right').button({
