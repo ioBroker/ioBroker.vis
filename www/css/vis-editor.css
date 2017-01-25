@@ -575,10 +575,17 @@ body {
     margin: 0;
 }
 
+#view_select_list {
+    height: 28px;
+    width: 28px;
+    border-radius: 0;
+    margin: 0;
+}
+
 #view_select_tabs_wrap {
     height: 27px;
-    max-width: -webkit-calc(100% - 54px);
-    max-width: calc(100% - 54px);
+    max-width: -webkit-calc(100% - 86px);
+    max-width: calc(100% - 86px);
     overflow: hidden;
 }
 
@@ -592,9 +599,8 @@ body {
 #view_select_right {
     height: 28px;
     width: 28px;
-    position: absolute;
-    right: -2px;
     border-radius: 0;
+    margin: 0;
 }
 
 .view-select-tab {

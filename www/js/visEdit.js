@@ -2431,6 +2431,28 @@ vis = $.extend(true, vis, {
             }
         });
 
+        $('#view_select_list').button({
+            icons: {
+                primary: 'ui-icon-clipboard'
+            },
+            text: false
+        }).click(function () {
+            var tempList = that.$selectView.clone();
+            tempList.selectmenu({
+                appendTo: "#view_select_list",
+                position: { my: "left top", at: "left bottom", of: "#view_select_list"},
+                change: function (event, ui) {
+                    var view = $(this).val();
+                    that.changeView(view, view);
+                },
+                close: function( event, ui ) {
+                    tempList.selectmenu('destroy');
+                    tempList.remove();
+                }
+            })
+                .selectmenu('open');
+        });
+
         $('#view_select_right').button({
             icons: {
                 primary: 'ui-icon-carat-1-e'
@@ -2439,8 +2461,8 @@ vis = $.extend(true, vis, {
         }).click(function () {
             var o = {
                 parent_w: $('#view_select_tabs_wrap').width(),
-                self_w: $('#view_select_tabs').width(),
-                self_l: parseInt($('#view_select_tabs').css('left'))
+                self_w:   $('#view_select_tabs').width(),
+                self_l:   parseInt($('#view_select_tabs').css('left'))
             };
 
             if (o.self_w != o.parent_w) {
