@@ -2438,6 +2438,7 @@ vis = $.extend(true, vis, {
             text: false
         }).click(function () {
             var tempList = that.$selectView.clone();
+            tempList.val(this.activeView);
             tempList.selectmenu({
                 appendTo: "#view_select_list",
                 position: { my: "left top", at: "left bottom", of: "#view_select_list"},
@@ -2451,6 +2452,7 @@ vis = $.extend(true, vis, {
                 }
             })
                 .selectmenu('open');
+
         });
 
         $('#view_select_right').button({
