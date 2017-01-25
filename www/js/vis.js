@@ -2891,7 +2891,7 @@ vis = {
                 if (!mWidget) continue;
 
                 if (this.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
-                    $(mWidget).find('.this-signal[data-index="' + signal.index + '"]').show();
+                    $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').show();
                 } else {
                     $(mWidget).find('.vis-signal[data-index="' + signal.index + '"]').hide();
                 }
