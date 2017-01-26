@@ -4582,6 +4582,7 @@ vis = $.extend(true, vis, {
 
                 var elementPosition = ui.offset;
                 var parentPosition = ui.helper.parent().offset();
+                if (!parentPosition) return;
                 var position = {left: elementPosition.left - parentPosition.left, top: elementPosition.top - parentPosition.top};
 
                 var moveX = position.left - origX;
