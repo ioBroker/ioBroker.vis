@@ -2438,9 +2438,8 @@ vis = $.extend(true, vis, {
             text: false
         }).click(function () {
             var tempList = that.$selectView.clone();
-            tempList.val(this.activeView);
+            tempList.val(that.activeView);
             tempList.selectmenu({
-                appendTo: "#view_select_list",
                 position: { my: "left top", at: "left bottom", of: "#view_select_list", collision: "none" },
                 change: function (event, ui) {
                     var view = $(this).val();
@@ -2453,7 +2452,7 @@ vis = $.extend(true, vis, {
             });
             tempList.selectmenu('menuWidget').css('max-height', '400px')
                 .parent()
-                .css('height', 'calc(100vh - 135px)')
+                .css('max-height', 'calc(100vh - 135px)')
                 .css('overflow-x', 'hidden')
                 .css('overflow-y', 'scroll');
             tempList.selectmenu('open');
