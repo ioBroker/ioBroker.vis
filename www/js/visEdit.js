@@ -2438,9 +2438,8 @@ vis = $.extend(true, vis, {
             text: false
         }).click(function () {
             var tempList = that.$selectView.clone();
-            tempList.val(this.activeView);
+            tempList.val(that.activeView);
             tempList.selectmenu({
-                appendTo: "#view_select_list",
                 position: { my: "left top", at: "left bottom", of: "#view_select_list", collision: "none" },
                 change: function (event, ui) {
                     var view = $(this).val();
@@ -2453,7 +2452,7 @@ vis = $.extend(true, vis, {
             });
             tempList.selectmenu('menuWidget').css('max-height', '400px')
                 .parent()
-                .css('height', 'calc(100vh - 135px)')
+                .css('max-height', 'calc(100vh - 135px)')
                 .css('overflow-x', 'hidden')
                 .css('overflow-y', 'scroll');
             tempList.selectmenu('open');
@@ -3603,7 +3602,7 @@ vis = $.extend(true, vis, {
             var views = this.getViewsOfWidget(id);
             var wids = id.split('_', 2);
             for (var i = 0; i < views.length; i++) {
-                this.delWidgetHelper(viewDiv, view, wids[0] + '_' + views[i], false);
+                this.delWidgetHelper(viewDiv, views[i], wids[0] + '_' + views[i], false);
             }
             this.inspectWidgets(viewDiv, view, []);
             return;
@@ -3621,7 +3620,7 @@ vis = $.extend(true, vis, {
             widgetDiv._customHandlers.onDelete(widgetDiv, id);
         }
         if (this.views[view].widgets[id] && this.views[view].widgets[id].data.members) {
-            var list = this.views[view].widgets[id].data.members;
+            var list = this.views[view].widgets[id].data.members.slice();
             for (var m = 0; m < list.length; m++) {
                 if (list[m] !== id) {
                     this.delWidgetHelper(viewDiv, view, list[m], isAll, id);
@@ -3634,7 +3633,21 @@ vis = $.extend(true, vis, {
         $('#' + id).remove();
         if (this.views[view].widgets[id] && this.views[view].widgets[id].grouped) {
             // find group
-            pos = this.views[view].widgets[groupId || viewDiv].data.members.indexOf(id);
+            var pos = -1;
+            if (!groupId && viewDiv == view) {
+                var widgets = this.views[view].widgets;
+                for (var w in widgets) {
+                    if (!widgets.hasOwnProperty(w)) continue;
+                    var members = this.views[view].widgets[w].data.members;
+                    if (members && ((pos = members.indexOf(id)) !== -1)) {
+                        groupId = w;
+                    }
+                }
+            }
+            else {
+                pos = this.views[view].widgets[groupId || viewDiv].data.members.indexOf(id);
+            }
+
             if (pos !== -1) this.views[view].widgets[groupId || viewDiv].data.members.splice(pos, 1);
         }
         if (view) delete this.views[view].widgets[id];
@@ -3974,31 +3987,46 @@ vis = $.extend(true, vis, {
         var widgetData = this.views[view].widgets[oldId];
         var obj = {
             tpl:    widgetData.tpl,
-            data:   widgetData.data,
+            data:   $.extend(true, {}, widgetData.data),
             style:  widgetData.style,
             wid:    newId,
             noSave: true
         };
-        if (widgetData.grouped) obj.grouped = true;
+        if (widgetData.grouped){
+            obj.grouped = true;
+            // get viewDiv
+            if (viewDiv == view) {
+                var widgets = this.views[view].widgets;
+                for (var w in widgets) {
+                    if (!widgets.hasOwnProperty(w)) continue;
+                    var members = this.views[view].widgets[w].data.members;
+                    var pos;
+                    if (members && ((pos = members.indexOf(oldId)) !== -1)) {
+                        viewDiv = w;
+                    }
+                }
+            }
+        }
 
         this.addWidget(viewDiv, view, obj, true);
 
-        if (widgetData.grouped) {
+        /*if (widgetData.grouped) {
             // rename in groups
             var widgets = this.views[view].widgets;
             for (var w in widgets) {
                 if (!widgets.hasOwnProperty(w)) continue;
                 var members = this.views[view].widgets[w].data.members;
                 var pos;
-                if (members && ((pos = members.indexOf(oldId)) !== -1)) {
-                    members[pos] = newId;
+                if (members && ((pos = members.indexOf(oldId)) !== -1) && members.indexOf(newId) === -1) {
+                    this.views[view].widgets[w].data.members[pos] = newId;
                 }
             }
-        }
-        if (viewDiv === this.activeView) this.updateSelectWidget(viewDiv, view, newId);
-        this.delWidgetHelper(oldId, false);
+        }*/
+        if (viewDiv === this.activeView) this.updateSelectWidget(view, view, newId);
+        delete this.views[view].widgets[oldId].data.members;
+        this.delWidgetHelper(viewDiv, view, oldId, false);
 
-        this.inspectWidgets(viewDiv, view, [newId]);
+        if (viewDiv === this.activeView) this.inspectWidgets(viewDiv, view, [newId]);
         this.save();
     },
     reRenderWidgetEdit:     function (viewDiv, view, wid) {
@@ -4050,6 +4078,11 @@ vis = $.extend(true, vis, {
             }
 
             if (view) {
+                //if widget is a group first sync widgets within this group
+                if (this.views[view].widgets[widgets[i]].data.members && this.views[view].widgets[widgets[i]].data.members.length) {
+                    this.syncWidgets(this.views[view].widgets[widgets[i]].data.members.slice(), views);
+                }
+
                 if (views === null) views = [];
 
                 var isFound = false;
@@ -4081,18 +4114,26 @@ vis = $.extend(true, vis, {
                     }
 
                     if (this.views[v_].widgets[wid + '_' + v_] !== undefined) {
-                        this.delWidgetHelper(wid + '_' + v_, false);
+                        this.delWidgetHelper(v_, v_, wid + '_' + v_, false);
                     }
 
                     if (isFound) {
+                        if (this.views[view].widgets[widgets[i]].data.members) {
+                            var data = $.extend(true, {}, this.views[view].widgets[widgets[i]].data);
+                            for (var j = 0; j < data.members.length; j++) {
+                                var _wids = data.members[j].split('_', 2);
+                                data.members[j] = _wids[0] + '_' + v_;
+                            }
+                        }
                         // Create
                         this.addWidget(this.views[v_] ? v_: this.getViewOfWidget(v_), v_, {
                             tpl:    this.views[view].widgets[widgets[i]].tpl, 
-                            data:   this.views[view].widgets[widgets[i]].data, 
+                            data:   data || this.views[view].widgets[widgets[i]].data,
                             style:  this.views[view].widgets[widgets[i]].style, 
                             wid:    wid + '_' + v_, 
                             view:   v_,
-                            noSave: true
+                            noSave: true,
+                            grouped:this.views[view].widgets[widgets[i]].grouped || false
                         }, true);
                     }
                 }
@@ -4101,9 +4142,9 @@ vis = $.extend(true, vis, {
                 if (views.length < 2 && (widgets[i].indexOf('_') !== -1)) {
                     // rename this widget from "wid_view" to "wid"
                     var _wids = widgets[i].split('_', 2);
-                    this.renameWidget(widgets[i], _wids[0]);
+                    this.renameWidget(view, view, widgets[i], _wids[0]);
                 } else if (views.length > 1 && (widgets[i].indexOf('_') === -1)) {
-                    this.renameWidget(widgets[i], widgets[i] + '_' + view);
+                    this.renameWidget(view, view, widgets[i], widgets[i] + '_' + view);
                 }
             }
         }
@@ -5709,7 +5750,7 @@ vis = $.extend(true, vis, {
                 $('#' + widgets[w]).addClass('vis-widget-edit-locked').removeClass('ui-selectee ui-selected').unbind('click dblclick');
                 this.views[view].widgets[widgets[w]].data.locked = true;
             }
-            this.inspectWidgets(viewDiv, view, []);
+            this.inspectWidgets(viewDiv, view, widgets);
         }
     },
     unlockWidgets:          function (viewDiv, view, widgets) {
@@ -5728,6 +5769,7 @@ vis = $.extend(true, vis, {
                 }
                 this.bindWidgetClick(viewDiv, view, widgets[w]);
             }
+            this.inspectWidgets(viewDiv, view, widgets);
         }
     },
     bringTo:                function (viewDiv, view, widgets, isToFront) {
@@ -5819,7 +5861,19 @@ vis = $.extend(true, vis, {
             return isInside;
         });
 
-        if (!$list.length) return;
+        if (!$list.length) {
+            //reset z-index
+            for (var w = 0; w < widgets.length; w++) {
+                $wid = $('#' + widgets[w]);
+                zindex = undefined;
+                console.log('reset z-index of ' + widgets[w]);
+                $wid.css('z-index', zindex);
+                viewObj.widgets[widgets[w]].style['z-index'] = zindex;
+            }
+            this.inspectWidgets(viewDiv, view, true);
+            return;
+        }
+
         var that = this;
         // Move all widgets
         if (isToFront) {
@@ -5911,7 +5965,7 @@ vis = $.extend(true, vis, {
         return $viewDiv.find('.vis-widget').filter(function() {
             var offset = $(this).position();
             if (!$(this).length) return false;
-            if ($(this).hasClass('vis-widget-edit-locked')) return false;
+            //if ($(this).hasClass('vis-widget-edit-locked')) return false;
             var id = $(this).attr('id');
             if (viewDiv === id) return false;
 
@@ -6135,7 +6189,7 @@ vis = $.extend(true, vis, {
                         that.unlockWidgets(viewDiv, view, widgets);
                         break;
                     case 'export':
-                        that.exportWidgets(viewDiv, view, widgets);
+                        that.exportWidgets(widgets);
                         break;
                     case 'bringToBack':
                         that.bringTo(viewDiv, view, widgets, false);

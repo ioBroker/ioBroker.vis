@@ -840,7 +840,7 @@ td > .select_active_widget :nth-child(2) {
 }
 
 .view-select-menu {
-    height: calc(100% - 100px);
+    max-height: calc(100% - 100px);
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -1088,4 +1088,5 @@ td > .select_active_widget :nth-child(2) {
 /*------------------------- context menu ------------------------------------*/
 .ui-menu-item {
     font-size: 12px !important;
+    text-align: left;
 }
