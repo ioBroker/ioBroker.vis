@@ -98,7 +98,11 @@
         "singleton":                true,
         "type":                     "vis",
 		"highlight":                true,
-		"noConfig":                 true
+		"noConfig":                 true,
+		"welcomeScreen":            [
+										{"link": "vis/edit.html", "name": "vis editor", "img": "vis/img/faviconEdit.png", "color": "green", "order": 1}, 
+										{"link": "vis/index.html", "name": "vis", "img": "vis/img/favicon.png", "color": "blue", "order": 0}
+									]
     },
     "native": {
         "defaultFileMode":          1604
