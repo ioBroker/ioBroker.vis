@@ -3286,7 +3286,7 @@ vis = $.extend(true, vis, {
         }
         var that = this;
         this.saveRemote(function () {
-            that.renderView(_dest, function (_view) {
+            that.renderView(_dest, _dest, function (_view) {
                 that.changeView(_view, _view);
                 $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
