@@ -3322,21 +3322,21 @@ vis = $.extend(true, vis, {
         });
     },
     nextView:               function () {
-        var $next = $('.view-select-tab.ui-state-active').next();
+        var $next = $('.view-select-tab.ui-state-active').parent().next().children().first();
 
         if ($next.hasClass('view-select-tab')) {
             $next.trigger('click');
         } else {
-            $('.view-select-tab.ui-state-active').parent().children().first().trigger('click');
+            $('.view-select-tab.ui-state-active').parent().parent().children().first().children().first().trigger('click');
         }
     },
     prevView:               function () {
-        var $prev = $('.view-select-tab.ui-state-active').prev();
+        var $prev = $('.view-select-tab.ui-state-active').parent().prev().children().first();
 
         if ($prev.hasClass('view-select-tab')) {
             $prev.trigger('click');
         } else {
-            $('.view-select-tab.ui-state-active').parent().children().last().trigger('click');
+            $('.view-select-tab.ui-state-active').parent().parent().children().last().children().first().trigger('click');
         }
     },
     editGetWidgets:         function (view, widget, _result) {
