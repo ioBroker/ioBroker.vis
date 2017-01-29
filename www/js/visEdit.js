@@ -3281,9 +3281,27 @@ vis = $.extend(true, vis, {
 
         // Give to all widgets new IDs...
         for (var widget in this.views[_dest].widgets) {
-            this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
-            delete this.views[_dest].widgets[widget];
+            if (!this.views[_dest].widgets.hasOwnProperty(widget)) continue;
+            if (this.views[_dest].widgets[widget].grouped) continue; //will be renamed together with parent group
+            if (this.views[_dest].widgets[widget].data.members) {
+                var members = [];
+                for (var i = 0; i < this.views[_dest].widgets[widget].data.members.length; i++) {
+                    var member = this.views[_dest].widgets[widget].data.members[i];
+                    var member_new = this.nextWidget();
+                    this.views[_dest].widgets[member_new] = this.views[_dest].widgets[member];
+                    members.push(member_new);
+                    delete this.views[_dest].widgets[member];
+                }
+                this.views[_dest].widgets[widget].data.members = members;
+                this.views[_dest].widgets[this.nextGroup()] = this.views[_dest].widgets[widget];
+                delete this.views[_dest].widgets[widget];
+            } else {
+                this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
+                delete this.views[_dest].widgets[widget];
+            }
         }
+
+
         var that = this;
         this.saveRemote(function () {
             that.renderView(_dest, _dest, function (_view) {
