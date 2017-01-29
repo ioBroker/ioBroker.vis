@@ -3286,7 +3286,7 @@ vis = $.extend(true, vis, {
         }
         var that = this;
         this.saveRemote(function () {
-            that.renderView(_dest, function (_view) {
+            that.renderView(_dest, _dest, function (_view) {
                 that.changeView(_view, _view);
                 $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
 
@@ -5708,7 +5708,7 @@ vis = $.extend(true, vis, {
                 $('#' + widgets[w]).addClass('vis-widget-edit-locked').removeClass('ui-selectee ui-selected').unbind('click dblclick');
                 this.views[view].widgets[widgets[w]].data.locked = true;
             }
-            this.inspectWidgets(viewDiv, view, []);
+            this.inspectWidgets(viewDiv, view, widgets);
         }
     },
     unlockWidgets:          function (viewDiv, view, widgets) {
@@ -5727,6 +5727,7 @@ vis = $.extend(true, vis, {
                 }
                 this.bindWidgetClick(viewDiv, view, widgets[w]);
             }
+            this.inspectWidgets(viewDiv, view, widgets);
         }
     },
     bringTo:                function (viewDiv, view, widgets, isToFront) {
@@ -5818,7 +5819,19 @@ vis = $.extend(true, vis, {
             return isInside;
         });
 
-        if (!$list.length) return;
+        if (!$list.length) {
+            //reset z-index
+            for (var w = 0; w < widgets.length; w++) {
+                $wid = $('#' + widgets[w]);
+                zindex = undefined;
+                console.log('reset z-index of ' + widgets[w]);
+                $wid.css('z-index', zindex);
+                viewObj.widgets[widgets[w]].style['z-index'] = zindex;
+            }
+            this.inspectWidgets(viewDiv, view, true);
+            return;
+        }
+
         var that = this;
         // Move all widgets
         if (isToFront) {
@@ -5910,7 +5923,7 @@ vis = $.extend(true, vis, {
         return $viewDiv.find('.vis-widget').filter(function() {
             var offset = $(this).position();
             if (!$(this).length) return false;
-            if ($(this).hasClass('vis-widget-edit-locked')) return false;
+            //if ($(this).hasClass('vis-widget-edit-locked')) return false;
             var id = $(this).attr('id');
             if (viewDiv === id) return false;
 
@@ -6134,7 +6147,7 @@ vis = $.extend(true, vis, {
                         that.unlockWidgets(viewDiv, view, widgets);
                         break;
                     case 'export':
-                        that.exportWidgets(viewDiv, view, widgets);
+                        that.exportWidgets(widgets);
                         break;
                     case 'bringToBack':
                         that.bringTo(viewDiv, view, widgets, false);
