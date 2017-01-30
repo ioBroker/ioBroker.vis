@@ -1068,10 +1068,7 @@ vis = {
     destroyWidget:      function (viewDiv, view, widget) {
         var $widget = $('#' + widget);
         if ($widget.length) {
-            var widgets;
-            if (this.views[view].widgets[widget])
-                widgets = this.views[view].widgets[widget].data.members;
-            else return;
+            var widgets = this.views[view].widgets[widget].data.members;
 
             if (widgets) {
                 for (var w = 0; w < widgets.length; w++) {

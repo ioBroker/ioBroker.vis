@@ -3280,8 +3280,33 @@ vis = $.extend(true, vis, {
         this.views[_dest].name = dest;
 
         // Give to all widgets new IDs...
+        var that = this;
+
+        var rename = function(widget, force) {
+            if (!force && that.views[_dest].widgets[widget].grouped) return widget;
+            if (that.views[_dest].widgets[widget].data.members) {
+                var members_new = [];
+                for (var i = 0; i < that.views[_dest].widgets[widget].data.members.length; i++) {
+                    var member = that.views[_dest].widgets[widget].data.members[i];
+                    members_new.push(rename(member, true));
+                }
+                var group_new = that.nextGroup();
+                that.views[_dest].widgets[widget].data.members = members_new;
+                that.views[_dest].widgets[group_new] = that.views[_dest].widgets[widget];
+                delete that.views[_dest].widgets[widget];
+                return group_new;
+            } else {
+                var name_new = that.nextWidget();
+                that.views[_dest].widgets[name_new] = that.views[_dest].widgets[widget];
+                delete that.views[_dest].widgets[widget];
+                return name_new;
+            }
+        };
         for (var widget in this.views[_dest].widgets) {
             if (!this.views[_dest].widgets.hasOwnProperty(widget)) continue;
+            rename(widget, false);
+
+            /*
             if (this.views[_dest].widgets[widget].grouped) continue; //will be renamed together with parent group
             if (this.views[_dest].widgets[widget].data.members) {
                 var members = [];
@@ -3299,10 +3324,10 @@ vis = $.extend(true, vis, {
                 this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
                 delete this.views[_dest].widgets[widget];
             }
+            */
         }
 
 
-        var that = this;
         this.saveRemote(function () {
             that.renderView(_dest, _dest, function (_view) {
                 that.changeView(_view, _view);
@@ -3620,7 +3645,8 @@ vis = $.extend(true, vis, {
             var views = this.getViewsOfWidget(id);
             var wids = id.split('_', 2);
             for (var i = 0; i < views.length; i++) {
-                this.delWidgetHelper(viewDiv, views[i], wids[0] + '_' + views[i], false);
+                var viewDivs = viewDiv.split('_', 2);
+                this.delWidgetHelper(viewDivs[0] + '_' + views[i], views[i], wids[0] + '_' + views[i], false);
             }
             this.inspectWidgets(viewDiv, view, []);
             return;
@@ -4099,13 +4125,14 @@ vis = $.extend(true, vis, {
                 //if widget is a group first sync widgets within this group
                 if (this.views[view].widgets[widgets[i]].data.members && this.views[view].widgets[widgets[i]].data.members.length) {
                     this.syncWidgets(this.views[view].widgets[widgets[i]].data.members.slice(), views);
+                    if (this.activeView == this.activeViewDiv) this.reRenderWidgetEdit(view, view, widgets[i]);
                 }
 
                 if (views === null) views = [];
 
                 var isFound = false;
-                for (var j = 0; j < views.length; j++) {
-                    if (views[j] === view) {
+                for (var l = 0; l < views.length; l++) {
+                    if (views[l] === view) {
                         isFound = true;
                         break;
                     }
@@ -4118,6 +4145,7 @@ vis = $.extend(true, vis, {
 
                 // First sync views
                 for (var v_ in this.views) {
+                    if (!this.views.hasOwnProperty(v_)) continue;
                     if (v_ === '___settings') continue;
                     isFound = false;
                     if (v_ === view) {
@@ -4132,15 +4160,19 @@ vis = $.extend(true, vis, {
                     }
 
                     if (this.views[v_].widgets[wid + '_' + v_] !== undefined) {
+                        if (isFound) {
+                            //do not delete members
+                            delete this.views[v_].widgets[wid + '_' + v_].data.members;
+                        }
                         this.delWidgetHelper(v_, v_, wid + '_' + v_, false);
                     }
 
                     if (isFound) {
+                        var data = null;
                         if (this.views[view].widgets[widgets[i]].data.members) {
-                            var data = $.extend(true, {}, this.views[view].widgets[widgets[i]].data);
+                            data = $.extend(true, {}, this.views[view].widgets[widgets[i]].data);
                             for (var j = 0; j < data.members.length; j++) {
-                                var _wids = data.members[j].split('_', 2);
-                                data.members[j] = _wids[0] + '_' + v_;
+                                data.members[j] = data.members[j].split('_', 2)[0] + '_' + v_;
                             }
                         }
                         // Create
@@ -4286,6 +4318,14 @@ vis = $.extend(true, vis, {
     },
     // Init all edit fields for one view
     changeViewEdit:         function (viewDiv, view, noChange, callback) {
+        //always save changes when changing views to ensure views are synced
+        if (this._saveTimer) {
+            clearTimeout(this._saveTimer);
+            this._saveTimer = null;
+        }
+        this._saveToServer(this.activeViewDiv, this.activeView);
+        $('#saving_progress').hide();
+
         var that = this;
         this.installSelectable(viewDiv, view, true);
 
@@ -5420,7 +5460,7 @@ vis = $.extend(true, vis, {
                 // Go through all widgets
                 for (var widget in this.views[view].widgets) {
                     if (!this.views[view].widgets.hasOwnProperty(widget)) continue;
-                    newWidgets.push(widget);
+                    if (!this.views[view].widgets[widget].grouped) newWidgets.push(widget);
                 }
             }
             this.inspectWidgets(viewDiv, view, newWidgets);
