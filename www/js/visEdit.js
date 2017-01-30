@@ -3305,26 +3305,6 @@ vis = $.extend(true, vis, {
         for (var widget in this.views[_dest].widgets) {
             if (!this.views[_dest].widgets.hasOwnProperty(widget)) continue;
             rename(widget, false);
-
-            /*
-            if (this.views[_dest].widgets[widget].grouped) continue; //will be renamed together with parent group
-            if (this.views[_dest].widgets[widget].data.members) {
-                var members = [];
-                for (var i = 0; i < this.views[_dest].widgets[widget].data.members.length; i++) {
-                    var member = this.views[_dest].widgets[widget].data.members[i];
-                    var member_new = this.nextWidget();
-                    this.views[_dest].widgets[member_new] = this.views[_dest].widgets[member];
-                    members.push(member_new);
-                    delete this.views[_dest].widgets[member];
-                }
-                this.views[_dest].widgets[widget].data.members = members;
-                this.views[_dest].widgets[this.nextGroup()] = this.views[_dest].widgets[widget];
-                delete this.views[_dest].widgets[widget];
-            } else {
-                this.views[_dest].widgets[this.nextWidget()] = this.views[_dest].widgets[widget];
-                delete this.views[_dest].widgets[widget];
-            }
-            */
         }
 
 
@@ -4054,18 +4034,6 @@ vis = $.extend(true, vis, {
 
         this.addWidget(viewDiv, view, obj, true);
 
-        /*if (widgetData.grouped) {
-            // rename in groups
-            var widgets = this.views[view].widgets;
-            for (var w in widgets) {
-                if (!widgets.hasOwnProperty(w)) continue;
-                var members = this.views[view].widgets[w].data.members;
-                var pos;
-                if (members && ((pos = members.indexOf(oldId)) !== -1) && members.indexOf(newId) === -1) {
-                    this.views[view].widgets[w].data.members[pos] = newId;
-                }
-            }
-        }*/
         if (viewDiv === this.activeView) this.updateSelectWidget(view, view, newId);
         delete this.views[view].widgets[oldId].data.members;
         this.delWidgetHelper(viewDiv, view, oldId, false);
