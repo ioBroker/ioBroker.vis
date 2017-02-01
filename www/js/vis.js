@@ -1476,7 +1476,7 @@ vis = {
     },
     renderWidget:       function (viewDiv, view, id, groupId) {
         var $view;
-
+        var that = this;
         if (!groupId) {
             $view = $('#visview_' + viewDiv);
         } else {
@@ -1493,9 +1493,9 @@ vis = {
                 $.map(widget.data, function(val, key) { 
                     var m;
                     if (typeof val == 'string' && (m = val.match(/^groupAttr(\d+)$/))) { 
-                        widget.data[key] = this.views[view].widgets[groupId].data[m[0]] || ''; 
+                        widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || ''; 
                     }
-                }.bind(this));
+                });
             }
         }
 
