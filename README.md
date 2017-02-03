@@ -101,9 +101,15 @@ Note: there is a special object ID - "username". It shows logged in user.
       "wid" - has a name of actual widget
       "wname" - widget name
 	  "widget" - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
-Note: to use ":" in calculatinos (e.g. in string formula) use "::" instead.
+Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 
-**Remember, that style definitions will be interprated as bindings, so use ```{{style: value}}``` for that.**
+**Remember, that style definitions will be interprated as bindings, so use ```{{style: value}}``` or just 
+
+```{
+	style: value
+}```
+
+for that.**
 
 ## Filters
 To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
