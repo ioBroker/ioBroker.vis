@@ -1476,7 +1476,7 @@ vis = {
     },
     renderWidget:       function (viewDiv, view, id, groupId) {
         var $view;
-
+        var that = this;
         if (!groupId) {
             $view = $('#visview_' + viewDiv);
         } else {
@@ -1490,13 +1490,12 @@ vis = {
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
-                for (var a in widget.data) {
-                    if (widget.data.hasOwnProperty(a) && typeof widget.data[a] === 'string') {
-                        for (var u = 1; u <= aCount; u++) {
-                            widget.data[a] = widget.data[a].replace('groupAttr' + u, this.views[view].widgets[groupId].data['groupAttr' + u] || '');
-                        }
+                $.map(widget.data, function(val, key) { 
+                    var m;
+                    if (typeof val == 'string' && (m = val.match(/^groupAttr(\d+)$/))) { 
+                        widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || ''; 
                     }
-                }
+                });
             }
         }
 
