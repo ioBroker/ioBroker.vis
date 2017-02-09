@@ -178,7 +178,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 0.12.7 (2017-02-09)
+* (bluefox) prepare beta
+
 ### 0.12.6 (2017-01-29)
 * (pmant) fix view copy
 * (pmant) Improvements to context menu

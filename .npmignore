@@ -6,5 +6,6 @@ cordova
 .idea
 .git
 test
+*.zip
 .travis.yml
 appveyor.yml

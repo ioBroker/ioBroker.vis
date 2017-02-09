@@ -2,17 +2,21 @@
  *
  *      iobroker vis Adapter
  *
- *      (c) 2014-2015 bluefox, hobbyquaker
+ *      (c) 2014-2017 bluefox, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
  *
  */
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
-"use strict";
+/* jshint -W097 */
+/* jshint strict:false */
+/* jslint node: true */
+'use strict';
+
+var adapterName    = require(__dirname + '/package.json').name.split('.').pop();
+var isBeta         = adapterName.indexOf('beta') !== -1;
 
 var utils          = require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter        = utils.adapter('vis');
+var adapter        = utils.adapter(adapterName);
 var fs             = require('fs');
 var path           = require('path');
 var syncWidgetSets = require(__dirname + '/lib/install.js');
@@ -54,11 +58,11 @@ function writeFile(fileName, callback) {
             var original = start + '\n' + _end;
             original = original.replace('<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
                 '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->');
-            adapter.readFile('vis', fileName, function (err, data) {
+            adapter.readFile(adapterName, fileName, function (err, data) {
                 if (data && data != index) {
                     fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
-                    adapter.writeFile('vis', fileName, index, function () {
+                    adapter.writeFile(adapterName, fileName, index, function () {
                         if (callback) callback(true);
                     });
                 } else {
@@ -94,7 +98,11 @@ function upload(callback) {
 }
 
 // Update index.html
-function checkFiles(configChanged) {
+function checkFiles(configChanged, isBeta) {
+    if (isBeta) {
+        adapter.stop();
+        return;
+    }
     writeFile('index.html', function (indexChanged) {
         // Update edit.html
         writeFile('edit.html', function (editChanged) {
@@ -105,7 +113,7 @@ function checkFiles(configChanged) {
                 data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
                 fs.writeFileSync(__dirname + '/www/cache.manifest', data);
 
-                adapter.writeFile('vis', 'cache.manifest', data, function () {
+                adapter.writeFile(adapterName, 'cache.manifest', data, function () {
                     upload(function () {
                         adapter.stop();
                     });
@@ -117,25 +125,71 @@ function checkFiles(configChanged) {
     });
 }
 
-function main() {
-    var changed = syncWidgetSets();
-    var count = 0;
+function copyFiles(root, filesOrDirs, callback) {
+    if (!filesOrDirs) {
+        adapter.readDir('vis.0', root, function (err, filesOrDirs) {
+            copyFiles(root, filesOrDirs || [], callback);
+        });
+        return;
+    }
+    if (!filesOrDirs.length) {
+        if (typeof callback === 'function') callback();
+        return;
+    }
 
-    if (changed) {
-        // upload config.js
-        count++;
-        var config = changed;
-        adapter.readFile('vis', 'js/config.js', function (err, data) {
-            if (data && data != config) {
-                adapter.log.info('config.js changed. Upload.');
-                adapter.writeFile('vis', 'js/config.js', config, function () {
-                    if (!(--count)) checkFiles(changed);
+    var task = filesOrDirs.shift();
+    if (task.isDir) {
+        copyFiles(root + task.file + '/', null, function () {
+            setTimeout(copyFiles, 0, root, filesOrDirs, callback);
+        })
+    } else {
+        adapter.readFile('vis.0', root + task.file, function (err, data) {
+            if (data || data === 0 || data === '') {
+                adapter.writeFile(adapterName + '.0', root + task.file, data, function () {
+                    setTimeout(copyFiles, 0, root, filesOrDirs, callback);
                 });
             } else {
-                if (!(--count)) checkFiles(changed);
+                setTimeout(copyFiles, 0, root, filesOrDirs, callback);
             }
         });
-        changed = true;
+    }
+}
+
+function main() {
+    var count = 0;
+    var changed = false;
+    if (!isBeta) {
+        changed = syncWidgetSets();
+
+        if (changed) {
+            // upload config.js
+            count++;
+            var config = changed;
+            adapter.readFile(adapterName, 'js/config.js', function (err, data) {
+                if (data && data != config) {
+                    adapter.log.info('config.js changed. Upload.');
+                    adapter.writeFile(adapterName, 'js/config.js', config, function () {
+                        if (!--count) checkFiles(changed, isBeta);
+                    });
+                } else {
+                    if (!--count) checkFiles(changed, isBeta);
+                }
+            });
+            changed = true;
+        }
+    } else {
+        count++;
+        // try to read vis-beta.0/files
+        adapter.readDir(adapterName + '.0', '/', function (err, dirs) {
+            if (!dirs || !dirs.length) {
+                // copy all directories
+                copyFiles('/', null, function () {
+                    if (!--count) checkFiles(changed, isBeta);
+                })
+            } else {
+                if (!--count) checkFiles(changed, isBeta);
+            }
+        });
     }
 
     // create command variable
@@ -152,22 +206,22 @@ function main() {
                 type: 'state',
                 native: {}
             }, function () {
-                if (!--count) checkFiles(changed);
+                if (!--count) checkFiles(changed, isBeta);
             }) ;
         } else {
-            if (!--count) checkFiles(changed);
+            if (!--count) checkFiles(changed, isBeta);
         }
     });
 
     // Create common user CSS file
     count++;
-    adapter.readFile('vis', 'css/vis-common-user.css', function (err, data) {
+    adapter.readFile(adapterName, 'css/vis-common-user.css', function (err, data) {
         if (err || data === null || data === undefined) {
-            adapter.writeFile('vis', 'css/vis-common-user.css', '', function () {
-                if (!--count) checkFiles(changed);
+            adapter.writeFile(adapterName, 'css/vis-common-user.css', '', function () {
+                if (!--count) checkFiles(changed, isBeta);
             });
         } else {
-            if (!--count) checkFiles(changed);
+            if (!--count) checkFiles(changed, isBeta);
         }
     });
 }
