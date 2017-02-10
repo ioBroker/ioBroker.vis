@@ -1,5 +1,7 @@
 /.idea/
 /node_modules
+*.zip
+**/*.zip
 /_socket
 /.build
 /lib/js

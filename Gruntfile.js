@@ -229,7 +229,10 @@ module.exports = function (grunt) {
         var fs = require('fs');
         var iop = JSON.parse(fs.readFileSync(__dirname + '/io-package.json').toString());
         iop.common.name = 'vis-beta';
-        iop.common.title = 'iobroker Visualisation BETA';
+        iop.common.title = 'iobroker Visualisation BETA!!';
+        iop.common.desc.en = 'iobroker Visualisation BETA!!';
+        iop.common.desc.de = 'iobroker Visualisation BETA!!';
+        iop.common.desc.ru = 'iobroker Visualisation BETA!!';
         for (var w = 0; w < iop.common.welcomeScreen.length; w++) {
             iop.common.welcomeScreen[w].link = iop.common.welcomeScreen[w].link.replace(/^vis\//, 'vis-beta/');
             iop.common.welcomeScreen[w].name = iop.common.welcomeScreen[w].name.replace(/^vis\s/, 'vis-beta ');
@@ -279,6 +282,12 @@ module.exports = function (grunt) {
 
         var conn = fs.readFileSync(__dirname + '/www/js/conn.js').toString().replace('\'vis.0\'', '\'vis-beta.0\'');
         fs.writeFileSync(__dirname + '/www/js/conn.js', conn);
+
+        var index = fs.readFileSync(__dirname + '/www/index.html').toString().replace('<title>vis</title>', '<title>vis-beta</title>');
+        fs.writeFileSync(__dirname + '/www/index.html', index);
+
+        var edit = fs.readFileSync(__dirname + '/www/edit.html').toString().replace('<title>Edit vis</title>', '<title>Edit vis BETA</title>');
+        fs.writeFileSync(__dirname + '/www/edit.html', edit);
     });
     grunt.registerTask('beta-post', function () {
         var syncWidgetSets = require(__dirname + '/lib/install.js');
