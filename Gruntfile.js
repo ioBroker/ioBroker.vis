@@ -244,7 +244,7 @@ module.exports = function (grunt) {
         
         var pack = JSON.parse(fs.readFileSync(__dirname + '/package.json').toString());
         pack.name = 'iobroker.vis-beta';
-        pack.description =  'Test graphical user interface for ioBroker.';
+        pack.description =  'BETA graphical user interface for ioBroker.';
         pack.devDependencies = {
             "grunt": "^0.4.5",
             "grunt-replace": "^0.9.3",
@@ -257,6 +257,7 @@ module.exports = function (grunt) {
             "chai": "^3.4.1",
             "iobroker.dwd": "https://github.com/ioBroker/ioBroker.dwd/tarball/master",
             "iobroker.kodi": "https://github.com/instalator/ioBroker.kodi/tarball/master",
+            "iobroker.milight": "https://github.com/foxthefox/ioBroker.milight/tarball/master",
             "iobroker.starline": "https://github.com/instalator/ioBroker.starline/tarball/master",
             "iobroker.vis-bars": "https://github.com/ioBroker/ioBroker.vis-bars/tarball/master",
             "iobroker.vis-canvas-gauges": "https://github.com/ioBroker/ioBroker.vis-canvas-gauges/tarball/master",

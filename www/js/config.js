@@ -11,7 +11,7 @@ var visConfig = {
         "tabs"
     ]
 };
-if (typeof exports != 'undefined') {
+if (typeof exports !== 'undefined') {
     exports.config = visConfig;
 } else {
     visConfig.language = window.navigator.userLanguage || window.navigator.language;
