@@ -178,7 +178,8 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.12.8 (2017-02-11)
+## Changelog
+### 0.12.8 (2017-02-11)
 
 ### 0.12.7 (2017-02-09)
 * (bluefox) prepare beta
@@ -286,7 +287,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ Copyright (c) 2013-2017 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>, 
+ Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
+ 
  Creative Common Attribution-NonCommercial (CC BY-NC)
 
  http://creativecommons.org/licenses/by-nc/4.0/
