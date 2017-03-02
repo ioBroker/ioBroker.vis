@@ -178,7 +178,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 0.12.9 (2017-03-02)
+
+
 ### 0.12.8 (2017-02-11)
 
 ### 0.12.7 (2017-02-09)

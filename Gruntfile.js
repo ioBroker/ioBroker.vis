@@ -257,6 +257,7 @@ module.exports = function (grunt) {
             "chai": "^3.4.1",
             "iobroker.dwd": "https://github.com/ioBroker/ioBroker.dwd/tarball/master",
             "iobroker.kodi": "https://github.com/instalator/ioBroker.kodi/tarball/master",
+            "ioBroker.mihome-vacuum": "https://github.com/ioBroker/ioBroker.mihome-vacuum/tarball/master",
             "iobroker.milight": "https://github.com/foxthefox/ioBroker.milight/tarball/master",
             "iobroker.starline": "https://github.com/instalator/ioBroker.starline/tarball/master",
             "iobroker.vis-bars": "https://github.com/ioBroker/ioBroker.vis-bars/tarball/master",

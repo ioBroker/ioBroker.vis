@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.8',
+    version: '0.12.9',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1144,7 +1144,7 @@ vis = {
 
         if (updateContainers) this.updateContainers(viewDiv, view);
     },
-    changeFilter:       function (viewDiv, view, filter, showEffect, showDuration, hideEffect, hideDuration) {
+    changeFilter:       function (view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.activeView;
         var widgets = this.views[view].widgets;
         var that = this;
@@ -1226,7 +1226,7 @@ vis = {
         }
 
         if (this.binds.bars && this.binds.bars.filterChanged) {
-            this.binds.bars.filterChanged(viewDiv, view, filter);
+            this.binds.bars.filterChanged(view, filter);
         }
     },
     isSignalVisible:    function (view, widget, index, val, widgetData) {
