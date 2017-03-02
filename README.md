@@ -103,7 +103,7 @@ Note: there is a special object ID - "username". It shows logged in user.
 	  "widget" - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
 Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 
-**Remember, that style definitions will be interprated as bindings, so use ```{{style: value}}``` or just 
+**Remember, that style definitions will be interpreted as bindings, so use ```{{style: value}}``` or just 
 
 ```{
 	style: value
