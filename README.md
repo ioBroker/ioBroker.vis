@@ -105,7 +105,8 @@ Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 
 **Remember**, that style definitions will be interpreted as bindings, so use ```{{style: value}}``` or just 
 
-```{
+```
+{
 	style: value
 }
 ```
