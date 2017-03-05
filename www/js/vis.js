@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.9',
+    version: '0.12.10',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -592,11 +592,15 @@ vis = {
                         // Add all OIDs from this view to parent
                         if (this.views[view].widgets[id].tpl === 'tplContainerView' && this.views[view].widgets[id].data.contains_view) {
                             var ids = views[this.views[view].widgets[id].data.contains_view];
-                            for (var a = 0; a < ids.length; a++) {
-                                if (views[view].indexOf(ids[a]) === -1) {
-                                    views[view].push(ids[a]);
-                                    changed = true;
+                            if (ids) {
+                                for (var a = 0; a < ids.length; a++) {
+                                    if (views[view].indexOf(ids[a]) === -1) {
+                                        views[view].push(ids[a]);
+                                        changed = true;
+                                    }
                                 }
+                            } else {
+                                console.warn('View does not exist: "' + this.views[view].widgets[id].data.contains_view + '"');
                             }
                         }
                     }
@@ -2815,6 +2819,8 @@ vis = {
         }
 
         this.subscribing.activeViews.push(view);
+
+        this.subscribing.byViews[views] = this.subscribing.byViews[views] || [];
 
         // subscribe
         var oids = [];
