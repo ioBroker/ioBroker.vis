@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.10',
+    version: '0.12.11',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -2820,7 +2820,7 @@ vis = {
 
         this.subscribing.activeViews.push(view);
 
-        this.subscribing.byViews[views] = this.subscribing.byViews[views] || [];
+        this.subscribing.byViews[view] = this.subscribing.byViews[view] || [];
 
         // subscribe
         var oids = [];
