@@ -886,184 +886,189 @@ vis = {
         });
     },
     renderView:         function (viewDiv, view, hidden, callback) {
-            var that = this;
+        var that = this;
 
-            if (typeof hidden === 'function') {
-                callback = hidden;
-                hidden   = view;
-                view     = viewDiv;
+        if (typeof hidden === 'function') {
+            callback = hidden;
+            hidden   = view;
+            view     = viewDiv;
+        }
+        if (typeof view === 'boolean') {
+            callback = hidden;
+            hidden   = undefined;
+            view     = viewDiv;
+        }
+        if (!this.editMode && !$('#commonTheme').length) {
+            $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
+        }
+
+        if (!this.views[view] || !this.views[view].settings) {
+            window.alert('Cannot render view ' + view + '. Invalid settings');
+            if (callback) {
+                setTimeout(function () {
+                    callback(viewDiv, view);
+                }, 0);
             }
-            if (typeof view === 'boolean') {
-                callback = hidden;
-                hidden   = undefined;
-                view     = viewDiv;
+            return false;
+        }
+
+        // try to render background
+
+
+        // collect all IDs, used in this view and in containers
+        this.subscribeStates(view, function () {
+            var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
+
+            that.views[view].settings.theme = that.views[view].settings.theme || 'redmond';
+
+            if (that.views[view].settings.filterkey) {
+                that.viewsActiveFilter[view] = that.views[view].settings.filterkey.split(',');
+            } else {
+                that.viewsActiveFilter[view] = [];
             }
-            if (!this.editMode && !$('#commonTheme').length) {
-                $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
-            }
+            //noinspection JSJQueryEfficiency
+            var $view = $('#visview_' + viewDiv);
 
-            if (!this.views[view] || !this.views[view].settings) {
-                window.alert('Cannot render view ' + view + '. Invalid settings');
-                if (callback) {
-                    setTimeout(function () {
-                        callback(viewDiv, view);
-                    }, 0);
-                }
-                return false;
-            }
-
-            // collect all IDs, used in this view and in containers
-            this.subscribeStates(view, function () {
-                var isViewsConverted = false; // Widgets in the views hav no information which WidgetSet they use, this info must be added and this flag says if that happens to store the views
-
-                that.views[view].settings.theme = that.views[view].settings.theme || 'redmond';
-
-                if (that.views[view].settings.filterkey) {
-                    that.viewsActiveFilter[view] = that.views[view].settings.filterkey.split(',');
-                } else {
-                    that.viewsActiveFilter[view] = [];
-                }
-                //noinspection JSJQueryEfficiency
-                var $view = $('#visview_' + viewDiv);
-
-                // apply group policies
-                if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
-                    if (that.views[view].settings.group_action === 'hide') {
-                        if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
-                            if (!$view.length) {
-                                $('#vis_container').append('<div id="visview_' + viewDiv + '" class="vis-view vis-user-disabled"></div>');
-                                $view = $('#visview_' + viewDiv);
-                            }
-                            $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
-                            if (callback) {
-                                setTimeout(function () {
-                                    callback(viewDiv, view);
-                                }, 0);
-                            }
-                            return;
+            // apply group policies
+            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                if (that.views[view].settings.group_action === 'hide') {
+                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                        if (!$view.length) {
+                            $('#vis_container').append('<div id="visview_' + viewDiv + '" class="vis-view vis-user-disabled"></div>');
+                            $view = $('#visview_' + viewDiv);
                         }
+                        $view.html('<div class="vis-view-disabled-text">' + _('View disabled for user %s', that.conn.getUser()) + '</div>');
+                        if (callback) {
+                            setTimeout(function () {
+                                callback(viewDiv, view);
+                            }, 0);
+                        }
+                        return;
                     }
                 }
-                if (!$view.length) {
-                    $('#vis_container').append('<div style="display: none;" id="visview_' + viewDiv + '" ' +
-                        'data-view="' + view + '" ' +
-                        'class="vis-view ' + (viewDiv !== view ? 'vis-edit-group' : '') + '" ' +
-                        (that.views[view].settings.alwaysRender ? 'data-persistent="true"' : '') + '></div>');
-                    that.addViewStyle(viewDiv, view, that.views[view].settings.theme);
+            }
+            if (!$view.length) {
+                $('#vis_container').append('<div style="display: none;" id="visview_' + viewDiv + '" ' +
+                    'data-view="' + view + '" ' +
+                    'class="vis-view ' + (viewDiv !== view ? 'vis-edit-group' : '') + '" ' +
+                    (that.views[view].settings.alwaysRender ? 'data-persistent="true"' : '') + '>' +
+                    '<div class="vis-view-disabled" style="display: none"></div>' +
+                    '</div>');
+                that.addViewStyle(viewDiv, view, that.views[view].settings.theme);
 
-                    $view = $('#visview_' + viewDiv);
+                $view = $('#visview_' + viewDiv);
 
-                    $view.css(that.views[view].settings.style);
-                    if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
+                $view.css(that.views[view].settings.style);
+                if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
 
-                    var id;
-                    if (viewDiv !== view && that.editMode) {
-                        //noinspection JSJQueryEfficiency
-                        var $widget = $('#' + viewDiv);
-                        if (!$widget.length) {
-                            that.renderWidget(view, view, viewDiv);
-                            $widget = $('#' + viewDiv);
-                        }
-                        $view.append('<div class="group-edit-header" data-view="' + viewDiv + '">' + _('Edit group:') + ' <b>' + viewDiv + '</b><button class="group-edit-close"></button></div>');
-                        $view.find('.group-edit-close').button({
-                            icons: {
-                                primary: 'ui-icon-close'
-                            },
-                            text: false
-                        }).data('view', view).css({width: 20, height: 20}).click(function () {
-                            var view = $(this).data('view');
-                            that.changeView(view, view);
-                        });
-
-                        $widget.appendTo($view);
-                        $widget.css({top: 0, left: 0});
-                        /*$widget.unbind('click dblclick');
-                         $widget.find('.vis-widget').each(function () {
-                         var id = $(this).attr('id');
-                         that.bindWidgetClick(view, id, true);
-                         });*/
-                    } else {
-                        that.setViewSize(viewDiv, view);
-                        // Render all widgets
-                        for (id in that.views[view].widgets) {
-                            if (!that.views[view].widgets.hasOwnProperty(id)) continue;
-                            // Try to complete the widgetSet information to optimize the loading of widgetSets
-                            if (id[0] !== 'g' && !that.views[view].widgets[id].widgetSet) {
-                                var obj = $('#' + that.views[view].widgets[id].tpl);
-                                if (obj) {
-                                    that.views[view].widgets[id].widgetSet = obj.attr('data-vis-set');
-                                    isViewsConverted = true;
-                                }
-                            }
-
-                            if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].grouped) that.renderWidget(viewDiv, view, id);
-                        }
+                var id;
+                if (viewDiv !== view && that.editMode) {
+                    //noinspection JSJQueryEfficiency
+                    var $widget = $('#' + viewDiv);
+                    if (!$widget.length) {
+                        that.renderWidget(view, view, viewDiv);
+                        $widget = $('#' + viewDiv);
                     }
-
-                    if (that.editMode) {
-                        if (that.binds.jqueryui) that.binds.jqueryui._disable();
-                        that.droppable(viewDiv, view);
-                    }
-                }
-
-                // move views in container
-                var containers = [];
-                $view.find('.vis-view-container').each(function () {
-                    var cview = $(this).attr('data-vis-contains');
-                    if (!that.views[cview]) {
-                        $(this).append('error: view not found.');
-                        return false;
-                    } else if (cview === view) {
-                        $(this).append('error: view container recursion.');
-                        return false;
-                    }
-                    containers.push({thisView: this, view: cview});
-                });
-                var wait = false;
-                if (containers.length) {
-                    wait = true;
-                    that.renderViews(viewDiv, containers, function (_viewDiv, _containers) {
-                        for (var c = 0; c < _containers.length; c++) {
-                            $('#visview_' + _containers[c].view)
-                                .appendTo(_containers[c].thisView)
-                                .show();
-                        }
-                        if (!hidden) $view.show();
-
-                        $('#visview_' + _viewDiv).trigger('rendered');
-                        if (callback) callback(_viewDiv, view);
+                    $view.append('<div class="group-edit-header" data-view="' + viewDiv + '">' + _('Edit group:') + ' <b>' + viewDiv + '</b><button class="group-edit-close"></button></div>');
+                    $view.find('.group-edit-close').button({
+                        icons: {
+                            primary: 'ui-icon-close'
+                        },
+                        text: false
+                    }).data('view', view).css({width: 20, height: 20}).click(function () {
+                        var view = $(this).data('view');
+                        that.changeView(view, view);
                     });
-                }
 
-                // Store modified view
-                if (isViewsConverted && that.saveRemote) that.saveRemote();
+                    $widget.appendTo($view);
+                    $widget.css({top: 0, left: 0});
+                    /*$widget.unbind('click dblclick');
+                     $widget.find('.vis-widget').each(function () {
+                     var id = $(this).attr('id');
+                     that.bindWidgetClick(view, id, true);
+                     });*/
+                } else {
+                    that.setViewSize(viewDiv, view);
+                    // Render all widgets
+                    for (id in that.views[view].widgets) {
+                        if (!that.views[view].widgets.hasOwnProperty(id)) continue;
+                        // Try to complete the widgetSet information to optimize the loading of widgetSets
+                        if (id[0] !== 'g' && !that.views[view].widgets[id].widgetSet) {
+                            var obj = $('#' + that.views[view].widgets[id].tpl);
+                            if (obj) {
+                                that.views[view].widgets[id].widgetSet = obj.attr('data-vis-set');
+                                isViewsConverted = true;
+                            }
+                        }
 
-                if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
-                    $('.vis-widget').addClass('vis-widget-lock');
-                    if (viewDiv !== view) {
-                        $('#' + viewDiv).removeClass('vis-widget-lock');
+                        if (!that.views[view].widgets[id].renderVisible && !that.views[view].widgets[id].grouped) that.renderWidget(viewDiv, view, id);
                     }
                 }
 
-                if (!wait) {
+                if (that.editMode) {
+                    if (that.binds.jqueryui) that.binds.jqueryui._disable();
+                    that.droppable(viewDiv, view);
+                }
+            }
+
+            // move views in container
+            var containers = [];
+            $view.find('.vis-view-container').each(function () {
+                var cview = $(this).attr('data-vis-contains');
+                if (!that.views[cview]) {
+                    $(this).append('error: view not found.');
+                    return false;
+                } else if (cview === view) {
+                    $(this).append('error: view container recursion.');
+                    return false;
+                }
+                containers.push({thisView: this, view: cview});
+            });
+            var wait = false;
+            if (containers.length) {
+                wait = true;
+                that.renderViews(viewDiv, containers, function (_viewDiv, _containers) {
+                    for (var c = 0; c < _containers.length; c++) {
+                        $('#visview_' + _containers[c].view)
+                            .appendTo(_containers[c].thisView)
+                            .show();
+                    }
                     if (!hidden) $view.show();
 
-                    setTimeout(function () {
-                        $('#visview_' + viewDiv).trigger('rendered');
-                        if (callback) callback(viewDiv, view);
-                    }, 0);
-                }
+                    $('#visview_' + _viewDiv).trigger('rendered');
+                    if (callback) callback(_viewDiv, view);
+                });
+            }
 
-                // apply group policies
-                if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
-                    if (that.views[view].settings.group_action !== 'hide') {
-                        if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
-                            $view.addClass('vis-user-disabled');
-                        }
+            // Store modified view
+            if (isViewsConverted && that.saveRemote) that.saveRemote();
+
+            if (that.editMode && $('#wid_all_lock_function').prop('checked')) {
+                $('.vis-widget').addClass('vis-widget-lock');
+                if (viewDiv !== view) {
+                    $('#' + viewDiv).removeClass('vis-widget-lock');
+                }
+            }
+
+            if (!wait) {
+                if (!hidden) $view.show();
+
+                setTimeout(function () {
+                    $('#visview_' + viewDiv).trigger('rendered');
+                    if (callback) callback(viewDiv, view);
+                }, 0);
+            }
+
+            // apply group policies
+            if (!that.editMode && that.views[view].settings.group && that.views[view].settings.group.length) {
+                if (that.views[view].settings.group_action !== 'hide') {
+                    if (!that.isUserMemberOf(that.conn.getUser(), that.views[view].settings.group)) {
+                        $view.addClass('vis-user-disabled');
                     }
                 }
-            });
-        },
+            }
+        });
+    },
     addViewStyle:       function (viewDiv, view, theme) {
         var _view = 'visview_' + viewDiv;
 
@@ -1801,15 +1806,21 @@ vis = {
                     });
                 });
             } else {
-                $('#visview_' + that.activeViewDiv).hide();
-                this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
+                var $oldView = $('#visview_' + that.activeViewDiv);
+                // disable view and show some action
+                $oldView.find('.vis-view-disabled').show();
+                this.renderView(viewDiv, view, true, function (_viewDiv, _view) {
+                    var $oldView = $('#visview_' + that.activeViewDiv);
+                    // hide aold view
+                    $oldView.hide();
+                    $oldView.find('.vis-view-disabled').hide();
                     var $view = $('#visview_' + _viewDiv);
 
                     // Get the view, if required, from Container
                     if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
 
+                    // show new view
                     $view.show();
-                    var $oldView = $('#visview_' + that.activeViewDiv);
 
                     if ($oldView.hasClass('vis-edit-group')) {
                         that.destroyView(that.activeViewDiv, that.activeView);
@@ -1837,37 +1848,37 @@ vis = {
         }
     },
     postChangeView:     function (viewDiv, view, callback) {
-            this.activeView = view;
-            this.activeViewDiv = viewDiv;
-            /*$('#visview_' + viewDiv).find('.vis-view-container').each(function () {
-             $('#visview_' + $(this).attr('data-vis-contains')).show();
-             });*/
+        this.activeView = view;
+        this.activeViewDiv = viewDiv;
+        /*$('#visview_' + viewDiv).find('.vis-view-container').each(function () {
+         $('#visview_' + $(this).attr('data-vis-contains')).show();
+         });*/
 
-            this.updateContainers(viewDiv, view);
+        this.updateContainers(viewDiv, view);
 
-            if (!this.editMode) {
-                this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
-                $(window).trigger('viewChanged', viewDiv);
+        if (!this.editMode) {
+            this.conn.sendCommand(this.instance, 'changedView', this.projectPrefix ? (this.projectPrefix + this.activeView) : this.activeView);
+            $(window).trigger('viewChanged', viewDiv);
+        }
+
+        if (window.location.hash.slice(1) !== view) {
+            if (history && history.pushState) {
+                history.pushState({}, '', '#' + viewDiv);
             }
+        }
 
-            if (window.location.hash.slice(1) !== view) {
-                if (history && history.pushState) {
-                    history.pushState({}, '', '#' + viewDiv);
-                }
-            }
+        // Navigation-Widgets
+        for (var i = 0; i < this.navChangeCallbacks.length; i++) {
+            this.navChangeCallbacks[i](viewDiv, view);
+        }
 
-            // Navigation-Widgets
-            for (var i = 0; i < this.navChangeCallbacks.length; i++) {
-                this.navChangeCallbacks[i](viewDiv, view);
-            }
-
-            // --------- Editor -----------------
-            if (this.editMode) {
-                this.changeViewEdit(viewDiv, view, false, callback);
-            } else if (typeof callback === 'function') {
-                callback(viewDiv, view);
-            }
-        },
+        // --------- Editor -----------------
+        if (this.editMode) {
+            this.changeViewEdit(viewDiv, view, false, callback);
+        } else if (typeof callback === 'function') {
+            callback(viewDiv, view);
+        }
+    },
     loadRemote:         function (callback, callbackArg) {
         var that = this;
         if (!this.projectPrefix) {
