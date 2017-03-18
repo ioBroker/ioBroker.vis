@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.15',
+    version: '0.12.16',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1808,7 +1808,7 @@ vis = {
             } else {
                 var $oldView = $('#visview_' + that.activeViewDiv);
                 // disable view and show some action
-                $oldView.find('.vis-view-disabled').show();
+                $oldView.find('> .vis-view-disabled').show();
                 this.renderView(viewDiv, view, true, function (_viewDiv, _view) {
                     var $oldView = $('#visview_' + that.activeViewDiv);
                     // hide old view
@@ -2359,12 +2359,11 @@ vis = {
                         }]
                     });
                 }
-
-
+                
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
-                        if (parts[u].match(/[\d\w_\.]+:[\d\w_\.]+/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                        if (parts[u].trim().match(/^[\d\w_\.]+:[\d\w_\.]+$/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                             var _systemOid = parts[u].trim();
                             var _visOid = _systemOid;
 
@@ -2383,12 +2382,13 @@ vis = {
                             } else if (test2 === '.lc' || test2 === '.ts') {
                                 _systemOid = _systemOid.substring(0, _systemOid.length - 3);
                             }
-                            var xx = _visOid.split(':', 2);
-                            var yy = _systemOid.split(':', 2);
+                            var x1 = _visOid.split(':', 2);
+                            var y1 = _systemOid.split(':', 2);
+
                             operations[0].arg.push({
-                                name: xx[0],
-                                visOid: xx[1],
-                                systemOid: yy[1]
+                                name:      x1[0],
+                                visOid:    x1[1],
+                                systemOid: y1[1]
                             });
                         } else {
                             parts[u] = parts[u].replace(/::/g, ':');
