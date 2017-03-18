@@ -12,3 +12,14 @@
 /cordova/platforms/android/.gradle
 /cordova/platforms/android/build
 /cordova/platforms/android/CordovaLib/build
+/www/edit.full.html
+/www/index.full.html
+/www/worker-css.js
+/www/worker-html.js
+/www/worker-javascript.js
+/www/css/vis.min.css
+/www/css/visEdit.min.css
+/www/js/vis.min.js
+/www/js/vis.mmin.js
+/www/js/visEdit.min.js
+/www/js/visEdit.mmin.js
