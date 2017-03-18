@@ -270,7 +270,7 @@ var servConn = {
                         if (!that.authError) {
                             that.reload();
                         }
-                    }, 3000);
+                    }, 6000);
 
                     that._socket.emit('authenticate', function (isOk, isSecure) {
                         if (that.waitConnect) {

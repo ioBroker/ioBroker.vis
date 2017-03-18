@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.11',
+    version: '0.12.12',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1191,8 +1191,9 @@ vis = {
             // hide all
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
+                if (!widgets[widget].data.filterkey) continue;
                 mWidget = document.getElementById(widget);
-                if (mWidget && widgets[widget].data.filterkey &&
+                if (mWidget &&
                     mWidget._customHandlers &&
                     mWidget._customHandlers.onHide) {
                     mWidget._customHandlers.onHide(mWidget, widget);

@@ -103,7 +103,8 @@ module.exports = function (grunt) {
                         flatten: true,
                         src:     [
                             srcDir + '*.*',
-                            srcDir + '.travis.yml'
+                            srcDir + '.travis.yml',
+                            '!' + srcDir + 'Gruntfile.js'
                         ],
                         dest:    srcDir
                     },
@@ -524,7 +525,7 @@ module.exports = function (grunt) {
         
         var pack = JSON.parse(fs.readFileSync(__dirname + '/package.json').toString());
         pack.name = 'iobroker.vis-beta';
-        pack.description =  'BETA graphical user interface for ioBroker.';
+        pack.description =  'BETA graphical user interface for iobroker.';
         pack.devDependencies = {
             "grunt": "^0.4.5",
             "grunt-replace": "^0.9.3",
@@ -592,7 +593,15 @@ module.exports = function (grunt) {
         fs.writeFileSync('www/worker-html.js', fs.readFileSync('www/lib/ace/worker-html.js'));
         fs.writeFileSync('www/worker-javascript.js', fs.readFileSync('www/lib/ace/worker-javascript.js'));
     });
+
+    var fs = require('fs');
+    if (!fs.existsSync('www/index.full.html')) fs.writeFileSync('www/index.full.html', fs.readFileSync('www/index.html'));
+    if (!fs.existsSync('www/edit.full.html')) fs.writeFileSync('www/edit.full.html', fs.readFileSync('www/edit.html'));
+    grunt.registerTask('copySrc', function () {
+    });
+
     grunt.registerTask('minify', [
+        'copySrc',
         'uglify:index',
         'uglify:edit',
         'cssmin:index',
@@ -617,9 +626,7 @@ module.exports = function (grunt) {
         'jscs'
     ]);
 	
-	grunt.registerTask('prepublish', ['replace:core', 'updateReadme']);
+	grunt.registerTask('prepublish', ['replace:core', 'minify', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
-    grunt.registerTask('rename', [
-        'replace:name'
-    ]);
+    grunt.registerTask('rename', ['replace:name']);
 };

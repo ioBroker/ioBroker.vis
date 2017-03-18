@@ -20,6 +20,7 @@ var adapter        = utils.adapter(adapterName);
 var fs             = require('fs');
 var path           = require('path');
 var syncWidgetSets = require(__dirname + '/lib/install.js');
+var minify         = require('html-minifier').minify;
 
 adapter.on('ready', function () {
     main();
@@ -27,16 +28,26 @@ adapter.on('ready', function () {
 
 function writeFile(fileName, callback) {
     var config = require(__dirname + '/www/js/config.js').config;
-    var index  = fs.readFileSync(__dirname + '/www/' + fileName).toString();
+    var index;
+    var srcFileNameParts = fileName.split('.');
+    var ext = srcFileNameParts.pop();
+    var srcFileName = srcFileNameParts.join('.') + '.src.' + ext;
+    if (fs.existsSync(__dirname + '/www/' + srcFileName)) {
+        index = fs.readFileSync(__dirname + '/www/' + srcFileName).toString();
+    } else {
+        index = fs.readFileSync(__dirname + '/www/' + fileName).toString();
+        fs.writeFileSync(__dirname + '/www/' + srcFileName, index);
+    }
 
     // enable cache
-    index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->',
-        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">').replace('<html>', '<!--html-->');
+    index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>',
+        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
 
     var begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
     var end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
     var bigInsert = '';
     for (var w in config.widgetSets) {
+        if (!config.widgetSets.hasOwnProperty(w)) continue;
         var file;
         var name;
 
@@ -46,6 +57,9 @@ function writeFile(fileName, callback) {
             name = config.widgetSets[w] + '.html';
         }
         file = fs.readFileSync(__dirname + '/www/widgets/' + name);
+        // extract all css and js
+
+
         bigInsert += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
     }
     var pos = index.indexOf(begin);
@@ -55,13 +69,22 @@ function writeFile(fileName, callback) {
         if (pos !== -1) {
             var _end = index.substring(pos);
             index    = start + '\n' + bigInsert + '\n' + _end;
-            var original = start + '\n' + _end;
-            original = original.replace('<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
-                '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->').replace('<!--html-->', '<html>');
+
+            index = minify(index, {
+                removeAttributeQuotes: true,
+                removeComments: true,
+                collapseInlineTagWhitespace: true,
+                collapseWhitespace: true,
+                decodeEntities: true,
+                minifyCSS: true,
+                minifyJS: true,
+                removeRedundantAttributes: true,
+                removeScriptTypeAttributes: true,
+                removeStyleLinkTypeAttributes: true
+            });
 
             adapter.readFile(adapterName, fileName, function (err, data) {
                 if (data && data !== index) {
-                    fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
                     adapter.writeFile(adapterName, fileName, index, function () {
                         if (callback) callback(true);
