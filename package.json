@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "0.12.12",
+  "version": "0.12.14",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -30,7 +30,7 @@
     "home automation",
     "SCADA"
   ],
-  "dependencies": {
+  "_dependencies": {
     "html-minifier": "^3.4.1"
   },
   "devDependencies": {

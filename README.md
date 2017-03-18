@@ -180,7 +180,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.12.12 (2017-03-18)
+## Changelog### 0.12.14 (2017-03-18)
+
+### 0.12.12 (2017-03-18)
 
 ### 0.12.7 (2017-02-09)
 * (bluefox) prepare beta

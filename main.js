@@ -20,7 +20,7 @@ var adapter        = utils.adapter(adapterName);
 var fs             = require('fs');
 var path           = require('path');
 var syncWidgetSets = require(__dirname + '/lib/install.js');
-var minify         = require('html-minifier').minify;
+//var minify         = require('html-minifier').minify;
 
 adapter.on('ready', function () {
     main();
@@ -70,7 +70,7 @@ function writeFile(fileName, callback) {
             var _end = index.substring(pos);
             index    = start + '\n' + bigInsert + '\n' + _end;
 
-            index = minify(index, {
+            /*index = minify(index, {
                 removeAttributeQuotes: true,
                 removeComments: true,
                 collapseInlineTagWhitespace: true,
@@ -81,7 +81,7 @@ function writeFile(fileName, callback) {
                 removeRedundantAttributes: true,
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true
-            });
+            });*/
 
             adapter.readFile(adapterName, fileName, function (err, data) {
                 if (data && data !== index) {

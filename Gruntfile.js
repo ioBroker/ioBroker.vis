@@ -1,8 +1,9 @@
 // To use this file in WebStorm, right click on the file name in the Project Panel (normally left) and select "Open Grunt Console"
 
 /** @namespace __dirname */
-/* jshint -W097 */// jshint strict:false
-/*jslint node: true */
+/* jshint -W097 */
+/* jshint strict:false */
+/* jslint node: true */
 'use strict';
 
 function getAppName() {
@@ -592,6 +593,12 @@ module.exports = function (grunt) {
         fs.writeFileSync('www/worker-css.js', fs.readFileSync('www/lib/ace/worker-css.js'));
         fs.writeFileSync('www/worker-html.js', fs.readFileSync('www/lib/ace/worker-html.js'));
         fs.writeFileSync('www/worker-javascript.js', fs.readFileSync('www/lib/ace/worker-javascript.js'));
+
+        fs.writeFileSync('www/css/channel.png', fs.readFileSync('www/lib/css/fancytree/channel.png'));
+        fs.writeFileSync('www/css/device.png', fs.readFileSync('www/lib/css/fancytree/device.png'));
+        fs.writeFileSync('www/css/icons.gif', fs.readFileSync('www/lib/css/fancytree/icons.gif'));
+        fs.writeFileSync('www/css/loading.gif', fs.readFileSync('www/lib/css/fancytree/loading.gif'));
+        fs.writeFileSync('www/css/state.png', fs.readFileSync('www/lib/css/fancytree/state.png'));
     });
 
     var fs = require('fs');
@@ -626,7 +633,7 @@ module.exports = function (grunt) {
         'jscs'
     ]);
 	
-	grunt.registerTask('prepublish', ['replace:core', 'minify', 'updateReadme']);
+	grunt.registerTask('prepublish', ['replace:core', 'updateReadme']);
 	grunt.registerTask('p', ['prepublish']);
     grunt.registerTask('rename', ['replace:name']);
 };
