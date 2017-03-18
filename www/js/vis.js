@@ -1811,7 +1811,7 @@ vis = {
                 $oldView.find('.vis-view-disabled').show();
                 this.renderView(viewDiv, view, true, function (_viewDiv, _view) {
                     var $oldView = $('#visview_' + that.activeViewDiv);
-                    // hide aold view
+                    // hide old view
                     $oldView.hide();
                     $oldView.find('.vis-view-disabled').hide();
                     var $view = $('#visview_' + _viewDiv);
@@ -1821,6 +1821,7 @@ vis = {
 
                     // show new view
                     $view.show();
+                    $view.find('.vis-view-disabled').hide();
 
                     if ($oldView.hasClass('vis-edit-group')) {
                         that.destroyView(that.activeViewDiv, that.activeView);
@@ -3080,7 +3081,11 @@ window.onpopstate = function () {
         vis.urlParams[decode(match[1])] = decode(match[2]);
     }
 
-    vis.editMode = (window.location.href.indexOf('edit.html') !== -1 || vis.urlParams.edit === '');
+    vis.editMode = (
+        window.location.href.indexOf('edit.html')      !== -1 ||
+        window.location.href.indexOf('edit.full.html') !== -1 ||
+        window.location.href.indexOf('edit.src.html')  !== -1 ||
+        vis.urlParams.edit === '');
 };
 window.onpopstate();
 
