@@ -1,6 +1,6 @@
 {
   "name": "iobroker.vis",
-  "description": "Graphical user interface for ioBroker.",
+  "description": "Graphical user interface for iobroker.",
   "version": "0.12.11",
   "author": {
     "name": "bluefox",
@@ -11,19 +11,19 @@
     "hobbyquaker <hq@ccu.io>",
     "smilingJack <smilingJack@ccu.io>"
   ],
-  "homepage": "https://github.com/ioBroker/ioBroker.vis",
+  "homepage": "https://github.com/iobroker/iobroker.vis",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ioBroker/ioBroker.vis"
+    "url": "https://github.com/iobroker/iobroker.vis"
   },
   "licenses": [
     {
       "type": "CC-BY-NC-4.0",
-      "url": "https://github.com/ioBroker/ioBroker.vis/blob/master/LICENSE"
+      "url": "https://github.com/iobroker/iobroker.vis/blob/master/LICENSE"
     }
   ],
   "keywords": [
-    "ioBroker",
+    "iobroker",
     "GUI",
     "DashUI",
     "web interface",
@@ -37,12 +37,16 @@
     "grunt-jscs": "^2.0.0",
     "grunt-http": "^1.6.0",
     "grunt-npm-install": "^0.3.1",
+    "grunt-contrib-uglify": "^2.2.0",
+    "grunt-contrib-htmlmin": "^2.3.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.0.0",
     "iobroker.web": "*",
     "mocha": "^2.3.4",
     "chai": "^3.4.1"
   },
   "bugs": {
-    "url": "https://github.com/ioBroker/ioBroker.vis/issues"
+    "url": "https://github.com/iobroker/iobroker.vis/issues"
   },
   "main": "main.js",
   "scripts": {

@@ -447,7 +447,8 @@ vis = $.extend(true, vis, {
             that.conn.chmodProject(that.projectPrefix, $(this).prop('checked') ? 0x644 : 0x600, function (err, files) {
                 if (err) {
                     that.showError(err);
-                    $('#vis_access_mode').prop('checked', !$('#vis_access_mode').prop('checked')).prop('disabled');
+                    var $mode = $('#vis_access_mode');
+                    $mode.prop('checked', !$mode.prop('checked')).prop('disabled');
                 }
             });
         });
@@ -977,22 +978,25 @@ vis = $.extend(true, vis, {
         that.editSaveConfig('widgetAccordeon', that.widgetAccordeon);
     },
     editInitDialogs:        function () {
+        var $pbody = $('#panel_body');
+
 		if (typeof fillAbout !== 'undefined') {
-			$('#dialog_about').html(fillAbout());
-			$('#dialog_about').dialog({
-				autoOpen: false,
-				width:    600,
-				height:   550,
-                open:     function (/*event, ui*/) {
-                    $('[aria-describedby="dialog_about"]').css('z-index', 1002);
-                    $('.ui-widget-overlay').css('z-index', 1001);
-                },
-				position: {
-					my: 'center',
-					at: 'center',
-					of: $('#panel_body')
-				}
-			});
+			$('#dialog_about')
+                .html(fillAbout())
+                .dialog({
+                    autoOpen: false,
+                    width:    600,
+                    height:   550,
+                    open:     function (/*event, ui*/) {
+                        $('[aria-describedby="dialog_about"]').css('z-index', 1002);
+                        $('.ui-widget-overlay').css('z-index', 1001);
+                    },
+                    position: {
+                        my: 'center',
+                        at: 'center',
+                        of: $pbody
+                    }
+                });
 		}
 
         $('#dialog_shortcuts').dialog({
@@ -1003,7 +1007,7 @@ vis = $.extend(true, vis, {
                 $('[aria-describedby="dialog_shortcuts"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             },
-            position: {my: 'center', at: 'center', of: $('#panel_body')}
+            position: {my: 'center', at: 'center', of: $pbody}
         });
 
     },
@@ -1033,15 +1037,18 @@ vis = $.extend(true, vis, {
         var that = this;
         var reader = new FileReader();
         reader.onload = function (evt) {
-            $('.vis-file-name').html('<img src="img/zip.png" /><br><span style="color: black; font-weight: bold">[' + that.editGetReadableSize(file.size) + ']</span><br><span style="color: black; font-weight: bold">' + file.name + '</span>');
-            // string has form data:;base64,TEXT==
-            $('.vis-file-name').data('file', evt.target.result.split(',')[1]);
-            $('.vis-import-text-drop-plus').hide();
+            var $name = $('.vis-file-name');
+            var $project = $('#name_import_project');
+            $name.html('<img src="img/zip.png" /><br><span style="color: black; font-weight: bold">[' + that.editGetReadableSize(file.size) + ']</span><br><span style="color: black; font-weight: bold">' + file.name + '</span>');
+                // string has form data:;base64,TEXT==
+            $name.data('file', evt.target.result.split(',')[1]);
+
+                $('.vis-import-text-drop-plus').hide();
             // try to extract project name from 2016-05-09-project.zip
             var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
-            if (m && !$('#name_import_project').val()) $('#name_import_project').val(m[1]);
+            if (m && !$project.val()) $project.val(m[1]);
             
-            $('#start_import_project').prop('disabled', !$('.vis-file-name').data('file') || !$('#name_import_project').val());
+            $('#start_import_project').prop('disabled', !$name.data('file') || !$project.val());
         };
         reader.readAsDataURL(file);
     },
@@ -1274,21 +1281,25 @@ vis = $.extend(true, vis, {
                         text: _('Ok'),
                         click: function () {
                             var changed = false;
-                            if (that.views.___settings.reloadOnSleep != $('#reloadOnSleep').val()) {
-                                that.views.___settings.reloadOnSleep = $('#reloadOnSleep').val();
+                            var val = $('#reloadOnSleep').val();
+                            if (that.views.___settings.reloadOnSleep != val) {
+                                that.views.___settings.reloadOnSleep = val;
                                 changed = true;
                             }
-                            if (that.views.___settings.destroyViewsAfter != $('#destroyViewsAfter').val()) {
-                                that.views.___settings.destroyViewsAfter = $('#destroyViewsAfter').val();
+                            val = $('#destroyViewsAfter').val();
+                            if (that.views.___settings.destroyViewsAfter != val) {
+                                that.views.___settings.destroyViewsAfter = val;
                                 changed = true;
                             }
-                            if (that.views.___settings.reconnectInterval != $('#reconnectInterval').val()) {
-                                that.views.___settings.reconnectInterval = $('#reconnectInterval').val();
+                            val = $('#reconnectInterval').val();
+                            if (that.views.___settings.reconnectInterval != val) {
+                                that.views.___settings.reconnectInterval = val;
                                 that.conn.setReconnectInterval(that.views.___settings.reconnectInterval);
                                 changed = true;
                             }
-                            if (that.views.___settings.darkReloadScreen != $('#darkReloadScreen').prop('checked')) {
-                                that.views.___settings.darkReloadScreen = $('#darkReloadScreen').prop('checked')
+                            val = $('#darkReloadScreen').prop('checked');
+                            if (that.views.___settings.darkReloadScreen != val) {
+                                that.views.___settings.darkReloadScreen = val;
                                 changed = true;
                             }
                             if (changed) {
@@ -1842,9 +1853,10 @@ vis = $.extend(true, vis, {
             var between;
 
             $.each(that.activeWidgets, function () {
-                var top = parseInt($('#' + this).css('top'));
-                var bottom = top + $('#' + this).height();
-                cont_size = cont_size + $('#' + this).height();
+                var $this = $('#' + this);
+                var top = parseInt($this.css('top'));
+                var bottom = top + $this.height();
+                cont_size = cont_size + $this.height();
                 if (min_top > top) min_top = top;
                 if (max_bottom < bottom) max_bottom = bottom;
 
@@ -2131,8 +2143,7 @@ vis = $.extend(true, vis, {
 
                 $('#exit_button').button('option', 'icons', {
                     primary: 'ui-icon-' + that.config['button/closeMode']
-                });
-                $('#exit_button').trigger('click');
+                }).trigger('click');
             }
         });
 
@@ -2635,13 +2646,12 @@ vis = $.extend(true, vis, {
             },
             text: false
         }).click(function() {
-            if ($('#select_css_file').val() === 'vis-user') {
+            var val = $('#select_css_file').val();
+            if (val === 'vis-user') {
                 that.conn.writeFile(that.projectPrefix + 'vis-user.css' , editor.getValue(), function () {
                     $('#css_file_save').button('disable');
                 });
-            }
-
-            if ($('#select_css_file').val() === 'vis-common-user') {
+            } else if (val === 'vis-common-user') {
                 that.conn.writeFile('/vis/css/vis-common-user.css', editor.getValue(), function () {
                     $('#css_file_save').button('disable');
                 });
@@ -2809,7 +2819,7 @@ vis = $.extend(true, vis, {
         }
 
         if (this.config['select/select_set']) {
-            $('#select_set option[value="' + this.config['select/select_set'] + '"]').prop('selected', true);
+            $('#select_set').find('option[value="' + this.config['select/select_set'] + '"]').prop('selected', true);
         }
 
         this.editInitWidgetPreview();
@@ -3143,9 +3153,10 @@ vis = $.extend(true, vis, {
         this.$dialogConfirm.dialog('option', 'title', title || _('Confirm'));
         $('#dialog-confirm-text').html(message);
         if (icon) {
-            $('#dialog-confirm-icon').show();
-            $('#dialog-confirm-icon').attr('class', '');
-            $('#dialog-confirm-icon').addClass('ui-icon ui-icon-' + icon);
+            $('#dialog-confirm-icon')
+                .show()
+                .attr('class', '')
+                .addClass('ui-icon ui-icon-' + icon);
         } else {
             $('#dialog-confirm-icon').hide();
         }
@@ -3327,21 +3338,23 @@ vis = $.extend(true, vis, {
         });
     },
     nextView:               function () {
-        var $next = $('.view-select-tab.ui-state-active').parent().next().children().first();
+        var $select = $('.view-select-tab.ui-state-active');
+        var $next = $select.parent().next().children().first();
 
         if ($next.hasClass('view-select-tab')) {
             $next.trigger('click');
         } else {
-            $('.view-select-tab.ui-state-active').parent().parent().children().first().children().first().trigger('click');
+            $select.parent().parent().children().first().children().first().trigger('click');
         }
     },
     prevView:               function () {
-        var $prev = $('.view-select-tab.ui-state-active').parent().prev().children().first();
+        var $select = $('.view-select-tab.ui-state-active');
+        var $prev = $select.parent().prev().children().first();
 
         if ($prev.hasClass('view-select-tab')) {
             $prev.trigger('click');
         } else {
-            $('.view-select-tab.ui-state-active').parent().parent().children().last().children().first().trigger('click');
+            $select.parent().parent().children().last().children().first().trigger('click');
         }
     },
     editGetWidgets:         function (view, widget, _result) {
@@ -4365,13 +4378,13 @@ vis = $.extend(true, vis, {
         if (viewDiv === view) {
             $('#ribbon_view').find('.ribbon_tab_content').show();
             $('#view_inspector').show();
+            var $screenSize  = $('#screen_size');
+            var $screenSizeX = $('#screen_size_x');
+            var $screenSizeY = $('#screen_size_y');
             // View (Resolution) settings
             if (this.views[view] && this.views[view].settings) {
                 // Try to find this resolution in the list
                 var res = this.views[view].settings.sizex + 'x' + this.views[view].settings.sizey;
-                var $screenSize = $('#screen_size');
-                var $screenSizeX = $('#screen_size_x');
-                var $screenSizeY = $('#screen_size_y');
                 $screenSize.find('option').each(function () {
                     if ($(this).attr('value') === res) {
                         $(this).attr('selected', true);
@@ -5469,6 +5482,7 @@ vis = $.extend(true, vis, {
         if (!viewDiv) viewDiv = this.activeViewDiv;
 
         if (widgets || (!$focused.length && this.activeWidgets.length)) {
+            //noinspection JSJQueryEfficiency
             var $clipboard_content = $('#clipboard_content');
             if (!$clipboard_content.length) {
                 $('body').append('<div id="clipboard_content" style="display: none" class="vis-clipboard" title="' + _('Click to hide') + '"></div>');

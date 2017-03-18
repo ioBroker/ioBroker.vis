@@ -1150,11 +1150,21 @@ vis = {
     },
     changeFilter:       function (view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.activeView;
+        // convert from old style
+        if (!this.views[view]) {
+            hideDuration = hideEffect;
+            hideEffect = showDuration;
+            showDuration = showEffect;
+            showEffect = filter;
+            filter = view;
+            view = this.activeView;
+        }
+
         var widgets = this.views[view].widgets;
         var that = this;
         var widget;
         var mWidget;
-        if (!filter) {
+        if (!(filter || '').trim()) {
             // show all
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
@@ -1166,6 +1176,7 @@ vis = {
             setTimeout(function () {
                 var mWidget;
                 for (var widget in widgets) {
+                    if (!widgets.hasOwnProperty(widget)) continue;
                     mWidget = document.getElementById(widget);
                     if (widgets[widget].data.filterkey &&
                         mWidget &&
@@ -1181,7 +1192,7 @@ vis = {
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
                 mWidget = document.getElementById(widget);
-                if (mWidget &&
+                if (mWidget && widgets[widget].data.filterkey &&
                     mWidget._customHandlers &&
                     mWidget._customHandlers.onHide) {
                     mWidget._customHandlers.onHide(mWidget, widget);
@@ -1190,12 +1201,32 @@ vis = {
             }
         } else {
             this.viewsActiveFilter[this.activeView] = filter.split(',');
+            var vFilters = this.viewsActiveFilter[this.activeView];
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
-                //console.log(widgets[widget]);
-                if (widgets[widget].data.filterkey) {
-                    if (this.viewsActiveFilter[this.activeView].length > 0 &&
-                        this.viewsActiveFilter[this.activeView].indexOf(widgets[widget].data.filterkey) === -1) {
+                var wFilters = widgets[widget].data.filterkey;
+
+                if (wFilters) {
+                    if (typeof wFilters !== 'object') {
+                        widgets[widget].data.filterkey = wFilters.split(/[;,]+/);
+                        wFilters = widgets[widget].data.filterkey;
+                    }
+                    var found = false;
+                    // optimization
+                    if (wFilters.length === 1) {
+                        found = vFilters.indexOf(wFilters[0]) !== -1;
+                    } else if (vFilters.length === 1) {
+                        found = wFilters.indexOf(vFilters[0]) !== -1;
+                    } else {
+                        for (var f = 0; f < wFilters.length; f++) {
+                            if (vFilters.indexOf(wFilters[f]) !== -1) {
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!found) {
                         mWidget = document.getElementById(widget);
                         if (mWidget &&
                             mWidget._customHandlers &&
@@ -1204,6 +1235,10 @@ vis = {
                         }
                         $('#' + widget).hide(hideEffect, null, parseInt(hideDuration));
                     } else {
+                        mWidget = document.getElementById(widget);
+                        if (mWidget && mWidget._customHandlers && mWidget._customHandlers.onShow) {
+                            mWidget._customHandlers.onShow(mWidget, widget);
+                        }
                         $('#' + widget).show(showEffect, null, parseInt(showDuration));
                     }
                 }
@@ -1239,10 +1274,11 @@ vis = {
 
         if (oid) {
             if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return (condition === 'not exist');
 
             var condition = widgetData['signals-cond-' + index];
             var value     = widgetData['signals-val-' + index];
+
+            if (val === undefined) return (condition === 'not exist');
 
             if (!condition || value === undefined) return (condition === 'not exist');
 
@@ -1361,6 +1397,7 @@ vis = {
                                     $indicator = $('#' + wdata['gestures-indicator']);
                                     // create default indicator
                                     if (!$indicator.length) {
+                                        //noinspection JSJQueryEfficiency
                                         $indicator = $('#gestureIndicator');
                                         if (!$indicator.length) {
                                             $('body').append('<div id="gestureIndicator" style="position: absolute; pointer-events: none; z-index: 100; box-shadow: 2px 2px 5px 1px gray;height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; padding-left: 2px; padding-right: 2px; background: lightgray;"></div>');
@@ -3364,9 +3401,9 @@ function main($) {
             vis.authRunning = true;
             var users;
             if (visConfig.auth.users && visConfig.auth.users.length) {
-                users = '<select id="login-username" value="' + visConfig.auth.users[0] + '" class="login-input-field">';
+                users = '<select id="login-username" class="login-input-field">';
                 for (var z = 0; z < visConfig.auth.users.length; z++) {
-                    users += '<option value="' + visConfig.auth.users[z] + '">' + visConfig.auth.users[z] + '</option>';
+                    users += '<option value="' + visConfig.auth.users[z] + '" ' + (!z ? 'selected' : '') + '>' + visConfig.auth.users[z] + '</option>';
                 }
                 users += '</select>';
             } else {

@@ -6,10 +6,9 @@
 
 var fmScriptEls =    document.getElementsByTagName('script');
 var fmThisScriptEl = fmScriptEls[fmScriptEls.length - 1];
-var fmFolder =       fmThisScriptEl.src.substr(0, fmThisScriptEl.src.lastIndexOf('/') + 1);
-
-//$('head').append('<script type="text/javascript" src="../lib/js/dropzone.js"></script>');
-$('head').append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/>');
+//var fmFolder =       fmThisScriptEl.src.substr(0, fmThisScriptEl.src.lastIndexOf('/') + 1);
+var fmFolder    =    'js/fm/';
+//$('head').append('<link rel="stylesheet" href="' + fmFolder + 'fileManager.css"/>');
 
 
 (function ($) {

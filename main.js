@@ -31,7 +31,7 @@ function writeFile(fileName, callback) {
 
     // enable cache
     index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->',
-        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
+        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">').replace('<html>', '<!--html-->');
 
     var begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
     var end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
@@ -40,7 +40,7 @@ function writeFile(fileName, callback) {
         var file;
         var name;
 
-        if (typeof config.widgetSets[w] == 'object') {
+        if (typeof config.widgetSets[w] === 'object') {
             name = config.widgetSets[w].name + '.html';
         } else {
             name = config.widgetSets[w] + '.html';
@@ -49,17 +49,18 @@ function writeFile(fileName, callback) {
         bigInsert += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
     }
     var pos = index.indexOf(begin);
-    if (pos != -1) {
+    if (pos !== -1) {
         var start = index.substring(0, pos + begin.length);
         pos = index.indexOf(end);
-        if (pos != -1) {
+        if (pos !== -1) {
             var _end = index.substring(pos);
             index    = start + '\n' + bigInsert + '\n' + _end;
             var original = start + '\n' + _end;
             original = original.replace('<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">',
-                '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->');
+                '<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->').replace('<!--html-->', '<html>');
+
             adapter.readFile(adapterName, fileName, function (err, data) {
-                if (data && data != index) {
+                if (data && data !== index) {
                     fs.writeFileSync(__dirname + '/www/' + fileName + '.original', original);
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
                     adapter.writeFile(adapterName, fileName, index, function () {
@@ -166,7 +167,7 @@ function main() {
             count++;
             var config = changed;
             adapter.readFile(adapterName, 'js/config.js', function (err, data) {
-                if (data && data != config) {
+                if (data && data !== config) {
                     adapter.log.info('config.js changed. Upload.');
                     adapter.writeFile(adapterName, 'js/config.js', config, function () {
                         if (!--count) checkFiles(changed, isBeta);

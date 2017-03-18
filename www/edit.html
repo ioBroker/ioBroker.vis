@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"-->
 <head>
 
@@ -21,18 +21,17 @@
 
     <title>Edit vis</title>
 
-    <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/css/fancytree/ui.fancytree.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css" />
+    <link rel="stylesheet" type="text/css" href="lib/css/farbtastic.css" />
+    <link rel="stylesheet" type="text/css" href="js/fm/fileManager.css" />
 
-    <link rel="stylesheet" type="text/css" href="lib/css/superfish/superfish.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/css/jquery.multiselect-1.13.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/css/jquery.jgrowl.min.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/css/farbtastic.css"/>
-
-    <link rel="stylesheet" type="text/css" href="css/backgrounds.css"/>
-    <link rel="stylesheet" type="text/css" href="css/vis.css"/>
+    <link rel="stylesheet" type="text/css" href="css/backgrounds.css" />
+    <link rel="stylesheet" type="text/css" href="css/vis.css" />
     <link rel="stylesheet" type="text/css" href="css/styles.css" />
-    <link rel="stylesheet" type="text/css" href="css/vis-editor.css"/>
-
+    <link rel="stylesheet" type="text/css" href="css/vis-editor.css" />
 
     <script type="text/javascript" src="../../lib/js/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="../../lib/js/jquery-ui-1.11.4.full.min.js"></script>
@@ -41,7 +40,6 @@
     <script type="text/javascript" src="../../lib/js/selectID.js"></script>
     <script type="text/javascript" src="../../lib/js/socket.io.js"></script>
     <script type="text/javascript" src="lib/js/translate.js"></script>
-
     <script type="text/javascript" src="lib/js/jquery.multiselect-1.13.min.js"></script>
     <script type="text/javascript" src="lib/js/loStorage.js"></script>
     <script type="text/javascript" src="lib/js/jquery.ui.touch-punch.min.js"></script>
@@ -49,16 +47,12 @@
     <script type="text/javascript" src="lib/js/can.custom.min.js"></script>
     <script type="text/javascript" src="lib/js/html2canvas.min.js"></script>
     <script type="text/javascript" src="lib/js/jquery.jgrowl.min.js"></script>
-    <!--script type="text/javascript" src="lib/js/jquery.ba-resize.min.js"></script-->
     <script type="text/javascript" src="lib/js/superclick.js"></script>
     <script type="text/javascript" src="lib/ace/ace.js"></script>
     <script type="text/javascript" src="lib/ace/ext-language_tools.js"></script>
-
     <script type="text/javascript" src="lib/js/farbtastic.js"></script>
-
     <script type="text/javascript" src="js/fm/fileManager.js"></script>
     <script type="text/javascript" src="js/config.js"></script> <!-- this file must be before vis.js -->
-
     <script type="text/javascript" src="js/visLang.js"></script>
     <script type="text/javascript" src="js/visAbout.js"></script>
     <script type="text/javascript" src="_socket/info.js"></script>
@@ -68,13 +62,6 @@
     <script type="text/javascript" src="js/visEdit.js"></script>
     <script type="text/javascript" src="js/visEditExt.js"></script>
     <script type="text/javascript" src="js/visEditInspect.js"></script>
-    <!--script type="text/javascript" src="js/visWizard.js"></script-->
-
-    <!-- widgets ->
-    <script type="text/javascript" src="widgets/hqwidgets/js/jquery.knob.js"></script>
-    <script type="text/javascript" src="widgets/hqwidgets/js/hqwidgets.js"></script>
-    <-- widgetsStop -->
-
 </head>
 <body >
 
@@ -194,7 +181,7 @@
 </div>
 <div id="menu_body" style="display: none; padding: 0;border: none; background: transparent;z-index: 999 ">
     <div style="margin-left: 5px; display: inline-block; position: relative;top:-4px"><span class="ui-widget-header"  style="border: 0">vis </span><span id="vis-version" class="ui-widget-header" style="border: 0"></span></div>
-    <div class="vis-menu-line" style="position: absolute; top: 37px; left: 0px; height: 5px; width: 100%; background: #3C98D3; z-index: 1000;"></div>
+    <div class="vis-menu-line" style="position: absolute; top: 37px; left: 0; height: 5px; width: 100%; background: #3C98D3; z-index: 1000;"></div>
     <ul style="border-radius: 0;display: inline-block; background: transparent; border: none;margin-bottom: -4px;position: relative; z-index: 2">
         <li id="ribbon_tab_datei" style="display: none">
             <a href="#ribbon_file" style="padding: 2px 4px 2px 4px" class="translate">File</a>
@@ -217,7 +204,7 @@
             <li class="ui-state-default ui-corner-top menu-tab" role="tab" style="padding: 1px 4px 1px 4px"><a class="menu-tab-text translate">Setup</a>
                 <ul style="display: none;" class="ui-widget-content">
                     <li class="ui-state-default menu-item" role="tab">
-                        <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <a class="menu-tab-text"><span class="translate">Theme</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"></span></a>
                         <ul id="ul_theme" class="ui-widget-content">
                             <li class="ui-state-default menu-item" data-theme="custom-light">
                                 <a data-info="custom-light">Light</a>
@@ -234,7 +221,7 @@
                         </ul>
                     </li>
                     <li class="ui-state-default menu-item" role="tab">
-                        <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <a class="menu-tab-text"><span class="translate">Language</span><span style="float: right;margin-top:4px" class="ui-icon ui-icon-carat-1-e"></span></a>
                         <ul class="ui-widget-content">
                             <li class="ui-state-default language-select menu-item" data-language="de">
                                 <a>Deutsch</a>
@@ -248,13 +235,13 @@
                         </ul>
                     </li>
                     <li id="li_menu_projects" class="ui-state-default menu-item" role="tab">
-                        <a class="menu-tab-text"><span class="translate">Projects</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <a class="menu-tab-text"><span class="translate">Projects</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"></span></a>
                         <ul id="menu_projects" class="ui-widget-content">
                             <li class="ui-state-default project-select menu-item" data-language="de"><a>Main</a></li>
                         </ul>
                     </li>
                     <li id="li_menu_export" class="ui-state-default menu-item" role="tab">
-                        <a class="menu-tab-text"><span class="translate">Project export/import</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"/></a>
+                        <a class="menu-tab-text"><span class="translate">Project export/import</span><span style="float: right; margin-top:4px" class="ui-icon ui-icon-carat-1-e"></span></a>
                         <ul class="ui-widget-content">
                             <li class="ui-state-default menu-item translate export-normal">Export normal</li>
                             <li class="ui-state-default menu-item translate export-anonymized">Export anonymized</li>
@@ -311,7 +298,7 @@
     <div class="ribbon_tab" id="ribbon_view">
         <div class="ribbon_tab_content ui-widget-content">
             <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 500px;">
-                <table style="border-spacing: 0px; width: 100%">
+                <table style="border-spacing: 0; width: 100%">
                     <colgroup>
                         <col width="80px" style="text-align:left"/>
                         <col width="100%"/>
@@ -374,7 +361,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <button class="vis-editor translateB" id="export_view">export view</button>
@@ -390,7 +377,7 @@
     <div class="ribbon_tab" id="ribbon_widget">
         <div class="ribbon_tab_content ui-widget-content">
             <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 461px;">
-                <table style="border-spacing: 0px; width: 100%; text-align: left">
+                <table style="border-spacing: 0; width: 100%; text-align: left">
                     <colgroup>
                         <col width="80px" style="text-align: left"/>
                         <col width="100%"/>
@@ -415,7 +402,7 @@
             </div>
             <!--<div class="ribbon_field ui-widget-content ui-corner-all"style="display:none">-->
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">Align widgets:</td>
                         <td>
@@ -452,7 +439,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all" style="">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td class="translate" style="text-align: center; height: 22px; padding-right: 3px">All widgets:</td>
                         <td>
@@ -465,7 +452,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <button class="vis-editor translateB" id="export_widgets">export widgets</button>
@@ -482,7 +469,7 @@
     <div class="ribbon_tab" id="ribbon_tools" >
         <div class="ribbon_tab_content ui-widget-content" >
             <div class="ribbon_field ui-widget-content ui-corner-all" style="width: 550px">
-                <table style="border-spacing: 0px; width: 100%">
+                <table style="border-spacing: 0; width: 100%">
                     <colgroup>
                         <col width="80px" style="text-align:left"/>
                         <col width="100%"/>
@@ -490,7 +477,7 @@
                     </colgroup>
                     <tr id="rib_tools_resolution_manuel" style="display:none">
                         <td class="translate">Resolution:</td>
-                        <td><table style="border: 0px"><tr>
+                        <td><table style="border: 0"><tr>
                             <td><div style="display: inline-block" class="translate">Width</div></td>
                             <td><input id="screen_size_x" type="number" style="width: 60px" value=""/></td>
                             <td><div style="display: inline-block" class="translate">Height</div></td>
@@ -501,7 +488,7 @@
                             <div class="rib_tool_resolution_toggle"></div>
                         </td>
                         <td>
-                            <table style="border: 0px">
+                            <table style="border: 0">
                                 <tr>
                                     <td><label for="screen_default_man" title="Default screen" class="translate translateT">Default:</label></td><td><input class="vis-screen-default" id="screen_default_man" type="checkbox"/></td>
                                     <td><label for="render_always_man"  title="Render always"  class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always_man" type="checkbox"/></td>
@@ -545,7 +532,7 @@
                             <div class="rib_tool_resolution_toggle"></div>
                         </td>
                         <td>
-                            <table style="border: 0px">
+                            <table style="border: 0">
                                 <tr>
                                     <td><label for="screen_default_fix" title="Default screen" class="translate translateT">Default:</label></td><td><input class="vis-screen-default" id="screen_default_fix" type="checkbox"/></td>
                                     <td><label for="render_always_fix"      title="Render always"  class="translate translateT">Render always:</label></td><td><input class="vis-screen-render-always" id="render_always_fix" type="checkbox"/></td>
@@ -556,7 +543,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <span style=" display: inline-block;" class="translate">Grid</span>
@@ -574,7 +561,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <span style="display: inline-block" class="translate">Instance ID</span>
@@ -590,7 +577,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <span style="display: inline-block" class="translate translateT" title="Make available for all users">Available for all:</span>
@@ -602,7 +589,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all" style="display: none">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td style="width: 80px" class='translate'>Room:</td>
                         <td><select id="wizard_rooms"></select></td>
@@ -619,7 +606,7 @@
     <div class="ribbon_tab" id="ribbon_dev">
         <div class="ribbon_tab_content ui-widget-content">
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <button id="dev_show_html">Show Widget HTML</button>
@@ -628,7 +615,7 @@
                 </table>
             </div>
             <div class="ribbon_field ui-widget-content ui-corner-all">
-                <table style="border-spacing: 0px">
+                <table style="border-spacing: 0">
                     <tr>
                         <td>
                             <button class="vis-editor translateB" id="export_local_view">export views</button>
@@ -644,7 +631,7 @@
             </div>
 
         <div class="ribbon_field ui-widget-content ui-corner-all">
-            <table style="border-spacing: 0px; text-align: center">
+            <table style="border-spacing: 0; text-align: center">
                 <tr>
                     <td class="translate">dev1</td>
                     <td class="translate">dev2</td>
@@ -700,11 +687,11 @@
                 <div id="view_select_tabs"></div>
             </div>
         </div>
-        <div id="vis_container" style="width: 100%; height: 100%; overflow: auto" class="ui-widget-content vis_container_edit vis_container " caption="Views">
+        <div id="vis_container" style="width: 100%; height: 100%; overflow: auto" class="ui-widget-content vis_container_edit vis_container">
             <div id="size_x"
-                 style="display:none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green; height: 100%;"></div>
+                 style="display: none; z-index: 99; position: absolute; top: 0; width:0; border-right: 1px solid red; height: 100%; border-left: 1px solid green;"></div>
             <div id="size_y"
-                 style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green; width: 100%;"></div>
+                 style="display:none; z-index: 99; position: absolute; left: 0; height:0; border-bottom: 1px solid red; width: 100%; border-top: 1px solid green;"></div>
             <ul id="context_menu" style="position: absolute; display: none; z-index: 999; min-width: 150px">
                 <li id="context_menu_wid"     class="ui-state-disabled"></li>
                 <li id="context_menu_select"  class="context-submenu context-menu-common-item" data-action="select">
@@ -792,7 +779,7 @@
             </ul>
             <div class="tab_attr ui-widget-content" id="tab_view_attr">
                 <div id="view_inspector">
-                    <table style="width: 100%; border: 0px">
+                    <table style="width: 100%; border: 0">
                         <colgroup>
                             <col width="40%"/>
                             <col width="60%"  style="padding-right: 5px"/>
@@ -985,7 +972,7 @@
             <div class="tab_attr ui-widget-content" id="tab_wid_attr">
                 <div class="vis-widget-tools" style="margin-top: 3px;">
                     <!--<h4 class="translate">Widget Attributes:</h4>-->
-                    <table cellspacing=0 style="width: 100%; border: 0px; table-layout: fixed; word-wrap: break-word;">
+                    <table cellspacing=0 style="width: 100%; border: 0; table-layout: fixed; word-wrap: break-word;">
                         <colgroup>
                             <col width="40%"/>
                             <col width="60%"  style="padding-right: 5px"/>

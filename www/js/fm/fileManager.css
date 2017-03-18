@@ -170,23 +170,20 @@
 }
 .fm_bar_back_behind {
     margin-left: 39px;
-    border-radius: 50px;
-    height: 64px;
+    display: none;    height: 64px;
     position: absolute;
     width: 64px;
     left: -73px;
     background-color: #d3d3d3;
     top: -1px;
     background-size: 64px;
-    border: 2px ridge silver
-    border-radius: 64 !important;
-
+    border: 2px ridge silver;
+    border-radius: 64px !important;
 }
 
 #fm_tr_head {
     display: none;
     visibility: hidden;
-
 }
 
 #fm_th_name {
@@ -200,13 +197,11 @@
     margin: 5px 5px 0 5px;
     line-height: 15px;
     vertical-align: top;
-
 }
 
 .fm_prev_img {
     max-height: 100%;
     max-width: 100%;
-
 }
 
 .fm_prev_img_container {
@@ -216,7 +211,6 @@
     display: flex;
     justify-content: center;
     margin-left: 11px;
-
 }
 
 .fm_prev_name {
@@ -228,7 +222,6 @@
     text-align: center;
     width: 150px;
     word-wrap: break-word;
-
 }
 
 .fm_prev_overlay {
@@ -237,14 +230,12 @@
     top: 0;
     width: 100%;
     left: 0;
-
 }
 
 #fm_scroll_pane {
     width: 100%;
     position: relative;
     overflow: hidden;
-
 }
 
 #fm_table_head {
@@ -253,19 +244,19 @@
 }
 
 #fm_table_head_name{
-display: inline-block;
-margin: 0;
-padding: 0;
-position: relative;
-width: calc(100% / 4 - 5px);
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: calc(100% / 4 - 5px);
 }
 
 #fm_table_head_type{
-display: inline-block;
-margin: 0;
-padding: 0;
-position: relative;
-width: calc(100% / 4 - 10px);
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: calc(100% / 4 - 10px);
 }
 #fm_table_head_size{
     display: inline-block;
@@ -314,8 +305,8 @@ width: calc(100% / 4 - 10px);
     overflow: hidden;
     padding: 0;
     color: transparent;
-
 }
+
 .fm_tr{
 
 }
@@ -330,8 +321,8 @@ width: calc(100% / 4 - 10px);
     position: absolute;
     padding: 5px !important;
     z-index:100000!important;
-
 }
+
 #fm_add_dropzone{
     height: calc(100% - 100px);
     width: calc(100% - 27px);
@@ -339,16 +330,16 @@ width: calc(100% / 4 - 10px);
     position: absolute;
     left: 10px;
     top: 10px;
-
 }
+
 .dialog_fm_add{
     height: calc(100% - 5px) !important;
     width:  calc(100% - 10px) !important;
     position: absolute !important;
     top: 0 !important;
     z-index:100000!important;
-
 }
+
 .fm_dropbox_text{
     font-size: 50px;
     font-weight: bold;
@@ -361,27 +352,29 @@ width: calc(100% / 4 - 10px);
     width: 100%;
     align-items: center;
     display: block;
-
 }
+
 #fm_inp_save{
     display: block;
     height: 20px;
     width: calc(100% - 150px);
 }
+
 #fm_btn_save{
     height: 36px;
     margin-top: 10px;
     width: 150px !important
 }
+
 #fm_btn_wrap{
 
 }
+
 #fm_save_wrap{
     align-items: center;
     display: flex;
     justify-content: space-around;
     margin-top: 6px;
-
 }
 
 .fm_add_buttonbar{
@@ -394,6 +387,7 @@ width: calc(100% / 4 - 10px);
     left: 10px;
     flex-direction: inherit;
 }
+
 .dialog_fm_rename{
     height: 170px !important;
     width: 400px !important;

@@ -173,6 +173,195 @@ module.exports = function (grunt) {
                         dest:    srcDir + 'test/lib'
                     }
                 ]
+            },
+            minify: {
+                options: {
+                    patterns: [
+                        {
+                            match:       /<script type="text\/javascript" src="cordova\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/translate\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/app\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/can\.custom\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/jquery.ui.touch-punch.min.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/jquery\.multiselect-1\.13\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/quo\.standalone\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/loStorage\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/conn\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/vis\.js"><\/script>/,
+                            replacement: '<script type="text/javascript" src="js/vis.min.js"></script>'
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/backgrounds.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/vis.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/app.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/styles.css" \/>/,
+                            replacement: '<link rel="stylesheet" type="text/css" href="css/vis.min.css" />'
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="lib\/css\/jquery.multiselect-1\.13\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/fm\/fileManager\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visLang\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visAbout\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visEditWelcome\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visEdit\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visEditExt\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="js\/visEditInspect\.js"><\/script>/,
+                            replacement: '<script type="text/javascript" src="js/visEdit.min.js"></script>'
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/jquery\.fancytree-all\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/colResizable-1\.5\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/dropzone\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/html2canvas\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/jquery\.jgrowl\.min\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/superclick\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/ace\/ace\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/ace\/ext-language_tools\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<script type="text\/javascript" src="lib\/js\/farbtastic\.js"><\/script>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="lib\/css\/fancytree\/ui.fancytree\.min\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="lib\/css\/superfish\/superfish\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="lib\/css\/jquery\.jgrowl\.min\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="lib\/css\/farbtastic\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/vis\.min\.css" \/>/,
+                            replacement: '<link rel="stylesheet" type="text\/css" href="css\/visEdit\.min\.css" \/>'
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="css\/vis-editor\.css" \/>/,
+                            replacement: ''
+                        },
+                        {
+                            match:       /<link rel="stylesheet" type="text\/css" href="js\/fm\/fileManager\.css" \/>/,
+                            replacement: ''
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + '/www/index.html',
+                            srcDir + '/www/edit.html'
+                        ],
+                        dest:    srcDir + '/www/'
+                    }
+                ]
+            },
+            minifyEdit: {
+                options: {
+                    patterns: [
+                        {
+                            match:       /<script type="text\/javascript" src="js\/vis\.min\.js"><\/script>/,
+                            replacement: ''
+                        }
+                    ]
+                },
+                files: [
+                    {
+                        expand:  true,
+                        flatten: true,
+                        src:     [
+                            srcDir + '/www/edit.html'
+                        ],
+                        dest:    srcDir + '/www/'
+                    }
+                ]
             }
         },
         // Javascript code styler
@@ -191,6 +380,97 @@ module.exports = function (grunt) {
                     url: 'https://raw.githubusercontent.com/' + appName + '/' + appName + '.js-controller/master/tasks/jscsRules.js'
                 },
                 dest: 'tasks/jscsRules.js'
+            }
+        },
+        concat: {
+            options: {
+                separator: ';\n'
+            },
+            index: {
+                src: [
+                    'www/lib/js/can.custom.min.js',
+                    'www/lib/js/jquery.ui.touch-punch.min.js',
+                    'www/lib/js/jquery.multiselect-1.13.min.js',
+                    'www/lib/js/quo.standalone.js',
+                    'www/lib/js/loStorage.js',
+                    'www/js/vis.mmin.js'
+                ],
+                dest: 'www/js/vis.min.js'
+            },
+            edit: {
+                src: [
+                    'www/lib/js/jquery.fancytree-all.min.js',
+                    'www/lib/js/colResizable-1.5.min.js',
+                    'www/lib/js/dropzone.js',
+                    'www/lib/js/html2canvas.min.js',
+                    'www/lib/js/jquery.jgrowl.min.js',
+                    'www/lib/js/superclick.js',
+                    'www/lib/ace/ace.js',
+                    'www/lib/ace/ext-language_tools.js',
+                    'www/lib/ace/ext-searchbox.js',
+                    'www/lib/ace/mode-css.js',
+                    'www/lib/ace/mode-html.js',
+                    'www/lib/ace/mode-javascript.js',
+                    //'www/lib/ace/worker-css.js',  - needs to be in root
+                    //'www/lib/ace/worker-html.js',
+                    //'www/lib/ace/worker-javascript.js',
+                    'www/lib/js/farbtastic.js',
+                    'www/js/vis.min.js',
+                    'www/js/visEdit.mmin.js'
+                ],
+                dest: 'www/js/visEdit.min.js'
+            }
+        },
+        uglify: {
+            index: {
+                files: {
+                    'www/js/vis.mmin.js': [
+                        'www/lib/js/translate.js',
+                        'www/js/conn.js',
+                        'www/js/vis.js'
+                    ]
+                }
+            },
+            edit: {
+                files: {
+                    'www/js/visEdit.mmin.js': [
+                        'www/js/fm/fileManager.js',
+                        'www/js/visLang.js',
+                        'www/js/visEditWelcome.js',
+                        'www/js/visEdit.js',
+                        'www/js/visEditExt.js',
+                        'www/js/visEditInspect.js'
+                    ]
+                }
+            }
+        },
+        cssmin: {
+            options: {
+                mergeIntoShorthands: false,
+                roundingPrecision: -1
+            },
+            index: {
+                files: {
+                    'www/css/vis.min.css': [
+                        'www/lib/css/jquery.multiselect-1.13.css',
+                        'www/css/background.css',
+                        'www/css/styles.css',
+                        'www/css/vis.css'
+                    ]
+                }
+            },
+            edit: {
+                files: {
+                    'www/css/visEdit.min.css': [
+                        'www/lib/css/fancytree/ui.fancytree.min.css',
+                        'www/lib/css/superfish/superfish.css',
+                        'www/lib/css/jquery.jgrowl.min.css',
+                        'www/lib/css/farbtastic.css',
+                        'www/js/fm/fileManager.css',
+                        'www/css/vis.min.css',
+                        'www/css/vis-editor.css'
+                    ]
+                }
             }
         }
     });
@@ -301,6 +581,29 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jscs');
     grunt.loadNpmTasks('grunt-http');
     grunt.loadNpmTasks('grunt-npm-install');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-htmlmin');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+
+    grunt.registerTask('copyAce', function () {
+        var fs = require('fs');
+        fs.writeFileSync('www/worker-css.js', fs.readFileSync('www/lib/ace/worker-css.js'));
+        fs.writeFileSync('www/worker-html.js', fs.readFileSync('www/lib/ace/worker-html.js'));
+        fs.writeFileSync('www/worker-javascript.js', fs.readFileSync('www/lib/ace/worker-javascript.js'));
+    });
+    grunt.registerTask('minify', [
+        'uglify:index',
+        'uglify:edit',
+        'cssmin:index',
+        'cssmin:edit',
+        'concat:index',
+        'concat:edit',
+        'replace:minify',
+        'replace:minifyEdit',
+        'copyAce'
+    ]);
+
     grunt.registerTask('beta', [
             'beta-pre',
             'npm-install',

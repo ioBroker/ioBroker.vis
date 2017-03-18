@@ -408,7 +408,7 @@
             }
 
             $this.find('select').change(function () {
-                vis.changeFilter($this.find('select option:selected').val(), hideEffect, hideDuration, showEffect, showDuration);
+                vis.changeFilter(null, $this.find('select option:selected').val(), hideEffect, hideDuration, showEffect, showDuration);
             });
 
         },
