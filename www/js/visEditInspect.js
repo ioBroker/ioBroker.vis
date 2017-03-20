@@ -520,7 +520,7 @@ vis = $.extend(true, vis, {
         // options = {min: ?,max: ?,step: ?}
         // Select
         var line = {
-            input: '<input id="inspect_' + widAttr + '" style="width: 100%"/>',
+            input: '<input id="inspect_' + widAttr + '" style="width: calc(100% - 2px);"/>',
             init: function (w, data) {
                 var platform = window.navigator.oscpu || window.navigator.platform;
                 // Do not show spin on MAc OS
@@ -535,9 +535,9 @@ vis = $.extend(true, vis, {
                         },200));
                     };
                     $(this).spinner(options);
-                    $(this).parent().css({width: '100%'});
+                    $(this).parent().css({width: 'calc(100% - 2px)'});
                 } else {
-                    $(this).parent().css({width: '98%'});
+                    $(this).parent().css({width: 'calc(100% - 8px)'});
                 }
                 // Allow only numbers
                 $(this).on('keypress', function(e) {

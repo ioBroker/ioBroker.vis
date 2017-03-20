@@ -171,15 +171,15 @@ body {
     width: 115px !important;
 }
 
-#widget_attrs_fix .ui-multiselect {
+#attr_wrap .ui-multiselect {
     width: 265px !important;
 }
 
-#widget_attrs_fix .vis-edit-textbox {
+#attr_wrap .vis-edit-textbox {
     width: 100%;
 }
 
-#widget_attrs_fix .vis-edit-textbox-with-button {
+#attr_wrap .vis-edit-textbox-with-button {
     width: calc(100% - 30px);
 }
 .vis-edit-percent-calc {
@@ -643,6 +643,14 @@ body {
     min-width: 20px;
     width: auto;
     overflow: visible;
+    font-size: 13px !important;
+}
+#attr_wrap .vis-edit-td-caption,
+#attr_wrap .vis-inspect-group,
+.group-view-css-common,
+.group-view-css-font-text,
+.group-view-css-background {
+    font-size: 13px !important;
 }
 
 #select_set-button {
