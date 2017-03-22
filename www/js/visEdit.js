@@ -2753,7 +2753,7 @@ vis = $.extend(true, vis, {
             change: function () {
                 var theme = $(this).val();
                 that.views[that.activeView].settings.theme = theme;
-                that.addViewStyle(that.activeView, theme);
+                that.addViewStyle(that.activeViewDiv, that.activeView, theme);
                 //that.additionalThemeCss(theme);
                 that.save();
             }
