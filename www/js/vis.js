@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.16',
+    version: '0.12.18',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -755,7 +755,7 @@ vis = {
                 this.activeView = hash;
                 this.activeViewDiv = this.activeView;
             } else {
-                window.alert(_("error - View doesn't exist"));
+                window.alert(_('error - View doesn\'t exist'));
                 if (typeof app === 'undefined') window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
                 $.error("vis Error can't find view");
             }
@@ -890,8 +890,7 @@ vis = {
 
         if (typeof hidden === 'function') {
             callback = hidden;
-            hidden   = view;
-            view     = viewDiv;
+            hidden = undefined;
         }
         if (typeof view === 'boolean') {
             callback = hidden;
