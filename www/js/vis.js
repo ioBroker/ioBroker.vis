@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2016 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2017 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -33,16 +33,16 @@
 
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
-        'No connection to Server':  {'en': 'No connection to Server',   'de': 'Keine Verbindung zu Server', 'ru': 'Нет соединения с сервером'},
+        'No connection to Server':  {'en': 'No connection to Server',   'de': 'Keine Verbindung zum Server', 'ru': 'Нет соединения с сервером'},
         'Loading Views...':         {'en': 'Loading Views...',          'de': 'Lade Views...',          'ru': 'Загрузка пользовательских страниц...'},
-        'Connecting to Server...':  {'en': 'Connecting to Server...',   'de': 'Verbinde mit Server...', 'ru': 'Соединение с сервером...'},
+        'Connecting to Server...':  {'en': 'Connecting to Server...',   'de': 'Verbinde mit dem Server...', 'ru': 'Соединение с сервером...'},
         'Loading data objects...':  {'en': 'Loading data...',           'de': 'Lade Daten...',          'ru': 'Загрузка данных...'},
         'Loading data values...':   {'en': 'Loading values...',         'de': 'Lade Werte...',          'ru': 'Загрузка значений...'},
         'error - View doesn\'t exist': {'en': 'View doesn\'t exist!',   'de': 'View existiert nicht!',  'ru': 'Страница не существует!'},
         'no views found!':          {'en': 'No views found!',           'de': 'Keine Views gefunden!',  'ru': 'Не найдено страниц!'},
         'No Views found on Server': {
             'en': 'No Views found on Server',
-            'de': 'Keine Views gefunden am Server.',
+            'de': 'Keine Views am Server gefunden.',
             'ru': 'На сервере не найдено никаких страниц.'
         },
         'All changes are saved locally. To reset changes clear the cache.': {
@@ -57,7 +57,7 @@ if (typeof systemDictionary !== 'undefined') {
         },
         'no views found on server.\nCreate new %s ?': {
             'en': 'no views found on server.\nCreate new %s?',
-            'de': 'Keine Views gefunden am Server.\nErzeugen %s?',
+            'de': 'Keine Views am Server gefunden am.\nErzeugen %s?',
             'ru': 'На сервере не найдено никаких страниц. Создать %s?'
         },
         'Update found, loading new Files...': {
@@ -72,7 +72,7 @@ if (typeof systemDictionary !== 'undefined') {
         },
         'error: view not found.': {
             'en': 'Error: view not found',
-            'de': 'Fehler: View ist nicht gefunden',
+            'de': 'Fehler: View wurde nicht gefunden',
             'ru': 'Ошибка: Страница не существует'
         },
         'error: view container recursion.': {
@@ -82,7 +82,7 @@ if (typeof systemDictionary !== 'undefined') {
         },
         "Cannot execute %s for %s, because of insufficient permissions": {
             "en": "Cannot execute %s for %s, because of insufficient permissions.",
-            "de": "Kann das Kommando \"%s\" für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden.",
+            "de": "Kann das Kommando \"%s\" für %s nicht ausführen, weil nicht genügend Zugriffsrechte vorhanden sind.",
             "ru": "Не могу выполнить \"%s\" для %s, так как недостаточно прав."
         },
         "Insufficient permissions": {
@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.18',
+    version: '0.12.16',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -755,7 +755,7 @@ vis = {
                 this.activeView = hash;
                 this.activeViewDiv = this.activeView;
             } else {
-                window.alert(_('error - View doesn\'t exist'));
+                window.alert(_("error - View doesn't exist"));
                 if (typeof app === 'undefined') window.location.href = 'edit.html?' + this.projectPrefix.substring(0, this.projectPrefix.length - 1);
                 $.error("vis Error can't find view");
             }
@@ -890,7 +890,8 @@ vis = {
 
         if (typeof hidden === 'function') {
             callback = hidden;
-            hidden = undefined;
+            hidden   = view;
+            view     = viewDiv;
         }
         if (typeof view === 'boolean') {
             callback = hidden;
