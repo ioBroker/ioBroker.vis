@@ -3252,6 +3252,115 @@ function main($) {
         });
     }
 
+    function createIds(IDs, index, callback) {
+        if (typeof index === 'function') {
+            callback = index;
+            index = 0;
+        }
+        index = index || 0;
+        var j;
+        var now = new Date().getTime() / 1000;
+        var obj = {};
+        for (j = index; j < vis.subscribing.IDs.length && j < index + 100; j++) {
+            var _id = vis.subscribing.IDs[j];
+            if (vis.states[_id + '.val'] === undefined) {
+                if (!_id || !_id.match(/^dev\d+$/)) {
+                    console.log('Create inner vis object ' + _id);
+                }
+                if (vis.editMode) {
+                    vis.states[_id + '.val'] = 'null';
+                    vis.states[_id + '.ts']  = now;
+                    vis.states[_id + '.ack'] = false;
+                    vis.states[_id + '.lc']  = now;
+                } else {
+                    obj[_id + '.val'] = 'null';
+                    obj[_id + '.ts']  = now;
+                    obj[_id + '.ack'] = false;
+                    obj[_id + '.lc']  = now;
+                }
+
+                if (!vis.editMode && vis.bindings[_id]) {
+                    for (var k = 0; k < vis.bindings[_id].length; k++) {
+                        var _widget = vis.views[vis.bindings[_id][k].view].widgets[vis.bindings[_id][k].widget];
+                        _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
+                    }
+                }
+            }
+        }
+        try {
+            vis.states.attr(obj);
+        } catch (e) {
+            vis.conn.logError('Error: can\'t create states objects (' + e + ')');
+        }
+
+        if (j < vis.subscribing.IDs.length) {
+            setTimeout(function () {
+                createIds(IDs, j, callback);
+            }, 0)
+        } else {
+            callback();
+        }
+    }
+
+    function afterInit(error) {
+        if (error) {
+            console.log('Possibly not authenticated, wait for request from server');
+            // Possibly not authenticated, wait for request from server
+        } else {
+            // Get user groups info
+            vis.conn.getGroups(function (err, userGroups) {
+                vis.userGroups = userGroups || {};
+                // Get Server language
+                vis.conn.getConfig(function (err, config) {
+                    systemLang = vis.args.lang || config.language || systemLang;
+                    vis.language = systemLang;
+                    vis.dateFormat = config.dateFormat;
+                    vis.isFloatComma = config.isFloatComma;
+                    translateAll();
+                    if (vis.isFirstTime) {
+                        // Init edit dialog
+                        if (vis.editMode && vis.editInit) vis.editInit();
+                        vis.isFirstTime = false;
+                        vis.init();
+                    }
+                });
+            });
+
+            // If metaIndex required, load it
+            if (vis.editMode) {
+                /* socket.io */
+                if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
+
+                // Read all data objects from server
+                vis.conn.getObjects(function (err, data) {
+                    vis.objects = data;
+                    // Detect if objects are loaded
+                    for (var ob in data) {
+                        if (data.hasOwnProperty(ob)) {
+                            vis.objectSelector = true;
+                            break;
+                        }
+                    }
+                    if (vis.editMode && vis.objectSelector) {
+                        vis.inspectWidgets(vis.activeViewDiv, vis.activeView, true);
+                    }
+                });
+            }
+
+            //console.log((new Date()) + " socket.io reconnect");
+            if (vis.isFirstTime) {
+                setTimeout(function () {
+                    if (vis.isFirstTime) {
+                        // Init edit dialog
+                        if (vis.editMode && vis.editInit) vis.editInit();
+                        vis.isFirstTime = false;
+                        vis.init();
+                    }
+                }, 1000);
+            }
+        }
+    }
+
     vis.conn.init(null, {
         mayReconnect: typeof app !== 'undefined' ? app.mayReconnect : null,
         onAuthError:  typeof app !== 'undefined' ? app.onAuthError  : null,
@@ -3302,98 +3411,11 @@ function main($) {
                         }
                         // Create non-existing IDs
                         if (vis.subscribing.IDs) {
-                            var now = new Date().getTime() / 1000;
-
-                            for (var j = 0; j < vis.subscribing.IDs.length; j++) {
-                                var _id = vis.subscribing.IDs[j];
-                                if (vis.states[_id + '.val'] === undefined) {
-                                    if (!_id || !_id.match(/^dev\d+$/)) {
-                                        console.log('Create inner vis object ' + _id);
-                                    }
-                                    if (vis.editMode) {
-                                        vis.states[_id + '.val'] = 'null';
-                                        vis.states[_id + '.ts']  = now;
-                                        vis.states[_id + '.ack'] = false;
-                                        vis.states[_id + '.lc']  = now;
-                                    } else {
-                                        var o = {};
-                                        o[_id + '.val'] = 'null';
-                                        o[_id + '.ts']  = now;
-                                        o[_id + '.ack'] = false;
-                                        o[_id + '.lc']  = now;
-
-                                        try {
-                                            vis.states.attr(o);
-                                        } catch (e) {
-                                            vis.conn.logError('Error: can\'t create states object for ' + _id + '(' + e + ')');
-                                        }
-                                    }
-
-                                    if (!vis.editMode && vis.bindings[_id]) {
-                                        for (var k = 0; k < vis.bindings[_id].length; k++) {
-                                            var _widget = vis.views[vis.bindings[_id][k].view].widgets[vis.bindings[_id][k].widget];
-                                            _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (error) {
-                            console.log('Possibly not authenticated, wait for request from server');
-                            // Possibly not authenticated, wait for request from server
-                        } else {
-                            // Get user groups info
-                            vis.conn.getGroups(function (err, userGroups) {
-                                vis.userGroups = userGroups || {};
-                                // Get Server language
-                                vis.conn.getConfig(function (err, config) {
-                                    systemLang = vis.args.lang || config.language || systemLang;
-                                    vis.language = systemLang;
-                                    vis.dateFormat = config.dateFormat;
-                                    vis.isFloatComma = config.isFloatComma;
-                                    translateAll();
-                                    if (vis.isFirstTime) {
-                                        // Init edit dialog
-                                        if (vis.editMode && vis.editInit) vis.editInit();
-                                        vis.isFirstTime = false;
-                                        vis.init();
-                                    }
-                                });
+                            createIds(vis.subscribing.IDs, function () {
+                                afterInit(error);
                             });
-
-                            // If metaIndex required, load it
-                            if (vis.editMode) {
-                                /* socket.io */
-                                if (vis.isFirstTime) vis.showWaitScreen(true, _('Loading data objects...'), null, 20);
-
-                                // Read all data objects from server
-                                vis.conn.getObjects(function (err, data) {
-                                    vis.objects = data;
-                                    // Detect if objects are loaded
-                                    for (var ob in data) {
-                                        if (data.hasOwnProperty(ob)) {
-                                            vis.objectSelector = true;
-                                            break;
-                                        }
-                                    }
-                                    if (vis.editMode && vis.objectSelector) {
-                                        vis.inspectWidgets(vis.activeViewDiv, vis.activeView, true);
-                                    }
-                                });
-                            }
-
-                            //console.log((new Date()) + " socket.io reconnect");
-                            if (vis.isFirstTime) {
-                                setTimeout(function () {
-                                    if (vis.isFirstTime) {
-                                        // Init edit dialog
-                                        if (vis.editMode && vis.editInit) vis.editInit();
-                                        vis.isFirstTime = false;
-                                        vis.init();
-                                    }
-                                }, 1000);
-                            }
+                        } else {
+                            afterInit(error);
                         }
                     });
                 });
