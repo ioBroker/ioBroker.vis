@@ -8,8 +8,6 @@ node_js:
   - '4'
   - '6'
   - '7'
-before_install:
-  - npm install npm@latest -g
 before_script:
   - npm install winston@2.3.0 --production
   - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
