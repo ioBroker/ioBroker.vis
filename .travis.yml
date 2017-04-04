@@ -9,7 +9,6 @@ node_js:
   - '6'
   - '7'
 before_script:
-  - travis_retry npm install winston@2.3.0
   - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
   - npm install iobroker.web  --prefix ./node_modules/iobroker.js-controller/
 env:
