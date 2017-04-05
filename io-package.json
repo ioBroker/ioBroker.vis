@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.12.19",
+        "version": "0.12.20",
         "title":                    "iobroker Visualisation",
         "news": {
 			"0.10.15": {

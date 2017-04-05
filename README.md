@@ -180,7 +180,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.12.19 (2017-03-30)
+## Changelog### 0.12.20 (2017-04-06)
+
+### 0.12.19 (2017-03-30)
 
 ### 0.12.18 (2017-03-22)
 

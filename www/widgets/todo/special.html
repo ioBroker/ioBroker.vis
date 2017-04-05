@@ -40,10 +40,10 @@
                 } else {
                     if (parseInt(delay, 10) > 0) {
                         setTimeout(function (_v) {
-                            vis.renderView(_v, true);
+                            vis.renderView(_v, _v, true);
                         }, delay, view);
                     } else {
-                        vis.renderView(view, true);
+                        vis.renderView(view, view, true);
                     }
                 }
             },
