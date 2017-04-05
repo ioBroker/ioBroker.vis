@@ -20,6 +20,8 @@ var adapter        = utils.adapter(adapterName);
 var fs             = require('fs');
 var path           = require('path');
 var syncWidgetSets = require(__dirname + '/lib/install.js');
+var https          = require('https');
+var jwt            = require('jsonwebtoken');
 //var minify         = require('html-minifier').minify;
 
 adapter.on('ready', function () {
@@ -121,6 +123,17 @@ function upload(callback) {
     });
 }
 
+function updateCacheManifest(callback) {
+    adapter.log.info('Changes in index.html detected => update cache.manifest');
+    var data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
+    var build = data.match(/# dev build ([0-9]+)/);
+    data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
+    fs.writeFileSync(__dirname + '/www/cache.manifest', data);
+
+    adapter.writeFile(adapterName, 'cache.manifest', data, function () {
+        callback && callback();
+    });
+}
 // Update index.html
 function checkFiles(configChanged, isBeta) {
     if (isBeta) {
@@ -131,13 +144,7 @@ function checkFiles(configChanged, isBeta) {
         // Update edit.html
         writeFile('edit.html', function (editChanged) {
             if (indexChanged || editChanged || configChanged) {
-                adapter.log.info('Changes in index.html detected => update cache.manifest');
-                var data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
-                var build = data.match(/# dev build ([0-9]+)/);
-                data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
-                fs.writeFileSync(__dirname + '/www/cache.manifest', data);
-
-                adapter.writeFile(adapterName, 'cache.manifest', data, function () {
+                updateCacheManifest(function () {
                     upload(function () {
                         adapter.stop();
                     });
@@ -179,9 +186,10 @@ function copyFiles(root, filesOrDirs, callback) {
     }
 }
 
-function main() {
+function generatePages() {
     var count = 0;
     var changed = false;
+
     if (!isBeta) {
         changed = syncWidgetSets();
 
@@ -248,4 +256,80 @@ function main() {
             if (!--count) checkFiles(changed, isBeta);
         }
     });
+}
+
+function indicateError(callback) {
+    var data = fs.readFileSync(__dirname + '/www/js/config.js').toString();
+    if (data.indexOf('license: false,') === -1) {
+        data = data.replace('var visConfig = {', 'var visConfig = {license: false,');
+        fs.writeFileSync(__dirname + '/www/js/config.js', data);
+
+        adapter.writeFile(adapterName, 'js/config.js', data, function () {
+            updateCacheManifest(callback);
+        });
+    } else {
+        callback && callback();
+    }
+}
+
+function main() {
+    // first of all check license
+    if (!adapter.config.license) {
+        indicateError(function () {
+            adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
+            adapter.stop();
+        });
+    } else {
+        // An object of options to indicate where to post to
+        var postOptions = {
+            host: 'iobroker1.net',
+            path: '/cert/',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+                'Content-Length': Buffer.byteLength(adapter.config.license)
+            }
+        };
+
+        // Set up the request
+        var postReq = https.request(postOptions, function (res) {
+            res.setEncoding('utf8');
+            var result = '';
+            res.on('data', function (chunk) {
+                result += chunk;
+            });
+
+            res.on('end', function () {
+                var data = JSON.parse(result);
+                if (data.result === 'OK') {
+                    generatePages();
+                } else {
+                    indicateError(function () {
+                        adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
+                        adapter.stop();
+                    });
+                }
+            });
+        }).on('error', function (error) {
+            jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), function (err, decoded) {
+                if (err) {
+                    adapter.log.error('Cannot check license: ' + error);
+                    adapter.stop();
+                } else {
+                    if (decoded && decoded.expires * 1000 < new Date().getTime()) {
+                        adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
+                        adapter.stop();
+                    } else if (!decoded) {
+                        adapter.log.error('Cannot check license: License is empty');
+                        adapter.stop();
+                    } else {
+                        generatePages();
+                    }
+                }
+            });
+        });
+
+        postReq.write(adapter.config.license);
+        postReq.end();
+    }
 }

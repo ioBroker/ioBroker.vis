@@ -1,7 +1,7 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.12.19",
+        "version": "0.14.0",
         "title":                    "iobroker Visualisation",
         "news": {
 			"0.10.15": {
@@ -98,14 +98,15 @@
         "singleton":                true,
         "type":                     "vis",
 		"highlight":                true,
-		"noConfig":                 true,
+		"noConfig":                 false,
 		"welcomeScreen":            [
 										{"link": "vis/edit.html", "name": "vis editor", "img": "vis/img/faviconEdit.png", "color": "green", "order": 1}, 
 										{"link": "vis/index.html", "name": "vis", "img": "vis/img/favicon.png", "color": "blue", "order": 0}
 									]
     },
     "native": {
-        "defaultFileMode":          1604
+        "defaultFileMode":          1604,
+        "license": ""
     },
     "instanceObjects": [
         {

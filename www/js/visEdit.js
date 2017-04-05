@@ -287,6 +287,9 @@ vis = $.extend(true, vis, {
         layout();
 
         $('#vis-version').html(this.version);
+        if (typeof visConfig !== 'undefined' && visConfig.license === false) {
+            $('#vis-version').addClass('vis-license-error').attr('title', _('License error! Please check logs for details.'));
+        }
 
         $('#button_undo').button({
                 icons: {primary: 'ui-icon ui-icon-arrowreturnthick-1-w'},
