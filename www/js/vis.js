@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.12.19',
+    version: '0.12.20',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1172,7 +1172,7 @@ vis = {
             // show all
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
-                if (widgets[widget].data.filterkey) {
+                if (widgets[widget] && widgets[widget].data && widgets[widget].data.filterkey) {
                     $('#' + widget).show(showEffect, null, parseInt(showDuration));
                 }
             }
@@ -1182,7 +1182,9 @@ vis = {
                 for (var widget in widgets) {
                     if (!widgets.hasOwnProperty(widget)) continue;
                     mWidget = document.getElementById(widget);
-                    if (widgets[widget].data.filterkey &&
+                    if (widgets[widget] &&
+                        widgets[widget].data &&
+                        widgets[widget].data.filterkey &&
                         mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
@@ -1195,7 +1197,7 @@ vis = {
             // hide all
             for (widget in widgets) {
                 if (!widgets.hasOwnProperty(widget)) continue;
-                if (!widgets[widget].data.filterkey) continue;
+                if (!widgets[widget] || !widgets[widget].data || !widgets[widget].data.filterkey) continue;
                 mWidget = document.getElementById(widget);
                 if (mWidget &&
                     mWidget._customHandlers &&
@@ -1208,7 +1210,7 @@ vis = {
             this.viewsActiveFilter[this.activeView] = filter.split(',');
             var vFilters = this.viewsActiveFilter[this.activeView];
             for (widget in widgets) {
-                if (!widgets.hasOwnProperty(widget)) continue;
+                if (!widgets.hasOwnProperty(widget) || !widgets[widget] || !widgets[widget].data) continue;
                 var wFilters = widgets[widget].data.filterkey;
 
                 if (wFilters) {
@@ -1258,7 +1260,7 @@ vis = {
                     if (mWidget &&
                         mWidget._customHandlers &&
                         mWidget._customHandlers.onShow) {
-                        if (widgets[widget].data.filterkey) {
+                        if (widgets[widget] && widgets[widget].data && widgets[widget].data.filterkey) {
                             if (!(that.viewsActiveFilter[that.activeView].length > 0 &&
                                 that.viewsActiveFilter[that.activeView].indexOf(widgets[widget].data.filterkey) === -1)) {
                                 mWidget._customHandlers.onShow(mWidget, widget);
@@ -2143,10 +2145,15 @@ vis = {
         }
     },
     isWidgetFilteredOut: function (view, widget) {
-        return (
-        this.views[view].widgets[widget].data.filterkey &&
-        this.viewsActiveFilter[view].length > 0 &&
-        this.viewsActiveFilter[view].indexOf(widget.data.filterkey) === -1);
+        var w = this.views[view].widgets[widget];
+        var v = this.viewsActiveFilter[view];
+        return (w &&
+                w.data &&
+                w.data.filterkey &&
+                widget &&
+                widget.data &&
+                v.length > 0 &&
+                v.indexOf(widget.data.filterkey) === -1);
     },
     calcCommonStyle:    function (recalc) {
         if (!this.commonStyle || recalc) {
@@ -2313,7 +2320,10 @@ vis = {
         var oid = format.match(/{(.+?)}/g);
         var result = null;
         if (oid) {
-            for (var p = 0; p < oid.length; p++) {
+            if (oid.length > 50) {
+                console.warn('Too many bindings in one widget: ' + oid.length + '[max = 50]');
+            }
+            for (var p = 0; p < oid.length && p < 50; p++) {
                 var _oid = oid[p].substring(1, oid[p].length - 1);
                 if (_oid[0] === '{') continue;
                 // If first symbol '"' => it is JSON
