@@ -186,12 +186,12 @@ function copyFiles(root, filesOrDirs, callback) {
     }
 }
 
-function generatePages() {
+function generatePages(isLicenseError) {
     var count = 0;
     var changed = false;
 
     if (!isBeta) {
-        changed = syncWidgetSets();
+        changed = syncWidgetSets(false, isLicenseError);
 
         if (changed) {
             // upload config.js
@@ -277,12 +277,13 @@ function main() {
     if (!adapter.config.license) {
         indicateError(function () {
             adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-            adapter.stop();
+            //adapter.stop();
+            generatePages(true);
         });
     } else {
         // An object of options to indicate where to post to
         var postOptions = {
-            host: 'iobroker1.net',
+            host: 'iobroker.net',
             path: '/cert/',
             method: 'POST',
             headers: {
@@ -300,13 +301,23 @@ function main() {
             });
 
             res.on('end', function () {
-                var data = JSON.parse(result);
-                if (data.result === 'OK') {
-                    generatePages();
-                } else {
+                try {
+                    var data = JSON.parse(result);
+                    if (data.result === 'OK') {
+                        adapter.log.info('vis license is OK.');
+                        generatePages();
+                    } else {
+                        indicateError(function () {
+                            adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
+                            //adapter.stop();
+                            generatePages(true);
+                        });
+                    }
+                } catch (e) {
                     indicateError(function () {
-                        adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
-                        adapter.stop();
+                        adapter.log.error('Cannot check license! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
+                        //adapter.stop();
+                        generatePages(true);
                     });
                 }
             });
@@ -314,16 +325,18 @@ function main() {
             jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), function (err, decoded) {
                 if (err) {
                     adapter.log.error('Cannot check license: ' + error);
-                    adapter.stop();
+                    //adapter.stop();
+                    generatePages(true);
                 } else {
                     if (decoded && decoded.expires * 1000 < new Date().getTime()) {
                         adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
                         adapter.stop();
                     } else if (!decoded) {
                         adapter.log.error('Cannot check license: License is empty');
-                        adapter.stop();
+                        //adapter.stop();
+                        generatePages(true);
                     } else {
-                        generatePages();
+                        generatePages(false);
                     }
                 }
             });
