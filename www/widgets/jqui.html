@@ -1569,7 +1569,7 @@
         data-vis-attrs="oid;values[0§1§2];texts[OFF§ON§AUTO]">
     <div style=" width:250px; height:41px;overflow: visible" class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" data-vis-resizable='{"disabled":true, "handles":""}' >
         <div class="vis-widget-body" >
-            <table id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" style="display: flex" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)},100) %> class="vis-no-spaces"><tr class="vis-no-spaces">
+            <table id="<%= this.data.attr('wid') %>_radio" data-oid="<%= this.data.attr('oid') %>" style="display: flex" <%= (el) -> setTimeout(function () {vis.binds.jqueryui.radio(el)}, 100) %> class="vis-no-spaces"><tr class="vis-no-spaces">
                 <%
                 var values = (data.attr('values') ? data.attr('values').split(';') : []);
                 var texts  = (data.attr('texts') ? data.attr('texts').split(';'): []);
