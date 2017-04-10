@@ -988,6 +988,15 @@ td > .select_active_widget :nth-child(2) {
 .selectmenu-overflow {
     height: 300px;
 }
+
+@keyframes blinker {
+    50% { opacity: 0; }
+}
+.vis-license-error {
+    color: red;
+    font-weight: bold;
+    animation: blinker 1s linear infinite;
+}
 /* --------- vis preview icons ------------------- */
 .vis-preview-informers-container {
     position:   absolute;
