@@ -273,6 +273,18 @@ function indicateError(callback) {
 }
 
 function main() {
+    // Check if noConfig = false
+    if (adapter.common.noConfig) {
+        adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+            obj.common.noConfig = false;
+            adapter.setForeignObject(obj._id, obj, function () {
+                adapter.stop();
+            });
+        });
+
+        return;
+    }
+
     // first of all check license
     if (!adapter.config.license) {
         indicateError(function () {
