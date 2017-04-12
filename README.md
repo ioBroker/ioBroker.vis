@@ -180,7 +180,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.14.0 (2017-04-10)
+## Changelog### 0.14.1 (2017-04-10)
+
+### 0.14.0 (2017-04-10)
 * (bluefox) add mandatory license input
 
 
