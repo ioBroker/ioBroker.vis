@@ -66,8 +66,8 @@ $.extend(systemDictionary, {
     'New:':                 {'en': 'New:',              'de': 'Neues:',                 'ru': 'Новое:'},
     "name":                 {"en": "Name",              "de": "Name",                   "ru": "Имя"},
     "Select color":         {"en": "Select color",      "de": "Farbe auswählen",        "ru": "Выбрать цвет"},
-    "File manager...":      {"en": "File manager...",   "de": "Datei Manager...",       "ru": 'Проводник...'},
-    "Copy to clipboard":    {"en": "Copy to clipboard", "de": "In den Zwischenpuffer kopieren",      "ru": "Копировать в буфер обмена"},
+    "File manager...":      {"en": "File manager...",   "de": "Dateimanager...",        "ru": 'Проводник...'},
+    "Copy to clipboard":    {"en": "Copy to clipboard", "de": "In die Zwischenablage kopieren",      "ru": "Копировать в буфер обмена"},
     "Wizard to create widgets...": {"en": "Wizard to create widgets...", "de": "Wizard um Widgets zu erzeugen...", "ru": "Создать несколько виджетов..."},
     "Generate":             {"en": "Generate",          "de": "Generieren",             "ru": "Создать"},
     "Attribute for OID:":   {"en": "Attribute for OID:", "de": "Attribute für OID:",    "ru": "Атрибут для OID:"},
@@ -110,7 +110,7 @@ $.extend(systemDictionary, {
     'User defined':         {'en': 'User defined',      'de': 'Vom Anwender definiert', 'ru': 'Пользовательское'},
     'Resolution':           {'en': 'Resolution:',       'de': 'Auflösung:',             'ru': 'Разрешение:'},
     'widget_doc':           {'en': 'Widget help',       'de': 'Widgethilfe',            'ru': 'Помощь'},
-    'Add Widget:':          {'en': 'Add Widget:',       'de': 'Widget einf&uuml;gen:',  'ru': 'Добавить элемент:'},
+    'Add Widget:':          {'en': 'Add Widget:',       'de': 'Widget einfügen:',       'ru': 'Добавить элемент:'},
     'Inspecting Widget:':   {'en': 'Inspecting Widget:', 'de': 'Widget inspizieren:',   'ru': 'Редактировать элемент:'},
     'Widget Attributes:':   {'en': 'Widget Attributes:', 'de': 'Widget-Eigenschaften:', 'ru': 'Свойства элемента:'},
     'filterkey':            {'en': 'Filter key',        'de': 'Filterwort',             'ru': 'Фильтр'},
@@ -172,8 +172,8 @@ $.extend(systemDictionary, {
     'Members':              {"en": "Members",           "de": "Mitglieder",             "ru": "Объекты"},
     "nothing":              {"en": "none",              "de": "keins",                  "ru": "ничего"},
     "Cut":                  {"en": "Cut",               "de": "Ausschneiden",           "ru": "Вырезать"},
-    "Bring to front":       {"en": "Bring to front",    "de": "Zum Fordergrund",        "ru": "Вынести наверх"},
-    "Move to back":         {"en": "Move to back",      "de": "Zum Hintergrund",        "ru": "Убрать вниз"},
+    "Bring to front":       {"en": "Bring to front",    "de": "In den Vordergrund",     "ru": "Вынести наверх"},
+    "Move to back":         {"en": "Move to back",      "de": "In den Hintergrund",     "ru": "Убрать вниз"},
     'Import / Export View': {
         'en': 'Import / Export View',
         'de': 'Importieren / Exportieren View',
@@ -196,7 +196,7 @@ $.extend(systemDictionary, {
     },
     'The view with the same name yet exists!': {
         'en': 'The view with the same name yet exists!',
-        'de': 'Eine View mit diesem Namen existiert bereits!',
+        'de': 'Ein View mit diesem Namen existiert bereits!',
         'ru': 'The view with the same name yet exists!'
     },
     'Please enter the name for the new view!': {
@@ -250,9 +250,9 @@ $.extend(systemDictionary, {
     "Help":                 {"en": "Help",              "de": "Hilfe",                  "ru": "Помощь"},
     "Shortcuts":            {"en": "Shortcuts",         "de": "Shortcuts",              "ru": "Быстрые клавиши"},
     "About":                {"en": "About",             "de": "Über das Projekt",       "ru": "О проекте"},
-    "Active View:":         {"en": "Active View:",      "de": "Aktiv View:",            "ru": "Выбранная страница:"},
+    "Active View:":         {"en": "Active View:",      "de": "Aktiver View:",          "ru": "Выбранная страница:"},
     "To View:":             {"en": "To View:",          "de": "In View:",               "ru": "На страницу:"},
-    "Active Widget:":       {"en": "Active widget:",    "de": "Aktiv Widget:",          "ru": "Выбранный элемент:"},
+    "Active Widget:":       {"en": "Active widget:",    "de": "Aktives Widget:",        "ru": "Выбранный элемент:"},
     "Resolution:":          {"en": "Resolution: ",      "de": "Auflöung: ",             "ru": "Разрешение экрана: "},
     "Widget":               {"en": "Widget",            "de": "Widget",                 "ru": "Элемент"},
     "View":                 {"en": "View",              "de": "View",                   "ru": "Страница"},
@@ -269,7 +269,7 @@ $.extend(systemDictionary, {
     },
     "Switch to runtime in this window": {
         "en": "Close editor",
-        "de": "Editor zumachen",
+        "de": "Editor schließen",
         "ru": "Закрыть редактор"
     },
     "Switch to runtime in new window": {
@@ -451,12 +451,12 @@ $.extend(systemDictionary, {
 
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
-        "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie erneut.",
+        "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
         "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз."
     },
     "Widgets filter. Double click to clear.": {
         "en": "Widgets filter. Double click to clear.",
-        "de": "Widgets-Filter. Double click um Field zu löschen.",
+        "de": "Widgets-Filter. Doppelklick um das Feld zu löschen.",
         "ru": "Фильтр элементов. Что бы очистить поле ввода - двойной щелчок."
     },
     "Cannot save file \"%s\": ": {
@@ -466,7 +466,7 @@ $.extend(systemDictionary, {
     },
     "permissionError": {
         "en": "permission denied",
-        "de": "keine Zulassung",
+        "de": "kein Zugriff",
         "ru": "отказано в доступе"
     },
     "Logout":               {"en": "Logout",            "de": "Logout",                 "ru": "Выйти"},
@@ -479,7 +479,7 @@ $.extend(systemDictionary, {
     "dev6":                 {"en": "dev6",              "de": "dev6",                   "ru": "dev6"},
 
     "Configuration not saved.": {
-        "en": "Project does not saved.",
+        "en": "Project was not saved yet.",
         "de": "Projekt ist noch nicht gespeichert.",
         "ru": "Проект не сохранён."
     },
@@ -496,7 +496,7 @@ $.extend(systemDictionary, {
     "%s widgets":           {"en": "%s widgets",        "de": "%s Widgets",             "ru": "%s элемента(ов)"},
     "Widget(s) copied to view %s": {
         "en": "Widget(s) copied to view %s",
-        "de": "Widget(s) sind zur Seite %s kopiert",
+        "de": "Widget(s) wurden zur Seite %s kopiert",
         "ru": "Элемент(а) скопированы на страницу %s"
     },
     "Select more than one widget and try again.": {
@@ -595,12 +595,12 @@ $.extend(systemDictionary, {
     "Project":              {"en": "Project",           "de": "Projekt",               "ru": "Проект"},
     "Align width": {
         "en": "Align width. Press more time to get the desired width.",
-        "de": "Gleiche Breite. Mehrmals druken um gewünschte Breite einzustellen.",
+        "de": "Gleiche Breite. Mehrmals drücken um gewünschte Breite einzustellen.",
         "ru": "Одинаковая ширина. Нажать несколько раз для получения желаемой ширина"
     },
     "Align height": {
         "en": "Align height. Press more time to get the desired height.",
-        "de": "Gleiche Höhe. Mehrmals druken um gewünschte Höhe einzustellen.",
+        "de": "Gleiche Höhe. Mehrmals drücken um gewünschte Höhe einzustellen.",
         "ru": "Одинаковая высота. Нажать несколько раз для получения желаемой высоты"
     },
     "Find previous":        {"en": "Find previous",     "de": "Finde vorherige",        "ru": "Искать назад"},
@@ -609,7 +609,7 @@ $.extend(systemDictionary, {
     "CSS":                  {"en": "CSS",               "de": "CSS",                    "ru": "CSS"},
     'To get back to edit mode just call "%s" in browser': {
         "en": 'To get back to edit mode just call "%s" in browser',
-        "de": 'Um wieder in Edit-Modus zurück zu kehren, einfach "%s" im Browser aufrufen',
+        "de": 'Um wieder in den Bearbeitungsmodus zurück zu kehren, einfach "%s" im Browser aufrufen',
         "ru": 'Что бы снова вернуться в режим редактирования надо просто вызвать в браузере "%s"'
     },
     "Popup window blocked!": {
@@ -830,4 +830,3 @@ $.extend(systemDictionary, {
     "gestures-pinchOut-value":  {"en": "-value",                "de": "-Wert",                  "ru": "-значение"},
     "gestures-pinchOut-limit":  {"en": "-limit",                "de": "-limit",                 "ru": "-ограничение"}
 });
-
