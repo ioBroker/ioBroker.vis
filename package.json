@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -31,9 +31,6 @@
   ],
   "dependencies": {
     "jsonwebtoken": "^7.3.0"
-  },
-  "_dependencies": {
-    "html-minifier": "^3.4.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",

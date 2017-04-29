@@ -180,11 +180,25 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.14.1 (2017-04-10)
+## Changelog
+### 0.14.2 (2017-04-29)
+* (bluefox) Fix install error
+
+### 0.14.1 (2017-04-27)
+* (bluefox) move beta to main
+* (bluefox) fix choose filter
+* (bluefox) fix error if some views do not exist
+* (bluefox) fix binding problem, e.g. "a:-45?0" was detected as variable too.
+* (bluefox) fix some font sizes
+* (bluefox) fix undo
+* (bluefox) fix themes change
+* (bluefox) optimize load of pages
+* (bluefox) check license
+* (bluefox) fix basic views 8
+* (bluefox) fix time picker if opened in dialog
 
 ### 0.14.0 (2017-04-10)
 * (bluefox) add mandatory license input
-
 
 ### 0.12.7 (2017-02-09)
 * (bluefox) prepare beta

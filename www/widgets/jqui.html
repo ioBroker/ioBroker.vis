@@ -1,6 +1,10 @@
 <link rel="stylesheet" href="lib/css/jquery-ui-timepicker-addon-1.2.2.css" />
 <script type="text/javascript" src="lib/js/jquery-ui-timepicker-addon-1.2.2.js"></script>
-
+<style>
+    #ui-datepicker-div {
+        z-index: 999 !important;
+    }
+</style>
 <script type="text/javascript">
     'use strict';
 
@@ -1503,7 +1507,7 @@
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body">
-            <input type="text" style="text-align:center;padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds')}); %> />
+            <input type="text" style="text-align: center; padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds')}); %> />
         </div>
     </div>
 </script>
