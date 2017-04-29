@@ -181,6 +181,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 0.14.2 (2017-04-29)
+* (bluefox) Fix install error
+
 ### 0.14.1 (2017-04-27)
 * (bluefox) move beta to main
 * (bluefox) fix choose filter

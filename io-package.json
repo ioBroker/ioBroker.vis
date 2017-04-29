@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.14.1",
+        "version": "0.14.2",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.14.2": {
+				"en":               "Fix install error",
+				"de":               "Korrigiere Installationsfehler",
+				"ru":               "Исправлена ошибка при инсталляции"
+			},
 			"0.10.15": {
 				"en":               "remove weather-adapter.html\nclean config.js\nremove old widgets\nimprove authentication in app\nallow creation of instance from helper widget",
 				"de":               "Lösche weather-adapter.html\nBereinige config.js\nLösche alte Widgets\nVerbessere die Authentication in der App\nErlaube die erzeugen von InstanceID im Helper-Widget",
