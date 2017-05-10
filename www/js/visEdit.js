@@ -3380,13 +3380,17 @@ vis = $.extend(true, vis, {
 
         var exportW = [];
         widgets = widgets || this.activeWidgets;
+
         for (var i = 0; i < widgets.length; i++) {
             var list = this.editGetWidgets(null, widgets[i]);
             for (var j = 0; j < list.length; j++) {
                 var obj = JSON.parse(JSON.stringify(this.views[this.activeView].widgets[list[j]]));
                 if (this.activeView !== this.activeViewDiv && obj.grouped) {
                     delete obj.grouped;
+                } else if (obj.grouped) {
+                    obj.groupName = list[j];
                 }
+
                 exportW.push(obj);
             }
         }
@@ -3418,6 +3422,7 @@ vis = $.extend(true, vis, {
             open:     function (event, ui) {
                 $('[aria-describedby="dialog_import_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
+
                 $('#start_import_widgets').unbind('click').click(function () {
                     $('#dialog_import_widgets').dialog('close');
                     var importObject;
@@ -3430,19 +3435,41 @@ vis = $.extend(true, vis, {
                     }
 
                     var widgets = [];
+                    var mapping = {};
+
                     // inverted order because of groups
                     for (var widget = importObject.length - 1; widget >= 0; widget--) {
                         if (that.binds.bars && that.binds.bars.convertOldBars && importObject[widget].data.baroptions) {
                             importObject[widget] = that.binds.bars.convertOldBars(importObject[widget]);
                         }
-                        //(tpl, data, style, wid, view, noSave, noAnimate)
-                        widgets.push(that.addWidget(viewDiv, view, {
+
+                        if (importObject[widget].tpl === '_tplGroup') {
+                            // try to convert members
+                            for (var d = 0; d < importObject[widget].data.members.length; d++) {
+                                if (mapping[importObject[widget].data.members[d]]) {
+                                    importObject[widget].data.members[d] = mapping[importObject[widget].data.members[d]];
+                                } else {
+                                    console.error('Unexpected error: widget "' + importObject[widget].data.members[d] + '" not found in export.');
+                                }
+                            }
+                        }
+
+                        var widgetId = that.addWidget(viewDiv, view, {
+                            widgetSet: importObject[widget].widgetSet,
                             tpl:       importObject[widget].tpl,
                             data:      importObject[widget].data,
                             style:     importObject[widget].style,
+                            grouped:   importObject[widget].grouped,
                             noSave:    true,
                             noAnimate: true
-                        }, true));
+                        }, true);
+
+                        if (importObject[widget].groupName) {
+                            mapping[importObject[widget].groupName] = widgetId;
+                        }
+
+                        // (tpl, data, style, wid, view, noSave, noAnimate)
+                        if (!importObject[widget].grouped) widgets.push(widgetId);
                     }
                     // update widget select
                     that.updateSelectWidget(viewDiv, view);

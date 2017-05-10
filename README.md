@@ -180,7 +180,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 0.14.3 (2017-05-11)
+* (bluefox) fix export/import of groupped widgets
+
 ### 0.14.2 (2017-04-29)
 * (bluefox) Fix install error
 
