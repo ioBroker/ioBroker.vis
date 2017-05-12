@@ -2502,9 +2502,13 @@ vis = $.extend(true, vis, {
                         .attr('data-zmodified', 'true')
                         .css('z-index', 700);
                 } else {
-                    $('#' + w)
-                        .attr('data-zmodified', 'true')
-                        .css('z-index', this.views[view].widgets[w].style['z-index'] || 0);
+                    var wwidegt = this.views[view].widgets[w];
+                    if (wwidegt) {
+                        wwidegt.style = widget.style || {};
+                        $('#' + w)
+                            .attr('data-zmodified', 'true')
+                            .css('z-index', wwidegt.style['z-index'] || 0);
+                    }
                 }
             }
         }
