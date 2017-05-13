@@ -1,9 +1,19 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.14.2",
+        "version": "0.14.4",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.14.4": {
+				"en":               "Fix error by groups selection",
+				"de":               "Korrigiere den Fehler bei Gruppenauswahl",
+				"ru":               "Исправлено выделение групп"
+			},
+			"0.14.3": {
+				"en":               "fix export/import of groupped widgets",
+				"de":               "Korrigiere export/import von grouppierten Widets",
+				"ru":               "Исправлен экспорт/импорт сгруппированных виджетов"
+			},
 			"0.14.2": {
 				"en":               "Fix install error",
 				"de":               "Korrigiere Installationsfehler",
