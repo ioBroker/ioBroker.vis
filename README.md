@@ -180,7 +180,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.14.4 (2017-05-12)
+## Changelog### 0.14.5 (2017-05-14)
 * (bluefox) Fix error by groups selection
 
 ### 0.14.3 (2017-05-11)
