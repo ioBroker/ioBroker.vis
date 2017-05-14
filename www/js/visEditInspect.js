@@ -2502,13 +2502,10 @@ vis = $.extend(true, vis, {
                         .attr('data-zmodified', 'true')
                         .css('z-index', 700);
                 } else {
-                    var wwidegt = this.views[view].widgets[w];
-                    if (wwidegt) {
-                        wwidegt.style = widget.style || {};
-                        $('#' + w)
-                            .attr('data-zmodified', 'true')
-                            .css('z-index', wwidegt.style['z-index'] || 0);
-                    }
+                    var wwidget = this.views[view].widgets[w];
+                    $('#' + w)
+                        .attr('data-zmodified', 'true')
+                        .css('z-index', (wwidget && wwidget.style) ? (wwidget.style['z-index'] || 0) : 0);
                 }
             }
         }
