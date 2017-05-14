@@ -349,6 +349,37 @@
                     $(this).parent().find('.ui-widget-header button .ui-button-text').html('');
                     $(this).parent().css('z-index', 998);
                     //touchscreen fix
+                    $dlg.find('.vis-view-container').each(function () {
+                        var cview = $(this).attr('data-vis-contains');
+                        if (!vis.views[cview]) {
+                            $(this).append('error: view not found.');
+                            return false;
+                        } else if (cview === vis.activeView) {
+                            $(this).append('error: view container recursion.');
+                            return false;
+                        }
+                        var $this = this;
+                        vis.renderView(cview, cview, false, function (_view) {
+                            $('#visview_' + _view)
+                                    .appendTo($this)
+                                    .show();
+                        });
+                    });
+
+                    if (options.setId) vis.setValue(options.setId, options.setValue);
+                    var $id =  $(this);
+                    if (options.minHeight)   $id.css('min-height', options.minHeight);
+                    if (options.minWidth)    $id.css('min-width',  options.minWidth);
+                    if (options.top  || options.top  === 0 || options.top  === '0') $id.parent().css('top',  options.top);
+                    if (options.left || options.left === 0 || options.left === '0') $id.parent().css('left', options.left);
+                    if (options.overflowX) $id.css('overflow-x', options.overflowX);
+                    if (options.overflowY) $id.css('overflow-y', options.overflowY);
+                    if (options.noHeader) {
+                        $id.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                        $id.parent().find('.ui-dialog-title').html('&nbsp;');
+                    }
+                    $id.parent().find('.ui-state-focus').blur();
+
                     var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
                     $closeButton.unbind('touchend').on('touchend', function (event) {
                         event.stopPropagation();
@@ -377,37 +408,8 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    $dlg.find('.vis-view-container').each(function () {
-                        var cview = $(this).attr('data-vis-contains');
-                        if (!vis.views[cview]) {
-                            $(this).append('error: view not found.');
-                            return false;
-                        } else if (cview === vis.activeView) {
-                            $(this).append('error: view container recursion.');
-                            return false;
-                        }
-                        var $this = this;
-                        vis.renderView(cview, cview, false, function (_view) {
-                            $('#visview_' + _view)
-                                    .appendTo($this)
-                                    .show();
-                        });
-                    });
-
-                    if (options.setId) vis.setValue(options.setId, options.setValue);
                     var $id =  $('#' + $(this).parent().attr('id') + '_dialog');
                     $id.dialog('open');
-                    if (options.minHeight)   $id.css('min-height', options.minHeight);
-                    if (options.minWidth)    $id.css('min-width',  options.minWidth);
-                    if (options.top  || options.top  === 0 || options.top  === '0') $id.parent().css('top',  options.top);
-                    if (options.left || options.left === 0 || options.left === '0') $id.parent().css('left', options.left);
-                    if (options.overflowX) $id.css('overflow-x', options.overflowX);
-                    if (options.overflowY) $id.css('overflow-y', options.overflowY);
-                    if (options.noHeader) {
-                        $id.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
-                        $id.parent().find('.ui-dialog-title').html('&nbsp;');
-                    }
-                    $id.parent().find('.ui-state-focus').blur();
                     return false;
                 });
             } else {
