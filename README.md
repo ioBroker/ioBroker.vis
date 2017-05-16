@@ -182,6 +182,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ## Changelog### 0.14.6 (2017-05-16)
 * (bluefox) Fix error by groups selection
+* (apollon77) fix jqui-dialog for auto-open
 
 ### 0.14.3 (2017-05-11)
 * (bluefox) fix export/import of groupped widgets
