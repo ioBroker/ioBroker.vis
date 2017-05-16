@@ -2380,7 +2380,7 @@ vis = $.extend(true, vis, {
         });
 
         $('.wid-prev').dblclick(function () {
-            that.editShowWizard(this.activeViewDiv, this.activeView, $(this).clone());
+            that.editShowWizard(that.activeViewDiv, that.activeView, $(this).clone());
         });
         if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
         if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
@@ -3853,7 +3853,7 @@ vis = $.extend(true, vis, {
             tpl:       options.tpl,
             data:      options.data,
             style:     options.style,
-            widgetSet: $tpl ? $tpl.attr('data-vis-set') : undefined
+            widgetSet: options.tpl === '_tplGroup' ? null : ($tpl ? $tpl.attr('data-vis-set') : undefined)
         };
 
         if (options.grouped || viewDiv !== view) this.views[view].widgets[widgetId].grouped = true;
@@ -3943,6 +3943,9 @@ vis = $.extend(true, vis, {
         return widgetId;
     },
     dupWidgets:             function (targetViewDiv, targetView, widgets, offsetX, offsetY, grouped) {
+        // make a copy
+        widgets = JSON.parse(JSON.stringify(widgets));
+
         if (typeof widgets === 'string') {
             try {
                 widgets = JSON.parse(widgets);
@@ -3956,7 +3959,9 @@ vis = $.extend(true, vis, {
             offsetX = undefined;
         }
 
-        if (!widgets) widgets = this.activeWidgets;
+        if (!widgets) {
+            widgets = this.activeWidgets;
+        }
 
         var srcViewDiv;
         var srcView;
@@ -3980,13 +3985,13 @@ vis = $.extend(true, vis, {
                 srcView         = widgets[i].view;
                 srcViewDiv      = widgets[i].viewDiv;
             } else {
-                srcViewDiv = this.activeViewDiv;
-                srcView    = this.activeView;
+                srcViewDiv      = this.activeViewDiv;
+                srcView         = this.activeView;
                 // From active view
-                tpl           = this.views[srcView].widgets[widgets[i]].tpl;
-                data          = $.extend({}, this.views[srcView].widgets[widgets[i]].data);
-                style         = $.extend({}, this.views[srcView].widgets[widgets[i]].style);
-                grouped      = this.views[srcView].widgets[widgets[i]].grouped && grouped;
+                tpl             = this.views[srcView].widgets[widgets[i]].tpl;
+                data            = $.extend({}, this.views[srcView].widgets[widgets[i]].data);
+                style           = $.extend({}, this.views[srcView].widgets[widgets[i]].style);
+                grouped         = this.views[srcView].widgets[widgets[i]].grouped && grouped;
             }
 
             if (offsetX !== undefined && typeof offsetX !== 'boolean') {
@@ -4037,14 +4042,26 @@ vis = $.extend(true, vis, {
 
             // if group
             if (obj.data.members) {
-                obj.data.members = this.dupWidgets(targetViewDiv, targetView, obj.data.members, true);
+                var ws = [];
+                for (var w = 0; w < obj.data.members.length; w++) {
+                    ws.push({
+                        view: srcView,
+                        viewDiv: srcViewDiv,
+                        widget: this.views[srcView].widgets[obj.data.members[w]]
+                    });
+                }
+
+                obj.data.members = this.dupWidgets(targetViewDiv, targetView, ws, true);
+                obj.wid = '';
             }
             newWidgets.push(this.addWidget(targetViewDiv, targetView, obj, true));
         }
 
-        if (this.activeView === targetViewDiv && !grouped) this.updateSelectWidget(targetViewDiv, targetView, newWidgets);
+        if (this.activeView === targetViewDiv && !grouped) {
+            this.updateSelectWidget(targetViewDiv, targetView, newWidgets);
+        }
 
-        if (!widgets[0].widget) {
+        if (widgets[0] && !widgets[0].widget) {
             this.showHint(_('Widget(s) copied to view %s', targetViewDiv) + '.', 30000);
         }
 
@@ -6032,12 +6049,22 @@ vis = $.extend(true, vis, {
     },
     editGetWidgetsUnderCursor: function ($viewDiv, view, options) {
         var viewDiv = $viewDiv.attr('id').substring('visview_'.length);
+        var that = this;
         return $viewDiv.find('.vis-widget').filter(function() {
             var offset = $(this).position();
-            if (!$(this).length) return false;
+
+            if (!$(this).length) {
+                return false;
+            }
             //if ($(this).hasClass('vis-widget-edit-locked')) return false;
             var id = $(this).attr('id');
-            if (viewDiv === id) return false;
+            if (viewDiv === id) {
+                return false;
+            }
+
+            if (that.views[view].widgets[id].grouped) {
+                return false;
+            }
 
             var range = {
                 x: [offset.left + options.scrollLeft, offset.left + options.scrollLeft + $(this).outerWidth()],
@@ -6169,7 +6196,9 @@ vis = $.extend(true, vis, {
         }
 
         // Find all widgets under the cursor
-        if (!$listToSelect) $listToSelect = this.editGetWidgetsUnderCursor($view, view, options);
+        if (!$listToSelect) {
+            $listToSelect = this.editGetWidgetsUnderCursor($view, view, options);
+        }
 
         // If no active widgets clicked, but only one other clicked => select it
         if (!$listSelected.length && $listToSelect.length === 1) {
@@ -6374,6 +6403,7 @@ vis = $.extend(true, vis, {
                     tree:            _('tree'),
                     copyToClipboard: _('Copy to clipboard')
                 },
+                noDialog: false,
                 noMultiselect: false,
                 filter: {type: 'state'},
                 roleExactly: true,

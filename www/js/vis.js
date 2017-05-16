@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.14.5',
+    version: '0.14.6',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1112,7 +1112,11 @@ vis = {
 
             if (widgets) {
                 for (var w = 0; w < widgets.length; w++) {
-                    this.destroyWidget(viewDiv, view, widgets[w]);
+                    if (widgets[w] !== widget) {
+                        this.destroyWidget(viewDiv, view, widgets[w]);
+                    } else {
+                        console.warn('Cyclic structure in ' + widget + '!');
+                    }
                 }
             }
 
