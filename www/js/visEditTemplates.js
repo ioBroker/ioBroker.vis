@@ -8,7 +8,87 @@
  *  http://creativecommons.org/licenses/by-nc/4.0/
  *
  */
-vis.editInitTemplatesPreview = function () {
+
+vis.editTemplatesInit = function () {
+    var that = this;
+    $('#toolbox').on('contextmenu click', function (e) {
+        // Workaround for OSX. Ignore clicks without ctrl
+        if (!e.button && !e.ctrlKey && !e.metaKey) return;
+
+        if (!e.shiftKey && !e.altKey) {
+            e.preventDefault();
+        }
+    });
+    $(document).on('contextmenu click', '.templates_prev', function (e) {
+        // Workaround for OSX. Ignore clicks without ctrl
+        if (!e.button && !e.ctrlKey && !e.metaKey) return;
+
+        if (!e.shiftKey && !e.altKey) {
+            var parentOffset = $(this).parent().offset();
+            //or $(this).offset(); if you really just want the current element's offset
+            var options = {
+                left: e.pageX - parentOffset.left,
+                top:  e.pageY - parentOffset.top
+            };
+
+            options.scrollLeft = $(this).scrollLeft();
+            options.scrollTop  = $(this).scrollTop();
+
+            options.left += options.scrollLeft;
+            options.top  += options.scrollTop;
+
+            that.editTemplatesShowMenu(options);
+
+            $('.context-template-submenu').data('template', $(this).data('template'));
+            e.preventDefault();
+        }
+    });
+    $('.context-template-submenu').click(function () {
+        var action = $(this).data('action');
+        that.editTemplateHideMenu();
+        // get template name
+        var template = $('.context-template-submenu').data('template');
+
+        switch (action) {
+            case 'edit':
+                that.editTemplatesSettings(template, function (data) {
+                    var template = $('.context-template-submenu').data('template');
+                    var changed = false;
+
+                    if (template !== data.name) {
+                        that.views.___settings.templates[data.name] = that.views.___settings.templates[template];
+                        delete that.views.___settings.templates[template];
+                        changed = true;
+                    }
+
+                    if (that.views.___settings.templates[data.name].desc !== data.desc) {
+                        that.views.___settings.templates[data.name].desc = data.desc;
+                        changed = true;
+                    }
+
+                    if (changed) {
+                        that.save();
+                        that.editTemplatesInitPreview();
+                    }
+                });
+                break;
+
+            case 'delete':
+                that.confirmMessage(_('Are you sure?'), _('Confirm'), 'alert', function (result) {
+                    if (result) {
+                        delete that.views.___settings.templates[template];
+                        that.save();
+                        that.editTemplatesInitPreview();
+                    }
+                });
+                break;
+        }
+    });
+
+    vis.editTemplatesInitPreview();
+};
+
+vis.editTemplatesInitPreview = function () {
     $('.templates_prev').remove();
     var $selectSet = $('#select_set');
 
@@ -20,13 +100,14 @@ vis.editInitTemplatesPreview = function () {
             if (!templates.hasOwnProperty(t)) {
                 continue;
             }
-            var text = '<div id="prev_container_temp_' + t + '" class="wid-prev templates_prev widget-filters" data-keywords="templates" data-template="' + t + '" title="' + t + '"><div class="wid-prev-name" >' + t + '</div></div>';
-            $toolbox.append(text);
-            var $preview = $('#prev_container_temp_' + t);
+            var text = '<div class="wid-prev templates_prev widget-filters" data-keywords="templates" data-template="' + t + '" title="' + (templates[t].desc || t) + '"><div class="wid-prev-name" >' + t + '</div></div>';
+            var $preview = $(text);
+            $toolbox.append($preview);
 
             if (templates[t].icon) {
-                var content = $preview.append('<img class="wid-prev-content" src="' + templates[t].icon + '" />');
+                $preview.append('<img class="wid-prev-content" src="' + templates[t].icon + '" />');
             }
+            
             $preview.draggable({
                 helper:      'clone',
                 appendTo:    $panel,
@@ -52,15 +133,12 @@ vis.editInitTemplatesPreview = function () {
     }
 };
 
-vis.editCreateTemplate = function (viewDiv, view, groupId, name) {
+vis.editTemplatesCreate = function (viewDiv, view, groupId) {
     this.views.___settings = this.views.___settings || {};
     this.views.___settings.templates = this.views.___settings.templates || {};
-    if (!name || this.views.___settings.templates[name]) {
-        name = 'template1';
-    }
     var members = [];
     var that = this;
-    this.editTemplateSettings(function (data) {
+    this.editTemplatesSettings(function (data) {
         that.copyWidgets(viewDiv, view, false, groupId, members, 0);
         that.views.___settings.templates[data.name] = {
             widgets: members,
@@ -73,17 +151,17 @@ vis.editCreateTemplate = function (viewDiv, view, groupId, name) {
                     that.views.___settings.templates[data.name].icon = canvas.toDataURL();
                 }
                 that.save(viewDiv, view);
-                that.editInitTemplatesPreview();
+                that.editTemplatesInitPreview();
             });
         } else {
             that.save(viewDiv, view);
-            that.editInitTemplatesPreview();
+            that.editTemplatesInitPreview();
         }
 
     });
 };
 
-vis.editTemplateSettings = function (template, callback) {
+vis.editTemplatesSettings = function (template, callback) {
     var that = this;
     var $dialog = $('#dialog-template');
     if (typeof template === 'function') {
@@ -154,4 +232,37 @@ vis.editTemplateSettings = function (template, callback) {
                 }
             ]
         });
+};
+
+vis.editTemplateHideMenu = function (e) {
+    if (e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+    }
+
+    $('#context_menu_template').hide();
+};
+
+vis.editTemplatesShowMenu = function (options) {
+    var $contextMenu = $('#context_menu_template');
+    this.hideContextMenu();
+
+    $contextMenu.unbind('blur').blur(this.editTemplateHideMenu);
+
+    $contextMenu.css(options)
+        .show()
+        .menu();
+
+    // var pos = $contextMenu.position();
+    var h   = $contextMenu.height();
+    var ww  = $contextMenu.width();
+
+    if (options.top - h > options.scrollTop) {
+        $contextMenu.css({top: options.top - h});
+    }
+    if (options.left - ww > options.scrollLeft) {
+        $contextMenu.css({left: options.left - ww});
+    }
+
+    $contextMenu.focus();
 };

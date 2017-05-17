@@ -2321,10 +2321,10 @@ vis = $.extend(true, vis, {
                 var tpl = $(tplList[i]).attr('id');
                 if (tpl === '_tplGroup') continue; // do not show group widget
                 var text = that.editOneWidgetPreview(tplList[i]);
-                $toolbox.append(text);
+                var $preview = $(text);
+                $toolbox.append($preview);
 
                 var $tpl     = $('#' + tpl);
-                var $preview = $('#prev_container_' + tpl);
                 var $prev    = $tpl.data('vis-prev');
 
                 if ($prev) {
@@ -2387,10 +2387,18 @@ vis = $.extend(true, vis, {
         $('.wid-prev').dblclick(function () {
             that.editShowWizard(that.activeViewDiv, that.activeView, $(this).clone());
         });
-        if (this.config['button/btn_prev_type']) $('#btn_prev_type').trigger('click');
-        if (this.config['button/btn_prev_type'] === undefined) $('#btn_prev_type').trigger('click');
+        
+        if (this.config['button/btn_prev_type']) {
+            $('#btn_prev_type').trigger('click');
+        }
 
-        if (this.config['button/btn_prev_zoom']) $('#btn_prev_zoom').trigger('click');
+        if (this.config['button/btn_prev_type'] === undefined) {
+            $('#btn_prev_type').trigger('click');
+        }
+
+        if (this.config['button/btn_prev_zoom']) {
+            $('#btn_prev_zoom').trigger('click');
+        }
     },
     editBuildSelectView:    function () {
         var keys = [];
@@ -2853,8 +2861,8 @@ vis = $.extend(true, vis, {
             }
         });
         
-        if (this.editInitTemplatesPreview) {
-            this.editInitTemplatesPreview();
+        if (this.editTemplatesInit) {
+            this.editTemplatesInit();
         }
 
         // set maximal height
@@ -4654,6 +4662,7 @@ vis = $.extend(true, vis, {
             cancel: false,
             start:  function (event, ui) {
                 $('#context_menu').hide();
+                $('#context_menu_template').hide();
 
                 that.gridWidth = parseInt(that.views[view].settings.gridSize, 10);
                 if (that.gridWidth < 1 || isNaN(that.gridWidth)) that.gridWidth = 10;
@@ -6141,6 +6150,9 @@ vis = $.extend(true, vis, {
         var $contextMenu = $('#context_menu');
         var $view = $('#visview_' + viewDiv);
 
+        if (this.editTemplatesHideMenu) {
+            this.editTemplatesHideMenu();
+        }
         // Remove selectable to prevent widgets selection after click
         if (this.selectable && $view.hasClass('ui-selectable')) $view.selectable('destroy');
 
@@ -6240,7 +6252,7 @@ vis = $.extend(true, vis, {
         }
 
         // If selected only one and it is group => show ungroup
-        if ($listSelected.length === 1 && $($listSelected[0]).attr('id')[0] === 'g' && this.editCreateTemplate) {
+        if ($listSelected.length === 1 && $($listSelected[0]).attr('id')[0] === 'g' && this.editTemplatesCreate) {
             $('#context_menu_ungroup').show();
             $('#context_menu_group2template').show();
         } else {
@@ -6346,7 +6358,7 @@ vis = $.extend(true, vis, {
                         that.editDestroyGroup(viewDiv, view, widgets[0]);
                         break;
                     case 'group2template':
-                        that.editCreateTemplate(viewDiv, view, widgets[0]);
+                        that.editTemplatesCreate(viewDiv, view, widgets[0]);
                         break;
                 }
             });

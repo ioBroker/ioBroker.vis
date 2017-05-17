@@ -677,17 +677,17 @@
         <input id="filter_set" value="*" type="text" style="width: 100%" class="translateT" title="Widgets filter. Double click to clear."/>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
-        <div id="toolbox" class="toolbox"></div>
+        <div id="toolbox" class="toolbox">
+            <ul id="context_menu_template" style="position: absolute; display: none; z-index: 999; min-width: 100px">
+                <li id="context_menu_template_edit"    class="context-template-submenu"  data-action="edit">
+                    <span class="translate">Edit</span>
+                </li>
+                <li id="context_menu_template_delete"  class="context-template-submenu" data-action="delete">
+                    <span class="translate">Delete</span>
+                </li>
+            </ul>
+        </div>
 
-        <ul id="context_menu_template" style="position: absolute; display: none; z-index: 999; min-width: 150px">
-            <li id="context_menu_template_edit"    class="context-submenu context-menu-common-item"  data-action="edit">
-                <span class="translate">Edit</span>
-            </li>
-            <li id="context_menu_template_delete"  class="context-submenu context-menu-common-item" data-action="delete">
-                <span class="translate">Delete</span>
-            </li>
-
-        </ul>
     </div>
     <div id="vis_wrap">
         <div id="view_select" class="ui-widget-content">
@@ -1102,14 +1102,14 @@
     </table>
 </div>
 <div id="dialog-template" class="translateT" title="Template Settings" style="overflow: hidden; display: none">
-    <table style="width: 100%">
+    <table style="width: 750px">
         <tr>
-            <td><label class="translate" for="dialog_template_name">Name:</label></td>
-            <td><input type="text" id="dialog_template_name" style="width: 100%"/></td>
+            <td style="width: 150px;"><label class="translate" for="dialog_template_name">Name:</label></td>
+            <td style="width: calc(100% - 150px);"><input type="text" id="dialog_template_name" style="width: 100%;"/></td>
         </tr>
         <tr>
             <td><label class="translate" for="dialog_template_desc">Description:</label></td>
-            <td><input type="text" id="dialog_template_desc" style="width: 100%"/></td>
+            <td><input type="text" id="dialog_template_desc" style="width: 100%;"/></td>
         </tr>
     </table>
 </div>
