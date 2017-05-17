@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>
 <head>
 
-    <!-- vis Version 0.14.6 -->
+    <!-- vis Version 0.14.5 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -62,6 +62,7 @@
     <script type="text/javascript" src="js/visEdit.js"></script>
     <script type="text/javascript" src="js/visEditExt.js"></script>
     <script type="text/javascript" src="js/visEditInspect.js"></script>
+    <script type="text/javascript" src="js/visEditTemplates.js"></script>
 </head>
 <body >
 
@@ -677,6 +678,16 @@
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
         <div id="toolbox" class="toolbox"></div>
+
+        <ul id="context_menu_template" style="position: absolute; display: none; z-index: 999; min-width: 150px">
+            <li id="context_menu_template_edit"    class="context-submenu context-menu-common-item"  data-action="edit">
+                <span class="translate">Edit</span>
+            </li>
+            <li id="context_menu_template_delete"  class="context-submenu context-menu-common-item" data-action="delete">
+                <span class="translate">Delete</span>
+            </li>
+
+        </ul>
     </div>
     <div id="vis_wrap">
         <div id="view_select" class="ui-widget-content">
@@ -1090,6 +1101,19 @@
         </tr>
     </table>
 </div>
+<div id="dialog-template" class="translateT" title="Template Settings" style="overflow: hidden; display: none">
+    <table style="width: 100%">
+        <tr>
+            <td><label class="translate" for="dialog_template_name">Name:</label></td>
+            <td><input type="text" id="dialog_template_name" style="width: 100%"/></td>
+        </tr>
+        <tr>
+            <td><label class="translate" for="dialog_template_desc">Description:</label></td>
+            <td><input type="text" id="dialog_template_desc" style="width: 100%"/></td>
+        </tr>
+    </table>
+</div>
+
 <div style="display: none" id="uploadPreview"></div>
 
 <div id="growl_informator" class="jGrowl bottom-left" style="z-index:3001"></div>

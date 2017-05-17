@@ -974,7 +974,8 @@ vis = $.extend(true, vis, {
                     resize:   function () {
                         editor.resize();
                     },
-                    open:     function () {
+                    open:     function (event) {
+                        $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                         $(this).parent().css({'z-index': 1000});
                         if (data.top !== undefined) {
                             if (data.top >= 0) {
@@ -2225,7 +2226,7 @@ vis = $.extend(true, vis, {
             if (this.activeWidgets.length === 1) {
                 try {
                     $widget = $('#' + this.activeWidgets[0]);
-                    if (!$widget.hasClass('ui-resizable') && (!this.widgets[wid].data._no_resize)) {
+                    if (!$widget.hasClass('ui-resizable') && this.widgets[wid] && this.widgets[wid].data && !this.widgets[wid].data._no_resize) {
                         this.resizable(viewDiv, view, $widget);
                     }
                 } catch (e) {

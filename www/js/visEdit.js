@@ -990,7 +990,8 @@ vis = $.extend(true, vis, {
                     autoOpen: false,
                     width:    600,
                     height:   550,
-                    open:     function (/*event, ui*/) {
+                    open:     function (event /* , ui*/) {
+                        $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                         $('[aria-describedby="dialog_about"]').css('z-index', 1002);
                         $('.ui-widget-overlay').css('z-index', 1001);
                     },
@@ -1006,7 +1007,8 @@ vis = $.extend(true, vis, {
             autoOpen: false,
             width: 600,
             height: 500,
-            open:     function (/*event, ui*/) {
+            open:     function (event /* , ui*/) {
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                 $('[aria-describedby="dialog_shortcuts"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             },
@@ -1227,7 +1229,8 @@ vis = $.extend(true, vis, {
                 modal: true,
                 draggable: false,
                 resizable: false,
-                open:    function () {
+                open:    function (event) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $('[aria-describedby="dialog-new-project"]').css('z-index', 1002);
                     //$('.ui-widget-overlay').css('z-index', 1001);
                 },
@@ -1274,7 +1277,8 @@ vis = $.extend(true, vis, {
                 modal:      true,
                 draggable:  false,
                 resizable:  false,
-                open:    function () {
+                open:    function (event) {
+                    $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                     $('[aria-describedby="dialog-settings"]').css('z-index', 1002);
                     //$('.ui-widget-overlay').css('z-index', 1001);
                 },
@@ -2252,6 +2256,7 @@ vis = $.extend(true, vis, {
         } else {
             types = [];
         }
+
         if ($tpl.data('vis-beta')) {
             beta = '<div style="color: red; width: 100%;  z-index: 100; top: 50% ; font-size: 15px;">!!! BETA !!!</div>';
         }
@@ -2262,6 +2267,7 @@ vis = $.extend(true, vis, {
 
         return '<div id="prev_container_' + tpl + '" class="wid-prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid-prev-name" >' + $tpl.data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>';
     },
+    
     editInitWidgetPreview:  function () {
         var that = this;
         $('#btn_prev_zoom').hover(
@@ -2304,15 +2310,18 @@ vis = $.extend(true, vis, {
             }
         });
 
+        var $panel = $('#panel_body');
+        var $toolbox = $('#toolbox');
+        // create widget sets
         $.each(this.widgetSets, function () {
             var set = this.name || this;
-            var tpl_list = $('.vis-tpl[data-vis-set="' + set + '"]');
+            var tplList = $('.vis-tpl[data-vis-set="' + set + '"]');
 
-            for(var i = 0; i < tpl_list.length; i++) {
-                var tpl = $(tpl_list[i]).attr('id');
+            for (var i = 0; i < tplList.length; i++) {
+                var tpl = $(tplList[i]).attr('id');
                 if (tpl === '_tplGroup') continue; // do not show group widget
-                var text = that.editOneWidgetPreview(tpl_list[i]);
-                $('#toolbox').append(text);
+                var text = that.editOneWidgetPreview(tplList[i]);
+                $toolbox.append(text);
 
                 var $tpl     = $('#' + tpl);
                 var $preview = $('#prev_container_' + tpl);
@@ -2322,8 +2331,6 @@ vis = $.extend(true, vis, {
                     var content = $preview.append($prev);
                     $(content).children().last().addClass('wid-prev-content');
                 }
-
-                var $panel = $('#panel_body');
 
                 $preview.draggable({
                     helper:      'clone',
@@ -2335,14 +2342,12 @@ vis = $.extend(true, vis, {
                     start: function (event, ui) {
                         if (ui.helper.children().length < 3) {
                             $(ui.helper).addClass('ui-state-highlight ui-corner-all').css({padding: '2px', 'font-size': '12px'});
-
                         } else {
                             $(ui.helper).find('.wid-prev-type').remove();
                             $(ui.helper).find('.wid-prev-name').remove();
                             $(ui.helper).css('border', 'none');
                             $(ui.helper).css('width',  'auto');
                         }
-
                     }
                 });
                 // Add widget by double click
@@ -2802,9 +2807,9 @@ vis = $.extend(true, vis, {
         });
 
         // end old select View xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        var $select_set = $('#select_set');
+        var $selectSet = $('#select_set');
         //$select_set.html('');
-        $select_set.append('<option value="all">*</option>');
+        $selectSet.append('<option value="all">*</option>');
         this.widgetSets.sort(function (a, b) {
             if ((a.name || a) > (b.name || b)) return 1;
             if ((a.name || a) < (b.name || b)) return -1;
@@ -2815,19 +2820,19 @@ vis = $.extend(true, vis, {
             if (!$('.vis-tpl[data-vis-set="' + (this.widgetSets[i].name || this.widgetSets[i]) + '"]').length) continue;
 
             if (this.widgetSets[i].name !== undefined ) {
-                $select_set.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
+                $selectSet.append('<option value="' + this.widgetSets[i].name + '">' + this.widgetSets[i].name + '</option>');
             } else {
-                $select_set.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
+                $selectSet.append('<option value="' + this.widgetSets[i] + '">' + this.widgetSets[i] + '</option>');
             }
         }
 
         if (this.config['select/select_set']) {
-            $('#select_set').find('option[value="' + this.config['select/select_set'] + '"]').prop('selected', true);
+            $selectSet.find('option[value="' + this.config['select/select_set'] + '"]').prop('selected', true);
         }
 
         this.editInitWidgetPreview();
 
-        $select_set.selectmenu({
+        $selectSet.selectmenu({
             change: function (event, ui) {
                 var tpl = ui.item.value;
                 that.editSaveConfig('select/select_set', tpl);
@@ -2847,6 +2852,10 @@ vis = $.extend(true, vis, {
                 }
             }
         });
+        
+        if (this.editInitTemplatesPreview) {
+            this.editInitTemplatesPreview();
+        }
 
         // set maximal height
         $('#select_set-menu').css('max-height', '400px');
@@ -2869,9 +2878,9 @@ vis = $.extend(true, vis, {
                 var value = $filter_set.val().toLowerCase();
                 that.editSaveConfig('select/filter_set', value);
                 $('.widget-filters').each(function () {
-                    if (value !== '' && value !== '*' && $select_set.val() !== 'all') {
-                        $select_set.val('all');
-                        $select_set.selectmenu('refresh');
+                    if (value !== '' && value !== '*' && $selectSet.val() !== 'all') {
+                        $selectSet.val('all');
+                        $selectSet.selectmenu('refresh');
                     }
                     var keywords = $(this).data('keywords');
                     if (value === '' || value === '*' || keywords.indexOf(value) !== -1) {
@@ -3402,7 +3411,8 @@ vis = $.extend(true, vis, {
             width:    800,
             height:   600,
             modal:    true,
-            open:     function (/*event, ui*/) {
+            open:     function (event /*, ui*/) {
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                 $('[aria-describedby="dialog_export_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             }
@@ -3422,7 +3432,8 @@ vis = $.extend(true, vis, {
             open:     function (event, ui) {
                 $('[aria-describedby="dialog_import_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
-
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
+                
                 $('#start_import_widgets').unbind('click').click(function () {
                     $('#dialog_import_widgets').dialog('close');
                     var importObject;
@@ -3505,7 +3516,8 @@ vis = $.extend(true, vis, {
             width:    800,
             height:   600,
             modal:    true,
-            open:     function (/*event, ui*/) {
+            open:     function (event /* , ui*/) {
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                 $('[aria-describedby="dialog_export_view"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
             }
@@ -3812,23 +3824,22 @@ vis = $.extend(true, vis, {
         }
 
         var widgetId;
-        if (!options.template && options.data.members) {
+        if (options.data.members) {
             widgetId = options.wid || this.nextGroup();
         } else {
             widgetId = options.wid || this.nextWidget();
         }
         var $tpl;
-        if (!options.template) {
-            $tpl = $('#' + options.tpl);
+        $tpl = $('#' + options.tpl);
 
-            // call custom init function
-            if (!options.noSave && $tpl.attr('data-vis-init')) {
-                var init = $tpl.attr('data-vis-init');
-                if (this.binds[$tpl.attr('data-vis-set')][init]) {
-                    this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
-                }
+        // call custom init function
+        if (!options.noSave && $tpl.attr('data-vis-init')) {
+            var init = $tpl.attr('data-vis-init');
+            if (this.binds[$tpl.attr('data-vis-set')][init]) {
+                this.binds[$tpl.attr('data-vis-set')][init](options.tpl, options.data);
             }
         }
+
         this.widgets[widgetId] = {
             wid: widgetId,
             data: new can.Map($.extend({
@@ -3849,7 +3860,6 @@ vis = $.extend(true, vis, {
         }
 
         this.views[view].widgets[widgetId] = {
-//            template:  options.template,
             tpl:       options.tpl,
             data:      options.data,
             style:     options.style,
@@ -3944,7 +3954,7 @@ vis = $.extend(true, vis, {
     },
     dupWidgets:             function (targetViewDiv, targetView, widgets, offsetX, offsetY, grouped) {
         // make a copy
-        widgets = JSON.parse(JSON.stringify(widgets));
+        if (widgets) widgets = JSON.parse(JSON.stringify(widgets));
 
         if (typeof widgets === 'string') {
             try {
@@ -3960,7 +3970,7 @@ vis = $.extend(true, vis, {
         }
 
         if (!widgets) {
-            widgets = this.activeWidgets;
+            widgets = JSON.parse(JSON.stringify(this.activeWidgets));
         }
 
         var srcViewDiv;
@@ -3974,6 +3984,7 @@ vis = $.extend(true, vis, {
 
         for (var i = 0; i < widgets.length; i++) {
             var objWidget;
+            if (widgets[i].wid) continue;
 
             // if from clipboard
             if (widgets[i].widget) {
@@ -4044,11 +4055,24 @@ vis = $.extend(true, vis, {
             if (obj.data.members) {
                 var ws = [];
                 for (var w = 0; w < obj.data.members.length; w++) {
-                    ws.push({
-                        view: srcView,
-                        viewDiv: srcViewDiv,
-                        widget: this.views[srcView].widgets[obj.data.members[w]]
-                    });
+                    var found = false;
+                    for (var f = 0; f < widgets.length; f++) {
+                        if (widgets[f].wid === obj.data.members[f]) {
+                            widgets[f].wid = false;
+                            widgets[f].view = srcView;
+                            widgets[f].viewDiv = srcViewDiv;
+                            ws.push(widgets[f]);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found && this.views[srcView].widgets[obj.data.members[w]]) {
+                        ws.push({
+                            view: srcView,
+                            viewDiv: srcViewDiv,
+                            widget: this.views[srcView].widgets[obj.data.members[w]]
+                        });
+                    }
                 }
 
                 obj.data.members = this.dupWidgets(targetViewDiv, targetView, ws, true);
@@ -4983,7 +5007,6 @@ vis = $.extend(true, vis, {
         $view.droppable({
             accept: '.wid-prev',
             drop: function (event, ui) {
-                var tpl = $(ui.draggable).data('tpl');
                 var $container = $('#vis_container');
                 var viewPos = $container.position();
                 var addPos = {
@@ -4994,35 +5017,45 @@ vis = $.extend(true, vis, {
                 addPos.left = addPos.left.toFixed(0) + 'px';
                 addPos.top  = addPos.top.toFixed(0)  + 'px';
 
-                var $tpl = $('#' + tpl);
-                var renderVisible = $tpl.attr('data-vis-render-visible');
+                var widgetId;
+                var template = $(ui.draggable).data('template');
 
-                // Widget attributes default values
-                var attrs = $tpl.attr('data-vis-attrs');
-                // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
-                var t = 0;
-                var attr;
-                while ((attr = $tpl.attr('data-vis-attrs' + t))) {
-                    attrs += attr;
-                    t++;
+                if (!template) {
+                    var tpl = $(ui.draggable).data('tpl');
+                    var $tpl = $('#' + tpl);
+                    var renderVisible = $tpl.attr('data-vis-render-visible');
+
+                    // Widget attributes default values
+                    var attrs = $tpl.attr('data-vis-attrs');
+                    // Combine attributes from data-vis-attrs, data-vis-attrs0, data-vis-attrs1, ...
+                    var t = 0;
+                    var attr;
+                    while ((attr = $tpl.attr('data-vis-attrs' + t))) {
+                        attrs += attr;
+                        t++;
+                    }
+                    var data = {};
+                    if (attrs) {
+                        attrs = attrs.split(';');
+                        if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
+                    }
+
+                    if (renderVisible) data.renderVisible = true;
+
+                    //tpl, data, style, wid, view, noSave, noAnimate
+                    widgetId = that.addWidget(viewDiv, view, {
+                        tpl:        tpl,
+                        data:       data,
+                        style:      addPos,
+                        noAnimate:  true
+                    }, false);
+                } else {
+                    widgetId = that.dupWidgets(viewDiv, view, that.views.___settings.templates[template].widgets, addPos.left, addPos.top);
                 }
-                var data = {};
-                if (attrs) {
-                    attrs = attrs.split(';');
-                    if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
+
+                if (viewDiv === that.activeView) {
+                    that.updateSelectWidget(viewDiv, view, widgetId);
                 }
-
-                if (renderVisible) data.renderVisible = true;
-
-                //tpl, data, style, wid, view, noSave, noAnimate
-                var widgetId = that.addWidget(viewDiv, view, {
-                    tpl:        tpl, 
-                    data:       data, 
-                    style:      addPos,
-                    noAnimate:  true
-                }, false);
-
-                if (viewDiv === that.activeView) that.updateSelectWidget(viewDiv, view, widgetId);
 
                 setTimeout(function () {
                     that.inspectWidgets(viewDiv, view, [widgetId]);
@@ -5523,6 +5556,33 @@ vis = $.extend(true, vis, {
             }
         }
     },
+    copyWidgets:             function (viewDiv, view, isCut, widget, clipboard, index, wid) {
+        if (this.views[view].widgets[widget]) {
+            var w = this.views[view].widgets[widget];
+            var members;
+            if (w.data && w.data.members) {
+                members = [];
+                for (var m = 0; m < w.data.members.length; m++) {
+                    index++;
+                    index = this.copyWidgets(viewDiv, view, isCut, w.data.members[m], clipboard, index, index);
+                    members.push(index);
+                }
+            }
+            var obj = {
+                widget:  $.extend(true, {}, w),
+                view:    isCut ? '---copied---' : view,
+                viewDiv: isCut ? '---copied---' : viewDiv
+            };
+            if (wid) {
+                obj.wid = wid;
+            }
+            if (members) {
+                obj.widget.data.members = members;
+            }
+            clipboard.push(obj);
+        }
+        return index;
+    },
     copy:                   function (viewDiv, view, isCut, widgets) {
         var $focused = $(':focus');
         if (!view)    view    = this.activeView;
@@ -5540,13 +5600,10 @@ vis = $.extend(true, vis, {
             var widgetNames = '';
             widgets = widgets || this.activeWidgets;
             if (widgets.length) {
+                var index = 0;
                 for (var i = 0, len = widgets.length; i < len; i++) {
                     widgetNames += (widgetNames ? ', ' : '') + widgets[i];
-                    this.clipboard.push({
-                        widget:  $.extend(true, {}, this.views[view].widgets[widgets[i]]),
-                        view:    (!isCut) ? view    : '---copied---',
-                        viewDiv: (!isCut) ? viewDiv : '---copied---'
-                    });
+                    index = this.copyWidgets(viewDiv, view, isCut, widgets[i], this.clipboard, index);
                 }
             }
 
@@ -5625,6 +5682,7 @@ vis = $.extend(true, vis, {
                     modal:    true,
                     title:    _('Confirm widget deletion'),
                     open:    function (event, ui) {
+                        $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
                         $('[aria-describedby="dialog_delete"]').css('z-index', 11002);
                         $('.ui-widget-overlay').css('z-index', 1001);
                     },
@@ -6073,33 +6131,6 @@ vis = $.extend(true, vis, {
             return (options.left >= range.x[0] && options.left <= range.x[1]) && (options.top >= range.y[0] && options.top <= range.y[1]);
         });
     },
-    /*editCopyWidgetsToTemplate: function (view, name, obj) {
-        var widgets = this.views[views].widgets[name].data.members;
-        if (widgets) {
-            for (var w = 0; w < widgets.length; w++) {
-                obj[widgets[w]] = this.views[views].widgets[widgets[w]];
-                this.editCopyWidgetsToTemplate(view, widgets[w], obj);
-            }
-        }
-    },
-    editCreateTemplate:     function (viewDiv, view, groupId, name) {
-        this.views.__settings__ = this.views.__settings__ || {};
-        if (!name || (this.views.__settings__.templates[name])) {
-            name = 'template1';
-        }
-        this.views.__settings__.templates[name] = {
-            main: this.views[views].widgets[groupId]
-        };
-        var template = this.views.__settings__.templates[name];
-        this.editCopyWidgetsToTemplate(view, name, template);
-
-        this.addWidget(viewDiv, view, {
-            template:   name,
-            data:       JSON.parse(JSON.strinigfy(template.main.data)),
-            style:      JSON.parse(JSON.strinigfy(template.main.style)),
-            noAnimate:  true
-        });
-    },*/
     showContextMenu:        function (viewDiv, view, options) {
         var that = this;
         var offset;
@@ -6129,7 +6160,7 @@ vis = $.extend(true, vis, {
                     var x = $(this).data('posX');
                     var y = $(this).data('posY');
                     // modify position of widget
-                    var widgets = that.dupWidgets(viewDiv, view, that.clipboard, that.activeView, x, y);
+                    var widgets = that.dupWidgets(viewDiv, view, that.clipboard, x, y);
                     that.save(viewDiv, view);                // Select main widget and add to selection the secondary ones
                     that.inspectWidgets(viewDiv, view, widgets);
                 });
@@ -6209,7 +6240,7 @@ vis = $.extend(true, vis, {
         }
 
         // If selected only one and it is group => show ungroup
-        if ($listSelected.length === 1 && $($listSelected[0]).attr('id')[0] === 'g') {
+        if ($listSelected.length === 1 && $($listSelected[0]).attr('id')[0] === 'g' && this.editCreateTemplate) {
             $('#context_menu_ungroup').show();
             $('#context_menu_group2template').show();
         } else {
@@ -6300,7 +6331,7 @@ vis = $.extend(true, vis, {
                         that.copy(viewDiv, view, false, widgets);
                         break;
                     case 'select':
-                        that.inspectWidgets(viewDiv, view, $(e.target).data('wid').split(' '));
+                        that.inspectWidgets(viewDiv, view, $(e.target).data('wid') ? $(e.target).data('wid').split(' ') : []);
                         break;
                     case 'delete':
                         that.onButtonDelete(widgets);
@@ -6316,9 +6347,6 @@ vis = $.extend(true, vis, {
                         break;
                     case 'group2template':
                         that.editCreateTemplate(viewDiv, view, widgets[0]);
-                        break;
-                    case 'template2group':
-                        that.editCreateGroupFromTemplate(viewDiv, view, widgets[0]);
                         break;
                 }
             });
@@ -6349,12 +6377,12 @@ vis = $.extend(true, vis, {
                         $('#' + widgets[i]).addClass('vis-widgets-highlight');
                     }
                 },
-                blur: function (event, ui) {
+                blur: function (/* event, ui */) {
                     $('#visview_' + viewDiv).find('.vis-widgets-highlight').removeClass('vis-widgets-highlight');
                 }
             });
 
-        var pos = $contextMenu.position();
+        // var pos = $contextMenu.position();
         var h   = $contextMenu.height();
         var ww  = $contextMenu.width();
 
