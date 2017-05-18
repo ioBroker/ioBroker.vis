@@ -267,6 +267,11 @@ $.extend(systemDictionary, {
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
               "Можно задать несколько ключей через запятую"
     },
+    "templates_help": {
+        "en": "We have been working hard on it and just want to say, that <b>possible</b> this feature will not be for free, but available for small fee. All created widgets will work, just for the creation and usage of the new templates could be not free.",
+        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass <b>möglich</b> diese Funktion nicht kostenlos sein wird, aber für kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
+        "ru": "Мы упорно работали над этим и просто хотим сказать, что <b>возможно</b> эта функция не будет бесплатной и будет доступна за небольшую плату. Все созданные виджеты будут работать, только создание и использование новых шаблонов может быть не бесплатными."
+    },
     "Switch to runtime in this window": {
         "en": "Close editor",
         "de": "Editor schließen",
