@@ -5059,6 +5059,9 @@ vis = $.extend(true, vis, {
                         noAnimate:  true
                     }, false);
                 } else {
+                    if (that.editTemplatesShowWarning) {
+                        that.editTemplatesShowWarning();
+                    }
                     widgetId = that.dupWidgets(viewDiv, view, that.views.___settings.templates[template].widgets, addPos.left, addPos.top);
                 }
 

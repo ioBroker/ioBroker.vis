@@ -85,8 +85,8 @@
         </tr>
         <tr>
             <td style="text-align: left; vertical-align: bottom">
-                <input type="checkbox" id="dialog_delete_is_show" style="display: inline-block; padding-left: 10px">
-                <span class="translate" style="font-size: small">Do not ask again</span>
+                <input type="checkbox" id="dialog_delete_is_show" style="display: inline-block; padding-left: 10px" />
+                <label for="dialog_delete_is_show" class="translate" style="font-size: small">Do not ask again</label>
             </td>
         </tr>
     </table>
@@ -716,14 +716,14 @@
                     <span class="ui-icon ui-icon-arrow-4-diag"></span>
                     <span class="translate">Ungroup</span>
                 </li>
-                <!--li id="context_menu_group2template" class="context-menu-common-item" data-action="group2template">
-                    <span class="ui-icon ui-icon-arrow-4-diag"></span>
+                <li id="context_menu_group2template" class="context-menu-common-item" data-action="group2template">
+                    <span class="ui-icon ui-icon-tag"></span>
                     <span class="translate">Make template</span>
                 </li>
                 <li id="context_menu_template2grpup" class="context-menu-common-item" data-action="template2group">
                     <span class="ui-icon ui-icon-arrow-4-diag"></span>
                     <span class="translate">Group from widget</span>
-                </li-->
+                </li>
                 <li id="context_menu_copy"    class="context-menu-action context-menu-common-item" data-action="copy">
                     <span class="ui-icon ui-icon-copy"></span>
                     <span class="translate">Copy</span>
@@ -1032,6 +1032,20 @@
         <span id="dialog-confirm-icon" class="ui-icon ui-icon-circle-check" style="float:left; margin:0 7px 50px 0;"></span>
         <span id="dialog-confirm-text" style="padding-left: 20px;"></span>
     </p>
+</div>
+<div style="display: none;text-align: center" id="dialog_template_warning">
+    <table style="height: 100%; width: 100%">
+        <tr>
+            <td><span id="dialog_template_warning_text" class="translate" style="display: inline-block; padding-left: 10px; text-align: left;">templates_help</span>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: left; vertical-align: bottom">
+                <input type="checkbox" id="dialog_template_warning_is_show" style="display: inline-block; padding-left: 10px" />
+                <label class="translate" style="font-size: small" for="dialog_template_warning_is_show">Do not show again</label>
+            </td>
+        </tr>
+    </table>
 </div>
 <div id="dialog-edit-text" title="Edit text" style="display: none">
     <!--textarea style="width: calc(100% - 5px); height: 96%;resize: none;" id="dialog-edit-text-textarea"></textarea-->

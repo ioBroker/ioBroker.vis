@@ -266,3 +266,35 @@ vis.editTemplatesShowMenu = function (options) {
 
     $contextMenu.focus();
 };
+
+vis.editTemplatesShowWarning = function () {
+    var isHideDialog = this.config['dialog/templates_is_show'] || false;
+    if (!isHideDialog) {
+        var that = this;
+
+        $('#dialog_template_warning').dialog({
+            autoOpen: true,
+            width:    600,
+            height:   400,
+            modal:    true,
+            title:    _('Hint'),
+            open:    function (event, ui) {
+                $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
+                $('[aria-describedby="dialog_template_warning"]').css('z-index', 11002);
+                $('.ui-widget-overlay').css('z-index', 1001);
+            },
+            buttons: [
+                {
+                    id: 'ok',
+                    text: _('Ok'),
+                    click: function () {
+                        if ($('#dialog_template_warning_is_show').prop('checked')) {
+                            that.editSaveConfig('dialog/templates_is_show', true);
+                        }
+                        $('#dialog_template_warning').dialog('close');
+                    }
+                }
+            ]
+        });
+    }
+};

@@ -71,6 +71,12 @@ $.extend(systemDictionary, {
     "Wizard to create widgets...": {"en": "Wizard to create widgets...", "de": "Wizard um Widgets zu erzeugen...", "ru": "Создать несколько виджетов..."},
     "Generate":             {"en": "Generate",          "de": "Generieren",             "ru": "Создать"},
     "Attribute for OID:":   {"en": "Attribute for OID:", "de": "Attribute für OID:",    "ru": "Атрибут для OID:"},
+    "Export as zip:":       {"en": "Export as zip:",    "de": "Exportieren als ZIP:",   "ru": "Экспорт ZIP:"},
+    "Make template":        {"en": "Make template",     "de": "Vorlage erzeigen",       "ru": "Создать шаблон"},
+    "Group from widget":    {"en": "Group from widget", "de": "Group from widget",      "ru": "Group from widget"},
+    "Description:":         {"en": "Description:",      "de": "Beschreibung:",          "ru": "Описание:"},
+    "Template Settings":    {"en": "Template Settings", "de": "Vorlage-Einstellungen",  "ru": "Свойства шаблона"},
+    "Do not show again":    {"en": "Do not show again", "de": "Nicht mehr zeigen",      "ru": "Больше не показывать"},
     'Confirm widget deletion': {
         'en': 'Confirm widget deletion',
         'de': 'Bestätigung',
@@ -259,6 +265,8 @@ $.extend(systemDictionary, {
     "Default:":             {"en": "Default:",          "de": "Default:",               "ru": "По умолчанию:"},
     "Render always:":       {"en": "Render always:",    "de": "Immer rendern:",         "ru": "Всегда создавать:"},
     "filter_key":           {"en": "Initial filter",    "de": "Anfangsfilter",          "ru": "Фильтр при показе"},
+    "templates":            {"en": "Templates",         "de": "Vorlagen",               "ru": "Шаблоны"},
+    "Hint":                 {"en": "Hint",              "de": "Hinweis",                "ru": "Сообщение"},
     "filter_key_tooltip": {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
               "Many filter words can be set deivided by comma.",
@@ -269,8 +277,8 @@ $.extend(systemDictionary, {
     },
     "templates_help": {
         "en": "We have been working hard on it and just want to say, that <b>possible</b> this feature will not be for free, but available for small fee. All created widgets will work, just for the creation and usage of the new templates could be not free.",
-        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass <b>möglich</b> diese Funktion nicht kostenlos sein wird, aber für kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
-        "ru": "Мы упорно работали над этим и просто хотим сказать, что <b>возможно</b> эта функция не будет бесплатной и будет доступна за небольшую плату. Все созданные виджеты будут работать, только создание и использование новых шаблонов может быть не бесплатными."
+        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass diese Funktion in der Zukunft <b>möglich</b> nicht kostenlos sein wird und für kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
+        "ru": "Мы упорно работали над этим и просто хотим сказать, что <b>возможно</b> эта функция в будущем не будет бесплатной и будет доступна за небольшую плату. Все созданные виджеты будут работать, только создание и использование новых шаблонов может быть не бесплатными."
     },
     "Switch to runtime in this window": {
         "en": "Close editor",
