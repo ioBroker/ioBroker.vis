@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.14.6",
+        "version": "0.14.7",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.14.7": {
+				"en":               "Add templates",
+				"de":               "Vorlagen sind huzugefügt",
+				"ru":               "Добавлены шаблоны"
+			},
 			"0.14.6": {
 				"en":               "Fix error by groups selection",
 				"de":               "Korrigiere den Fehler bei Gruppenauswahl",

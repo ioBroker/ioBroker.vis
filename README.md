@@ -180,7 +180,10 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.14.6 (2017-05-16)
+## Changelog### 0.14.7 (2017-05-19)
+* (bluefox) add templates
+
+### 0.14.6 (2017-05-16)
 * (bluefox) Fix error by groups selection
 * (apollon77) fix jqui-dialog for auto-open
 
