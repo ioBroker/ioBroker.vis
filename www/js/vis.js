@@ -104,7 +104,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 
 var vis;
 vis = {
-    version: '0.14.7',
+    version: '0.14.8',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -320,6 +320,7 @@ vis = {
 
         var view;
         var id;
+        var sidd;
         for (view in this.views) {
             if (!this.views.hasOwnProperty(view)) continue;
 
@@ -478,30 +479,33 @@ vis = {
                         var oids = this.extractBinding(data[attr]);
                         if (oids) {
                             for (var t = 0; t < oids.length; t++) {
-                                if (oids[t].systemOid) {
-                                    if (IDs.indexOf(oids[t].systemOid) === -1) IDs.push(oids[t].systemOid);
-                                    if (views && views[view].indexOf(oids[t].systemOid) === -1) views[view].push(oids[t].systemOid);
-                                    if (!this.bindings[oids[t].systemOid]) this.bindings[oids[t].systemOid] = [];
+                                var ssid = oids[t].systemOid;
+                                if (ssid) {
+                                    if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
+                                    if (views && views[view].indexOf(ssid) === -1) views[view].push(ssid);
+                                    if (!this.bindings[ssid]) this.bindings[ssid] = [];
                                     oids[t].type = 'data';
                                     oids[t].attr = attr;
                                     oids[t].view = view;
                                     oids[t].widget = id;
 
-                                    this.bindings[oids[t].systemOid].push(oids[t]);
+                                    this.bindings[ssid].push(oids[t]);
                                 }
 
                                 if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
                                     for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
-                                        if (IDs.indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) IDs.push(oids[t].operations[0].arg[ww].systemOid);
-                                        if (views && views[view].indexOf(oids[t].operations[0].arg[ww].systemOid) === -1) views[view].push(oids[t].operations[0].arg[ww].systemOid);
-                                        if (!this.bindings[oids[t].operations[0].arg[ww].systemOid]) this.bindings[oids[t].operations[0].arg[ww].systemOid] = [];
-                                        this.bindings[oids[t].operations[0].arg[ww].systemOid].push(oids[t]);
+                                        ssid = oids[t].operations[0].arg[ww].systemOid;
+                                        if (!ssid) continue;
+                                        if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
+                                        if (views && views[view].indexOf(ssid) === -1) views[view].push(ssid);
+                                        if (!this.bindings[ssid]) this.bindings[ssid] = [];
+                                        this.bindings[ssidd].push(oids[t]);
                                     }
                                 }
                             }
                         } else
                         if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
-                            if (data[attr] !== 'nothing_selected') {
+                            if (data[attr] && data[attr] !== 'nothing_selected') {
                                 if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                                 if (views && views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
                             }
@@ -536,8 +540,10 @@ vis = {
                         } else
                         if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                             var _id = 'groupAttr' + m[1];
-                            if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
-                            if (views && views[view].indexOf(data[_id]) === -1) views[view].push(data[_id]);
+                            if (data[_id]) {
+                                if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
+                                if (views && views[view].indexOf(data[_id]) === -1) views[view].push(data[_id]);
+                            }
                         }
                     }
                 }
@@ -550,22 +556,28 @@ vis = {
                             var objIDs = this.extractBinding(style[cssAttr]);
                             if (objIDs) {
                                 for (var tt = 0; tt < objIDs.length; tt++) {
-                                    if (IDs.indexOf(objIDs[tt].systemOid) === -1) IDs.push(objIDs[tt].systemOid);
-                                    if (views && views[view].indexOf(objIDs[tt].systemOid) === -1) views[view].push(objIDs[tt].systemOid);
-                                    if (!this.bindings[objIDs[tt].systemOid]) this.bindings[objIDs[tt].systemOid] = [];
+                                    sidd = objIDs[tt].systemOid;
+                                    if (sidd) {
+                                        if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
+                                        if (views && views[view].indexOf(sidd) === -1) views[view].push(sidd);
+                                        if (!this.bindings[sidd]) this.bindings[sidd] = [];
 
-                                    objIDs[tt].type = 'style';
-                                    objIDs[tt].attr = cssAttr;
-                                    objIDs[tt].view = view;
-                                    objIDs[tt].widget = id;
+                                        objIDs[tt].type = 'style';
+                                        objIDs[tt].attr = cssAttr;
+                                        objIDs[tt].view = view;
+                                        objIDs[tt].widget = id;
 
-                                    this.bindings[objIDs[tt].systemOid].push(objIDs[tt]);
+                                        this.bindings[sidd].push(objIDs[tt]);
+                                    }
+
                                     if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
                                         for (var w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
-                                            if (IDs.indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) IDs.push(objIDs[tt].operations[0].arg[w].systemOid);
-                                            if (views && views[view].indexOf(objIDs[tt].operations[0].arg[w].systemOid) === -1) views[view].push(objIDs[tt].operations[0].arg[w].systemOid);
-                                            if (!this.bindings[objIDs[tt].operations[0].arg[w].systemOid]) this.bindings[objIDs[tt].operations[0].arg[w].systemOid] = [];
-                                            this.bindings[objIDs[tt].operations[0].arg[w].systemOid].push(objIDs[tt]);
+                                            sidd = objIDs[tt].operations[0].arg[w].systemOid;
+                                            if (!sidd) continue;
+                                            if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
+                                            if (views && views[view].indexOf(sidd) === -1) views[view].push(sidd);
+                                            if (!this.bindings[sidd]) this.bindings[sidd] = [];
+                                            this.bindings[sidd].push(objIDs[tt]);
                                         }
                                     }
                                 }
@@ -594,7 +606,7 @@ vis = {
                             var ids = views[this.views[view].widgets[id].data.contains_view];
                             if (ids) {
                                 for (var a = 0; a < ids.length; a++) {
-                                    if (views[view].indexOf(ids[a]) === -1) {
+                                    if (ids[a] && views[view].indexOf(ids[a]) === -1) {
                                         views[view].push(ids[a]);
                                         changed = true;
                                     }

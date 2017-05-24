@@ -4065,7 +4065,7 @@ vis = $.extend(true, vis, {
                 for (var w = 0; w < obj.data.members.length; w++) {
                     var found = false;
                     for (var f = 0; f < widgets.length; f++) {
-                        if (widgets[f].wid === obj.data.members[f]) {
+                        if (widgets[f].wid && widgets[f].wid === obj.data.members[w]) {
                             widgets[f].wid = false;
                             widgets[f].view = srcView;
                             widgets[f].viewDiv = srcViewDiv;
