@@ -180,8 +180,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
-### 0.14.8 (2017-05-24)
+## Changelog### 0.15.0 (2017-05-25)
 * (bluefox) fix copy of grouped widgets
 * (bluefox) fix subscribe if empty states
 
