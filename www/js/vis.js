@@ -499,7 +499,7 @@ vis = {
                                         if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
                                         if (views && views[view].indexOf(ssid) === -1) views[view].push(ssid);
                                         if (!this.bindings[ssid]) this.bindings[ssid] = [];
-                                        this.bindings[ssidd].push(oids[t]);
+                                        this.bindings[ssid].push(oids[t]);
                                     }
                                 }
                             }
