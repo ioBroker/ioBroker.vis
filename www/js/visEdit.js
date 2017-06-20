@@ -2102,8 +2102,16 @@ vis = $.extend(true, vis, {
                     try {
                         var win = window.open(document.location.protocol + '//' + document.location.host + document.location.pathname.replace('edit', 'index') + window.location.search + '#' + that.activeView, 'vis-runtime');
                         if (win) {
-                            win.location.reload();
-                            win.focus();
+                            if (navigator.userAgent.indexOf("Firefox") > 0) {
+                                // give to firefox time to update location
+                                setTimeout(function () {
+                                    win.location.reload();
+                                    win.focus();
+                                }, 1000);
+                            } else {
+                                win.location.reload();
+                                win.focus();
+                            }
                         } else {
                             that.showError(_('Popup window blocked!'), _('Cannot open new window'), 'alert');
                         }
