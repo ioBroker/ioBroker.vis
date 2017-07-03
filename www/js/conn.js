@@ -265,12 +265,17 @@ var servConn = {
                 that._socket.emit('name', connOptions.name);
                 console.log((new Date()).toISOString() + ' Connected => authenticate');
                 setTimeout(function () {
+                    var timeOut = 6000;
+                    // If online give more time
+                    if (window.location.href.indexOf('iobroker.') !== -1) {
+                        timeOut = 12000;
+                    }
                     that.waitConnect = setTimeout(function() {
                         console.error('No answer from server');
                         if (!that.authError) {
                             that.reload();
                         }
-                    }, 6000);
+                    }, timeOut);
 
                     that._socket.emit('authenticate', function (isOk, isSecure) {
                         if (that.waitConnect) {
