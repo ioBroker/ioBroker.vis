@@ -1035,6 +1035,10 @@ vis = {
                 }
                 containers.push({thisView: this, view: cview});
             });
+            // add view class
+            if (that.views[view].settings['class']) {
+                $view.addClass(that.views[view].settings['class'])
+            }
             var wait = false;
             if (containers.length) {
                 wait = true;

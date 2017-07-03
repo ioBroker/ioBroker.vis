@@ -6140,7 +6140,7 @@ vis = $.extend(true, vis, {
                 return false;
             }
 
-            if (that.views[view].widgets[id].grouped) {
+            if (that.views[view].widgets[id] && that.views[view].widgets[id].grouped) {
                 return false;
             }
 

@@ -1766,7 +1766,7 @@
                         }
                     }
 
-                    if (_data.$image.attr('src') == _data.imageActive) _data.$image.attr('src', _data.imageStarted);
+                    if (_data.$image.attr('src') === _data.imageActive) _data.$image.attr('src', _data.imageStarted);
 
                     //final_transcript = capitalize(final_transcript);
                     _data.$text.hide();
@@ -1777,7 +1777,7 @@
 
                     if (found) {
                         text = found;
-                        if (_data.$image.attr('src') == _data.imageStarted) _data.$image.attr('src', _data.imageDetected);
+                        if (_data.$image.attr('src') === _data.imageStarted) _data.$image.attr('src', _data.imageDetected);
                         _data.$result.addClass('mic-keyword-found');
                         if (_data.keyWordColor) _data.$result.css({color: _data.keyWordColor});
                     }
