@@ -181,10 +181,14 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 0.15.2 (2017-07-07)
+* (bluefox) Fix binding if it has "-" in the OID
+
 ### 0.15.1 (2017-06-30)
 * (bluefox) Fix error with context menu
 * (bluefox) Allow add class to view
-### 0.15.0 (2017-05-25)
+
+### 0.15.0 (2017-05-25)
 * (bluefox) fix copy of grouped widgets
 * (bluefox) fix subscribe if empty states
 

@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.15.1",
+        "version": "0.15.2",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.15.2": {
+				"en":               "Fix binding if it has \"-\" in the OID",
+				"de":               "Korrigiere den fehler mit Binding und \"-\" in OID",
+				"ru":               "Исправлены bindings, если содержат минус в имени"
+			},
 			"0.15.1": {
 				"en":               "Fix error with context menu\nAllow add class to view",
 				"de":               "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
@@ -33,76 +38,6 @@
 				"en":               "Fix install error",
 				"de":               "Korrigiere Installationsfehler",
 				"ru":               "Исправлена ошибка при инсталляции"
-			},
-			"0.10.15": {
-				"en":               "remove weather-adapter.html\nclean config.js\nremove old widgets\nimprove authentication in app\nallow creation of instance from helper widget",
-				"de":               "Lösche weather-adapter.html\nBereinige config.js\nLösche alte Widgets\nVerbessere die Authentication in der App\nErlaube die erzeugen von InstanceID im Helper-Widget",
-				"ru":               "Удалён weather-adapter.html\nПочищен config.js\nУбраны старые виджеты\nУлучшена аутентификация в App\nМожно создавать InstanceID из Helper-Widget"
-			},
-			"0.10.12": {
-				"en":               "group specific visibility of widgets",
-				"de":               "Sichtbarkeit von widgets abhängig vom eingeloggten Anwender",
-				"ru":               "Скрывать виджеты в зависимости от пользователя"
-			},
-			"0.10.11": {
-				"en":               "fix for iOS 10\nallow disabling of groups for performance",
-				"de":               "Fix für iOS 10\nErlaube Gruppendeaktivierung",
-				"ru":               "Исправление для iOS 10\nВозможность деактивировать группу для уменьшения нагрузки"
-			},
-			"0.10.10": {
-				"en":               "add text2speech widget",
-				"de":               "Hinzufügen text2speech widget",
-				"ru":               "Добавлен text2speech виджет"
-			},
-			"0.10.9": {
-				"en":               "destory unused views after 30 seconds\ndo not show middle leading lines if top and bottom are shown\nlet timestamp and lastchange to show time as interval",
-				"de":               "Lösche View nach 30 Sekunden falls inaktiv\nKeine Mittellinie beim schieben\nZeige Zeit als Intervall für timestamp und lastchange widgets",
-				"ru":               "После 30 секунд не использования страница будет удалена из памяти\nне показывать среднюю направляющую\nпоказывать время как инткрвал в timestamp и lastchange"
-			},
-			"0.10.8": {
-				"en":               "support of web-socket force",
-				"de":               "support of web-socket force",
-				"ru":               "support of web-socket force"
-			},
-			"0.10.7": {
-				"en":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
-				"de":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n",
-				"ru":               "add dark reload screen\nfix reload interval\nexport/import\nadd global script\nadd 'not exist'/'not consist'/'exist' to signal and visibility\nfix oids in editor\n"
-			},
-			"0.10.6": {
-				"en":               "add settings to reload vis",
-				"de":               "add settings to reload vis",
-				"ru":               "add settings to reload vis"
-			},
-			"0.10.5": {
-				"en":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
-				"de":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode",
-				"ru":               "fix select ID dialog\nadd align help lines\nnever store data in non-edit mode"
-			},
-			"0.10.4": {
-				"en":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
-				"de":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews",
-				"ru":               "fix drag and resize\nfix QuoJS\nsupport of milliseconds in formatDate\nsupport of getHistory\nsupport of show history instances\ngrid\nadd jqui previews"
-			},
-            "0.10.3": {
-				"en":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"de":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active",
-				"ru":               "update canJS\nfixes bugs with dialogs on touchscreens\nspeedUP show attributes at 300ms\nfix click on widget if signal is active"
-			},
-            "0.10.2": {
-				"en":               "fix widgets with timestamps",
-				"de":               "fix widgets with timestamps",
-				"ru":               "fix widgets with timestamps"
-			},
-			"0.10.1": {
-				"en":               "change version",
-				"de":               "change version",
-				"ru":               "change version"
-			},
-			"0.10.0": {
-				"en":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
-				"de":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings",
-				"ru":               "translates\nfix 'no widgets selected'\nchange widget icons\nadd signals\nadd app.css for cordova\nchange icons preview\nshow properties of widget as icon\nfix error with external commands\nadd types icon to preview\nsupport edit on iPad1\nchange security settings"
 			}
         },
         "desc": {
