@@ -394,6 +394,7 @@
         }
     };
     vis.binds.basic = {
+        isFullScreen: false,
         filterDropdown: function (el, filters, hideEffect, hideDuration, showEffect, showDuration) {
             var $this = $(el);
             if (filters) {
@@ -1912,6 +1913,50 @@
                     });
                 }
             });
+        },
+        toggleFullScreen: function (wid, view, data, style) {
+            var $div = $('#' + wid);
+            // if nothing found => wait
+            if (!$div.length) {
+                setTimeout(function () {
+                    vis.binds.basic.toggleFullScreen(wid, view, data, style);
+                }, 100);
+                return;
+            }
+
+            var svgOn  = '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"></path></svg>';
+            var svgOff = '<svg viewBox="0 0 24 24" style="display: inline-block; color: rgba(0, 0, 0, 0.87); fill: currentcolor; height: 24px; width: 24px; user-select: none; transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"></path></svg>';
+
+            if (!vis.editMode) {
+                $div.unbind('click').click(function () {
+                    if (vis.binds.basic.isFullScreen) {
+                        vis.binds.basic.isFullScreen = false;
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        }
+                        $('#' + wid).find('.vis-fullscreen-icon').html(svgOn);
+                    } else {
+                        vis.binds.basic.isFullScreen = true;
+                        var element = $('#vis_container')[0];
+                        if (element.requestFullscreen) {
+                            element.requestFullscreen();
+                        } else if (element.mozRequestFullScreen) {
+                            element.mozRequestFullScreen();
+                        } else if (element.webkitRequestFullscreen) {
+                            element.webkitRequestFullscreen();
+                        } else if (element.msRequestFullscreen) {
+                            element.msRequestFullscreen();
+                        }
+                        $('#' + wid).find('.vis-fullscreen-icon').html(svgOff);
+                    }
+                });
+            }
+
+            $div.find('.vis-fullscreen-icon').html(svgOn);
         }
     };
 
@@ -2808,6 +2853,20 @@
         </div>
     </div>
     <% vis.binds.basic.speech2text(this.data.wid, this.view, this.data, this.style); %>
+</script>
+
+<script id="tplFullScreen"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<img src="widgets/basic/img/Prev_FullScreen.png"></img>'
+        data-vis-set="basic"
+        data-vis-type="tools"
+        data-vis-name="Full Screen"
+        data-vis-attrs="">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width:43px; height:43px; background: #AAAAAA; cursor: pointer; opacity: 0.9" id="<%= this.data.attr('wid') %>">
+		<div class='vis-fullscreen-icon' style="padding: 10px"></div>
+		<%= vis.binds.basic.toggleFullScreen(this.data.wid, this.view, this.data, this.style); %>
+    </div>
 </script>
 
 <script id="tplScreenResolution"
