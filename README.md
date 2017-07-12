@@ -180,7 +180,10 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 0.15.3 (2017-07-12)
+* (bluefox) Add full screen widget
+* (bluefox) Fix timestamp widget
+
 ### 0.15.2 (2017-07-07)
 * (bluefox) Fix binding if it has "-" in the OID
 

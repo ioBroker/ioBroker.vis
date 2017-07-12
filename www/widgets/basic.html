@@ -1260,7 +1260,7 @@
                     if (d === 1 && value !== 11) {
                         return value + ' ' + singular;
                     } else
-                    if (d >= 2 && d <= 4 && value > 20) {
+                    if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
                         return value + ' ' + special24;
                     } else {
                         return value + ' ' + plural;
@@ -1344,7 +1344,7 @@
                 }
             } else {
                 var d = Math.floor(diff / (3600 * 24));
-                var h = Math.floor((diff - d * (3600 * 24)) / 24);
+                var h = Math.floor((diff - d * (3600 * 24)) / 3600);
                 text = '';
                 if (vis.language === 'de') {
                     text = 'vor ' + vis.binds.basic.formatIntervalHelper(d, 'days');
@@ -1709,7 +1709,6 @@
                 };
 
                 _data.recognition.onerror  = function(event) {
-                    debugger;
                     _data.$result.hide();
                     _data.$text.show();
                     _data.$image.attr('src', _data.imageInactive);

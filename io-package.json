@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "0.15.2",
+        "version": "0.15.3",
         "title":                    "iobroker Visualisation",
         "news": {
+			"0.15.2": {
+				"en":               "Add full screen widget\nFix timestamp widget",
+				"de":               "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",
+				"ru":               "Добавлен виджет full screen\nИсправлен виджет timestamp"
+			},
 			"0.15.2": {
 				"en":               "Fix binding if it has \"-\" in the OID",
 				"de":               "Korrigiere den fehler mit Binding und \"-\" in OID",
