@@ -1257,12 +1257,12 @@ vis = $.extend(true, vis, {
                 line = this.editWidgetNames(widAttr.name, widAttr.options);
                 break;
             case 'effect-options':
-                line = this.editSelect(widAttr.name, {
-                    'left':   _('left'),
-                    'right':  _('right'),
-                    'top':    _('top'),
-                    'bottom': _('bottom')
-                });
+                var _opts = {};
+                _opts[_('left')] = 'left';
+                _opts[_('right')] = 'right';
+                _opts[_('top')] = 'top';
+                _opts[_('bottom')] = 'bottom';
+                line = this.editSelect(widAttr.name, _opts);
                 break;
             case 'hidden':
                 return;
@@ -1643,7 +1643,7 @@ vis = $.extend(true, vis, {
             //Update containers
             if (wdata.type === 'views') {
                 // Set ths views for containers
-                that.updateContainers(wdata.view);
+                that.updateContainers(wdata.view, wdata.view);
             }
         });
 

@@ -19,7 +19,7 @@
 
 }
 
-.li_karu {
+.li_carousel {
     background-color: rgba(0, 0, 0, 0);
     /*width: auto !important;*/
     /*height: auto !important;*/
@@ -27,7 +27,7 @@
     position: relative;
 }
 
-.karu_blocking {
+.carousel_blocking {
     position: relative;
     z-index: 149;
     width: 100%;

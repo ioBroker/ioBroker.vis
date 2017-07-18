@@ -44,8 +44,8 @@
             $wid.find('.tabs-container').sliderTabs({
                 height: $wid.height() - 5
             });
-            vis.updateContainers(view);
-            if (vis.editMode && vis.activeWidgets.indexOf(wid) != -1) {
+            vis.updateContainers(view, view);
+            if (vis.editMode && vis.activeWidgets.indexOf(wid) !== -1) {
                 $wid.resizable('destroy');
                 vis.resizable(vis.activeViewDiv, vis.activeView, $wid);
             }

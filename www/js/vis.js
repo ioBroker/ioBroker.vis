@@ -859,7 +859,7 @@ vis = {
             var cview = $(this).attr('data-vis-contains');
             if (!that.views[cview]) {
                 $(this).html('<span style="color: red" class="container-error">' + _('error: view not found.') + '</span>');
-            } else if (cview === view) {
+            } else if (cview === view || cview === viewDiv) {
                 $(this).html('<span style="color: red" class="container-error">' + _('error: view container recursion.') + '</span>');
             } else {
                 if ($(this).find('.container-error').length) {
