@@ -8,7 +8,8 @@ var visConfig = {
                 "basic"
             ]
         },
-        "tabs"
+        "tabs",
+		"swipe"
     ]
 };
 if (typeof exports !== 'undefined') {

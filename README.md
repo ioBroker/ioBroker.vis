@@ -180,7 +180,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.15.3 (2017-07-12)
+## Changelog
+### 0.15.4 (2017-07-19)
+* (bluefox) Add swipe
+
+### 0.15.3 (2017-07-12)
 * (bluefox) Add full screen widget
 * (bluefox) Fix timestamp widget
 
