@@ -144,7 +144,77 @@
                 });
             }
         },
+        applyCarousel: function ($div, childView) {
+            var $childView = $div.find('#visview_' + childView);
+            var count = $div.data('count');
+            count = count || 0;
 
+            if (!$childView.length) {
+                count++;
+                if (count > 20) {
+                    return;
+                }
+                $div.data('count', count);
+                setTimeout(function () {
+                    vis.binds.swipe.applyCarousel($div, childView);
+                }, 100);
+                return;
+            }
+            var $all = $div.find('.vis-widget');
+            $all.each(function () {
+                var $id = $(this);
+                var id = $id.attr('id');
+                var idOldPos = $id.position();
+
+                var $idAndChilds = $childView.children('[id^=' + id + ']');
+
+                if ($idAndChilds.length === 1) {
+                    $id.css({top: 0, left: 0});
+
+                    $idAndChilds.wrapAll('<li id="li_' + id + '" class="li_carousel" ></li>');
+                    $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
+                } else {
+                    $idAndChilds.wrapAll('<div id="wrap_' + id + '" style="position: absolute; height: 50px; width: 50px; left: ' + (idOldPos.left * -1) + 'px; top:' + (idOldPos.top * -1) + 'px"></div>');
+                    $('#wrap_' + id).wrap('<li id="li_' + id + '" class="li_carousel"></li>');
+                    $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
+                }
+            });
+
+            $childView.children('.li_carousel').append('<div class="carousel_blocking"></div>');
+            $childView.children('.li_carousel').wrapAll('<ul class="parent_carousel"></ul>');
+
+            $childView.find('.parent_carousel')
+                .bind('round_ready', function () {
+                    var child = $('.roundabout-in-focus').children();
+                    $(child[1]).removeClass("carousel_blocking")
+                })
+                .roundabout({
+                    clickToFocus: true,
+                    enableDrag: true,
+                    dragFactor: 2,
+                    minZ: 1,
+                    maxZ: 100,
+                    tilt: -4,
+                    minOpacity: 0.2,
+                    minScale: 1,
+                    childSelector: '.li_carousel',
+                    triggerFocusEvents: true,
+                    triggerBlurEvents: true
+                });
+
+
+            $childView.find('.li_carousel')
+                .bind('round_focus', function () {
+                    var child = $(this).children();
+                    $(child[1]).removeClass('carousel_blocking');
+                    $(this).removeClass('roundabout-moveable-item')
+                })
+                .bind('round_blur', function () {
+                    var child = $(this).children();
+                    $(child[1]).addClass('carousel_blocking');
+                    $(this).addClass('roundabout-moveable-item')
+                });
+        },
         carousel: function (wid, view, data, style) {
             var $div = $('#' + wid);
             var childView = data.contains_view;
@@ -156,6 +226,7 @@
                 }, 100);
                 return;
             }
+
             if (view === data.contains_view) {
                 $div.find('.vis-widget-body').attr('data-vis-contains', '');
                 $div.html('<div style="color: red">' + _('Cannot show itself') + '</div>');
@@ -165,61 +236,7 @@
             if (vis.editMode) return;
 
             vis.binds.swipe.loadRoundScripts(function () {
-                var $childView = $div.find('#visview_' + childView);
-                var $all = $div.find('.vis-widget');
-                $all.each(function () {
-                    var $id = $(this);
-                    var id = $id.attr('id');
-                    var idOldPos = $id.position();
-
-                    var $idAndChilds = $childView.children('[id^=' + id + ']');
-
-                    if ($idAndChilds.length === 1) {
-                        $id.css({top: 0, left: 0});
-
-                        $idAndChilds.wrapAll('<li id="li_' + id + '" class="li_carousel" ></li>');
-                        $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
-                    } else {
-                        $idAndChilds.wrapAll('<div id="wrap_' + id + '" style="position: absolute; height: 50px; width: 50px; left: ' + (idOldPos.left * -1) + 'px; top:' + (idOldPos.top * -1) + 'px"></div>');
-                        $('#wrap_' + id).wrap('<li id="li_' + id + '" class="li_carousel"></li>');
-                        $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
-                    }
-                });
-
-                $childView.children('.li_carousel').append('<div class="carousel_blocking"></div>');
-                $childView.children('.li_carousel').wrapAll('<ul class="parent_carousel"></ul>');
-
-                $childView.find('.parent_carousel')
-                    .bind('round_ready', function () {
-                        var child = $('.roundabout-in-focus').children();
-                        $(child[1]).removeClass("carousel_blocking")
-                    })
-                    .roundabout({
-                        clickToFocus: true,
-                        enableDrag: true,
-                        dragFactor: 2,
-                        minZ: 1,
-                        maxZ: 100,
-                        tilt: -4,
-                        minOpacity: 0.2,
-                        minScale: 1,
-                        childSelector: '.li_carousel',
-                        triggerFocusEvents: true,
-                        triggerBlurEvents: true
-                    });
-
-
-                $childView.find('.li_carousel')
-                    .bind('round_focus', function () {
-                        var child = $(this).children();
-                        $(child[1]).removeClass('carousel_blocking');
-                        $(this).removeClass('roundabout-moveable-item')
-                    })
-                    .bind('round_blur', function () {
-                        var child = $(this).children();
-                        $(child[1]).addClass('carousel_blocking');
-                        $(this).addClass('roundabout-moveable-item')
-                    });
+                vis.binds.swipe.applyCarousel($div, childView);
             });
         }
     };

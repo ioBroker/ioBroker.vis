@@ -4,6 +4,11 @@
         "version": "0.15.4",
         "title":                    "iobroker Visualisation",
         "news": {
+            "0.15.4": {
+              "en":                 "Add swipe",
+              "de":                 "Swipe hunzugefügt",
+              "ru":                 "Добавлен swipe"
+            },
 			"0.15.3": {
 				"en":               "Add full screen widget\nFix timestamp widget",
 				"de":               "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",

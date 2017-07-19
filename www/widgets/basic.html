@@ -2115,7 +2115,7 @@
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
-            <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
+            <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr('src'), data.attr('refreshInterval'), data.attr('refreshOnWakeUp'), data.attr('refreshOnViewChange')) %> />
         </div>
     </div>
