@@ -184,9 +184,9 @@
             $childView.children('.li_carousel').wrapAll('<ul class="parent_carousel"></ul>');
 
             $childView.find('.parent_carousel')
-                .bind('round_ready', function () {
+                .bind('ready', function () {
                     var child = $('.roundabout-in-focus').children();
-                    $(child[1]).removeClass("carousel_blocking")
+                    $(child[1]).removeClass('carousel_blocking');
                 })
                 .roundabout({
                     clickToFocus: true,
@@ -204,12 +204,12 @@
 
 
             $childView.find('.li_carousel')
-                .bind('round_focus', function () {
+                .bind('focus', function () {
                     var child = $(this).children();
                     $(child[1]).removeClass('carousel_blocking');
                     $(this).removeClass('roundabout-moveable-item')
                 })
-                .bind('round_blur', function () {
+                .bind('blur', function () {
                     var child = $(this).children();
                     $(child[1]).addClass('carousel_blocking');
                     $(this).addClass('roundabout-moveable-item')
