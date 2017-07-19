@@ -504,7 +504,7 @@ var servConn = {
         } else {
             if (!this._checkConnection('readFile', arguments)) return;
 
-            if (!isRemote && typeof app !== 'undefined') {
+            if (!isRemote && typeof app !== 'undefined' && !app.settings.dontCache) {
                 app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), callback);
             } else {
                 var adapter = this.namespace;
@@ -575,7 +575,7 @@ var servConn = {
 
         if (!this._checkConnection('readFile', arguments)) return;
 
-        if (!isRemote && typeof app !== 'undefined') {
+        if (!isRemote && typeof app !== 'undefined' && !app.settings.dontCache) {
             app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), function (err, data, mimeType) {
                 setTimeout(function () {
                     if (data) {
