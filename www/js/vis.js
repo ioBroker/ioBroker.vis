@@ -1558,10 +1558,10 @@ vis = {
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
-                $.map(widget.data, function(val, key) { 
+                $.map(widget.data, function(val, key) {
                     var m;
-                    if (typeof val == 'string' && (m = val.match(/^groupAttr(\d+)$/))) { 
-                        widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || ''; 
+                    if (typeof val == 'string' && (m = val.match(/^groupAttr(\d+)$/))) {
+                        widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || '';
                     }
                 });
             }
@@ -1916,6 +1916,9 @@ vis = {
                     return;
                 }
             }
+            if (typeof app !== 'undefined' && app.replaceFilesInViewsWeb) {
+                data = app.replaceFilesInViewsWeb(data);
+            }
 
             if (data) {
                 if (typeof data === 'string') {
@@ -2168,12 +2171,12 @@ vis = {
         var w = this.views[view].widgets[widget];
         var v = this.viewsActiveFilter[view];
         return (w &&
-                w.data &&
-                w.data.filterkey &&
-                widget &&
-                widget.data &&
-                v.length > 0 &&
-                v.indexOf(widget.data.filterkey) === -1);
+        w.data &&
+        w.data.filterkey &&
+        widget &&
+        widget.data &&
+        v.length > 0 &&
+        v.indexOf(widget.data.filterkey) === -1);
     },
     calcCommonStyle:    function (recalc) {
         if (!this.commonStyle || recalc) {
@@ -2388,7 +2391,7 @@ vis = {
                         }]
                     });
                 }
-                
+
                 for (var u = 1; u < parts.length; u++) {
                     // eval construction
                     if (isEval) {
@@ -3111,10 +3114,10 @@ window.onpopstate = function () {
     }
 
     vis.editMode = (
-        window.location.href.indexOf('edit.html')      !== -1 ||
-        window.location.href.indexOf('edit.full.html') !== -1 ||
-        window.location.href.indexOf('edit.src.html')  !== -1 ||
-        vis.urlParams.edit === '');
+    window.location.href.indexOf('edit.html')      !== -1 ||
+    window.location.href.indexOf('edit.full.html') !== -1 ||
+    window.location.href.indexOf('edit.src.html')  !== -1 ||
+    vis.urlParams.edit === '');
 };
 window.onpopstate();
 
@@ -3253,6 +3256,10 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
+                if (data && typeof app !== 'undefined' && app.replaceFilesInViewsWeb) {
+                    data = app.replaceFilesInViewsWeb(data);
+                }
+
                 if (data || vis.editMode) $('head').append('<style id="vis-common-user" class="vis-common-user">' + data + '</style>');
                 $(document).trigger('vis-common-user');
             },
@@ -3269,6 +3276,9 @@ function main($) {
             dataType: 'html',
             cache:    vis.useCache,
             success:  function (data) {
+                if (data && typeof app !== 'undefined' && app.replaceFilesInViewsWeb) {
+                    data = app.replaceFilesInViewsWeb(data);
+                }
                 if (data || vis.editMode) {
                     $('head').append('<style id="vis-user" class="vis-user">' + data + '</style>');
                 }
@@ -3511,7 +3521,7 @@ function main($) {
                 'margin-top': -popMargTop,
                 'margin-left': -popMargLeft
             });
-            
+
             $('#login-mask').fadeIn(300);
             // When clicking on the button close or the mask layer the popup closed
             $('#login-password').keypress(function (e) {
@@ -3680,9 +3690,9 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
 }
 
 /*if (window.location.search === '?edit') {
-    window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
-    location.href = './edit.html' + window.location.hash;
-}*/
+ window.alert(_('please use /vis/edit.html instead of /vis/?edit'));
+ location.href = './edit.html' + window.location.hash;
+ }*/
 
 // TODO find out if iPad 1 has map or not.
 // Production steps of ECMA-262, Edition 5, 15.4.4.19
