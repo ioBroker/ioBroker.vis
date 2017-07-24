@@ -181,6 +181,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 0.15.5 (2017-07-24)
+* (bluefox) Fix widgets upload
+
 ### 0.15.4 (2017-07-19)
 * (bluefox) Add swipe
 

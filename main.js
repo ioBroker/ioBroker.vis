@@ -105,8 +105,7 @@ function writeFile(fileName, callback) {
 
 function upload(callback) {
     adapter.log.info('Upload ' + adapter.name + ' anew, while changes detected...');
-    var file = utils.controllerDir + '/lib/setup.js';
-
+    var file = utils.controllerDir + '/iobroker.js';
     var child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
     var count = 0;
     child.stdout.on('data', function (data) {
@@ -118,7 +117,7 @@ function upload(callback) {
         adapter.log.error(data.toString().replace('\n', ''));
     });
     child.on('exit', function (exitCode) {
-        adapter.log.info('Uploaded.');
+        adapter.log.info('Uploaded. ' + (exitCode ? 'Exit - ' + exitCode : 0));
         callback(exitCode);
     });
 }
