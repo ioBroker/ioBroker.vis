@@ -889,6 +889,48 @@ vis = $.extend(true, vis, {
         }
 
     },
+    editLastChange: function () {
+        var group = 'lastChange';
+        this.groups[group] = this.groups[group] || {};
+        // oid
+        this.addToInspect(this.activeWidgets, {name: 'lc-oid', type: 'id'},   group);
+        // type (or timestamp)
+        this.addToInspect(this.activeWidgets, {name: 'lc-type', type: 'select', options: ['last-change', 'timestamp'], default: 'last-change'}, group);
+        // is interval
+        this.addToInspect(this.activeWidgets, {name: 'lc-is-interval', type: 'checkbox', default: true}, group);
+        // format
+        this.addToInspect(this.activeWidgets, {name: 'lc-format', type: 'auto', options: ['YYYY.MM.DD hh:mm:ss','DD.MM.YYYY hh:mm:ss','YYYY.MM.DD','DD.MM.YYYY','YYYY/MM/DD hh:mm:ss','YYYY/MM/DD','hh:mm:ss'], default: ''}, group);
+        // position vertical
+        this.addToInspect(this.activeWidgets, {name: 'lc-position-vert', type: 'select', options: ['top', 'middle', 'bottom'], default: 'top'},   group);
+        // position horizontal
+        this.addToInspect(this.activeWidgets, {name: 'lc-position-horz', type: 'select', options: ['left', 'middle', 'right'], default: 'right'},   group);
+        // offset vertical
+        this.addToInspect(this.activeWidgets, {name: 'lc-offset-vert', type: 'slider', options: {min: -120, max: 120, step: 1}, default: 0},   group);
+        // offset horizontal
+        this.addToInspect(this.activeWidgets, {name: 'lc-offset-horz', type: 'slider', options: {min: -120, max: 120, step: 1}, default: 0},   group);
+
+        this.addToInspect('delimiterInGroup', group);
+
+        // font-size
+        this.addToInspect(this.activeWidgets, {name: 'lc-font-size', type: 'auto', options: ['', 'medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'], default: '12px'}, group);
+        // font-family
+        this.addToInspect(this.activeWidgets, {name: 'lc-font-family', type: 'fontname', default: ''}, group);
+        // font-style
+        this.addToInspect(this.activeWidgets, {name: 'lc-font-style', type: 'auto', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'], default: ''}, group);
+        // background-color
+        this.addToInspect(this.activeWidgets, {name: 'lc-bkg-color', type: 'color', default: ''}, group);
+        // color
+        this.addToInspect(this.activeWidgets, {name: 'lc-color', type: 'color', default: ''}, group);
+
+        // border-width
+        this.addToInspect(this.activeWidgets, {name: 'lc-border-width', default: '0'}, group);
+        // border-style
+        this.addToInspect(this.activeWidgets, {name: 'lc-border-style', type: 'auto', options: ['', 'none', 'hidden', 'dotted', 'dashed', 'solid', 'double', 'groove', 'ridge', 'inset', 'outset', 'initial', 'inherit'], default: ''}, group);
+        // border-color
+        this.addToInspect(this.activeWidgets, {name: 'lc-border-color', type: 'color', default: ''}, group);
+        // border-radius
+        this.addToInspect(this.activeWidgets, {name: 'lc-border-radius', type: 'slider', options: {min: 0, max: 20, step: 1}, default: 10}, group);
+    },
     editGestures:       function (view) {
         var group = 'gestures';
         this.groups[group] = this.groups[group] || {};
@@ -2366,7 +2408,9 @@ vis = $.extend(true, vis, {
         if ($widgetTpl.attr('data-vis-no-signals')  !== 'true') {
             this.editSignalIcons(view);
         }
-
+        if ($widgetTpl.attr('data-vis-no-ls')  !== 'true') {
+            this.editLastChange(view);
+        }
         // Re-render all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {
             for (var r = 0; r < this.reRenderList.length; r++) {

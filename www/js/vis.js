@@ -136,6 +136,7 @@ vis = {
     statesDebounce:     {},
     visibility:         {},
     signals:            {},
+    lastChanges:        {},
     bindings:           {},
     bindingsCache:      {},
     subscribing:        {
@@ -504,7 +505,7 @@ vis = {
                                 }
                             }
                         } else
-                        if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/)) && data[attr])) {
+                        if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/) || attr === 'lc-oid') && data[attr])) {
                             if (data[attr] && data[attr] !== 'nothing_selected') {
                                 if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
                                 if (views && views[view].indexOf(data[attr]) === -1) views[view].push(data[attr]);
@@ -535,6 +536,19 @@ vis = {
                                     view:   view,
                                     widget: id,
                                     index:  parseInt(attr.substring('signals-oid-'.length), 10)
+                                });
+                            }
+                            if (attr === 'lc-oid') {
+                                var lcsid = data[attr];
+                                if (lcsid.match(/^groupAttr(\d+)$/)) {
+                                    var ggroup = this.getWidgetGroup(view, id);
+                                    if (ggroup) lcsid = this.views[view].widgets[ggroup].data[lcsid];
+                                }
+
+                                if (!this.lastChanges[lcsid]) this.lastChanges[lcsid] = [];
+                                this.lastChanges[lcsid].push({
+                                    view:   view,
+                                    widget: id
                                 });
                             }
                         } else
@@ -1532,6 +1546,62 @@ vis = {
             }
         });
     },
+    addLastChange:      function (view, wid, data) {
+        // show last change
+        var css = {
+            background: 'rgba(182,182,182,0.6)',
+            'font-family': 'Tahoma',
+            position: 'absolute',
+            'z-index': -1,
+            'border-radius': parseInt(data['lc-border-radius'], 10) || 0,
+            'padding-top': 3,
+            'padding-bottom': 3,
+            'white-space': 'nowrap'
+        };
+        if (data['lc-font-size']) {
+            css['font-size'] = data['lc-font-size'];
+        }
+        if (data['lc-font-style']) {
+            css['font-style'] = data['lc-font-style'];
+        }
+        if (data['lc-font-family']) {
+            css['font-family'] = data['lc-font-family'];
+        }
+        if (data['lc-bkg-color']) {
+            css['background'] = data['lc-bkg-color'];
+        }
+        if (data['lc-color']) {
+            css['color'] = data['lc-color'];
+        }
+        if (data['lc-border-width']) {
+            css['border-width'] = parseInt(data['lc-border-width'], 10) || 0;
+        }
+        if (data['lc-border-style']) {
+            css['border-style'] = data['lc-border-style'];
+        }
+        if (data['lc-border-color']) {
+            css['border-color'] = data['lc-border-color'];
+        }
+        if (data['lc-position-vert'] === 'top') {
+            css.top = parseInt(data['lc-offset-vert'], 10);
+        } else if (data['lc-position-vert'] === 'bottom') {
+            css.bottom = parseInt(data['lc-offset-vert'], 10);
+        } else if (data['lc-position-vert'] === 'middle') {
+            css.top = 'calc(50% + ' + (parseInt(data['lc-offset-vert'], 10) - 10) + 'px)';
+        }
+        var offset = parseFloat(data['lc-offset-horz']);
+        if (data['lc-position-horz'] === 'left') {
+            css.right = 'calc(100% - ' + (10 + offset) + 'px)';
+            css['padding-right'] = 20;
+            css['padding-left'] = 10;
+        } else if (data['lc-position-horz'] === 'right') {
+            css.left = 'calc(100% + ' + data['lc-offset-horz'] + ')';
+        } else if (data['lc-position-horz'] === 'middle') {
+            css.left = 'calc(50% + ' + data['lc-offset-horz'] + ')';
+        }
+        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval']) + '</div>';
+        $('#' + wid).append($(text).css(css));
+    },
     isUserMemberOf:     function (user, userGroups) {
         if (!this.userGroups) return true;
         if (typeof userGroups !== 'object') userGroups = [userGroups];
@@ -1714,6 +1784,9 @@ vis = {
             while (widget.data['signals-oid-' + s]) {
                 this.addSignalIcon(view, id, widget.data, s);
                 s++;
+            }
+            if (widget.data['lc-oid']) {
+                this.addLastChange(view, id, widget.data);
             }
 
             // If edit mode, bind on click event to open this widget in edit dialog
@@ -3019,6 +3092,18 @@ vis = {
             }
         }
 
+        // Process last update
+        if (!this.editMode && this.lastChanges[id]) {
+            for (var l = 0; l < this.lastChanges[id].length; l++) {
+                var update = this.lastChanges[id][l];
+                var uWidget = document.getElementById(update.widget);
+                if (uWidget) {
+                    var $lc = $(uWidget).find('.vis-last-change');
+                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), $lc.data('interval') === 'true'));
+                }
+            }
+        }
+
         // Bindings on every element
         if (!this.editMode && this.bindings[id]) {
             for (var i = 0; i < this.bindings[id].length; i++) {
@@ -3299,7 +3384,7 @@ function main($) {
         }
         index = index || 0;
         var j;
-        var now = new Date().getTime() / 1000;
+        var now = new Date().getTime();
         var obj = {};
         for (j = index; j < vis.subscribing.IDs.length && j < index + 100; j++) {
             var _id = vis.subscribing.IDs[j];
