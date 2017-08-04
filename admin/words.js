@@ -16,6 +16,6 @@ systemDictionary = {
               "Man kann eine Lizenz auf <a href='https://iobroker.net' target='_blank'>iobroker.net</a> nach Registrierung bekommen.",
         "ru": "Для пользования <b>vis</b> необходимо получить лицензионный ключ.<br>" +
               "<b>vis</b> бесплатен для личного использования в некоммерческих целях. Для использования <b>vis</b> в коммерческих целях необходимо заплатить за лицензию.<br>" +
-              "Лицензионный ключ можно получить здесь <a href='https://iobroker.net' target='_blank'>iobroker.net</a> после регистрации."
+              "Лицензионный ключ можно получить здесь <a href='https://iobroker.net/accountLicenses' target='_blank'>iobroker.net</a> после регистрации."
     }
 };
