@@ -1,7 +1,7 @@
 systemDictionary = {
-    "vis adapter settings":  {"en": "vis adapter settings",  "de": "vis Adapter-Einstellungen",  "ru": "Настройки драйвера vis"},
-    "License:":              {"en": "License key:", "de": "License Key:", "ru": "Лицензионный ключ:"},
-    "Check license":         {"en": "Check license", "de": "Lizenz prüfen", "ru": "Проверить лицензию"},
+    "vis adapter settings":  {"en": "vis adapter settings", "de": "vis Adapter-Einstellungen",  "ru": "Настройки драйвера vis"},
+    "License:":              {"en": "License key:",         "de": "License Key:",               "ru": "Лицензионный ключ:"},
+    "Check license":         {"en": "Check license",        "de": "Lizenz prüfen",              "ru": "Проверить лицензию"},
     "Service is offline. Please try later.":         {
         "en": "Service is offline or no internet available. Please try later or check the internet connection.",
         "de": "Service ist momentan nicht erreichbar oder keine Internetverbindung vorhanden. Bitte fersuchen Sie später noch ein mal oder prüfen Sie die Internetverbindung.",

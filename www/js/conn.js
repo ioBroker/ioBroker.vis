@@ -161,7 +161,8 @@ var servConn = {
     },
     reload: function () {
         if (window.location.host === 'iobroker.net' ||
-            window.location.host === 'iobroker.biz') {
+            window.location.host === 'iobroker.biz' ||
+            window.location.host === 'iobroker.pro') {
             window.location = '/';
         } else {
             window.location.reload();

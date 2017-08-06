@@ -79,10 +79,8 @@
         "type":                     "vis",
 		"highlight":                true,
 		"noConfig":                 false,
-		"welcomeScreen":            [
-										{"link": "vis/edit.html", "name": "vis editor", "img": "vis/img/faviconEdit.png", "color": "green", "order": 1}, 
-										{"link": "vis/index.html", "name": "vis", "img": "vis/img/favicon.png", "color": "blue", "order": 0}
-									]
+		"welcomeScreen":            {"link": "vis/index.html", "name": "vis",        "img": "vis/img/favicon.png",     "color": "blue",  "order": 0},
+        "welcomeScreenPro":         {"link": "vis/edit.html",  "name": "vis editor", "img": "vis/img/faviconEdit.png", "color": "green", "order": 1}
     },
     "native": {
         "defaultFileMode":          1604,
