@@ -461,7 +461,8 @@ $.extend(systemDictionary, {
     "heating":              {"en": "heating",           "de": "heating", "ru": "heating"},
     "iframe":               {"en": "iframe",            "de": "iframe", "ru": "iframe"},
     "project":              {"en": "project",           "de": "project", "ru": "project"},
-
+    "value":                {"en": "value",             "de": "Wert",           "ru": "Значение"},
+    "control":              {"en": "control",           "de": "Steuerung",      "ru": "Управление"},
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
         "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
@@ -603,6 +604,28 @@ $.extend(systemDictionary, {
     "signals-text-style-2": {"en": "CSS text style [2]", "de": "CSS Textstyl [2]",     "ru": "CSS для текста[2]"},
     "signals-blink-2":      {"en": "Blinking [2]",      "de": "Blinken [2]",           "ru": "Мигание [2]"},
     "signals-text-class-2": {"en": "Classes [2]",       "de": "Klassen [2]",           "ru": "Классы [2]"},
+
+
+    "group_last_change":    {"en": "Show last change",  "de": "Zeige lätze Änderung",   "ru": "Показать последнее изменение"},
+    "lc-oid":               {"en": "Object ID",         "de": "Objekt ID",              "ru": "ID объекта"},
+    "lc-type":              {"en": "Type",              "de": "Typ",                    "ru": "Тип"},
+    "lc-is-interval":       {"en": "Interval",          "de": "Intervall",              "ru": "Интервал"},
+    "lc-format":            {"en": "Time format",       "de": "Zeitformat",             "ru": "Формат времени"},
+    "lc-position-vert":     {"en": "Position vert",     "de": "Position vert",          "ru": "Положение Y"},
+    "lc-position-horz":     {"en": "Position horz",     "de": "Position horz",          "ru": "Положение X"},
+    "lc-offset-vert":       {"en": "Offset Y",          "de": "Offset y",               "ru": "Cдвиг по Y"},
+    "lc-offset-horz":       {"en": "Offset X",          "de": "Offset x",               "ru": "Cдвиг по X"},
+    "lc-font-size":         {"en": "font-size",         "de": "font-size",              "ru": "font-size"},
+    "lc-font-family":       {"en": "font-family",       "de": "font-family",            "ru": "font-family"},
+    "lc-font-style":        {"en": "font-style",        "de": "font-style",             "ru": "font-style"},
+    "lc-bkg-color":         {"en": "background",        "de": "background",             "ru": "background"},
+    "lc-color":             {"en": "color",             "de": "color",                  "ru": "color"},
+    "lc-border-width":      {"en": "border-width",      "de": "border-width",           "ru": "border-width"},
+    "lc-border-style":      {"en": "border-style",      "de": "border-style",           "ru": "border-style"},
+    "lc-border-color":      {"en": "border-color",      "de": "border-color",           "ru": "border-color"},
+    "lc-border-radius":     {"en": "border-radius",     "de": "border-radius",          "ru": "border-radius"},
+    "last-change":          {"en": "last change",       "de": "lätze Änderung",         "ru": "посл. изменение"},
+    "middle":               {"en": "middle",            "de": "Mitte",                  "ru": "в середине"},
 
     "Global":               {"en": "Global",            "de": "Global",                "ru": "Общая"},
     "Project":              {"en": "Project",           "de": "Projekt",               "ru": "Проект"},

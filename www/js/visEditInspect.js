@@ -180,6 +180,7 @@ vis = $.extend(true, vis, {
                     });
                 }
             };
+
             line[0].onchange = function (val, oldValue) {
                 var wdata = $(this).data('wdata');
                 $('#inspect_' + wdata.attr + '_desc').html(that.getObjDesc(val));
@@ -244,11 +245,11 @@ vis = $.extend(true, vis, {
             } else {
                 $dialog.selectId('option', 'filterPresets', {role: widgetFilter});
                 $dialog.selectId('option', 'filter', {
-                        common: {
-                            history: isHistory ? {
-                                enabled: true
-                            } : undefined
-                        }
+                    common: {
+                        history: isHistory ? {
+                            enabled: true
+                        } : undefined
+                    }
                 });
             }
         }
@@ -809,6 +810,7 @@ vis = $.extend(true, vis, {
         };
 
         for(var attr in this.groups[group]) {
+            if (!this.groups[group].hasOwnProperty(attr)) continue;
             this.groups[group][attr].css = true;
             this.groups[group][attr].attrName = attr;
             this.groups[group][attr].attrIndex = '';
@@ -889,8 +891,8 @@ vis = $.extend(true, vis, {
         }
 
     },
-    editLastChange: function () {
-        var group = 'lastChange';
+    editLastChange:     function () {
+        var group = 'last_change';
         this.groups[group] = this.groups[group] || {};
         // oid
         this.addToInspect(this.activeWidgets, {name: 'lc-oid', type: 'id'},   group);
@@ -903,7 +905,7 @@ vis = $.extend(true, vis, {
         // position vertical
         this.addToInspect(this.activeWidgets, {name: 'lc-position-vert', type: 'select', options: ['top', 'middle', 'bottom'], default: 'top'},   group);
         // position horizontal
-        this.addToInspect(this.activeWidgets, {name: 'lc-position-horz', type: 'select', options: ['left', 'middle', 'right'], default: 'right'},   group);
+        this.addToInspect(this.activeWidgets, {name: 'lc-position-horz', type: 'select', options: ['left', /*'middle', */'right'], default: 'right'},   group);
         // offset vertical
         this.addToInspect(this.activeWidgets, {name: 'lc-offset-vert', type: 'slider', options: {min: -120, max: 120, step: 1}, default: 0},   group);
         // offset horizontal
@@ -1223,8 +1225,25 @@ vis = $.extend(true, vis, {
                 if (widgetData && (widgetData[widAttr.name] === null || widgetData[widAttr.name] === undefined) && !widAttr.name.match(/^gestures-/)) {
                     widgetData[widAttr.name] = widAttr.default;
                     this.reRenderList = this.reRenderList || [];
-                    if (this.reRenderList.indexOf(widgets[i]) === -1) this.reRenderList.push(widgets[i]);
+                    if (this.reRenderList.indexOf(widgets[i]) === -1) {
+                        this.reRenderList.push(widgets[i]);
+                    }
                 }
+            }
+        } else if (widAttr.name === 'lc-oid' && widgets.length === 1) {
+            var _view       = this.getViewOfWidget(widgets[0]);
+            var _widgetData = this.views[_view].widgets[widgets[0]].data;
+            if (!_widgetData['lc-oid'] && _widgetData['g_last_change']) {
+                // find any oid value
+                for (var a in _widgetData) {
+                    if (_widgetData.hasOwnProperty(a) && a.match(/^oid|oid$/)) {
+                        if (_widgetData[a] && _widgetData[a] !== 'nothing_selected') {
+                            _widgetData['lc-oid'] = _widgetData[a];
+                        }
+                        break;
+                    }
+                }
+
             }
         }
 
@@ -1394,7 +1413,7 @@ vis = $.extend(true, vis, {
 
             if (isGroupEnabled) {
                 for (widAttr in this.groups[group]) {
-                    if (widAttr === '___enabled') continue;
+                    if (!this.groups[group].hasOwnProperty(widAttr) || widAttr === '___enabled') continue;
 
                     var line = this.groups[group][widAttr];
                     if (line === 'delimiter') {
@@ -1483,11 +1502,11 @@ vis = $.extend(true, vis, {
                     this.setAttrValue(view, this.activeWidgets, widAttr, line.css, values);
 
                     var wdata = {
-                        attr: widAttr,
-                        widgets: widgets,
-                        view: view,
-                        type: line.type,
-                        css: line.css,
+                        attr:           widAttr,
+                        widgets:        widgets,
+                        view:           view,
+                        type:           line.type,
+                        css:            line.css,
                         onChangeWidget: line.onChangeWidget
                     };
                     if (line.onchange) wdata.onchange = line.onchange;

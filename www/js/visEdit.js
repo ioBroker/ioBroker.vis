@@ -2275,7 +2275,6 @@ vis = $.extend(true, vis, {
 
         return '<div id="prev_container_' + tpl + '" class="wid-prev ' + set + '_prev widget-filters" data-keywords="' + classTypes + '" data-tpl="' + tpl + '" title="' + types.join(', ') + '">' + type + '<div class="wid-prev-name" >' + $tpl.data('vis-name') + '</div>'  + beta + '<div class="vis-preview-informers-container">' + behaviorIcons.join('') + '</div></div>';
     },
-    
     editInitWidgetPreview:  function () {
         var that = this;
         $('#btn_prev_zoom').hover(
@@ -3960,6 +3959,7 @@ vis = $.extend(true, vis, {
             options.data.g_css_border         = false;
             options.data.g_gestures           = false;
             options.data.g_signals            = false;
+            options.data.g_last_change        = false;
         }
 
         if (!options.noSave) this.save();
@@ -5576,7 +5576,7 @@ vis = $.extend(true, vis, {
             }
         }
     },
-    copyWidgets:             function (viewDiv, view, isCut, widget, clipboard, index, wid) {
+    copyWidgets:            function (viewDiv, view, isCut, widget, clipboard, index, wid) {
         if (this.views[view].widgets[widget]) {
             var w = this.views[view].widgets[widget];
             var members;
@@ -6760,7 +6760,7 @@ vis = $.extend(true, vis, {
         this.sortSelectWidget();
         this.$selectActiveWidgets.multiselect('refresh');
     },
-    sortSelectWidget: function() {
+    sortSelectWidget:       function() {
         this.$selectActiveWidgets.append(this.$selectActiveWidgets.find("option").remove().sort(function(a, b) {
             var at = $(a).text().toLowerCase();
             var bt = $(b).text().toLowerCase();

@@ -1548,12 +1548,13 @@ vis = {
     },
     addLastChange:      function (view, wid, data) {
         // show last change
+        var border = (parseInt(data['lc-border-radius'], 10) || 0) + 'px';
         var css = {
             background: 'rgba(182,182,182,0.6)',
             'font-family': 'Tahoma',
             position: 'absolute',
-            'z-index': -1,
-            'border-radius': parseInt(data['lc-border-radius'], 10) || 0,
+            'z-index': 0,
+            'border-radius': data['lc-position-horz'] === 'left' ? (border + ' 0 0 ' + border) : (data['lc-position-horz'] === 'right' ? '0 ' + border + ' ' + border + ' 0' : border),
             'padding-top': 3,
             'padding-bottom': 3,
             'white-space': 'nowrap'
@@ -1589,18 +1590,20 @@ vis = {
         } else if (data['lc-position-vert'] === 'middle') {
             css.top = 'calc(50% + ' + (parseInt(data['lc-offset-vert'], 10) - 10) + 'px)';
         }
-        var offset = parseFloat(data['lc-offset-horz']);
+        var offset = parseFloat(data['lc-offset-horz']) || 0;
         if (data['lc-position-horz'] === 'left') {
-            css.right = 'calc(100% - ' + (10 + offset) + 'px)';
-            css['padding-right'] = 20;
-            css['padding-left'] = 10;
+            css.right = 'calc(100% - ' + offset + 'px)';
+            css['padding-right'] = 10;
+            css['padding-left']  = 10;
         } else if (data['lc-position-horz'] === 'right') {
-            css.left = 'calc(100% + ' + data['lc-offset-horz'] + ')';
+            css.left = 'calc(100% + ' + offset + 'px)';
+            css['padding-right'] = 10;
+            css['padding-left']  = 10;
         } else if (data['lc-position-horz'] === 'middle') {
-            css.left = 'calc(50% + ' + data['lc-offset-horz'] + ')';
+            css.left = 'calc(50% + ' + offset + 'px)';
         }
         var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval']) + '</div>';
-        $('#' + wid).append($(text).css(css));
+        $('#' + wid).prepend($(text).css(css)).css('overflow', 'visible');
     },
     isUserMemberOf:     function (user, userGroups) {
         if (!this.userGroups) return true;
@@ -1763,6 +1766,10 @@ vis = {
                 $wid = $wid || $('#' + id);
                 $wid.addClass(widget.data.class);
             }
+
+            var $tpl = $('#' + widget.tpl);
+
+            $wid.addClass('vis-tpl-' + $tpl.data('vis-set') + '-' + $tpl.data('vis-name'));
 
             if (!this.editMode) {
                 if (this.isWidgetFilteredOut(view, id) || this.isWidgetHidden(view, id, undefined, widget.data)) {
