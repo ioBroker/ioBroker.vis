@@ -2548,7 +2548,17 @@ vis = {
                                 parse[2] = parse[2].substring(1, parse[2].length - 1);
                                 operations.push({op: parse[1], arg: parse[2]});
                             } else
-                            // value formatting
+							// returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}	
+                            if (parse[1] === 'array') {
+                                operations = operations || [];
+                                param = parse[2].trim();
+                                param = param.substring(1, param.length - 1);
+                                param = param.split(',');
+                                if (Array.isArray(param)) {
+                                    operations.push ({op: parse[1], arg: param}); //xxx
+                                }
+                            } else
+						    // value formatting
                             if (parse[1] === 'value') {
                                 operations = operations || [];
                                 var param = (parse[2] === undefined) ? '(2)' : parse[2];
@@ -2731,7 +2741,10 @@ vis = {
                     case 'value':
                         value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
                         break;
-                    case 'date':
+                    case 'array':
+                        value = oids[t].operations[k].arg [~~value];
+                        break; 
+					case 'date':
                         value = this.formatDate(value, oids[t].operations[k].arg);
                         break;
                     case 'min':
