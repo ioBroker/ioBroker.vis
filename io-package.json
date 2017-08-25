@@ -6,7 +6,7 @@
         "news": {
             "0.15.6": {
               "en":                 "Added array operator to bindings",
-              "de":                 "Array Operator zu bindings hinzugefügt",
+              "de":                 "Array Operator zu bindings hinzugefügt"
             },
             "0.15.5": {
               "en":                 "Fix widgets upload",
