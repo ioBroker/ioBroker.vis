@@ -658,6 +658,11 @@ $.extend(systemDictionary, {
         "de": "Kann kein neues Fenster aufmachen",
         "ru": "Не могу открыть новое всплывающее окно"
     },
+    "License error! Please check logs for details.": {
+        "en": "License error! Please check logs for details.",
+        "de": "Lizenzfehler! Bitte überprüfen Sie die Log-Protokolle für Details.",
+        "ru": "Ошибка лицензии! Пожалуйста, проверьте логи."
+    },
 
     "css_position":         {"en": "position",          "de": "position",               "ru": "position"},
     "css_display":          {"en": "display",           "de": "display",                "ru": "display"},
