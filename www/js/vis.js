@@ -25,6 +25,9 @@
 /* global servConn */
 /* global systemDictionary */
 /* global $ */
+/* global app */
+/* global Audio */
+/* global cordova */
 /* global translateAll */
 /* global jQuery */
 /* global document */
@@ -102,9 +105,8 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
     systemLang = visConfig.language || systemLang;
 }
 
-var vis;
-vis = {
-    version: '0.15.5',
+var vis = {
+    version: '0.15.7',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -698,7 +700,7 @@ vis = {
         if (typeof storage !== 'undefined') this.instance = this.instance || storage.get(this.storageKeyInstance);
         if (this.editMode) this.bindInstanceEdit();
     },
-    init:               function () {
+    init:               function (onReady) {
         if (this.initialized) return;
 
         if (typeof storage !== 'undefined') {
@@ -713,10 +715,13 @@ vis = {
          this.binds.hqWidgetsExt.hqInit();
          }*/
 
+        var that = this;
         //this.loadRemote(this.loadWidgetSets, this.initNext);
-        this.loadWidgetSets(this.initNext);
+        this.loadWidgetSets(function () {
+            that.initNext(onReady);
+        });
     },
-    initNext:           function () {
+    initNext:           function (onReady) {
         this.showWaitScreen(false);
         var that = this;
         // First start.
@@ -797,7 +802,7 @@ vis = {
         }
 
         // Navigation
-        $(window).bind('hashchange', function (e) {
+        $(window).bind('hashchange', function (/* e */) {
             var view = window.location.hash.slice(1);
             that.changeView(view, view);
         });
@@ -812,6 +817,7 @@ vis = {
         // If this function called earlier, it makes problems under FireFox.
         // render all views, that should be always rendered
         var containers = [];
+        var cnt = 0;
         if (this.views && !this.editMode) {
             for (var view in this.views) {
                 if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
@@ -820,13 +826,23 @@ vis = {
                 }
             }
             if (containers.length) {
+                cnt++;
                 this.renderViews(that.activeViewDiv, containers, function () {
-                    if (that.activeView) that.changeView(that.activeViewDiv, that.activeView);
+                    cnt--;
+                    if (that.activeView) {
+                        that.changeView(that.activeViewDiv, that.activeView, function () {
+                            if (!cnt && onReady) {
+                                onReady();
+                            }
+                        });
+                    }
                 });
             }
         }
 
-        if (!containers.length && this.activeView) this.changeView(this.activeViewDiv, this.activeView);
+        if (!containers.length && this.activeView) {
+            this.changeView(this.activeViewDiv, this.activeView, onReady);
+        }
     },
     initViewObject:     function () {
         if (!this.editMode) {
@@ -1633,7 +1649,7 @@ vis = {
             if (aCount) {
                 $.map(widget.data, function(val, key) {
                     var m;
-                    if (typeof val == 'string' && (m = val.match(/^groupAttr(\d+)$/))) {
+                    if (typeof val === 'string' && (m = val.match(/^groupAttr(\d+)$/))) {
                         widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || '';
                     }
                 });
@@ -1980,6 +1996,7 @@ vis = {
         } else if (typeof callback === 'function') {
             callback(viewDiv, view);
         }
+        this.updateIframeZoom();
     },
     loadRemote:         function (callback, callbackArg) {
         var that = this;
@@ -2150,7 +2167,7 @@ vis = {
             if (step !== undefined) {
                 this.waitScreenVal += step;
                 _setTimeout(function (_val) {
-                    $(".vis-progressbar").progressbar('value', _val);
+                    $('.vis-progressbar').progressbar('value', _val);
                 }, 0, this.waitScreenVal);
 
             }
@@ -2331,7 +2348,7 @@ vis = {
                 dateObj = new Date(dateObj);
             }
         }
-        var format = _format || that.dateFormat || 'DD.MM.YYYY';
+        var format = _format || this.dateFormat || 'DD.MM.YYYY';
 
         if (isDuration) dateObj.setMilliseconds(dateObj.getMilliseconds() + dateObj.getTimezoneOffset() * 60 * 1000);
 
@@ -2513,7 +2530,7 @@ vis = {
                             }
                         }
                     } else {
-                        var parse = parts[u].match(/([\w\s\/\+\*\-]+)(\(.+\))?/);
+                        var parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);
                         if (parse && parse[1]) {
                             parse[1] = parse[1].trim();
                             // operators requires parameter
@@ -3074,23 +3091,23 @@ vis = {
         }
 
         if (!this.editMode && this.visibility[id]) {
-            for (var i = 0; i < this.visibility[id].length; i++) {
-                var mWidget = document.getElementById(this.visibility[id][i].widget);
-                if (!mWidget) continue;
-                if (this.isWidgetHidden(this.visibility[id][i].view, this.visibility[id][i].widget, state.val) ||
-                    this.isWidgetFilteredOut(this.visibility[id][i].view, this.visibility[id][i].widget)) {
-                    $(mWidget).hide();
-                    if (mWidget &&
-                        mWidget._customHandlers &&
-                        mWidget._customHandlers.onHide) {
-                        mWidget._customHandlers.onHide(mWidget, id);
+            for (var k = 0; k < this.visibility[id].length; k++) {
+                var mmWidget = document.getElementById(this.visibility[id][k].widget);
+                if (!mmWidget) continue;
+                if (this.isWidgetHidden(this.visibility[id][k].view, this.visibility[id][k].widget, state.val) ||
+                    this.isWidgetFilteredOut(this.visibility[id][k].view, this.visibility[id][k].widget)) {
+                    $(mmWidget).hide();
+                    if (mmWidget &&
+                        mmWidget._customHandlers &&
+                        mmWidget._customHandlers.onHide) {
+                        mmWidget._customHandlers.onHide(mmWidget, id);
                     }
                 } else {
-                    $(mWidget).show();
-                    if (mWidget &&
-                        mWidget._customHandlers &&
-                        mWidget._customHandlers.onShow) {
-                        mWidget._customHandlers.onShow(mWidget, id);
+                    $(mmWidget).show();
+                    if (mmWidget &&
+                        mmWidget._customHandlers &&
+                        mmWidget._customHandlers.onShow) {
+                        mmWidget._customHandlers.onShow(mmWidget, id);
                     }
                 }
             }
@@ -3179,14 +3196,28 @@ vis = {
                 }
             }
         }
+    },
+    updateIframeZoom:   function (zoom) {
+        if (zoom === undefined) zoom = document.body.style.zoom;
+        if (zoom) {
+            $('iframe').each(function () {
+                if (this.contentWindow.document.body) {
+                    this.contentWindow.document.body.style.zoom = zoom;
+                }
+            }).unbind('onload').load(function () {
+                if (this.contentWindow.document.body) {
+                    this.contentWindow.document.body.style.zoom = zoom;
+                }
+            });
+        }
     }
 };
 
 // WebApp Cache Management
 if ('applicationCache' in window) {
-    window.addEventListener('load', function (e) {
+    window.addEventListener('load', function (/* e */) {
         window.applicationCache.addEventListener('updateready', function (e) {
-            if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+            if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
                 vis.showWaitScreen(true, null, _('Update found, loading new Files...'), 100);
                 $('#waitText').attr('id', 'waitTextDisabled');
                 $('.vis-progressbar').hide();
@@ -3235,12 +3266,12 @@ if (!vis.editMode) {
             return false;
         }
     });
-    $(window).on('touchend mouseup', function (e) {
+    $(window).on('touchend mouseup', function (/* e */) {
         vis.lastChange = null;
     });
 }
 
-function main($) {
+function main($, onReady) {
     // parse arguments
     var args = document.location.href.split('?')[1];
     vis.args = {};
@@ -3447,7 +3478,7 @@ function main($) {
         }
     }
 
-    function afterInit(error) {
+    function afterInit(error, onReady) {
         if (error) {
             console.log('Possibly not authenticated, wait for request from server');
             // Possibly not authenticated, wait for request from server
@@ -3466,7 +3497,7 @@ function main($) {
                         // Init edit dialog
                         if (vis.editMode && vis.editInit) vis.editInit();
                         vis.isFirstTime = false;
-                        vis.init();
+                        vis.init(onReady);
                     }
                 });
             });
@@ -3499,7 +3530,7 @@ function main($) {
                         // Init edit dialog
                         if (vis.editMode && vis.editInit) vis.editInit();
                         vis.isFirstTime = false;
-                        vis.init();
+                        vis.init(onReady);
                     }
                 }, 1000);
             }
@@ -3557,10 +3588,10 @@ function main($) {
                         // Create non-existing IDs
                         if (vis.subscribing.IDs) {
                             createIds(vis.subscribing.IDs, function () {
-                                afterInit(error);
+                                afterInit(error, onReady);
                             });
                         } else {
-                            afterInit(error);
+                            afterInit(error, onReady);
                         }
                     });
                 });
@@ -3783,6 +3814,7 @@ if (!Array.prototype.indexOf) {
         return -1;
     };
 }
+
 function _setTimeout(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
     return setTimeout(function () {
         func(arg1, arg2, arg3, arg4, arg5, arg6);
@@ -3803,7 +3835,6 @@ function _setInterval(func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) {
 // Production steps of ECMA-262, Edition 5, 15.4.4.19
 // Reference: http://es5.github.io/#x15.4.4.19
 if (!Array.prototype.map) {
-
     Array.prototype.map = function(callback, thisArg) {
 
         var T, A, k;

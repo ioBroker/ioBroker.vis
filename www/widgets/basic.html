@@ -62,6 +62,7 @@
             "header_color":     {"en": "Header color",              "de": "Kopffarbe",              "ru": "Цвет фона заголовка"},
             "refreshOnWakeUp":  {"en": "Refresh on wake up",        "de": "Update bei Aufwachen",   "ru": "Обновлять при выходе из сна"},
             "refreshOnViewChange": {"en": "Refresh on view change", "de": "Update bei Viewwechsel", "ru": "Обновлять при смене страницы"},
+            "refreshWithNoQuery": {"en": "Do not add anything to URL", "de": "Addiere nichst zu URL", "ru": "Ничего не добавлять к URL"},
             "src_":             {"en": "URL, by value=",            "de": "URL falls Wert=",        "ru": "Адрес при значении "},
             "nav_view":         {"en": "View to navigate",          "de": "View zum Navigieren",    "ru": "Перейти на страницу"},
             "group_effects":    {"en": "Show/Hide Effects",         "de": "Anzeige Effekte",        "ru": "Эффекты появления/исчезновения"},
@@ -944,7 +945,15 @@
                 });
             }
         },
-        iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange) {
+        iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
+            if (typeof src === 'object') {
+                refreshInterval     = src.refreshInterval;
+                refreshOnWakeUp     = src.refreshOnWakeUp;
+                refreshOnViewChange = src.refreshOnViewChange;
+                refreshWithNoQuery  = src.refreshWithNoQuery;
+                src                 = src.src;
+            }
+
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('iframe');
                 refreshInterval = parseInt(refreshInterval, 10);
@@ -953,23 +962,22 @@
                     var widgetView = vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
                         }
                     });
                 }
                 if (refreshInterval > 0) {
-                    var $this = $(el).parent().find('iframe');
                     refreshInterval = parseInt(refreshInterval, 10);
                     setInterval(function () {
                         if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
-                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
                         }
                     }, refreshInterval);
                 }
                 if (refreshOnWakeUp) {
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
-                        $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
                     });
                 }
             }
@@ -986,7 +994,14 @@
                 }, refreshInterval);
             }
         },
-        imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange) {
+        imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
+            if (typeof src === 'object') {
+                refreshInterval     = src.refreshInterval;
+                refreshOnWakeUp     = src.refreshOnWakeUp;
+                refreshOnViewChange = src.refreshOnViewChange;
+                refreshWithNoQuery  = src.refreshWithNoQuery;
+                src                 = src.src;
+            }
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('img');
@@ -996,14 +1011,14 @@
                     var widgetView = vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
                         }
                     });
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
-                            $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                            $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
                         }
                     }, refreshInterval);
                 }
@@ -1012,7 +1027,7 @@
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
                         //console.log("wakeup refresh!");
-                        $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
                         //console.log($this.attr('src'));
                     });
                 }
@@ -2090,7 +2105,7 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
-        data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;scrollX[false]/checkbox;scrollY[false]/checkbox;seamless[true]/checkbox">
+        data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;refreshWithNoQuery/checkbox;scrollX[false]/checkbox;scrollY[false]/checkbox;seamless[true]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
@@ -2109,14 +2124,14 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_Image.png"></img>'
         data-vis-name="Image"
-        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox">
+        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;refreshWithNoQuery/checkbox;">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
             <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
-            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data.attr('src'), data.attr('refreshInterval'), data.attr('refreshOnWakeUp'), data.attr('refreshOnViewChange')) %> />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data) %> />
         </div>
     </div>
 </script>
