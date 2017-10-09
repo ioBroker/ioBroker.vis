@@ -338,6 +338,14 @@
         },
         dialogContainer: function (el, options, persistent, preload) {
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
+
+            if (!$dlg.length) {
+                setTimeout(function () {
+                    vis.binds.jqueryui.dialogContainer(el, options, persistent, preload);
+                }, 200);
+                return;
+            }
+
             options.width     = options.dialog_width;
             options.height    = options.dialog_height;
             options.top       = options.dialog_top;
@@ -429,7 +437,12 @@
             if (!timeout) timeout = 1000;
 
             var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
-
+            if (!$dialog.length) {
+                setTimeout(function () {
+                    vis.binds.jqueryui.dialogAutoClose(el, timeout);
+                }, 200);
+                return;
+            }
             $dialog.on('dialogopen', function () {
                 $dialog.find('input').on('click', function () {
                     var timer = $dialog.data('timer');

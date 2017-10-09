@@ -1,3 +1,19 @@
+/* Reset all fonts settings */
+body, html {
+    font-style: normal;
+    font-stretch: normal;
+    text-shadow: none;
+    text-transform: none;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-indent: 0;
+    display: inline-block;
+    text-align: start;
+    font: 1em Arial;
+}
+
 /* set font as in editor */
 #vis_container {
     font-family: Arial, sans-serif;
