@@ -2138,7 +2138,7 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
-        data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;refreshWithNoQuery/checkbox;scrollX[false]/checkbox;scrollY[false]/checkbox;seamless[true]/checkbox">
+        data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;scrollX/checkbox;scrollY/checkbox;seamless[true]/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
@@ -2157,7 +2157,7 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_Image.png"></img>'
         data-vis-name="Image"
-        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;refreshWithNoQuery/checkbox;">
+        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
@@ -2371,7 +2371,7 @@
         data-vis-type="val"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueFloat.png"></img>'
         data-vis-name="Number"
-        data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
+        data-vis-attrs="oid;html_prepend;html_append_singular;html_append_plural;group.extended;digits;is_comma[true]/checkbox;is_tdp/checkbox;factor[1];oid-quality;class_true;class_false;test_html">
     <div class="vis-widget <%== (vis.states.attr(this.data['oid-quality'] + '.val') === 'true' ||  vis.states.attr(this.data['oid-quality'] + '.val') === true) ? this.data.attr('class_true') : this.data.attr('class_false') %> <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 60px; height: 18px" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
@@ -2869,7 +2869,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueGesture.png"></img>'
         data-vis-name="Gesture indicator"
         data-vis-no-gestures="true"
-        data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits[0];is_comma[true]/checkbox;is_tdp[false]/checkbox;factor[1];test_html">
+        data-vis-attrs="html_prepend;html_append_singular;html_append_plural;group.extended;digits[0];is_comma[true]/checkbox;is_tdp/checkbox;factor[1];test_html">
     <div class="vis-widget <%== this.data.attr('class') %>" style="height: 21px; border: 1px solid #c7c7c7; border-radius: 5px; text-align: center; padding-top: 6px; box-shadow: 2px 2px 5px 1px gray; padding-left: 2px; padding-right: 2px; background: lightgray;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% vis.binds.basic.createValueGesture(this.data.wid, this.view, this.data, this.style); %>
