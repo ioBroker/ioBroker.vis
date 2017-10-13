@@ -323,6 +323,7 @@
         iframe: function (el, srcArr, refreshInterval) {
             var $this = $(el).parent().find('iframe');
             var oid   = $this.attr('data-oid');
+            refreshInterval = parseInt(refreshInterval, 10) || 0;
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
@@ -350,6 +351,7 @@
         image: function (el, srcArr, refreshInterval) {
             var $this = $(el).parent().find('img');
             var oid = $this.attr('data-oid');
+            refreshInterval = parseInt(refreshInterval, 10) || 0;
 
             vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
@@ -946,17 +948,20 @@
             }
         },
         iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
-            if (typeof src === 'object') {
+            if (src && typeof src === 'object') {
                 refreshInterval     = src.refreshInterval;
                 refreshOnWakeUp     = src.refreshOnWakeUp;
                 refreshOnViewChange = src.refreshOnViewChange;
                 refreshWithNoQuery  = src.refreshWithNoQuery;
                 src                 = src.src;
             }
+            refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
+            refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
+            refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('iframe');
-                refreshInterval = parseInt(refreshInterval, 10);
+                refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     var widgetView = vis.activeView;
@@ -967,10 +972,12 @@
                     });
                 }
                 if (refreshInterval > 0) {
-                    refreshInterval = parseInt(refreshInterval, 10);
                     setInterval(function () {
-                        if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                        if ($this.is(':visible')) {
+                            var p = $this.parents(':hidden');
+                            if (!p.length || p[0].tagName === 'BODY') {
+                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                            }
                         }
                     }, refreshInterval);
                 }
@@ -983,29 +990,35 @@
             }
         },
         htmlRefresh: function (el, html, refreshInterval) {
-            refreshInterval = parseInt(refreshInterval, 10);
+            refreshInterval = parseInt(refreshInterval, 10) || 0;
             if (html && !vis.editMode && refreshInterval > 0) {
                 var $this = $(el);
-                refreshInterval = parseInt(refreshInterval, 10);
                 setInterval(function () {
-                    if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
-                        $this.html(html);
+                    if ($this.is(':visible')) {
+                        var p = $this.parents(':hidden');
+                        if (!p.length || p[0].tagName === 'BODY') {
+                            $this.html(html);
+                        }
                     }
                 }, refreshInterval);
             }
         },
         imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
-            if (typeof src === 'object') {
+            if (src && typeof src === 'object') {
+                debugger;
                 refreshInterval     = src.refreshInterval;
                 refreshOnWakeUp     = src.refreshOnWakeUp;
                 refreshOnViewChange = src.refreshOnViewChange;
                 refreshWithNoQuery  = src.refreshWithNoQuery;
                 src                 = src.src;
             }
+            refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
+            refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
+            refreshWithNoQuery  = refreshWithNoQuery  === true || refreshWithNoQuery  === 'true';
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('img');
-                refreshInterval = parseInt(refreshInterval, 10);
+                refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     var widgetView = vis.activeView;
@@ -1017,8 +1030,11 @@
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
-                        if ($this.is(':visible') && $this.parents(':hidden').length === 0) {
-                            $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                        if ($this.is(':visible')) {
+                            var p = $this.parents(':hidden');
+                            if (!p.length || p[0].tagName === 'BODY') {
+                                $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                            }
                         }
                     }, refreshInterval);
                 }
@@ -1034,12 +1050,14 @@
             }
         },
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
-            if (!$('#' + wid).length) {
+            var $wid = $('#' + wid);
+            if (!$wid.length) {
                 return setTimeout(function () {
                     vis.binds.basic.showSvg(myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control);
                 }, 100);
-            };
-            $('#' + wid).find('svg').remove();
+            }
+
+            $wid.find('svg').remove();
             var str = vis.states.attr(oid + '.val');
             if (typeof str === 'string') str = str.toLowerCase();
             var val = parseFloat(str);
@@ -1056,7 +1074,7 @@
                 sText += svg_true;
             }
             sText += '</svg>';
-            $('#' + wid).find('.vis-widget-body').append (sText);
+            $wid.find('.vis-widget-body').append (sText);
 
             if (style) $('#' + wid).css(style);
 
@@ -1095,7 +1113,7 @@
                     }
                 });
             }
-            var $svg = $('#' + wid).find('svg');
+            var $svg = $wid.find('svg');
             if (!vis.editMode && !no_control) {
                 $svg.children().on('click touchstart', onSvgClick);
             } else if (vis.editMode){
@@ -1187,7 +1205,7 @@
         getCalc: function (data, val) {
             var min = (data.min || data.min === 0) ? parseFloat(data.min) : 0;
             var max = (data.max || data.max === 0) ? parseFloat(data.max) : 100;
-            var val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
+            val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
             val = (val - min) / (max - min);
             return (data.border) ? ("calc(" + Math.round(val * 100) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : (Math.round(val * 100) + "%");
         },
@@ -1198,8 +1216,8 @@
 	            _format = decimals;
 	        }
 	        var format = (_format === undefined) ? ".," : _format;
-	        if (typeof value !== "number") value = parseFloat(value);
-	        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+	        if (typeof value !== 'number') value = parseFloat(value);
+	        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
 	    },
 
         formatIntervalHelper: function (value, type) {
@@ -1620,7 +1638,7 @@
                 }
                 text = data.html_prepend || '';
                 text += vis.binds.basic.formatFloat(data,val);
-                text += parseFloat(vis.binds.basic.formatFloat(data,val)) == 1 ? data.html_append_singular || '' : data.html_append_plural || '';
+                text += parseFloat(vis.binds.basic.formatFloat(data,val)) === 1 ? data.html_append_singular || '' : data.html_append_plural || '';
                 $content.html(text);
                 $div.css({left: parseInt(x)  -$div.width() / 2 + 'px', top: parseInt(y) - $div.height() / 2 + 'px'}).show();
             }
