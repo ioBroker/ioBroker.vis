@@ -948,12 +948,20 @@
             }
         },
         iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
+            var widgetView;
             if (src && typeof src === 'object') {
+                widgetView = refreshInterval;
                 refreshInterval     = src.refreshInterval;
                 refreshOnWakeUp     = src.refreshOnWakeUp;
                 refreshOnViewChange = src.refreshOnViewChange;
                 refreshWithNoQuery  = src.refreshWithNoQuery;
                 src                 = src.src;
+            } else if (refreshInterval && typeof refreshInterval === 'object') {
+                widgetView = refreshOnWakeUp;
+                refreshInterval     = refreshInterval.refreshInterval;
+                refreshOnWakeUp     = refreshInterval.refreshOnWakeUp;
+                refreshOnViewChange = refreshInterval.refreshOnViewChange;
+                refreshWithNoQuery  = refreshInterval.refreshWithNoQuery;
             }
             refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
             refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
@@ -964,7 +972,7 @@
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
-                    var widgetView = vis.activeView;
+                    widgetView = widgetView || vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
                         if (view === widgetView) {
                             $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
@@ -2131,13 +2139,13 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
         data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp[false]/checkbox;refreshOnViewChange[false]/checkbox;refreshWithNoQuery/checkbox;scrollX[false]/checkbox;scrollY[false]/checkbox;seamless[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
             <div class="editmode-helper" />
             <% } %>
             <iframe src="<%= this.data.attr('src') %>" <%= this.data.attr('noSandbox') ? '' : 'sandbox="allow-modals allow-forms allow-pointer-lock allow-popups allow-same-origin allow-scripts"' %> style="position: absolute; border: 0; padding: 0; margin: 0; width: 100%; height: 100%;<%= this.data.attr('scrollX') == true ? 'overflow-x: scroll;' : 'overflow-x: hidden;' %><%= this.data.attr('scrollY') == true ? 'overflow-y: scroll;' : 'overflow-y: hidden;' %>" <%= this.data.attr('seamless') == true ? 'seamless' : '' %>></iframe>
-            <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data.attr('src'), data.attr('refreshInterval'), data.attr('refreshOnWakeUp'), data.attr('refreshOnViewChange')) %>></div>
+            <div <%= (el) -> vis.binds.basic.iframeRefresh(el, data, this.view) %>></div>
         </div>
     </div>
 </script>
