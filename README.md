@@ -181,7 +181,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 0.15.7 (2017-10-01)
+## Changelog### 1.0.0 release candidate (2017-10-13)
+* (bluefox) fix iframe and image updates
+* (bluefox) fix fonts
+
+### 0.15.7 (2017-10-01)
 * (bluefox) allow update of images without additional query (but it works only in spome very specific cases)
 * (bluefox) zoom of iframes
 
