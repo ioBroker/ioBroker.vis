@@ -1004,13 +1004,20 @@
             }
         },
         imgRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
+            var widgetView;
             if (src && typeof src === 'object') {
-                debugger;
+                widgetView = refreshInterval;
                 refreshInterval     = src.refreshInterval;
                 refreshOnWakeUp     = src.refreshOnWakeUp;
                 refreshOnViewChange = src.refreshOnViewChange;
                 refreshWithNoQuery  = src.refreshWithNoQuery;
                 src                 = src.src;
+            } else if (refreshInterval && typeof refreshInterval === 'object') {
+                widgetView = refreshOnWakeUp;
+                refreshInterval     = refreshInterval.refreshInterval;
+                refreshOnWakeUp     = refreshInterval.refreshOnWakeUp;
+                refreshOnViewChange = refreshInterval.refreshOnViewChange;
+                refreshWithNoQuery  = refreshInterval.refreshWithNoQuery;
             }
             refreshOnViewChange = refreshOnViewChange === true || refreshOnViewChange === 'true';
             refreshOnWakeUp     = refreshOnWakeUp     === true || refreshOnWakeUp     === 'true';
@@ -1021,7 +1028,7 @@
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
-                    var widgetView = vis.activeView;
+                    widgetView = widgetView || vis.activeView;
                     vis.navChangeCallbacks.push(function (view) {
                         if (view === widgetView) {
                             $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
@@ -2149,7 +2156,7 @@
                 <div class="editmode-helper" />
             <% } %>
             <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
-            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data) %> />
+            <div <%= (el) -> vis.binds.basic.imgRefresh(el, data, this.view) %> />
         </div>
     </div>
 </script>
@@ -2413,7 +2420,7 @@
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %>
                 <img src="<%= (typeof app !== 'undefined' ? app.replaceFilePathImg(vis.states.attr(this.data.oid + '.val')) : vis.states.attr(this.data.oid + '.val')) || '' %>" width="100%" />
-                 <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + '.val' ), data.attr("refreshInterval")) %> />
+                 <div <%= (el) -> vis.binds.basic.imgRefresh(el, vis.states.attr(data.oid + '.val' ), data, this.view) %> />
                 <%== this.data.attr('html_append') %>
             </div>
         </div>
