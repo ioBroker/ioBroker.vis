@@ -1,158 +1,176 @@
 {
     "common": {
-        "name":                     "vis",
+        "name": "vis",
         "version": "1.0.0",
-        "title":                    "iobroker Visualisation",
+        "title": "iobroker Visualisation",
         "news": {
             "0.15.6": {
-              "en":                 "Added array operator to bindings",
-              "de":                 "Array Operator zu bindings hinzugefügt"
+                "en": "Added array operator to bindings",
+                "de": "Array Operator zu bindings hinzugefügt"
             },
             "0.15.5": {
-              "en":                 "Fix widgets upload",
-              "de":                 "Korrigiere Widgets uplaod",
-              "ru":                 "Исправлено обновление виджетов"
+                "en": "Fix widgets upload",
+                "de": "Korrigiere Widgets uplaod",
+                "ru": "Исправлено обновление виджетов"
             },
             "0.15.4": {
-              "en":                 "Add swipe",
-              "de":                 "Swipe hunzugefügt",
-              "ru":                 "Добавлен swipe"
+                "en": "Add swipe",
+                "de": "Swipe hunzugefügt",
+                "ru": "Добавлен swipe"
             },
-			"0.15.3": {
-				"en":               "Add full screen widget\nFix timestamp widget",
-				"de":               "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",
-				"ru":               "Добавлен виджет full screen\nИсправлен виджет timestamp"
-			},
-			"0.15.2": {
-				"en":               "Fix binding if it has \"-\" in the OID",
-				"de":               "Korrigiere den fehler mit Binding und \"-\" in OID",
-				"ru":               "Исправлены bindings, если содержат минус в имени"
-			},
-			"0.15.1": {
-				"en":               "Fix error with context menu\nAllow add class to view",
-				"de":               "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
-				"ru":               "Исправлено контекстное меню\nМожно добавлять классы к страницам"
-			},
+            "0.15.3": {
+                "en": "Add full screen widget\nFix timestamp widget",
+                "de": "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",
+                "ru": "Добавлен виджет full screen\nИсправлен виджет timestamp"
+            },
+            "0.15.2": {
+                "en": "Fix binding if it has \"-\" in the OID",
+                "de": "Korrigiere den fehler mit Binding und \"-\" in OID",
+                "ru": "Исправлены bindings, если содержат минус в имени"
+            },
+            "0.15.1": {
+                "en": "Fix error with context menu\nAllow add class to view",
+                "de": "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
+                "ru": "Исправлено контекстное меню\nМожно добавлять классы к страницам"
+            },
             "0.15.0": {
-              "en":                 "fix copy of grouped widgets\nfix subscribe if empty states",
-              "de":                 "Korrigiere das Kopieren von mehreren Groupped-Widgets\nKorrigiere Subscribe, falls OIS leer sind",
-              "ru":                 "Исправлено копирование нескольких сгруппированых виджетов.\nИсрправлена ошибка, если OID пуст"
+                "en": "fix copy of grouped widgets\nfix subscribe if empty states",
+                "de": "Korrigiere das Kopieren von mehreren Groupped-Widgets\nKorrigiere Subscribe, falls OIS leer sind",
+                "ru": "Исправлено копирование нескольких сгруппированых виджетов.\nИсрправлена ошибка, если OID пуст"
             },
-			"0.14.7": {
-				"en":               "Add templates",
-				"de":               "Vorlagen sind huzugefügt",
-				"ru":               "Добавлены шаблоны"
-			},
-			"0.14.6": {
-				"en":               "Fix error by groups selection",
-				"de":               "Korrigiere den Fehler bei Gruppenauswahl",
-				"ru":               "Исправлено выделение групп"
-			},
-			"0.14.3": {
-				"en":               "fix export/import of groupped widgets",
-				"de":               "Korrigiere export/import von grouppierten Widets",
-				"ru":               "Исправлен экспорт/импорт сгруппированных виджетов"
-			},
-			"0.14.2": {
-				"en":               "Fix install error",
-				"de":               "Korrigiere Installationsfehler",
-				"ru":               "Исправлена ошибка при инсталляции"
-			}
+            "0.14.7": {
+                "en": "Add templates",
+                "de": "Vorlagen sind huzugefügt",
+                "ru": "Добавлены шаблоны"
+            },
+            "0.14.6": {
+                "en": "Fix error by groups selection",
+                "de": "Korrigiere den Fehler bei Gruppenauswahl",
+                "ru": "Исправлено выделение групп"
+            },
+            "0.14.3": {
+                "en": "fix export/import of groupped widgets",
+                "de": "Korrigiere export/import von grouppierten Widets",
+                "ru": "Исправлен экспорт/импорт сгруппированных виджетов"
+            },
+            "0.14.2": {
+                "en": "Fix install error",
+                "de": "Korrigiere Installationsfehler",
+                "ru": "Исправлена ошибка при инсталляции"
+            }
         },
         "desc": {
-            "en":                   "Graphical user interface for iobroker.",
-            "de":                   "Graphische Darstellung für iobroker (ehemalige DashUI)",
-            "ru":                   "Веб интерфейс для визуализации данных 'iobroker' (бывший модуль Dash UI)"
+            "en": "Graphical user interface for iobroker.",
+            "de": "Graphische Darstellung für iobroker (ehemalige DashUI)",
+            "ru": "Веб интерфейс для визуализации данных 'iobroker' (бывший модуль Dash UI)"
         },
-        "platform":                 "Javascript/Node.js",
-        "loglevel":                 "info",
-        "icon":                     "vis.png",
-        "enabled":                  true,
-        "mode":                     "once",
-        "extIcon":                  "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
-        "keywords":                 ["DashUI", "GUI", "graphical", "scada"],
-        "readme":                   "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
+        "platform": "Javascript/Node.js",
+        "loglevel": "info",
+        "icon": "vis.png",
+        "enabled": true,
+        "mode": "once",
+        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
+        "keywords": [
+            "DashUI",
+            "GUI",
+            "graphical",
+            "scada"
+        ],
+        "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],
-        "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
-        "license":                  "CC BY-NC",
-        "dependencies":             [{"web": ">=1.5.4"}],
-        "restartAdapters":          ["vis"],
-        "singleton":                true,
-        "type":                     "vis",
-		"highlight":                true,
-		"noConfig":                 false,
-		"welcomeScreen":            {"link": "vis/index.html", "name": "vis",        "img": "vis/img/favicon.png",     "color": "blue",  "order": 0},
-        "welcomeScreenPro":         {"link": "vis/edit.html",  "name": "vis editor", "img": "vis/img/faviconEdit.png", "color": "green", "order": 1}
+        "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
+        "license": "CC BY-NC",
+        "dependencies": [
+            {
+                "web": ">=1.5.4"
+            }
+        ],
+        "restartAdapters": [
+            "vis"
+        ],
+        "singleton": true,
+        "type": "visualization",
+        "highlight": true,
+        "noConfig": false,
+        "welcomeScreen": {
+            "link": "vis/index.html",
+            "name": "vis",
+            "img": "vis/img/favicon.png",
+            "color": "blue",
+            "order": 0
+        },
+        "welcomeScreenPro": {
+            "link": "vis/edit.html",
+            "name": "vis editor",
+            "img": "vis/img/faviconEdit.png",
+            "color": "green",
+            "order": 1
+        }
     },
     "native": {
-        "defaultFileMode":          1604,
+        "defaultFileMode": 1604,
         "license": ""
     },
     "instanceObjects": [
         {
-            "_id":  "",
+            "_id": "",
             "type": "meta",
             "common": {
                 "name": "user files and images for vis",
                 "type": "meta.user"
             },
-            "native": {
-            }
+            "native": {}
         },
         {
-            "_id":  "control",
+            "_id": "control",
             "type": "channel",
             "common": {
                 "name": "Control vis"
             },
-            "native": {
-            }
+            "native": {}
         },
         {
-            "_id":  "control.instance",
+            "_id": "control.instance",
             "type": "state",
             "common": {
                 "name": "Control vis",
                 "type": "string",
                 "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
             },
-            "native": {
-            }
+            "native": {}
         },
-      {
-          "_id":  "control.command",
-          "type": "state",
-          "common": {
-              "name": "Command for vis",
-              "type": "string",
-              "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-              "states": {
-				  "alert": 			"alert",
-				  "changeView": 	"changeView",
-				  "refresh": 		"refresh",
-				  "reload": 		"reload",
-				  "dialog": 		"dialog",
-				  "popup": 			"popup",
-				  "playSound": 		"playSound",
-				  "changedView": 	"changedView",
-				  "tts": 			"tts"
-			  }      
-          },
-          "native": {
-          }
-      },
-      {
-          "_id":  "control.data",
-          "type": "state",
-          "common": {
-              "name": "Data for control vis",
-              "type": "string",
-              "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-          },
-          "native": {
-          }
-      }
+        {
+            "_id": "control.command",
+            "type": "state",
+            "common": {
+                "name": "Command for vis",
+                "type": "string",
+                "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                "states": {
+                    "alert": "alert",
+                    "changeView": "changeView",
+                    "refresh": "refresh",
+                    "reload": "reload",
+                    "dialog": "dialog",
+                    "popup": "popup",
+                    "playSound": "playSound",
+                    "changedView": "changedView",
+                    "tts": "tts"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "control.data",
+            "type": "state",
+            "common": {
+                "name": "Data for control vis",
+                "type": "string",
+                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+            },
+            "native": {}
+        }
     ]
 }
