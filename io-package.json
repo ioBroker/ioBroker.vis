@@ -1,9 +1,14 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "title":                    "iobroker Visualisation",
         "news": {
+            "1.0.1": {
+              "en":                 "Release candidate\nFix parse of invalid bindings",
+              "de":                 "Release candidate\nKorrigiere die Aufbau von falschen Bindings",
+              "ru":                 "Release candidate\nПоправлен рендеринг неправильных bindings"
+            },
             "0.15.6": {
               "en":                 "Added array operator to bindings",
               "de":                 "Array Operator zu bindings hinzugefügt"

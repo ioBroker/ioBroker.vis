@@ -2545,7 +2545,7 @@ var vis = {
                                     console.log('Invalid format of format string: ' + format);
                                     parse[2] = null;
                                 } else {
-                                    parse[2] = parse[2].trim().replace(',', '.');
+                                    parse[2] = (parse[2] || '').trim().replace(',', '.');
                                     parse[2] = parse[2].substring(1, parse[2].length - 1);
                                     parse[2] = parseFloat(parse[2].trim());
 
@@ -2561,14 +2561,14 @@ var vis = {
                             // date formatting
                             if (parse[1] === 'date') {
                                 operations = operations || [];
-                                parse[2] = parse[2].trim();
+                                parse[2] = (parse[2] || '').trim();
                                 parse[2] = parse[2].substring(1, parse[2].length - 1);
                                 operations.push({op: parse[1], arg: parse[2]});
                             } else
 							// returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}	
                             if (parse[1] === 'array') {
                                 operations = operations || [];
-                                param = parse[2].trim();
+                                param = (parse[2] || '').trim();
                                 param = param.substring(1, param.length - 1);
                                 param = param.split(',');
                                 if (Array.isArray(param)) {
@@ -2578,7 +2578,7 @@ var vis = {
 						    // value formatting
                             if (parse[1] === 'value') {
                                 operations = operations || [];
-                                var param = (parse[2] === undefined) ? '(2)' : parse[2];
+                                var param = (parse[2] === undefined) ? '(2)' : (parse[2] || '');
                                 param = param.trim();
                                 param = param.substring(1, param.length - 1);
                                 operations.push({op: parse[1], arg: param});
@@ -2589,7 +2589,7 @@ var vis = {
                                     operations = operations || [];
                                     operations.push({op: parse[1]});
                                 } else {
-                                    parse[2] = parse[2].trim().replace(',', '.');
+                                    parse[2] = (parse[2] || '').trim().replace(',', '.');
                                     parse[2] = parse[2].substring(1, parse[2].length - 1);
                                     parse[2] = parseFloat(parse[2].trim());
 
