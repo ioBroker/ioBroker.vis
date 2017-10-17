@@ -31,6 +31,7 @@
 /* global translateAll */
 /* global jQuery */
 /* global document */
+/* global moment */
 /* jshint -W097 */// jshint strict:false
 'use strict';
 
@@ -106,7 +107,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.0.0',
+    version: '1.0.1',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -3492,6 +3493,10 @@ function main($, onReady) {
                     vis.language = systemLang;
                     vis.dateFormat = config.dateFormat;
                     vis.isFloatComma = config.isFloatComma;
+                    // set moment language
+                    if (typeof moment !== 'undefined') {
+                        moment.lang(vis.language);
+                    }
                     translateAll();
                     if (vis.isFirstTime) {
                         // Init edit dialog

@@ -1196,7 +1196,13 @@ vis = $.extend(true, vis, {
             $('[data-language=' + that.language + ']').removeClass('ui-state-active');
             that.language = $(this).data('language');
             $(this).addClass('ui-state-active');
-            if (typeof systemLang !== 'undefined') systemLang = that.language;
+            if (typeof systemLang !== 'undefined') {
+                systemLang = that.language;
+            }
+            // set moment language
+            if (typeof moment !== 'undefined') {
+                moment.lang(that.language);
+            }
             setTimeout(function () {
                 translateAll();
             }, 0);
