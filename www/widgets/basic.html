@@ -1318,7 +1318,10 @@
                 }
             }
         },
-        formatInterval: function (timestamp) {
+        formatInterval: function (timestamp, isMomentJs) {
+            if (isMomentJs && typeof moment !== 'undefined') {
+                return moment(new Date(timestamp)).fromNow();
+            }
             var diff = new Date().getTime() - timestamp;
             diff = Math.round(diff / 1000);
             var text;
@@ -1427,11 +1430,11 @@
             if (vis.binds.basic.updateInterval) return;
             vis.binds.basic.updateInterval = setInterval(function () {
                 $('.time-interval').each(function () {
-                    $(this).html(vis.binds.basic.formatInterval($(this).data('time')))
+                    $(this).html(vis.binds.basic.formatInterval($(this).data('time'), $(this).data('moment')))
                 });
             }, 15000);
         },
-        formatDate: function (dateObj, format, interval) {
+        formatDate: function (dateObj, format, interval, isMomentJs) {
             if (typeof format === 'boolean') {
                 interval = format;
                 format = 'auto';
@@ -1464,7 +1467,7 @@
             }
             if (interval) {
                 vis.binds.basic.startUpdateInterval();
-                return '<span class="time-interval" data-time="' + dateObj.getTime() + '">' + vis.binds.basic.formatInterval(dateObj.getTime()) + '</span>';
+                return '<span class="time-interval" data-time="' + dateObj.getTime() + '" data-moment="' + (isMomentJs || false) + '">' + vis.binds.basic.formatInterval(dateObj.getTime(), isMomentJs) + '</span>';
             }
 
             var v;

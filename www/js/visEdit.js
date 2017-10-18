@@ -1222,8 +1222,8 @@ vis = $.extend(true, vis, {
         // fill projects
         this.editFillProjects();
 
-        $('#new-project-name').keypress(function(e) {
-            if (e.which == 13) {
+        $('#new-project-name').keypress(function (e) {
+            if (e.which === 13) {
                 $('#dialog-new-project').parent().find('#ok').trigger('click');
             }
         });

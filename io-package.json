@@ -1,13 +1,13 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "1.0.1",
+        "version": "1.0.2",
         "title":                    "iobroker Visualisation",
         "news": {
-            "1.0.1": {
-              "en":                 "Release candidate\nFix parse of invalid bindings",
-              "de":                 "Release candidate\nKorrigiere die Aufbau von falschen Bindings",
-              "ru":                 "Release candidate\nПоправлен рендеринг неправильных bindings"
+            "1.0.2": {
+              "en":                 "Release candidate\nFix parse of invalid bindings\nadd moment.js",
+              "de":                 "Release candidate\nKorrigiere die Aufbau von falschen Bindings\nmoment.js hinzugefügt",
+              "ru":                 "Release candidate\nПоправлен рендеринг неправильных bindings\nДобавлен moment.js"
             },
             "0.15.6": {
               "en":                 "Added array operator to bindings",

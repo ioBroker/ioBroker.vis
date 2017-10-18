@@ -900,6 +900,8 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, {name: 'lc-type', type: 'select', options: ['last-change', 'timestamp'], default: 'last-change'}, group);
         // is interval
         this.addToInspect(this.activeWidgets, {name: 'lc-is-interval', type: 'checkbox', default: true}, group);
+        // is moment.js
+        this.addToInspect(this.activeWidgets, {name: 'lc-is-moment', type: 'checkbox', default: false}, group);
         // format
         this.addToInspect(this.activeWidgets, {name: 'lc-format', type: 'auto', options: ['YYYY.MM.DD hh:mm:ss','DD.MM.YYYY hh:mm:ss','YYYY.MM.DD','DD.MM.YYYY','YYYY/MM/DD hh:mm:ss','YYYY/MM/DD','hh:mm:ss'], default: ''}, group);
         // position vertical
@@ -932,6 +934,10 @@ vis = $.extend(true, vis, {
         this.addToInspect(this.activeWidgets, {name: 'lc-border-color', type: 'color', default: ''}, group);
         // border-radius
         this.addToInspect(this.activeWidgets, {name: 'lc-border-radius', type: 'slider', options: {min: 0, max: 20, step: 1}, default: 10}, group);
+        // padding
+        this.addToInspect(this.activeWidgets, {name: 'lc-padding'}, group);
+        // z-index
+        this.addToInspect(this.activeWidgets, {name: 'lc-zindex', type: 'slider', options: {min: -10, max: 20, step: 1}, default: -1}, group);
     },
     editGestures:       function (view) {
         var group = 'gestures';

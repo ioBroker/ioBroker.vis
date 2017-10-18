@@ -107,7 +107,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.0.1',
+    version: '1.0.2',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1570,10 +1570,8 @@ var vis = {
             background: 'rgba(182,182,182,0.6)',
             'font-family': 'Tahoma',
             position: 'absolute',
-            'z-index': 0,
+            'z-index': -1,
             'border-radius': data['lc-position-horz'] === 'left' ? (border + ' 0 0 ' + border) : (data['lc-position-horz'] === 'right' ? '0 ' + border + ' ' + border + ' 0' : border),
-            'padding-top': 3,
-            'padding-bottom': 3,
             'white-space': 'nowrap'
         };
         if (data['lc-font-size']) {
@@ -1600,6 +1598,15 @@ var vis = {
         if (data['lc-border-color']) {
             css['border-color'] = data['lc-border-color'];
         }
+        if (data['lc-padding']) {
+            css['padding'] = data['lc-padding'];
+        } else {
+            css['padding-top']    = 3;
+            css['padding-bottom'] = 3;
+        }
+        if (data['lc-zindex']) {
+            css['z-index'] = data['lc-zindex'];
+        }
         if (data['lc-position-vert'] === 'top') {
             css.top = parseInt(data['lc-offset-vert'], 10);
         } else if (data['lc-position-vert'] === 'bottom') {
@@ -1610,16 +1617,20 @@ var vis = {
         var offset = parseFloat(data['lc-offset-horz']) || 0;
         if (data['lc-position-horz'] === 'left') {
             css.right = 'calc(100% - ' + offset + 'px)';
-            css['padding-right'] = 10;
-            css['padding-left']  = 10;
+            if (!data['lc-padding']) {
+                css['padding-right'] = 10;
+                css['padding-left']  = 10;
+            }
         } else if (data['lc-position-horz'] === 'right') {
             css.left = 'calc(100% + ' + offset + 'px)';
-            css['padding-right'] = 10;
-            css['padding-left']  = 10;
+            if (!data['lc-padding']) {
+                css['padding-right'] = 10;
+                css['padding-left']  = 10;
+            }
         } else if (data['lc-position-horz'] === 'middle') {
             css.left = 'calc(50% + ' + offset + 'px)';
         }
-        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval']) + '</div>';
+        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']) + '</div>';
         $('#' + wid).prepend($(text).css(css)).css('overflow', 'visible');
     },
     isUserMemberOf:     function (user, userGroups) {

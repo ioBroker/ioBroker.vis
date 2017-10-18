@@ -561,6 +561,9 @@ $.extend(systemDictionary, {
     },
     "All groups":           {"en": "all groups",        "de": "Alle Gruppen",           "ru": "всех групп"},
     "hide":                 {"en": "hide",              "de": "verbergen",              "ru": "скрыть"},
+    "oid-working":          {"en": "Working Object ID", "de": "Object ID in Arbeit",    "ru": "ID в процессе"},
+    "min":                  {"en": "min",               "de": "min",                    "ru": "min"},
+    "max":                  {"en": "max",               "de": "max",                    "ru": "max"},
 
     "group_signals":        {"en": "Notification icons", "de": "Signalbilder",         "ru": "Иконки сигналов"},
     "signals-oid-0":        {"en": "Object ID [0]",     "de": "Objekt ID [0]",         "ru": "ID объекта [0]"},
@@ -610,6 +613,7 @@ $.extend(systemDictionary, {
     "lc-oid":               {"en": "Object ID",         "de": "Objekt ID",              "ru": "ID объекта"},
     "lc-type":              {"en": "Type",              "de": "Typ",                    "ru": "Тип"},
     "lc-is-interval":       {"en": "Interval",          "de": "Intervall",              "ru": "Интервал"},
+    "lc-is-moment":         {"en": "Use Moment.js",     "de": "Benutze Moment.js",      "ru": "Исп. Moment.js"},
     "lc-format":            {"en": "Time format",       "de": "Zeitformat",             "ru": "Формат времени"},
     "lc-position-vert":     {"en": "Position vert",     "de": "Position vert",          "ru": "Положение Y"},
     "lc-position-horz":     {"en": "Position horz",     "de": "Position horz",          "ru": "Положение X"},
@@ -624,6 +628,8 @@ $.extend(systemDictionary, {
     "lc-border-style":      {"en": "border-style",      "de": "border-style",           "ru": "border-style"},
     "lc-border-color":      {"en": "border-color",      "de": "border-color",           "ru": "border-color"},
     "lc-border-radius":     {"en": "border-radius",     "de": "border-radius",          "ru": "border-radius"},
+    "lc-padding":           {"en": "padding",           "de": "padding",                "ru": "padding"},
+    "lc-zindex":            {"en": "zindex",            "de": "zindex",                 "ru": "zindex"},
     "last-change":          {"en": "last change",       "de": "lätze Änderung",         "ru": "посл. изменение"},
     "middle":               {"en": "middle",            "de": "Mitte",                  "ru": "в середине"},
 
