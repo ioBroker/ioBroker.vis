@@ -1570,7 +1570,7 @@ var vis = {
             background: 'rgba(182,182,182,0.6)',
             'font-family': 'Tahoma',
             position: 'absolute',
-            'z-index': -1,
+            'z-index': 0,
             'border-radius': data['lc-position-horz'] === 'left' ? (border + ' 0 0 ' + border) : (data['lc-position-horz'] === 'right' ? '0 ' + border + ' ' + border + ' 0' : border),
             'white-space': 'nowrap'
         };

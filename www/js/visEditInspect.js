@@ -937,7 +937,7 @@ vis = $.extend(true, vis, {
         // padding
         this.addToInspect(this.activeWidgets, {name: 'lc-padding'}, group);
         // z-index
-        this.addToInspect(this.activeWidgets, {name: 'lc-zindex', type: 'slider', options: {min: -10, max: 20, step: 1}, default: -1}, group);
+        this.addToInspect(this.activeWidgets, {name: 'lc-zindex', type: 'slider', options: {min: -10, max: 20, step: 1}, default: 0}, group);
     },
     editGestures:       function (view) {
         var group = 'gestures';
