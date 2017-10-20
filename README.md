@@ -181,7 +181,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog
+## Changelog### 1.0.3 (2017-10-20)
+
+
 ### 1.0.2 release candidate (2017-10-16)
 * (bluefox) Fix parse of invalid bindings
 * (bluefox) add moment.js
