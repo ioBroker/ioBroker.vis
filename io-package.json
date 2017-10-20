@@ -4,7 +4,7 @@
         "version": "1.0.3",
         "title":                    "iobroker Visualisation",
         "news": {
-            "1.0.2": {
+            "1.0.3": {
               "en":                 "Release candidate\nFix parse of invalid bindings\nadd moment.js",
               "de":                 "Release candidate\nKorrigiere die Aufbau von falschen Bindings\nmoment.js hinzugefügt",
               "ru":                 "Release candidate\nПоправлен рендеринг неправильных bindings\nДобавлен moment.js"
