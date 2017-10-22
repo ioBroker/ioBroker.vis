@@ -373,6 +373,7 @@ $.extend(systemDictionary, {
     "attrName5":            {"en": "Attribute 5",       "de": "Attribut 5",             "ru": "Параметр 5"},
     "attrName6":            {"en": "Attribute 6",       "de": "Attribut 6",             "ru": "Параметр 6"},
     "attrName7":            {"en": "Attribute 7",       "de": "Attribut 7",             "ru": "Параметр 7"},
+    "Only background":      {"en": "Only background",   "de": "Nur background",         "ru": "Только background"},
     "Use inside of group groupAttr%s": {
         "en": "Use inside of group groupAttr%s",
         "de": "Benutze groupAttr%s innerhalb von der Gruppe",

@@ -2,7 +2,7 @@
 <!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>
 <head>
 
-    <!-- vis Version 1.0.3 -->
+    <!-- vis Version 1.0.4 -->
 
     <!--
 		Use FireFox or Chrome with --allow-file-access-from-files flag to test DashUI local.
@@ -103,7 +103,7 @@
     <table class="table-no-space">
         <tr class="table-no-space">
             <td class="translate table-no-space">View name: </td>
-            <td class="table-no-space"><input type="text" id="name_import_view"></td>
+            <td class="table-no-space"><input id="name_import_view"></td>
             <td class="table-no-space"><button id="start_import_view" class="translateB">import view</button></td>
         </tr>
     </table>
@@ -120,7 +120,7 @@
     <table style="padding: 15px; width: calc(100% - 30px);">
         <tr class="table-no-space">
             <td class="translate table-no-space" style="width: 20%">Project&nbsp;name:</td>
-            <td class="table-no-space" style="width: 40%"><input type="text" id="name_import_project" style="width: 150px;"></td>
+            <td class="table-no-space" style="width: 40%"><input id="name_import_project" style="width: 150px;"></td>
             <td class="table-no-space" style="width: 50%"><button id="start_import_project" class="translateB">import&nbsp;project</button></td>
         </tr>
     </table>
@@ -309,7 +309,7 @@
                     <tr id="rib_view_add_tr" style="display:none">
                         <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
                         <td>
-                            <input type="text" id="rib_view_addname" >
+                            <input id="rib_view_addname" >
                         </td>
                         <td>
                             <div id="rib_view_add_ok" class="btn-iconbar ui-corner-all"></div>
@@ -321,7 +321,7 @@
                     <tr id="rib_view_rename_tr" style="display:none">
                         <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
                         <td>
-                            <input type="text" id="rib_view_newname" >
+                            <input id="rib_view_newname" >
                         </td>
                         <td>
                             <div id="rib_view_rename_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
@@ -333,7 +333,7 @@
                     <tr id="rib_view_copy_tr" style="display:none">
                         <td style=" height: 22px; padding-right:3px" class="translate">New Name:</td>
                         <td>
-                            <input type="text" id="rib_view_copyname" >
+                            <input id="rib_view_copyname" >
                         </td>
                         <td>
                             <div id="rib_view_copy_ok" class="btn-iconbar ui-corner-all"><img class="icon-on-iconbar" src="icon/ok.png"></div>
@@ -569,7 +569,7 @@
                             <span style="display: inline-block" class="translate">Instance ID</span>
                         </td>
                         <td>
-                            <input type="text" id="vis_instance"/>
+                            <input id="vis_instance"/>
                         </td>
                         <td>
                             <button type="button" class="vis-editor translateB" id="create_instance">create_instance</button>
@@ -659,7 +659,7 @@
                         <input type="number" value="1" step="1" class="vis-editor oid-dev" id="oid_dev5"/>
                     </td>
                     <td>
-                        <input type="text" value="string" class="vis-editor oid-dev" id="oid_dev6"/>
+                        <input value="string" class="vis-editor oid-dev" id="oid_dev6"/>
                     </td>
                 </tr>
             </table>
@@ -675,7 +675,7 @@
             <div id="btn_prev_type" title="Show type of widgets" class="translateT"><span class="ui-icon ui-icon-tag"></span></div>
             <div id="btn_prev_zoom" title="Small widgets" class="translateT"><span class="ui-icon ui-icon-zoomout"></span></div>
         </div>
-        <input id="filter_set" value="*" type="text" style="width: 100%" class="translateT" title="Widgets filter. Double click to clear."/>
+        <input id="filter_set" value="*" style="width: 100%" class="translateT" title="Widgets filter. Double click to clear."/>
         <select id="select_set" style="width: 100%" class="select-set"></select>
 
         <div id="toolbox" class="toolbox">
@@ -797,16 +797,16 @@
                             <tr><td colspan="3" class="ui-state-default"><span class="translate">group_css_common</span><button class="view-group" style="float:right" data-group="view-css-common"></button></td></tr>
                             <tr class="group-view-css-common">
                                 <td class="vis-edit-td-caption translate">comment</td>
-                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
+                                <td class="vis-edit-td-field" colspan="2"><input id="inspect_view_comment" class="vis-inspect-view vis-edit-textbox"/></td>
                             </tr>
                             <tr class="group-view-css-common">
                                 <td class="vis-edit-td-caption translate">class</td>
-                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
+                                <td class="vis-edit-td-field" colspan="2"><input id="inspect_view_class" class="vis-inspect-view vis-edit-textbox"/></td>
 
                             </tr>
                             <tr class="group-view-css-common">
                                 <td class="vis-edit-td-caption translateT" style="font-style: italic" title="filter_key_tooltip"><span class="translate">filter_key</span></td>
-                                <td class="vis-edit-td-field" colspan="2"><input type="text" id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
+                                <td class="vis-edit-td-field" colspan="2"><input id="inspect_view_filterkey" class="vis-inspect-view vis-edit-textbox"/></td>
                             </tr>
                             <tr class="group-view-css-common">
                                 <td class="vis-edit-td-caption translate">Theme</td>
@@ -854,59 +854,65 @@
                                 <td colspan="3" class="css-inspector-heading ui-state-default"><span class="translate">group_css_background</span><button  style="float:right" class="view-group" data-group="view-css-background"></button></td>
                             </tr>
                             <tr class="group-view-css-background">
-                                <td colspan="3" id="inspect_view_bkg_parent"><input id="inspect_view_bkg_def" type="text"/></td>
+                                <td colspan="3" id="inspect_view_bkg_parent"><input id="inspect_view_bkg_def"/></td>
+                            </tr>
+                            <tr>
+                                <td class="translate">Use background</td>
+                                <td colspan="2">
+                                    <input id="inspect_view_css_only_background" type="checkbox"/>
+                                </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>background</td>
                                 <td colspan="2">
-                                    <input type="text" id="inspect_view_css_background" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-color</td>
-                                <td ><input type="text" id="inspect_view_css_background-color" class="vis-edit-textbox vis-inspect-view-css"/></td>
+                                <td ><input id="inspect_view_css_background-color" class="vis-edit-textbox vis-inspect-view-css"/></td>
                                 <td><button data-attr="view_css_background-color" class="view-edit-button" data-type="color"></button></td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-image</td>
                                 <td colspan="2">
-                                    <input type="text" id="inspect_view_css_background-image" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-image" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-repeat</td>
                                 <td  colspan="2">
-                                    <input type="text" id="inspect_view_css_background-repeat" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-repeat" class="vis-edit-textbox vis-inspect-view-css" data-options="repeat;repeat-x;repeat-y;no-repeat;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-attachment</td>
                                 <td  colspan="2">
-                                    <input type="text" id="inspect_view_css_background-attachment" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-attachment" class="vis-edit-textbox vis-inspect-view-css" data-options="scroll;fixed;local;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-position</td>
                                 <td  colspan="2">
-                                    <input type="text" id="inspect_view_css_background-position" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-position" class="vis-edit-textbox vis-inspect-view-css" data-options="left top;left center;left bottom;right top;right center;right bottom;center top;center center;center bottom;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-size</td>
                                 <td  colspan="2">
-                                    <input type="text" id="inspect_view_css_background-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-size" class="vis-edit-textbox vis-inspect-view-css" data-options="auto;cover;contain;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-clip</td>
                                 <td  colspan="2">
-                                    <input type="text" id="inspect_view_css_background-clip" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-clip" class="vis-edit-textbox vis-inspect-view-css" data-options="border-box;padding-box;content-box;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-background">
                                 <td>-origin</td>
                                 <td colspan="2">
-                                    <input type="text" id="inspect_view_css_background-origin" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_background-origin" class="vis-edit-textbox vis-inspect-view-css" data-options="border-box;padding-box;content-box;initial;inherit"/>
                                 </td>
                             </tr>
                             <tr>
@@ -915,62 +921,62 @@
                             <tr class="group-view-css-font-text">
                                 <td>color</td>
                                 <td>
-                                    <input type="text" id="inspect_view_css_color" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_color" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                                 <td><button data-attr="view_css_color" class="view-edit-button" data-type="color"></button></td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>text-shadow</td>
                                 <td>
-                                    <input type="text" id="inspect_view_css_text-shadow" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_text-shadow" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>font-family</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_font-family" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_font-family" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>font-style</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_font-style" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_font-style" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>font-variant</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_font-variant" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_font-variant" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>font-weight</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_font-weight" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_font-weight" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>font-size</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_font-size" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_font-size" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>line-height</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_line-height" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_line-height" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>letter-spacing</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_letter-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_letter-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                             <tr class="group-view-css-font-text">
                                 <td>word-spacing</td>
                                 <td >
-                                    <input type="text" id="inspect_view_css_word-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
+                                    <input id="inspect_view_css_word-spacing" class="vis-edit-textbox vis-inspect-view-css"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -1049,7 +1055,7 @@
     <div id="dialog-edit-text-textarea" style="width: calc(100% - 5px); height: 96%;"></div>
 </div>
 <div id="dialog-new-project" class="translateT" title="Create new project" style="overflow: hidden; display: none">
-    <table><tr><td class="translate">Name:</td><td><input type="text" id="new-project-name" style="width: 250px" /></td></tr></table>
+    <table><tr><td class="translate">Name:</td><td><input id="new-project-name" style="width: 250px" /></td></tr></table>
 </div>
 <div id="dialog-settings" class="translateT" title="VIS Settings" style="overflow: hidden; display: none">
     <table>
@@ -1116,11 +1122,11 @@
     <table style="width: 750px">
         <tr>
             <td style="width: 150px;"><label class="translate" for="dialog_template_name">Name:</label></td>
-            <td style="width: calc(100% - 150px);"><input type="text" id="dialog_template_name" style="width: 100%;"/></td>
+            <td style="width: calc(100% - 150px);"><input id="dialog_template_name" style="width: 100%;"/></td>
         </tr>
         <tr>
             <td><label class="translate" for="dialog_template_desc">Description:</label></td>
-            <td><input type="text" id="dialog_template_desc" style="width: 100%;"/></td>
+            <td><input id="dialog_template_desc" style="width: 100%;"/></td>
         </tr>
     </table>
 </div>

@@ -210,6 +210,48 @@ vis = $.extend(true, vis, {
             });
         }
     },
+    editShowHideViewBackground: function (view, isInit) {
+        if (!this.views[view].settings) {
+            this.views[view].settings = {};
+        }
+        var $back = $('#inspect_view_css_background');
+        if ($('#inspect_view_css_only_background').prop('checked')) {
+            this.views[view].settings.useBackground = true;
+            var that = this;
+            $back.parent().parent().show();
+            $('.vis-inspect-view-css').each(function () {
+                var attr = $(this).attr('id').slice(17);
+                if (attr.match(/^background-/)) {
+                    $(this).parent().parent().hide();
+                    if (that.views[view].settings.style) {
+                        delete that.views[view].settings.style[attr];
+                    }
+                }
+            });
+            if (!isInit) {
+                $back.val($('#visview_' + view).css('background'));
+            }
+        } else {
+            this.views[view].settings.useBackground = false;
+            $back.parent().parent().hide();
+            var $view;
+            if (!isInit) {
+                $view = $('#visview_' + view);
+            }
+            $('.vis-inspect-view-css').each(function () {
+                var attr = $(this).attr('id').slice(17);
+                if (attr.match(/^background-/)) {
+                    $(this).parent().parent().show();
+                    if (!isInit) {
+                        $(this).val($view.css(attr));
+                    }
+                }
+            });
+            if (this.views[view].settings.style) {
+                delete this.views[view].settings.style.background;
+            }
+        }
+    },
     editInit:               function () {
         var that = this;
         // Create debug variables
@@ -458,29 +500,47 @@ vis = $.extend(true, vis, {
 
         this.initStealHandlers();
 
+        $('#inspect_view_css_only_background').change(function () {
+            that.editShowHideViewBackground(that.activeView);
+            that.save();
+        });
+
         $('.vis-inspect-view-css').change(function () {
             var $this = $(this);
-            var attr = $this.attr('id').slice(17);
-            var val = $this.val();
+            var attr  = $this.attr('id').slice(17);
+            var val   = $this.val();
             var $view = $('#visview_' + that.activeViewDiv);
             $view.css(attr, val);
-            // Update background-xxx if changed background and vice versa
-            if (attr.match(/^background-/)) {
-                $('#inspect_view_css_background').val($view.css('background'));
-            } else if (attr === 'background') {
-                $('.vis-inspect-view-css').each(function () {
-                    var attr = $(this).attr('id').slice(17);
-                    if (attr.match(/^background-/)) {
-                        $(this).val($view.css(attr));
-                    }
-                });
-            }
 
-            if (!that.views[that.activeView].settings.style) that.views[that.activeView].settings.style = {};
+            if (!that.views[that.activeView].settings.style) {
+                that.views[that.activeView].settings.style = {};
+            }
             that.views[that.activeView].settings.style[attr] = val;
             that.save();
         }).keyup(function () {
             $(this).trigger('change');
+        }).each(function () {
+            var options = $(this).data('options');
+            if (options) {
+                var values = options.split(';');
+                $(this).autocomplete({
+                    minLength: 0,
+                    source: function (request, response) {
+                        var _data = $.grep(values, function (value) {
+                            return value.substring(0, request.term.length).toLowerCase() === request.term.toLowerCase();
+                        });
+
+                        response(_data);
+                    },
+                    select: function (event, ui) {
+                        $(this).val(ui.item.value);
+                        $(this).trigger('change', ui.item.value);
+                    }
+                }).focus(function () {
+                    // Show dropdown menu
+                    $(this).autocomplete('search', '');
+                });
+            }
         });
 
         $('.vis-inspect-view').change(function () {
@@ -544,7 +604,7 @@ vis = $.extend(true, vis, {
             // Allow: backspace, delete, tab, escape, enter and .
             if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
                 // Allow: Ctrl+A, Command+A
-                (e.keyCode == 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
+                (e.keyCode === 65 && ( e.ctrlKey === true || e.metaKey === true ) ) ||
                 // Allow: home, end, left, right, down, up
                 (e.keyCode >= 35 && e.keyCode <= 40)) {
                 // let it happen, don't do anything
@@ -4563,17 +4623,30 @@ vis = $.extend(true, vis, {
             $('.view-select-tab').removeClass('ui-tabs-active ui-state-active');
             $('#view_tab_' + view).addClass('ui-tabs-active ui-state-active');
 
+            if (that.views[view] && that.views[view].settings) {
+                $('#inspect_view_css_only_background').prop('checked', that.views[view].settings.useBackground);
+            }
+            that.editShowHideViewBackground(view, true);
+
             // View CSS Inspector
             $('.vis-inspect-view-css').each(function () {
                 var $this = $(this);
                 var attr = $this.attr('id').slice(17);
-                var css = $('#visview_' + viewDiv).css(attr);
-                $this.val(css);
+
+                var css;
+                if (that.views[view] && that.views[view].settings && that.views[view].settings.style) {
+                    css = that.views[view].settings.style[attr];
+                    $this.val(css);
+                } else {
+                    css = $view.css(attr);
+                }
+                $this.val(css || '');
                 if (attr.match(/color$/)) {
                     $this.css('background-color', css || '');
                     that._editSetFontColor($this.attr('id'));
                 }
             });
+
             var $themeSelect = $('#inspect_view_theme');
             if (this.views[view] && this.views[view].settings) {
                 $('.vis-inspect-view').each(function () {

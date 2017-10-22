@@ -181,7 +181,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 1.0.3 (2017-10-20)
+## Changelog### 1.0.4 (2017-10-22)
+* (bluefox) Add autocomplete for view CSS options
+* (bluefox) change edit of view CSS background options
+
+### 1.0.3 (2017-10-20)
 * (bluefox) Fix parse of invalid bindings
 * (bluefox) add moment.js
 
