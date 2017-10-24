@@ -610,7 +610,7 @@ $.extend(systemDictionary, {
     "signals-text-class-2": {"en": "Classes [2]",       "de": "Klassen [2]",           "ru": "Классы [2]"},
 
 
-    "group_last_change":    {"en": "Show last change",  "de": "Zeige lätze Änderung",   "ru": "Показать последнее изменение"},
+    "group_last_change":    {"en": "Show last change",  "de": "Zeige letzte Änderung",  "ru": "Показать последнее изменение"},
     "lc-oid":               {"en": "Object ID",         "de": "Objekt ID",              "ru": "ID объекта"},
     "lc-type":              {"en": "Type",              "de": "Typ",                    "ru": "Тип"},
     "lc-is-interval":       {"en": "Interval",          "de": "Intervall",              "ru": "Интервал"},
