@@ -1,10 +1,15 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "1.0.4",
+        "version": "1.0.5",
         "title":                    "iobroker Visualisation",
         "news": {
-			"1.0.4": {
+			"1.0.5": {
+              "en":                 "show number of datapoints in every project",
+              "de":                 "Zeige die Anzahl von Datenpunkten in jedem Projekt",
+              "ru":                 "Показывет количество используемых данных в каждом проекте"
+            },
+            "1.0.4": {
               "en":                 "Add autocomplete for view CSS options\nchange edit of view CSS background options",
               "de":                 "Automatische Vervollständigung für View-CSS-Optionen hinzufügen\nÄndern der CSS-Hintergrundoptionen für View",
               "ru":                 "Добавлено автозаполнение для CSS опций страницы\nИзменение редактирования background CSS страницы"
@@ -100,6 +105,7 @@
         "restartAdapters": [
             "vis"
         ],
+        "serviceStates":            "lib/states.js",
         "singleton":                true,
         "type": "visualization",
 		"highlight":                true,

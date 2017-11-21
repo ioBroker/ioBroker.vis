@@ -181,7 +181,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
-## Changelog### 1.0.4 (2017-10-22)
+## Changelog
+### 1.0.5 (2017-11-19)
+* (bluefox) show number of datapoints in every project
+
+### 1.0.4 (2017-10-22)
 * (bluefox) Add autocomplete for view CSS options
 * (bluefox) change edit of view CSS background options
 
