@@ -631,7 +631,7 @@ $.extend(systemDictionary, {
     "lc-border-radius":     {"en": "border-radius",     "de": "border-radius",          "ru": "border-radius"},
     "lc-padding":           {"en": "padding",           "de": "padding",                "ru": "padding"},
     "lc-zindex":            {"en": "zindex",            "de": "zindex",                 "ru": "zindex"},
-    "last-change":          {"en": "last change",       "de": "lätze Änderung",         "ru": "посл. изменение"},
+    "last-change":          {"en": "last change",       "de": "letze Änderung",         "ru": "посл. изменение"},
     "middle":               {"en": "middle",            "de": "Mitte",                  "ru": "в середине"},
 
     "Global":               {"en": "Global",            "de": "Global",                "ru": "Общая"},
