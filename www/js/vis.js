@@ -321,7 +321,7 @@ var vis = {
         this.signals     = result.signals;
         this.lastChanges = result.lastChanges;
 
-        return {IDs: result.IDs, byViews: result.views};
+        return {IDs: result.IDs, byViews: result.byViews};
     },
     getWidgetGroup:     function (view, widget) {
         return getWidgetGroup(this.views, view, widget);
