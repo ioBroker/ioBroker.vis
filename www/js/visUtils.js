@@ -532,6 +532,6 @@ function getUsedObjectIDs(views, isByViews) {
     return {IDs: IDs, byViews: _views, visibility: visibility, bindings: bindings, lastChanges: lastChanges, signals: signals};
 }
 
-if (module && module.parent) {
+if (typeof module !== 'undefined' && module.parent) {
     module.exports.getUsedObjectIDs = getUsedObjectIDs;
 }
