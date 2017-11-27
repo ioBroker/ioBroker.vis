@@ -79,7 +79,7 @@ $.extend(systemDictionary, {
     "Do not show again":    {"en": "Do not show again", "de": "Nicht mehr zeigen",      "ru": "Больше не показывать"},
     'Confirm widget deletion': {
         'en': 'Confirm widget deletion',
-        'de': 'Bestätigung',
+        'de': 'Löschen bestätigen',
         'ru': 'Подтвердите'
     },
     'Widget copied to view %s': {
@@ -89,17 +89,17 @@ $.extend(systemDictionary, {
     },
     'Really delete view %s?': {
         'en': 'Really delete view %s?',
-        'de': 'Wirklich View "%s" löschen?',
+        'de': 'View "%s" wirklich löschen?',
         'ru': 'Вы действительно хотите удалить страницу %s?'
     },
     'Do you want delete %s widgets?': {
         'en': 'Do you want delete %s widgets?',
-        'de': 'Wirklich %s Widgets löschen?',
+        'de': '%s Widgets wirklich löschen?',
         'ru': 'Вы действительно хотите удалить %s элемента(ов)?'
     },
     'Do you want delete widget %s?': {
         'en': 'Do you want delete widget %s?',
-        'de': 'Wirklich %s Widget löschen?',
+        'de': '%s Widget wirklich löschen?',
         'ru': 'Вы действительно хотите удалить элемент %s?'
     },
     'Hide widget description': {
@@ -109,19 +109,19 @@ $.extend(systemDictionary, {
     },
     "Changes are not saved!. Continue?": {
         "en": "Changes are not saved!. Continue?",
-        "de": "Änderungen sind nicht gespeichert!. Weitermachen?",
+        "de": "Änderungen sind nicht gespeichert! Weitermachen?",
         "ru": "Изменения не сохранены!. Продолжить?"
     },
     'Is hide':              {'en': 'Is hide',           'de': 'Verbergen',              'ru': 'Скрыть'},
     'User defined':         {'en': 'User defined',      'de': 'Vom Anwender definiert', 'ru': 'Пользовательское'},
     'Resolution':           {'en': 'Resolution:',       'de': 'Auflösung:',             'ru': 'Разрешение:'},
-    'widget_doc':           {'en': 'Widget help',       'de': 'Widgethilfe',            'ru': 'Помощь'},
+    'widget_doc':           {'en': 'Widget help',       'de': 'Widget-Hilfe',            'ru': 'Помощь'},
     'Add Widget:':          {'en': 'Add Widget:',       'de': 'Widget einfügen:',       'ru': 'Добавить элемент:'},
     'Inspecting Widget:':   {'en': 'Inspecting Widget:', 'de': 'Widget inspizieren:',   'ru': 'Редактировать элемент:'},
     'Widget Attributes:':   {'en': 'Widget Attributes:', 'de': 'Widget-Eigenschaften:', 'ru': 'Свойства элемента:'},
     'filterkey':            {'en': 'Filter key',        'de': 'Filterwort',             'ru': 'Фильтр'},
     'views':                {'en': 'Show in views',     'de': 'Zeige in Views',         'ru': 'Показать на страницах'},
-    'Background class':     {'en': 'Background class:', 'de': 'Hintergrundklasse:',     'ru': 'CSS класс фона:'},
+    'Background class':     {'en': 'Background class:', 'de': 'Hintergrund-Klasse:',    'ru': 'CSS класс фона:'},
     'Background':           {'en': 'Background:',       'de': 'Hintergrund:',           'ru': 'CSS класс фона:'},
     'Webseite':             {'en': 'Web link',          'de': 'Webseite',               'ru': 'Веб сайт'},
     'none selected':        {'en': 'none selected',     'de': 'nichts selektiert',      'ru': 'ничего не выбрано'},
@@ -129,11 +129,11 @@ $.extend(systemDictionary, {
     'User name':            {'en': 'User name',         'de': 'Anwendername',           'ru': 'Логин'},
     'Password':             {'en': 'Password',          'de': 'Kennwort',               'ru': 'Пароль'},
     'Sign in':              {'en': 'Sign in',           'de': 'Anmelden',               'ru': 'Войти'},
-    'Check all':            {'en': 'Check all',         'de': 'Alle selektieren',       'ru': 'Выбрать все'},
-    'Uncheck all':          {'en': 'Uncheck all',       'de': 'Alle deselektieren',     'ru': 'Убрать все'},
+    'Check all':            {'en': 'Check all',         'de': 'Alle auswählen',         'ru': 'Выбрать все'},
+    'Uncheck all':          {'en': 'Uncheck all',       'de': 'Alle abwählen',          'ru': 'Убрать все'},
     'Select options':       {'en': 'Select options',    'de': 'Selekteingensch.',       'ru': 'Свойства выбора'},
     'Änderungs-Historie':   {'en': 'Change log',        'de': 'Änderungs-Historie:',    'ru': 'Список изменений'},
-    'invalid JSON':         {'en': 'Invalid JSON',      'de': 'Invalid JSON',           'ru': 'Неправильный формат'},
+    'invalid JSON':         {'en': 'Invalid JSON',      'de': 'Ungültige JSON',         'ru': 'Неправильный формат'},
     'Do not ask again':     {'en': 'Don\'t ask again',  'de': 'Nicht mehr fragen',      'ru': 'Больше не спрашивать'},
     'import':               {'en': 'Import view',       'de': 'View importieren',       'ru': 'Импорт страницы'},
     'export view':          {'en': 'Export view',       'de': 'View exportieren',       'ru': 'Экспорт страницы'},
@@ -141,7 +141,7 @@ $.extend(systemDictionary, {
     'export widgets title': {'en': 'Export widgets (Ctrl+A, Ctrl+C)', 'de': 'Widgets exportieren (Strg+A, Strg+C)', 'ru': 'Экспорт элементов (Ctrl+A, Ctrl+C)'},
     'import view':          {'en': 'Import view',       'de': 'View importieren',       'ru': 'Импорт страницы'},
     'export views':         {'en': 'Export views',      'de': 'View exportieren',       'ru': 'Экспорт страницы'},
-    'import views':         {'en': 'Import views',      'de': 'View importieren',       'ru': 'Импорт страницы'},
+    'import views':         {'en': 'Import views',      'de': 'Views importieren',      'ru': 'Импорт страницы'},
     "export widgets":       {"en": "Export widgets",    "de": "Widgets Exportieren",    "ru": "Экспорт элементов"},
     "import widgets":       {"en": "Import widgets",    "de": "Widgets Importieren",    "ru": "Импорт элементов"},
     "View name: ":          {"en": "View name: ",       "de": "Viewname: ",             "ru": "Имя страницы: "},
@@ -152,7 +152,7 @@ $.extend(systemDictionary, {
         "ru": '<div class="ui-icon ui-icon-locked" style="width: 15px;height: 13px;display:inline-block"></div>Не выбирать'
     },
     'clear cached views':   {'en': 'Clear views from cache', 'de': 'Views aus Browser-Cache löschen', 'ru': 'Очистить страницы из броузера'},
-    'Select object ID':     {"en": "Select object ID",  "de": "Id vom Objekt auswählen", "ru": "Выбрать ID объекта"},
+    'Select object ID':     {"en": "Select object ID",  "de": "ID des Objekts auswählen", "ru": "Выбрать ID объекта"},
     'Select image':         {"en": "Select image",      "de": "Bild auswählen",         "ru": "Выбрать изображение"},
     "all":                  {"en": "All",               "de": "Alle",                   "ru": "Все"},
     "Copy":                 {"en": "Copy",              "de": "Kopieren",               "ru": "Скопировать"},
@@ -160,10 +160,10 @@ $.extend(systemDictionary, {
     "Delete":               {"en": "Delete",            "de": "Löschen",                "ru": "Удалить"},
     'from':                 {"en": "From",              "de": "von",                    "ru": "Выбрать изображение"},
     'lc':                   {"en": "Last change",       "de": "Letzte Änderung",        "ru": "Последнее изменение"},
-    'ts':                   {"en": "Time stamp",        "de": "Zeitstämpel",            "ru": "Время"},
+    'ts':                   {"en": "Time stamp",        "de": "Zeitstempel",            "ru": "Время"},
     'ack':                  {"en": "Acknowledged",      "de": "Bestätigt",              "ru": "Подтверждено"},
     'expand':               {"en": "Expand all nodes",  "de": "Alle ausklappen",        "ru": "Развернуть все узлы"},
-    'collapse':             {"en": "Collapse all nodes", "de": "Alle zusammenklappen",  "ru": "Свернуть все узлы"},
+    'collapse':             {"en": "Collapse all nodes", "de": "Alle zuklappen",        "ru": "Свернуть все узлы"},
     'refresh':              {"en": "Refresh tree/list", "de": "Baum neu aufbauen",      "ru": "Построить дерево заново"},
     'edit':                 {"en": "Edit",              "de": "Ändern",                 "ru": "Изменить"},
     'ok':                   {"en": "Ok",                "de": "Ok",                     "ru": "Ok"},
@@ -202,7 +202,7 @@ $.extend(systemDictionary, {
     },
     'The view with the same name yet exists!': {
         'en': 'The view with the same name yet exists!',
-        'de': 'Ein View mit diesem Namen existiert bereits!',
+        'de': 'Eine View mit diesem Namen existiert bereits!',
         'ru': 'The view with the same name yet exists!'
     },
     'Please enter the name for the new view!': {
@@ -238,7 +238,7 @@ $.extend(systemDictionary, {
     },
     'icons8': {
         'en': 'In this project are used the icons from <a href="https://icons8.com">Icons8 resource</a>.',
-        'de': 'In diesem Projekt die Bilder vom <a href="https://icons8.com">Icons8 resource</a> sind benutzt.',
+        'de': 'In diesem Projekt werden Bilder von <a href="https://icons8.com">Icons8 resource</a> genutzt.',
         'ru': 'В этом проекте используются иконки с ресурса <a href="https://icons8.com">Icons8</a>.'
     },
     'group_fixed':          {'en': 'General',           'de': 'Generell',               'ru': 'Фиксированные'},
@@ -259,7 +259,7 @@ $.extend(systemDictionary, {
     "Active View:":         {"en": "Active View:",      "de": "Aktiver View:",          "ru": "Выбранная страница:"},
     "To View:":             {"en": "To View:",          "de": "In View:",               "ru": "На страницу:"},
     "Active Widget:":       {"en": "Active widget:",    "de": "Aktives Widget:",        "ru": "Выбранный элемент:"},
-    "Resolution:":          {"en": "Resolution: ",      "de": "Auflöung: ",             "ru": "Разрешение экрана: "},
+    "Resolution:":          {"en": "Resolution: ",      "de": "Auflösung: ",             "ru": "Разрешение экрана: "},
     "Widget":               {"en": "Widget",            "de": "Widget",                 "ru": "Элемент"},
     "View":                 {"en": "View",              "de": "View",                   "ru": "Страница"},
     "Default:":             {"en": "Default:",          "de": "Default:",               "ru": "По умолчанию:"},
@@ -269,15 +269,15 @@ $.extend(systemDictionary, {
     "Hint":                 {"en": "Hint",              "de": "Hinweis",                "ru": "Сообщение"},
     "filter_key_tooltip": {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
-              "Many filter words can be set deivided by comma.",
-        "de": "Falls gesetzt nur die Widgets mit diesem Filterwort werden angezeig.\x0A" +
-              "Es können mehere Filterworte mit Komma geteilt gesetzt werden.",
+              "Many filter words can be set devided by comma.",
+        "de": "Falls gesetzt, nur die Widgets mit diesem Filterwort nngezeigen.\x0A" +
+              "Mehrere, durch Komma geteilte Filterworte können gesetzt werden.",
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
               "Можно задать несколько ключей через запятую"
     },
     "templates_help": {
         "en": "We have been working hard on it and just want to say, that <b>possible</b> this feature will not be for free, but available for small fee. All created widgets will work, just for the creation and usage of the new templates could be not free.",
-        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass diese Funktion in der Zukunft <b>möglich</b> nicht kostenlos sein wird und für kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
+        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass diese Funktion in der Zukunft <b>möglicherweise</b> nicht kostenlos sein und gegen eine kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht gratis sein.",
         "ru": "Мы упорно работали над этим и просто хотим сказать, что <b>возможно</b> эта функция в будущем не будет бесплатной и будет доступна за небольшую плату. Все созданные виджеты будут работать, только создание и использование новых шаблонов может быть не бесплатными."
     },
     "Switch to runtime in this window": {
@@ -302,12 +302,12 @@ $.extend(systemDictionary, {
     "Change log":           {"en": "Change log",        "de": "Änderungen",             "ru": "Изменения"},
     "CC BY-NC License 4.0": {"en": "CC BY-NC License 4.0", "de": "CC BY-NC Lizenz 4.0", "ru": "CC BY-NC лицензия 4.0"},
     "not defined":          {"en": "not defined",       "de": "nicht definiert",        "ru": "не задано"},
-    "PgUp":                 {"en": "PgUp",              "de": "BildOben",               "ru": "PgUp"},
-    "Prev. View":           {"en": "Previous view",     "de": "Prev. View",             "ru": "Предыдущая страница"},
-    "PgDown":               {"en": "PgDown",            "de": "BildUnten",              "ru": "PgDown"},
-    "Move Widget 1px":      {"en": "Move Widget 1px",   "de": "Schiebe Widget auf 1px", "ru": "Сдвинуть элемент на 1 пиксель"},
+    "PgUp":                 {"en": "PgUp",              "de": "BildRauf",               "ru": "PgUp"},
+    "Prev. View":           {"en": "Previous view",     "de": "Vorherige View",          "ru": "Предыдущая страница"},
+    "PgDown":               {"en": "PgDown",            "de": "BildRunter",              "ru": "PgDown"},
+    "Move Widget 1px":      {"en": "Move Widget 1px",   "de": "Schiebe Widget um 1px", "ru": "Сдвинуть элемент на 1 пиксель"},
     "Arrow Keys":           {"en": "Arrow Keys",        "de": "Pfeiltasten",            "ru": "Стрелки"},
-    "Move Widget 10px":     {"en": "Move Widget 10px",  "de": "Schiebe Widget auf 10px", "ru": "Сдвинуть элемент на 10 пикселей"},
+    "Move Widget 10px":     {"en": "Move Widget 10px",  "de": "Schiebe Widget um 10px", "ru": "Сдвинуть элемент на 10 пикселей"},
     "Ctrl / CMD":           {"en": "Ctrl / CMD",        "de": "Strg / CMD", "           ru": "Ctrl / CMD"},
     "Show develop ribbon":  {"en": "Show develop ribbon", "de": "Zeige Entwicklerpanel", "ru": "Показать панель разработчика"},
     "Full screen":          {"en": "Full screen",       "de": "Vollbild",               "ru": "Полный экран"},
@@ -317,12 +317,12 @@ $.extend(systemDictionary, {
     "Align widgets:":       {"en": "Align widgets:",    "de": "Widgets ausrichten:",    "ru": "Выровнять элементы:"},
     "Undo":                 {"en": "Undo",              "de": "Undo",                   "ru": "Отменить последние действия"},
     "Add new view":         {"en": "Add new view",      "de": "Neue View einfügen",     "ru": "Добавить новую страницу"},
-    "Delete actual view":   {"en": "Delete actual view", "de": "Löschen aktuelle View", "ru": "Удалить текущую страницу"},
+    "Delete actual view":   {"en": "Delete actual view", "de": "Lösche aktuelle View",  "ru": "Удалить текущую страницу"},
     "Rename view":          {"en": "Rename view",       "de": "View umbennenen",        "ru": "Переименовать страницу"},
     "Copy view":            {"en": "Copy view",         "de": "View kopieren",          "ru": "Скопировать страницу"},
     "Delete widget":        {"en": "Delete widget",     "de": "Widget löschen",         "ru": "Удалить элемент"},
     "Copy widget":          {"en": "Copy widget",       "de": "Widget kopieren",        "ru": "Скопировать элемент"},
-    "Help about widget":    {"en": "Help about widget", "de": "Hilfe über Widget",      "ru": "Помощь к элементу"},
+    "Help about widget":    {"en": "Help about widget", "de": "Hilfe zum Widget",      "ru": "Помощь к элементу"},
     "Align horizontal/left":    {"en": "Align horizontal/left",     "de": "Ausrichten waagerecht links",            "ru": "Выровнять по горизонтали налево"},
     "Align horizontal/right":   {"en": "Align horizontal/right",    "de": "Ausrichten waagerecht rechts",           "ru": "Выровнять по горизонтали направо"},
     "Align vertical/top":       {"en": "Align vertical/top",        "de": "Ausrichten senkrecht oben",              "ru": "Выровнять по вертикали наверх"},
@@ -337,7 +337,7 @@ $.extend(systemDictionary, {
     "Available for all:":   {"en": "Available for all:", "de": "Für alle Anwender:",    "ru": "Доступно для всех:"},
     "readOnly":             {"en": "read only",         "de": "nur lesend",             "ru": "только для чтения"},
     "New project...":       {"en": "New project...",    "de": "Neues Projekt...",       "ru": "Новый проект..."},
-    "Create new project":   {"en": "Create new project", "de": "Neues Projekt",         "ru": "Создать новый проект"},
+    "Create new project":   {"en": "Create new project", "de": "Neues Projekt erstellen", "ru": "Создать новый проект"},
     "No connection":        {"en": "No connection",     "de": "Verbindungsfehler",      "ru": "Связь прервана"},
     "Settings...":          {"en": "Settings...",       "de": "Einstellungen...",       "ru": "Настройки..."},
     "Project&nbsp;name:":   {"en": "Project&nbsp;name:", "de": "Projektname:",          "ru": "Имя&nbsp;нового&nbsp;проекта:"},
@@ -349,7 +349,7 @@ $.extend(systemDictionary, {
     "Kb":                   {"en": "Kb",                "de": "Kb",                     "ru": "Кб"},
     "Mb":                   {"en": "Kb",                "de": "Mb",                     "ru": "Мб"},
     "Export normal":        {"en": "Export (normal)",   "de": "Exportieren (normal)",   "ru": "Экспорт (обычный)"},
-    "Export anonymized":    {"en": "Export (anonymized)", "de": "Exportieren (anonymized)", "ru": "Экспорт (анонимный)"},
+    "Export anonymized":    {"en": "Export (anonymized)", "de": "Exportieren (anonymisiert)", "ru": "Экспорт (анонимный)"},
     "Import":               {"en": "Import",            "de": "Import",                 "ru": "Импорт"},
     "Scripts":              {"en": "Scripts",           "de": "Skripte",                "ru": "Скрипты"},
     "Find:":                {"en": "Find:",             "de": "Suchen:",                "ru": "Найти:"},
@@ -376,37 +376,37 @@ $.extend(systemDictionary, {
     "Only background":      {"en": "Only background",   "de": "Nur background",         "ru": "Только background"},
     "Use inside of group groupAttr%s": {
         "en": "Use inside of group groupAttr%s",
-        "de": "Benutze groupAttr%s innerhalb von der Gruppe",
+        "de": "Benutze groupAttr%s innerhalb der Gruppe",
         "ru": "Используй в группе groupAttr%s"
     },
     'Project "%s" was succseffully imported. Open it?': {
         "en": 'Project "%s" was succseffully imported. Open it?',
-        "de": 'Projekt "%s" war erfolgreich importiert. Aufmachen?',
+        "de": 'Projekt "%s" wurde erfolgreich importiert. Öffnen?',
         "ru": 'Проект "%s" был успешно импортирован. Открыть?'
     },
     "Drop files here or click to select one": {
         "en": "Drop files here or click to select one...",
-        "de": "Dateien hereinziehen oder klicken um mit Dialog auszuwählen...",
+        "de": "Dateien hereinziehen oder klicken, um mit Dialog auszuwählen...",
         "ru": "Перетащите файл сюда или нажмите, что бы выбрать..."
     },
     "Invalid file extenstion!": {
         "en": "Invalid file extenstion!",
-        "de": "Invalid Dateiextenstion!",
+        "de": "Ungültige Dateiendung!",
         "ru": "Неправильный тип файла!"
     },
     "Reload if sleep longer than:": {
         "en": "Reload if sleep longer than:",
-        "de": "Neuladen falls keine Verbindung länger als:",
+        "de": "Neuladen, falls keine Verbindung länger als:",
         "ru": "Перезагружать если нет соединения дольше:"
     },
     "Destroy inactive view after:": {
         "en": "Destroy inactive view:",
-        "de": "Löschen aus RAM nicht aktive Views:",
+        "de": "Lösche inaktive Views aus RAM:",
         "ru": "Стирать из памяти неактивные страницы:"
     },
     "Changes are not saved. Are you sure?": {
         "en": "Changes are not saved. Are you sure?",
-        "de": "Änderungen sind nicht gespeichert. Sicher?",
+        "de": "Änderungen wurden nicht gespeichert. Sicher?",
         "ru": "Изменения не сохранены. Вы уверены?"
     },
     "never":                {"en": "never",             "de": "nie",                    "ru": "никогда"},
@@ -418,7 +418,7 @@ $.extend(systemDictionary, {
     "30 seconds":           {"en": "30 seconds",        "de": "30 Sekunden",            "ru": "30 секунд"},
     "1 minute":             {"en": "1 minute",          "de": "1 Minute",               "ru": "1 минута"},
     "5 minutes":            {"en": "5 minutes",         "de": "5 Minuten",              "ru": "5 минут"},
-    "10 minutes":           {"en": "10 minutes",        "de": "10 minMinutenutes",      "ru": "10 минут"},
+    "10 minutes":           {"en": "10 minutes",        "de": "10 Minuten",             "ru": "10 минут"},
     "30 minutes":           {"en": "30 minutes",        "de": "30 Minuten",             "ru": "30 минут"},
     "1 hour":               {"en": "1 hour",            "de": "1 Stunde",               "ru": "1 час"},
     "2 hours":              {"en": "2 hours",           "de": "2 Stunden",              "ru": "2 часа"},
@@ -429,7 +429,7 @@ $.extend(systemDictionary, {
     "VIS Settings":         {"en": "Project settings",  "de": "Projekteinstellungen",   "ru": "Настройки проекта"},
     //"Änderungen":           {"en": "Changes",           "de": "Änderungen",             "ru": "Изменения"},
     "Reconnect interval:":  {"en": "Reconnect interval:", "de": "Wiederverbindungsintervall:",  "ru": "Интервал при установке соединения:"},
-    "Dark reconnect screen:": {"en": "Dark reconnect screen:", "de": "Dunkles Reconnect-Screen:", "ru": "Тёмный экран при соединении:"},
+    "Dark reconnect screen:": {"en": "Dark reconnect screen:", "de": "Dunkler Reconnect-Screen:", "ru": "Тёмный экран при соединении:"},
     "filter":               {"en": "Filter",            "de": "Filter",                 "ru": "Фильтр"},
     "navigation":           {"en": "Navigation",        "de": "Navigation",             "ru": "Навигация"},
     "static":               {"en": "Static",            "de": "Statisch",               "ru": "Статичное"},
@@ -443,35 +443,35 @@ $.extend(systemDictionary, {
     "json":                 {"en": "JSON",              "de": "JSON",                   "ru": "JSON"},
     "table":                {"en": "Table",             "de": "Tabelle",                "ru": "Таблица"},
     "tools":                {"en": "Tools",             "de": "Hilfsmittel",            "ru": "Инструменты"},
-    "bool":                 {"en": "bool",              "de": "bool", "ru": "bool"},
-    "button":               {"en": "button",            "de": "button", "ru": "button"},
-    "dimmer":               {"en": "dimmer",            "de": "dimmer", "ru": "dimmer"},
-    "temperature":          {"en": "temperature",       "de": "temperature", "ru": "temperature"},
-    "window":               {"en": "window",            "de": "window", "ru": "window"},
-    "shutter":              {"en": "shutter",           "de": "shutter", "ru": "shutter"},
-    "door":                 {"en": "door",              "de": "door", "ru": "door"},
-    "lock":                 {"en": "lock",              "de": "lock", "ru": "lock"},
-    "checkbox":             {"en": "checkbox",          "de": "checkbox", "ru": "checkbox"},
-    "number":               {"en": "number",            "de": "number", "ru": "number"},
-    "knob":                 {"en": "knob",              "de": "knob", "ru": "knob"},
-    "dialog":               {"en": "dialog",            "de": "dialog", "ru": "dialog"},
-    "valve":                {"en": "valve",             "de": "valve", "ru": "valve"},
-    "camera":               {"en": "camera",            "de": "camera", "ru": "camera"},
-    "keyboard":             {"en": "keyboard",          "de": "keyboard", "ru": "keyboard"},
-    "slider":               {"en": "slider",            "de": "slider", "ru": "slider"},
-    "heating":              {"en": "heating",           "de": "heating", "ru": "heating"},
-    "iframe":               {"en": "iframe",            "de": "iframe", "ru": "iframe"},
-    "project":              {"en": "project",           "de": "project", "ru": "project"},
-    "value":                {"en": "value",             "de": "Wert",           "ru": "Значение"},
-    "control":              {"en": "control",           "de": "Steuerung",      "ru": "Управление"},
+    "bool":                 {"en": "bool",              "de": "bool",                   "ru": "bool"},
+    "button":               {"en": "button",            "de": "button",                 "ru": "button"},
+    "dimmer":               {"en": "dimmer",            "de": "dimmer",                 "ru": "dimmer"},
+    "temperature":          {"en": "temperature",       "de": "temperature",            "ru": "temperature"},
+    "window":               {"en": "window",            "de": "window",                 "ru": "window"},
+    "shutter":              {"en": "shutter",           "de": "shutter",                "ru": "shutter"},
+    "door":                 {"en": "door",              "de": "door",                   "ru": "door"},
+    "lock":                 {"en": "lock",              "de": "lock",                   "ru": "lock"},
+    "checkbox":             {"en": "checkbox",          "de": "checkbox",               "ru": "checkbox"},
+    "number":               {"en": "number",            "de": "number",                 "ru": "number"},
+    "knob":                 {"en": "knob",              "de": "knob",                   "ru": "knob"},
+    "dialog":               {"en": "dialog",            "de": "dialog",                 "ru": "dialog"},
+    "valve":                {"en": "valve",             "de": "valve",                  "ru": "valve"},
+    "camera":               {"en": "camera",            "de": "camera",                 "ru": "camera"},
+    "keyboard":             {"en": "keyboard",          "de": "keyboard",               "ru": "keyboard"},
+    "slider":               {"en": "slider",            "de": "slider",                 "ru": "slider"},
+    "heating":              {"en": "heating",           "de": "heating",                "ru": "heating"},
+    "iframe":               {"en": "iframe",            "de": "iframe",                 "ru": "iframe"},
+    "project":              {"en": "project",           "de": "project",                "ru": "project"},
+    "value":                {"en": "value",             "de": "Wert",                   "ru": "Значение"},
+    "control":              {"en": "control",           "de": "Steuerung",              "ru": "Управление"},
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
-        "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
+        "de": "Ladevorgang wurde angehalten, da nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
         "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз."
     },
     "Widgets filter. Double click to clear.": {
         "en": "Widgets filter. Double click to clear.",
-        "de": "Widgets-Filter. Doppelklick um das Feld zu löschen.",
+        "de": "Widgets-Filter. Doppelklick, um das Feld zu löschen.",
         "ru": "Фильтр элементов. Что бы очистить поле ввода - двойной щелчок."
     },
     "Cannot save file \"%s\": ": {
@@ -495,13 +495,13 @@ $.extend(systemDictionary, {
 
     "Configuration not saved.": {
         "en": "Project was not saved yet.",
-        "de": "Projekt ist noch nicht gespeichert.",
+        "de": "Projekt wurde noch nicht gespeichert.",
         "ru": "Проект не сохранён."
     },
     "Clipboard:":           {"en": "Clipboard:",        "de": "Zwischenablage:",        "ru": "Буфер обмена:"},
-    "Click to hide":        {"en": "Click to hide",     "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
+    "Click to hide":        {"en": "Click to hide",     "de": "Anklicken, um zu verbergen", "ru": "Нажать, что бы скрыть"},
     "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
-    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget herumschieben", "ru": "Дективировать перенос виджетов мышкой"},
+    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget-Verschieben", "ru": "Дективировать перенос виджетов мышкой"},
     "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp",     "ru": "Показать тип элемента"},
     "Small widgets":        {"en": "Small widgets",     "de": "Kleine Widgets",         "ru": "Показать маленькие элементы"},
     "to group":             {"en": "Group",             "de": "Gruppieren",             "ru": "Объеденить"},
@@ -511,7 +511,7 @@ $.extend(systemDictionary, {
     "%s widgets":           {"en": "%s widgets",        "de": "%s Widgets",             "ru": "%s элемента(ов)"},
     "Widget(s) copied to view %s": {
         "en": "Widget(s) copied to view %s",
-        "de": "Widget(s) wurden zur Seite %s kopiert",
+        "de": "Widget(s) wurden auf Seite %s kopiert",
         "ru": "Элемент(а) скопированы на страницу %s"
     },
     "Select more than one widget and try again.": {
@@ -531,20 +531,20 @@ $.extend(systemDictionary, {
     "<":                    {"en": "<",                 "de": "<",                      "ru": "<"},
     ">":                    {"en": ">",                 "de": ">",                      "ru": ">"},
     "consist":              {"en": "consist",           "de": "bestehend aus",          "ru": "содержит"},
-    "not consist":          {"en": "not consist",       "de": "bestehend nicht aus",    "ru": "не содержит"},
+    "not consist":          {"en": "not consist",       "de": "nicht bestehend aus",    "ru": "не содержит"},
     "exist":                {"en": "exist",             "de": "existiert",              "ru": "существует"},
-    "not exist":            {"en": "not exist",         "de": "nicht existiert",        "ru": "не существует"},
+    "not exist":            {"en": "not exist",         "de": "existiert nicht",        "ru": "не существует"},
     "group_visibility":     {"en": "Visibility",        "de": "Sichtbarkeit",           "ru": "Видимость"},
     "visibility-oid":       {"en": "Object ID",         "de": "Object ID",              "ru": "ID Объекта"},
     "visibility-oid_tooltip": {
         "en": "Depends on state of object with this ID,\x0Athe widget can be shown or hidden",
-        "de": "Abhängig von dem Zustand des Objektes mit\x0Adiesem ID kann Widget verborgen oder angezeigt sein.",
+        "de": "Abhängig vom Zustand des Objektes mit\x0Adieser ID kann Widget verborgen oder angezeigt werden.",
         "ru": "Элемент можно показать или скрыть\x0Aв зависимости от состояние объекта с таким ID"
     },
     "visibility-cond":      {"en": "Сondition",         "de": "Bedingung",              "ru": "Условие"},
     "visibility-cond_tooltip": {
         "en": "E.g. 'Value of Object ID' >= 'Value of condition'",
-        "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedienung'",
+        "de": "Z.B. 'Wert vom Objekt' >= 'Wert für die Bedienung'",
         "ru": "Например 'Значение объекта' >= 'Значения для условия"
     },
     "visibility-val":       {"en": "Value for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
@@ -638,12 +638,12 @@ $.extend(systemDictionary, {
     "Project":              {"en": "Project",           "de": "Projekt",               "ru": "Проект"},
     "Align width": {
         "en": "Align width. Press more time to get the desired width.",
-        "de": "Gleiche Breite. Mehrmals drücken um gewünschte Breite einzustellen.",
+        "de": "Gleiche Breite. Mehrmals drücken, um gewünschte Breite einzustellen.",
         "ru": "Одинаковая ширина. Нажать несколько раз для получения желаемой ширина"
     },
     "Align height": {
         "en": "Align height. Press more time to get the desired height.",
-        "de": "Gleiche Höhe. Mehrmals drücken um gewünschte Höhe einzustellen.",
+        "de": "Gleiche Höhe. Mehrmals drücken, um gewünschte Höhe einzustellen.",
         "ru": "Одинаковая высота. Нажать несколько раз для получения желаемой высоты"
     },
     "Find previous":        {"en": "Find previous",     "de": "Finde vorherige",        "ru": "Искать назад"},
@@ -657,12 +657,12 @@ $.extend(systemDictionary, {
     },
     "Popup window blocked!": {
         "en": "Popup window blocked!",
-        "de": "Popup-Fenster blokiert!",
+        "de": "Popup-Fenster blockiert!",
         "ru": "Всплывающее окно заблокировано!"
     },
     "Cannot open new window": {
         "en": "Cannot open new window",
-        "de": "Kann kein neues Fenster aufmachen",
+        "de": "Kann kein neues Fenster öffnen",
         "ru": "Не могу открыть новое всплывающее окно"
     },
     "License error! Please check logs for details.": {
@@ -780,7 +780,7 @@ $.extend(systemDictionary, {
     "gestures-swiping-delta":   {"en": "-delta",                "de": "-delta",                 "ru": "-дельта"},
     "gestures-swiping-delta_tooltip": {
         "en": "value gets changed after that many pixels movement",
-        "de": "Wert wird nach so viele Pixeln Bewegung verändert",
+        "de": "Wert wird nach so vielen Pixeln Bewegung verändert",
         "ru": "value gets changed after that many pixels movement"
     },
     "gestures-rotating-oid":    {"en": "rotating Object ID",    "de": "rotating Object ID",     "ru": "ID объекта при кручении"},
