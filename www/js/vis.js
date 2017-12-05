@@ -678,7 +678,10 @@ var vis = {
                 $view = $('#visview_' + viewDiv);
 
                 $view.css(that.views[view].settings.style);
-                if (that.views[view].settings.style.background_class) $view.addClass(that.views[view].settings.style.background_class);
+
+                if (that.views[view].settings.style.background_class) {
+                    $view.addClass(that.views[view].settings.style.background_class);
+                }
 
                 var id;
                 if (viewDiv !== view && that.editMode) {
@@ -1144,8 +1147,8 @@ var vis = {
                                                 } else {
                                                     $(this).html(evData.val);
                                                     $(this).css({
-                                                        left: parseInt(evData.x) - $(this).width() / 2 + 'px',
-                                                        top: parseInt(evData.y) - $(this).height() / 2 + 'px'
+                                                        left: parseInt(evData.x) - $(this).width()  / 2 + 'px',
+                                                        top:  parseInt(evData.y) - $(this).height() / 2 + 'px'
                                                     }).show();
                                                 }
                                             });

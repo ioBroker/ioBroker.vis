@@ -713,6 +713,18 @@ $.extend(systemDictionary, {
     "css_padding-top":      {"en": "padding-top",       "de": "padding-top",            "ru": "padding-top"},
     "css_padding-right":    {"en": "padding-right",     "de": "padding-right",          "ru": "padding-right"},
     "css_padding-bottom":   {"en": "padding-bottom",    "de": "padding-bottom",         "ru": "padding-bottom"},
+    "css_transform":        {"en": "transform",         "de": "transform",              "ru": "transform"},
+    "css_transform_tooltip": {
+        "en": "Transformation that affects an element's appearance\x0A" +
+            "Only visible, if widget is NOT selected.\x0A" +
+            "Examples: rotate(45deg) scale(0.5) skew(10deg)",
+        "de": "Transformation, die das Aussehen eines Elements beeinflusst\x0A" +
+            "Nur sichtbar, wenn das Widget NICHT ausgewählt ist.\x0A" +
+            "Beispiele: rotate(45deg) scale(0.5) skew(10deg)",
+        "ru": "Трансформация, которая влияет на внешний вид элемента\x0A" +
+            "Видно только, если виджет НЕ выбран.\x0A" +
+            "Примеры: rotate(45deg) scale(0.5) skew(10deg)"
+    },
     "css_margin-left":      {"en": "margin-left",       "de": "margin-left",            "ru": "margin-left"},
     "css_margin-top":       {"en": "margin-top",        "de": "margin-top",             "ru": "margin-top"},
     "css_margin-right":     {"en": "margin-right",      "de": "margin-right",           "ru": "margin-right"},

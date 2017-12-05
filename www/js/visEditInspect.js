@@ -412,7 +412,8 @@ vis = $.extend(true, vis, {
             var b;
             var g;
             var hsp;
-            var a = $('#' + element).css('background-color');
+            var $element = $('#' + element);
+            var a = $element.css('background-color');
             if (a.match(/^rgb/)) {
                 a = a.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d+)?))?\)$/);
                 r = a[1];
@@ -430,11 +431,13 @@ vis = $.extend(true, vis, {
                 0.114 * (b * b)
             );
             if (hsp > 127.5) {
-                $('#' + element).css('color', '#000000');
+                $element.css('color', '#000000');
             } else {
-                $('#' + element).css('color', '#FFFFFF');
+                $element.css('color', '#FFFFFF');
             }
-        }catch (err){}
+        } catch (err) {
+
+        }
     },
     editColor:          function (widAttr) {
         var that = this;
@@ -470,7 +473,7 @@ vis = $.extend(true, vis, {
     editViewName:       function (widAttr) {
         var views = [''];
         for (var v in this.views) {
-            if (v === '___settings') continue;
+            if (!this.views.hasOwnProperty(v) || v === '___settings') continue;
             views.push(v);
         }
 
@@ -511,7 +514,7 @@ vis = $.extend(true, vis, {
                         that.hideShowAttr(eff, true);
                     } else {
                         that.hideShowAttr(eff, false);
-                        $('#inspect_' + eff).val('').trigger('change');
+                        $elem.val('').trigger('change');
                     }
                 }
             }
@@ -543,7 +546,7 @@ vis = $.extend(true, vis, {
                 // Allow only numbers
                 $(this).on('keypress', function(e) {
                     var code = e.keyCode || e.charCode;
-                    return (code >= 48 && code <= 57) || (code == 110);
+                    return (code >= 48 && code <= 57) || (code === 110);
                 });
             }
         };
@@ -727,6 +730,7 @@ vis = $.extend(true, vis, {
         this.groups[group]['css_overflow-y'] = this.editSelect('css_overflow-y', ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'], true);
         this.groups[group].css_opacity       = {input: '<input type="text" id="inspect_css_opacity"/>'};
         this.groups[group].css_cursor        = this.editAutoComplete('css_cursor', ['', 'pointer', 'auto', 'alias', 'all-scroll', 'cell', 'context-menu', 'col-resize', 'copy', 'crosshair', 'default', 'e-resize', 'ew-resize', 'grab', 'grabbing', 'help', 'move', 'n-resize', 'ne-resize', 'nesw-resize', 'ns-resize', 'nw-resize', 'nwse-resize', 'no-drop', 'none', 'not-allowed', 'progress', 'row-resize', 's-resize', 'se-resize', 'sw-resize', 'text', 'vertical-text', 'w-resize', 'wait', 'zoom-in', 'zoom-out', 'initial', 'inherit']);
+        this.groups[group].css_transform     = {input: '<input type="text" id="inspect_css_transform"/>'};
 
         for (var attr in this.groups[group]) {
             if (!this.groups[group].hasOwnProperty(attr)) continue;
@@ -1619,21 +1623,26 @@ vis = $.extend(true, vis, {
 
             // Set flag, that value was modified
             if (diff) $this.data('different', false).removeClass('vis-edit-different');
+            var css = wdata.attr.substring(4);
+            var val = ($this.attr('type') === 'checkbox') ? $this.prop('checked') : $this.val();
 
             for (var i = 0; i < wdata.widgets.length; i++) {
                 if (wdata.css) {
-                    var css = wdata.attr.substring(4);
                     if (!that.views[wdata.view].widgets[wdata.widgets[i]].style) {
                         that.views[wdata.view].widgets[wdata.widgets[i]].style = {};
                     }
-                    var val = $this.val();
                     oldValue = that.views[wdata.view].widgets[wdata.widgets[i]].style[css];
                     that.views[wdata.view].widgets[wdata.widgets[i]].style[css] = val;
-                    var $widget = $('#' + wdata.widgets[i]);
-                    if (val !== '' && (css === 'left' || css === 'top')) {
-                        if (val.indexOf('%') === -1 && val.indexOf('px') === -1 && val.indexOf('em') === -1) val += 'px';
+                    if (css !== 'transform') {
+                        var $widget = $('#' + wdata.widgets[i]);
+                        if (val !== '' && (css === 'left' || css === 'top') &&
+                            (val.indexOf('%') === -1 && val.indexOf('px') === -1 && val.indexOf('em') === -1)) {
+                            $widget.css(css, val + 'px');
+                        } else {
+                            $widget.css(css, val);
+                        }
                     }
-                    $widget.css(css, val);
+
                     if (that.activeWidgets.indexOf(wdata.widgets[i]) !== -1) {
                         that.showWidgetHelper(viewDiv, view, wdata.widgets[i], true);
                     }
@@ -1642,30 +1651,24 @@ vis = $.extend(true, vis, {
                         that.reRenderWidgetEdit(viewDiv, view, wdata.widgets[i]);
                     }
                 } else {
-                    var _val;
-                    if ($this.attr('type') === 'checkbox') {
-                        _val = $this.prop('checked');
-                    } else {
-                        _val = $this.val();
-                    }
                     oldValue = that.widgets[wdata.widgets[i]].data[wdata.attr];
-                    that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = that.widgets[wdata.widgets[i]].data[wdata.attr] = _val;
+                    that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = that.widgets[wdata.widgets[i]].data[wdata.attr] = val;
                 }
 
                 // Some user adds ui-draggable and ui-resizable as class to widget.
                 // The result is DashUI tries to remove draggable and resizable properties and fails
                 if (wdata.attr === 'class') {
-                    var val = that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr];
-                    if (val.indexOf('ui-draggable') !== -1 || val.indexOf('ui-resizable') !== -1) {
-                        var vals = val.split(' ');
-                        val = '';
+                    var _val_ = that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr];
+                    if (_val_.indexOf('ui-draggable') !== -1 || _val_.indexOf('ui-resizable') !== -1) {
+                        var vals = _val_.split(' ');
+                        _val_ = '';
                         for (var j = 0; j < vals.length; j++) {
                             if (vals[j] && vals[j] !== 'ui-draggable' && vals[j] !== 'ui-resizable') {
-                                val += ((val) ? ' ' : '') + vals[j];
+                                _val_ += ((_val_) ? ' ' : '') + vals[j];
                             }
                         }
-                        that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = val;
-                        $this.val(val);
+                        that.views[wdata.view].widgets[wdata.widgets[i]].data[wdata.attr] = _val_;
+                        $this.val(_val_);
                     }
                 }
 
@@ -1679,8 +1682,8 @@ vis = $.extend(true, vis, {
                 var changed = false;
                 if (typeof wdata.onchange === 'function') {
                     if (wdata.css) {
-                        var css = wdata.attr.substring(4);
-                        changed = wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], oldValue) || false;
+                        var _css = wdata.attr.substring(4);
+                        changed = wdata.onchange.call(this, that.views[wdata.view].widgets[wdata.widgets[i]].style[_css], oldValue) || false;
                     } else {
                         changed = wdata.onchange.call(this, that.widgets[wdata.widgets[i]].data[wdata.attr], oldValue) || false;
                     }
@@ -1691,8 +1694,8 @@ vis = $.extend(true, vis, {
                     if (that.binds[widgetSet] && that.binds[widgetSet][wdata.onChangeWidget]) {
                         var _changed;
                         if (wdata.css) {
-                            var css = wdata.attr.substring(4);
-                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[css], css, true, oldValue);
+                            var __css = wdata.attr.substring(4);
+                            _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.views[wdata.view].widgets[wdata.widgets[i]].style[__css], __css, true, oldValue);
                         } else {
                             _changed = that.binds[widgetSet][wdata.onChangeWidget](wdata.widgets[i], wdata.view, that.widgets[wdata.widgets[i]].data[wdata.attr], wdata.attr, false, oldValue);
                         }
@@ -2167,6 +2170,21 @@ vis = $.extend(true, vis, {
                 $(this).prop('style').removeProperty('z-index');
             } else {
                 $(this).css('z-index', zIndex);
+            }
+        });
+        $('.vis-widget[data-tmodified="true"]').each(function () {
+            var wid = $(this).attr('id');
+
+            $(this).removeAttr('data-tmodified');
+
+            oldView = oldView || that.getViewOfWidget(wid);
+
+            var transform = that.views[oldView].widgets[wid] && that.views[oldView].widgets[wid].style && that.views[oldView].widgets[wid].style.transform;
+
+            if (!transform) {
+                $(this).prop('style').removeProperty('transform');
+            } else {
+                $(this).css('transform', transform);
             }
         });
 

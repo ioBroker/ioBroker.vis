@@ -4364,13 +4364,18 @@ vis = $.extend(true, vis, {
 
         if ($widget.attr('data-vis-hide-helper') === 'true') isShow = false;
 
-        //noinspection JSJQueryEfficiency
+        // noinspection JSJQueryEfficiency
         var $helper = $('#widget_helper_' + wid);
         if (isShow) {
             if ($widget && !$widget.length) {
                 console.log('Cannot find in DOM ' + wid);
                 return;
             }
+            // disable transform while editing
+            if ($widget.css('transform')) {
+                $widget.css('transform', '').attr('data-tmodified', true);
+            }
+
             var pos = this.editWidgetsRect(viewDiv, view, wid);
 
             if (!$helper.length) {
