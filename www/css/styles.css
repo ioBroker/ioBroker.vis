@@ -45,9 +45,8 @@ body .vis-style-green-gray {
 }
 
 .vis-style-green-gray tr {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    border-color: #46637f;
+    border-top: 1px solid #46637f;
+    border-bottom: 1px solid #46637f;
 }
 
 .vis-style-green-gray th {

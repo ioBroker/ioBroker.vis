@@ -18,12 +18,21 @@ body, html {
 #vis_container {
     font-family: Arial, sans-serif;
 }
-/*div#vis_container {
+
+.vis-widget {
+    position: absolute;
+    overflow: hidden;
+}
+
+.vis-view {
+    top: 0;
+    min-height: 100%;
+    min-width: 100%;
+}
+.vis-no-user-select {
     -webkit-touch-callout: none;
     -ms-touch-select: none;
     -ms-touch-action: none;
-
-    -webkit-tap-highlight-color:rgba(0,0,0,0);
 
     touch-callout: none;
     touch-select: none;
@@ -35,30 +44,10 @@ body, html {
     -ms-user-select: none;
 
     user-select: none;
-    border: none !important;
-}*/
-
-.dashui-inspect-css {
-    color: initial !important;
-
-    height: 22px;
 }
 
-.dashui-inspect-view-css {
-    color: initial !important;
-
-    height: 22px;
-}
-
-.vis-widget {
-    position: absolute;
-    overflow: hidden;
-}
-
-.vis-view {
-    top: 0;
-    min-height: 100%;
-    min-width: 100%;
+.vis-no-pointer-events {
+    pointer-events: none
 }
 
 .tplSpanOnOff {
@@ -307,7 +296,7 @@ div#vis_editor {
     min-width: 440px !important;
     max-width: 440px !important;
     overflow-y: hidden;
-    oberflow-x: scroll;
+    overflow-x: scroll;
 }
 
 .vis-steal-css, .vis-clear-css {
@@ -368,7 +357,7 @@ div#vis_editor {
 
 .vis-stealmode {
     position: absolute;
-    top: 0px;
+    top: 0;
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 14px;
@@ -495,7 +484,7 @@ div#vis_editor {
     display: inline-block;
     padding: 6px 6px 4px;
     margin-top: 10px;
-    font: 12px;
+    font-size: 12px;
     width: 220px;
 }
 

@@ -922,15 +922,15 @@ td > .select_active_widget :nth-child(2) {
 }
 
 @-webkit-keyframes vis-leading-line-shadow {
-    from {-webkit-box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    from {-webkit-box-shadow: 0 0 1px 1px rgba(255,0,0,0.5);}
     to   {-webkit-box-shadow: none;}
 }
 @-moz-keyframes vis-leading-line-shadow {
-    from {-moz-box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    from {-moz-box-shadow: 0 0 1px 1px rgba(255,0,0,0.5);}
     to   {-moz-box-shadow: none;}
 }
 @keyframes vis-leading-line-shadow {
-    from {box-shadow: 0px 0px 1px 1px rgba(255,0,0,0.5);}
+    from {box-shadow: 0 0 1px 1px rgba(255,0,0,0.5);}
     to   {box-shadow: none;}
 }
 

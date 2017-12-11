@@ -133,6 +133,7 @@ $.extend(systemDictionary, {
     'Uncheck all':          {'en': 'Uncheck all',       'de': 'Alle deselektieren',     'ru': 'Убрать все'},
     'Select options':       {'en': 'Select options',    'de': 'Selekteingensch.',       'ru': 'Свойства выбора'},
     'Änderungs-Historie':   {'en': 'Change log',        'de': 'Änderungs-Historie:',    'ru': 'Список изменений'},
+
     'invalid JSON':         {'en': 'Invalid JSON',      'de': 'Invalid JSON',           'ru': 'Неправильный формат'},
     'Do not ask again':     {'en': 'Don\'t ask again',  'de': 'Nicht mehr fragen',      'ru': 'Больше не спрашивать'},
     'import':               {'en': 'Import view',       'de': 'View importieren',       'ru': 'Импорт страницы'},

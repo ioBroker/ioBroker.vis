@@ -231,7 +231,13 @@
             },
             "speechMode":       {"en": "Speech mode",               "de": "Sprachmodus",            "ru": "Режим речи"},
             "single":           {"en": "single",                    "de": "Ein mal",                "ru": "Одиночный"},
-            "startstop":        {"en": "start/stop",                "de": "Start/Stop",             "ru": "Старт/стоп"}
+            "startstop":        {"en": "start/stop",                "de": "Start/Stop",             "ru": "Старт/стоп"},
+            "line":             {"en": "line",                      "de": "Linie",                  "ru": "линия"},
+            "triangle":         {"en": "triangle",                  "de": "Dreieck",                "ru": "треугольник"},
+            "star":             {"en": "star",                      "de": "Stern",                  "ru": "звезда"},
+            "arrow":            {"en": "arrow",                     "de": "Pfeil",                  "ru": "стрела"},
+            "scaleWidth":       {"en": "Scale width",               "de": "breiten Skala",          "ru": "Масштаб по ширине"},
+            "scaleHeight":      {"en": "Scale height",              "de": "höhen Skala",            "ru": "Масштаб по высоте"}
         });
     }
 
@@ -2160,13 +2166,14 @@
         data-vis-type="static"
         data-vis-prev='<img src="widgets/basic/img/Prev_Image.png"></img>'
         data-vis-name="Image"
-        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;">
+        data-vis-attrs="src/image;stretch/checkbox;refreshInterval[0]/slider,0,180000,100;"
+        data-vis-attrs0="refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;allowUserInteractions/checkbox;">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
-            <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
+            <img class="<%= this.data.attr('stretch') ? 'vis-image' : '' %> <%= this.data.attr('allowUserInteractions') ? '' : 'vis-no-user-select vis-no-pointer-events' %>" style="top:0; left: 0; position: absolute; width: 100%; <%= this.data.attr('stretch') ? 'height: 100%;' : '' %>" <%= this.data.attr('src') ? 'src="' + this.data.attr('src') + '"' : '' %> />
             <div <%= (el) -> vis.binds.basic.imgRefresh(el, data, this.view) %> />
         </div>
     </div>
