@@ -409,7 +409,7 @@ var vis = {
             this.showWaitScreen(false);
         }
 
-        var hash = window.location.hash.substring(1);
+        var hash = decodeURIComponent(window.location.hash.substring(1));
 
         // create demo states
         if (this.views && this.views.DemoView) this.createDemoStates();
