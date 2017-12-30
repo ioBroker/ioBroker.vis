@@ -16,7 +16,7 @@ var adapterName    = require(__dirname + '/package.json').name.split('.').pop();
 var isBeta         = adapterName.indexOf('beta') !== -1;
 
 var utils          = require(__dirname + '/lib/utils'); // Get common adapter utils
-var adapter        = utils.adapter(adapterName);
+var adapter        = new utils.Adapter(adapterName);
 var fs             = require('fs');
 var path           = require('path');
 var syncWidgetSets = require(__dirname + '/lib/install.js');
