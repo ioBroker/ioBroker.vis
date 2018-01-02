@@ -541,7 +541,7 @@
             }
         },
         navigation: function (el, options) {
-            if (!vis.editMode) {
+            if (!vis.editMode && options.nav_view) {
                 var $this = $(el);
                 $this.on('click touchstart', function (e) {
                     // Protect against two events
