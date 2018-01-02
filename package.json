@@ -44,7 +44,7 @@
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^2.0.0",
     "iobroker.web": "*",
-    "mocha": "^3.5.3",
+    "mocha": "^4.1.0",
     "chai": "^4.1.2"
   },
   "bugs": {
@@ -52,7 +52,7 @@
   },
   "main": "main.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha",
+    "test": "node node_modules/mocha/bin/mocha --exit",
     "install": "node main.js --install"
   },
   "license": "CC-BY-NC-4.0"
