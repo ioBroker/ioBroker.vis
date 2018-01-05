@@ -1,0 +1,141 @@
+<html>
+<head>
+    <!-- Materialze style -->
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+
+    <script type="text/javascript" src="../../lib/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+    <script type="text/javascript" src="words.js"></script>
+
+    <style>
+        .success {
+            color: forestgreen;
+            font-weight: bold;
+        }
+        .error {
+            color: #ab0000;
+        }
+        .license {
+            width: 100%; height: 100px; resize: none
+        }
+        #check {
+            display: inline-block;
+        }
+        #checkResult {
+            padding-left: 10px;
+            display: inline-block;
+        }
+        .instructions{
+            font-size: 16px;
+        }
+    </style>
+    <script type="text/javascript">
+        function setValue(id, value, onChange) {
+            var $value = $('#' + id + '.value');
+            if ($value.attr('type') === 'checkbox') {
+                $value.prop('checked', value).change(function() {
+                    onChange();
+                });
+            } else {
+                $value.val(value).change(function() {
+                    if ($(this).attr('id') === 'license') {
+                        if ($(this).val()) {
+                            $('#check').removeClass('disabled');
+                        } else {
+                            $('#check').addClass('disabled');
+                        }
+                        $('#checkResult').html();
+                    }
+                    onChange();
+                }).keyup(function() {
+                    $(this).trigger('change');
+                });
+            }
+        }
+
+        function load(settings, onChange) {
+            if (!settings) return;
+
+            if (settings.license === undefined) settings.license = '';
+
+            for (var key in settings) {
+                if (settings.hasOwnProperty(key)) setValue(key, settings[key], onChange);
+            }
+            var $check = $('#check');
+            $check.click(function () {
+                $('#check').addClass('disabled');
+                $('#checkResult').html('...');
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'https://iobroker.net/cert/',
+                    data:  $('#license').val(),
+                    contentType: 'text/plain',
+                    xhrFields: {
+                        withCredentials: false
+                    },
+                    headers: {},
+                    success: function(data, status, request) {
+                        $('#check').removeClass('disabled');
+                        $('#checkResult').html(data ? data.result : 'error').removeClass('error').addClass(data.result === 'OK' ? 'success': '');
+                    },
+                    error: function (res, error) {
+                        $('#check').removeClass('disabled');
+                        $('#checkResult').html(_('Service is offline. Please try later.')).addClass('error').removeClass('success');
+                    }
+                });
+            });
+            if (!settings.license) {
+                $check.addClass('disabled');
+            }
+
+            onChange(false);
+        }
+
+        function save(callback) {
+            var obj = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+
+            callback(obj);
+        }
+    </script>
+</head>
+<body>
+<div class="m adapter-container">
+    <div class="row">
+        <div class="col s12">
+            <img src="vis.png" class="logo">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <textarea class="value license" id="license"></textarea>
+            <label class="translate" for="license">License:</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <a class="waves-effect waves-light btn" id="check"><i class="material-icons">help</i><span class="translate">Check license</span></a>
+            <div id="checkResult"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <span class="translate instructions">instruction</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

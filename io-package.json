@@ -1,9 +1,30 @@
 {
     "common": {
         "name":                     "vis",
-        "version": "1.0.5",
-        "title":                    "iobroker Visualisation",
+        "version": "1.1.0",
+        "title":                    {
+          "en": "iobroker Visualisation",
+          "de": "iobroker Visualisierung",
+          "ru": "Визуализация iobroker",
+          "pt": "iobroker Visualização",
+          "nl": "iobroker Visualisatie",
+          "fr": "Visualisation d'iobroker",
+          "it": "Visualizzazione iobroker",
+          "es": "Visualización iobroker",
+          "pl": "Wizualizacja iobroker"
+        },
         "news": {
+            "1.1.0": {
+              "en": "The problem with view change on the touch devices fixed",
+              "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
+              "ru": "Проблема с изменением вида на сенсорных устройствах исправлена",
+              "pt": "O problema com a mudança de exibição nos dispositivos de toque fixos",
+              "nl": "Het probleem met de wijziging van weergave op de aanraakapparaten is opgelost",
+              "fr": "Le problème avec le changement de vue sur les appareils tactiles fixés",
+              "it": "Risolto il problema con il cambio di vista sui dispositivi touch",
+              "es": "El problema con el cambio de vista en los dispositivos táctiles solucionó",
+              "pl": "Naprawiono problem z zmianą widoku na urządzeniach dotykowych"
+            },
 			"1.0.5": {
               "en":                 "show number of datapoints in every project",
               "de":                 "Zeige die Anzahl von Datenpunkten in jedem Projekt",
@@ -47,37 +68,18 @@
 				"en":               "Fix error with context menu\nAllow add class to view",
 				"de":               "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
 				"ru":               "Исправлено контекстное меню\nМожно добавлять классы к страницам"
-			},
-            "0.15.0": {
-              "en":                 "fix copy of grouped widgets\nfix subscribe if empty states",
-              "de":                 "Korrigiere das Kopieren von mehreren Groupped-Widgets\nKorrigiere Subscribe, falls OIS leer sind",
-              "ru":                 "Исправлено копирование нескольких сгруппированых виджетов.\nИсрправлена ошибка, если OID пуст"
-            },
-			"0.14.7": {
-				"en":               "Add templates",
-				"de":               "Vorlagen sind huzugefügt",
-				"ru":               "Добавлены шаблоны"
-			},
-			"0.14.6": {
-				"en":               "Fix error by groups selection",
-				"de":               "Korrigiere den Fehler bei Gruppenauswahl",
-				"ru":               "Исправлено выделение групп"
-			},
-			"0.14.3": {
-				"en":               "fix export/import of groupped widgets",
-				"de":               "Korrigiere export/import von grouppierten Widets",
-				"ru":               "Исправлен экспорт/импорт сгруппированных виджетов"
-			},
-			"0.14.2": {
-				"en":               "Fix install error",
-				"de":               "Korrigiere Installationsfehler",
-				"ru":               "Исправлена ошибка при инсталляции"
 			}
         },
         "desc": {
-            "en":                   "Graphical user interface for iobroker.",
-            "de":                   "Graphische Darstellung für iobroker (ehemalige DashUI)",
-            "ru":                   "Веб интерфейс для визуализации данных 'iobroker' (бывший модуль Dash UI)"
+          "en": "Graphical user interface for iobroker",
+          "de": "Grafische Benutzeroberfläche für iobroker",
+          "ru": "Графический пользовательский интерфейс для iobroker",
+          "pt": "Interface gráfica do usuário para iobroker",
+          "nl": "Grafische gebruikersinterface voor iobroker",
+          "fr": "Interface utilisateur graphique pour iobroker",
+          "it": "Interfaccia utente grafica per iobroker",
+          "es": "Interfaz gráfica de usuario para iobroker",
+          "pl": "Graficzny interfejs użytkownika dla iobroker"
         },
         "platform":                 "Javascript/Node.js",
         "loglevel":                 "info",
@@ -110,19 +112,20 @@
         "type": "visualization",
 		"highlight":                true,
 		"noConfig":                 false,
+        "materialize":              true,
         "welcomeScreen": {
-            "link": "vis/index.html",
-            "name": "vis",
-            "img": "vis/img/favicon.png",
-            "color": "blue",
-            "order": 0
+            "link":   "vis/index.html",
+            "name":   "vis",
+            "img":    "vis/img/favicon.png",
+            "color":  "blue",
+            "order":  0
     },
         "welcomeScreenPro": {
-            "link": "vis/edit.html",
-            "name": "vis editor",
-            "img": "vis/img/faviconEdit.png",
-            "color": "green",
-            "order": 1
+            "link":   "vis/edit.html",
+            "name":   "vis editor",
+            "img":    "vis/img/faviconEdit.png",
+            "color":  "green",
+            "order":  1
         }
     },
     "native": {

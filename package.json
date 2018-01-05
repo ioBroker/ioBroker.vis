@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -30,19 +30,11 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^7.3.0"
+    "jsonwebtoken": "^8.1.0"
   },
   "devDependencies": {
-    "grunt": "^1.0.1",
-    "grunt-replace": "^1.0.1",
-    "grunt-contrib-jshint": "^1.1.0",
-    "grunt-jscs": "^3.0.1",
-    "grunt-http": "^2.2.0",
-    "grunt-npm-install": "^0.3.1",
-    "grunt-contrib-uglify": "^2.2.0",
-    "grunt-contrib-htmlmin": "^2.3.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-cssmin": "^2.0.0",
+    "gulp": "^3.9.1",
+    "gulp-replace": "^0.6.1",
     "iobroker.web": "*",
     "mocha": "^4.1.0",
     "chai": "^4.1.2"

@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2017 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2018 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -107,7 +107,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.0.5',
+    var version = "1.1.0";
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -148,7 +148,8 @@ var vis = {
         active: [],
         activeViews: []
     },
-    commonStyle: null,
+    commonStyle:        null,
+    debounceInterval:   700,
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -1643,7 +1644,7 @@ var vis = {
                 });
             }
             // remember last click for de-bounce
-            this.lastChange = (new Date()).getTime();
+            this.lastChange = Date.now();
         } else {
             this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
                 var $view = $('#visview_' + _viewDiv);
@@ -1734,9 +1735,9 @@ var vis = {
     wakeUpCallbacks:    [],
     initWakeUp:         function () {
         var that = this;
-        var oldTime = (new Date()).getTime();
+        var oldTime = Date.now();
         setInterval(function () {
-            var currentTime = (new Date()).getTime();
+            var currentTime = Date.now();
             //console.log("checkWakeUp "+ (currentTime - oldTime));
             if (currentTime > (oldTime + 10000)) {
                 oldTime = currentTime;
@@ -2377,9 +2378,9 @@ var vis = {
         if (!this.isTouch) return false;
 
         // Protect against two events
-        var now = (new Date()).getTime();
+        var now = Date.now();
         //console.log('gclick: ' + this.lastChange + ' ' + (now - this.lastChange));
-        if (this.lastChange && now - this.lastChange < 700) {
+        if (this.lastChange && now - this.lastChange < this.debounceInterval) {
             //console.log('gclick: filtered');
             return true;
         }
@@ -2391,7 +2392,7 @@ var vis = {
         }
         var lastClick = $el.data(isUp ? 'lcu' : 'lc');
         //console.log('click: ' + lastClick + ' ' + (now - lastClick));
-        if (lastClick && now - lastClick < 700) {
+        if (lastClick && now - lastClick < this.debounceInterval) {
             //console.log('click: filtered');
             return true;
         }
@@ -2406,8 +2407,8 @@ var vis = {
     getHistory:         function (id, options, callback) {
         // Possible options:
         // - **instance - (mandatory) sql.x or history.y
-        // - **start** - (optional) time in ms - *new Date().getTime()*'
-        // - **end** - (optional) time in ms - *new Date().getTime()*', by default is (now + 5000 seconds)
+        // - **start** - (optional) time in ms - *Date.now()*'
+        // - **end** - (optional) time in ms - *Date.now()*', by default is (now + 5000 seconds)
         // - **step** - (optional) used in aggregate (m4, max, min, average, total) step in ms of intervals
         // - **count** - number of values if aggregate is 'onchange' or number of intervals if other aggregate method. Count will be ignored if step is set.
         // - **from** - if *from* field should be included in answer
@@ -2532,7 +2533,7 @@ var vis = {
         }
         if (oids.length) {
             var that = this;
-            console.debug('[' + new Date().getTime() + '] Request ' + oids.length + ' states.');
+            console.debug('[' + Date.now() + '] Request ' + oids.length + ' states.');
             this.conn.getStates(oids, function (error, data) {
                 if (error) that.showError(error);
 
@@ -2768,15 +2769,19 @@ window.onpopstate();
 if (!vis.editMode) {
     // Protection after view change
     $(window).on('click touchstart mousedown', function (e) {
-        if (vis.lastChange) {
+        if (Date.now() - vis.lastChange < vis.debounceInterval) {
             e.stopPropagation();
             e.preventDefault();
             return false;
         }
     });
-    $(window).on('touchend mouseup', function (/* e */) {
+    /*$(window).on('touchend mouseup', function () {
         vis.lastChange = null;
-    });
+        var $log = $('#w00039');
+        var $log1 = $('#w00445');
+        $log.append('<br>gclick touchend: ' + vis.lastChange);
+        $log1.append('<br>gclick touchend: ' + vis.lastChange);
+    });*/
 }
 
 function main($, onReady) {
@@ -2943,7 +2948,7 @@ function main($, onReady) {
         }
         index = index || 0;
         var j;
-        var now = new Date().getTime();
+        var now = Date.now();
         var obj = {};
         for (j = index; j < vis.subscribing.IDs.length && j < index + 100; j++) {
             var _id = vis.subscribing.IDs[j];
@@ -3246,7 +3251,7 @@ function main($, onReady) {
                                 href = location.protocol + '//' + location.hostname + ':' + location.port + data;
                             }
                             // force read from server
-                            href += '?' + (new Date()).getTime();
+                            href += '?' + Date.now();
 
                             if (typeof Audio !== 'undefined') {
                                 var snd = new Audio(href); // buffers automatically when created

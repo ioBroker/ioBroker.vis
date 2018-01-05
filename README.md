@@ -9,7 +9,7 @@ iobroker.vis
 
 WEB visualisation for iobroker platform.
 
-## Installation & Dokumentation
+## Installation & Documentation
 
 ![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
 ![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
@@ -182,6 +182,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.0 (2018-01-04)
+* (bluefox) The problem with view change on the touch devices fixed
+
 ### 1.0.5 (2017-11-19)
 * (bluefox) show number of datapoints in every project
 
@@ -357,7 +360,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2017 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>, 
+ Copyright (c) 2013-2018 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>, 
  
  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  
