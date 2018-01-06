@@ -1,104 +1,105 @@
 {
     "common": {
-        "name":                     "vis",
+        "name": "vis",
         "version": "1.1.0",
-        "title":                    {
-          "en": "iobroker Visualisation",
-          "de": "iobroker Visualisierung",
-          "ru": "Визуализация iobroker",
-          "pt": "iobroker Visualização",
-          "nl": "iobroker Visualisatie",
-          "fr": "Visualisation d'iobroker",
-          "it": "Visualizzazione iobroker",
-          "es": "Visualización iobroker",
-          "pl": "Wizualizacja iobroker"
+        "title": "Visualisation",
+        "titleLang": {
+            "en": "Visualisation",
+            "de": "Visualisierung",
+            "ru": "Визуализация",
+            "pt": "Visualização",
+            "nl": "Visualisatie",
+            "fr": "Visualisation",
+            "it": "Visualizzazione",
+            "es": "Visualización",
+            "pl": "Wizualizacja"
         },
         "news": {
             "1.1.0": {
-              "en": "The problem with view change on the touch devices fixed",
-              "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
-              "ru": "Проблема с изменением вида на сенсорных устройствах исправлена",
-              "pt": "O problema com a mudança de exibição nos dispositivos de toque fixos",
-              "nl": "Het probleem met de wijziging van weergave op de aanraakapparaten is opgelost",
-              "fr": "Le problème avec le changement de vue sur les appareils tactiles fixés",
-              "it": "Risolto il problema con il cambio di vista sui dispositivi touch",
-              "es": "El problema con el cambio de vista en los dispositivos táctiles solucionó",
-              "pl": "Naprawiono problem z zmianą widoku na urządzeniach dotykowych"
+                "en": "The problem with view change on the touch devices fixed",
+                "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
+                "ru": "Проблема с изменением вида на сенсорных устройствах исправлена",
+                "pt": "O problema com a mudança de exibição nos dispositivos de toque fixos",
+                "nl": "Het probleem met de wijziging van weergave op de aanraakapparaten is opgelost",
+                "fr": "Le problème avec le changement de vue sur les appareils tactiles fixés",
+                "it": "Risolto il problema con il cambio di vista sui dispositivi touch",
+                "es": "El problema con el cambio de vista en los dispositivos táctiles solucionó",
+                "pl": "Naprawiono problem z zmianą widoku na urządzeniach dotykowych"
             },
-			"1.0.5": {
-              "en":                 "show number of datapoints in every project",
-              "de":                 "Zeige die Anzahl von Datenpunkten in jedem Projekt",
-              "ru":                 "Показывет количество используемых данных в каждом проекте"
+            "1.0.5": {
+                "en": "show number of datapoints in every project",
+                "de": "Zeige die Anzahl von Datenpunkten in jedem Projekt",
+                "ru": "Показывет количество используемых данных в каждом проекте"
             },
             "1.0.4": {
-              "en":                 "Add autocomplete for view CSS options\nchange edit of view CSS background options",
-              "de":                 "Automatische Vervollständigung für View-CSS-Optionen hinzufügen\nÄndern der CSS-Hintergrundoptionen für View",
-              "ru":                 "Добавлено автозаполнение для CSS опций страницы\nИзменение редактирования background CSS страницы"
+                "en": "Add autocomplete for view CSS options\nchange edit of view CSS background options",
+                "de": "Automatische Vervollständigung für View-CSS-Optionen hinzufügen\nÄndern der CSS-Hintergrundoptionen für View",
+                "ru": "Добавлено автозаполнение для CSS опций страницы\nИзменение редактирования background CSS страницы"
             },
             "1.0.3": {
-              "en":                 "Release candidate\nFix parse of invalid bindings\nadd moment.js",
-              "de":                 "Release candidate\nKorrigiere die Aufbau von falschen Bindings\nmoment.js hinzugefügt",
-              "ru":                 "Release candidate\nПоправлен рендеринг неправильных bindings\nДобавлен moment.js"
+                "en": "Release candidate\nFix parse of invalid bindings\nadd moment.js",
+                "de": "Release candidate\nKorrigiere die Aufbau von falschen Bindings\nmoment.js hinzugefügt",
+                "ru": "Release candidate\nПоправлен рендеринг неправильных bindings\nДобавлен moment.js"
             },
             "0.15.6": {
-              "en":                 "Added array operator to bindings",
-              "de":                 "Array Operator zu bindings hinzugefügt"
+                "en": "Added array operator to bindings",
+                "de": "Array Operator zu bindings hinzugefügt"
             },
             "0.15.5": {
-              "en":                 "Fix widgets upload",
-              "de":                 "Korrigiere Widgets uplaod",
-              "ru":                 "Исправлено обновление виджетов"
+                "en": "Fix widgets upload",
+                "de": "Korrigiere Widgets uplaod",
+                "ru": "Исправлено обновление виджетов"
             },
             "0.15.4": {
-              "en":                 "Add swipe",
-              "de":                 "Swipe hunzugefügt",
-              "ru":                 "Добавлен swipe"
+                "en": "Add swipe",
+                "de": "Swipe hunzugefügt",
+                "ru": "Добавлен swipe"
             },
-			"0.15.3": {
-				"en":               "Add full screen widget\nFix timestamp widget",
-				"de":               "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",
-				"ru":               "Добавлен виджет full screen\nИсправлен виджет timestamp"
-			},
-			"0.15.2": {
-				"en":               "Fix binding if it has \"-\" in the OID",
-				"de":               "Korrigiere den fehler mit Binding und \"-\" in OID",
-				"ru":               "Исправлены bindings, если содержат минус в имени"
-			},
-			"0.15.1": {
-				"en":               "Fix error with context menu\nAllow add class to view",
-				"de":               "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
-				"ru":               "Исправлено контекстное меню\nМожно добавлять классы к страницам"
-			}
+            "0.15.3": {
+                "en": "Add full screen widget\nFix timestamp widget",
+                "de": "Full Screen Widget hunzugefügt\nKorrigiere timestamp widget",
+                "ru": "Добавлен виджет full screen\nИсправлен виджет timestamp"
+            },
+            "0.15.2": {
+                "en": "Fix binding if it has \"-\" in the OID",
+                "de": "Korrigiere den fehler mit Binding und \"-\" in OID",
+                "ru": "Исправлены bindings, если содержат минус в имени"
+            },
+            "0.15.1": {
+                "en": "Fix error with context menu\nAllow add class to view",
+                "de": "Korrigiere den fehler mit dem Kontext-Menu\nErlaube Klasse zur Seite hinzufügen",
+                "ru": "Исправлено контекстное меню\nМожно добавлять классы к страницам"
+            }
         },
         "desc": {
-          "en": "Graphical user interface for iobroker",
-          "de": "Grafische Benutzeroberfläche für iobroker",
-          "ru": "Графический пользовательский интерфейс для iobroker",
-          "pt": "Interface gráfica do usuário para iobroker",
-          "nl": "Grafische gebruikersinterface voor iobroker",
-          "fr": "Interface utilisateur graphique pour iobroker",
-          "it": "Interfaccia utente grafica per iobroker",
-          "es": "Interfaz gráfica de usuario para iobroker",
-          "pl": "Graficzny interfejs użytkownika dla iobroker"
+            "en": "Graphical user interface for iobroker",
+            "de": "Grafische Benutzeroberfläche für iobroker",
+            "ru": "Графический пользовательский интерфейс для iobroker",
+            "pt": "Interface gráfica do usuário para iobroker",
+            "nl": "Grafische gebruikersinterface voor iobroker",
+            "fr": "Interface utilisateur graphique pour iobroker",
+            "it": "Interfaccia utente grafica per iobroker",
+            "es": "Interfaz gráfica de usuario para iobroker",
+            "pl": "Graficzny interfejs użytkownika dla iobroker"
         },
-        "platform":                 "Javascript/Node.js",
-        "loglevel":                 "info",
-        "icon":                     "vis.png",
-        "enabled":                  true,
-        "mode":                     "once",
-        "extIcon":                  "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
+        "platform": "Javascript/Node.js",
+        "loglevel": "info",
+        "icon": "vis.png",
+        "enabled": true,
+        "mode": "once",
+        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
         "keywords": [
             "DashUI",
             "GUI",
             "graphical",
             "scada"
         ],
-        "readme":                   "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
+        "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],
-        "localLink":                "%web_protocol%://%ip%:%web_port%/vis/edit.html",
-        "license":                  "CC BY-NC",
+        "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
+        "license": "CC BY-NC",
         "dependencies": [
             {
                 "web": ">=1.5.4"
@@ -107,34 +108,34 @@
         "restartAdapters": [
             "vis"
         ],
-        "serviceStates":            "lib/states.js",
-        "singleton":                true,
+        "serviceStates": "lib/states.js",
+        "singleton": true,
         "type": "visualization",
-		"highlight":                true,
-		"noConfig":                 false,
-        "materialize":              true,
+        "highlight": true,
+        "noConfig": false,
+        "materialize": true,
         "welcomeScreen": {
-            "link":   "vis/index.html",
-            "name":   "vis",
-            "img":    "vis/img/favicon.png",
-            "color":  "blue",
-            "order":  0
-    },
+            "link": "vis/index.html",
+            "name": "vis",
+            "img": "vis/img/favicon.png",
+            "color": "blue",
+            "order": 0
+        },
         "welcomeScreenPro": {
-            "link":   "vis/edit.html",
-            "name":   "vis editor",
-            "img":    "vis/img/faviconEdit.png",
-            "color":  "green",
-            "order":  1
+            "link": "vis/edit.html",
+            "name": "vis editor",
+            "img": "vis/img/faviconEdit.png",
+            "color": "green",
+            "order": 1
         }
     },
     "native": {
-        "defaultFileMode":          1604,
+        "defaultFileMode": 1604,
         "license": ""
     },
     "instanceObjects": [
         {
-            "_id":  "",
+            "_id": "",
             "type": "meta",
             "common": {
                 "name": "user files and images for vis",
@@ -143,7 +144,7 @@
             "native": {}
         },
         {
-            "_id":  "control",
+            "_id": "control",
             "type": "channel",
             "common": {
                 "name": "Control vis"
@@ -151,7 +152,7 @@
             "native": {}
         },
         {
-            "_id":  "control.instance",
+            "_id": "control.instance",
             "type": "state",
             "common": {
                 "name": "Control vis",
@@ -160,36 +161,36 @@
             },
             "native": {}
         },
-      {
-          "_id":  "control.command",
-          "type": "state",
-          "common": {
-              "name": "Command for vis",
-              "type": "string",
-              "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-              "states": {
-				  "alert": 			"alert",
-				  "changeView": 	"changeView",
-				  "refresh": 		"refresh",
-				  "reload": 		"reload",
-				  "dialog": 		"dialog",
-				  "popup": 			"popup",
-				  "playSound": 		"playSound",
-				  "changedView": 	"changedView",
-				  "tts": 			"tts"
-			  }      
-          },
+        {
+            "_id": "control.command",
+            "type": "state",
+            "common": {
+                "name": "Command for vis",
+                "type": "string",
+                "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                "states": {
+                    "alert": "alert",
+                    "changeView": "changeView",
+                    "refresh": "refresh",
+                    "reload": "reload",
+                    "dialog": "dialog",
+                    "popup": "popup",
+                    "playSound": "playSound",
+                    "changedView": "changedView",
+                    "tts": "tts"
+                }
+            },
             "native": {}
-      },
-      {
-          "_id":  "control.data",
-          "type": "state",
-          "common": {
-              "name": "Data for control vis",
-              "type": "string",
-              "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-          },
+        },
+        {
+            "_id": "control.data",
+            "type": "state",
+            "common": {
+                "name": "Data for control vis",
+                "type": "string",
+                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+            },
             "native": {}
-          }
+        }
     ]
 }

@@ -362,16 +362,16 @@ gulp.task('replacePkg', function (done) {
     .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
     .pipe(gulp.dest(srcDir));
 });
-gulp.task('replaceVis', function (done) {
-    gulp.src([
+gulp.task('replaceVis', function () {
+    return gulp.src([
         srcDir + 'www/js/vis.js'
     ])
         .pipe(replace(/var version = *'[.0-9]*';/g, 'var version = "' + version + '";'))
         .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
         .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'var version = "' + version + '";'))
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '# vis Version ' + version))
-        .pipe(replace(/# vis Version [.0-9]+/g, 'var version = "' + version + '";'))
+        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
+        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
+        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
         .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
         .pipe(gulp.dest( srcDir + '/www/js'));
 });
@@ -381,12 +381,12 @@ gulp.task('replaceHtml', function (done) {
         srcDir + 'www/index.html',
         srcDir + 'www/edit.html'
     ])
-        .pipe(replace(/var version = *'[.0-9]*';/g, 'var version = "' + version + '";'))
+        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
+        .pipe(replace(/var version = *'[.0-9]*';/g, 'var version = \'' + version + '\';'))
         .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
         .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'var version = "' + version + '";'))
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '# vis Version ' + version))
-        .pipe(replace(/# vis Version [.0-9]+/g, 'var version = "' + version + '";'))
+        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
+        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
         .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
         .pipe(gulp.dest(srcDir + '/www'));
 });
@@ -435,4 +435,4 @@ gulp.task('updateReadme', function (done) {
 
 gulp.task('replace', ['replacePkg', 'replaceVis', 'replaceHtml']);
 
-gulp.task('default', ['updatePackages', 'updateReadme']);
+gulp.task('default', ['updatePackages', 'updateReadme', 'replace']);
