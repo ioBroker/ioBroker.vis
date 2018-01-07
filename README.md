@@ -182,7 +182,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
-### 1.1.0 (2018-01-04)
+### 1.1.1 (2018-01-07)
 * (bluefox) The problem with view change on the touch devices fixed
 
 ### 1.0.5 (2017-11-19)

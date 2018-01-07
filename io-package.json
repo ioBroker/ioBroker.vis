@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.0",
+        "version": "1.1.1",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,7 +15,7 @@
             "pl": "Wizualizacja"
         },
         "news": {
-            "1.1.0": {
+            "1.1.1": {
                 "en": "The problem with view change on the touch devices fixed",
                 "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
                 "ru": "Проблема с изменением вида на сенсорных устройствах исправлена",

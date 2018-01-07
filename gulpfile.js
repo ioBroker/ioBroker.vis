@@ -387,7 +387,7 @@ gulp.task('replaceHtml', function (done) {
         .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
         .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
         .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
-        .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
+        .pipe(replace(/# dev build [.0-9]+/g, '# dev build 0'))
         .pipe(gulp.dest(srcDir + '/www'));
 });
 
