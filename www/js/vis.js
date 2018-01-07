@@ -3084,10 +3084,10 @@ function main($, onReady) {
                     vis.conn.subscribe([vis.conn.namespace + '.control.instance', vis.conn.namespace + '.control.data', vis.conn.namespace + '.control.command']);
 
                     // first of all add custom scripts
-                    if (!vis.editMode && vis.views && this.views.___settings) {
+                    if (!vis.editMode && vis.views && vis.views.___settings) {
                         if (vis.views.___settings.scripts) {
                             var script = document.createElement('script');
-                            script.innerHTML = this.views.___settings.scripts;
+                            script.innerHTML = vis.views.___settings.scripts;
                             document.head.appendChild(script);
                         }
                     }
@@ -3215,7 +3215,7 @@ function main($, onReady) {
                         parts = data.split('/');
                         if (parts[1]) {
                             // detect actual project
-                            var actual = this.projectPrefix ? this.projectPrefix.substring(0, this.projectPrefix.length - 1) : 'main';
+                            var actual = vis.projectPrefix ? vis.projectPrefix.substring(0, vis.projectPrefix.length - 1) : 'main';
                             if (parts[0] !== actual) {
                                 document.location.href = 'index.html?' + actual + '#' + parts[1];
                                 return;
