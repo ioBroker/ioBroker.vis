@@ -4749,6 +4749,8 @@ vis = $.extend(true, vis, {
         var origX, origY;
         var that = this;
         var draggableOptions;
+        viewDiv = viewDiv || this.activeView;
+        view = view || viewDiv;
 
         draggableOptions = {
             cancel: false,
