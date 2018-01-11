@@ -171,7 +171,14 @@ vis = $.extend(true, vis, {
             for (var b in this.bindings) {
                 if (!this.bindings.hasOwnProperty(b)) continue;
                 for (var h = 0; h < this.bindings[b].length; h++) {
-                    viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                    try {
+                        // if widget still exists
+                        if (viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget]) {
+                            viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                        }
+                    } catch (e) {
+                        console.warn('error by saving of binding: ' + this.bindings[b][h].view)
+                    }
                 }
             }
             viewsToSave = JSON.stringify(viewsToSave, null, 2);
@@ -214,43 +221,46 @@ vis = $.extend(true, vis, {
         if (!this.views[view].settings) {
             this.views[view].settings = {};
         }
-        var $back = $('#inspect_view_css_background');
-        if ($('#inspect_view_css_only_background').prop('checked')) {
-            this.views[view].settings.useBackground = true;
-            var that = this;
-            $back.parent().parent().show();
-            $('.vis-inspect-view-css').each(function () {
-                var attr = $(this).attr('id').slice(17);
-                if (attr.match(/^background-/)) {
-                    $(this).parent().parent().hide();
-                    if (that.views[view].settings.style) {
-                        delete that.views[view].settings.style[attr];
+        if (this.groupsState['view-css-background']) {
+            var $back = $('#inspect_view_css_background');
+            if ($('#inspect_view_css_only_background').prop('checked')) {
+                this.views[view].settings.useBackground = true;
+                var that = this;
+                $back.parent().parent().show();
+                $('.vis-inspect-view-css').each(function () {
+                    var attr = $(this).attr('id').slice(17);
+                    if (attr.match(/^background-/)) {
+                        $(this).parent().parent().hide();
+                        if (that.views[view].settings.style) {
+                            delete that.views[view].settings.style[attr];
+                        }
                     }
+                });
+                if (!isInit) {
+                    $back.val($('#visview_' + view).css('background'));
                 }
-            });
-            if (!isInit) {
-                $back.val($('#visview_' + view).css('background'));
-            }
-        } else {
-            this.views[view].settings.useBackground = false;
-            $back.parent().parent().hide();
-            var $view;
-            if (!isInit) {
-                $view = $('#visview_' + view);
-            }
-            $('.vis-inspect-view-css').each(function () {
-                var attr = $(this).attr('id').slice(17);
-                if (attr.match(/^background-/)) {
-                    $(this).parent().parent().show();
-                    if (!isInit) {
-                        $(this).val($view.css(attr));
+            } else {
+                this.views[view].settings.useBackground = false;
+                $back.parent().parent().hide();
+                var $view;
+                if (!isInit) {
+                    $view = $('#visview_' + view);
+                }
+                $('.vis-inspect-view-css').each(function () {
+                    var attr = $(this).attr('id').slice(17);
+                    if (attr.match(/^background-/)) {
+                        $(this).parent().parent().show();
+                        if (!isInit) {
+                            $(this).val($view.css(attr));
+                        }
                     }
+                });
+                if (this.views[view].settings.style) {
+                    delete this.views[view].settings.style.background;
                 }
-            });
-            if (this.views[view].settings.style) {
-                delete this.views[view].settings.style.background;
             }
         }
+
     },
     editInit:               function () {
         var that = this;

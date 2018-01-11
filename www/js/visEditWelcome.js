@@ -178,7 +178,7 @@ vis.createDemoView = function () {
                     "visibility-cond": "==",
                     "visibility-val": 1,
                     "refreshInterval": "0",
-                    "html": "<style>\n.blink {\n  animation: blinker 5s linear infinite;\n}\n\n@keyframes blinker {  \n  50% { opacity: 0.0; }\n}\n</style>\n\n<div class=\"blink\">" + _("Click me!") + "</div>",
+                    "html": "<style>\n.blink {\n  animation: blinker 5s linear infinite;\n}\n\n@keyframes blinker {  \n  50% { opacity: 0.0; \n}\n}\n</style>\n\n<div class=\"blink\">" + _("Click me!") + "</div>",
                     "filterkey": _("light"),
                     "name": "Click me"
                 },
