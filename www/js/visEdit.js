@@ -4988,6 +4988,10 @@ vis = $.extend(true, vis, {
             view    = this.activeView;
             viewDiv = this.activeViewDiv;
         }
+        if (!obj) {
+            console.warn('obj is null');
+            return;
+        }
 
         this.gridWidth = parseInt(this.views[view].settings.gridSize, 10);
         if (this.gridWidth < 1 || isNaN(this.gridWidth)) this.gridWidth = 10;
