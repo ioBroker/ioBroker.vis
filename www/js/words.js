@@ -272,7 +272,7 @@ $.extend(systemDictionary, {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
               "Many filter words can be set deivided by comma.",
         "de": "Falls gesetzt, werden nur die Widgets mit diesem Filterwort  angezeigt.\x0A" +
-              "Es können mehere Filterworte mit einem Komma geteilt gesetzt werden.",
+              "Es können mehrere Filterworte mit einem Komma geteilt gesetzt werden.",
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
               "Можно задать несколько ключей через запятую"
     },
