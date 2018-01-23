@@ -161,7 +161,7 @@ $.extend(systemDictionary, {
     "Delete":               {"en": "Delete",            "de": "Löschen",                "ru": "Удалить"},
     'from':                 {"en": "From",              "de": "von",                    "ru": "Выбрать изображение"},
     'lc':                   {"en": "Last change",       "de": "Letzte Änderung",        "ru": "Последнее изменение"},
-    'ts':                   {"en": "Time stamp",        "de": "Zeitstämpel",            "ru": "Время"},
+    'ts':                   {"en": "Time stamp",        "de": "Zeitstempel",            "ru": "Время"},
     'ack':                  {"en": "Acknowledged",      "de": "Bestätigt",              "ru": "Подтверждено"},
     'expand':               {"en": "Expand all nodes",  "de": "Alle ausklappen",        "ru": "Развернуть все узлы"},
     'collapse':             {"en": "Collapse all nodes", "de": "Alle zusammenklappen",  "ru": "Свернуть все узлы"},
@@ -239,7 +239,7 @@ $.extend(systemDictionary, {
     },
     'icons8': {
         'en': 'In this project are used the icons from <a href="https://icons8.com">Icons8 resource</a>.',
-        'de': 'In diesem Projekt die Bilder vom <a href="https://icons8.com">Icons8 resource</a> sind benutzt.',
+        'de': 'In diesem Projekt werden Bilder von <a href="https://icons8.com">Icons8 resource</a> benutzt.',
         'ru': 'В этом проекте используются иконки с ресурса <a href="https://icons8.com">Icons8</a>.'
     },
     'group_fixed':          {'en': 'General',           'de': 'Generell',               'ru': 'Фиксированные'},
@@ -270,15 +270,15 @@ $.extend(systemDictionary, {
     "Hint":                 {"en": "Hint",              "de": "Hinweis",                "ru": "Сообщение"},
     "filter_key_tooltip": {
         "en": "If set only widgets with this filter key will be shown.\x0A" +
-              "Many filter words can be set deivided by comma.",
-        "de": "Falls gesetzt nur die Widgets mit diesem Filterwort werden angezeig.\x0A" +
-              "Es können mehere Filterworte mit Komma geteilt gesetzt werden.",
+        "Many filter words can be set deivided by comma.",
+        "de": "Falls gesetzt, werden nur die Widgets mit diesem Filterwort  angezeigt.\x0A" +
+        "Es können mehrere Filterworte mit einem Komma geteilt gesetzt werden.",
         "ru": "Если задано, то элементы только с таким ключём фильтра будут показаны.\x0A" +
-              "Можно задать несколько ключей через запятую"
+        "Можно задать несколько ключей через запятую"
     },
     "templates_help": {
         "en": "We have been working hard on it and just want to say, that <b>possible</b> this feature will not be for free, but available for small fee. All created widgets will work, just for the creation and usage of the new templates could be not free.",
-        "de": "Wir haben hart daran gearbeitet und wollen nur sagen, dass diese Funktion in der Zukunft <b>möglich</b> nicht kostenlos sein wird und für kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
+        "de": "Wir haben hart daran gearbeitet und wollen mitteilen, dass diese Funktion in der Zukunft <b>möglichicherweise</b> für eine kleine Gebühr zur Verfügung stehen wird. Alle erstellten Widgets werden funktionieren, nur die Erstellung und Nutzung der neuen Vorlagen könnte nicht frei sein.",
         "ru": "Мы упорно работали над этим и просто хотим сказать, что <b>возможно</b> эта функция в будущем не будет бесплатной и будет доступна за небольшую плату. Все созданные виджеты будут работать, только создание и использование новых шаблонов может быть не бесплатными."
     },
     "Switch to runtime in this window": {
@@ -374,35 +374,35 @@ $.extend(systemDictionary, {
     "attrName5":            {"en": "Attribute 5",       "de": "Attribut 5",             "ru": "Параметр 5"},
     "attrName6":            {"en": "Attribute 6",       "de": "Attribut 6",             "ru": "Параметр 6"},
     "attrName7":            {"en": "Attribute 7",       "de": "Attribut 7",             "ru": "Параметр 7"},
-    "Only background":      {"en": "Only background",   "de": "Nur background",         "ru": "Только background"},
+    "Only background":      {"en": "Only background",   "de": "Nur Hintergrund",         "ru": "Только background"},
     "Use inside of group groupAttr%s": {
         "en": "Use inside of group groupAttr%s",
-        "de": "Benutze groupAttr%s innerhalb von der Gruppe",
+        "de": "Benutze innerhalb der Gruppe groupAttr%s",
         "ru": "Используй в группе groupAttr%s"
     },
     'Project "%s" was succseffully imported. Open it?': {
         "en": 'Project "%s" was succseffully imported. Open it?',
-        "de": 'Projekt "%s" war erfolgreich importiert. Aufmachen?',
+        "de": 'Projekt "%s" wurde erfolgreich importiert. Öffnen?',
         "ru": 'Проект "%s" был успешно импортирован. Открыть?'
     },
     "Drop files here or click to select one": {
         "en": "Drop files here or click to select one...",
-        "de": "Dateien hereinziehen oder klicken um mit Dialog auszuwählen...",
+        "de": "Dateien hereinziehen oder Mausklick, um ein Auswahlfenster zu öffnen...",
         "ru": "Перетащите файл сюда или нажмите, что бы выбрать..."
     },
     "Invalid file extenstion!": {
         "en": "Invalid file extenstion!",
-        "de": "Invalid Dateiextenstion!",
+        "de": "Invalide Dateiextenstion!",
         "ru": "Неправильный тип файла!"
     },
     "Reload if sleep longer than:": {
         "en": "Reload if sleep longer than:",
-        "de": "Neuladen falls keine Verbindung länger als:",
+        "de": "Neuladen, falls keine Verbindung länger als:",
         "ru": "Перезагружать если нет соединения дольше:"
     },
     "Destroy inactive view after:": {
         "en": "Destroy inactive view:",
-        "de": "Löschen aus RAM nicht aktive Views:",
+        "de": "Lösche nicht aktive Views:",
         "ru": "Стирать из памяти неактивные страницы:"
     },
     "Changes are not saved. Are you sure?": {
@@ -419,7 +419,7 @@ $.extend(systemDictionary, {
     "30 seconds":           {"en": "30 seconds",        "de": "30 Sekunden",            "ru": "30 секунд"},
     "1 minute":             {"en": "1 minute",          "de": "1 Minute",               "ru": "1 минута"},
     "5 minutes":            {"en": "5 minutes",         "de": "5 Minuten",              "ru": "5 минут"},
-    "10 minutes":           {"en": "10 minutes",        "de": "10 minMinutenutes",      "ru": "10 минут"},
+    "10 minutes":           {"en": "10 minutes",        "de": "10 Minutenutes",      "ru": "10 минут"},
     "30 minutes":           {"en": "30 minutes",        "de": "30 Minuten",             "ru": "30 минут"},
     "1 hour":               {"en": "1 hour",            "de": "1 Stunde",               "ru": "1 час"},
     "2 hours":              {"en": "2 hours",           "de": "2 Stunden",              "ru": "2 часа"},
@@ -430,13 +430,13 @@ $.extend(systemDictionary, {
     "VIS Settings":         {"en": "Project settings",  "de": "Projekteinstellungen",   "ru": "Настройки проекта"},
     //"Änderungen":           {"en": "Changes",           "de": "Änderungen",             "ru": "Изменения"},
     "Reconnect interval:":  {"en": "Reconnect interval:", "de": "Wiederverbindungsintervall:",  "ru": "Интервал при установке соединения:"},
-    "Dark reconnect screen:": {"en": "Dark reconnect screen:", "de": "Dunkles Reconnect-Screen:", "ru": "Тёмный экран при соединении:"},
+    "Dark reconnect screen:": {"en": "Dark reconnect screen:", "de": "Dunkler Reconnect-Screen:", "ru": "Тёмный экран при соединении:"},
     "filter":               {"en": "Filter",            "de": "Filter",                 "ru": "Фильтр"},
     "navigation":           {"en": "Navigation",        "de": "Navigation",             "ru": "Навигация"},
     "static":               {"en": "Static",            "de": "Statisch",               "ru": "Статичное"},
     "ctrl":                 {"en": "control",           "de": "Steuern",                "ru": "Управлять"},
     "stateful":             {"en": "stateful",          "de": "stateful",               "ru": "stateful"},
-    "container":            {"en": "Container",         "de": "Kontainer",              "ru": "Контейнер"},
+    "container":            {"en": "Container",         "de": "Container",              "ru": "Контейнер"},
     "val":                  {"en": "Value",             "de": "Wert",                   "ru": "Значение"},
     "timestamp":            {"en": "Timestamp",         "de": "Zeitstempel",            "ru": "Время"},
     "state":                {"en": "State",             "de": "Zustand",                "ru": "Состояние"},
@@ -467,7 +467,7 @@ $.extend(systemDictionary, {
     "control":              {"en": "control",           "de": "Steuerung",      "ru": "Управление"},
     "Loading stopped": {
         "en": "Loading stopped, because no permissins for selected project. Please select other, e.g \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> and try one more time.",
-        "de": "Ladevorgang ist angehalten, weil nicht genügend Rechte vorhanden sind. Bitte wählen Sie anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
+        "de": "Ladevorgang wurde angehalten, da nicht genügend Rechte vorhanden sind. Bitte wählen Sie ein anderes Projekt, z.B. \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> und versuchen Sie es erneut.",
         "ru": "Загрузка остановлена, потому что не хватает прав для просмотра проекта. Выберите другой проект, например \"<a href=\"%s/vis/edit.html?main\">%s/vis/edit.html?main</a> и попробуйте ещё раз."
     },
     "Widgets filter. Double click to clear.": {
@@ -502,7 +502,7 @@ $.extend(systemDictionary, {
     "Clipboard:":           {"en": "Clipboard:",        "de": "Zwischenablage:",        "ru": "Буфер обмена:"},
     "Click to hide":        {"en": "Click to hide",     "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
     "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
-    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget herumschieben", "ru": "Дективировать перенос виджетов мышкой"},
+    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere das Widget verschiebbar ist", "ru": "Дективировать перенос виджетов мышкой"},
     "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp",     "ru": "Показать тип элемента"},
     "Small widgets":        {"en": "Small widgets",     "de": "Kleine Widgets",         "ru": "Показать маленькие элементы"},
     "to group":             {"en": "Group",             "de": "Gruppieren",             "ru": "Объеденить"},
@@ -539,7 +539,7 @@ $.extend(systemDictionary, {
     "visibility-oid":       {"en": "Object ID",         "de": "Object ID",              "ru": "ID Объекта"},
     "visibility-oid_tooltip": {
         "en": "Depends on state of object with this ID,\x0Athe widget can be shown or hidden",
-        "de": "Abhängig von dem Zustand des Objektes mit\x0Adiesem ID kann Widget verborgen oder angezeigt sein.",
+        "de": "Abhängig von dem Zustand des Objektes mit\x0Adieser ID, kann das Widget verborgen oder angezeigt werden.",
         "ru": "Элемент можно показать или скрыть\x0Aв зависимости от состояние объекта с таким ID"
     },
     "visibility-cond":      {"en": "Сondition",         "de": "Bedingung",              "ru": "Условие"},
@@ -558,7 +558,7 @@ $.extend(systemDictionary, {
     "visibility-groups-action": {"en": "If user not in group",  "de": "Falls Anwender nicht in der Gruppe",            "ru": "Если пользователь не в группе"},
     "visibility-groups-action_tooltip":    {
         "en": "If current user not in the given groups, what should happen?",
-        "de": "Falls aktueller Anwender nicht in den gesetzten Gruppen ist, was muss passieren?",
+        "de": "Falls aktueller Anwender nicht in den gesetzten Gruppen ist, was soll passieren?",
         "ru": "Если пользователь не в указанных группах, что должно произойти?"
     },
     "All groups":           {"en": "all groups",        "de": "Alle Gruppen",           "ru": "всех групп"},
@@ -575,7 +575,7 @@ $.extend(systemDictionary, {
     "signals-text-0":       {"en": "Description [0]",   "de": "Beschreibung [0]",      "ru": "Описание [0]"},
     "signals-horz-0":       {"en": "Horizontal[0]",     "de": "Horizontale [0]",       "ru": "по горизонтали [0]"},
     "signals-vert-0":       {"en": "Vertical [0]",      "de": "Vertikale [0]",         "ru": "по вертикали [0]"},
-    "signals-hide-edit-0":  {"en": "Hide by edit [0]",  "de": "Nicht zeigen bei Editieren [0]", "ru": "Не показывать в редакторе [0]"},
+    "signals-hide-edit-0":  {"en": "Hide by edit [0]",  "de": "Nicht zeigen beim Editieren [0]", "ru": "Не показывать в редакторе [0]"},
     "signals-icon-size-0":  {"en": "Icon size in px[0]", "de": "Bildgröße in px [0]",  "ru": "Размер картинки в px [0]"},
     "signals-icon-style-0": {"en": "CSS icon style [0]", "de": "CSS Bildstyl [0]",     "ru": "CSS для картинки [0]"},
     "signals-text-style-0": {"en": "CSS text style [0]", "de": "CSS Textstyl [0]",     "ru": "CSS для текста[0]"},
@@ -603,7 +603,7 @@ $.extend(systemDictionary, {
     "signals-text-2":       {"en": "Description [2]",   "de": "Beschreibung [2]",      "ru": "Описание [2]"},
     "signals-horz-2":       {"en": "Horizontal[2]",     "de": "Horizontale [2]",       "ru": "по горизонтали [2]"},
     "signals-vert-2":       {"en": "Vertical [2]",      "de": "Vertikale [2]",         "ru": "по вертикали [2]"},
-    "signals-hide-edit-2":  {"en": "Hide by edit [2]",  "de": "Nicht zeigen bei Editieren [2]", "ru": "Не показывать в редакторе [2]"},
+    "signals-hide-edit-2":  {"en": "Hide by edit [2]",  "de": "Nicht zeigen beim Editieren [2]", "ru": "Не показывать в редакторе [2]"},
     "signals-icon-size-2":  {"en": "Icon size in px[2]", "de": "Bildgröße in px [2]",  "ru": "Размер картинки в px [2]"},
     "signals-icon-style-2": {"en": "CSS icon style [2]", "de": "CSS Bildstyl [2]",     "ru": "CSS для картинки [2]"},
     "signals-text-style-2": {"en": "CSS text style [2]", "de": "CSS Textstyl [2]",     "ru": "CSS для текста[2]"},
@@ -717,14 +717,14 @@ $.extend(systemDictionary, {
     "css_transform":        {"en": "transform",         "de": "transform",              "ru": "transform"},
     "css_transform_tooltip": {
         "en": "Transformation that affects an element's appearance\x0A" +
-            "Only visible, if widget is NOT selected.\x0A" +
-            "Examples: rotate(45deg) scale(0.5) skew(10deg)",
+        "Only visible, if widget is NOT selected.\x0A" +
+        "Examples: rotate(45deg) scale(0.5) skew(10deg)",
         "de": "Transformation, die das Aussehen eines Elements beeinflusst\x0A" +
-            "Nur sichtbar, wenn das Widget NICHT ausgewählt ist.\x0A" +
-            "Beispiele: rotate(45deg) scale(0.5) skew(10deg)",
+        "Nur sichtbar, wenn das Widget NICHT ausgewählt ist.\x0A" +
+        "Beispiele: rotate(45deg) scale(0.5) skew(10deg)",
         "ru": "Трансформация, которая влияет на внешний вид элемента\x0A" +
-            "Видно только, если виджет НЕ выбран.\x0A" +
-            "Примеры: rotate(45deg) scale(0.5) skew(10deg)"
+        "Видно только, если виджет НЕ выбран.\x0A" +
+        "Примеры: rotate(45deg) scale(0.5) skew(10deg)"
     },
     "css_margin-left":      {"en": "margin-left",       "de": "margin-left",            "ru": "margin-left"},
     "css_margin-top":       {"en": "margin-top",        "de": "margin-top",             "ru": "margin-top"},
@@ -733,25 +733,25 @@ $.extend(systemDictionary, {
     "css_box-shadow":       {"en": "box-shadow",        "de": "box-shadow",             "ru": "box-shadow"},
     "css_box-shadow_tooltip": {
         "en": "h-shadow v-shadow blur spread color\x0A" +
-              "h-shadow: Required. The position of the horizontal shadow. Negative values are allowed\x0A" +
-              "v-shadow: Required. The position of the vertical shadow. Negative values are allowed\x0A" +
-              "blur: Optional. The blur distance\x0A" +
-              "spread: Optional. The size of shadow\x0A" +
-              "color: Optional. The color of the shadow. The default value is black. Look at CSS Color Values for a complete list of possible color values.\x0A" +
-              "inset: Optional. Changes the shadow from an outer shadow (outset) to an inner shadow.",
+        "h-shadow: Required. The position of the horizontal shadow. Negative values are allowed\x0A" +
+        "v-shadow: Required. The position of the vertical shadow. Negative values are allowed\x0A" +
+        "blur: Optional. The blur distance\x0A" +
+        "spread: Optional. The size of shadow\x0A" +
+        "color: Optional. The color of the shadow. The default value is black. Look at CSS Color Values for a complete list of possible color values.\x0A" +
+        "inset: Optional. Changes the shadow from an outer shadow (outset) to an inner shadow.",
         "de": "inset [<X-Verschiebung> <Y-Verschiebung> <Unschärfe-Radius> <Ausbreitungsradius> <Farbe>]\x0A" +
-              "inset: Die Angabe ist optional. Wenn nicht festgelegt, wird angenommen, dass es sich um einen Schlagschatten handelt.\x0A" +
-              "X-Verschiebung Y-Verschiebung: Eine Angabe ist erforderlich. Es gibt zwei Längenwerte, die die Verschiebung des Schattens angeben. Negative Werte sind auch möglich.\x0A" +
-              "Unschärfe-Radius: Die Angabe ist optional und Null, wenn kein <Unschärfe-Radius> gesetzt wurde. Je großer der Wert, desto größer die Unschärfe.\x0A" +
-              "Ausbreitungsradius: Eine weitere Längenangabe, deren Angabe optional ist. Wenn nicht festgelegt ist der Ausbreitungsradius 0 und der Schatten hat die gleiche Größe wie das Element.\x0A" +
-              "Farbe: Die Angabe ist optional. Wenn nicht festgelegt, hängt die Farbe vom Browser ab. In Gecko (Firefox) wird der Wert der color Eigenschaft verwendet.\x0A",
+        "inset: Die Angabe ist optional. Wenn nicht festgelegt, wird angenommen, dass es sich um einen Schlagschatten handelt.\x0A" +
+        "X-Verschiebung Y-Verschiebung: Eine Angabe ist erforderlich. Es gibt zwei Längenwerte, die die Verschiebung des Schattens angeben. Negative Werte sind auch möglich.\x0A" +
+        "Unschärfe-Radius: Die Angabe ist optional und Null, wenn kein <Unschärfe-Radius> gesetzt wurde. Je großer der Wert, desto größer die Unschärfe.\x0A" +
+        "Ausbreitungsradius: Eine weitere Längenangabe, deren Angabe optional ist. Wenn nicht festgelegt ist der Ausbreitungsradius 0 und der Schatten hat die gleiche Größe wie das Element.\x0A" +
+        "Farbe: Die Angabe ist optional. Wenn nicht festgelegt, hängt die Farbe vom Browser ab. In Gecko (Firefox) wird der Wert der color Eigenschaft verwendet.\x0A",
         "ru": "inset <сдвиг по x> <сдвиг по y> <радиус размытия> <растяжение> <цвет>\x0A" +
-              "inset: Тень выводится внутри элемента. Необязательный параметр.\x0A" +
-              "сдвиг по x: Смещение тени по горизонтали относительно элемента. Положительное значение этого параметра задает сдвиг тени вправо, отрицательное — влево. Обязательный параметр.\x0A" +
-              "сдвиг по y: Смещение тени по вертикали относительно элемента. Положительное значение задает сдвиг тени вниз, отрицательное — вверх. Обязательный параметр.\x0A" +
-              "радиус размытия: Задает радиус размытия тени. Чем больше это значение, тем сильнее тень сглаживается, становится шире и светлее. Если этот параметр не задан, по умолчанию устанавливается равным 0, тень при этом будет четкой, а не размытой.\x0A" +
-              "растяжение: Положительное значение растягивает тень, отрицательное, наоборот, ее сжимает. Если этот параметр не задан, по умолчанию устанавливается 0, при этом тень будет того же размера, что и элемент.\x0A" +
-              "цвет: Цвет тени в любом доступном CSS формате, по умолчанию тень черная. Необязательный параметр."
+        "inset: Тень выводится внутри элемента. Необязательный параметр.\x0A" +
+        "сдвиг по x: Смещение тени по горизонтали относительно элемента. Положительное значение этого параметра задает сдвиг тени вправо, отрицательное — влево. Обязательный параметр.\x0A" +
+        "сдвиг по y: Смещение тени по вертикали относительно элемента. Положительное значение задает сдвиг тени вниз, отрицательное — вверх. Обязательный параметр.\x0A" +
+        "радиус размытия: Задает радиус размытия тени. Чем больше это значение, тем сильнее тень сглаживается, становится шире и светлее. Если этот параметр не задан, по умолчанию устанавливается равным 0, тень при этом будет четкой, а не размытой.\x0A" +
+        "растяжение: Положительное значение растягивает тень, отрицательное, наоборот, ее сжимает. Если этот параметр не задан, по умолчанию устанавливается 0, при этом тень будет того же размера, что и элемент.\x0A" +
+        "цвет: Цвет тени в любом доступном CSS формате, по умолчанию тень черная. Необязательный параметр."
     },
     "group_css_animation":      {"en": "CSS Animation",         "de": "CSS Animation",          "ru": "CSS Анимация"},
     "css_animation-name":       {"en": "animation-name",        "de": "animation-name",         "ru": "animation-name"},

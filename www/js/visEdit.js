@@ -6703,8 +6703,10 @@ vis = $.extend(true, vis, {
             var left = offset.left - viewOffset.left;
             // May be bug?
             if (!left && !top) {
-                left = parseInt($w[0].style.left, 10) || 0;
-                top  = parseInt($w[0].style.top, 10) + parseInt($w[0].offsetTop, 10);
+                left = parseInt($w[0].style.left || '0', 10) + parseInt($w[0].offsetLeft, 10);
+                top  = parseInt($w[0].style.top  || '0', 10) + parseInt($w[0].offsetTop, 10);
+                left = left || 0;
+                top  = top || 0;
             }
             var height = $w.innerHeight();
             var width  = $w.innerWidth();
