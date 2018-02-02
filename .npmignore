@@ -1,4 +1,5 @@
 Gruntfile.js
+gulpfile.js
 tasks
 ablage.html
 node_modules
@@ -9,3 +10,6 @@ test
 *.zip
 .travis.yml
 appveyor.yml
+iob_npm.done
+package-lock.json
+admin/i18n
