@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -30,7 +30,7 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^8.1.0"
+    "jsonwebtoken": "^8.1.1 "
   },
   "devDependencies": {
     "gulp": "^3.9.1",

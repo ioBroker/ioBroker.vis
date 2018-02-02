@@ -545,7 +545,7 @@ $.extend(systemDictionary, {
     "visibility-cond":      {"en": "Сondition",         "de": "Bedingung",              "ru": "Условие"},
     "visibility-cond_tooltip": {
         "en": "E.g. 'Value of Object ID' >= 'Value of condition'",
-        "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedienung'",
+        "de": "Z.B. 'Wert von dem Objekt' >= 'Wert für die Bedingung'",
         "ru": "Например 'Значение объекта' >= 'Значения для условия"
     },
     "visibility-val":       {"en": "Value for condition", "de": "Wert für die Bedingung", "ru": "Значение для условия"},
@@ -658,7 +658,7 @@ $.extend(systemDictionary, {
     },
     "Popup window blocked!": {
         "en": "Popup window blocked!",
-        "de": "Popup-Fenster blokiert!",
+        "de": "Popup-Fenster blockiert!",
         "ru": "Всплывающее окно заблокировано!"
     },
     "Cannot open new window": {

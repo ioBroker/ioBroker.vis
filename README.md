@@ -1,5 +1,5 @@
 ![Logo](admin/vis.png)
-iobroker.vis
+# iobroker.vis
 ============
 
 [![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
@@ -182,6 +182,13 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.2 (2018-02-02)
+* (bluefox) Fixing the saving of project
+* (bluefox) Fixing the background selector
+* (bluefox) Fixing the null pointer problem
+* (bluefox) Fixing the selection helper
+* Update translations
+
 ### 1.1.1 (2018-01-07)
 * (bluefox) The problem with view change on the touch devices fixed
 

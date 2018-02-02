@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.1",
+        "version": "1.1.2",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,6 +15,17 @@
             "pl": "Wizualizacja"
         },
         "news": {
+            "1.1.2": {
+                "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
+                "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",
+                "ru": "исправлено сохранение проекта\nисправлен переключатель фона\nУстранение проблемы с нулевым указателем\nисправлен выбор виджетов\nпереводы",
+                "pt": "Reparando a poupança do projeto\nCorrigindo o seletor de fundo\nCorrigindo o problema do ponteiro nulo\nReparando o auxiliar de seleção\nAtualizar traduções",
+                "nl": "Het opslaan van het project bevestigen\nDe achtergrondkiezer bevestigen\nVaststelling van het probleem met de null-wijzer\nDe selectiehulp bevestigen\nUpdate vertalingen",
+                "fr": "Fixer la sauvegarde du projet\nFixer le sélecteur d'arrière-plan\nCorrection du problème du pointeur nul\nCorrection de l'assistant de sélection\nMise à jour",
+                "it": "Risolvendo il salvataggio del progetto\nRisolto il problema con il selettore dello sfondo\nRisolvere il problema con il puntatore nullo\nRiparare l'helper di selezione\nAggiorna traduzioni",
+                "es": "Corregir el guardado del proyecto\nReparar el selector de fondo\nCorregir el problema del puntero nulo\nReparar el asistente de selección\nActualizar traducciones",
+                "pl": "Naprawienie zapisu projektu\nNaprawianie wybieraka tła\nNaprawiono problem z pustym wskaźnikiem\nNaprawianie pomocnika wyboru\nZaktualizuj tłumaczenia"
+            },
             "1.1.1": {
                 "en": "The problem with view change on the touch devices fixed",
                 "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
