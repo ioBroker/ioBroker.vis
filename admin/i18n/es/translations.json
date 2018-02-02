@@ -1,0 +1,7 @@
+{
+  "Check license": "Verificar licencia",
+  "License:": "Clave de licencia:",
+  "Service is offline. Please try later.": "El servicio está fuera de línea o no hay internet disponible. Por favor intente más tarde o verifique la conexión a internet.",
+  "instruction": "Para usar <b> vis </b>, debe obtener la clave de licencia correspondiente. <br> <b> vis </b> es gratuito para uso privado, pero para uso comercial tiene un precio. <br> Usted puede obtener la licencia en <a href='https://iobroker.net' target='_blank'>iobroker.net</a> después de un breve registro.",
+  "vis adapter settings": "vis configuración del adaptador"
+}

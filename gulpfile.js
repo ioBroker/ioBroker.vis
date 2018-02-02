@@ -60,7 +60,7 @@ function readWordJs(src) {
 
         var lines = words.split(/\r\n|\r|\n/g);
         var i = 0;
-        while (!lines[i].match(/^systemDictionary = {/)) {
+        while (!lines[i].match(/^\$\.extend\(systemDictionary, {/)) {
             i++;
         }
         lines.splice(0, i);
@@ -74,8 +74,8 @@ function readWordJs(src) {
             lines.splice(i + 1);
         }
 
-        lines[0] = lines[0].replace('systemDictionary = ', '');
-        lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/};$/, '}');
+        lines[0] = lines[0].replace('$.extend(systemDictionary, ', '');
+        lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/}\);$/, '}');
         words = lines.join('\n');
         var resultFunc = new Function('return ' + words + ';');
 
@@ -353,6 +353,27 @@ gulp.task('wwwLanguages2words', function (done) {
     languages2words('./www/');
     done();
 });
+
+gulp.task('adminWords2languages', function (done) {
+    words2languages('./admin/');
+    done();
+});
+
+gulp.task('adminWords2languagesFlat', function (done) {
+    words2languagesFlat('./admin/');
+    done();
+});
+
+gulp.task('adminLanguagesFlat2words', function (done) {
+    languagesFlat2words('./admin/');
+    done();
+});
+
+gulp.task('adminLanguages2words', function (done) {
+    languages2words('./admin/');
+    done();
+});
+
 
 gulp.task('replacePkg', function (done) {
     gulp.src([

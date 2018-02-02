@@ -1,0 +1,7 @@
+{
+  "Check license": "Check license",
+  "License:": "License key:",
+  "Service is offline. Please try later.": "Service is offline or no internet available. Please try later or check the internet connection.",
+  "instruction": "To use <b>vis</b>, you must get the license key for it.<br><b>vis</b> is free for private use, but for commercial use it has a price.<br>You can get the license on <a href='https://iobroker.net' target='_blank'>iobroker.net</a> after short registration.",
+  "vis adapter settings": "vis adapter settings"
+}
