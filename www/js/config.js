@@ -1,7 +1,6 @@
 var visConfig = {
     "widgetSets": [
         "basic",
-        "hqwidgets",
         "jqplot",
         {
             "name": "jqui",
@@ -9,21 +8,8 @@ var visConfig = {
                 "basic"
             ]
         },
-        "map",
-        {
-            "name": "material",
-            "depends": []
-        },
-        {
-            "name": "metro",
-            "depends": [
-                "jqui-mfd",
-                "basic"
-            ]
-        },
-        "swipe",
         "tabs",
-        "template"
+		"swipe"
     ]
 };
 if (typeof exports !== 'undefined') {
