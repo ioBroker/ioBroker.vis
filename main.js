@@ -225,18 +225,29 @@ function generatePages(isLicenseError) {
 
     // create command variable
     count++;
-    adapter.getObject('command', function (err, obj) {
+    adapter.getObject('control.command', function (err, obj) {
         if (!obj) {
-            adapter.setObject('command', {
-                common: {
-                    name: 'Command interface for vis',
-                    type: 'object',
-                    desc: 'Write object: {instance: "FFFFFFFFF", command: "changeView", data: "ViewName"} to change the view',
-                    role: 'command'
+            adapter.setObject('control.command',         {
+                    "type": "state",
+                    "common": {
+                        "name": "Command for vis",
+                        "type": "string",
+                        "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                        "states": {
+                            "alert": "alert",
+                            "changeView": "changeView",
+                            "refresh": "refresh",
+                            "reload": "reload",
+                            "dialog": "dialog",
+                            "popup": "popup",
+                            "playSound": "playSound",
+                            "changedView": "changedView",
+                            "tts": "tts"
+                        }
+                    },
+                    "native": {}
                 },
-                type: 'state',
-                native: {}
-            }, function () {
+                , function () {
                 if (!--count) checkFiles(changed, isBeta);
             }) ;
         } else {
