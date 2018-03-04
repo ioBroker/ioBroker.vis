@@ -227,7 +227,8 @@ function generatePages(isLicenseError) {
     count++;
     adapter.getObject('control.command', function (err, obj) {
         if (!obj) {
-            adapter.setObject('control.command',         {
+            adapter.setObject('control.command',
+                {
                     "type": "state",
                     "common": {
                         "name": "Command for vis",
@@ -247,9 +248,9 @@ function generatePages(isLicenseError) {
                     },
                     "native": {}
                 },
-                , function () {
-                if (!--count) checkFiles(changed, isBeta);
-            }) ;
+                function () {
+                    if (!--count) checkFiles(changed, isBeta);
+                }) ;
         } else {
             if (!--count) checkFiles(changed, isBeta);
         }
