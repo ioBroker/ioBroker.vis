@@ -3007,7 +3007,8 @@ function main($, onReady) {
                     vis.isFloatComma = config.isFloatComma;
                     // set moment language
                     if (typeof moment !== 'undefined') {
-                        moment.lang(vis.language);
+                        //moment.lang(vis.language);
+                        moment.locale(vis.language);
                     }
                     translateAll();
                     if (vis.isFirstTime) {
