@@ -131,7 +131,7 @@ $.extend(systemDictionary, {
     'Sign in':              {'en': 'Sign in',           'de': 'Anmelden',               'ru': 'Войти'},
     'Check all':            {'en': 'Check all',         'de': 'Alle selektieren',       'ru': 'Выбрать все'},
     'Uncheck all':          {'en': 'Uncheck all',       'de': 'Alle deselektieren',     'ru': 'Убрать все'},
-    'Select options':       {'en': 'Select options',    'de': 'Selekteingensch.',       'ru': 'Свойства выбора'},
+    'Select options':       {'en': 'Select options',    'de': 'Selekt Eingensch.',       'ru': 'Свойства выбора'},
     'Änderungs-Historie':   {'en': 'Change log',        'de': 'Änderungs-Historie:',    'ru': 'Список изменений'},
 
     'invalid JSON':         {'en': 'Invalid JSON',      'de': 'Invalid JSON',           'ru': 'Неправильный формат'},
@@ -348,14 +348,14 @@ $.extend(systemDictionary, {
     "Drop the files here":  {"en": "Drop the files here", "de": "Hier hinzufügen",      "ru": "Добавить..."},
     "bytes":                {"en": "bytes",             "de": "Bytes",                  "ru": "байт"},
     "Kb":                   {"en": "Kb",                "de": "Kb",                     "ru": "Кб"},
-    "Mb":                   {"en": "Kb",                "de": "Mb",                     "ru": "Мб"},
+    "Mb":                   {"en": "Mb",                "de": "Mb",                     "ru": "Мб"},
     "Export normal":        {"en": "Export (normal)",   "de": "Exportieren (normal)",   "ru": "Экспорт (обычный)"},
     "Export anonymized":    {"en": "Export (anonymized)", "de": "Exportieren (anonymized)", "ru": "Экспорт (анонимный)"},
     "Import":               {"en": "Import",            "de": "Import",                 "ru": "Импорт"},
     "Scripts":              {"en": "Scripts",           "de": "Skripte",                "ru": "Скрипты"},
     "Find:":                {"en": "Find:",             "de": "Suchen:",                "ru": "Найти:"},
     "Save scripts":         {"en": "Save scripts",      "de": "Speichern",              "ru": "Сохранить"},
-    "group_objects":        {"en": "Attributes",        "de": "Attributen",             "ru": "Атрибуты"},
+    "group_objects":        {"en": "Attributes",        "de": "Attribute",             "ru": "Атрибуты"},
     "attrCount":            {"en": "Count",             "de": "Anzahl",                 "ru": "Количество"},
     "attrName":             {"en": "Attribute name",    "de": "Attributname",           "ru": "Имя атрибута"},
     "attrType":             {"en": "Attribute type",    "de": "Attributetyp",           "ru": "Тип атрибута"},
@@ -392,7 +392,7 @@ $.extend(systemDictionary, {
     },
     "Invalid file extenstion!": {
         "en": "Invalid file extenstion!",
-        "de": "Invalide Dateiextenstion!",
+        "de": "Ungültige Dateierweiterung!",
         "ru": "Неправильный тип файла!"
     },
     "Reload if sleep longer than:": {
@@ -472,7 +472,7 @@ $.extend(systemDictionary, {
     },
     "Widgets filter. Double click to clear.": {
         "en": "Widgets filter. Double click to clear.",
-        "de": "Widgets-Filter. Doppelklick um das Feld zu löschen.",
+        "de": "Widgets-Filter. Doppelklick, um das Feld zu löschen.",
         "ru": "Фильтр элементов. Что бы очистить поле ввода - двойной щелчок."
     },
     "Cannot save file \"%s\": ": {
@@ -500,9 +500,9 @@ $.extend(systemDictionary, {
         "ru": "Проект не сохранён."
     },
     "Clipboard:":           {"en": "Clipboard:",        "de": "Zwischenablage:",        "ru": "Буфер обмена:"},
-    "Click to hide":        {"en": "Click to hide",     "de": "Anklicken um zu verbergen", "ru": "Нажать, что бы скрыть"},
+    "Click to hide":        {"en": "Click to hide",     "de": "Anklicken, um zu verbergen", "ru": "Нажать, что бы скрыть"},
     "Lock Widget function": {"en": "Disable interaction with widget", "de": "Deaktiviere Widget-Interaktion", "ru": "Деактивировать взаимодействие с элементом"},
-    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere das Widget verschiebbar ist", "ru": "Дективировать перенос виджетов мышкой"},
+    "Lock Widget dragging": {"en": "Lock widget dragging", "de": "Deaktiviere Widget, verschieben", "ru": "Дективировать перенос виджетов мышкой"},
     "Show type of widgets": {"en": "Show type of widgets", "de": "Zeige Widgettyp",     "ru": "Показать тип элемента"},
     "Small widgets":        {"en": "Small widgets",     "de": "Kleine Widgets",         "ru": "Показать маленькие элементы"},
     "to group":             {"en": "Group",             "de": "Gruppieren",             "ru": "Объеденить"},
@@ -577,8 +577,8 @@ $.extend(systemDictionary, {
     "signals-vert-0":       {"en": "Vertical [0]",      "de": "Vertikale [0]",         "ru": "по вертикали [0]"},
     "signals-hide-edit-0":  {"en": "Hide by edit [0]",  "de": "Nicht zeigen beim Editieren [0]", "ru": "Не показывать в редакторе [0]"},
     "signals-icon-size-0":  {"en": "Icon size in px[0]", "de": "Bildgröße in px [0]",  "ru": "Размер картинки в px [0]"},
-    "signals-icon-style-0": {"en": "CSS icon style [0]", "de": "CSS Bildstyl [0]",     "ru": "CSS для картинки [0]"},
-    "signals-text-style-0": {"en": "CSS text style [0]", "de": "CSS Textstyl [0]",     "ru": "CSS для текста[0]"},
+    "signals-icon-style-0": {"en": "CSS icon style [0]", "de": "CSS Bildstil [0]",     "ru": "CSS для картинки [0]"},
+    "signals-text-style-0": {"en": "CSS text style [0]", "de": "CSS Textstil [0]",     "ru": "CSS для текста[0]"},
     "signals-blink-0":      {"en": "Blinking [0]",      "de": "Blinken [0]",           "ru": "Мигание [0]"},
     "signals-text-class-0": {"en": "Classes [0]",       "de": "Klassen [0]",           "ru": "Классы [0]"},
 
@@ -591,8 +591,8 @@ $.extend(systemDictionary, {
     "signals-vert-1":       {"en": "Vertical [1]",      "de": "Vertikale [1]",         "ru": "по вертикали [1]"},
     "signals-hide-edit-1":  {"en": "Hide by edit [1]",  "de": "Nicht zeigen bei Editieren [1]", "ru": "Не показывать в редакторе [1]"},
     "signals-icon-size-1":  {"en": "Icon size in px[1]", "de": "Bildgröße in px [1]",  "ru": "Размер картинки в px [1]"},
-    "signals-icon-style-1": {"en": "CSS icon style [1]", "de": "CSS Bildstyl [1]",     "ru": "CSS для картинки [1]"},
-    "signals-text-style-1": {"en": "CSS text style [1]", "de": "CSS Textstyl [1]",     "ru": "CSS для текста[1]"},
+    "signals-icon-style-1": {"en": "CSS icon style [1]", "de": "CSS Bildstil [1]",     "ru": "CSS для картинки [1]"},
+    "signals-text-style-1": {"en": "CSS text style [1]", "de": "CSS Textstil [1]",     "ru": "CSS для текста[1]"},
     "signals-blink-1":      {"en": "Blinking [1]",      "de": "Blinken [1]",           "ru": "Мигание [1]"},
     "signals-text-class-1": {"en": "Classes [1]",       "de": "Klassen [1]",           "ru": "Классы [1]"},
 
@@ -605,8 +605,8 @@ $.extend(systemDictionary, {
     "signals-vert-2":       {"en": "Vertical [2]",      "de": "Vertikale [2]",         "ru": "по вертикали [2]"},
     "signals-hide-edit-2":  {"en": "Hide by edit [2]",  "de": "Nicht zeigen beim Editieren [2]", "ru": "Не показывать в редакторе [2]"},
     "signals-icon-size-2":  {"en": "Icon size in px[2]", "de": "Bildgröße in px [2]",  "ru": "Размер картинки в px [2]"},
-    "signals-icon-style-2": {"en": "CSS icon style [2]", "de": "CSS Bildstyl [2]",     "ru": "CSS для картинки [2]"},
-    "signals-text-style-2": {"en": "CSS text style [2]", "de": "CSS Textstyl [2]",     "ru": "CSS для текста[2]"},
+    "signals-icon-style-2": {"en": "CSS icon style [2]", "de": "CSS Bildstil [2]",     "ru": "CSS для картинки [2]"},
+    "signals-text-style-2": {"en": "CSS text style [2]", "de": "CSS Textstil [2]",     "ru": "CSS для текста[2]"},
     "signals-blink-2":      {"en": "Blinking [2]",      "de": "Blinken [2]",           "ru": "Мигание [2]"},
     "signals-text-class-2": {"en": "Classes [2]",       "de": "Klassen [2]",           "ru": "Классы [2]"},
 
@@ -639,12 +639,12 @@ $.extend(systemDictionary, {
     "Project":              {"en": "Project",           "de": "Projekt",               "ru": "Проект"},
     "Align width": {
         "en": "Align width. Press more time to get the desired width.",
-        "de": "Gleiche Breite. Mehrmals drücken um gewünschte Breite einzustellen.",
+        "de": "Gleiche Breite. Mehrmals drücken, um gewünschte Breite einzustellen.",
         "ru": "Одинаковая ширина. Нажать несколько раз для получения желаемой ширина"
     },
     "Align height": {
         "en": "Align height. Press more time to get the desired height.",
-        "de": "Gleiche Höhe. Mehrmals drücken um gewünschte Höhe einzustellen.",
+        "de": "Gleiche Höhe. Mehrmals drücken, um gewünschte Höhe einzustellen.",
         "ru": "Одинаковая высота. Нажать несколько раз для получения желаемой высоты"
     },
     "Find previous":        {"en": "Find previous",     "de": "Finde vorherige",        "ru": "Искать назад"},
