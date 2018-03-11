@@ -433,11 +433,14 @@
             if (val === 'false') val = false;
 
             if (!vis.editMode) {
-                $this.on('click touchstart', function (e) {
+				var moved = false;
+                $this.on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
                     var oid = $(this).attr('data-oid');
+					
+					if (moved) return;
 
                     if ($(this).attr('url-value')) {
                         vis.conn.httpGet($(this).attr('url-value'));
@@ -452,7 +455,11 @@
 
                         if (oid) vis.setValue(oid, val);
                     }
-                });
+                }).on('touchmove', function () {
+					moved = true;
+				}).on('touchstart', function () {
+					moved = false;
+				});
             }
         },
         pressed: null,
@@ -494,9 +501,12 @@
             }
 
             if (!vis.editMode) {
-                $(el).on('click touchstart', function (e) {
+				var moved = false;
+                $(el).on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
+					
+					if (moved) return;
 
                     if (vis.binds.basic.pressed) {
                         clearInterval(vis.binds.basic.pressed);
@@ -520,7 +530,11 @@
                             vis.setValue($this.attr('data-oid'), tmp);
                         }
                     }
-                });
+                }).on('touchmove', function () {
+					moved = true;
+				}).on('touchstart', function () {
+					moved = false;
+				});
             }
 
             if (interval) {
@@ -543,16 +557,23 @@
         navigation: function (el, options) {
             if (!vis.editMode && options.nav_view) {
                 var $this = $(el);
-                $this.on('click touchstart', function (e) {
+				var moved = false;
+                $this.on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
+					
+					if (moved) return;
 
                     if (options.background) $('body').css({background: options.background});
 
                     vis.changeView(options.nav_view, options.nav_view, options.hideOptions, options.showOptions, options.sync);
                     //e.preventDefault();
                     //return false;
-                });
+                }).on('touchmove', function () {
+					moved = true;
+				}).on('touchstart', function () {
+					moved = false;
+				});
             }
         },
         hideOnFalse: function (el) {
@@ -859,9 +880,13 @@
             if (max === '') max = undefined;
 
             if ((oid || oidTrue || urlTrue) && !vis.editMode && !readOnly) {
-                $this.on('click touchstart', function () {
+				var moved = false;
+                $this.on('click touchend', function () {			
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
+					
+					if (moved) return;
+					
                     var val;
 
                     if (oidTrue || urlTrue) {
@@ -950,7 +975,11 @@
                             vis.setValue(oid, val);
                         }
                     }
-                });
+                }).on('touchmove', function () {
+					moved = true;
+				}).on('touchstart', function () {
+					moved = false;
+				});
             }
         },
         iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
@@ -1099,10 +1128,13 @@
 
             if (style) $('#' + wid).css(style);
 
+			var moved = false;
             function onSvgClick() {
                 // Protect against two events
                 if (vis.detectBounce(this)) return;
 
+				if (moved) return;
+				
                 var val = vis.states[oid + '.val'];
                 if (val === null || val === '' || val === undefined || val === false || val === "false") {
                     vis.setValue(oid, true);
@@ -1126,7 +1158,12 @@
                     var $svg = $('#' + wid).find('svg');
                     $svg.html(newVal ? svg_true : svg_false);
                     if (!vis.editMode && !no_control) {
-                        $svg.children().unbind('click touchstart').on('click touchstart', onSvgClick);
+                        $svg.children().unbind('click touchend touchmove touchstart').on('click touchend', onSvgClick)
+						.on('touchmove', function () {
+							moved = true;
+						}).on('touchstart', function () {
+							moved = false;
+						});
                     } else if (vis.editMode){
                         $svg.children().unbind('click touchstart').on('click touchstart', function () {
                             vis.inspectWidgets([wid]);
@@ -1136,7 +1173,11 @@
             }
             var $svg = $wid.find('svg');
             if (!vis.editMode && !no_control) {
-                $svg.children().on('click touchstart', onSvgClick);
+                $svg.children().on('click touchend', onSvgClick).on('touchmove', function () {
+					moved = true;
+				}).on('touchstart', function () {
+					moved = false;
+				});
             } else if (vis.editMode){
                 $svg.children().unbind('click touchstart').on('click touchstart', function () {
                     vis.inspectWidgets([wid]);
