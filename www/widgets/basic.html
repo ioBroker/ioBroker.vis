@@ -309,7 +309,7 @@
             var $this = $(el);
             var oid   = $this.attr('data-oid');
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
                 if (newVal === 'false' || newVal === false) newVal = 0;
                 var view = viewArr[newVal];
@@ -324,34 +324,54 @@
                     });
                 }
                 vis.destroyUnusedViews();
-            });
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            }
         },
         iframe: function (el, srcArr, refreshInterval) {
             var $this = $(el).parent().find('iframe');
             var oid   = $this.attr('data-oid');
             refreshInterval = parseInt(refreshInterval, 10) || 0;
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange (e, newVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
                 if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
-            });
-
-            if (vis.states[oid + '.val'] !== undefined) {
-                var val = vis.states[oid + '.val'];
-                if (val === 'true'  || val === true)  val = 1;
-                if (val === 'false' || val === false) val = 0;
-                $this.attr('src', srcArr[val]);
             }
 
-            if (refreshInterval > 0) {
-                setInterval(function () {
-                    var val = vis.states[oid + '.val'] || 0;
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                if (vis.states[oid + '.val'] !== undefined) {
+                    var val = vis.states[oid + '.val'];
                     if (val === 'true'  || val === true)  val = 1;
                     if (val === 'false' || val === false) val = 0;
-                    var src = srcArr[val];
-                    $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                }, refreshInterval);
+                    $this.attr('src', srcArr[val]);
+                }
+
+                if (refreshInterval > 0) {
+                    setInterval(function () {
+                        var val = vis.states[oid + '.val'] || 0;
+                        if (val === 'true'  || val === true)  val = 1;
+                        if (val === 'false' || val === false) val = 0;
+                        var src = srcArr[val];
+                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    }, refreshInterval);
+                }
             }
         },
         image: function (el, srcArr, refreshInterval) {
@@ -359,29 +379,40 @@
             var oid = $this.attr('data-oid');
             refreshInterval = parseInt(refreshInterval, 10) || 0;
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange (e, newVal) {
                 if (newVal === 'true'  || newVal === true)  newVal = 1;
                 if (newVal === 'false' || newVal === false) newVal = 0;
                 $this.attr('src', srcArr[newVal]);
-            });
-
-            if (vis.states[oid + '.val'] !== undefined) {
-                var val = vis.states[oid + '.val'];
-                if (val === 'true'  || val === true)  val = 1;
-                if (val === 'false' || val === false) val = 0;
-                $this.attr('src', srcArr[val]);
             }
 
-            if (refreshInterval > 0) {
-                setInterval(function () {
-                    var val = vis.states[oid + '.val'] || 0;
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                if (vis.states[oid + '.val'] !== undefined) {
+                    var val = vis.states[oid + '.val'];
                     if (val === 'true'  || val === true)  val = 1;
                     if (val === 'false' || val === false) val = 0;
+                    $this.attr('src', srcArr[val]);
+                }
 
-                    var src = srcArr[val];
-                    if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
-                }, refreshInterval);
+                if (refreshInterval > 0) {
+                    setInterval(function () {
+                        var val = vis.states[oid + '.val'] || 0;
+                        if (val === 'true'  || val === true)  val = 1;
+                        if (val === 'false' || val === false) val = 0;
+
+                        var src = srcArr[val];
+                        if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                    }, refreshInterval);
+                }
             }
+
         },
         value: function (values, oid) {
             if (oid !== 'nothing_selected' && vis.states.attr(oid + '.val') !== undefined) {
@@ -420,11 +451,10 @@
             $this.find('select').change(function () {
                 vis.changeFilter(null, $this.find('select option:selected').val(), hideEffect, hideDuration, showEffect, showDuration);
             });
-
         },
         state: function (el, oid) {
             var $this = $(el);
-            var oid = (oid ? oid : $this.attr('data-oid'));
+            oid = (oid ? oid : $this.attr('data-oid'));
             var val = $this.attr('data-val');
 
             if (oid) $this.attr('data-oid', oid);
@@ -551,6 +581,8 @@
                             clearInterval(vis.binds.basic.pressed);
                             vis.binds.basic.pressed = null;
                         }
+                    }).data('destroy', function (id, $widget) {
+                        $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
                     });
             }
         },
@@ -578,22 +610,34 @@
         },
         hideOnFalse: function (el) {
             var $this = $(el);
-            var oid = $this.attr('data-oid');
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
+            var oid   = $this.attr('data-oid');
+
+            function onChange (e, newVal) {
+                if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) == 0) {
                     if (!vis.editMode) {
                         $this.hide();
                     }
                 } else {
                     $this.show();
                 }
-            });
-            if (!vis.editMode) {
-                var newVal = vis.states.attr(oid + '.val');
-                if (newVal === null || newVal === false || newVal === 0 || newVal === "false" || parseInt(newVal,10) == 0) {
-                    $this.hide();
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $this.data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                if (!vis.editMode) {
+                    var newVal = vis.states.attr(oid + '.val');
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) == 0) {
+                        $this.hide();
+                    }
                 }
             }
+
         },
         /*hideOnTrue: function (el) {
             var $this = $(el);
@@ -666,15 +710,23 @@
             var oid   = $this.data('oid'); // Object ID
             var wid   = $this.data('oid-working'); // Work ID
 
+            function onChange() {
+                vis.binds.basic._onChange(el, oid, wid);
+            }
             if (oid) {
-                vis.states.bind(oid + '.val', function (e, val, oldVal) {
-                    vis.binds.basic._onChange(el, oid, wid);
-                });
+                var bound = [];
+                vis.states.bind(oid + '.val', onChange);
+                bound.push(oid + '.val');
                 if (wid) {
-                    vis.states.bind(wid + '.val', function (e, val, oldVal) {
-                        vis.binds.basic._onChange(el, oid, wid);
-                    });
+                    vis.states.bind(wid + '.val', onChange);
+                    bound.push(wid + '.val');
                 }
+
+                // remember all ids, that bound
+                $this.closest('.vis-widget')
+                    .data('bound', bound)
+                    // remember bind handler
+                    .data('bindHandler', onChange);
             }
 
             if (numeric) {
@@ -716,15 +768,22 @@
             var oid   = $this.data('oid'); // Object ID
             var wid   = $this.data('oid-working'); // Work ID
 
+            function onChange(e, val) {
+                $this.val(val);
+            }
+
             if (oid) {
-                vis.states.bind(oid + '.val', function (e, val, oldVal) {
-                    $this.val(val);
-                });
+                var bound = [oid + '.val'];
+                vis.states.bind(oid + '.val', onChange);
                 if (wid) {
-                    vis.states.bind(wid + '.val', function (e, val, oldVal) {
-                        $this.val(val);
-                    });
+                    bound.push(wid + '.val');
+                    vis.states.bind(wid + '.val', onChange);
                 }
+                // remember all ids, that bound
+                $this.closest('.vis-widget')
+                    .data('bound', bound)
+                    // remember bind handler
+                    .data('bindHandler', onChange);
             }
 
             if (data.numeric) {
@@ -803,6 +862,7 @@
             if (invert) val = !val;
 
             $this.val(val ? 1 : 0);
+
             if (!vis.editMode) {
                 if (oid !== 'nothing_selected') {
                     $this.change(function () {
@@ -815,7 +875,7 @@
             if (oid !== 'nothing_selected') {
 
             }
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal, oldVal) {
                 if (newVal === 'false') {
                     newVal = false;
                 } else if (newVal === 'true') {
@@ -860,11 +920,20 @@
                         $this.trigger('change');
                     }
                 }
-            });
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $this.closest('.vis-widget')
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            }
         },
         toggle: function (el, oid) {
             var $this = $(el);
-            var oid = oid || $this.data('oid');
+            oid = oid || $this.data('oid');
             var min = $this.data('min');
             var max = $this.data('max');
 
@@ -979,7 +1048,9 @@
 					moved = true;
 				}).on('touchstart', function () {
 					moved = false;
-				});
+				}).data('destroy', function (id, $widget) {
+				    $widget.off('click touchend').off('touchmove').off('touchstart');
+                });
             }
         },
         iframeRefresh: function (el, src, refreshInterval, refreshOnWakeUp, refreshOnViewChange, refreshWithNoQuery) {
@@ -1101,6 +1172,9 @@
         },
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
             var $wid = $('#' + wid);
+
+            if ($wid.attr('id').match(/_removed$/)) return;
+
             if (!$wid.length) {
                 return setTimeout(function () {
                     vis.binds.basic.showSvg(myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control);
@@ -1124,11 +1198,12 @@
                 sText += svg_true;
             }
             sText += '</svg>';
-            $wid.find('.vis-widget-body').append (sText);
+            $wid.find('.vis-widget-body').append(sText);
 
-            if (style) $('#' + wid).css(style);
+            if (style) $wid.css(style);
 
 			var moved = false;
+
             function onSvgClick() {
                 // Protect against two events
                 if (vis.detectBounce(this)) return;
@@ -1151,38 +1226,49 @@
                 }
             }
 
-            if (oid) {
-                vis.states.bind(oid + '.val', function (e, newVal) {
-                    if (newVal === 'true'  || newVal === true)  newVal = 1;
-                    if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
-                    var $svg = $('#' + wid).find('svg');
-                    $svg.html(newVal ? svg_true : svg_false);
-                    if (!vis.editMode && !no_control) {
-                        $svg.children().unbind('click touchend touchmove touchstart').on('click touchend', onSvgClick)
-						.on('touchmove', function () {
-							moved = true;
-						}).on('touchstart', function () {
-							moved = false;
-						});
-                    } else if (vis.editMode){
-                        $svg.children().unbind('click touchstart').on('click touchstart', function () {
-                            vis.inspectWidgets([wid]);
+            function onChange (e, newVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false || newVal === '0') newVal = 0;
+                var $svg = $('#' + wid).find('svg');
+
+                $svg.html(newVal ? svg_true : svg_false);
+
+                if (!vis.editMode && !no_control) {
+                    $svg.children().unbind('click touchend touchmove touchstart').on('click touchend', onSvgClick)
+                        .on('touchmove', function () {
+                            moved = true;
+                        }).on('touchstart', function () {
+                            moved = false;
                         });
-                    }
-                });
+                } else if (vis.editMode){
+                    $svg.children().unbind('click touchstart').on('click touchstart', function () {
+                        vis.inspectWidgets([wid]);
+                    });
+                }
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $wid.data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
             }
             var $svg = $wid.find('svg');
             if (!vis.editMode && !no_control) {
-                $svg.children().on('click touchend', onSvgClick).on('touchmove', function () {
+                $svg.children().off('click touchend').on('click touchend', onSvgClick).off('touchmove').on('touchmove', function () {
 					moved = true;
 				}).on('touchstart', function () {
 					moved = false;
 				});
             } else if (vis.editMode){
-                $svg.children().unbind('click touchstart').on('click touchstart', function () {
+                $svg.children().off('click touchstart').on('click touchstart', function () {
                     vis.inspectWidgets([wid]);
                 });
             }
+            $wid.data('destroy', function (id, $widget) {
+                $widget.find('svg').children().off('click touchend').off('touchmove').off('click touchstart');
+            });
         },
         editNote: function (wid, max_width, min_width, min_height, oid) {
             if (vis.editMode) return;
@@ -1269,7 +1355,7 @@
             var max = (data.max || data.max === 0) ? parseFloat(data.max) : 100;
             val = parseFloat(vis.states.attr(data.oid + '.val')) || 0;
             val = (val - min) / (max - min);
-            return (data.border) ? ("calc(" + Math.round(val * 100) + "% - " + vis.binds.basic.extractWidth(data.border, 2) + ")") : (Math.round(val * 100) + "%");
+            return (data.border) ? ('calc(' + Math.round(val * 100) + '% - ' + vis.binds.basic.extractWidth(data.border, 2) + ')') : (Math.round(val * 100) + '%');
         },
 
         formatValue: function formatValue(value, decimals, _format) {
@@ -1277,7 +1363,7 @@
 	            decimals = 2;
 	            _format = decimals;
 	        }
-	        var format = (_format === undefined) ? ".," : _format;
+	        var format = (_format === undefined) ? '.,' : _format;
 	        if (typeof value !== 'number') value = parseFloat(value);
 	        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
 	    },
@@ -1609,23 +1695,25 @@
 
             return format;
         },
-        detectScreen: function (el) {
+        detectScreen: function (wid) {
             if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) === -1) {
                 vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
             }
 
+            function onResize () {
+                if (vis.editMode) {
+                    $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
+                    $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
+                } else {
+                    $('.vis-resolution-width').html($(window).width());
+                    $('.vis-resolution-height').html($(window).height());
+                    $('.vis-resolution-default-view').html(vis.findNearestResolution());
+                }
+            }
+
             setTimeout(function () {
-                $(window).bind('resize', function () {
-                    if (vis.editMode) {
-                        $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
-                        $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
-                        $('.vis-resolution-default-view').html(vis.findNearestResolution(vis.views[vis.activeView].settings.sizex || $(window).width(), vis.views[vis.activeView].settings.sizey || $(window).height()));
-                    } else {
-                        $('.vis-resolution-width').html($(window).width());
-                        $('.vis-resolution-height').html($(window).height());
-                        $('.vis-resolution-default-view').html(vis.findNearestResolution());
-                    }
-                });
+                $(window).bind('resize', onResize);
                 if (vis.editMode) {
                     $('.vis-resolution-width').html(vis.views[vis.activeView].settings.sizex  || $(window).width());
                     $('.vis-resolution-height').html(vis.views[vis.activeView].settings.sizey || $(window).height());
@@ -1636,6 +1724,12 @@
                     $('.vis-resolution-default-view').html(vis.findNearestResolution());
                 }
             }, 100);
+
+            if (vis.editMode) {
+                $('#' + wid).data('destroy', function () {
+                    $(window).unbind('resize', onResize);
+                });
+            }
         },
         createScreenText: function () {
             setTimeout(function () {
@@ -1829,7 +1923,7 @@
                 };
 
                 _data.recognition.onend    = function() {
-                    console.log('onend');
+                    // console.log('onend');
                     _data.recognition.stop();
                     _data.recognition = null;
                     if (!_data.ignoreOnEnd) {
@@ -1937,6 +2031,7 @@
 
                 _data.recognition.start();
             }
+
             if (_data.speechMode === 'continuous') {
                 if (!vis.editMode) {
                     startRecognition();
@@ -2013,6 +2108,9 @@
         },
         toggleFullScreen: function (wid, view, data, style) {
             var $div = $('#' + wid);
+
+            if ($div.attr('id').match(/_removed$/)) return;
+
             // if nothing found => wait
             if (!$div.length) {
                 setTimeout(function () {
@@ -2982,7 +3080,7 @@
 			Height: <span class='vis-resolution-height'></span><br>
 			Instance: <span><%== vis.instance ? vis.instance : vis.binds.basic.createScreenText() %></span>
 		</div>
-		<%= vis.binds.basic.detectScreen() %>
+		<%= vis.binds.basic.detectScreen(this.data.attr('wid')) %>
     </div>
 </script>
 

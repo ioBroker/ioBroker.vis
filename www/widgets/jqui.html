@@ -195,10 +195,19 @@
             var oid = $this.data('oid');
             var max = $this.data('max') || 1;
             var min = $this.data('min') || 0;
+
+            function onChange(e, newVal) {
+                vis.binds.jqueryui.activeHelper($this, newVal, min, max, _value, reverse);
+            }
+
             if (oid) {
-                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                    vis.binds.jqueryui.activeHelper($this, newVal, min, max, _value, reverse);
-                });
+                // remember all ids, that bound
+                $this.parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                vis.states.bind(oid + '.val', onChange);
                 vis.binds.jqueryui.activeHelper($this, vis.states.attr(oid + '.val'), min, max, _value, reverse);
             }
         },
@@ -274,7 +283,7 @@
                                 $(this).parent().find('.ui-state-focus').blur();
                                 //touchscreen fix
                                 var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                                $closeButton.unbind('touchend').on('touchend', function (event) {
+                                $closeButton.off('touchend').on('touchend', function (event) {
                                     event.stopPropagation();
                                     $dlg.dialog('close');
                                     return false;
@@ -291,7 +300,7 @@
                         $dlg.data('inited', true);
 
                         if (closeOnClick) {
-                            $dlg.unbind('click touchstart touchend').on('click touchend', function (event) {
+                            $dlg.off('click touchstart touchend').on('click touchend', function (event) {
                                 event.stopPropagation();
                                 $dlg.dialog('close');
                                 return false;
@@ -309,7 +318,7 @@
                         if ($dlg.data('preload')) $dlg.html(html);
                         //touchscreen fix
                         var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                        $closeButton.unbind('touchend').on('touchend', function (event) {
+                        $closeButton.off('touchend').on('touchend', function (event) {
                             event.stopPropagation();
                             $dlg.dialog('close');
                             return false;
@@ -328,7 +337,7 @@
                 $dlg.data('inited', true);
 
                 if (closeOnClick) {
-                    $dlg.unbind('click touchstart touchend').on('click touchend', function (event) {
+                    $dlg.off('click touchstart touchend').on('click touchend', function (event) {
                         event.stopPropagation();
                         $dlg.dialog('close');
                         return false;
@@ -338,6 +347,10 @@
         },
         dialogContainer: function (el, options, persistent, preload) {
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
+
+            if ($(el).parent().attr('id').match(/_removed$/)) {
+                return;
+            }
 
             if (!$dlg.length) {
                 setTimeout(function () {
@@ -391,7 +404,7 @@
                     $id.parent().find('.ui-state-focus').blur();
 
                     var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                    $closeButton.unbind('touchend').on('touchend', function (event) {
+                    $closeButton.off('touchend').on('touchend', function (event) {
                         event.stopPropagation();
                         $dlg.dialog('close');
                         var $view = $dlg.find('.vis-view');
@@ -437,12 +450,18 @@
             if (!timeout) timeout = 1000;
 
             var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
+
+            if ($(el).parent().attr('id').match(/_removed$/)) {
+                return;
+            }
+
             if (!$dialog.length) {
                 setTimeout(function () {
                     vis.binds.jqueryui.dialogAutoClose(el, timeout);
                 }, 200);
                 return;
             }
+
             $dialog.on('dialogopen', function () {
                 $dialog.find('input').on('click', function () {
                     var timer = $dialog.data('timer');
@@ -520,14 +539,26 @@
                 vis.setValue(oid, $(this).val());
             });
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
-                if (!asString && digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
+            function onChange(e, newVal) {
+                if (!asString && digits && digits !== '') {
+                    newVal = parseFloat(newVal).toFixed(digits);
+                }
 
                 $this.val(newVal);
-            });
-            var val = vis.states[oid + '.val'];
-            if (!asString && digits && digits !== '') {
-                val = parseFloat(vis.states[oid + '.val']).toFixed(digits);
+            }
+            var val = '';
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                val = vis.states[oid + '.val'];
+                if (!asString && digits && digits !== '') {
+                    val = parseFloat(vis.states[oid + '.val']).toFixed(digits);
+                }
             }
             $this.val(val);
         },
@@ -539,7 +570,7 @@
                 monthNamesShort: vis.binds.jqueryui.shortMonths[vis.language],
                 monthNames:      vis.binds.jqueryui.months[vis.language],
                 dayNamesMin:     vis.binds.jqueryui.shortWeekDays[vis.language],
-                showAnim:        "fadeIn",
+                showAnim:        'fadeIn',
                 firstDay: 1,
                 currentText:     vis.binds.jqueryui.currentText[vis.language],
                 closeText:       vis.binds.jqueryui.closeText[vis.language]
@@ -558,13 +589,25 @@
 
             if (!vis.editMode) $this.datepicker(datepickerOptions);
 
-            $this.change(function () {
-                vis.setValue(oid, $(this).val());
-            });
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 $this.val(newVal);
-            });
-            $this.val(vis.states.attr(oid + '.val'));
+            }
+
+            if (oid) {
+                $this.change(function () {
+                    vis.setValue(oid, $(this).val());
+                });
+
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                $this.val(vis.states.attr(oid + '.val'));
+            }
         },
         inputDatetime: function (el, options) {
             var $this = $(el);
@@ -608,21 +651,33 @@
             } else {
                 $this.addClass('ui-widget ui-button ui-corner-all');
             }
-            $this.change(function () {
-                var $this = $(this);
-                var val = $this.val();
-                /*if ($this[0].__options && !$this[0].__options.showSecond) {
-                 var vals = val.split(':');
-                 if (vals.length === 3) {
-                 val = vals[0] + ":" + vals[1];
-                 }
-                 }*/
-                vis.setValue(oid, val);
-            });
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+
+
+            function onChange(e, newVal) {
                 $this.val(newVal);
-            });
-            $this.val(vis.states.attr(oid + '.val'));
+            }
+
+            if (oid) {
+                $this.change(function () {
+                    var $this = $(this);
+                    var val = $this.val();
+                    /*if ($this[0].__options && !$this[0].__options.showSecond) {
+                     var vals = val.split(':');
+                     if (vals.length === 3) {
+                     val = vals[0] + ":" + vals[1];
+                     }
+                     }*/
+                    vis.setValue(oid, val);
+                });
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                $this.val(vis.states.attr(oid + '.val'));
+            }
         },
         inputset: function (el, options, asString) {
             var digits    = options;
@@ -650,7 +705,9 @@
                     });
                 }, 100);
             }
+
             if (!noJsStyle) $this.prev().button();
+
             $this.prev().addClass('ui-state-default')
                     .css({
                         font:            'inherit',
@@ -662,22 +719,32 @@
                         cursor:         'text',
                         height:         '95%'
                     });
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+
+            function onChange(e, newVal) {
                 if (!asString && digits && digits !== '') {
                     newVal = parseFloat(newVal).toFixed(digits);
                 }
                 $(input).val(newVal);
+            }
 
-            });
-            var newVal = vis.states[oid + '.val'];
-            if (!asString && digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
-            $(input).val(newVal);
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+
+                var newVal = vis.states[oid + '.val'];
+                if (!asString && digits && digits !== '') newVal = parseFloat(newVal).toFixed(digits);
+                $(input).val(newVal);
+            }
         },
         multiselect: function (el, options, isOpen) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
             var noJsStyle = $this.attr('data-no-style');
-            $this.val(vis.states[oid + '.val']);
+            if (oid) $this.val(vis.states[oid + '.val']);
 
             if (noJsStyle !== true && noJsStyle !== 'true') {
                 $this.multiselect($.extend({
@@ -710,17 +777,26 @@
             }
             var id =  $this.attr('id');
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 var $select = $('#' + id);
                 $select.val(newVal);
                 if (noJsStyle !== true && noJsStyle !== 'true') {
                     $select.multiselect('refresh');
                 }
-            });
+            }
+
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            }
 
             if (vis.editMode) {
-                if (noJsStyle !== true && noJsStyle !== 'true') {
-                    if (isOpen) $this.multiselect('open');
+                if (noJsStyle !== true && noJsStyle !== 'true' && isOpen) {
+                    $this.multiselect('open');
                 }
 
                 vis.bindWidgetClick($this.attr('data-view'), $this.attr('id').replace('_multiselect', ''));
@@ -728,35 +804,37 @@
                     if (noJsStyle !== true && noJsStyle !== 'true') {
                         $('#' + id).multiselect('option', 'minWidth', $(this).width() - 7);
                     }
+                }).data('destroy', function (id, $widget) {
+                    $widget.off('resize');
                 });
             }
         },
         slider: function (el, options) {
-            var $this = $(el);
-            var oid = $this.attr('data-oid');
-            var oid2 = $this.attr('data-oid2');
-            var oid_val = 0;
-            var oid2_val = 0;
-            var wid = $this.attr('data-oid-working');
-            var wid2 = $this.attr('data-oid2-working');
-            var settings = $.extend({
-                range: oid2 ? true : false,
-                min: 0,
-                max: 100,
-                step: 1,
-                value: parseFloat(vis.states.attr(oid + '.val')),
-                slide: function (e, ui) {
-                    // Slider -> Observable
+            var $this       = $(el);
+            var oid         = $this.attr('data-oid');
+            var oid2        = $this.attr('data-oid2');
+            var oid_val     = 0;
+            var oid2_val    = 0;
+            var wid         = $this.attr('data-oid-working');
+            var wid2        = $this.attr('data-oid2-working');
 
+            var settings    = $.extend({
+                range:  !!oid2,
+                min:    0,
+                max:    100,
+                step:   1,
+                value:  parseFloat(vis.states.attr(oid + '.val')),
+                slide:  function (e, ui) {
+                    // Slider -> Observable
                     if (oid2) {
                         if (options.inverted) {
                             ui.values[0] = (settings.max - ui.values[0]) + settings.min;
                             ui.values[1] = (settings.max - ui.values[1]) + settings.min;
                         }
 
-                        vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                        if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
                         vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                    } else {
+                    } else if (oid) {
                         if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
                         vis.setValue(oid, ui.value); //.toFixed(6));
                     }
@@ -779,28 +857,26 @@
 
             $this.slider(settings);
 
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 // console.log('slider newVal=' + JSON.stringify(newVal));
                 // If device not in working state
-                if (!vis.states.attr(wid + '.val')) {
-
-                    if (settings.inverted) {
-                        oid_val = (settings.max - parseFloat(newVal)) + settings.min;
-                    } else {
-                        oid_val = parseFloat(newVal);
-                    }
-                    if ($this.slider('instance')) {
-                        if (oid2) {
-                            $this.slider('values', [oid_val, oid2_val]);
+                if (e.type === oid + '.val') {
+                    if (!vis.states.attr(wid + '.val')) {
+                        if (settings.inverted) {
+                            oid_val = (settings.max - parseFloat(newVal)) + settings.min;
                         } else {
-                            $this.slider('value', oid_val);
+                            oid_val = parseFloat(newVal);
+                        }
+                        if ($this.slider('instance')) {
+                            if (oid2) {
+                                $this.slider('values', [oid_val, oid2_val]);
+                            } else {
+                                $this.slider('value', oid_val);
+                            }
                         }
                     }
-                }
-            });
-            if (oid2) {
-                vis.states.bind(oid2 + '.val', function (e, newVal, oldVal) {
-//                     console.log('slider newVal=' + JSON.stringify(newVal));
+                } else if (e.type === oid2 + '.val'){
+                    // console.log('slider newVal=' + JSON.stringify(newVal));
                     // If device not in working state
                     if (!vis.states.attr(wid2 + '.val')) {
                         oid2_val = parseFloat(newVal);
@@ -813,38 +889,42 @@
                             $this.slider('values', [oid_val, oid2_val]);
                         }
                     }
-                });
+                }
+            }
+            var bound = [];
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
+                bound.push(oid + '.val');
+            }
 
-                oid_val = vis.states.attr(oid + '.val');
+            if (oid2) {
+                vis.states.bind(oid2 + '.val', onChange);
+                bound.push(oid2 + '.val');
+
+                oid_val  = vis.states.attr(oid + '.val');
                 oid2_val = vis.states.attr(oid2 + '.val');
+
                 if (settings.inverted) {
-                    oid_val = (settings.max - oid_val) + settings.min;
+                    oid_val  = (settings.max - oid_val)  + settings.min;
                     oid2_val = (settings.max - oid2_val) + settings.min;
                 }
                 $this.slider('values', [oid_val, oid2_val]);
             }
 
-            $(function () {
-                $('#slider-range').slider({
-                    range:  true,
-                    min:    0,
-                    max:    500,
-                    values: [75, 300],
-                    slide: function (event, ui) {
-                        $('#amount').val('$' + ui.values[0] + ' - $' + ui.values[1]);
-                    }
-                });
-                $('#amount').val('$' + $('#slider-range').slider('values', 0) +
-                        ' - $' + $('#slider-range').slider('values', 1));
-            })
+            if (bound.length) {
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', bound)
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            }
         },
         button: function (el, value) {
-
             if ($(el).data('no-style')) return;
-            setTimeout(function(){
-                $(el).button();
-            },0)
 
+            setTimeout(function () {
+                $(el).button();
+            }, 0);
         },
         buttonDialog: function (el) {
             if ($(el).data('no-style')) return;
@@ -873,6 +953,11 @@
             });
         },
         radio: function (el, options, process) {
+            var $this    = $(el);
+            if ($this.parent().parent().attr('id').match(/_removed$/)) {
+                return;
+            }
+
             if (!process) {
                 setTimeout(function () {
                     vis.binds.jqueryui.radio(el, process, true);
@@ -880,11 +965,9 @@
                 return;
             }
             var settings = $.extend({}, options);
-            var $this = $(el);
-            var oid = $this.attr('data-oid');
+            var oid      = $this.attr('data-oid');
 
-            // Observable -> Buttonset
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 $this.find('input').removeAttr('checked');
                 if (newVal === true || newVal === 'true') {
                     newVal = 1;
@@ -897,37 +980,57 @@
                 $this.find('input').each(function () {
                     if ($(this).button('instance')) $(this).button('refresh');
                 });
-            });
+            }
 
-            var val = vis.states.attr(oid + '.val');
+            // Observable -> Buttonset
+            if (oid) {
+                vis.states.bind(oid + '.val', onChange);
 
-            if (val === true  || val === 'true')  { val = 1; }
-            if (val === false || val === 'false') { val = 0; }
-            setTimeout(function () {
-                //console.log(val + ' ' + $this.find('input[value="' + val + '"]').length);
-                $this.find('input').prop('checked', false);
-                $this.find('input[value="' + val + '"]').prop('checked', true);
-                $this.buttonset(settings);
+                // remember all ids, that bound
+                $this.parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
 
-                $this.find('input').each(function () {
-                    if ($this.button('instance')) $(this).button('refresh');
-                });
-                if (!vis.editMode) {
-                    // Buttonset -> Observable
-                    $this.find('input').on('click touchstart', function () {
-                        // Protect against two events
-                        if (vis.detectBounce(this)) return;
+                var val = vis.states.attr(oid + '.val');
 
-                        var val = $(this).val();
-                        var f = parseFloat(val);
-                        if (f.toString() === val.toString()) {
-                            vis.setValue(oid, f);
-                        } else {
-                            vis.setValue(oid, val);
+                if (val === true  || val === 'true')  {
+                    val = 1;
+                }
+                if (val === false || val === 'false') {
+                    val = 0;
+                }
+
+                setTimeout(function () {
+                    //console.log(val + ' ' + $this.find('input[value="' + val + '"]').length);
+                    $this.find('input').prop('checked', false);
+                    $this.find('input[value="' + val + '"]').prop('checked', true);
+                    $this.buttonset(settings);
+
+                    $this.find('input').each(function () {
+                        if ($this.button('instance')) {
+                            $(this).button('refresh');
                         }
                     });
-                }
-            }, 50);
+
+                    if (!vis.editMode) {
+                        // Buttonset -> Observable
+                        $this.find('input').on('click touchstart', function () {
+                            // Protect against two events
+                            if (vis.detectBounce(this)) return;
+
+                            var val = $(this).val();
+                            var f = parseFloat(val);
+                            if (f.toString() === val.toString()) {
+                                vis.setValue(oid, f);
+                            } else {
+                                vis.setValue(oid, val);
+                            }
+                        });
+                    }
+                }, 50);
+            }
+
         },
         iconHttpGet: function (el, url) {
             if (vis.editMode) return;
@@ -945,15 +1048,7 @@
             var $hue = $(el).parent().find('.hue-mode-hue');
             var $ct  = $(el).parent().find('.hue-mode-ct');
 
-            if (vis.states.attr(oid + '.val') === 'ct') {
-                $hue.hide();
-                $ct.show();
-            } else {
-                $ct.hide();
-                $hue.show();
-            }
-
-            vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+            function onChange(e, newVal) {
                 if (newVal === 'ct') {
                     $hue.hide();
                     $ct.show();
@@ -961,7 +1056,27 @@
                     $ct.hide();
                     $hue.show();
                 }
-            });
+            }
+
+            if (oid) {
+                if (vis.states.attr(oid + '.val') === 'ct') {
+                    $hue.hide();
+                    $ct.show();
+                } else {
+                    $ct.hide();
+                    $hue.show();
+                }
+                vis.states.bind(oid + '.val', onChange);
+
+                // remember all ids, that bound
+                $(el).parent().parent()
+                    .data('bound', [oid + '.val'])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            } else {
+                $ct.hide();
+                $hue.show();
+            }
         },
         _disable: function () {
             $('.vis-view-container').find('.ui-slider').each(function () {
@@ -977,6 +1092,7 @@
                     }
                 });
             }, 200);
+
             setTimeout(function () {
                 $('.vis-view-container').find('a[href]').each(function () {
                     $(this).on('click touchstart', function (e) {});
@@ -985,7 +1101,10 @@
         },
         itoggle: function (el){
             var $this = $(el).parent();
-            var oid = $this.parent().attr('data-oid') + '.val';
+            var oid = $this.parent().attr('data-oid');
+            if (oid) {
+                oid += '.val';
+            }
             var val = vis.states.attr(oid);
             var activeVal = $this.parent().data('val');
             if (activeVal === '' || activeVal === undefined) activeVal = null;
@@ -1016,7 +1135,7 @@
                 }
             }
 
-            vis.states.bind(oid, function (e, val) {
+            function onChange (e, val) {
                 if (activeVal !== null) {
                     if (activeVal.toString() === val.toString()) {
                         $this.find('.imgToggleFalse').hide();
@@ -1034,19 +1153,27 @@
                         $this.find('.imgToggleFalse').show();
                     }
                 }
-            });
+            }
+            if (oid) {
+                vis.states.bind(oid, onChange);
+                    // remember all ids, that bound
+                $this.parent()
+                    .data('bound', [oid])
+                    // remember bind handler
+                    .data('bindHandler', onChange);
+            }
         },
         calcValue: function (value, min, max) {
             if (!min) min = 0;
             if (max === null || max === undefined || max === '') max = 100;
-            min = parseFloat(min);
-            max = parseFloat(max);
+            min   = parseFloat(min);
+            max   = parseFloat(max);
             value = parseFloat(value);
             return min + value * (max - min);
         },
         calcImage: function (val, min, max, invert) {
-            var max = (max !== undefined) ? max : 100;
-            var min = (min !== undefined) ? min : 0;
+            max = (max !== undefined) ? max : 100;
+            min = (min !== undefined) ? min : 0;
 
             val = parseFloat(val);
             if (invert) val = max - val + min;
@@ -1081,9 +1208,9 @@
                 el.parent().find('svg').remove();
                 var $that = el;
                 var imgURL = $that.attr('src');
-                $.get(imgURL, function(data) {
+                $.get(imgURL, function (data) {
                     // Get the SVG tag, ignore the rest
-                    var $svg = jQuery(data).find('svg');
+                    var $svg = $(data).find('svg');
 
                     // Remove any invalid XML tags as per http://validator.w3.org
                     $svg = $svg.removeAttr('xmlns:a');
@@ -1099,7 +1226,6 @@
 
                     // Replace image with new SVG
                     $that.replaceWith($svg);
-
                 }, 'xml');
             }, 0);
         },
@@ -1122,7 +1248,8 @@
                 });
 
                 function check_pw() {
-                    if (data._data.Password === $('#inp_NavPw').val()) {
+                    var $inputPass = $('#inp_NavPw');
+                    if (data._data.Password === $inputPass.val()) {
                         $('#NavPwDialog').remove();
                         vis.changeView(data.attr('nav_view'), data.attr('nav_view'), {
                                     effect: data.attr('hide_effect'),
@@ -1135,19 +1262,20 @@
                                 },
                                 data.attr('sync'));
                     } else {
-                        $('#inp_NavPw').val('');
-                        var bg = $('#inp_NavPw').data('bg');
+                        $inputPass.val('');
+                        var bg = $inputPass.data('bg');
                         if (!bg) {
-                            bg = $('#inp_NavPw').css('background-color');
-                            $('#inp_NavPw').data('bg', bg);
+                            bg = $inputPass.css('background-color');
+                            $inputPass.data('bg', bg);
                         }
-                        $('#inp_NavPw').css('background-color', '#FF0000').animate({'background-color': bg}, 500);
+                        $inputPass.css('background-color', '#FF0000').animate({'background-color': bg}, 500);
                     }
                 }
 
                 $('#btn_navPwcancel').button().click(function () {
                     $('#NavPwDialog').remove();
                 });
+
                 $('#NavPwDialog').dialog({
                     title: _('Password'),
                     modal: true
@@ -1625,9 +1753,6 @@
         data-vis-name="Select ValueList"
         data-vis-attrs="oid;values[0§1§2]/text;texts[OFF§ON§AUTO]/text;height[100]/slider,15,500,1;open/checkbox;no_style/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" >
-        <% if (false && vis.editMode) { %>
-			<div class="editmode-helper" />
-		<% } %>
         <div class="vis-widget-body" >
             <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-view="<%= this.view %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
             <%

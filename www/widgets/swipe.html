@@ -104,9 +104,9 @@
             }
             
             if (vis.editMode) {
-                $div
-                    .show()
-                        .find('.translate-it').each(function () {
+                $div.show()
+                    .find('.translate-it')
+                        .each(function () {
                             $(this).html(_($(this).text()));
                         });
             }
@@ -201,7 +201,6 @@
                     triggerFocusEvents: true,
                     triggerBlurEvents: true
                 });
-
 
             $childView.find('.li_carousel')
                 .bind('focus', function () {

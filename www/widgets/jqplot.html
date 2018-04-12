@@ -40,6 +40,10 @@
         gauge: function (el, data) {
             var $this = $(el).find('.jqplot-gauge');
 
+            if ($(el).attr('id').match(/_removed$/)) {
+                return;
+            }
+
             if (!$this.length || !$this.is(':visible')) {
                 setTimeout(function () {
                     vis.binds.jqplot.gauge(el, data);
@@ -73,14 +77,16 @@
                         hubRadius:      (!data.hubRadius ? undefined : parseInt(data.hubRadius, 10)),
                         tickPadding:    (!data.tickPadding ? undefined : parseInt(data.tickPadding, 10)),
                         needleThickness: (!data.needleThickness ? undefined : parseInt(data.needleThickness, 10)),
-                        needlePad:      (!data.needlePad ? undefined : parseInt(data.needlePad, 10)),
-                        ringWidth:      (!data.ringWidth ? undefined : parseInt(data.ringWidth, 10))
+                        needlePad:      (!data.needlePad ? undefined : parseInt(data.needlePad, 10))
                     }
                 }
             };
-            if (options.seriesDefaults.rendererOptions.ticks && options.seriesDefaults.rendererOptions.ticks.length == 1) options.seriesDefaults.rendererOptions.ticks[1] = options.seriesDefaults.rendererOptions.ticks[0];
+            if (options.seriesDefaults.rendererOptions.ticks && options.seriesDefaults.rendererOptions.ticks.length === 1) {
+                options.seriesDefaults.rendererOptions.ticks[1] = options.seriesDefaults.rendererOptions.ticks[0];
+            }
 
             $(el).data('options', data);
+            $this.html('');
 
             try {
                 var jqplotOptions = $.extend(true, {
@@ -99,17 +105,31 @@
 
                 var oid = $this.attr('data-oid');
                 var series;
-                if (oid != 'nothing_selected' && vis.states[oid + '.val'] !== undefined) {
+                if (oid !== 'nothing_selected' && vis.states[oid + '.val'] !== undefined) {
                     series = [[vis.states[oid + '.val']]];
                 } else {
                     series = [[1, 0]];
                 }
 
-                var plot = $.jqplot($this.attr('id'), series, jqplotOptions);
-                vis.states.bind(oid + '.val', function (e, newVal, oldVal) {
+                function onChange(e, newVal/* , oldVal */) {
                     plot.series[0].data = [[1, newVal]];
                     plot.redraw();
-                });
+                }
+
+                var bound = [];
+
+                if (oid) {
+                    vis.states.bind(oid + '.val', onChange);
+                    bound.push(oid + '.val');
+                }
+                var plot = $.jqplot($this.attr('id'), series, jqplotOptions);
+
+                if (bound.length) {
+                    // remember all ids, that bound
+                    $(el).data('bound', bound);
+                    // remember bind handler
+                    $(el).data('bindHandler', onChange);
+                }
             } catch(e) {
                 servConn.logError('Cannot render widget jqplot: ' + e);
             }
@@ -117,12 +137,19 @@
             if (vis.editMode) {
                 $(el).resize(function () {
                     var timer = $(this).data('timer');
-                    if (timer) clearTimeout(timer);
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
                     var that = this;
                     $(this).data('timer', setTimeout(function () {
+                        $(that).data('timer', null);
                         $('#' + $(that).attr('id') + '_gauge').html('');
                         vis.binds.jqplot.gauge(that, $(that).data('options'));
                     }, 300));
+                });
+
+                $(el).data('destroy', function (id, $widget) {
+                    $widget.off('resize');
                 });
             }
         }

@@ -13,6 +13,7 @@
     vis.binds.tabs = {
         stabs: function (view, wid, data) {
             var $wid = $('#' + wid);
+            if ($wid.attr('id').match(/_removed$/)) return;
             if (!$wid.length) {
                 return setTimeout(function () {
                     vis.binds.tabs.stabs(view, wid, data);
@@ -44,11 +45,20 @@
             $wid.find('.tabs-container').sliderTabs({
                 height: $wid.height() - 5
             });
+
             vis.updateContainers(view, view);
             if (vis.editMode && vis.activeWidgets.indexOf(wid) !== -1) {
                 $wid.resizable('destroy');
                 vis.resizable(vis.activeViewDiv, vis.activeView, $wid);
             }
+
+            $wid.data('destroy', function (id, $widget) {
+                try {
+                    $widget.resizable('destroy');
+                } catch (e) {
+
+                }
+            });
         }
     };
 </script>

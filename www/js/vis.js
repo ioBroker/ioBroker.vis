@@ -1410,7 +1410,11 @@ var vis = {
             if ($widget.length) {
                 var destroy = $widget.data('destroy');
 
-                if (typeof destroy === 'function') destroy(id, $widget);
+                if (typeof destroy === 'function') {
+                    $widget.off('resize'); // remove resize handler
+                    destroy(id, $widget);
+                    $widget.data('destroy', null);
+                }
                 if (isRelative && !$view.find('#' + id).length) {
                     $widget.remove();
                     $widget.length = 0;
