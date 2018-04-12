@@ -142,6 +142,7 @@ Commands:
     - "container - Button  - view in jqui Dialog".
 
     "control.data" must have id of dialog widget, e.g. "w00056".
+* dialogClose    
 * popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
 * playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis and let it play as for instance "/vis.0/main/img/myFile.mp3".
@@ -182,6 +183,13 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.3 (2018-04-12)
+* (bluefox) ignore click by scrolling on touch devices
+* (bluefox) remove wrong state vis.0.command
+* (bluefox) fix error with jplot
+* (bluefox) better widget behaviour in edit Mode (basic, jqui)
+* Fix config dialog
+
 ### 1.1.2 (2018-02-02)
 * (bluefox) Fixing the saving of project
 * (bluefox) Fixing the background selector
