@@ -58,6 +58,7 @@ vis.styleSelect = {
         var result = [];
         var sSheetList = document.styleSheets;
         for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
+            if (!document.styleSheets[sSheet]) continue;
             var ruleList = document.styleSheets[sSheet].cssRules;
             if (ruleList) {
                 for (var rule = 0; rule < ruleList.length; rule ++) {
@@ -67,7 +68,7 @@ vis.styleSelect = {
                         var substyles = _styles[s].trim().split(' ');
                         var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                        if (!_style || _style[0] != '.' || _style.indexOf(':') != -1) continue;
+                        if (!_style || _style[0] !== '.' || _style.indexOf(':') !== -1) continue;
 
                         var name = _style;
                         name = name.replace(',', '');
@@ -83,7 +84,7 @@ vis.styleSelect = {
                             name = name[0].toUpperCase() + name.substring(1);
                             var fff = document.styleSheets[sSheet].href;
 
-                            if (fff && fff.indexOf('/') != -1) {
+                            if (fff && fff.indexOf('/') !== -1) {
                                 fff = fff.substring(fff.lastIndexOf('/') + 1);
                             }
 
@@ -121,13 +122,14 @@ vis.styleSelect = {
                 var files   = (options.filterFile)  ? options.filterFile.split(' ')  : [''];
 
                 for (var style in this._internalList) {
+                    if (!this._internalList.hasOwnProperty(style)) continue;
                     for (var f = 0; f < files.length; f++) {
                         if (!options.filterFile ||
-                            (this._internalList[style].file && this._internalList[style].file.indexOf(files[f]) != -1)) {
+                            (this._internalList[style].file && this._internalList[style].file.indexOf(files[f]) !== -1)) {
                             var isFound = !filters;
                             if (!isFound) {
                                 for (var k = 0; k < filters.length; k++) {
-                                    if (style.indexOf(filters[k]) != -1) {
+                                    if (style.indexOf(filters[k]) !== -1) {
                                         isFound = true;
                                         break;
                                     }
@@ -171,7 +173,9 @@ vis.styleSelect = {
         if (!$('#' + options.name + '_styles').length) {
             text = '<select id="' + options.name + '_styles"><option value="">' + _('nothing') + '</option>';
             for (var style_ in styles) {
-                text += '<option ' + ((options.style == style_) ? 'selected' : '') + ' value="' + style_ + '" data-parent-style="' +  styles[style_].parentClass + '">' + styles[style_].name + '</option>\n';
+                if (styles.hasOwnProperty(style_)) {
+                    text += '<option ' + ((options.style === style_) ? 'selected' : '') + ' value="' + style_ + '" data-parent-style="' +  styles[style_].parentClass + '">' + styles[style_].name + '</option>\n';
+                }
             }
             text += '</select>';
         }
@@ -264,8 +268,6 @@ var colorSelect = {
     _titleText:  '',
     
     show:  function (options) {
-        var i = 0;
-        
         if (!this._selectText) {
             this._selectText = _('Select');
             this._cancelText = _('Cancel');
@@ -355,17 +357,17 @@ if (!$().multiselect) {
                 var that = this;
                 this.table.find('input').each(function () {
                     this._parent = that;
-                    $(this).click(function () {
+                    $(this).on('click', function () {
                         var val = $(this).attr('data-value');
                         var checked =  $(this).is(':checked');
                         // change state on the original option tags
-                        this._parent.element.find("option").each(function () {
+                        this._parent.element.find('option').each(function () {
                             if(this.value === val) {
                                 $(this).prop('selected', checked);
                             }
                         });
 
-                        this._parent.element.trigger("change");
+                        this._parent.element.trigger('change');
                     });
                 });
             },
