@@ -38,7 +38,7 @@ $.extend(systemDictionary, {
 	"Address"             : {"en" : "Address",      "de": "Adresse",              "ru": "Адрес"},
 	"Function"            : {"en" : "Function",     "de": "Gewerk",               "ru": "Функционал"},
 	"Disable device filter:" : {
-        "en" : "Disable device filter:",
+        "en": "Disable device filter:",
         "de": "Schalte Ger&auml;tefilter aus:",
         "ru": "Убрать фильтр по устройствам:"
     },
@@ -59,45 +59,49 @@ vis.styleSelect = {
         var sSheetList = document.styleSheets;
         for (var sSheet = 0; sSheet < sSheetList.length; sSheet++) {
             if (!document.styleSheets[sSheet]) continue;
-            var ruleList = document.styleSheets[sSheet].cssRules;
-            if (ruleList) {
-                for (var rule = 0; rule < ruleList.length; rule ++) {
-                    if (!ruleList[rule].selectorText) continue;
-                    var _styles = ruleList[rule].selectorText.split(',');
-                    for (var s = 0; s < _styles.length; s++) {
-                        var substyles = _styles[s].trim().split(' ');
-                        var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
+            try {
+                var ruleList = document.styleSheets[sSheet].cssRules;
+                if (ruleList) {
+                    for (var rule = 0; rule < ruleList.length; rule ++) {
+                        if (!ruleList[rule].selectorText) continue;
+                        var _styles = ruleList[rule].selectorText.split(',');
+                        for (var s = 0; s < _styles.length; s++) {
+                            var substyles = _styles[s].trim().split(' ');
+                            var _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                        if (!_style || _style[0] !== '.' || _style.indexOf(':') !== -1) continue;
+                            if (!_style || _style[0] !== '.' || _style.indexOf(':') !== -1) continue;
 
-                        var name = _style;
-                        name = name.replace(',', '');
-                        name = name.replace(/^\./, '');
+                            var name = _style;
+                            name = name.replace(',', '');
+                            name = name.replace(/^\./, '');
 
-                        var val  = name;
-                        name = name.replace(/^hq-background-/, '');
-                        name = name.replace(/^hq-/, '');
-                        name = name.replace(/^ui-/, '');
-                        name = name.replace(/[-_]/g, ' ');
+                            var val  = name;
+                            name = name.replace(/^hq-background-/, '');
+                            name = name.replace(/^hq-/, '');
+                            name = name.replace(/^ui-/, '');
+                            name = name.replace(/[-_]/g, ' ');
 
-                        if (name.length > 0) {
-                            name = name[0].toUpperCase() + name.substring(1);
-                            var fff = document.styleSheets[sSheet].href;
+                            if (name.length > 0) {
+                                name = name[0].toUpperCase() + name.substring(1);
+                                var fff = document.styleSheets[sSheet].href;
 
-                            if (fff && fff.indexOf('/') !== -1) {
-                                fff = fff.substring(fff.lastIndexOf('/') + 1);
-                            }
+                                if (fff && fff.indexOf('/') !== -1) {
+                                    fff = fff.substring(fff.lastIndexOf('/') + 1);
+                                }
 
-                            if (!result[val]) {
-                                if (substyles.length > 1) {
-                                    result[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', '')};
-                                } else {
-                                    result[val] = {name: name, file: fff, attrs: ruleList[rule].style};
+                                if (!result[val]) {
+                                    if (substyles.length > 1) {
+                                        result[val] = {name: name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', '')};
+                                    } else {
+                                        result[val] = {name: name, file: fff, attrs: ruleList[rule].style};
+                                    }
                                 }
                             }
                         }
                     }
                 }
+            } catch (e) {
+                console.error(e);
             }
         }
         return result;
