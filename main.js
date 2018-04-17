@@ -297,7 +297,7 @@ function main() {
     }
 
     // first of all check license
-    if (!adapter.config.license) {
+    if (!adapter.config.license || typeof adapter.config.license !== 'string') {
         indicateError(function () {
             adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
             //adapter.stop();
