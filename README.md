@@ -183,6 +183,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.4 (2018-04-23)
+* (bluefox) fix bool SVG
+
 ### 1.1.3 (2018-04-12)
 * (bluefox) ignore click by scrolling on touch devices
 * (bluefox) remove wrong state vis.0.command

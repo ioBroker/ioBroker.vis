@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.3",
+        "version": "1.1.4",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,7 +15,7 @@
             "pl": "Wizualizacja"
         },
         "news": {
-            "1.1.3": {
+            "1.1.4": {
                 "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
                 "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",
                 "ru": "исправлено сохранение проекта\nисправлен переключатель фона\nУстранение проблемы с нулевым указателем\nисправлен выбор виджетов\nпереводы",
