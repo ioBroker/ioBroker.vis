@@ -13,7 +13,11 @@
     vis.binds.tabs = {
         stabs: function (view, wid, data) {
             var $wid = $('#' + wid);
-            if ($wid.attr('id').match(/_removed$/)) return;
+            var id = $wid.attr('id');
+            if (id && id.match(/_removed$/)) {
+                return;
+            }
+
             if (!$wid.length) {
                 return setTimeout(function () {
                     vis.binds.tabs.stabs(view, wid, data);

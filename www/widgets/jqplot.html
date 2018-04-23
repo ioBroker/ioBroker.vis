@@ -40,7 +40,8 @@
         gauge: function (el, data) {
             var $this = $(el).find('.jqplot-gauge');
 
-            if ($(el).attr('id').match(/_removed$/)) {
+            var id = $(el).attr('id');
+            if (id && id.match(/_removed$/)) {
                 return;
             }
 

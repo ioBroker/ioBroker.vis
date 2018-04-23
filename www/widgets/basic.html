@@ -632,7 +632,7 @@
 
                 if (!vis.editMode) {
                     var newVal = vis.states.attr(oid + '.val');
-                    if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) == 0) {
+                    if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) === 0) {
                         $this.hide();
                     }
                 }
@@ -1011,7 +1011,7 @@
                                 if ($(this).data('as-button')) $(this).addClass('ui-state-active');
                                 val = $(this).data('img-true');
                             } else {
-                                val = $(this).data('img-false')
+                                val = $(this).data('img-false');
                                 if ($(this).data('as-button')) $(this).removeClass('ui-state-active');
                             }
                             $(this).find('.' + img).attr('src', val);
@@ -1173,7 +1173,8 @@
         showSvg: function (myClass, view, wid, oid, opacity, svg_false, svg_true, style, no_control) {
             var $wid = $('#' + wid);
 
-            if ($wid.attr('id').match(/_removed$/)) return;
+            var id = $wid.attr('id');
+            if (id && id.match(/_removed$/)) return;
 
             if (!$wid.length) {
                 return setTimeout(function () {
@@ -2109,7 +2110,8 @@
         toggleFullScreen: function (wid, view, data, style) {
             var $div = $('#' + wid);
 
-            if ($div.attr('id').match(/_removed$/)) return;
+            var id = $div.attr('id');
+            if (id && id.match(/_removed$/)) return;
 
             // if nothing found => wait
             if (!$div.length) {

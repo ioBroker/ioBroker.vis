@@ -348,7 +348,8 @@
         dialogContainer: function (el, options, persistent, preload) {
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
 
-            if ($(el).parent().attr('id').match(/_removed$/)) {
+            var id = $(el).parent().attr('id');
+            if (id && id.match(/_removed$/)) {
                 return;
             }
 
@@ -451,7 +452,8 @@
 
             var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
 
-            if ($(el).parent().attr('id').match(/_removed$/)) {
+            var id = $(el).parent().attr('id');
+            if (id && id.match(/_removed$/)) {
                 return;
             }
 
@@ -954,7 +956,8 @@
         },
         radio: function (el, options, process) {
             var $this    = $(el);
-            if ($this.parent().parent().attr('id').match(/_removed$/)) {
+            var id = $this.parent().parent().attr('id');
+            if (id && id.match(/_removed$/)) {
                 return;
             }
 
