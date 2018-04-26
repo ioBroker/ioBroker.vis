@@ -223,12 +223,17 @@ var servConn = {
 
             var url;
             if (connLink) {
-                url = connLink;
                 if (typeof connLink !== 'undefined') {
                     if (connLink[0] === ':') connLink = location.protocol + '//' + location.hostname + connLink;
                 }
+                url = connLink;
             } else {
                 url = location.protocol + '//' + location.host;
+            }
+
+            // remove port if via cloud
+            if (url.match(/iobroker\.pro|iobroker\.net/)) {
+                url = url.replace(/:\d+/, '');
             }
 
             this._socket = io.connect(url, {
