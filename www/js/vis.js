@@ -1529,7 +1529,7 @@ var vis = {
                 }
             }
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + ')');
+            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + '): ' + JSON.stringify(e.stack));
         }
 
         if (userGroups && $wid && $wid.length) {
@@ -2599,7 +2599,7 @@ var vis = {
             try {
                 this.states.attr(o);
             } catch (e) {
-                this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + ')');
+                this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
             }
         }
 
