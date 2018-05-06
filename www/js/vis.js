@@ -1529,7 +1529,7 @@ var vis = {
                 }
             }
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' (' + e + '): ' + JSON.stringify(e.stack));
+            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' on "' + view + '" (' + e + '): ' + JSON.stringify(e.stack));
         }
 
         if (userGroups && $wid && $wid.length) {

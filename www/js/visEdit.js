@@ -172,9 +172,11 @@ vis = $.extend(true, vis, {
                 if (!this.bindings.hasOwnProperty(b)) continue;
                 for (var h = 0; h < this.bindings[b].length; h++) {
                     try {
-                        // if widget still exists
-                        if (viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget]) {
-                            viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                        if (this.bindings[b][h].systemOid && this.bindings[b][h].systemOid.match(/^dev\d+$/)) {
+                            // if widget still exists
+                            if (viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget]) {
+                                viewsToSave[this.bindings[b][h].view].widgets[this.bindings[b][h].widget][this.bindings[b][h].type][this.bindings[b][h].attr] = this.bindings[b][h].format;
+                            }
                         }
                     } catch (e) {
                         console.warn('error by saving of binding: ' + this.bindings[b][h].view)
