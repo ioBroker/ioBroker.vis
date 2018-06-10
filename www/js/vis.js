@@ -107,7 +107,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.1.4',
+    version: '1.1.5',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -150,6 +150,8 @@ var vis = {
     },
     commonStyle:        null,
     debounceInterval:   700,
+    user:               '',   // logged in user
+    loginRequired:      false,
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -2150,7 +2152,13 @@ var vis = {
             var value;
             if (oids[t].visOid) switch (oids[t].visOid) {
                 case 'username.val':
-                    value = this.conn.getUser();
+                    value = this.user;
+                    break;
+                case 'login.val':
+                    value = this.loginRequired;
+                    break;
+                case 'instance.val':
+                    value = this.instance;
                     break;
                 case 'language.val':
                     value = this.language;
@@ -3081,40 +3089,44 @@ function main($, onReady) {
                     vis.showWaitScreen(true, _('Loading data values...') + '<br>', null, 20);
                 }
 
-                // first of all try to load views
-                vis.loadRemote(function () {
-                    vis.subscribing.IDs     = vis.subscribing.IDs || [];
-                    vis.subscribing.byViews = vis.subscribing.byViews || {};
+                vis.conn.getLoggedUser(function (authReq, user) {
+                    vis.user = user;
+                    vis.loginRequired = authReq;
+                    // first of all try to load views
+                    vis.loadRemote(function () {
+                        vis.subscribing.IDs = vis.subscribing.IDs || [];
+                        vis.subscribing.byViews = vis.subscribing.byViews || {};
 
-                    vis.conn.subscribe([vis.conn.namespace + '.control.instance', vis.conn.namespace + '.control.data', vis.conn.namespace + '.control.command']);
+                        vis.conn.subscribe([vis.conn.namespace + '.control.instance', vis.conn.namespace + '.control.data', vis.conn.namespace + '.control.command']);
 
-                    // first of all add custom scripts
-                    if (!vis.editMode && vis.views && vis.views.___settings) {
-                        if (vis.views.___settings.scripts) {
-                            var script = document.createElement('script');
-                            script.innerHTML = vis.views.___settings.scripts;
-                            document.head.appendChild(script);
+                        // first of all add custom scripts
+                        if (!vis.editMode && vis.views && vis.views.___settings) {
+                            if (vis.views.___settings.scripts) {
+                                var script = document.createElement('script');
+                                script.innerHTML = vis.views.___settings.scripts;
+                                document.head.appendChild(script);
+                            }
                         }
-                    }
 
-                    // Read all states from server
-                    console.debug('Request ' + (vis.editMode ? 'all' : vis.subscribing.active.length) + ' states.');
-                    vis.conn.getStates(vis.editMode ? null: vis.subscribing.active, function (error, data) {
-                        if (error) vis.showError(error);
+                        // Read all states from server
+                        console.debug('Request ' + (vis.editMode ? 'all' : vis.subscribing.active.length) + ' states.');
+                        vis.conn.getStates(vis.editMode ? null : vis.subscribing.active, function (error, data) {
+                            if (error) vis.showError(error);
 
-                        vis.updateStates(data);
+                            vis.updateStates(data);
 
-                        if (vis.subscribing.active.length) {
-                            vis.conn.subscribe(vis.subscribing.active);
-                        }
-                        // Create non-existing IDs
-                        if (vis.subscribing.IDs) {
-                            createIds(vis.subscribing.IDs, function () {
+                            if (vis.subscribing.active.length) {
+                                vis.conn.subscribe(vis.subscribing.active);
+                            }
+                            // Create non-existing IDs
+                            if (vis.subscribing.IDs) {
+                                createIds(vis.subscribing.IDs, function () {
+                                    afterInit(error, onReady);
+                                });
+                            } else {
                                 afterInit(error, onReady);
-                            });
-                        } else {
-                            afterInit(error, onReady);
-                        }
+                            }
+                        });
                     });
                 });
             } else {

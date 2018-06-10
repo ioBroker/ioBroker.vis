@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.4",
+        "version": "1.1.5",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,6 +15,17 @@
             "pl": "Wizualizacja"
         },
         "news": {
+            "1.1.5": {
+                "en": "A user variable was added into bindings.\nfixed saving of widgets if they have bindings",
+                "de": "Eine Benutzervariable wurde in Bindungen eingefügt.\ndas Speichern von Widgets wurde behoben, wenn sie Bindings haben",
+                "ru": "Пользовательская переменная была добавлена ​​в привязки.\nфиксированное сохранение виджетов, если у них есть привязки",
+                "pt": "Uma variável de usuário foi adicionada às ligações.\nsalvamento fixo de widgets se eles tiverem ligações",
+                "nl": "Een gebruikersvariabele is toegevoegd aan bindingen.\nvaste opslag van widgets als ze bindingen hebben",
+                "fr": "Une variable utilisateur a été ajoutée dans les liaisons.\nsauvegarde fixe des widgets s'ils ont des liaisons",
+                "it": "Una variabile utente è stata aggiunta ai binding.\nRisolto il salvataggio dei widget se hanno dei binding",
+                "es": "Se agregó una variable de usuario a los enlaces.\nAhorro fijo de widgets si tienen enlaces",
+                "pl": "Zmienna użytkownika została dodana do wiązań.\nnaprawione zapisywanie widżetów, jeśli mają powiązania"
+            },
             "1.1.4": {
                 "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
                 "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",

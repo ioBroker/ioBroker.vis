@@ -65,7 +65,7 @@ var servConn = {
     getIsLoginRequired: function () {
         return this._isSecure;
     },
-    getUser: function () {
+    getUser:          function () {
         return this._user;
     },
     setReloadTimeout: function (timeout){
@@ -1093,6 +1093,9 @@ var servConn = {
                 callback(null, enums);
             });
         }
+    },
+    getLoggedUser:    function (callback) {
+        this._socket.emit('authEnabled', callback);
     },
     // return time when the objects were synchronized
     getSyncTime:     function () {

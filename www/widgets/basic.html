@@ -613,7 +613,7 @@
             var oid   = $this.attr('data-oid');
 
             function onChange (e, newVal) {
-                if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || parseInt(newVal, 10) == 0) {
+                if (newVal === null || newVal === false || newVal === 0 || newVal === 'false' || !parseInt(newVal, 10)) {
                     if (!vis.editMode) {
                         $this.hide();
                     }

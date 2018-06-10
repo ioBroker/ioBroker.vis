@@ -96,12 +96,17 @@ Take care about types. All of them defined as strings. To be sure, that value wi
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
-Note: there is a special object ID - "username". It shows logged in user. 
-      And there is a "language" object id: can be "de", "en" or "ru".
-      "view" - has a name of actual view
-      "wid" - has a name of actual widget
-      "wname" - widget name
-	  "widget" - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
+### Special bindings
+There are a number different internal bindings to provide additional information in views:
+* username - shows logged in user
+* view - name of actual view
+* wname - widget name
+* widget - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
+* wid - name of actual widget
+* language - can be "de", "en" or "ru".
+* instance - browser instance
+* login - if login required or not (e.g. to show/hide logout button)
+
 Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 
 **Remember**, that style definitions will be interpreted as bindings, so use ```{{style: value}}``` or just 
@@ -183,6 +188,16 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.5 (2018-06-10)
+* (bluefox) show more information if widget cannot be rendered
+* (bluefox) fix saving of widgets if they have bindings
+* (bluefox) show error stack
+* (bluefox) fix binding
+* (Apollon77) fix testing
+* (bluefox) fix for iobroker.pro and external socket.io settings
+* (bluefox) A user variable was added into bindings.
+* (bluefox) Fixed widget tabs
+
 ### 1.1.4 (2018-04-23)
 * (bluefox) fix bool SVG
 
