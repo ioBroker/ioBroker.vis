@@ -378,8 +378,13 @@ var vis = {
         if (typeof app !== 'undefined' && app.settings) {
             this.instance = app.settings.instance;
         }
-        if (typeof storage !== 'undefined') this.instance = this.instance || storage.get(this.storageKeyInstance);
-        if (this.editMode) this.bindInstanceEdit();
+        if (typeof storage !== 'undefined') {
+            this.instance = this.instance || storage.get(this.storageKeyInstance);
+        }
+        if (this.editMode) {
+            this.bindInstanceEdit();
+        }
+        this.states.attr({'instance.val': this.instance, 'instance': this.instance});
     },
     init:               function (onReady) {
         if (this.initialized) return;
@@ -2146,167 +2151,152 @@ var vis = {
 
         return result;
     },
+    getSpecialValues:   function (name, view, wid, widget) {
+        switch (name) {
+            case 'username.val':
+                return this.user;
+            case 'login.val':
+                return this.loginRequired;
+            case 'instance.val':
+                return this.instance;
+            case 'language.val':
+                return this.language;
+            case 'wid.val':
+                return wid;
+            case 'wname.val':
+                return widget && (widget.data.name || wid);
+            case 'view.val':
+                return view;
+            default:
+                return undefined;
+        }
+    },
     formatBinding:      function (format, view, wid, widget) {
         var oids = this.extractBinding(format);
         for (var t = 0; t < oids.length; t++) {
             var value;
-            if (oids[t].visOid) switch (oids[t].visOid) {
-                case 'username.val':
-                    value = this.user;
-                    break;
-                case 'login.val':
-                    value = this.loginRequired;
-                    break;
-                case 'instance.val':
-                    value = this.instance;
-                    break;
-                case 'language.val':
-                    value = this.language;
-                    break;
-                case 'wid.val':
-                    value = wid;
-                    break;
-                case 'wname.val':
-                    value = widget.data.name || wid;
-                    break;
-                case 'view.val':
-                    value = view;
-                    break;
-                default:
+            if (oids[t].visOid) {
+                value = this.getSpecialValues(oids[t].visOid, view, wid, widget);
+                if (value === undefined) {
                     value = this.states.attr(oids[t].visOid);
-                    break;
+                }
             }
-            if (oids[t].operations) for (var k = 0; k < oids[t].operations.length; k++) {
-
-                switch (oids[t].operations[k].op) {
-                    case 'eval':
-                        var string = '';//'(function() {';
-                        for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            if (!oids[t].operations[k].arg[a].name) continue;
-                            switch (oids[t].operations[k].arg[a].visOid) {
-                                case 'wid.val':
-                                    value = wid;
-                                    break;
-                                case 'view.val':
-                                    value = view;
-                                    break;
-                                case 'username.val':
-                                    value = this.conn.getUser();
-                                    break;
-                                case 'language.val':
-                                    value = this.language;
-                                    break;
-                                case 'wname.val':
-                                    value = widget.data.name || wid;
-                                    break;
-                                default:
+            if (oids[t].operations) {
+                for (var k = 0; k < oids[t].operations.length; k++) {
+                    switch (oids[t].operations[k].op) {
+                        case 'eval':
+                            var string = '';//'(function() {';
+                            for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
+                                if (!oids[t].operations[k].arg[a].name) continue;
+                                value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widget);
+                                if (value === undefined) {
                                     value = this.states.attr(oids[t].operations[k].arg[a].visOid);
-                                    break;
+                                }
+                                string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                             }
-                            string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
-                        }
-                        var formula = oids[t].operations[k].formula;
-                        if (formula && formula.indexOf('widget.') !== -1) {
-                            string += 'var widget = ' + JSON.stringify(widget) + ';';
-                        }
-                        string += 'return ' + oids[t].operations[k].formula + ';';
-                        //string += '}())';
-                        try {
-                            value = new Function(string)();
-                        } catch (e) {
-                            console.error('Error in eval[value]     : ' + format);
-                            console.error('Error in eval[script]: ' + string);
-                            console.error('Error in eval[error] : ' + e);
-                            value = 0;
-                        }
-                        break;
-                    case '*':
-                        if (oids[t].operations[k].arg !== undefined) {
-                            value = parseFloat(value) * oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '/':
-                        if (oids[t].operations[k].arg !== undefined) {
-                            value = parseFloat(value) / oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '+':
-                        if (oids[t].operations[k].arg !== undefined) {
-                            value = parseFloat(value) + oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '-':
-                        if (oids[t].operations[k].arg !== undefined) {
-                            value = parseFloat(value) - oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '%':
-                        if (oids[t].operations[k].arg !== undefined) {
-                            value = parseFloat(value) % oids[t].operations[k].arg;
-                        }
-                        break;
-                    case 'round':
-                        if (oids[t].operations[k].arg === undefined) {
-                            value = Math.round(parseFloat(value));
-                        } else {
-                            value = parseFloat(value).toFixed(oids[t].operations[k].arg);
-                        }
-                        break;
-                    case 'pow':
-                        if (oids[t].operations[k].arg === undefined) {
-                            value = Math.pow(parseFloat(value), 2);
-                        } else {
-                            value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
-                        }
-                        break;
-                    case 'sqrt':
-                        value = Math.sqrt(parseFloat(value));
-                        break;
-                    case 'hex':
-                        value = Math.round(parseFloat(value)).toString(16);
-                        break;
-                    case 'hex2':
-                        value = Math.round(parseFloat(value)).toString(16);
-                        if (value.length < 2) value = '0' + value;
-                        break;
-                    case 'HEX':
-                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                        break;
-                    case 'HEX2':
-                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                        if (value.length < 2) value = '0' + value;
-                        break;
-                    case 'value':
-                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
-                        break;
-                    case 'array':
-                        value = oids[t].operations[k].arg [~~value];
-                        break; 
-					case 'date':
-                        value = this.formatDate(value, oids[t].operations[k].arg);
-                        break;
-                    case 'min':
-                        value = parseFloat(value);
-                        value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                        break;
-                    case 'max':
-                        value = parseFloat(value);
-                        value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                        break;
-                    case 'random':
-                        if (oids[t].operations[k].arg === undefined) {
-                            value = Math.random();
-                        } else {
-                            value = Math.random() * oids[t].operations[k].arg;
-                        }
-                        break;
-                    case 'floor':
-                        value = Math.floor(parseFloat(value));
-                        break;
-                    case 'ceil':
-                        value = Math.ceil(parseFloat(value));
-                        break;
-                } //switch
+                            var formula = oids[t].operations[k].formula;
+                            if (formula && formula.indexOf('widget.') !== -1) {
+                                string += 'var widget = ' + JSON.stringify(widget) + ';';
+                            }
+                            string += 'return ' + oids[t].operations[k].formula + ';';
+                            //string += '}())';
+                            try {
+                                value = new Function(string)();
+                            } catch (e) {
+                                console.error('Error in eval[value]     : ' + format);
+                                console.error('Error in eval[script]: ' + string);
+                                console.error('Error in eval[error] : ' + e);
+                                value = 0;
+                            }
+                            break;
+                        case '*':
+                            if (oids[t].operations[k].arg !== undefined) {
+                                value = parseFloat(value) * oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '/':
+                            if (oids[t].operations[k].arg !== undefined) {
+                                value = parseFloat(value) / oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '+':
+                            if (oids[t].operations[k].arg !== undefined) {
+                                value = parseFloat(value) + oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '-':
+                            if (oids[t].operations[k].arg !== undefined) {
+                                value = parseFloat(value) - oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '%':
+                            if (oids[t].operations[k].arg !== undefined) {
+                                value = parseFloat(value) % oids[t].operations[k].arg;
+                            }
+                            break;
+                        case 'round':
+                            if (oids[t].operations[k].arg === undefined) {
+                                value = Math.round(parseFloat(value));
+                            } else {
+                                value = parseFloat(value).toFixed(oids[t].operations[k].arg);
+                            }
+                            break;
+                        case 'pow':
+                            if (oids[t].operations[k].arg === undefined) {
+                                value = Math.pow(parseFloat(value), 2);
+                            } else {
+                                value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
+                            }
+                            break;
+                        case 'sqrt':
+                            value = Math.sqrt(parseFloat(value));
+                            break;
+                        case 'hex':
+                            value = Math.round(parseFloat(value)).toString(16);
+                            break;
+                        case 'hex2':
+                            value = Math.round(parseFloat(value)).toString(16);
+                            if (value.length < 2) value = '0' + value;
+                            break;
+                        case 'HEX':
+                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                            break;
+                        case 'HEX2':
+                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                            if (value.length < 2) value = '0' + value;
+                            break;
+                        case 'value':
+                            value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
+                            break;
+                        case 'array':
+                            value = oids[t].operations[k].arg [~~value];
+                            break;
+                        case 'date':
+                            value = this.formatDate(value, oids[t].operations[k].arg);
+                            break;
+                        case 'min':
+                            value = parseFloat(value);
+                            value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            break;
+                        case 'max':
+                            value = parseFloat(value);
+                            value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            break;
+                        case 'random':
+                            if (oids[t].operations[k].arg === undefined) {
+                                value = Math.random();
+                            } else {
+                                value = Math.random() * oids[t].operations[k].arg;
+                            }
+                            break;
+                        case 'floor':
+                            value = Math.floor(parseFloat(value));
+                            break;
+                        case 'ceil':
+                            value = Math.ceil(parseFloat(value));
+                            break;
+                    } //switch
+                }
             } //if for
             format = format.replace(oids[t].token, value);
         }//for
@@ -3092,6 +3082,12 @@ function main($, onReady) {
                 vis.conn.getLoggedUser(function (authReq, user) {
                     vis.user = user;
                     vis.loginRequired = authReq;
+                    vis.states.attr({
+                        'username.val' : vis.user,
+                        'login.val' : vis.loginRequired,
+                        'username' : vis.user,
+                        'login' : vis.loginRequired
+                    });
                     // first of all try to load views
                     vis.loadRemote(function () {
                         vis.subscribing.IDs = vis.subscribing.IDs || [];
