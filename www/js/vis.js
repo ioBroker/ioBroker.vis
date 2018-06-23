@@ -1631,23 +1631,30 @@ var vis = {
                 // disable view and show some action
                 $oldView.find('> .vis-view-disabled').show();
                 this.renderView(viewDiv, view, true, function (_viewDiv, _view) {
-                    var $oldView = $('#visview_' + that.activeViewDiv);
-                    // hide old view
-                    $oldView.hide();
-                    $oldView.find('.vis-view-disabled').hide();
+                    var $oldView;
+                    if (that.activeViewDiv !== _viewDiv) {
+                        $oldView = $('#visview_' + that.activeViewDiv);
+                        // hide old view
+                        $oldView.hide();
+                        $oldView.find('.vis-view-disabled').hide();
+                    }
                     var $view = $('#visview_' + _viewDiv);
 
                     // Get the view, if required, from Container
-                    if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
+                    if ($view.parent().attr('id') !== 'vis_container') {
+                        $view.appendTo('#vis_container');
+                    }
 
                     // show new view
                     $view.show();
                     $view.find('.vis-view-disabled').hide();
 
-                    if ($oldView.hasClass('vis-edit-group')) {
-                        that.destroyView(that.activeViewDiv, that.activeView);
-                    } else {
-                        $oldView.hide();
+                    if (that.activeViewDiv !== _viewDiv) {
+                        if ($oldView.hasClass('vis-edit-group')) {
+                            that.destroyView(that.activeViewDiv, that.activeView);
+                        } else {
+                            $oldView.hide();
+                        }
                     }
 
                     that.postChangeView(_viewDiv, _view, callback);

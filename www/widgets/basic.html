@@ -115,6 +115,12 @@
                 "en": "If persistent the view will not be destroyed when inactive, just hide.\nElsewise the view will be destroyed, if inactive.",
                 "de": "Falls 'Bleibend', dann wird die View nicht zerstört, sondern nur versteckt wenn inaktive. Sonst wird die View immer wieder kreiert und zerstört.",
                 "ru": "Если выбранно 'Постоянно', то страница не будет уничтожаться, если она не активна. В противном случае страница будет создаваться и разрушаться."},
+            "notIfInvisible":       {"en": "Only if visible",                "de": "Nur falls sichtbar",               "ru": "Только если видимо"},
+            "notIfInvisible_tooltip": {
+                "en": "View will be used only if this widget is visible",
+                "de": "Die View wird nur benutzt, wenn dieses Widget sichtbar ist",
+                "ru": "Страница будет использоваться только в том случае, если виден этот виджет"
+            },
             "valuelist":        {"en": "Values list",               "de": "Wertenliste",            "ru": "Список значений"},
             "valuelist_tooltip": {
                 "en": "Divide values with semicolon, like 'ok;warning;alram'. Every text accordingly for value 0,1,2 and so on\nTo have ';' in text use §§ instead.",
@@ -305,14 +311,14 @@
     });
 
     vis.binds.stateful = {
-        view: function (el, viewArr, persistent) {
+        view: function (el, viewArr, persistent, notIfInvisible) {
             var $this = $(el);
             var oid   = $this.attr('data-oid');
+            var timer = null;
 
-            function onChange(e, newVal) {
-                if (newVal === 'true'  || newVal === true)  newVal = 1;
-                if (newVal === 'false' || newVal === false) newVal = 0;
-                var view = viewArr[newVal];
+            function draw(val) {
+                timer = null;
+                var view = viewArr[val];
                 if (!persistent) {
                     $this.parent().find('div.vis-view').remove();
                 } else {
@@ -320,10 +326,29 @@
                 }
                 if (vis.views[view]) {
                     vis.renderView(view, view, true, function (_view) {
-                        $('#visview_' + _view).appendTo($this).show().data('persistent', persistent);
+                        var $view = $('#visview_' + _view);
+                        $view.show().data('persistent', persistent);
+                        if (!$this.find('#visview_' + _view).length) {
+                            $view.appendTo($this);
+                        }
                     });
                 }
                 vis.destroyUnusedViews();
+            }
+
+            function onChange(e, newVal) {
+                if (newVal === 'true'  || newVal === true)  newVal = 1;
+                if (newVal === 'false' || newVal === false) newVal = 0;
+                if (notIfInvisible && !$this.is(':visible')) {
+                    return;
+                }
+
+                if (timer) {
+                    clearTimeout(timer)
+                }
+                timer = setTimeout(function () {
+                    draw(newVal);
+                }, 50);
             }
 
             if (oid) {
@@ -2410,7 +2435,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_StatefulContainerView8.png"></img>'
         data-vis-type="stateful,container"
         data-vis-name="view in widget 8"
-        data-vis-attrs="oid;persistent/checkbox;count[1]/number;group.views;contains_view_(0-count)/views">
+        data-vis-attrs="oid;persistent/checkbox;notIfInvisible/checkbox;count[1]/number;group.views;contains_view_(0-count)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:400px; height: 270px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper" />
@@ -2424,7 +2449,7 @@
             }
         %>
         <div class="vis-widget-body">
-            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent')) %> />
+            <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent'), data.attr('notIfInvisible') %> />
         </div>
     </div>
 </script>
