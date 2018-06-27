@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.4",
+        "version": "1.1.5",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
