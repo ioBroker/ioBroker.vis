@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.5",
+        "version": "1.1.6",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,6 +15,17 @@
             "pl": "Wizualizacja"
         },
         "news": {
+            "1.1.6": {
+                "en": "New special bindings are supported\nError with fast view changes is fixed\nfix (jqui - ctrl - IconState / val - Icon Bool)",
+                "de": "Neue spezielle Bindungen werden unterstützt\nFehler bei schnellen Ansichtsänderungen ist behoben\nfix (jqui - Strg - IconState / val - Icon Bool)",
+                "ru": "Поддерживаются новые специальные привязки\nИсправлена ​​ошибка с быстрым изменением вида\nfix (jqui - ctrl - IconState / val - Icon Bool)",
+                "pt": "Novas ligações especiais são suportadas\nErro com alterações de visualização rápida corrigidas\ncorrigir (jqui - ctrl - IconState / val - Bool de ícone)",
+                "nl": "Nieuwe speciale bindingen worden ondersteund\nFout bij snelle wijzigingen in weergave is opgelost\nfix (jqui - ctrl - IconState / val - Icon Bool)",
+                "fr": "Les nouvelles liaisons spéciales sont prises en charge\nErreur avec les changements d'affichage rapide est fixée\ncorriger (jqui - ctrl - IconState / val - Icône Bool)",
+                "it": "Sono supportati nuovi binding speciali\nL'errore con le modifiche veloci alla vista è stato risolto\ncorreggere (jqui - ctrl - IconState / val - Icon Bool)",
+                "es": "Se admiten nuevos enlaces especiales\nSe corrigió el error con los cambios de vista rápida\ncorregir (jqui - ctrl - IconState / val - Icon Bool)",
+                "pl": "Nowe powiązania specjalne są obsługiwane\nNaprawiono błąd związany z szybkimi zmianami widoku\nnapraw (jqui - ctrl - IconState / val - Icon Bool)"
+            },
             "1.1.4": {
                 "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
                 "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",

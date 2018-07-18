@@ -45,7 +45,7 @@
             "false_text":       {"en": "Text inactive",      "de": "Inaktiv-Text",          "ru": "Неактивный текст"},
             "true_text":        {"en": "Text active",        "de": "Aktiv-Text",            "ru": "Активный текст"},
             "false_src":        {"en": "Icon inactive",      "de": "Inaktiv-Bild",          "ru": "Неактивная картинка"},
-            "true_src":         {"en": "Icon active",        "de": "Aktiv-Bild",            "ru": "Активный картинка"},
+            "true_src":         {"en": "Icon active",        "de": "Aktiv-Bild",            "ru": "Активная картинка"},
             "false_alt":        {"en": "Tooltip inactive",   "de": "Inaktiv-Tooltip",       "ru": "Неактивная подсказка"},
             "true_alt":         {"en": "Tooltip active",     "de": "Aktiv-Tooltip",         "ru": "Активная подсказка"},
             "dialog_top":       {"en": "Top",                "de": "Position oben",         "ru": "Позиция сверху"},
@@ -1102,7 +1102,7 @@
                 });
             }, 200);
         },
-        itoggle: function (el){
+        itoggle: function (el) {
             var $this = $(el).parent();
             var oid = $this.parent().attr('data-oid');
             if (oid) {
@@ -1113,6 +1113,7 @@
             if (activeVal === '' || activeVal === undefined) activeVal = null;
 
             if (activeVal !== null) {
+                if (val === null || val === undefined) val = '';
                 if (activeVal.toString() === val.toString()) {
                     $this.find('.imgToggleFalse').hide();
                     $this.find('.imgToggleTrue').show();
@@ -1125,12 +1126,9 @@
                     var f = parseFloat(val);
                     if (f == val) {
                         val = f;
-                    } else if (val !== '') {
-                        val = true;
                     } else {
-                        val = false;
+                        val = val !== '';
                     }
-
                 }
                 if (val > 0) {
                     $this.find('.imgToggleFalse').hide();
@@ -1856,10 +1854,10 @@
         styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
     }
     %>
-    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('click_value') %>" <%= (el) -> vis.binds.basic.state(el); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('click_value') %>" <%= (el) -> vis.binds.basic.state(el, this.data.attr('click_id')); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
         <div class="vis-widget-body">
             <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="               <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
-            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display:none"><%= this.data.attr('true_text')  %></span>
+            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display: none"><%= this.data.attr('true_text')  %></span>
             <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
         </div>
     </div>

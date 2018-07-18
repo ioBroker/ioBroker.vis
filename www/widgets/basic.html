@@ -479,10 +479,12 @@
         },
         state: function (el, oid) {
             var $this = $(el);
-            oid = (oid ? oid : $this.attr('data-oid'));
+            oid = oid ? oid : $this.attr('data-oid');
             var val = $this.attr('data-val');
 
-            if (oid) $this.attr('data-oid', oid);
+            if (oid) {
+                $this.attr('data-ctrl-oid', oid);
+            }
 
             if (val === 'true')  val = true;
             if (val === 'false') val = false;
@@ -493,9 +495,9 @@
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-                    var oid = $(this).attr('data-oid');
-					
 					if (moved) return;
+
+                    var oid = $(this).attr('data-ctrl-oid');
 
                     if ($(this).attr('url-value')) {
                         vis.conn.httpGet($(this).attr('url-value'));

@@ -188,6 +188,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.6 (2018-07-18)
+* (bluefox) support of new variables (see [Special bindings](#special-bindings) )
+* (bluefox) fix error if fast view changes
+* (bluefox) fix "jqui - ctrl - IconState / val - Icon Bool"
+
 ### 1.1.5 (2018-06-10)
 * (bluefox) show more information if widget cannot be rendered
 * (bluefox) fix saving of widgets if they have bindings
