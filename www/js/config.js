@@ -1,39 +1,15 @@
 var visConfig = {
     "widgetSets": [
         "basic",
-        "chromecast",
-        "dwd",
-        "hqwidgets",
         "jqplot",
-        {
-            "name": "jqui-mfd",
-            "depends": [
-                "basic",
-                "jqui"
-            ]
-        },
         {
             "name": "jqui",
             "depends": [
                 "basic"
             ]
         },
-        "map",
-        {
-            "name": "material",
-            "depends": []
-        },
-        {
-            "name": "metro",
-            "depends": [
-                "jqui-mfd",
-                "basic"
-            ]
-        },
-        "mihome-vacuum",
-        "swipe",
         "tabs",
-        "template"
+		"swipe"
     ]
 };
 if (typeof exports !== 'undefined') {
