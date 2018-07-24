@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.6",
+        "version": "1.1.7",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -15,6 +15,17 @@
             "pl": "Wizualizacja"
         },
         "news": {
+            "1.1.7": {
+                "en": "view8 corrected",
+                "de": "view8 korrigiert",
+                "ru": "view8 исправлено",
+                "pt": "view8 corrigido",
+                "nl": "view8 gecorrigeerd",
+                "fr": "view8 corrigé",
+                "it": "view8 corretta",
+                "es": "view8 corregido",
+                "pl": "view8 poprawiony"
+            },
             "1.1.6": {
                 "en": "New special bindings are supported\nError with fast view changes is fixed\nfix (jqui - ctrl - IconState / val - Icon Bool)",
                 "de": "Neue spezielle Bindungen werden unterstützt\nFehler bei schnellen Ansichtsänderungen ist behoben\nfix (jqui - Strg - IconState / val - Icon Bool)",
@@ -149,7 +160,7 @@
         "materialize": true,
         "welcomeScreen": {
             "link": "vis/index.html",
-            "name": "vis",
+            "name": "vis runtime",
             "img": "vis/img/favicon.png",
             "color": "#ffe9c8",
             "order": 0

@@ -107,7 +107,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.1.6',
+    version: '1.1.7',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1536,7 +1536,11 @@ var vis = {
                 }
             }
         } catch (e) {
-            this.conn.logError('Error: can\'t render ' + widget.tpl + ' ' + id + ' on "' + view + '" (' + e + '): ' + JSON.stringify(e.stack));
+            var lines = (e.toString() + e.stack.toString()).split('\n');
+            this.conn.logError('can\'t render ' + widget.tpl + ' ' + id + ' on "' + view + '": ');
+            for (var l = 0; l < lines.length; l++) {
+                this.conn.logError(l + ' - ' + lines[l]);
+            }
         }
 
         if (userGroups && $wid && $wid.length) {

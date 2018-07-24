@@ -188,6 +188,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.7 (2018-07-24)
+* (bluefox) view8 corrected
+
 ### 1.1.6 (2018-07-18)
 * (bluefox) support of new variables (see [Special bindings](#special-bindings) )
 * (bluefox) fix error if fast view changes
