@@ -177,6 +177,7 @@ body {
 
 #attr_wrap .vis-edit-textbox {
     width: calc(100% - 5px);
+    resize: vertical;
 }
 
 #attr_wrap .vis-edit-textbox-with-button {
