@@ -2613,6 +2613,23 @@
     </div>
 </script>
 
+<script id="tplValueTimestampValue"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="basic"
+        data-vis-type="val,timestamp"
+        data-vis-name="Timestamp Value"
+        data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
+        data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <div data-oid="<%= this.data.attr('oid') %>">
+                <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.val'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
+            </div>
+        </div>
+    </div>
+</script>
+
 <script id="tplValueTimestamp"
         type="text/ejs"
         class="vis-tpl"
