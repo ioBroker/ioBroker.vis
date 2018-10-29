@@ -188,6 +188,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.8 (2018-10-29)
+* (bluefox) File dialog was corrected
+
 ### 1.1.7 (2018-07-24)
 * (bluefox) view8 corrected
 
