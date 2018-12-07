@@ -958,6 +958,25 @@
                     .data('bindHandler', onChange);
             }
         },
+	pushbutton: function(el, oid) {
+		if (!vis.editMode) {
+			var $this = $(el);
+			oid = oid || $this.data('oid');
+
+			$this.on('mousedown touchstart', function (e) {
+				// Protect against two events
+				if (vis.detectBounce(this)) return;
+
+				vis.setValue(oid, true);
+			});
+			$this.on('mouseup touchend touchcancel', function (e) {
+				// Protect against two events
+				if (vis.detectBounce(this, true)) return;
+
+				vis.setValue(oid, false);
+			});
+		}
+	},
         toggle: function (el, oid) {
             var $this = $(el);
             oid = oid || $this.data('oid');
