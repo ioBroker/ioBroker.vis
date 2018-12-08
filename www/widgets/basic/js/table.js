@@ -100,8 +100,7 @@ vis.binds.table = {
         // Get container for detailed information
         var $el = $('#' + data.detailed_wid);
         if ($el.length) {
-            var text = "";
-            var print = null;
+            var text = '';
 
             if (data.content._detail) {
                 text += '<table class="' + data.tClass + '-detail">';
@@ -113,12 +112,12 @@ vis.binds.table = {
                     for (var odata in data.content[obj]) {
                         if (typeof data.content[obj][odata] === 'function') continue;
                         var val = data.content[obj][odata].toString();
-                        if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                        if (odata.length > 1 && odata[0] === '_' && obj !== '_class' && obj.substring(0, 4) !== '_btn' && obj !== '_id') {
                             continue;
                         }
                         text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + odata + '</td>' +
                             '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
-                        if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                        if (val && val.length > 6 && val.substring(val.length - 6) === '&nbsp;') {
                             text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                         }
                         r++;
@@ -129,7 +128,7 @@ vis.binds.table = {
                     text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + obj.substring(1) + '</td>' +
                         '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
 
-                    if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                    if (val && val.length > 6 && val.substring(val.length - 6) === '&nbsp;') {
                         text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                     }
                     r++;
@@ -138,22 +137,22 @@ vis.binds.table = {
             } else {
                 // Try to find special attributes starting with '_'
                 for (var obj in data.content) {
-                    if (typeof data.content[obj] === 'function') continue;
-                    if (obj.length > 0 && obj[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                    if (!data.content.hasOwnProperty(obj) || typeof data.content[obj] === 'function') continue;
+                    if (obj.length > 0 && obj[0] === '_' && obj !== '_class' && obj.substring(0, 4) !== '_btn' && obj !== '_id') {
                         text += '<table class="' + data.tClass + '-detail">';
                         // Show that object
                         var r = 0;
                         // Go through all attributes
-                        if (typeof data.content[obj] == 'object') {
+                        if (typeof data.content[obj] === 'object') {
                             for (var odata in data.content[obj]) {
                                 if (typeof data.content[obj][odata] === 'function') continue;
                                 var val = data.content[obj][odata].toString();
-                                if (odata.length > 1 && odata[0] == '_' && obj != '_class' && obj.substring(0, 4) != '_btn' && obj != '_id') {
+                                if (odata.length > 1 && odata[0] === '_' && obj !== '_class' && obj.substring(0, 4) !== '_btn' && obj !== '_id') {
                                     continue;
                                 }
                                 text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + odata + '</td>' +
                                     '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
-                                if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                                if (val && val.length > 6 && val.substring(val.length - 6) === '&nbsp;') {
                                     text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                                 }
                                 r++;
@@ -164,7 +163,7 @@ vis.binds.table = {
                             text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((r % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + obj.substring(1) + '</td>' +
                                 '<td class="' + data.tClass + '-detail-td-value">' + val + '</td></tr>';
 
-                            if (val && val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                            if (val && val.length > 6 && val.substring(val.length - 6) === '&nbsp;') {
                                 text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                             }
                             r++;
@@ -182,7 +181,8 @@ vis.binds.table = {
                 var row = 0;
                 for (var data_obj in data.content) {
                     // Show that object
-                    if (data_obj.length > 1 && data_obj[0] == '_' && data_obj != '_class' && data_obj.substring(0, 4) != '_btn' && data_obj != '_id') {
+                    if (!data.content.hasOwnProperty(data_obj) ||
+                        (data_obj.length > 1 && data_obj[0] === '_' && data_obj !== '_class' && data_obj.substring(0, 4) !== '_btn' && data_obj !== '_id')) {
                         continue;
                     }
                     var val = data.content[data_obj].toString();
@@ -190,7 +190,7 @@ vis.binds.table = {
                     text += '<tr class="' + data.tClass + '-detail-tr ' + data.tClass + '-detail-tr-' + ((row % 2) ? 'odd' : 'even') + '"><td class="' + data.tClass + '-detail-td-name">' + data_obj + '</td>' +
                         '<td class="' + data.tClass + '-detail-td-value">' + data.content[data_obj]+'</td></tr>';
 
-                    if (val.length > 6 && val.substring(val.length - 6) == '&nbsp;') {
+                    if (val.length > 6 && val.substring(val.length - 6) === '&nbsp;') {
                         text += '<tr class="' + data.tClass + '-detail-tr"><td colspan="2">&nbsp;</td></tr>';
                     }
                     row++;
@@ -252,19 +252,21 @@ vis.binds.table = {
         }
         var k = 1;
         for (var obj in rowData) {
-            if (obj.match(/^jQuery/) ||
-                typeof rowData[obj] == 'function' ||
-                !rowData.hasOwnProperty(obj)) continue;
+            if (!rowData.hasOwnProperty(obj) ||
+                obj.match(/^jQuery/) ||
+                typeof rowData[obj] === 'function') {
+                continue;
+            }
 
             var attr = options['colAttr' + k] || obj;
 
-            if (attr && attr[0] == '_') {
+            if (attr && attr[0] === '_') {
                 if (attr.match(/^_btn/) || options['colAttr' + k]) {
                     var btnText  = '';
                     var btnClass = '';
                     text += '<td class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>';
                     if (attr.match(/^_btn/)){
-                        if (typeof rowData[attr] == 'string') {
+                        if (typeof rowData[attr] === 'string') {
                             btnText  = rowData[attr];
                         } else {
                             btnText  = rowData[attr].caption;
@@ -312,7 +314,7 @@ vis.binds.table = {
         if (typeof app !== 'undefined' && app.replaceFilePathJson) {
             tableJson = app.replaceFilePathJson(tableJson);
         }
-        if (tableJson && (typeof tableJson == "string")) {
+        if (tableJson && typeof tableJson === 'string') {
             try {
                 table = JSON.parse(tableJson);
             }
@@ -349,13 +351,15 @@ vis.binds.table = {
                 header += '<tr class="' + tClass + '-th">';
                 var k = 1;
                 for (var obj in table[ii]) {
-                    if (obj.match(/^jQuery/) ||
-                        typeof table[ii][obj] == 'function' ||
-                        !table[ii].hasOwnProperty(obj)) continue;
+                    if (!table[ii].hasOwnProperty(obj) ||
+                        obj.match(/^jQuery/) ||
+                        typeof table[ii][obj] === 'function') {
+                        continue;
+                    }
 
                     var attr = options['colAttr' + k] || obj;
 
-                    if (attr && attr[0] == '_') {
+                    if (attr && attr[0] === '_') {
                         if (attr.match(/^_btn/) || options['colAttr' + k]) {
                             header += '<th class="' + tClass + '-th' + k + '" ' + (options['colWidth' + k] ? 'style="width:' + options['colWidth' + k] + '"' : '') + '>' + (options['colName' + k] || '') + '</th>';
                             k++;
@@ -377,7 +381,7 @@ vis.binds.table = {
                 headerDone = true;
             }
 
-            if (_classes &&_classes.indexOf('selected') != -1) selectedId = ii;
+            if (_classes &&_classes.indexOf('selected') !== -1) selectedId = ii;
 
             text += vis.binds.table.createRow(table[ii], wid, options, j, false, ii, table[ii]._id);
             j++;
@@ -408,10 +412,10 @@ vis.binds.table = {
             if (!table[i]) continue;
 
             $elem.find('.vis-table-ack-button[data-index="' + i + '"]')
-            .data('options', {
-                    ack_id: table[i]._ack_id || JSON.stringify(table[i]),
-                    ack_oid: options.ack_oid
-                });
+                .data('options', {
+                        ack_id: table[i]._ack_id || JSON.stringify(table[i]),
+                        ack_oid: options.ack_oid
+                    });
         }
         // If detailed information desired
         if (options.detailed_wid) {
@@ -462,7 +466,7 @@ vis.binds.table = {
                 var data = $(this).data('options');
                 // Convert event to json
                 if (newVal) {
-                    if (typeof newVal == 'string') {
+                    if (typeof newVal === 'string') {
                         try {
                             newEvent = JSON.parse(newVal);
                         }
@@ -536,12 +540,12 @@ vis.binds.table = {
         $('#' + wid).data('options', data);
 
         if (options.event_oid) {
-            if ($('#' + wid).data('binded') != options.event_oid) {
+            if ($('#' + wid).data('binded') !== options.event_oid) {
                 $('#' + wid).data('binded', options.event_oid);
                 vis.states.bind(options.event_oid + '.val', cbNewEvent);
             }
         } else {
-            if ($('#' + wid).data('binded') != options.table_oid) {
+            if ($('#' + wid).data('binded') !== options.table_oid) {
                 $('#' + wid).data('binded', options.table_oid);
                 vis.states.bind(options.table_oid + '.val', cbNewTable);
             }
@@ -591,18 +595,18 @@ vis.binds.table = {
             height:    options.height || 200,
             width:     options.width || 400,
             autoOpen:  false,
-            modal:     (options.modal === true || options.modal === "true"),
+            modal:     (options.modal === true || options.modal === 'true'),
             draggable: false,
             buttons:   buttons
         });
 
-        if ((vis.editMode && options.show) || trigger_value == "open") {
+        if ((vis.editMode && options.show) || trigger_value === 'open') {
             $(elem).dialog('open');
             vis.binds.dialog_trigger_id = options.trigger_id;
         }
 
         elem.triggered = function (objId, _newEvent) {
-            if (_newEvent == "open") {
+            if (_newEvent === 'open') {
                 $(this).dialog('open');
                 vis.binds.dialog_trigger_id = this._options.trigger_id;
             }

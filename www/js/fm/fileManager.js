@@ -12,7 +12,7 @@ var fmFolder    =    'js/fm/';
 
 
 (function ($) {
-    "use strict";
+    'use strict';
     $.fn.cursorPosition = function(position) {
         var input = this.get(0);
         if (!input) return; // No (input) element found
@@ -44,7 +44,7 @@ var fmFolder    =    'js/fm/';
 
     $.fm = function (options, callback) {
         var fmConn;
-        if (typeof SGI != 'undefined') {
+        if (typeof SGI !== 'undefined') {
             // TO DO wrapper must be created. Direct using of socket is not convenient.
             fmConn = SGI.socket;
         } else if (options.conn) {
@@ -79,7 +79,7 @@ var fmFolder    =    'js/fm/';
         var config      = {};
         if (o.fileFilter && !o.fileFilter.length) o.fileFilter = null;
 
-        if (typeof storage != 'undefined') {
+        if (typeof storage !== 'undefined') {
             try {
                 config = storage.get('visFM');
                 if (config) {
@@ -87,6 +87,10 @@ var fmFolder    =    'js/fm/';
                 } else {
                     config = {};
                 }
+                if (config.path === '/') {
+                    config.path = '';
+                }
+
             } catch (e) {
                 console.log('Cannot load FM config');
                 config = {};
@@ -94,7 +98,7 @@ var fmFolder    =    'js/fm/';
         }
 
         o.view = config.view || o.view;
-        if (o.defaultPath == o.path) {
+        if (o.defaultPath === o.path) {
             o.path = config.path || o.path;
         } else {
             config.path = o.path;
@@ -102,13 +106,13 @@ var fmFolder    =    'js/fm/';
         o.filter = config.filter || '';
 
         // Analyse path, if it is a file name
-        if (o.path && o.path[o.path.length - 1] != '/') {
+        if (o.path && o.path[o.path.length - 1] !== '/') {
             var parts = o.path.split('/');
             o.currentFile = parts.pop();
             o.path = parts.join('/') + '/';
         }
 
-        if (o.path.substring(0, 'widgets/'.length) == 'widgets/' || o.path.substring(0, 'img/'.length) == 'img/') {
+        if (o.path.substring(0, 'widgets/'.length) === 'widgets/' || o.path.substring(0, 'img/'.length) === 'img/') {
             o.path = '/vis/' + o.path;
         }
 
@@ -194,7 +198,7 @@ var fmFolder    =    'js/fm/';
                                 }
                                 o.path = o.root + val;
 
-                                if ($('.fm-path').data('old') != val) {
+                                if ($('.fm-path').data('old') !== val) {
                                     o.cursorPosition = $('.fm-path').cursorPosition();
                                     $('.fm-path').data('timer', null);
                                     load(val);
