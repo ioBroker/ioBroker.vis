@@ -286,11 +286,9 @@ function indicateError(callback) {
 function main() {
     // Check if noConfig = false
     if (adapter.common.noConfig) {
-        adapter.getForeignObject('system.adapter.' + adapter.namespace, function (err, obj) {
+        adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
             obj.common.noConfig = false;
-            adapter.setForeignObject(obj._id, obj, function () {
-                adapter.stop();
-            });
+            adapter.setForeignObject(obj._id, obj, () => adapter.stop());
         });
 
         return;
