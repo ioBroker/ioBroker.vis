@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.8",
+        "version": "1.1.9",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -12,9 +12,22 @@
             "fr": "Visualisation",
             "it": "Visualizzazione",
             "es": "Visualización",
-            "pl": "Wizualizacja"
+            "pl": "Wizualizacja",
+            "zh-cn": "可视化"
         },
         "news": {
+            "1.1.9": {
+                "en": "Add Chinese support",
+                "de": "Chinesische Unterstützung hinzufügen",
+                "ru": "Добавить поддержку китайцев",
+                "pt": "Adicionar suporte chinês",
+                "nl": "Voeg Chinese ondersteuning toe",
+                "fr": "Ajouter un support chinois",
+                "it": "Aggiungi supporto cinese",
+                "es": "Añadir soporte chino",
+                "pl": "Dodaj chińskie wsparcie",
+                "zh-cn": "添加中文支持"
+            },
             "1.1.8": {
                 "en": "File dialog was corrected",
                 "de": "Dateidialog wurde korrigiert",
@@ -135,7 +148,8 @@
             "fr": "Interface utilisateur graphique pour iobroker",
             "it": "Interfaccia utente grafica per iobroker",
             "es": "Interfaz gráfica de usuario para iobroker",
-            "pl": "Graficzny interfejs użytkownika dla iobroker"
+            "pl": "Graficzny interfejs użytkownika dla iobroker",
+            "zh-cn": "iobroker的图形化用户界面"
         },
         "platform": "Javascript/Node.js",
         "loglevel": "info",

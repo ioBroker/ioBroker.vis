@@ -23,7 +23,8 @@ var languages  =  {
     fr: {},
     it: {},
     es: {},
-    pl: {}
+    pl: {},
+    'zh-cn': {}
 };
 var srcDir     = __dirname + '/';
 
@@ -420,9 +421,16 @@ gulp.task('updatePackages', function (done) {
         var newNews = {};
 
         newNews[pkg.version] = {
-            en: 'news',
-            de: 'neues',
-            ru: 'новое'
+            'en': 'news',
+            'de': 'neues',
+            'ru': 'новое',
+            'pt': 'notícia',
+            'nl': 'nieuws',
+            'fr': 'nouvelles',
+            'it': 'notizia',
+            'es': 'Noticias',
+            'pl': 'Aktualności',
+            'zh-cn': '消息'
         };
         iopackage.common.news = Object.assign(newNews, news);
     }
