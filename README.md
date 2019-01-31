@@ -188,7 +188,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
-### 1.1.9 (2019-01-26)
+### 1.1.10 (2019-01-30)
 * Add Chinese support
 
 ### 1.1.8 (2018-10-29)

@@ -1,3 +1,19 @@
+/**
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
 function getWidgetGroup(views, view, widget) {
     var widgets = views[view].widgets;
     var members;
