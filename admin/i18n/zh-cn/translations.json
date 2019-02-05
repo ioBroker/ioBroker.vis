@@ -1,0 +1,7 @@
+{
+  "Check license": "请检查许可证",
+  "License:": "注册码:",
+  "Service is offline. Please try later.": "服务器离线或主机无法上网。请请检查网络连接, 稍后再试。",
+  "instruction": "如果要使用<b>vis</b>, 您必须获取它的注册码.<br><b>vis</b>对个人免费使用, 但是对商业项目有偿使用.<br>您可以在<a href='https://iobroker.net' target='_blank'>iobroker.net</a>网页上购买注册码。",
+  "vis adapter settings": "vis适配器设置"
+}

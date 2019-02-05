@@ -1470,7 +1470,11 @@
 
 	        if (value === 1) {
                 if (vis.language === 'de') {
-                    return 'einer ' + singular;
+                    if (type === 'days') {
+                        return 'einem ' + singular;
+                    } else {
+                        return 'einer ' + singular;
+                    }
                 } else if (vis.language === 'ru') {
                     if (type === 'days' || type === 'hours') {
                         return 'один ' + singular;

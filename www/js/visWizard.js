@@ -2,7 +2,8 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2018 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker,
+ *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/

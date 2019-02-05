@@ -188,6 +188,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.10 (2019-01-30)
+* Add Chinese support
+
 ### 1.1.8 (2018-10-29)
 * (bluefox) File dialog was corrected
 
@@ -404,7 +407,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2018 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>, 
+ Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  

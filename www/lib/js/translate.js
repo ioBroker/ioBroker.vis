@@ -10,7 +10,7 @@ function translateWord(text, lang, dictionary) {
         var newText = dictionary[text][lang];
         if (newText) {
             return newText;
-        } else if (lang != 'en') {
+        } else if (lang !== 'en') {
             newText = dictionary[text].en;
             if (newText) {
                 return newText;
@@ -59,7 +59,7 @@ function translateAll(lang, dictionary) {
         //<span class="ui-button-text" >Save</span>
         var text = $(this).attr('data-lang');
         if (!text) {
-            text = $(this).html().match(/\>([\w ]+)\</);
+            text = $(this).html().match(/>([\w ]+)</);
             if (text && text.length > 1) {
                 text = text[1];
             } else {
@@ -96,21 +96,21 @@ var _ = function (text, arg1, arg2, arg3) {
     text = translateWord(text);
 
     var pos = text.indexOf('%s');
-    if (pos != -1) {
+    if (pos !== -1) {
         text = text.replace('%s', arg1);
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
-    if (pos != -1)  {
+    if (pos !== -1)  {
         text = text.replace('%s', arg2);
     } else {
         return text;
     }
 
     pos = text.indexOf('%s');
-    if (pos != -1)  {
+    if (pos !== -1)  {
         text = text.replace('%s', arg3);
     }
 

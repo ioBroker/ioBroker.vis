@@ -2,11 +2,16 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2017 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker
+ *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
  *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
  */
 /* jshint browser:true */
 /* global document */
@@ -107,7 +112,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.1.8',
+    version: '1.1.10',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
