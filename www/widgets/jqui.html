@@ -828,39 +828,39 @@
                 step:   1,
                 value:  parseFloat(vis.states.attr(oid + '.val')),
                 slide:  function (e, ui) {
-					if (options.submitmethod !== 'stop') {
-						// Slider -> Observable
-						if (oid2) {
-							if (options.inverted) {
-								ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-								ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-							}
+                    if (options.submitmethod !== 'stop') {
+                      // Slider -> Observable
+                      if (oid2) {
+                        if (options.inverted) {
+                          ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                          ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                        }
 
-							if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
-							vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-						} else if (oid) {
-							if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-							vis.setValue(oid, ui.value); //.toFixed(6));
-						}
-					}
+                        oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                        vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                      } else if (oid) {
+                        if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                        vis.setValue(oid, ui.value); //.toFixed(6));
+                      }
+                    }
 
                 },
-				stop: function (e, ui) {
-					if(options.submitmethod === 'stop') {
-						if (oid2) {
-							if (options.inverted) {
-								ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-								ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-							}
+                stop: function (e, ui) {
+                  if (options.submitmethod === 'stop') {
+                    if (oid2) {
+                      if (options.inverted) {
+                        ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                        ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                      }
 
-							if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
-							vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-						} else if (oid) {
-							if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-							vis.setValue(oid, ui.value); //.toFixed(6));
-						}
-					}
-				}
+                      oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                      vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                    } else if (oid) {
+                      if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                      vis.setValue(oid, ui.value); //.toFixed(6));
+                    }
+                  }
+                }
             }, options);
 
             settings.inverted = (settings.inverted === 'true' || settings.inverted === true);
@@ -1874,6 +1874,28 @@
     }
     %>
     <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" data-val="<%= this.data.attr('click_value') %>" <%= (el) -> vis.binds.basic.state(el, this.data.attr('click_id')); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
+        <div class="vis-widget-body">
+            <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="               <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
+            <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display: none"><%= this.data.attr('true_text')  %></span>
+            <div <%= (el) -> vis.binds.jqueryui.itoggle(el) %>></div>
+        </div>
+    </div>
+</script>
+
+<script id="tplIconStatePushButton"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="jqui"
+        data-vis-prev='<div id="prev_tplIconStateBool" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 100px; height: 25px;" > <div class="vis-widget-prev-body"> <img class="tplImgFalse" src="/vis/img/bulb_on.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
+        data-vis-name="ctrl - Icon PushButton / val - Icon Bool"
+        data-vis-attrs="oid;click_id/id;false_text;true_text;false_src/image;true_src/image;imageHeight/slider,0,200,1;false_alt;true_alt;invert_icon/checkbox">
+    <%
+    var styles = '';
+    if (this.data.invert_icon === 'true' || this.data.invert_icon === true) {
+        styles = "filter: invert(1); -webkit-filter: invert(1); -moz-filter: invert(1); -o-filter: invert(1); -ms-filter: invert(1);";
+    }
+    %>
+    <div class="vis-widget ui-widget ui-button ui-corner-all ui-state-default <%== this.data.attr('class') %>" style="width: 100px; height: 35px;" id="<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.pushbutton(el, this.data.attr('click_id')); vis.binds.jqueryui.classes(el, null, data.click_value) %>>
         <div class="vis-widget-body">
             <img class="imgToggleFalse" <%= this.data.attr('false_src') ? 'src="' +  this.data.attr('false_src') + '"' : '' %> style="               <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('false_alt') %>"/ ><span class="imgToggleFalse"><%= this.data.attr('false_text') %></span>
             <img class="imgToggleTrue"  <%= this.data.attr('true_src')  ? 'src="' +  this.data.attr('true_src')  + '"' : '' %> style="display: none; <%= styles %> vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('true_alt')  %>" /><span class="imgToggleTrue" style="display: none"><%= this.data.attr('true_text')  %></span>
