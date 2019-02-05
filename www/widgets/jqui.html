@@ -40,6 +40,7 @@
             "alt_false":        {"en": "Tooltip by OFF",     "de": "Tooltip bei AUS",       "ru": "Подсказка при ВЫКЛ"},
             "timeOnly":         {"en": "Time only",          "de": "Nur Zeit",              "ru": "Только время"},
             "inverted":         {"en": "Inverted value",     "de": "Wert invertiert",       "ru": "Иневртировать значение"},
+            "submitmethod":     {"en": "Submit method",      "de": "Sendemethode",          "ru": "Метод"},
             "click_id":         {"en": "Control ID",         "de": "Steuer-ID",             "ru": "Контроль-ID"},
             "click_value":      {"en": "Control value",      "de": "Steuerwert",            "ru": "Контроль-значение"},
             "false_text":       {"en": "Text inactive",      "de": "Inaktiv-Text",          "ru": "Неактивный текст"},
@@ -827,21 +828,39 @@
                 step:   1,
                 value:  parseFloat(vis.states.attr(oid + '.val')),
                 slide:  function (e, ui) {
-                    // Slider -> Observable
-                    if (oid2) {
-                        if (options.inverted) {
-                            ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-                            ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-                        }
+					if (options.submitmethod !== 'stop') {
+						// Slider -> Observable
+						if (oid2) {
+							if (options.inverted) {
+								ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+								ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+							}
 
-                        if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
-                        vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                    } else if (oid) {
-                        if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-                        vis.setValue(oid, ui.value); //.toFixed(6));
-                    }
+							if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
+							vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+						} else if (oid) {
+							if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+							vis.setValue(oid, ui.value); //.toFixed(6));
+						}
+					}
 
-                }
+                },
+				stop: function (e, ui) {
+					if(options.submitmethod === 'stop') {
+						if (oid2) {
+							if (options.inverted) {
+								ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+								ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+							}
+
+							if (oid) vis.setValue(oid, ui.values[0]); //.toFixed(6));
+							vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+						} else if (oid) {
+							if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+							vis.setValue(oid, ui.value); //.toFixed(6));
+						}
+					}
+				}
             }, options);
 
             settings.inverted = (settings.inverted === 'true' || settings.inverted === true);
@@ -1793,7 +1812,7 @@
 
 <script id="tplJquiSliderVertical"
         type="text/ejs"
-        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox"
+        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox;submitmethod/nselect,scroll,stop"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiSliderVertical" style="position: relative; text-align: initial;padding: 4px;overflow:visible;height:50px"><div class="vis-widget_prev " style="width: 23px; height: 30px; overflow: visible !important;"> <div class="vis-widget-prev-body " style="width: 100%; padding: 4px; "> <div class="sliderJQUI ui-slider ui-slider-vertical ui-widget ui-widget-content ui-corner-all" id="19vlqqb6r_slider" data-oid="nothing_selected" data-oid-working="" style="height:100%"><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="bottom: 0%;"></span></div></div> </div></div>'
         data-vis-set="jqui"
@@ -1801,14 +1820,14 @@
         data-vis-name="Slider vertical">
     <div id="<%= this.data.attr('wid') %>" data-vis-resizable='{"minWidth":23, "maxWidth":23}' class="vis-widget" style="width:23px; height:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="width: 100%; padding: 4px; ">
-            <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min), max: parseFloat(data.max), step: parseFloat(data.step), orientation:"vertical", inverted: data.inverted}) %> style="height:100%"/></div>
+            <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min), max: parseFloat(data.max), step: parseFloat(data.step), orientation:"vertical", inverted: data.inverted, submitmethod: data.submitmethod}) %> style="height:100%"/></div>
         </div>
     </div>
 </script>
 
 <script id="tplJquiSlider"
         type="text/ejs"
-        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox"
+        data-vis-attrs="oid;oid-2;oid-working;oid-2-working;min;max;step;inverted/checkbox;submitmethod/nselect,scroll,stop"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplJquiSlider" style="position: relative; text-align: initial;padding: 4px;overflow:visible"><div class="vis-widget_prev " style="width: 80px; overflow: visible !important; left: 475px; top: 188px; position: absolute; height: 23px;"> <div class="vis-widget-prev-body " style="padding: 4px;"> <div class="sliderJQUI ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" id="19vlqppi9_slider" data-oid="nothing_selected" data-oid-working=""><span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 0%;"></span></div></div> </div></div>'
         data-vis-set="jqui"
@@ -1816,7 +1835,7 @@
         data-vis-name="Slider horizontal">
     <div id="<%= this.data.attr('wid') %>" data-vis-resizable='{"minHeight":23, "maxHeight":23}' class="vis-widget" style="height:23; width:160px; overflow:visible !important;">
         <div class="vis-widget-body <%== this.data.attr('class') %>" style="padding: 4px;">
-            <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step), inverted: data.inverted}) %> /></div>
+            <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider" data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min:parseFloat(data.min),max:parseFloat(data.max),step:parseFloat(data.step), inverted: data.inverted, submitmethod: data.submitmethod}) %> /></div>
         </div>
     </div>
 </script>
