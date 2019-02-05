@@ -40,7 +40,7 @@
             "alt_false":        {"en": "Tooltip by OFF",     "de": "Tooltip bei AUS",       "ru": "Подсказка при ВЫКЛ"},
             "timeOnly":         {"en": "Time only",          "de": "Nur Zeit",              "ru": "Только время"},
             "inverted":         {"en": "Inverted value",     "de": "Wert invertiert",       "ru": "Иневртировать значение"},
-            "submitmethod":     {"en": "Submit method",      "de": "Sendemethode",          "ru": ""},
+            "submitmethod":     {"en": "Submit method",      "de": "Sendemethode",          "ru": "Метод"},
             "click_id":         {"en": "Control ID",         "de": "Steuer-ID",             "ru": "Контроль-ID"},
             "click_value":      {"en": "Control value",      "de": "Steuerwert",            "ru": "Контроль-значение"},
             "false_text":       {"en": "Text inactive",      "de": "Inaktiv-Text",          "ru": "Неактивный текст"},
@@ -828,8 +828,7 @@
                 step:   1,
                 value:  parseFloat(vis.states.attr(oid + '.val')),
                 slide:  function (e, ui) {
-					if(options.submitmethod != 'stop')
-					{
+					if (options.submitmethod !== 'stop') {
 						// Slider -> Observable
 						if (oid2) {
 							if (options.inverted) {
@@ -847,8 +846,7 @@
 
                 },
 				stop: function (e, ui) {
-					if(options.submitmethod == 'stop')
-					{
+					if(options.submitmethod === 'stop') {
 						if (oid2) {
 							if (options.inverted) {
 								ui.values[0] = (settings.max - ui.values[0]) + settings.min;
