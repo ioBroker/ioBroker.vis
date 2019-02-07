@@ -91,7 +91,7 @@ var servConn = {
     },
     _monitor:         function () {
         if (this._timer) return;
-        var ts = (new Date()).getTime();
+        var ts = Date.now();
         if (this._reloadInterval && ts - this._lastTimer > this._reloadInterval * 1000) {
             // It seems, that PC was in a sleep => Reload page to request authentication anew
             this.reload();
@@ -110,7 +110,7 @@ var servConn = {
         this._isSecure = isSecure;
 
         if (this._isSecure) {
-            that._lastTimer = (new Date()).getTime();
+            that._lastTimer = Date.now();
             this._monitor();
         }
 
@@ -159,7 +159,7 @@ var servConn = {
             }, 1000);
         }
     },
-    reload: function () {
+    reload:           function () {
         if (window.location.host === 'iobroker.net' ||
             window.location.host === 'iobroker.biz' ||
             window.location.host === 'iobroker.pro') {
@@ -248,7 +248,7 @@ var servConn = {
 
             this._socket.on('connect', function () {
                 if (that._disconnectedSince) {
-                    var offlineTime = (new Date()).getTime() - that._disconnectedSince;
+                    var offlineTime = Date.now() - that._disconnectedSince;
                     console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                     // reload whole page if no connection longer than some period
@@ -329,7 +329,7 @@ var servConn = {
             });
 
             this._socket.on('disconnect', function () {
-                that._disconnectedSince = (new Date()).getTime();
+                that._disconnectedSince = Date.now();
 
                 // called only once when connection lost (and it was here before)
                 that._isConnected = false;
@@ -351,7 +351,7 @@ var servConn = {
 
             // after reconnect the "connect" event will be called
             this._socket.on('reconnect', function () {
-                var offlineTime = (new Date()).getTime() - that._disconnectedSince;
+                var offlineTime = Date.now() - that._disconnectedSince;
                 console.log('was offline for ' + (offlineTime / 1000) + 's');
 
                 // reload whole page if no connection longer than one minute
@@ -472,12 +472,12 @@ var servConn = {
             if (callback) callback(version);
         });
     },
-    subscribe:       function (idOrArray, callback) {
+    subscribe:        function (idOrArray, callback) {
         if (!this._checkConnection('subscribe', arguments)) return;
 
         this._socket.emit('subscribe', idOrArray, callback);
     },
-    unsubscribe:       function (idOrArray, callback) {
+    unsubscribe:      function (idOrArray, callback) {
         if (!this._checkConnection('unsubscribe', arguments)) return;
 
         this._socket.emit('unsubscribe', idOrArray, callback);
@@ -529,7 +529,7 @@ var servConn = {
             }
         }
     },
-    getMimeType: function (ext) {
+    getMimeType:      function (ext) {
         if (ext.indexOf('.') !== -1) ext = ext.toLowerCase().match(/\.[^.]+$/);
         var _mimeType;
         if (ext === '.css') {
@@ -825,7 +825,7 @@ var servConn = {
                                 if (typeof storage !== 'undefined') {
                                     storage.set('objects',  data);
                                     storage.set('enums',    enums);
-                                    storage.set('timeSync', (new Date()).getTime());
+                                    storage.set('timeSync', Date.now());
                                 }
                             }
 
@@ -1098,7 +1098,7 @@ var servConn = {
         this._socket.emit('authEnabled', callback);
     },
     // return time when the objects were synchronized
-    getSyncTime:     function () {
+    getSyncTime:      function () {
         if (this._useStorage && typeof storage !== 'undefined') {
             var timeSync = storage.get('timeSync');
             if (timeSync) return new Date(timeSync);
@@ -1301,7 +1301,7 @@ var servConn = {
             callback(err, result);
         });
     },
-    getLiveHost:        function (cb) {
+    getLiveHost:      function (cb) {
         var that = this;
         this._socket.emit('getObjectView', 'system', 'host', {startkey: 'system.host.', endkey: 'system.host.\u9999'}, function (err, res) {
             var _hosts = [];
@@ -1323,7 +1323,7 @@ var servConn = {
             });
         });
     },
-    readDirAsZip:       function (project, useConvert, callback) {
+    readDirAsZip:     function (project, useConvert, callback) {
         if (!callback) {
             callback = useConvert;
             useConvert = undefined;
@@ -1358,7 +1358,7 @@ var servConn = {
 
         });
     },
-    writeDirAsZip:       function (project, base64, callback) {
+    writeDirAsZip:    function (project, base64, callback) {
         if (!this._isConnected) {
             console.log('No connection!');
             return;
