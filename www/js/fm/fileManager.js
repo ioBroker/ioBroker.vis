@@ -173,40 +173,43 @@ var fmFolder    =    'js/fm/';
         function load(path) {
             if (!path) {
                 path = '/';
-                $('.fm-path').val(path);
-                $('.fm-path').cursorPosition(1);
+                var $fmPath = $('.fm-path');
+                $fmPath.val(path);
+                $fmPath.cursorPosition(1);
                 o.path = o.root + path;
             }
 
             try {
                 fmConn.readDir(path, function (err, data) {
+                    var $fmPath = $('.fm-path');
                     if (!err && data) {
                         o.data = data;
                         var p = path.replace(o.root, '');
 
-                        $('.fm-path').data('old', p);
-                        $('.fm-path').val(p).unbind('change').unbind('keyup').change(function () {
+                        $fmPath.data('old', p);
+                        $fmPath.val(p).unbind('change').unbind('keyup').on('change', function () {
                             var timer = $(this).data('timer');
                             if (timer) clearTimeout(timer);
 
                             $(this).data('timer', setTimeout(function () {
-                                var val = $('.fm-path').val();
+                                var $fmPath = $('.fm-path');
+                                var val = $fmPath.val();
                                 if (!val) {
                                     val = '/';
-                                    $('.fm-path').val(val);
-                                    $('.fm-path').cursorPosition(1);
+                                    $fmPath.val(val);
+                                    $fmPath.cursorPosition(1);
                                 }
                                 o.path = o.root + val;
 
-                                if ($('.fm-path').data('old') !== val) {
-                                    o.cursorPosition = $('.fm-path').cursorPosition();
-                                    $('.fm-path').data('timer', null);
+                                if ($fmPath.data('old') !== val) {
+                                    o.cursorPosition = $fmPath.cursorPosition();
+                                    $fmPath.data('timer', null);
                                     load(val);
-                                    $('.fm-path').data('old', val);
+                                    $fmPath.data('old', val);
                                 }
                             }, 500));
 
-                        }).keyup(function () {
+                        }).on('keyup', function () {
                             $(this).trigger('change');
                         });
 
@@ -214,9 +217,10 @@ var fmFolder    =    'js/fm/';
                     } else {
                         o.data = [];
                         build(o, err);
+                        $fmPath.val(path);
                         $('.fm-files').html('<span class="fm-error">' + err + '</span>');
                     }
-                    $('.fm-path').cursorPosition(o.cursorPosition);
+                    $fmPath.cursorPosition(o.cursorPosition);
                     o.cursorPosition = undefined;
                 });
             } catch (err) {
@@ -238,7 +242,7 @@ var fmFolder    =    'js/fm/';
 
                     $('#fm_add_dropzone').append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
-                        '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + reader.result + '"/></div>' +
+                        '<div class="fm_prev_img_container"><img alt="container" class="fm_prev_img" src="' + reader.result + '"/></div>' +
                         '<div class="fm_prev_name">' + files[0].name + '</div>' +
                         '<div class="fm_prev_overlay"></div>' +
                         '</div>');
@@ -248,7 +252,7 @@ var fmFolder    =    'js/fm/';
 
                     $('#fm_add_dropzone').append(
                         '<div class="fm_prev_container ' + class_name + '" data-file="' + files[0].name + '">' +
-                        '<div class="fm_prev_img_container"><img class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
+                        '<div class="fm_prev_img_container"><img alt="container" class="fm_prev_img" src="' + fmFolder + 'icon/mine/128/' + icon + '.png"/></div>' +
                         '<div class="fm_prev_name">' + files[0].name + '</div>' +
                         '<div class="fm_prev_overlay"></div>' +
                         '</div>');
