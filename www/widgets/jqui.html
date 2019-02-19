@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="lib/css/jquery-ui-timepicker-addon-1.2.2.css" />
-<script type="text/javascript" src="lib/js/jquery-ui-timepicker-addon-1.2.2.js"></script>
+<link rel="stylesheet" href="lib/css/jquery-ui-timepicker-addon-1.6.3.css" />
+<script type="text/javascript" src="lib/js/jquery-ui-timepicker-addon-1.6.3.js"></script>
 <style>
     #ui-datepicker-div {
         z-index: 999 !important;
@@ -619,9 +619,9 @@
             var $this = $(el);
             var oid = $this.attr('data-oid');
             var timeFormat = options.showSecond ? 'HH:mm:ss' : 'HH:mm';
-            var hourGrid = options.showGrid ? 6 : undefined;
-            var minuteGrid = options.showGrid ? options.stepMinute : undefined;
-            var secondGrid = options.showGrid ? 15 : undefined;
+            var hourGrid = options.showGrid ? 6 : 0;
+            var minuteGrid = options.showGrid ? options.stepMinute : 0;
+            var secondGrid = options.showGrid ? 15 : 0;
             var timepickerOptions = $.extend(true, {
                 dateFormat:      'yy-mm-dd',
                 monthNamesShort: vis.binds.jqueryui.shortMonths[vis.language],
