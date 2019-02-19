@@ -621,6 +621,7 @@
             var timeFormat = options.showSecond ? 'HH:mm:ss' : 'HH:mm';
             var hourGrid = options.showGrid ? 6 : 0;
             var minuteGrid = options.showGrid ? options.stepMinute : 0;
+            if (minuteGrid < 10) {minuteGrid = 10;}
             var secondGrid = options.showGrid ? 15 : 0;
             var timepickerOptions = $.extend(true, {
                 dateFormat:      'yy-mm-dd',
