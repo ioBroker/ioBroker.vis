@@ -39,6 +39,9 @@
             "src_false":        {"en": "Icon by OFF",        "de": "Icon bei AUS",          "ru": "Иконка при ВЫКЛ"},
             "alt_false":        {"en": "Tooltip by OFF",     "de": "Tooltip bei AUS",       "ru": "Подсказка при ВЫКЛ"},
             "timeOnly":         {"en": "Time only",          "de": "Nur Zeit",              "ru": "Только время"},
+            "hideSeconds":      {"en": "Hide seconds",       "de": "Keine Sekunden",        "ru": "спрятать секунды"},
+            "stepMinute":       {"en": "Step size minutes",  "de": "Schrittweite Minuten",  "ru": "размер шага минуты"},
+            "showGrid":         {"en": "Show grid",          "de": "Zeige Raster",          "ru": "показать сетку"},
             "inverted":         {"en": "Inverted value",     "de": "Wert invertiert",       "ru": "Иневртировать значение"},
             "submitmethod":     {"en": "Submit method",      "de": "Sendemethode",          "ru": "Метод"},
             "click_id":         {"en": "Control ID",         "de": "Steuer-ID",             "ru": "Контроль-ID"},
@@ -615,6 +618,10 @@
         inputDatetime: function (el, options) {
             var $this = $(el);
             var oid = $this.attr('data-oid');
+            var timeFormat = options.showSecond ? 'HH:mm:ss' : 'HH:mm';
+            var hourGrid = options.showGrid ? 6 : undefined;
+            var minuteGrid = options.showGrid ? options.stepMinute : undefined;
+            var secondGrid = options.showGrid ? 15 : undefined;
             var timepickerOptions = $.extend(true, {
                 dateFormat:      'yy-mm-dd',
                 monthNamesShort: vis.binds.jqueryui.shortMonths[vis.language],
@@ -629,13 +636,13 @@
                 currentText:     vis.binds.jqueryui.currentText[vis.language],
                 closeText:       vis.binds.jqueryui.closeText[vis.language],
                 timeOnlyTitle:   vis.binds.jqueryui.timeOnlyTitle[vis.language],
-                minuteGrid:      undefined,
-                hourGrid:        undefined,
-                secondGrid:      undefined,
+                minuteGrid:      minuteGrid,
+                hourGrid:        hourGrid,
+                secondGrid:      secondGrid,
                 timeOnly:        false,
                 showSecond:      true,
-                timeFormat:      'HH:mm:ss',
-                pickerTimeFormat: 'HH:mm:ss'
+                timeFormat:      timeFormat,
+                pickerTimeFormat: timeFormat
             }, options);
             $this.addClass('ui-state-default')
                     .css({
@@ -1676,13 +1683,13 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputDatetime" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 110px; height: 39px; overflow: visible; text-align: center;"> <div class="vis-widget-prev-body"> <input type="text" style="text-align: left; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; outline: none; cursor: text; " value="18:00:00" size="5" class="ui-state-default ui-widget ui-button ui-corner-all"> </div> </div></div>'
         data-vis-name="ctrl - Input Datetime"
-        data-vis-attrs="oid;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox">
+        data-vis-attrs="oid;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox;stepMinute/slider,1,30,1;showGrid/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:200px;height:40px;overflow: visible;text-align:center;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body">
-            <input type="text" style="text-align: center; padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds')}); %> />
+            <input type="text" style="text-align: center; padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds'), stepMinute: data.attr('stepMinute'), showGrid: data.attr('showGrid')}); %> />
         </div>
     </div>
 </script>
