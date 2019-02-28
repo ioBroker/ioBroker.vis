@@ -3119,7 +3119,8 @@ function main($, onReady) {
                                 document.head.appendChild(script);
                             }
                         }
-
+                        // Hide old disabled layer
+                        $('.vis-view-disabled').hide();
                         // Read all states from server
                         console.debug('Request ' + (vis.editMode ? 'all' : vis.subscribing.active.length) + ' states.');
                         vis.conn.getStates(vis.editMode ? null : vis.subscribing.active, function (error, data) {

@@ -335,6 +335,10 @@ var servConn = {
                 that._isConnected = false;
                 if (that._connCallbacks.onConnChange) {
                     setTimeout(function () {
+                        //show server disconnect layer only when socket is not reconnected in the 5s timeout
+                        if (that._isConnected) {
+                            return
+                        }
                         var elem = document.getElementById('server-disconnect');
                         if (elem) elem.style.display = '';
                         that._connCallbacks.onConnChange(that._isConnected);
