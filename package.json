@@ -30,15 +30,15 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^8.2.2"
+    "jsonwebtoken": "^8.2.2",
+    "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-replace": "^1.0.0",
     "iobroker.web": "*",
     "mocha": "^6.0.2",
-    "chai": "^4.1.2",
-    "@iobroker/adapter-core": "^1.0.3"
+    "chai": "^4.1.2"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
