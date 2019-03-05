@@ -13,7 +13,6 @@ before_script:
   - npm -v
   - npm install winston@3.2.1 --production
   - 'npm install https://github.com/ioBroker/ioBroker.js-controller/tarball/master --production'
-  - npm install iobroker.web  --prefix ./node_modules/iobroker.js-controller/ --production
 env:
   - CXX=g++-4.9
 addons:
