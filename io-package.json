@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.1.10",
+        "version": "1.1.11",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.1.11": {
+                "en": "Bool HTML was Improved ",
+                "de": "Bool HTML wurde verbessert",
+                "ru": "Bool HTML был улучшен",
+                "pt": "Bool HTML foi melhorado",
+                "nl": "Bool HTML is verbeterd",
+                "fr": "Bool HTML a été amélioré",
+                "it": "Bool HTML è stato migliorato",
+                "es": "Bool HTML fue mejorado",
+                "pl": "Bool HTML został ulepszony",
+                "zh-cn": "“Bool HTML”得到了改进"
+            },
             "1.1.10": {
                 "en": "Add Chinese support",
                 "de": "Chinesische Unterstützung hinzufügen",

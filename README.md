@@ -188,6 +188,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.11 (2019-02-07)
+* (bluefox) improve Bool HTML
+
 ### 1.1.10 (2019-01-30)
 * Add Chinese support
 

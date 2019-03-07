@@ -490,12 +490,12 @@
             if (val === 'false') val = false;
 
             if (!vis.editMode) {
-				var moved = false;
+                var moved = false;
                 $this.on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
 
-					if (moved) return;
+                    if (moved) return;
 
                     var oid = $(this).attr('data-ctrl-oid');
 
@@ -513,10 +513,10 @@
                         if (oid) vis.setValue(oid, val);
                     }
                 }).on('touchmove', function () {
-					moved = true;
-				}).on('touchstart', function () {
-					moved = false;
-				});
+                    moved = true;
+                }).on('touchstart', function () {
+                    moved = false;
+                });
             }
         },
         pressed: null,
@@ -558,12 +558,12 @@
             }
 
             if (!vis.editMode) {
-				var moved = false;
+                var moved = false;
                 $(el).on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
-					
-					if (moved) return;
+
+                    if (moved) return;
 
                     if (vis.binds.basic.pressed) {
                         clearInterval(vis.binds.basic.pressed);
@@ -588,10 +588,10 @@
                         }
                     }
                 }).on('touchmove', function () {
-					moved = true;
-				}).on('touchstart', function () {
-					moved = false;
-				});
+                    moved = true;
+                }).on('touchstart', function () {
+                    moved = false;
+                });
             }
 
             if (interval) {
@@ -609,19 +609,19 @@
                             vis.binds.basic.pressed = null;
                         }
                     }).data('destroy', function (id, $widget) {
-                        $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
-                    });
+                    $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
+                });
             }
         },
         navigation: function (el, options) {
             if (!vis.editMode && options.nav_view) {
                 var $this = $(el);
-				var moved = false;
+                var moved = false;
                 $this.on('click touchend', function (e) {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
-					
-					if (moved) return;
+
+                    if (moved) return;
 
                     if (options.background) $('body').css({background: options.background});
 
@@ -629,10 +629,10 @@
                     //e.preventDefault();
                     //return false;
                 }).on('touchmove', function () {
-					moved = true;
-				}).on('touchstart', function () {
-					moved = false;
-				});
+                    moved = true;
+                }).on('touchstart', function () {
+                    moved = false;
+                });
             }
         },
         hideOnFalse: function (el) {
@@ -654,7 +654,7 @@
 
                 // remember all ids, that bound
                 $this.data('bound', [oid + '.val'])
-                    // remember bind handler
+                // remember bind handler
                     .data('bindHandler', onChange);
 
                 if (!vis.editMode) {
@@ -958,25 +958,25 @@
                     .data('bindHandler', onChange);
             }
         },
-	pushbutton: function(el, oid) {
-		if (!vis.editMode) {
-			var $this = $(el);
-			oid = oid || $this.data('oid');
+        pushbutton: function(el, oid) {
+            if (!vis.editMode) {
+                var $this = $(el);
+                oid = oid || $this.data('oid');
 
-			$this.on('mousedown touchstart', function (e) {
-				// Protect against two events
-				if (vis.detectBounce(this)) return;
+                $this.on('mousedown touchstart', function (e) {
+                    // Protect against two events
+                    if (vis.detectBounce(this)) return;
 
-				vis.setValue(oid, true);
-			});
-			$this.on('mouseup touchend touchcancel', function (e) {
-				// Protect against two events
-				if (vis.detectBounce(this, true)) return;
+                    vis.setValue(oid, true);
+                });
+                $this.on('mouseup touchend touchcancel', function (e) {
+                    // Protect against two events
+                    if (vis.detectBounce(this, true)) return;
 
-				vis.setValue(oid, false);
-			});
-		}
-	},
+                    vis.setValue(oid, false);
+                });
+            }
+        },
         toggle: function (el, oid) {
             var $this = $(el);
             oid = oid || $this.data('oid');
@@ -995,13 +995,13 @@
             if (max === '') max = undefined;
 
             if ((oid || oidTrue || urlTrue) && !vis.editMode && !readOnly) {
-				var moved = false;
-                $this.on('click touchend', function () {			
+                var moved = false;
+                $this.on('click touchend', function () {
                     // Protect against two events
                     if (vis.detectBounce(this)) return;
-					
-					if (moved) return;
-					
+
+                    if (moved) return;
+
                     var val;
 
                     if (oidTrue || urlTrue) {
@@ -1015,6 +1015,10 @@
                         } else {
                             val = vis.states[oid + '.val'];
                             if (max !== undefined) {
+                                if (max === 'true')  max = true;
+                                if (max === 'false') max = false;
+                                if (val === 'true')  val = true;
+                                if (val === 'false') val = false;
                                 val = (val == max);
                             } else {
                                 val = (val === 1 || val === '1' || val === true || val === 'true');
@@ -1065,11 +1069,11 @@
                     } else {
                         var val = vis.states[oid + '.val'];
                         if ((min === undefined && (val === null || val === '' || val === undefined || val === false || val === 'false')) ||
-                                (min !== undefined && min == val)) {
+                            (min !== undefined && min == val)) {
                             vis.setValue(oid, max !== undefined ? max : true);
                         } else
                         if ((max === undefined && (val === true || val === 'true')) ||
-                                (max !== undefined && val == max))
+                            (max !== undefined && val == max))
                         {
                             vis.setValue(oid, min !== undefined ? min : false);
                         } else {
@@ -1091,11 +1095,11 @@
                         }
                     }
                 }).on('touchmove', function () {
-					moved = true;
-				}).on('touchstart', function () {
-					moved = false;
-				}).data('destroy', function (id, $widget) {
-				    $widget.off('click touchend').off('touchmove').off('touchstart');
+                    moved = true;
+                }).on('touchstart', function () {
+                    moved = false;
+                }).data('destroy', function (id, $widget) {
+                    $widget.off('click touchend').off('touchmove').off('touchstart');
                 });
             }
         },
@@ -1249,14 +1253,14 @@
 
             if (style) $wid.css(style);
 
-			var moved = false;
+            var moved = false;
 
             function onSvgClick() {
                 // Protect against two events
                 if (vis.detectBounce(this)) return;
 
-				if (moved) return;
-				
+                if (moved) return;
+
                 var val = vis.states[oid + '.val'];
                 if (val === null || val === '' || val === undefined || val === false || val === "false") {
                     vis.setValue(oid, true);
@@ -1285,8 +1289,8 @@
                         .on('touchmove', function () {
                             moved = true;
                         }).on('touchstart', function () {
-                            moved = false;
-                        });
+                        moved = false;
+                    });
                 } else if (vis.editMode){
                     $svg.children().unbind('click touchstart').on('click touchstart', function () {
                         vis.inspectWidgets([wid]);
@@ -1298,16 +1302,16 @@
                 vis.states.bind(oid + '.val', onChange);
                 // remember all ids, that bound
                 $wid.data('bound', [oid + '.val'])
-                    // remember bind handler
+                // remember bind handler
                     .data('bindHandler', onChange);
             }
             var $svg = $wid.find('svg');
             if (!vis.editMode && !no_control) {
                 $svg.children().off('click touchend').on('click touchend', onSvgClick).off('touchmove').on('touchmove', function () {
-					moved = true;
-				}).on('touchstart', function () {
-					moved = false;
-				});
+                    moved = true;
+                }).on('touchstart', function () {
+                    moved = false;
+                });
             } else if (vis.editMode){
                 $svg.children().off('click touchstart').on('click touchstart', function () {
                     vis.inspectWidgets([wid]);
@@ -1326,7 +1330,7 @@
 
             var $this = $('#div_' + wid);
             $('body').append('<div id="dlg_' + wid + '" title="' + _('Edit note') + '">' +
-            '<textarea style="resize: none; width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
+                '<textarea style="resize: none; width:95%; height:92%" id="text_' + wid + '">' + $this.text().trim() + '</textarea></div>');
 
             var buttons = {};
             buttons[_('Clear')] = function () {
@@ -1406,18 +1410,18 @@
         },
 
         formatValue: function formatValue(value, decimals, _format) {
-	        if (typeof decimals !== 'number') {
-	            decimals = 2;
-	            _format = decimals;
-	        }
-	        var format = (_format === undefined) ? '.,' : _format;
-	        if (typeof value !== 'number') value = parseFloat(value);
-	        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
-	    },
+            if (typeof decimals !== 'number') {
+                decimals = 2;
+                _format = decimals;
+            }
+            var format = (_format === undefined) ? '.,' : _format;
+            if (typeof value !== 'number') value = parseFloat(value);
+            return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+        },
 
         formatIntervalHelper: function (value, type) {
             var singular;
-	        var plural;
+            var plural;
             var special24;
             if (vis.language === 'de') {
                 if (type === 'seconds') {
@@ -1468,7 +1472,7 @@
                 }
             }
 
-	        if (value === 1) {
+            if (value === 1) {
                 if (vis.language === 'de') {
                     if (type === 'days') {
                         return 'einem ' + singular;
@@ -1802,9 +1806,27 @@
         },
         isFalse: function (val, min, max) {
             if (min !== undefined && min !== null && min !== '') {
+                if (val === 'true') {
+                    val = true;
+                }
+                if (val === 'false') {
+                    val = false;
+                }
                 if (max !== undefined && max !== null && max !== '') {
+                    if (max === 'false') {
+                        max = false;
+                    }
+                    if (max === 'true') {
+                        max = true;
+                    }
                     return val != max;
                 } else {
+                    if (min === 'false') {
+                        min = false;
+                    }
+                    if (min === 'true') {
+                        min = true;
+                    }
                     return val == min;
                 }
             }
@@ -2982,7 +3004,7 @@
         data-vis-name="Bulb on/off"
         data-vis-attrs="oid;min;max;icon_off[img~bulb_off.png]/image;icon_on[img~bulb_on.png]/image;readOnly/checkbox;"
         data-vis-attrs0="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
-        >
+>
     <div
         data-oid="<%= this.data.attr('oid') %>"
         class="vis-widget <%== this.data.attr('class') %>"
@@ -3050,7 +3072,7 @@
         data-vis-attrs1="event_oid/id;new_on_top/checkbox;ack_oid/id;hide_header/checkbox;show_scroll/checkbox;detailed_wid/widget;max_rows/number;"
         data-vis-attrs2="colCount/number;group.header/byindex;colName(1-colCount);colWidth(1-colCount);colAttr(1-colCount);"
         data-vis-attrs-not-used="btn_print;view_for_print/views"
-        >
+>
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; background: #d3d3d3">
        <% vis.binds.table.showTable(this.view, this.data.attr('wid'), this.data); %>
     </div>
