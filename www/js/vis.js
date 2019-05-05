@@ -630,6 +630,10 @@ var vis = {
             hidden   = undefined;
             view     = viewDiv;
         }
+
+        viewDiv = decodeURIComponent(viewDiv);
+        view = decodeURIComponent(view);
+
         if (!this.editMode && !$('#commonTheme').length) {
             $('head').prepend('<link rel="stylesheet" type="text/css" href="' + ((typeof app === 'undefined') ? '../../' : '') + 'lib/css/themes/jquery-ui/' + (this.calcCommonStyle() || 'redmond') + '/jquery-ui.min.css" id="commonTheme"/>');
         }
