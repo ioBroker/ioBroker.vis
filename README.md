@@ -1,20 +1,19 @@
 ![Logo](admin/vis.png)
-# iobroker.vis
-============
+# Visualisation
 
 ![Number of Installations](http://iobroker.live/badges/vis-installed.svg) ![Number of Installations](http://iobroker.live/badges/vis-stable.svg) [![NPM version](http://img.shields.io/npm/v/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.vis.svg)](https://www.npmjs.com/package/iobroker.vis)
 
 [![NPM](https://nodei.co/npm/iobroker.vis.png?downloads=true)](https://nodei.co/npm/iobroker.vis/)
 
-WEB visualisation for iobroker platform.
+WEB visualisation for ioBroker platform.
 
 ## Installation & Documentation
 
-![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user0.png)
-![Demo interface](https://github.com/GermanBluefox/DashUI/raw/master/images/user7.png)
+![Demo interface](img/user0.png)
+![Demo interface](img/user7.png)
 
-[Online Demos](https://iobroker.net:8080)
+[Online Demos](https://iobroker.click/)
 
 ## Bindings of objects
 Normally most of widgets have ObjectID attribute. And this attribute can be bound with some value of object ID.
@@ -30,29 +29,29 @@ Patten has following format:
 
 Following operations are supported:
 
-- \* - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
-- \+ - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
-- \- - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
-- / - dividing. Argument must be in brackets, like "/(0.5)". In this sample we dividing value by 0.5.
-- % - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
-- round - round the value.
-- round(N) - round the value with N places after point, e.g. 34.678;round(1) => 34.7
-- hex - convert value to hexadecimal value. All letters are lower cased. 
-- hex2 - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
-- HEX - same as hex, but upper cased.
-- HEX2 - same as hex2, but upper cased.
-- date - format date according to given format. Format is the same as in [iobroker.javascript](https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate)
-- min(N) - if value is less than N, take the N, elsewise value
-- max(M) - if value is greater than M, take the M, elsewise value
-- sqrt - square root
-- pow(n) - power of N.
-- pow - power of 2.
-- floor - Math.floor
-- ceil - Math.ceil
-- random(R) - Math.random() * R, or just Math.random() if no argument
-- formatValue(decimals) - format value according to system settings and use decimals
-- date(format) - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
-- array(element1,element2[,element3,element4]) - returns the element of index. e.g.: {id.ack;array(ack is false,ack is true)}
+- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiplying value with 4.
+- `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
+- `\-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
+- `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample we dividing value by 0.5.
+- `%` - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
+- `round` - round the value.
+- `round(N)` - round the value with N places after point, e.g. 34.678;round(1) => 34.7
+- `hex` - convert value to hexadecimal value. All letters are lower cased.
+- `hex2` - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
+- `HEX` - same as hex, but upper cased.
+- `HEX2` - same as hex2, but upper cased.
+- `date` - format date according to given format. Format is the same as in [iobroker.javascript](https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate)
+- `min(N)` - if value is less than N, take the N, elsewise value
+- `max(M)` - if value is greater than M, take the M, elsewise value
+- `sqrt` - square root
+- `pow(n)` - power of N.
+- `pow` - power of 2.
+- `floor` - Math.floor
+- `ceil` - Math.ceil
+- `random(R)` - Math.random() * R, or just Math.random() if no argument
+- `formatValue(decimals)` - format value according to system settings and use decimals
+- `date(format)` - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
+- `array(element1,element2[,element3,element4])` - returns the element of index. e.g.: `{id.ack;array(ack is false,ack is true)}`
 
 You can use this pattern in any text, like
 
@@ -66,7 +65,7 @@ or color calculations:
 #{objectRed;/(100);*(255);HEX2}{objectGreen;HEX2}{objectBlue;HEX2}
 ```
 
-To show timestamp of object write ".ts" or ".lc" (for last change) at the end of object id, e.g.:
+To show timestamp of object write `.ts` or `.lc` (for last change) at the end of object id, e.g.:
 
 ```
 Last change: {objectRed.lc;date(hh:mm)}
@@ -78,7 +77,7 @@ There is another possibility to write pattern:
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(h*h + w*w))}
 ```
 
-```{h:height;w:width;h*w}``` will be interpreted as function:
+`{h:height;w:width;h*w}` will be interpreted as function:
 
 ```
 value = (function () {
@@ -98,18 +97,18 @@ Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Ma
 
 ### Special bindings
 There are a number different internal bindings to provide additional information in views:
-* username - shows logged in user
-* view - name of actual view
-* wname - widget name
-* widget - is an object with all data of widget. Can be used only in JS part, like {a:a;widget.data.name}
-* wid - name of actual widget
-* language - can be "de", "en" or "ru".
-* instance - browser instance
-* login - if login required or not (e.g. to show/hide logout button)
+* `username` - shows logged in user
+* `view` - name of actual view
+* `wname` - widget name
+* `widget` - is an object with all data of widget. Can be used only in JS part, like `{a:a;widget.data.name}`
+* `wid` - name of actual widget
+* `language` - can be `de`, `en` or `ru`.
+* `instance` - browser instance
+* `login` - if login required or not (e.g. to show/hide logout button)
 
 Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 
-**Remember**, that style definitions will be interpreted as bindings, so use ```{{style: value}}``` or just 
+**Remember**, that style definitions will be interpreted as bindings, so use `{{style: value}}` or just
 
 ```
 {
@@ -117,55 +116,55 @@ Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 }
 ```
 
-for that.**
+for that.
 
 ## Filters
 To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
  
-Every widget has a field "filter". If you set it to some value, e.g. "light", so you can use other widget (bars - filters, filter - dropdown) to control which filter is actually active. 
+Every widget has a field `filter`. If you set it to some value, e.g. `light`, so you can use other widget `(bars - filters, filter - dropdown)` to control which filter is actually active.
 
 ## Control interface
 Vis creates 3 variables:
 
-- control.instance - Here the browser instance should be written or FFFFFFFF if every browser must be controlled.
-- control.data     - Parameter for command. See specific command description.
-- control.command  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
+- `control.instance` - Here the browser instance should be written or FFFFFFFF if every browser must be controlled.
+- `control.data`     - Parameter for command. See specific command description.
+- `control.command`  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
 
 Commands:
 
-* alert - show alert window in vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
-* changeView - switch to desired view. "control.data" must have name of view. You can specify project name too as "project/view". Default project is "main".
-* refresh - reload vis, for instance after project is changed to reload on all browsers.
-* reload - same as refresh.
-* dialog - Show dialog window. Dialog must exist on view. One of:
+* `alert` - show alert window in vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
+* `changeView` - switch to desired view. "control.data" must have name of view. You can specify project name too as "project/view". Default project is "main".
+* `refresh` - reload vis, for instance after project is changed to reload on all browsers.
+* `reload` - same as refresh.
+* `dialog` - Show dialog window. Dialog must exist on view. One of:
 
-    - "static    - HTML    - Dialog",
-    - "static    - Icon    - Dialog",
-    - "container - HTML    - view in jqui Dialog",
-    - "container - ext cmd - view in jqui Dialog",
-    - "container - Icon    - view in jqui Dialog",
-    - "container - Button  - view in jqui Dialog".
+    - `static    - HTML    - Dialog`,
+    - `static    - Icon    - Dialog`,
+    - `container - HTML    - view in jqui Dialog`,
+    - `container - ext cmd - view in jqui Dialog`,
+    - `container - Icon    - view in jqui Dialog`,
+    - `container - Button  - view in jqui Dialog`.
 
-    "control.data" must have id of dialog widget, e.g. "w00056".
-* dialogClose    
-* popup - opens a new browser window. Link must be specified in "control.data", e.g. http://google.com
-* playSound - play sound file. The link to file is specified in "control.data", e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
-  You can upload your own file in vis and let it play as for instance "/vis.0/main/img/myFile.mp3".
+    `control.data` must have id of dialog widget, e.g. `w00056`.
+* `dialogClose`
+* `popup` - opens a new browser window. Link must be specified in `control.data`, e.g. http://google.com
+* `playSound` - play sound file. The link to file is specified in `control.data`, e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
+  You can upload your own file in vis and let it play as for instance `/vis.0/main/img/myFile.mp3`.
 
 If user changes the view or at start the variables will be filled by vis with
 
-- "control.instance": browser instance and ack=true
-- "control.data": project and view name in form "project/view", e.g. "main/view" (and ack=true)
-- "control.command": "changedView" and ack=true
+- `control.instance`: browser instance and `ack=true`
+- `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
+- `control.command`: `changedView` and `ack=true`
 
-You can write the JSON-string or Object into control.command as ```{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}```. In this case the instance and data will be taken from JSON object.
+You can write the JSON-string or Object into control.command as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case the instance and data will be taken from JSON object.
 
 ## Default view
 You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
 
 Additionally you can define if this view must be used as default for this resolution. 
 
-So every time the **index.html** (without #viewName) is called, the best suitable for this resolution view will be opened. 
+So every time the `index.html` (without `#viewName`) is called, the best suitable for this resolution view will be opened.
 If only one view has *"Default"* flag, so this view will be opened independent from screen resolution or orientation.      
 
 E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
@@ -188,6 +187,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.1.12 (2019-05-06)
+* (bluefox) add translations
+
 ### 1.1.11 (2019-02-07)
 * (bluefox) improve Bool HTML
 
@@ -410,9 +412,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2019 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
- Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
+ Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  
  Creative Common Attribution-NonCommercial (CC BY-NC)
 

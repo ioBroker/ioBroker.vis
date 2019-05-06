@@ -2,38 +2,36 @@
  *
  *      iobroker vis Adapter
  *
- *      (c) 2014-2017 bluefox, hobbyquaker
+ *      Copyright (c) 2014-2019, bluefox
+ *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
  *
  */
 /* jshint -W097 */
-/* jshint strict:false */
+/* jshint strict: false */
 /* jslint node: true */
 'use strict';
 
-var adapterName    = require(__dirname + '/package.json').name.split('.').pop();
-var isBeta         = adapterName.indexOf('beta') !== -1;
+const adapterName    = require('./package.json').name.split('.').pop();
+const isBeta         = adapterName.indexOf('beta') !== -1;
 
-var utils = require('@iobroker/adapter-core'); // Get common adapter utils
-var adapter        = new utils.Adapter(adapterName);
-var fs             = require('fs');
-var path           = require('path');
-var syncWidgetSets = require(__dirname + '/lib/install.js');
-var https          = require('https');
-var jwt            = require('jsonwebtoken');
-//var minify         = require('html-minifier').minify;
+const utils          = require('@iobroker/adapter-core'); // Get common adapter utils
+const adapter        = new utils.Adapter(adapterName);
+const fs             = require('fs');
+const syncWidgetSets = require('./lib/install.js');
+const https          = require('https');
+const jwt            = require('jsonwebtoken');
+//const minify         = require('html-minifier').minify;
 
-adapter.on('ready', function () {
-    main();
-});
+adapter.on('ready', () => main());
 
 function writeFile(fileName, callback) {
-    var config = require(__dirname + '/www/js/config.js').config;
-    var index;
-    var srcFileNameParts = fileName.split('.');
-    var ext = srcFileNameParts.pop();
-    var srcFileName = srcFileNameParts.join('.') + '.src.' + ext;
+    const config = require(__dirname + '/www/js/config.js').config;
+    let index;
+    const srcFileNameParts = fileName.split('.');
+    const ext = srcFileNameParts.pop();
+    const srcFileName = srcFileNameParts.join('.') + '.src.' + ext;
     if (fs.existsSync(__dirname + '/www/' + srcFileName)) {
         index = fs.readFileSync(__dirname + '/www/' + srcFileName).toString();
     } else {
@@ -45,13 +43,13 @@ function writeFile(fileName, callback) {
     index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>',
         '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
 
-    var begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
-    var end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
-    var bigInsert = '';
-    for (var w in config.widgetSets) {
+    const begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
+    const end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
+    let bigInsert = '';
+    for (const w in config.widgetSets) {
         if (!config.widgetSets.hasOwnProperty(w)) continue;
-        var file;
-        var name;
+        let file;
+        let name;
 
         if (typeof config.widgetSets[w] === 'object') {
             name = config.widgetSets[w].name + '.html';
@@ -64,12 +62,12 @@ function writeFile(fileName, callback) {
 
         bigInsert += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
     }
-    var pos = index.indexOf(begin);
+    let pos = index.indexOf(begin);
     if (pos !== -1) {
-        var start = index.substring(0, pos + begin.length);
+        const start = index.substring(0, pos + begin.length);
         pos = index.indexOf(end);
         if (pos !== -1) {
-            var _end = index.substring(pos);
+            const _end = index.substring(pos);
             index    = start + '\n' + bigInsert + '\n' + _end;
 
             /*index = minify(index, {
@@ -85,14 +83,12 @@ function writeFile(fileName, callback) {
                 removeStyleLinkTypeAttributes: true
             });*/
 
-            adapter.readFile(adapterName, fileName, function (err, data) {
+            adapter.readFile(adapterName, fileName, (err, data) => {
                 if (data && data !== index) {
                     fs.writeFileSync(__dirname + '/www/' + fileName, index);
-                    adapter.writeFile(adapterName, fileName, index, function () {
-                        if (callback) callback(true);
-                    });
-                } else {
-                    if (callback) callback(false);
+                    adapter.writeFile(adapterName, fileName, index, () => callback && callback(true));
+                } else if (callback) {
+                    callback(false);
                 }
             });
         } else if (callback) {
@@ -105,18 +101,18 @@ function writeFile(fileName, callback) {
 
 function upload(callback) {
     adapter.log.info('Upload ' + adapter.name + ' anew, while changes detected...');
-    var file = utils.controllerDir + '/iobroker.js';
-    var child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
-    var count = 0;
-    child.stdout.on('data', function (data) {
+    const file = utils.controllerDir + '/iobroker.js';
+    const child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
+    let count = 0;
+    child.stdout.on('data', data => {
         count++;
         adapter.log.debug(data.toString().replace('\n', ''));
-        if ((count % 100) === 0) adapter.log.info(count + ' files uploaded...');
+        !(count % 100) && adapter.log.info(count + ' files uploaded...');
     });
-    child.stderr.on('data', function (data) {
+    child.stderr.on('data', data => {
         adapter.log.error(data.toString().replace('\n', ''));
     });
-    child.on('exit', function (exitCode) {
+    child.on('exit', exitCode => {
         adapter.log.info('Uploaded. ' + (exitCode ? 'Exit - ' + exitCode : 0));
         callback(exitCode);
     });
@@ -124,14 +120,12 @@ function upload(callback) {
 
 function updateCacheManifest(callback) {
     adapter.log.info('Changes in index.html detected => update cache.manifest');
-    var data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
-    var build = data.match(/# dev build ([0-9]+)/);
+    let data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
+    const build = data.match(/# dev build ([0-9]+)/);
     data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
     fs.writeFileSync(__dirname + '/www/cache.manifest', data);
 
-    adapter.writeFile(adapterName, 'cache.manifest', data, function () {
-        callback && callback();
-    });
+    adapter.writeFile(adapterName, 'cache.manifest', data, () => callback && callback());
 }
 // Update index.html
 function checkFiles(configChanged, isBeta) {
@@ -139,15 +133,12 @@ function checkFiles(configChanged, isBeta) {
         adapter.stop();
         return;
     }
-    writeFile('index.html', function (indexChanged) {
+    writeFile('index.html', indexChanged => {
         // Update edit.html
-        writeFile('edit.html', function (editChanged) {
+        writeFile('edit.html', editChanged => {
             if (indexChanged || editChanged || configChanged) {
-                updateCacheManifest(function () {
-                    upload(function () {
-                        adapter.stop();
-                    });
-                });
+                updateCacheManifest(() => 
+                    upload(() => adapter.stop()));
             } else {
                 adapter.stop();
             }
@@ -157,27 +148,24 @@ function checkFiles(configChanged, isBeta) {
 
 function copyFiles(root, filesOrDirs, callback) {
     if (!filesOrDirs) {
-        adapter.readDir('vis.0', root, function (err, filesOrDirs) {
-            copyFiles(root, filesOrDirs || [], callback);
-        });
+        adapter.readDir('vis.0', root, (err, filesOrDirs) => 
+            copyFiles(root, filesOrDirs || [], callback));
         return;
     }
     if (!filesOrDirs.length) {
-        if (typeof callback === 'function') callback();
+        typeof callback === 'function' && callback();
         return;
     }
 
-    var task = filesOrDirs.shift();
+    const task = filesOrDirs.shift();
     if (task.isDir) {
-        copyFiles(root + task.file + '/', null, function () {
-            setTimeout(copyFiles, 0, root, filesOrDirs, callback);
-        })
+        copyFiles(root + task.file + '/', null, () => 
+            setTimeout(copyFiles, 0, root, filesOrDirs, callback));
     } else {
-        adapter.readFile('vis.0', root + task.file, function (err, data) {
+        adapter.readFile('vis.0', root + task.file, (err, data) => {
             if (data || data === 0 || data === '') {
-                adapter.writeFile(adapterName + '.0', root + task.file, data, function () {
-                    setTimeout(copyFiles, 0, root, filesOrDirs, callback);
-                });
+                adapter.writeFile(adapterName + '.0', root + task.file, data, () => 
+                    setTimeout(copyFiles, 0, root, filesOrDirs, callback));
             } else {
                 setTimeout(copyFiles, 0, root, filesOrDirs, callback);
             }
@@ -186,8 +174,8 @@ function copyFiles(root, filesOrDirs, callback) {
 }
 
 function generatePages(isLicenseError) {
-    var count = 0;
-    var changed = false;
+    let count = 0;
+    let changed = false;
 
     if (!isBeta) {
         changed = syncWidgetSets(false, isLicenseError);
@@ -195,15 +183,14 @@ function generatePages(isLicenseError) {
         if (changed) {
             // upload config.js
             count++;
-            var config = changed;
-            adapter.readFile(adapterName, 'js/config.js', function (err, data) {
+            const config = changed;
+            adapter.readFile(adapterName, 'js/config.js', (err, data) => {
                 if (data && data !== config) {
                     adapter.log.info('config.js changed. Upload.');
-                    adapter.writeFile(adapterName, 'js/config.js', config, function () {
-                        if (!--count) checkFiles(changed, isBeta);
-                    });
+                    adapter.writeFile(adapterName, 'js/config.js', config, () => 
+                        !--count && checkFiles(changed, isBeta));
                 } else {
-                    if (!--count) checkFiles(changed, isBeta);
+                    !--count && checkFiles(changed, isBeta);
                 }
             });
             changed = true;
@@ -211,73 +198,69 @@ function generatePages(isLicenseError) {
     } else {
         count++;
         // try to read vis-beta.0/files
-        adapter.readDir(adapterName + '.0', '/', function (err, dirs) {
+        adapter.readDir(adapterName + '.0', '/', (err, dirs) => {
             if (!dirs || !dirs.length) {
                 // copy all directories
-                copyFiles('/', null, function () {
-                    if (!--count) checkFiles(changed, isBeta);
-                })
+                copyFiles('/', null, () => 
+                    !--count && checkFiles(changed, isBeta));
             } else {
-                if (!--count) checkFiles(changed, isBeta);
+                !--count && checkFiles(changed, isBeta);
             }
         });
     }
 
     // create command variable
     count++;
-    adapter.getObject('control.command', function (err, obj) {
+    adapter.getObject('control.command', (err, obj) => {
         if (!obj) {
             adapter.setObject('control.command',
                 {
-                    "type": "state",
-                    "common": {
-                        "name": "Command for vis",
-                        "type": "string",
-                        "desc": "Writing this variable akt as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-                        "states": {
-                            "alert": "alert",
-                            "changeView": "changeView",
-                            "refresh": "refresh",
-                            "reload": "reload",
-                            "dialog": "dialog",
-                            "popup": "popup",
-                            "playSound": "playSound",
-                            "changedView": "changedView",
-                            "tts": "tts"
+                    type: 'state',
+                    common: {
+                        name: 'Command for vis',
+                        type: 'string',
+                        desc: 'Writing this variable akt as the trigger. Instance and data must be preset before \'command\' will be written. \'changedView\' will be signalled too',
+                        states: {
+                            alert: 'alert',
+                            changeView: 'changeView',
+                            refresh: 'refresh',
+                            reload: 'reload',
+                            dialog: 'dialog',
+                            popup: 'popup',
+                            playSound: 'playSound',
+                            changedView: 'changedView',
+                            tts: 'tts'
                         }
                     },
-                    "native": {}
+                    native: {}
                 },
-                function () {
-                    if (!--count) checkFiles(changed, isBeta);
-                }) ;
+                () => !--count && checkFiles(changed, isBeta)
+            );
         } else {
-            if (!--count) checkFiles(changed, isBeta);
+            !--count && checkFiles(changed, isBeta);
         }
     });
 
     // Create common user CSS file
     count++;
-    adapter.readFile(adapterName, 'css/vis-common-user.css', function (err, data) {
+    adapter.readFile(adapterName, 'css/vis-common-user.css', (err, data) => {
         if (err || data === null || data === undefined) {
-            adapter.writeFile(adapterName, 'css/vis-common-user.css', '', function () {
-                if (!--count) checkFiles(changed, isBeta);
-            });
+            adapter.writeFile(adapterName, 'css/vis-common-user.css', '', () => 
+                !--count && checkFiles(changed, isBeta));
         } else {
-            if (!--count) checkFiles(changed, isBeta);
+            !--count && checkFiles(changed, isBeta);
         }
     });
 }
 
 function indicateError(callback) {
-    var data = fs.readFileSync(__dirname + '/www/js/config.js').toString();
+    let data = fs.readFileSync(__dirname + '/www/js/config.js').toString();
     if (data.indexOf('license: false,') === -1) {
-        data = data.replace('var visConfig = {', 'var visConfig = {license: false,');
+        data = data.replace('const visConfig = {', 'const visConfig = {license: false,');
         fs.writeFileSync(__dirname + '/www/js/config.js', data);
 
-        adapter.writeFile(adapterName, 'js/config.js', data, function () {
-            updateCacheManifest(callback);
-        });
+        adapter.writeFile(adapterName, 'js/config.js', data, () => 
+            updateCacheManifest(callback));
     } else {
         callback && callback();
     }
@@ -296,74 +279,100 @@ function main() {
 
     // first of all check license
     if (!adapter.config.license || typeof adapter.config.license !== 'string') {
-        indicateError(function () {
+        indicateError(() => {
             adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
             //adapter.stop();
             generatePages(true);
         });
     } else {
-        // An object of options to indicate where to post to
-        var postOptions = {
-            host: 'iobroker.net',
-            path: '/cert/',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'text/plain',
-                'Content-Length': Buffer.byteLength(adapter.config.license)
-            }
-        };
-
-        // Set up the request
-        var postReq = https.request(postOptions, function (res) {
-            res.setEncoding('utf8');
-            var result = '';
-            res.on('data', function (chunk) {
-                result += chunk;
-            });
-
-            res.on('end', function () {
-                try {
-                    var data = JSON.parse(result);
-                    if (data.result === 'OK') {
-                        adapter.log.info('vis license is OK.');
-                        generatePages();
-                    } else {
-                        indicateError(function () {
-                            adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
-                            //adapter.stop();
-                            generatePages(true);
-                        });
-                    }
-                } catch (e) {
-                    indicateError(function () {
-                        adapter.log.error('Cannot check license! Nothing updated. Error: ' + (data ? data.result: 'unknown'));
-                        //adapter.stop();
-                        generatePages(true);
-                    });
-                }
-            });
-        }).on('error', function (error) {
-            jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), function (err, decoded) {
-                if (err) {
-                    adapter.log.error('Cannot check license: ' + error);
-                    //adapter.stop();
+        adapter.getForeignObject('system.meta.uuid', (err, uuidObj) => {
+            if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
+                indicateError(() => {
+                    adapter.log.error('UUID not found!');
                     generatePages(true);
-                } else {
-                    if (decoded && decoded.expires * 1000 < new Date().getTime()) {
-                        adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
-                        adapter.stop();
-                    } else if (!decoded) {
-                        adapter.log.error('Cannot check license: License is empty');
-                        //adapter.stop();
-                        generatePages(true);
-                    } else {
-                        generatePages(false);
+                });
+            } else {
+                // An object of options to indicate where to post to
+                const postOptions = {
+                    host: 'iobroker.net',
+                    path: '/cert/',
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain',
+                        'Content-Length': Buffer.byteLength(adapter.config.license)
                     }
-                }
-            });
-        });
+                };
 
-        postReq.write(adapter.config.license);
-        postReq.end();
+                // Set up the request
+                const postReq = https.request(postOptions, res => {
+                    res.setEncoding('utf8');
+                    let result = '';
+                    res.on('data', chunk => result += chunk);
+
+                    res.on('end', () => {
+                        try {
+                            const data = JSON.parse(result);
+                            if (data.result === 'OK') {
+                                if (uuidObj.native.uuid.length !== 36) {
+                                    jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), (err, decoded) => {
+                                        if (err) {
+                                            adapter.log.error('Cannot check license: ' + err);
+                                            generatePages(true);
+                                        } else {
+                                            if (!decoded || decoded.invoice === 'free') {
+                                                adapter.log.error('Cannot use free license with commercial device!');
+                                                generatePages(true);
+                                            } else {
+                                                generatePages(false);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    adapter.log.info('vis license is OK.');
+                                    generatePages();
+                                }
+                            } else {
+                                indicateError(() => {
+                                    adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result : 'unknown'));
+                                    generatePages(true);
+                                });
+                            }
+                        } catch (e) {
+                            indicateError(() => {
+                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + (data ? data.result : 'unknown'));
+                                generatePages(true);
+                            });
+                        }
+                    });
+                }).on('error', error => {
+                    jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), (err, decoded) => {
+                        if (err) {
+                            adapter.log.error('Cannot check license: ' + error);
+                            generatePages(true);
+                        } else {
+                            if (decoded && decoded.expires * 1000 < new Date().getTime()) {
+                                adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
+                                adapter.stop();
+                            } else if (!decoded) {
+                                adapter.log.error('Cannot check license: License is empty');
+                                generatePages(true);
+                            } else if (uuidObj.native.uuid.length !== 36) {
+                                if (decoded.invoice === 'free') {
+                                    adapter.log.error('Cannot use free license with commercial device!');
+                                    generatePages(true);
+                                } else {
+                                    generatePages(false);
+                                }
+                            } else {
+                                generatePages(false);
+                            }
+                        }
+                    });
+                });
+
+                postReq.write(adapter.config.license);
+                postReq.end();
+            }
+        });
     }
 }
