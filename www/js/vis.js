@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.1.12',
+    version: '1.2.0',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -2604,7 +2604,7 @@ var vis = {
         this.unsubscribeStates(view);
     },
     checkLicense: function () {
-        if (!this.licTimeout && (typeof visConfig === 'undefined' || !visConfig.license)) {
+        if (!this.licTimeout && (typeof visConfig === 'undefined' || visConfig.license === false)) {
             this.licTimeout = setTimeout(function () {
 
                 this.licTimeout = setTimeout(function () {
