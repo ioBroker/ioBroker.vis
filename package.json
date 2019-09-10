@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -30,15 +30,15 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^8.2.2",
+    "jsonwebtoken": "^8.5.1",
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-replace": "^1.0.0",
     "iobroker.web": "*",
-    "mocha": "^6.0.2",
-    "chai": "^4.1.2"
+    "mocha": "^6.2.0",
+    "chai": "^4.2.0"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"

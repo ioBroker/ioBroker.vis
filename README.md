@@ -187,6 +187,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.2.1 (2019-09-10)
+* (bluefox) fixed upload of files
+
 ### 1.2.0 (2019-05-07)
 * (bluefox) add translations
 

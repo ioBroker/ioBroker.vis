@@ -366,57 +366,57 @@ function languages2words(src) {
     writeWordJs(bigOne, src);
 }
 
-gulp.task('wwwWords2languages', function (done) {
+gulp.task('wwwWords2languages', done => {
     words2languages('./www/');
     done();
 });
 
-gulp.task('wwwWords2languagesFlat', function (done) {
+gulp.task('wwwWords2languagesFlat', done => {
     words2languagesFlat('./www/');
     done();
 });
 
-gulp.task('wwwLanguagesFlat2words', function (done) {
+gulp.task('wwwLanguagesFlat2words', done => {
     languagesFlat2words('./www/');
     done();
 });
 
-gulp.task('wwwLanguages2words', function (done) {
+gulp.task('wwwLanguages2words', done => {
     languages2words('./www/');
     done();
 });
 
-gulp.task('adminWords2languages', function (done) {
+gulp.task('adminWords2languages', done => {
     words2languages('./admin/');
     done();
 });
 
-gulp.task('adminWords2languagesFlat', function (done) {
+gulp.task('adminWords2languagesFlat', done => {
     words2languagesFlat('./admin/');
     done();
 });
 
-gulp.task('adminLanguagesFlat2words', function (done) {
+gulp.task('adminLanguagesFlat2words', done => {
     languagesFlat2words('./admin/');
     done();
 });
 
-gulp.task('adminLanguages2words', function (done) {
+gulp.task('adminLanguages2words', done => {
     languages2words('./admin/');
     done();
 });
 
 
-gulp.task('replacePkg', function (done) {
+gulp.task('replacePkg', () => 
     gulp.src([
         srcDir + 'package.json',
         srcDir + 'io-package.json'
     ])
     .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-    .pipe(gulp.dest(srcDir));
-});
-gulp.task('replaceVis', function () {
-    return gulp.src([
+    .pipe(gulp.dest(srcDir)));
+
+gulp.task('replaceVis', () =>
+    gulp.src([
         srcDir + 'www/js/vis.js'
     ])
         .pipe(replace(/const version = *'[.0-9]*';/g, 'const version = "' + version + '";'))
@@ -426,9 +426,9 @@ gulp.task('replaceVis', function () {
         .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
         .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
         .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest( srcDir + '/www/js'));
-});
-gulp.task('replaceHtml', function (done) {
+        .pipe(gulp.dest( srcDir + '/www/js')));
+
+gulp.task('replaceHtml', () => 
     gulp.src([
         srcDir + 'www/cache.manifest',
         srcDir + 'www/index.html',
@@ -441,10 +441,9 @@ gulp.task('replaceHtml', function (done) {
         .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
         .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
         .pipe(replace(/# dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest(srcDir + '/www'));
-});
+        .pipe(gulp.dest(srcDir + '/www')));
 
-gulp.task('updatePackages', function (done) {
+gulp.task('updatePackages', done => {
     iopackage.common.version = pkg.version;
     iopackage.common.news = iopackage.common.news || {};
     if (!iopackage.common.news[pkg.version]) {
@@ -469,7 +468,7 @@ gulp.task('updatePackages', function (done) {
     done();
 });
 
-gulp.task('updateReadme', function (done) {
+gulp.task('updateReadme', done => {
     const readme = fs.readFileSync('README.md').toString();
     const pos = readme.indexOf('## Changelog\n');
     if (pos !== -1) {
@@ -493,6 +492,6 @@ gulp.task('updateReadme', function (done) {
     done();
 });
 
-gulp.task('replace', ['replacePkg', 'replaceVis', 'replaceHtml']);
+gulp.task('replace', gulp.series('replacePkg', 'replaceVis', 'replaceHtml'));
 
-gulp.task('default', ['updatePackages', 'updateReadme', 'replace']);
+gulp.task('default', gulp.series('updatePackages', 'updateReadme', 'replace'));

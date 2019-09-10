@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.0",
+        "version": "1.2.1",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.1": {
+                "en": "fixed upload of files",
+                "de": "Fehler beim Hochladen von Dateien behoben",
+                "ru": "исправлена загрузка файлов",
+                "pt": "upload fixo de arquivos",
+                "nl": "vaste upload van bestanden",
+                "fr": "téléchargement fixe de fichiers",
+                "it": "caricamento fisso di file",
+                "es": "carga fija de archivos",
+                "pl": "naprawione przesyłanie plików",
+                "zh-cn": "修复了文件上传"
+            },
             "1.2.0": {
                 "en": "Translations were added",
                 "de": "Übersetzungen wurden hinzugefügt",

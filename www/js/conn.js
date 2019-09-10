@@ -70,7 +70,7 @@ var servConn = {
         return this._user;
     },
     setReloadTimeout: function (timeout){
-        this._reloadInterval = parseInt(timeout, 10);    
+        this._reloadInterval = parseInt(timeout, 10);
     },
     setReconnectInterval: function (interval){
         this._reconnectInterval = parseInt(interval, 10);
@@ -254,7 +254,7 @@ var servConn = {
 
                     // reload whole page if no connection longer than some period
                     if (that._reloadInterval && offlineTime > that._reloadInterval * 1000 && !that.authError) that.reload();
-                    
+
                     that._disconnectedSince = null;
                 }
 
@@ -584,7 +584,7 @@ var servConn = {
             throw 'No callback set';
         }
 
-        if (!this._checkConnection('readFile', arguments)) return;
+        if (!this._checkConnection('readFile64', arguments)) return;
 
         if (!isRemote && typeof app !== 'undefined' && !app.settings.dontCache) {
             app.readLocalFile(filename.replace(/^\/vis\.0\//, ''), function (err, data, mimeType) {
@@ -641,13 +641,13 @@ var servConn = {
     },
     // Write file base 64
     writeFile64:      function (filename, data, callback) {
-        if (!this._checkConnection('writeFile', arguments)) return;
+        if (!this._checkConnection('writeFile64', arguments)) return;
 
         var parts = filename.split('/');
         var adapter = parts[1];
         parts.splice(0, 2);
 
-        this._socket.emit('writeFile', adapter, parts.join('/'), atob(data), {mode: this._defaultMode}, callback);
+        this._socket.emit('writeFile64', adapter, parts.join('/'), data, {mode: this._defaultMode}, callback);
     },
     readDir:          function (dirname, callback) {
         //socket.io
@@ -1044,7 +1044,7 @@ var servConn = {
                         storage.set('groups', groups);
                     }
                 }
-                
+
                 callback(null, groups);
             });
         }

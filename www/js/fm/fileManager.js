@@ -273,7 +273,7 @@ var fmFolder    =    'js/fm/';
             $('#fm_table_head').remove();
             $("#fm_bar_play, #fm_bar_stop, #fm_bar_down, #fm_bar_del").button('disable');
 
-            if (o.data !== undefined && o.view == "table") {
+            if (o.data !== undefined && o.view === "table") {
 
                 $('<div id="fm_table_head">' +
                     ' <button id="fm_table_head_name" >'  + fmTranslate('Name') + '</button>' +
@@ -478,11 +478,11 @@ var fmFolder    =    'js/fm/';
                 }
             }
 
-            if (o.data !== undefined && o.view == 'prev') {
+            if (o.data !== undefined && o.view === 'prev') {
                 var path = o.root ? o.path.split(o.root)[1] : o.path;
 
                 if (o.uploadDir) {
-                    if (path.substring(0, o.uploadDir.length) == o.uploadDir) {
+                    if (path.substring(0, o.uploadDir.length) === o.uploadDir) {
                         $('#fm_bar_add').button('enable');
                     } else {
                         $('#fm_bar_add').button('disable').attr('title', fmTranslate('Upload possible only to ') + o.uploadDir);
@@ -490,7 +490,7 @@ var fmFolder    =    'js/fm/';
                 }
 
                 $.each(o.data, function () {
-                    if (this.file == '..') return;
+                    if (this.file === '..') return;
 
                     if (this.stats.nlink > 1 || this.isDir) {
                         var type = "_";
@@ -506,7 +506,7 @@ var fmFolder    =    'js/fm/';
                         var _type  = (this.file.split('.')[1] || "").toLowerCase();
                         var icon   = "undef";
                         var filter = "";
-                        if (o.fileFilter && o.fileFilter.length && o.fileFilter.indexOf(_type) == -1) {
+                        if (o.fileFilter && o.fileFilter.length && o.fileFilter.indexOf(_type) === -1) {
                             filter = "fm_fileFilter";
                         }
 
@@ -1109,7 +1109,7 @@ var fmFolder    =    'js/fm/';
                     o.view = 'table';
                     build(o);
                 }
-                if (id == "fm_bar_prev") {
+                if (id === 'fm_bar_prev') {
                     o.view = "prev";
                     build(o);
                 }
@@ -1122,7 +1122,7 @@ var fmFolder    =    'js/fm/';
                     document.getElementById('fm_sound_play').play();
 
                 }
-                if (id == 'fm_bar_stop') {
+                if (id === 'fm_bar_stop') {
                     document.getElementById('fm_sound_play').remove();
                 }
 //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
