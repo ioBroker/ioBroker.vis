@@ -1,4 +1,4 @@
-var visConfig = {
+const visConfig = {
     "widgetSets": [
         "basic",
         "jqplot",
@@ -8,8 +8,8 @@ var visConfig = {
                 "basic"
             ]
         },
-        "tabs",
-		"swipe"
+        "swipe",
+        "tabs"
     ]
 };
 if (typeof exports !== 'undefined') {
