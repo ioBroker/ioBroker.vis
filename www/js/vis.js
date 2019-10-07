@@ -2760,15 +2760,19 @@ var vis = {
             this.states[id + '.ts']  = state.ts;
             this.states[id + '.ack'] = state.ack;
             this.states[id + '.lc']  = state.lc;
-            if (state.q !== undefined) this.states[id + '.q'] = state.q;
+            if (state.q !== undefined) {
+                this.states[id + '.q'] = state.q;
+            }
         } else {
             var o = {};
             // Check new model
             o[id + '.val'] = state.val;
-            o[id + '.ts'] = state.ts;
+            o[id + '.ts']  = state.ts;
             o[id + '.ack'] = state.ack;
-            o[id + '.lc'] = state.lc;
-            if (state.q !== undefined) o[id + '.q'] = state.q;
+            o[id + '.lc']  = state.lc;
+            if (state.q !== undefined) {
+                o[id + '.q'] = state.q;
+            }
             try {
                 this.states.attr(o);
             } catch (e) {
@@ -3345,7 +3349,7 @@ function main($, onReady) {
                 '</div>' +
                 '</div>';
 
-            // Add the mask to body            
+            // Add the mask to body
             $('body')
                 .append(text)
                 .append('<div id="login-mask"></div>');
