@@ -280,6 +280,7 @@ var vis = {
     editMode:           false,
     language:           (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:     {},
+    statesDebounceTime: 1000,
     visibility:         {},
     signals:            {},
     lastChanges:        {},
@@ -367,7 +368,7 @@ var vis = {
                         if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
                         delete that.statesDebounce[id];
                     }
-                }, 1000, id),
+                }, that.statesDebounceTime, id),
                 state: null
             };
         } else {
@@ -628,6 +629,7 @@ var vis = {
             }
             if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
             if (this.views.___settings.destroyViewsAfter !== undefined) this.views.___settings.destroyViewsAfter = parseInt(this.views.___settings.destroyViewsAfter, 10);
+            if (this.views.___settings.statesDebounceTime > 0) this.statesDebounceTime = parseInt(this.views.___settings.statesDebounceTime);
         }
 
         // Navigation
