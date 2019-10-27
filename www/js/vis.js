@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.2.1',
+    version: '1.2.2',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -304,7 +304,9 @@ var vis = {
                 that.showMessage(_('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), _('Insufficient permissions'), 'alert', 600);
             }
 
-            if (that.states.attr(id) || that.states.attr(id + '.val') !== undefined) {
+            var val = that.states.attr(id + '.val');
+
+            if (that.states.attr(id) || val !== undefined || val !== null) {
                 that.states.attr(state);
 
                 // If error set value back, but we need generate the edge
@@ -348,8 +350,9 @@ var vis = {
         o[id + '.ts'] = t;
         o[id + '.ack'] = false;
 
+        var _val = this.states.attr(id + '.val');
         // Create this value
-        if (this.states.attr(id + '.val') === undefined) {
+        if (_val === undefined || _val === null) {
             created = true;
             this.states.attr(o);
         }
@@ -477,7 +480,7 @@ var vis = {
         var arrSets = [];
 
         // If widgets are pre-loaded
-        if (this.binds && this.binds.stateful !== undefined) {
+        if (this.binds && this.binds.stateful !== undefined && this.binds.stateful !== null) {
             this.toLoadSetsCount = 0;
         } else {
             // Get list of used widget sets. if Edit mode list is null.
@@ -1167,14 +1170,20 @@ var vis = {
         var oid = widgetData['signals-oid-' + index];
 
         if (oid) {
-            if (val === undefined) val = this.states.attr(oid + '.val');
+            if (val === undefined || val === null) {
+                val = this.states.attr(oid + '.val');
+            }
 
             var condition = widgetData['signals-cond-' + index];
             var value     = widgetData['signals-val-' + index];
 
-            if (val === undefined) return (condition === 'not exist');
+            if (val === undefined || val === null) {
+                return (condition === 'not exist');
+            }
 
-            if (!condition || value === undefined) return (condition === 'not exist');
+            if (!condition || value === undefined || value === null) {
+                return (condition === 'not exist');
+            }
 
             if (val === 'null' && condition !== 'exist' && condition !== 'not exist') return false;
 
@@ -1263,7 +1272,7 @@ var vis = {
                     var valState = that.states.attr(oid + '.val');
                     var newVal = null;
                     var $indicator;
-                    if (valState !== undefined) {
+                    if (valState !== undefined && valState !== null) {
                         $wid.on('touchmove', function (evt) {
                             evt.preventDefault();
                         });
@@ -1722,14 +1731,14 @@ var vis = {
             sync = undefined;
         }
 
-        var effect = (hideOptions !== undefined) && (hideOptions.effect !== undefined) && hideOptions.effect;
+        var effect = hideOptions !== undefined && hideOptions !== null && hideOptions.effect !== undefined && hideOptions.effect !== null && hideOptions.effect;
         if (!effect) {
-            effect = (showOptions !== undefined) && (showOptions.effect !== undefined) && showOptions.effect;
+            effect = showOptions !== undefined && showOptions !== null && showOptions.effect !== undefined && showOptions.effect !== null && showOptions.effect;
         }
-        if (effect && ((showOptions === undefined) || !showOptions.effect)) {
+        if (effect && (showOptions === undefined || showOptions === null || !showOptions.effect)) {
             showOptions = {effect: hideOptions.effect, options: {}, duration: hideOptions.duration};
         }
-        if (effect && ((hideOptions === undefined) || !hideOptions.effect)) {
+        if (effect && (hideOptions === undefined || hideOptions === null || !hideOptions.effect)) {
             hideOptions = {effect: showOptions.effect, options: {}, duration: showOptions.duration};
         }
         hideOptions = $.extend(true, {effect: undefined, options: {}, duration: 0}, hideOptions);
@@ -2027,7 +2036,7 @@ var vis = {
             if (appendText !== null && appendText !== undefined) {
                 $('#waitText').append(appendText);
             }
-            if (step !== undefined) {
+            if (step !== undefined && step !== null) {
                 this.waitScreenVal += step;
                 _setTimeout(function (_val) {
                     $('.vis-progressbar').progressbar('value', _val);
@@ -2050,7 +2059,7 @@ var vis = {
     unregisterOnChange: function (callback, arg) {
         for (var i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
             if (this.onChangeCallbacks[i].callback === callback &&
-                (arg === undefined || this.onChangeCallbacks[i].arg === arg)) {
+                (arg === undefined || arg === null || this.onChangeCallbacks[i].arg === arg)) {
                 this.onChangeCallbacks.slice(i, 1);
                 return;
             }
@@ -2061,18 +2070,26 @@ var vis = {
         var oid = widgetData['visibility-oid'];
         var condition = widgetData['visibility-cond'];
         if (oid) {
-            if (val === undefined) val = this.states.attr(oid + '.val');
-            if (val === undefined) return (condition === 'not exist');
+            if (val === undefined || val === null) {
+                val = this.states.attr(oid + '.val');
+            }
+            if (val === undefined || val === null) {
+                return (condition === 'not exist');
+            }
 
             var value = widgetData['visibility-val'];
 
-            if (!condition || value === undefined) return (condition === 'not exist');
+            if (!condition || value === undefined || value === null) {
+                return (condition === 'not exist');
+            }
 
-            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') return false;
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
 
             var t = typeof val;
             if (t === 'boolean' || val === 'false' || val === 'true') {
-                value = (value === 'true' || value === true || value === 1 || value === '1');
+                value = value === 'true' || value === true || value === 1 || value === '1';
             } else
             if (t === 'number') {
                 value = parseFloat(value);
@@ -2177,10 +2194,12 @@ var vis = {
         //format = (_format === undefined) ? (that.isFloatComma) ? ".," : ",." : _format;
         // does not work...
         // using default german...
-        var format = (_format === undefined) ? ".," : _format;
+        var format = _format === undefined || _format === null ? '.,' : _format;
 
-        if (typeof value !== "number") value = parseFloat(value);
-        return isNaN(value) ? "" : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+        if (typeof value !== 'number') {
+            value = parseFloat(value);
+        }
+        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
     formatDate:         function formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
@@ -2336,7 +2355,7 @@ var vis = {
             var value;
             if (oids[t].visOid) {
                 value = this.getSpecialValues(oids[t].visOid, view, wid, widget);
-                if (value === undefined) {
+                if (value === undefined || value === null) {
                     value = this.states.attr(oids[t].visOid);
                 }
             }
@@ -2348,7 +2367,7 @@ var vis = {
                             for (var a = 0; a < oids[t].operations[k].arg.length; a++) {
                                 if (!oids[t].operations[k].arg[a].name) continue;
                                 value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widget);
-                                if (value === undefined) {
+                                if (value === undefined || value === null) {
                                     value = this.states.attr(oids[t].operations[k].arg[a].visOid);
                                 }
                                 string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
@@ -2369,39 +2388,39 @@ var vis = {
                             }
                             break;
                         case '*':
-                            if (oids[t].operations[k].arg !== undefined) {
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
                                 value = parseFloat(value) * oids[t].operations[k].arg;
                             }
                             break;
                         case '/':
-                            if (oids[t].operations[k].arg !== undefined) {
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
                                 value = parseFloat(value) / oids[t].operations[k].arg;
                             }
                             break;
                         case '+':
-                            if (oids[t].operations[k].arg !== undefined) {
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
                                 value = parseFloat(value) + oids[t].operations[k].arg;
                             }
                             break;
                         case '-':
-                            if (oids[t].operations[k].arg !== undefined) {
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
                                 value = parseFloat(value) - oids[t].operations[k].arg;
                             }
                             break;
                         case '%':
-                            if (oids[t].operations[k].arg !== undefined) {
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
                                 value = parseFloat(value) % oids[t].operations[k].arg;
                             }
                             break;
                         case 'round':
-                            if (oids[t].operations[k].arg === undefined) {
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
                                 value = Math.round(parseFloat(value));
                             } else {
                                 value = parseFloat(value).toFixed(oids[t].operations[k].arg);
                             }
                             break;
                         case 'pow':
-                            if (oids[t].operations[k].arg === undefined) {
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
                                 value = Math.pow(parseFloat(value), 2);
                             } else {
                                 value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
@@ -2442,7 +2461,7 @@ var vis = {
                             value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
                             break;
                         case 'random':
-                            if (oids[t].operations[k].arg === undefined) {
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
                                 value = Math.random();
                             } else {
                                 value = Math.random() * oids[t].operations[k].arg;
@@ -2465,7 +2484,7 @@ var vis = {
     findNearestResolution: function (resultRequiredOrX, height) {
         var w;
         var h;
-        if (height !== undefined) {
+        if (height !== undefined && height !== null) {
             w = resultRequiredOrX;
             h = height;
             resultRequiredOrX = false;
@@ -2760,7 +2779,7 @@ var vis = {
             this.states[id + '.ts']  = state.ts;
             this.states[id + '.ack'] = state.ack;
             this.states[id + '.lc']  = state.lc;
-            if (state.q !== undefined) {
+            if (state.q !== undefined && state.q !== null) {
                 this.states[id + '.q'] = state.q;
             }
         } else {
@@ -2770,7 +2789,7 @@ var vis = {
             o[id + '.ts']  = state.ts;
             o[id + '.ack'] = state.ack;
             o[id + '.lc']  = state.lc;
-            if (state.q !== undefined) {
+            if (state.q !== undefined && state.q !== null) {
                 o[id + '.q'] = state.q;
             }
             try {
@@ -2864,14 +2883,18 @@ var vis = {
                         this.states[id + '.ts'] = obj.ts;
                         this.states[id + '.ack'] = obj.ack;
                         this.states[id + '.lc'] = obj.lc;
-                        if (obj.q !== undefined) this.states[id + '.q'] = obj.q;
+                        if (obj.q !== undefined && obj.q !== null) {
+                            this.states[id + '.q'] = obj.q;
+                        }
                     } else {
                         var oo = {};
                         oo[id + '.val'] = obj.val;
                         oo[id + '.ts'] = obj.ts;
                         oo[id + '.ack'] = obj.ack;
                         oo[id + '.lc'] = obj.lc;
-                        if (obj.q !== undefined) oo[id + '.q'] = obj.q;
+                        if (obj.q !== undefined && obj.q !== null) {
+                            oo[id + '.q'] = obj.q;
+                        }
                         this.states.attr(oo);
                     }
                 } catch (e) {
@@ -2888,7 +2911,9 @@ var vis = {
         }
     },
     updateIframeZoom:   function (zoom) {
-        if (zoom === undefined) zoom = document.body.style.zoom;
+        if (zoom === undefined || zoom === null) {
+            zoom = document.body.style.zoom;
+        }
         if (zoom) {
             $('iframe').each(function () {
                 if (this.contentWindow.document.body) {
@@ -3133,7 +3158,7 @@ function main($, onReady) {
         var obj = {};
         for (j = index; j < vis.subscribing.IDs.length && j < index + 100; j++) {
             var _id = vis.subscribing.IDs[j];
-            if (vis.states[_id + '.val'] === undefined) {
+            if (vis.states[_id + '.val'] === undefined || vis.states[_id + '.val'] === null) {
                 if (!_id || !_id.match(/^dev\d+$/)) {
                     console.log('Create inner vis object ' + _id);
                 }

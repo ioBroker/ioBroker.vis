@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.1",
+        "version": "1.2.2",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.2": {
+                "en": "Preparations for js-controller 2.0",
+                "de": "Vorbereitungen für js-controller 2.0",
+                "ru": "Подготовка к js-controller 2.0",
+                "pt": "Preparativos para js-controller 2.0",
+                "nl": "Voorbereidingen voor js-controller 2.0",
+                "fr": "Préparations pour js-controller 2.0",
+                "it": "Preparativi per js-controller 2.0",
+                "es": "Preparativos para js-controller 2.0",
+                "pl": "Przygotowania do js-kontrolera 2.0",
+                "zh-cn": "js-controller 2.0的准备"
+            },
             "1.2.1": {
                 "en": "fixed upload of files",
                 "de": "Fehler beim Hochladen von Dateien behoben",
@@ -107,33 +119,6 @@
                 "it": "Risolvendo il salvataggio del progetto\nRisolto il problema con il selettore dello sfondo\nRisolvere il problema con il puntatore nullo\nRiparare l'helper di selezione\nAggiorna traduzioni",
                 "es": "Corregir el guardado del proyecto\nReparar el selector de fondo\nCorregir el problema del puntero nulo\nReparar el asistente de selección\nActualizar traducciones",
                 "pl": "Naprawienie zapisu projektu\nNaprawianie wybieraka tła\nNaprawiono problem z pustym wskaźnikiem\nNaprawianie pomocnika wyboru\nZaktualizuj tłumaczenia"
-            },
-            "1.1.2": {
-                "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
-                "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",
-                "ru": "исправлено сохранение проекта\nисправлен переключатель фона\nУстранение проблемы с нулевым указателем\nисправлен выбор виджетов\nпереводы",
-                "pt": "Reparando a poupança do projeto\nCorrigindo o seletor de fundo\nCorrigindo o problema do ponteiro nulo\nReparando o auxiliar de seleção\nAtualizar traduções",
-                "nl": "Het opslaan van het project bevestigen\nDe achtergrondkiezer bevestigen\nVaststelling van het probleem met de null-wijzer\nDe selectiehulp bevestigen\nUpdate vertalingen",
-                "fr": "Fixer la sauvegarde du projet\nFixer le sélecteur d'arrière-plan\nCorrection du problème du pointeur nul\nCorrection de l'assistant de sélection\nMise à jour",
-                "it": "Risolvendo il salvataggio del progetto\nRisolto il problema con il selettore dello sfondo\nRisolvere il problema con il puntatore nullo\nRiparare l'helper di selezione\nAggiorna traduzioni",
-                "es": "Corregir el guardado del proyecto\nReparar el selector de fondo\nCorregir el problema del puntero nulo\nReparar el asistente de selección\nActualizar traducciones",
-                "pl": "Naprawienie zapisu projektu\nNaprawianie wybieraka tła\nNaprawiono problem z pustym wskaźnikiem\nNaprawianie pomocnika wyboru\nZaktualizuj tłumaczenia"
-            },
-            "1.1.1": {
-                "en": "The problem with view change on the touch devices fixed",
-                "de": "Das Problem mit der Ansicht Änderung auf den Touch-Geräten behoben",
-                "ru": "Проблема с изменением вида на сенсорных устройствах исправлена",
-                "pt": "O problema com a mudança de exibição nos dispositivos de toque fixos",
-                "nl": "Het probleem met de wijziging van weergave op de aanraakapparaten is opgelost",
-                "fr": "Le problème avec le changement de vue sur les appareils tactiles fixés",
-                "it": "Risolto il problema con il cambio di vista sui dispositivi touch",
-                "es": "El problema con el cambio de vista en los dispositivos táctiles solucionó",
-                "pl": "Naprawiono problem z zmianą widoku na urządzeniach dotykowych"
-            },
-            "1.0.5": {
-                "en": "show number of datapoints in every project",
-                "de": "Zeige die Anzahl von Datenpunkten in jedem Projekt",
-                "ru": "Показывет количество используемых данных в каждом проекте"
             }
         },
         "desc": {
