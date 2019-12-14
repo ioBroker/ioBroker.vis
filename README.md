@@ -187,6 +187,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.2.3 (2019-12-14)
+* (bluefox) Small changes in license handling were made
+
 ### 1.2.2 (2019-10-27)
 * (bluefox) Preparations for js-controller 2.0. Check undefined adn null.
 
