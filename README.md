@@ -159,6 +159,12 @@ If user changes the view or at start the variables will be filled by vis with
 
 You can write the JSON-string or Object into control.command as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case the instance and data will be taken from JSON object.
 
+Example for javascript adapter:
+
+```
+setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data": ""});
+```
+
 ## Default view
 You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
 
