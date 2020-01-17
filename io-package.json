@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.2",
+        "version": "1.2.3",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.3": {
+                "en": "Small changes in license handling were made",
+                "de": "Kleine Änderungen in der Lizenzverwaltung wurden vorgenommen",
+                "ru": "Небольшие изменения в обработке лицензий",
+                "pt": "Pequenas mudanças no manuseio de licenças foram feitas",
+                "nl": "Er zijn kleine wijzigingen aangebracht in de licentiebehandeling",
+                "fr": "De petits changements dans la gestion des licences ont été effectués",
+                "it": "Sono state apportate piccole modifiche alla gestione delle licenze",
+                "es": "Se hicieron pequeños cambios en el manejo de la licencia.",
+                "pl": "Wprowadzono niewielkie zmiany w obsłudze licencji",
+                "zh-cn": "许可证处理方面进行了一些小的更改"
+            },
             "1.2.2": {
                 "en": "Preparations for js-controller 2.0",
                 "de": "Vorbereitungen für js-controller 2.0",
@@ -108,17 +120,6 @@
                 "it": "Sono supportati nuovi binding speciali\nL'errore con le modifiche veloci alla vista è stato risolto\ncorreggere (jqui - ctrl - IconState / val - Icon Bool)",
                 "es": "Se admiten nuevos enlaces especiales\nSe corrigió el error con los cambios de vista rápida\ncorregir (jqui - ctrl - IconState / val - Icon Bool)",
                 "pl": "Nowe powiązania specjalne są obsługiwane\nNaprawiono błąd związany z szybkimi zmianami widoku\nnapraw (jqui - ctrl - IconState / val - Icon Bool)"
-            },
-            "1.1.4": {
-                "en": "Fixing the saving of project\nFixing the background selector\nFixing the null pointer problem\nFixing the selection helper\nUpdate translations",
-                "de": "Die Projektspeicherung ist korrigiert\nHintergrundselektors ist korrigiert\nReparieren des Null-Zeiger-Problems\nAuswahlhelfer korrigiert\nÜbersetzungen",
-                "ru": "исправлено сохранение проекта\nисправлен переключатель фона\nУстранение проблемы с нулевым указателем\nисправлен выбор виджетов\nпереводы",
-                "pt": "Reparando a poupança do projeto\nCorrigindo o seletor de fundo\nCorrigindo o problema do ponteiro nulo\nReparando o auxiliar de seleção\nAtualizar traduções",
-                "nl": "Het opslaan van het project bevestigen\nDe achtergrondkiezer bevestigen\nVaststelling van het probleem met de null-wijzer\nDe selectiehulp bevestigen\nUpdate vertalingen",
-                "fr": "Fixer la sauvegarde du projet\nFixer le sélecteur d'arrière-plan\nCorrection du problème du pointeur nul\nCorrection de l'assistant de sélection\nMise à jour",
-                "it": "Risolvendo il salvataggio del progetto\nRisolto il problema con il selettore dello sfondo\nRisolvere il problema con il puntatore nullo\nRiparare l'helper di selezione\nAggiorna traduzioni",
-                "es": "Corregir el guardado del proyecto\nReparar el selector de fondo\nCorregir el problema del puntero nulo\nReparar el asistente de selección\nActualizar traducciones",
-                "pl": "Naprawienie zapisu projektu\nNaprawianie wybieraka tła\nNaprawiono problem z pustym wskaźnikiem\nNaprawianie pomocnika wyboru\nZaktualizuj tłumaczenia"
             }
         },
         "desc": {

@@ -312,7 +312,7 @@ function main() {
                         try {
                             const data = JSON.parse(result);
                             if (data.result === 'OK') {
-                                if (uuidObj.native.uuid.length !== 36) {
+                                if (uuidObj.native.uuid.length !== 36 && uuidObj.native.uuid.substring(0, 2) !== 'IO') {
                                     jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), (err, decoded) => {
                                         if (err) {
                                             adapter.log.error('Cannot check license: ' + err);

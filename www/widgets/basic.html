@@ -1139,7 +1139,7 @@
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
-                            if (!p.length || p[0].tagName === 'BODY') {
+                            if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
                                 $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
                             }
                         }
@@ -1160,7 +1160,7 @@
                 setInterval(function () {
                     if ($this.is(':visible')) {
                         var p = $this.parents(':hidden');
-                        if (!p.length || p[0].tagName === 'BODY') {
+                        if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
                             $this.html(html);
                         }
                     }
@@ -1203,7 +1203,7 @@
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
-                            if (!p.length || p[0].tagName === 'BODY') {
+                            if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
                                 $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
                             }
                         }
