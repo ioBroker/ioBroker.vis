@@ -1594,7 +1594,8 @@ var vis = {
                     val:     this.states.attr(widget.data.oid + '.val'),
                     data:    widgetData,
                     viewDiv: viewDiv,
-                    view:    view
+                    view:    view,
+                    style:   widget.style
                 });
                 if ($widget.length) {
                     if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
@@ -1607,7 +1608,8 @@ var vis = {
                 canWidget = can.view(widget.tpl, {
                     data:    widgetData,
                     viewDiv: viewDiv,
-                    view:    view
+                    view:    view,
+                    style:   widget.style
                 });
                 if ($widget.length) {
                     if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
