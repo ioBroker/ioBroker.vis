@@ -66,6 +66,7 @@
 //              html - dialog box with html editor
 //              widget - existing widget selector
 //              history - select history instances
+//              password - password
 
 'use strict';
 
@@ -1342,6 +1343,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'history':
                 line = this.editHistoryInstance(widAttr.name);
+                break;
+            case 'password':
+                line = '<input type="password" id="inspect_' + widAttr.name + '"/>';
                 break;
             default:
                 line = '<input type="text" id="inspect_' + widAttr.name + '"/>';
