@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.3",
+        "version": "1.2.4",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.4": {
+                "en": "Table widget was extended with the selected object ID.",
+                "de": "Das Tabellenwidget wurde um die ausgewählte Objekt-ID erweitert.",
+                "ru": "Табличный виджет был расширен с выбранным идентификатором объекта.",
+                "pt": "O widget de tabela foi estendido com o ID do objeto selecionado.",
+                "nl": "Tabelwidget is uitgebreid met de geselecteerde object-ID.",
+                "fr": "Le widget de table a été étendu avec l'ID d'objet sélectionné.",
+                "it": "Il widget della tabella è stato esteso con l'ID oggetto selezionato.",
+                "es": "El widget de tabla se amplió con el ID de objeto seleccionado.",
+                "pl": "Widżet tabeli został rozszerzony o wybrany identyfikator obiektu.",
+                "zh-cn": "表窗口小部件已扩展为具有选定的对象ID。"
+            },
             "1.2.3": {
                 "en": "Small changes in license handling were made",
                 "de": "Kleine Änderungen in der Lizenzverwaltung wurden vorgenommen",

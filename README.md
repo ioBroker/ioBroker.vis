@@ -193,6 +193,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.2.4 (2020-02-11)
+* (bluefox) Table widget was extended with the selected object ID.
+
 ### 1.2.3 (2019-12-14)
 * (bluefox) Small changes in license handling were made
 

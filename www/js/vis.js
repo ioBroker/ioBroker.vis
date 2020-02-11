@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.2.3',
+    version: '1.2.4',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
