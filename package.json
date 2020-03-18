@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for iobroker.",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -15,12 +15,6 @@
     "type": "git",
     "url": "https://github.com/iobroker/iobroker.vis"
   },
-  "licenses": [
-    {
-      "type": "CC-BY-NC-4.0",
-      "url": "https://github.com/iobroker/iobroker.vis/blob/master/LICENSE"
-    }
-  ],
   "keywords": [
     "iobroker",
     "GUI",

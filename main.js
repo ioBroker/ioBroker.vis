@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2019, bluefox
+ *      Copyright (c) 2014-2020, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -266,16 +266,6 @@ function indicateError(callback) {
 }
 
 function main() {
-    // Check if noConfig = false
-    if (adapter.common.noConfig) {
-        adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-            obj.common.noConfig = false;
-            adapter.setForeignObject(obj._id, obj, () => adapter.stop());
-        });
-
-        return;
-    }
-
     // first of all check license
     if (!adapter.config.license || typeof adapter.config.license !== 'string') {
         indicateError(() => {
@@ -293,7 +283,7 @@ function main() {
             } else {
                 // An object of options to indicate where to post to
                 const postOptions = {
-                    host: 'iobroker.net',
+                    host: 'iobroker1.net',
                     path: '/cert/',
                     method: 'POST',
                     headers: {
@@ -338,7 +328,7 @@ function main() {
                             }
                         } catch (e) {
                             indicateError(() => {
-                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + (data ? data.result : 'unknown'));
+                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + e);
                                 generatePages(true);
                             });
                         }

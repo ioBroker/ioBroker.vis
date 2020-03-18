@@ -193,6 +193,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.2.5 (2020-03-18)
+* (bluefox) Added the better error message if license could not be parsed
+
 ### 1.2.4 (2020-02-11)
 * (bluefox) Table widget was extended with the selected object ID.
 
@@ -430,7 +433,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2019 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2020 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  
