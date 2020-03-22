@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.5",
+        "version": "1.2.6",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,7 +16,7 @@
             "zh-cn": "可视化"
         },
         "news": {
-            "1.2.5": {
+            "1.2.6": {
                 "en": "Added the better error message if license could not be parsed",
                 "de": "Die bessere Fehlermeldung wurde hinzugefügt, wenn die Lizenz nicht analysiert werden konnte",
                 "ru": "Добавлено лучшее сообщение об ошибке, если лицензия не может быть проанализирована",

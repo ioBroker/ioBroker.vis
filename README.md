@@ -193,7 +193,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
-### 1.2.5 (2020-03-18)
+### 1.2.6 (2020-03-22)
 * (bluefox) Added the better error message if license could not be parsed
 
 ### 1.2.4 (2020-02-11)

@@ -283,7 +283,7 @@ function main() {
             } else {
                 // An object of options to indicate where to post to
                 const postOptions = {
-                    host: 'iobroker1.net',
+                    host: 'iobroker.net',
                     path: '/cert/',
                     method: 'POST',
                     headers: {
