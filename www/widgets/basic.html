@@ -1635,9 +1635,7 @@
             if (!dateObj) return '';
             var text = typeof dateObj;
             if (text === 'string') {
-                var pos = dateObj.indexOf('.');
-                if (pos !== -1) dateObj = dateObj.substring(0, pos);
-                return dateObj;
+		dateObj = new Date(dateObj);
             }
             if (text !== 'object') {
                 var i = parseInt(dateObj, 10);
