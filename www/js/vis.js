@@ -2374,7 +2374,12 @@ var vis = {
                                 if (value === undefined || value === null) {
                                     value = this.states.attr(oids[t].operations[k].arg[a].visOid);
                                 }
-                                string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                try {
+                                    if (JSON.parse(value));
+                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = ' + value + ';';
+                                } catch(e) {
+                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                }
                             }
                             var formula = oids[t].operations[k].formula;
                             if (formula && formula.indexOf('widget.') !== -1) {
