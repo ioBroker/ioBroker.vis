@@ -327,7 +327,11 @@ var vis = {
 
                 // Inform other widgets, that does not support canJS
                 for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
-                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                    try {
+                        that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                    } catch (e) {
+                        that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                    }
                 }
             }
         });
@@ -2870,9 +2874,13 @@ var vis = {
 
         // Inform other widgets, that do not support canJS
         for (var j = 0, len = this.onChangeCallbacks.length; j < len; j++) {
-            this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
+            try {
+                this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
+            } catch (e) {
+                this.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+            }
         }
-        if (this.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
+        this.editMode && $.fn.selectId && $.fn.selectId('stateAll', id, state);
     },
     updateStates:       function (data) {
         if (data) {

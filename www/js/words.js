@@ -21,6 +21,7 @@
 /*global systemDictionary:true */
 'use strict';
 
+
 $.extend(systemDictionary, {
     "Views": {                                       "en": "Views",                                           "de": "Views",                                           "ru": "Страницы",                                        "zh-cn": "视图"},
     "Widgets": {                                     "en": "Widgets",                                         "de": "Widgets",                                         "ru": "Элементы",                                        "zh-cn": "小部件"},

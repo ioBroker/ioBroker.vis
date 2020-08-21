@@ -6005,7 +6005,7 @@ vis = $.extend(true, vis, {
     },
     bindInstanceEdit:       function () {
         var that = this;
-        if (!this.instance) this.generateInstance();
+        !this.instance && this.generateInstance();
 
         $('#vis_instance').change(function () {
             that.instance = $(this).val();
