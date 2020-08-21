@@ -802,18 +802,18 @@ var servConn = {
                         that._defaultMode = data['system.adapter.' + that.namespace].native.defaultFileMode;
                     }
 
-                    // Read all channels for images
-                    that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                    // Read all charts
+                    that._socket.emit('getObjectView', 'chart', 'chart', {startkey: '', endkey: '\u9999'}, function (err, res) {
                         if (err) {
                             callback(err);
                             return;
                         }
                         for (var i = 0; i < res.rows.length; i++) {
-                            data[res.rows[i].id] = res.rows[i].value;
+                            data[res.rows[i].value._id] = res.rows[i].value;
                         }
 
-                        // Read all devices for images
-                        that._socket.emit('getObjectView', 'system', 'device', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                        // Read all channels for images
+                        that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
                             if (err) {
                                 callback(err);
                                 return;
@@ -821,20 +821,33 @@ var servConn = {
                             for (var i = 0; i < res.rows.length; i++) {
                                 data[res.rows[i].id] = res.rows[i].value;
                             }
-
-                            if (that._useStorage) {
-                                that._fillChildren(data);
-                                that._objects = data;
-                                that._enums   = enums;
-
-                                if (typeof storage !== 'undefined') {
-                                    storage.set('objects',  data);
-                                    storage.set('enums',    enums);
-                                    storage.set('timeSync', Date.now());
+                            // Read all devices for images
+                            that._socket.emit('getObjectView', 'system', 'device', {
+                                startkey: '',
+                                endkey: '\u9999'
+                            }, function (err, res) {
+                                if (err) {
+                                    callback(err);
+                                    return;
                                 }
-                            }
+                                for (var i = 0; i < res.rows.length; i++) {
+                                    data[res.rows[i].id] = res.rows[i].value;
+                                }
 
-                            if (callback) callback(err, data);
+                                if (that._useStorage) {
+                                    that._fillChildren(data);
+                                    that._objects = data;
+                                    that._enums = enums;
+
+                                    if (typeof storage !== 'undefined') {
+                                        storage.set('objects', data);
+                                        storage.set('enums', enums);
+                                        storage.set('timeSync', Date.now());
+                                    }
+                                }
+
+                                if (callback) callback(err, data);
+                            });
                         });
                     });
                 });

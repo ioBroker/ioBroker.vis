@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.6",
+        "version": "1.2.7",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.7": {
+                "en": "Charts are now supported",
+                "de": "Diagramme werden jetzt unterstützt",
+                "ru": "Графики теперь поддерживаются",
+                "pt": "Gráficos agora são suportados",
+                "nl": "Grafieken worden nu ondersteund",
+                "fr": "Les graphiques sont désormais pris en charge",
+                "it": "I grafici sono ora supportati",
+                "es": "Los gráficos ahora son compatibles",
+                "pl": "Wykresy są teraz obsługiwane",
+                "zh-cn": "现在支持图表"
+            },
             "1.2.6": {
                 "en": "Added the better error message if license could not be parsed",
                 "de": "Die bessere Fehlermeldung wurde hinzugefügt, wenn die Lizenz nicht analysiert werden konnte",

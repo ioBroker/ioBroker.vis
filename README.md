@@ -193,6 +193,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
+### 1.2.7 (2020-08-21)
+* (bluefox) Charts are now supported
+
 ### 1.2.6 (2020-03-22)
 * (bluefox) Added the better error message if license could not be parsed
 
