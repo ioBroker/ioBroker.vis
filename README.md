@@ -193,7 +193,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 ![Dark](img/dark_screen.png)
 
 ## Changelog
-### 1.2.7 (2020-08-21)
+### 1.2.8 (2020-08-22)
 * (bluefox) Charts are now supported
 
 ### 1.2.6 (2020-03-22)

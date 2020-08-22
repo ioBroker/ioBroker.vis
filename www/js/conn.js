@@ -497,9 +497,8 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('getVersion', function (version) {
-            if (callback)
-                callback(version);
+        this._socket.emit('getVersion', function (error, version) {
+            callback && callback(version || error);
         });
     },
     readFile:         function (filename, callback, isRemote) {

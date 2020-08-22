@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.7",
+        "version": "1.2.8",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,7 +16,7 @@
             "zh-cn": "可视化"
         },
         "news": {
-            "1.2.7": {
+            "1.2.8": {
                 "en": "Charts are now supported",
                 "de": "Diagramme werden jetzt unterstützt",
                 "ru": "Графики теперь поддерживаются",
