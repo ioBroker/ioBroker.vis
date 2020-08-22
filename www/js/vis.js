@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.2.7',
+    version: '1.2.8',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
