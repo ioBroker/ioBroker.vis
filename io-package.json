@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.9",
+        "version": "1.2.10",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.10": {
+                "en": "JSON strings will be parsed in VIS bindings",
+                "de": "JSON-Zeichenfolgen werden in VIS-Bindungen analysiert",
+                "ru": "Строки JSON будут анализироваться в привязках VIS",
+                "pt": "Strings JSON serão analisadas em associações VIS",
+                "nl": "JSON-strings worden geparseerd in VIS-bindingen",
+                "fr": "Les chaînes JSON seront analysées dans les liaisons VIS",
+                "it": "Le stringhe JSON verranno analizzate nelle associazioni VIS",
+                "es": "Las cadenas JSON se analizarán en enlaces VIS",
+                "pl": "Ciągi JSON będą analizowane w powiązaniach VIS",
+                "zh-cn": "JSON字符串将在VIS绑定中解析"
+            },
             "1.2.9": {
                 "en": "Charts are now supported",
                 "de": "Diagramme werden jetzt unterstützt",
