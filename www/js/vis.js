@@ -2379,8 +2379,8 @@ var vis = {
                                     value = this.states.attr(oids[t].operations[k].arg[a].visOid);
                                 }
                                 try {
-                                    if (JSON.parse(value));
-                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = ' + value + ';';
+                                    value = JSON.parse(value);
+                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
                                 } catch(e) {
                                     string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                                 }
