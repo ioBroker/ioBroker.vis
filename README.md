@@ -192,7 +192,15 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### __WORK IN PROGRESS__
+-->
+
 ## Changelog
+### __WORK IN PROGRESS__
+* (bluefox) The error message about the non-found chart view was fixed. 
+
 ### 1.2.10 (2020-08-23)
 * (gsicilia82/fceller) JSON strings will be parsed in VIS bindings
 
