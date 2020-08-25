@@ -754,6 +754,27 @@ var servConn = {
             }
         }
     },
+    getCharts: function (data, callback) {
+        var that = this;
+        // Check if chart view exists
+        this._socket.emit('getObject', '_design/chart', function (err, obj) {
+            if (obj && obj.views && obj.views.chart) {
+                // Read all charts
+                that._socket.emit('getObjectView', 'chart', 'chart', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    for (var i = 0; i < res.rows.length; i++) {
+                        data[res.rows[i].value._id] = res.rows[i].value;
+                    }
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        });
+    },
     // callback(err, data)
     getObjects:       function (useCache, callback) {
         if (typeof useCache === 'function') {
@@ -802,15 +823,7 @@ var servConn = {
                     }
 
                     // Read all charts
-                    that._socket.emit('getObjectView', 'chart', 'chart', {startkey: '', endkey: '\u9999'}, function (err, res) {
-                        if (err) {
-                            callback(err);
-                            return;
-                        }
-                        for (var i = 0; i < res.rows.length; i++) {
-                            data[res.rows[i].value._id] = res.rows[i].value;
-                        }
-
+                    that.getCharts(data, function () {
                         // Read all channels for images
                         that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
                             if (err) {
