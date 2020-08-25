@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.10",
+        "version": "1.2.11",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.11": {
+                "en": "The error message about the non-found chart view was fixed.",
+                "de": "Die Fehlermeldung zur nicht gefundenen Diagrammansicht wurde behoben.",
+                "ru": "Исправлено сообщение об ошибке о ненайденном просмотре диаграммы.",
+                "pt": "A mensagem de erro sobre a exibição do gráfico não encontrado foi corrigida.",
+                "nl": "Het foutbericht over de niet-gevonden kaartweergave is opgelost.",
+                "fr": "Le message d'erreur concernant la vue graphique non trouvée a été corrigé.",
+                "it": "Il messaggio di errore relativo alla visualizzazione del grafico non trovata è stato corretto.",
+                "es": "Se solucionó el mensaje de error sobre la vista de gráfico no encontrado.",
+                "pl": "Komunikat o błędzie dotyczący nieodnalezionego widoku wykresu został naprawiony.",
+                "zh-cn": "有关未找到的图表视图的错误消息已修复。"
+            },
             "1.2.10": {
                 "en": "JSON strings will be parsed in VIS bindings",
                 "de": "JSON-Zeichenfolgen werden in VIS-Bindungen analysiert",
