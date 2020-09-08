@@ -712,12 +712,14 @@ var servConn = {
             if (!this._checkConnection('getStates', arguments)) return;
 
             this.gettingStates = this.gettingStates || 0;
-            this.gettingStates++;
-            if (this.gettingStates > 1) {
-                // fix for slow devices
-                console.log('Trying to get empty list, because the whole list could not be loaded');
-                IDs = [];
+            if (this.gettingStates > 0) {
+                // fix for slow devices -> if getStates still in progress, wait and try again
+                console.log('Trying to get states again, because emitted getStates still pending');
+                setTimeout(() => this.getStates(IDs, callback), 50);
+                return;
             }
+
+            this.gettingStates++;
             var that = this;
             this._socket.emit('getStates', IDs, function (err, data) {
                 that.gettingStates--;
