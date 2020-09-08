@@ -2380,8 +2380,13 @@ var vis = {
                                 }
                                 try {
                                     value = JSON.parse(value);
-                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
-                                } catch(e) {
+                                    // if array or object, we format it correctly, else it should be a string
+                                    if (typeof value === 'object') {
+                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
+                                    } else {
+                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                    }
+                                } catch (e) {
                                     string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                                 }
                             }
