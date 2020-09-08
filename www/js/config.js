@@ -1,4 +1,4 @@
-const visConfig = {
+var visConfig = {
     "widgetSets": [
         "basic",
         "jqplot",
