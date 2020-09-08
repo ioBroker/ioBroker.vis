@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.11",
+        "version": "1.2.12",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.12": {
+                "en": "only parse arrays and json objects, not booleans, normal strings etc",
+                "de": "Analysieren Sie nur Arrays und JSON-Objekte, keine Booleschen Werte, normale Zeichenfolgen usw.",
+                "ru": "анализировать только массивы и объекты json, а не логические значения, обычные строки и т. д.",
+                "pt": "analisa apenas matrizes e objetos json, não booleanos, strings normais, etc.",
+                "nl": "alleen arrays en json-objecten ontleden, geen booleans, normale strings enz",
+                "fr": "analyser uniquement les tableaux et les objets json, pas les booléens, les chaînes normales, etc.",
+                "it": "analizza solo array e oggetti json, non booleani, stringhe normali ecc",
+                "es": "solo analizar matrices y objetos json, no booleanos, cadenas normales, etc.",
+                "pl": "analizuje tylko tablice i obiekty json, a nie wartości logiczne, zwykłe ciągi znaków itp",
+                "zh-cn": "仅解析数组和json对象，不解析布尔值，普通字符串等"
+            },
             "1.2.11": {
                 "en": "The error message about the non-found chart view was fixed.",
                 "de": "Die Fehlermeldung zur nicht gefundenen Diagrammansicht wurde behoben.",

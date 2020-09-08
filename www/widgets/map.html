@@ -1,0 +1,535 @@
+<!--
+    ioBroker.vis map widgets
+
+    version: "1.0.3"
+
+    Copyright 2016-2020 bluefox<dogafox@gmail.com>
+
+-->
+<script type="text/javascript">
+    'use strict';
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            "Get the Google API Key": {                      "en": "Get the Google API Key",                          "de": "Google API Schlüssel Bekommen",                   "ru": "Получить Google API ключ",                        "pt": "Obter a chave da API do Google",                  "nl": "Download de Google API Key",                      "fr": "Obtenir la clé de l'API Google",                  "it": "Ottieni la chiave dell'API di Google",            "es": "Obtener la clave API de Google",                  "pl": "Uzyskaj klucz Google API"},
+            "Google Map API key:": {                         "en": "Google Map API key:",                             "de": "Google Map API Schlüssel:",                       "ru": "Google Map API ключ",                             "pt": "Tecla Google Map API:",                           "nl": "Google Map API-sleutel:",                         "fr": "Clé de l'API Google Map:",                        "it": "Chiave API Mappa Google:",                        "es": "Clave de la API de Google Map:",                  "pl": "Klucz API Map Google:"},
+            "HYBRID": {                                      "en": "Hybrid",                                          "de": "Hybrid",                                          "ru": "Гибридная",                                       "pt": "Híbrido",                                         "nl": "Hybride",                                         "fr": "Hybride",                                         "it": "Ibrido",                                          "es": "Híbrido",                                         "pl": "Hybrydowy"},
+            "Maps Widgets settings": {                       "en": "High quality Widgets settings",                   "de": "High quality Widgets Einstellungen",              "ru": "Настройки High quality Widgets",                  "pt": "Configurações de Widgets de alta qualidade",      "nl": "Hoge kwaliteit Widgets-instellingen",             "fr": "Paramètres Widgets de haute qualité",             "it": "Impostazioni widget di alta qualità",             "es": "Ajustes de widgets de alta calidad",              "pl": "Wysokiej jakości ustawienia widgetów"},
+            "No API key": {                                  "en": "No API key",                                      "de": "Kein API Schlüssel",                              "ru": "Нет API ключа",                                   "pt": "Nenhuma chave da API",                            "nl": "Geen API-sleutel",                                "fr": "Aucune clé API",                                  "it": "Nessuna chiave API",                              "es": "Sin clave de API",                                "pl": "Brak klucza API"},
+            "ROADMAP": {                                     "en": "Roadmap",                                         "de": "Straßenkarte ",                                   "ru": "Дороги",                                          "pt": "Roteiro",                                         "nl": "roadmap",                                         "fr": "Feuille de route",                                "it": "Roadmap",                                         "es": "Mapa vial",                                       "pl": "Mapa drogowa"},
+            "SATELLITE": {                                   "en": "Satellite",                                       "de": "Satellit",                                        "ru": "Спутник",                                         "pt": "Satélite",                                        "nl": "Satelliet",                                       "fr": "Satellite",                                       "it": "Satellitare",                                     "es": "Satélite",                                        "pl": "Satelita"},
+            "TERRAIN": {                                     "en": "Terrain",                                         "de": "Gelände",                                         "ru": "Местность",                                       "pt": "Terreno",                                         "nl": "Terrein",                                         "fr": "Terrain",                                         "it": "Terreno",                                         "es": "Terreno",                                         "pl": "Teren"},
+            "apiKey": {                                      "en": "Google API Key",                                  "de": "Google API Schlüssel",                            "ru": "Google API ключ",                                 "pt": "Chave da API do Google",                          "nl": "Google API Key",                                  "fr": "Clé de l'API Google",                             "it": "Chiave API di Google",                            "es": "Clave de API de Google",                          "pl": "Klucz Google API"},
+            "apiKey_tooltip": {                              "en": "Just write one space to get API from settings",   "de": "Einfach Leerzeihen eingeben um die Einstellungen aus dem Adapter zu übernehmen", "ru": "Просто введите пробел, что бы перенять ключ из настроек драйвера", "pt": "Basta escrever um espaço para obter API das configurações", "nl": "Schrijf gewoon een spatie om API uit instellingen te halen", "fr": "Il suffit d'écrire un espace pour obtenir l'API des paramètres", "it": "Basta scrivere uno spazio per ottenere API dalle impostazioni", "es": "Solo escribe un espacio para obtener la API de la configuración", "pl": "Wystarczy napisać jedną spację, aby pobrać interfejs API z ustawień"},
+            "group_markers": {                               "en": "Markers",                                         "de": "Markers",                                         "ru": "Маркеры",                                         "pt": "Marcadores",                                      "nl": "markers",                                         "fr": "Marqueurs",                                       "it": "marcatori",                                       "es": "Marcadores",                                      "pl": "Markery"},
+            "hideControls": {                                "en": "Hide controls",                                   "de": "Keine Bedienelemente",                            "ru": "Скрыть управление",                               "pt": "Ocultar controles",                               "nl": "Verberg besturingselementen",                     "fr": "Masquer les contrôles",                           "it": "Nascondi i controlli",                            "es": "Ocultar controles",                               "pl": "Ukryj formanty"},
+            "mCount": {                                      "en": "Number of markers",                               "de": "Anzahl Markers",                                  "ru": "Количество маркеров",                             "pt": "Número de marcadores",                            "nl": "Aantal markeringen",                              "fr": "Nombre de marqueurs",                             "it": "Numero di marcatori",                             "es": "Cantidad de marcadores",                          "pl": "Liczba markerów"},
+            "map": {                                         "en": "map",                                             "de": "Karte",                                           "ru": "карта",                                           "pt": "mapa",                                            "nl": "kaart",                                           "fr": "carte",                                           "it": "carta geografica",                                "es": "mapa",                                            "pl": "mapa"},
+            "mapTypeId": {                                   "en": "Map type",                                        "de": "Kertentyp",                                       "ru": "Тип карты",                                       "pt": "Tipo de mapa",                                    "nl": "Kaartsoort",                                      "fr": "Type de carte",                                   "it": "Tipo di mappa",                                   "es": "Tipo de mapa",                                    "pl": "Typ mapy"},
+            "markersHeight": {                               "en": "Height",                                          "de": "Höche",                                           "ru": "Высота",                                          "pt": "Altura",                                          "nl": "Hoogte",                                          "fr": "la taille",                                       "it": "Altezza",                                         "es": "Altura",                                          "pl": "Wysokość"},
+            "markersImage": {                                "en": "Icon URL",                                        "de": "Bild URL",                                        "ru": "URL картинки",                                    "pt": "URL do ícone",                                    "nl": "Pictogram URL",                                   "fr": "URL de l'icône",                                  "it": "Icona URL",                                       "es": "Ícono URL",                                       "pl": "URL ikony"},
+            "markersLabel": {                                "en": "Letter",                                          "de": "Buchstabe",                                       "ru": "Буква или число",                                 "pt": "Carta",                                           "nl": "Brief",                                           "fr": "Lettre",                                          "it": "Lettera",                                         "es": "Carta",                                           "pl": "List"},
+            "markersLabel_tooltip": {                        "en": "Only first letter or digit",                      "de": "Nur ein Symbol",                                  "ru": "Только один символ",                              "pt": "Apenas a primeira letra ou dígito",               "nl": "Alleen eerste letter of cijfer",                  "fr": "Seulement la première lettre ou le chiffre",      "it": "Solo prima lettera o cifra",                      "es": "Solo la primera letra o dígito",                  "pl": "Tylko pierwsza litera lub cyfra"},
+            "markersLat-oid": {                              "en": "Latitude ID",                                     "de": "Breitengrad ID",                                  "ru": "ID широты",                                       "pt": "Identificação da Latitude",                       "nl": "Latitude ID",                                     "fr": "Latitude ID",                                     "it": "Latitude ID",                                     "es": "Latitud ID",                                      "pl": "Identyfikator Latitude"},
+            "markersLon-oid": {                              "en": "Longitude ID",                                    "de": "Längengrad ID",                                   "ru": "ID долготы",                                      "pt": "ID de Longitude",                                 "nl": "Lengtegraad-ID",                                  "fr": "Longitude ID",                                    "it": "ID longitudine",                                  "es": "ID de longitud",                                  "pl": "ID długości"},
+            "markersOffsetX": {                              "en": "Offset X",                                        "de": "Offset X",                                        "ru": "Сдвиг по X",                                      "pt": "Offset X",                                        "nl": "Offset X",                                        "fr": "Décalage X",                                      "it": "Offset X",                                        "es": "Desplazamiento X",                                "pl": "Przesunięcie X"},
+            "markersOffsetY": {                              "en": "Offset Y",                                        "de": "Offset Y",                                        "ru": "Сдвиг по Y",                                      "pt": "Offset Y",                                        "nl": "Offset Y",                                        "fr": "Offset Y",                                        "it": "Offset Y",                                        "es": "Desplazamiento Y",                                "pl": "Przesunięcie Y"},
+            "markersOpacity": {                              "en": "Opacity",                                         "de": "Durchsichtigkeit",                                "ru": "Прозрачность",                                    "pt": "Opacidade",                                       "nl": "ondoorzichtigheid",                               "fr": "Opacité",                                         "it": "Opacità",                                         "es": "Opacidad",                                        "pl": "Nieprzezroczystość"},
+            "markersSwap": {                                 "en": "Swap Latitude and Longitude",                     "de": "Tausche Längengrad mit Breitengrad",              "ru": "Поменять местами широту и долготу",               "pt": "Trocar Latitude e Longitude",                     "nl": "Swap Latitude and Longitude",                     "fr": "Échanger la latitude et la longitude",            "it": "Scambia latitudine e longitudine",                "es": "Intercambiar latitud y longitud",                 "pl": "Zamień szerokość i długość geograficzną"},
+            "markersText": {                                 "en": "Tooltip",                                         "de": "Tooltip",                                         "ru": "Подсказка",                                       "pt": "Tooltip",                                         "nl": "tooltip",                                         "fr": "Info-bulle",                                      "it": "tooltip",                                         "es": "Información sobre herramientas",                  "pl": "Etykietka"},
+            "markersWidth": {                                "en": "Width",                                           "de": "Breite",                                          "ru": "Ширина",                                          "pt": "Largura",                                         "nl": "Breedte",                                         "fr": "Largeur",                                         "it": "Larghezza",                                       "es": "Anchura",                                         "pl": "Szerokość"},
+            "markersView": {                                 "en": "View",                                            "de": "View",                                            "ru": "Страница",                                        "pt": "View",                                            "nl": "View",                                            "fr": "View",                                            "it": "View",                                            "es": "View",                                            "pl": "View"},
+            "markersUrl": {                                  "en": "URL",                                             "de": "URL",                                             "ru": "URL",                                             "pt": "URL",                                             "nl": "URL",                                             "fr": "URL",                                             "it": "URL",                                             "es": "URL",                                             "pl": "URL"},
+            "maxZoom": {                                     "en": "Max zoom level",                                  "de": "Max Zoom",                                        "ru": "Уровень зума",                                    "pt": "Nível de zoom máximo",                            "nl": "Max zoomniveau",                                  "fr": "Niveau de zoom maximum",                          "it": "Max livello di zoom",                             "es": "Nivel de zoom máximo",                            "pl": "Maksymalny poziom zbliżenia"},
+            "noZoomAndPan": {                                "en": "No zoom",                                         "de": "Kein Zoom",                                       "ru": "Без зума",                                        "pt": "Sem zoom",                                        "nl": "Niet zoomen",                                     "fr": "Pas de zoom",                                     "it": "Nessun zoom",                                     "es": "Sin zoom",                                        "pl": "Bez powiększenia"},
+            "showTraffic": {                                 "en": "Show traffic",                                    "de": "Verkehrsinformation",                             "ru": "Загруженность дорог",                             "pt": "Mostrar tráfego",                                 "nl": "Toon verkeer",                                    "fr": "Afficher le trafic",                              "it": "Mostra traffico",                                 "es": "Mostrar tráfico",                                 "pl": "Pokaż ruch"}
+        });
+    }
+
+    vis.binds.map = {
+        version: "1.0.3",
+        showVersion: function () {
+            if (vis.binds.map.version) {
+                console.log('Version vis-map: ' + vis.binds.map.version);
+                vis.binds.map.version = null;
+            }
+        },
+        updateWidgets: [],
+        updateIntervalTimer: null,
+        isLonLatIsOID: function (value) {
+            if (typeof value !== 'string') return false;
+            if (!value) return false;
+            if (value[0] === '-') return false;
+            if (value[0] >= '0' && value[0] <= '9') return false;
+            return true;
+        },
+        osm: {
+            loaded: false,
+            fromProjection: null,
+            toProjection: null,
+            getMarkers: function (markers) {
+                var result = new OpenLayers.Layer.Markers('Markers');
+                var list = [];
+
+                for (var m = 0; m < markers.length; m++) {
+                    var width  = parseFloat(markers[m].width  || 25);
+                    var height = parseFloat(markers[m].height || 25);
+                    var size   = new OpenLayers.Size(width, height);
+                    var url    = markers[m].image || 'widgets/map/img/pin.png';
+                    var opacity = (markers[m].opacity === '' || markers[m].opacity === null || markers[m].opacity === undefined) ? 1 : parseFloat(markers[m].opacity);
+                    var offsetX = (markers[m].offsetX === '' || markers[m].offsetX === null || markers[m].offsetX === undefined) ? -(size.w/2) : (-1) * parseFloat(markers[m].offsetX);
+                    var offsetY = (markers[m].offsetY === '' || markers[m].offsetY === null || markers[m].offsetY === undefined) ? -size.h : (-1) * parseFloat(markers[m].offsetY);
+                    var offset = new OpenLayers.Pixel(offsetX, offsetY);
+
+                    var icon   = new OpenLayers.Icon(url, size, offset);
+                    var marker;
+                    if (vis.binds.map.isLonLatIsOID(markers[m].lon) && vis.binds.map.isLonLatIsOID(markers[m].lat)) {
+                        marker = new OpenLayers.Marker(vis.binds.map.osm.text2position(vis.states[markers[m].lon + '.val'] + ';' + vis.states[markers[m].lat + '.val'], markers[m].swap), icon);
+                    } else if (vis.binds.map.isLonLatIsOID(markers[m].lon)) {
+                        marker = new OpenLayers.Marker(vis.binds.map.osm.text2position(vis.states[markers[m].lon + '.val'], markers[m].swap), icon);
+                    } else {
+                        marker = new OpenLayers.Marker(vis.binds.map.osm.text2position(markers[m].lon.toString() + (markers[m].lat ? ';' + markers[m].lat : ''), markers[m].swap), icon);
+                    }
+                    opacity = parseFloat(opacity);
+
+                    if (opacity === 0) marker.display(opacity !== 0);
+                    if (opacity !== 1 && opacity !== 0) marker.setOpacity(opacity);
+
+                    if (markers[m].url || markers[m].view) {
+                        (function (mm) {
+                            marker.events.register('mousedown', marker.feature, function() {
+                                if (markers[mm].view) {
+                                    vis.changeView(markers[mm].view, markers[mm].view);
+                                } else {
+                                    document.location = markers[mm].url;
+                                }
+                            });
+                        })(m);
+                    }
+
+
+                    list.push(marker);
+                    result.addMarker(marker);
+                }
+
+                return {layer: result, list: list};
+            },
+            setCenter: function (map, markers, maxZoom) {
+                if (markers && markers.markers.length) {
+                    var bound = markers.getDataExtent();
+                    var zoom = Math.min(map.getZoomForExtent(bound), maxZoom === undefined ? 30 : parseFloat(maxZoom));
+                    map.setCenter(bound.getCenterLonLat(), zoom);
+                } else {
+                    map.setCenter(vis.binds.map.osm.text2position('5.55;6.66'), parseFloat(maxZoom));
+                }
+            },
+            text2position: function (text, isSwap) {
+                var parts = (text ||'').toString().split(';');
+                if (parts.length < 2) parts = (text ||'').split(',');
+                if (parts.length < 2) return null;
+                var lon = parseFloat(parts[0].replace(',', '.').trim());
+                var lat = parseFloat(parts[1].replace(',', '.').trim());
+                if (isSwap) {
+                    return new OpenLayers.LonLat(lat, lon).transform(vis.binds.map.osm.fromProjection, vis.binds.map.osm.toProjection);
+                } else {
+                    return new OpenLayers.LonLat(lon, lat).transform(vis.binds.map.osm.fromProjection, vis.binds.map.osm.toProjection);
+                }
+            },
+            showMap: function (divName, markerList, maxZoom) {
+                var map = new OpenLayers.Map(divName);
+                var mapnik = new OpenLayers.Layer.OSM();
+                // Fix Cross Origin problem on safari
+                mapnik.tileOptions.crossOriginKeyword = null;
+                map.addLayer(mapnik);
+
+                var oObj = vis.binds.map.osm.getMarkers(markerList);
+                map.addLayer(oObj.layer);
+
+                vis.binds.map.osm.setCenter(map, oObj.layer, maxZoom);
+                $('.olControlAttribution').hide();
+                var $div = $('#' + divName);
+                $div.css('border-radius', $div.parent().css('border-radius')).css('overflow', 'hidden');
+
+                return {map: map, markers: oObj.list, layer: oObj.layer};
+            },
+            update: function ($div) {
+                var obj     = $div.data('object');
+                var markers = $div.data('markers');
+                var zoom    = $div.data('zoom');
+
+                for (var m = 0; m < markers.length; m++) {
+                    if (vis.binds.map.isLonLatIsOID(markers[m].lon) && vis.binds.map.isLonLatIsOID(markers[m].lat)) {
+                        obj.markers[m].lonlat = vis.binds.map.osm.text2position(vis.states[markers[m].lon + '.val'] + ';' + vis.states[markers[m].lat + '.val'], markers[m].swap);
+                        obj.layer.removeMarker(obj.markers[m]);
+                        obj.layer.addMarker(obj.markers[m]);
+                    } else if (vis.binds.map.isLonLatIsOID(markers[m].lon)) {
+                        obj.markers[m].lonlat = vis.binds.map.osm.text2position(vis.states[markers[m].lon + '.val'], markers[m].swap);
+                        obj.layer.removeMarker(obj.markers[m]);
+                        obj.layer.addMarker(obj.markers[m]);
+                    }
+                }
+                vis.binds.map.osm.setCenter(obj.map, obj.layer, zoom);
+            },
+            init: function (wid, view, data, style) {
+                var $div = $('#' + wid);
+                if (!$div.length) {
+                    setTimeout(function () {
+                        vis.binds.map.osm.init(wid, view, data, style);
+                    }, 100);
+                    return;
+                }
+
+                if (!$('#osm_map').length) {
+                    var script = document.createElement('script');
+                    if (window.location.protocol === 'file:') {
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js';
+                    } else {
+                        script.src = '//cdnjs.cloudflare.com/ajax/libs/openlayers/2.13.1/OpenLayers.js';
+                    }
+                    script.id = 'osm_map';
+                    document.head.appendChild(script);
+                    $('#osm_map').load(function () {
+                        vis.binds.map.osm.loaded = true;
+                        vis.binds.map.osm.init(wid, view, data, style);
+                    });
+                    return;
+                } else if (!vis.binds.map.osm.loaded) {
+                    $('#osm_map').load(function () {
+                        vis.binds.map.osm.init(wid, view, data, style);
+                    });
+                    return;
+                }
+                if (!vis.binds.map.osm.fromProjection) vis.binds.map.osm.fromProjection = new OpenLayers.Projection('EPSG:4326');   // Transform from WGS 1984
+                if (!vis.binds.map.osm.toProjection)   vis.binds.map.osm.toProjection   = new OpenLayers.Projection('EPSG:900913'); // to Spherical Mercator Projection
+
+                var $map = $div.find('.vis-widget-body');
+
+                var markers = [];
+
+                data.mCount = parseInt(data.mCount, 10) || 1;
+                var u;
+                for (u = 1; u <= data.mCount; u++) {
+                    if (data['markersLon-oid' + u]) {
+                        var marker = {
+                            lon:        data['markersLon-oid'   + u] || '',
+                            lat:        data['markersLat-oid'   + u] || '',
+                            image:      data['markersImage'     + u],
+                            width:      data['markersWidth'     + u],
+                            height:     data['markersHeight'    + u],
+                            offsetX:    data['markersOffsetY'   + u],
+                            offsetY:    data['markersOffsetX'   + u],
+                            opacity:    data['markersOpacity'   + u],
+                            text:       data['markersText'      + u] || undefined,
+                            label:      data['markersLabel'     + u] || undefined,
+                            view:       data['markersView'      + u] || undefined,
+                            url:        data['markersUrl'       + u] || undefined,
+                            swap:       data['markersSwap'      + u] === true || data['markersSwap'      + u] === 'true'
+                        };
+
+                        markers.push(marker);
+                    }
+                }
+
+                $map.data('object',  vis.binds.map.osm.showMap('map_' + data.wid, markers, parseInt(data.maxZoom, 10) || 20));
+                $map.data('markers', markers);
+                $map.data('zoom',    parseInt(data.maxZoom, 10) || 20);
+                if (data.hideControls) $map.find('.olControlZoom').hide();
+
+                function onChange() {
+                    vis.binds.map.osm.update($map);
+                }
+                var bound = [];
+
+                for (u = 1; u <= data.mCount; u++) {
+                    if (vis.binds.map.isLonLatIsOID(data['markersLon-oid' + u])) {
+                        vis.states.bind(data['markersLon-oid' + u] + '.val', onChange);
+                        bound.push(data['markersLon-oid' + u] + '.val');
+                    }
+                    if (vis.binds.map.isLonLatIsOID(data['markersLat-oid' + u])) {
+                        vis.states.bind(data['markersLat-oid' + u] + '.val', onChange);
+                        bound.push(data['markersLat-oid' + u] + '.val');
+                    }
+                }
+
+                if (bound.length) {
+                    // remember all ids, that bound
+                    $div.data('bound', bound);
+                    // remember bind handler
+                    $div.data('bindHandler', onChange);
+                }
+            }
+        },
+        googleMap: {
+            loaded: false,
+            text2position: function (text, isSwap) {
+                var parts = (text || '').toString().split(';');
+                if (parts.length < 2) parts = (text || '').split(',');
+                if (parts.length < 2) return null;
+                var lon = parseFloat(parts[0].replace(',', '.').trim());
+                var lat = parseFloat(parts[1].replace(',', '.').trim());
+                if (isSwap) {
+                    return new google.maps.LatLng(lon, lat);
+                } else {
+                    return new google.maps.LatLng(lat, lon);
+                }
+            },
+            setCenter: function (map, oMarkers, maxZoom) {
+                var bounds = new google.maps.LatLngBounds();
+                for (var m = 0; m < oMarkers.length; m++) {
+                    bounds.extend(oMarkers[m].getPosition());
+                }
+                if (oMarkers.length > 1) {
+                    map.fitBounds(bounds);
+                } else if (oMarkers.length) {
+                    map.panTo(oMarkers[0].getPosition());
+                }
+
+                var listener = google.maps.event.addListener(map, 'idle', function() {
+                    if (map.getZoom() > maxZoom) map.setZoom(maxZoom);
+                    google.maps.event.removeListener(listener);
+                });
+            },
+            setMarkers: function (map, markers) {
+                var result = [];
+                for (var m = 0; m < markers.length; m++) {
+                    var width  = parseFloat(markers[m].width  || 100);
+                    var height = parseFloat(markers[m].height || 25);
+                    var opacity = (markers[m].opacity === '' || markers[m].opacity === null || markers[m].opacity === undefined) ? 1 : parseFloat(markers[m].opacity);
+                    var offsetX = (markers[m].offsetX === '' || markers[m].offsetX === null || markers[m].offsetX === undefined) ? null : parseFloat(markers[m].offsetX);
+                    var offsetY = (markers[m].offsetY === '' || markers[m].offsetY === null || markers[m].offsetY === undefined) ? null : parseFloat(markers[m].offsetY);
+
+                    var image = markers[m].image ? {
+                        url: 		markers[m].image.indexOf('/') === -1 ? '//maps.gstatic.com/mapfiles/markers2/' + markers[m].image : markers[m].image,
+                        origin:     new google.maps.Point(0, 0),
+                        scaledSize: new google.maps.Size(width, height) // scaled size
+
+                    } : undefined;
+
+                    if (image && offsetX !== null && offsetY !== null) image.anchor = new google.maps.Point(offsetY, offsetX);
+
+                    var position;
+
+                    if (vis.binds.map.isLonLatIsOID(markers[m].lon) && vis.binds.map.isLonLatIsOID(markers[m].lat)) {
+                        position = vis.binds.map.googleMap.text2position(vis.states[markers[m].lon + '.val'] + ';' + vis.states[markers[m].lat + '.val'], markers[m].swap);
+                    } else if (vis.binds.map.isLonLatIsOID(markers[m].lon)) {
+                        position = vis.binds.map.googleMap.text2position(vis.states[markers[m].lon + '.val'], markers[m].swap);
+                    } else {
+                        position = vis.binds.map.googleMap.text2position(markers[m].lon.toString() + (markers[m].lat ? ';' + markers[m].lat : ''), markers[m].swap);
+                    }
+                    var marker = new google.maps.Marker({
+                        position:   position,
+                        icon: 		image,
+                        label: 		markers[m].label || undefined,
+                        map:        map,
+                        title:      markers[m].text || undefined
+                    });
+                    if (opacity !== 1) {
+                        marker.setOpacity(opacity);
+                    }
+
+                    if (markers[m].url || markers[m].view) {
+                        (function (mm) {
+                            marker.addListener('click', function() {
+                                if (markers[mm].view) {
+                                    vis.changeView(markers[mm].view, markers[mm].view);
+                                } else {
+                                    document.location = markers[mm].url;
+                                }
+                            });
+                        })(m);
+                    }
+                    result.push(marker);
+                }
+                return result;
+            },
+            showMap: function (divElem, markerList, maxZoom, options) {
+                options = options || {};
+                options.mapTypeId = options.mapTypeId || google.maps.MapTypeId.ROADMAP;
+
+                var map = new google.maps.Map(divElem, {
+                    zoom: 			        maxZoom,
+                    center: 		        new google.maps.LatLng(52.52, 13.41),
+                    mapTypeId: 	            options.mapTypeId,
+                    disableDefaultUI:       !!options.hideControls,
+                    scrollwheel:            !options.noZoomAndPan,
+                    disableDoubleClickZoom: !!options.noZoomAndPan,
+                    panControl:             !options.noZoomAndPan
+                });
+
+                var $div = $(divElem);
+                $div.css('border-radius', $div.parent().css('border-radius'));
+
+
+                var markers = vis.binds.map.googleMap.setMarkers(map, markerList);
+                vis.binds.map.googleMap.setCenter(map, markers, maxZoom);
+
+                if (options.showTraffic) {
+                    var trafficLayer = new google.maps.TrafficLayer();
+                    trafficLayer.setMap(map);
+                }
+                return {map: map, markers: markers};
+            },
+            update: function ($div) {
+                var obj     = $div.data('object');
+                var markers = $div.data('markers');
+                var maxZoom = $div.data('zoom');
+
+                for (var m = 0; m < markers.length; m++) {
+                    if (vis.binds.map.isLonLatIsOID(markers[m].lon) && vis.binds.map.isLonLatIsOID(markers[m].lat)) {
+                        obj.markers[m].setPosition(vis.binds.map.googleMap.text2position(vis.states[markers[m].lon + '.val'] + ';' + vis.states[markers[m].lat + '.val'], markers[m].swap));
+                    } else if (vis.binds.map.isLonLatIsOID(markers[m].lon)) {
+                        obj.markers[m].setPosition(vis.binds.map.googleMap.text2position(vis.states[markers[m].lon + '.val'], markers[m].swap));
+                    }
+                }
+
+                vis.binds.map.googleMap.setCenter(obj.map, obj.markers, maxZoom);
+            },
+            init: function (wid, view, data, style) {
+                var $div = $('#' + wid);
+                if (!$div.length) {
+                    setTimeout(function () {
+                        vis.binds.map.googleMap.init(wid, view, data, style);
+                    }, 100);
+                    return;
+                }
+                var $map = $div.find('.vis-widget-body');
+                if (!data.apiKey) {
+                    $map.append(_('No API key'));
+                    return;
+                }
+
+                if (!$('#google_map').length) {
+                    var script = document.createElement('script');
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key=' + data.apiKey + '&signed_in=false';
+                    script.id = 'google_map';
+                    document.head.appendChild(script);
+                    $('#google_map').load(function () {
+                        vis.binds.map.googleMap.loaded = true;
+                        vis.binds.map.googleMap.init(wid, view, data, style);
+                    });
+                    return;
+                } else if (!vis.binds.map.googleMap.loaded) {
+                    $('#google_map').load(function () {
+                        vis.binds.map.googleMap.init(wid, view, data, style);
+                    });
+                    return;
+                }
+
+                var options = {
+                    mapTypeId:      google.maps.MapTypeId[data.mapTypeId || 'ROADMAP'],
+                    hideControls:   data.hideControls || false,
+                    noZoomAndPan:   data.noZoomAndPan || false,
+                    showTraffic:    data.showTraffic === 'true' || data.showTraffic === true
+                };
+                var markers = [];
+
+                for (var u = 1; u <= data.mCount; u++) {
+                    if (data['markersLon-oid' + u]) {
+                        var marker = {
+                            lon:        data['markersLon-oid'   + u] || '',
+                            lat:        data['markersLat-oid'   + u] || '',
+                            image:      data['markersImage'     + u],
+                            width:      data['markersWidth'     + u],
+                            height:     data['markersHeight'    + u],
+                            offsetX:    data['markersOffsetY'   + u],
+                            offsetY:    data['markersOffsetX'   + u],
+                            opacity:    data['markersOpacity'   + u],
+                            text:       data['markersText'      + u] || undefined,
+                            label:      data['markersLabel'     + u] || undefined,
+                            view:       data['markersView'      + u] || undefined,
+                            url:        data['markersUrl'       + u] || undefined,
+                            swap:       data['markersSwap'      + u] === true || data['markersSwap'      + u] === 'true'
+                        };
+                        markers.push(marker);
+                    }
+                }
+
+                $map.data('markers', markers);
+                $map.data('zoom',    parseInt(data.maxZoom, 10) || 20);
+                $map.data('object', vis.binds.map.googleMap.showMap($map[0], markers, parseInt(data.maxZoom, 10) || 20, options));
+
+                function onChange() {
+                    vis.binds.map.googleMap.update($map);
+                }
+                var bound = [];
+                for (u = 1; u <= data.mCount; u++) {
+                    if (vis.binds.map.isLonLatIsOID(data['markersLon-oid' + u])) {
+                        vis.states.bind(data['markersLon-oid' + u] + '.val', onChange);
+                        bound.push(data['markersLon-oid' + u] + '.val');
+                    }
+                    if (vis.binds.map.isLonLatIsOID(data['markersLat-oid' + u])) {
+                        vis.states.bind(data['markersLat-oid' + u] + '.val', onChange);
+                        bound.push(data['markersLat-oid' + u] + '.val');
+                    }
+                }
+                if (bound.length) {
+                    // remember all ids, that bound
+                    $div.data('bound', bound);
+                    // remember bind handler
+                    $div.data('bindHandler', onChange);
+                }
+            }
+        }
+    };
+
+    if (vis.editMode) {
+        // find automatically google map api key
+        vis.binds.map.onIdChanged = function (widgetID, view, newId, fields) {
+            var changed = [];
+            var key = vis.views[view].widgets[widgetID].data.apiKey;
+            if (!key.trim()) {
+                var obj = vis.objects['system.adapter.vis-map.0'];
+                if (obj && obj.native && obj.native.googleApiKey) {
+                    vis.views[view].widgets[widgetID].data.apiKey = obj.native.googleApiKey;
+                    changed.push('apiKey');
+                }
+            }
+            return changed.length ? changed : null;
+        };
+    }
+
+    vis.binds.map.showVersion();
+</script>
+<style>
+    a[href^="http://maps.google.com/maps"]{display: none !important}
+    a[href^="https://maps.google.com/maps"]{display: none !important}
+
+    .gmnoprint a, .gmnoprint span, .gm-style-cc {
+        display: none;
+    }
+    .gmnoprint div {
+        background: none !important;
+    }
+</style>
+
+<script id="tplOsm"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="map"
+        data-vis-name="Open Street Map"
+        data-vis-type="map"
+        data-vis-update-style="true"
+        data-vis-prev='<img src="widgets/map/img/Prev_tplOsm.png"></img>'
+        data-vis-attrs="mCount[1]/number,1,20,1;maxZoom[14]/slider,0,18,1;hideControls/checkbox;"
+        data-vis-attrs0="group.markers/byindex;markersLon-oid(1-mCount)/id,gps;markersLat-oid(1-mCount)/id,gps;markersSwap(1-mCount)/checkbox;markersImage(1-mCount)/image;markersWidth(1-mCount)/slider,1,100,1;markersHeight(1-mCount)/slider,1,100,1;markersOffsetX(1-mCount)/slider,1,100,1;markersOffsetY(1-mCount)/slider,1,100,1;markersOpacity(1-mCount)/slider,0,1,0.05;markersView(1-mCount)/views;markersUrl(1-mCount)/text;"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: hidden; width: 200px; height: 200px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" id="map_<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.map.osm.init(this.data.wid, this.view, this.data, this.style) %> style="position: relative;"></div>
+    </div>
+</script>
+
+<script id="tplGoogleMap"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="map"
+        data-vis-name="Google Map"
+        data-vis-type="map"
+        data-vis-update-style="true"
+        data-vis-prev='<img src="widgets/map/img/Prev_tplGoogleMap.png"></img>'
+        data-vis-attrs="mCount[1]/number,1,20,1;maxZoom[14]/slider,0,30,1;mapTypeId/select,ROADMAP,SATELLITE,HYBRID,TERRAIN;hideControls/checkbox;noZoomAndPan/checkbox;apiKey//onIdChanged;showTraffic/checkbox;"
+        data-vis-attrs0="group.markers/byindex;markersLon-oid(1-mCount)/id,gps;markersLat-oid(1-mCount)/id,gps;markersSwap(1-mCount)/checkbox;markersImage(1-mCount)/image;markersWidth(1-mCount)/slider,1,100,1;markersHeight(1-mCount)/slider,1,100,1;markersOffsetX(1-mCount)/slider,1,100,1;markersOffsetY(1-mCount)/slider,1,100,1;markersText(1-mCount);markersLabel(1-mCount);markersOpacity(1-mCount)/slider,0,1,0.05;markersView(1-mCount)/views;markersUrl(1-mCount)/text;"
+>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: hidden; width: 200px; height: 200px; background-color: none !important" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" <%= (el) -> vis.binds.map.googleMap.init(this.data.wid, this.view, this.data, this.style) %>></div>
+    </div>
+</script>

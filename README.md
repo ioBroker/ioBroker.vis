@@ -198,7 +198,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.2.12 (2020-09-08)
 * (foxriver76) only parse arrays and json objects, not booleans, normal strings etc
 
 ### 1.2.11 (2020-08-25)
