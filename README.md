@@ -198,6 +198,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (foxriver76) only parse arrays and json objects, not booleans, normal strings etc
+
 ### 1.2.11 (2020-08-25)
 * (bluefox) The error message about the non-found chart view was fixed. 
 
