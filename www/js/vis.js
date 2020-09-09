@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.2.12',
+    version: '1.2.11',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -2209,6 +2209,29 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
+    formatMomentDate: function formatMomentDate(dateObj, _format) {     
+                if (!dateObj) return '';
+                var type = typeof dateObj;
+                if (type === 'string') dateObj = moment(dateObj);
+        
+                if (type !== 'object') {
+                    var j = parseInt(dateObj, 10);
+                    if (j == dateObj) {
+                        // may this is interval
+                        if (j < 946681200) {
+                            dateObj = moment(dateObj);
+                        } else {
+                            // if less 2000.01.01 00:00:00
+                            dateObj = (j < 946681200000) ? moment(j * 1000) : moment(j);
+                        }
+                    } else {
+                        dateObj = moment(dateObj);
+                    }
+                }
+                var format = _format || this.dateFormat || 'DD.MM.YYYY';
+                
+                return moment(dateObj).format(format);
+    },
     formatDate:         function formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
@@ -2380,13 +2403,8 @@ var vis = {
                                 }
                                 try {
                                     value = JSON.parse(value);
-                                    // if array or object, we format it correctly, else it should be a string
-                                    if (typeof value === 'object') {
-                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
-                                    } else {
-                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
-                                    }
-                                } catch (e) {
+                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
+                                } catch(e) {
                                     string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
                                 }
                             }
@@ -2470,6 +2488,9 @@ var vis = {
                         case 'date':
                             value = this.formatDate(value, oids[t].operations[k].arg);
                             break;
+                        case 'momentDate':
+                            value = this.formatMomentDate(value, oids[t].operations[k].arg);
+                            break;                            
                         case 'min':
                             value = parseFloat(value);
                             value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;

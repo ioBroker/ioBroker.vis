@@ -150,7 +150,7 @@ function extractBinding(format) {
                             }
                         } else
                         // date formatting
-                        if (parse[1] === 'date') {
+                        if (parse[1] === 'date' || parse[1] === 'momentDate' ) {
                             operations = operations || [];
                             parse[2] = (parse[2] || '').trim();
                             parse[2] = parse[2].substring(1, parse[2].length - 1);
