@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2019, bluefox
+ *      Copyright (c) 2014-2020, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -137,7 +137,7 @@ function checkFiles(configChanged, isBeta) {
         // Update edit.html
         writeFile('edit.html', editChanged => {
             if (indexChanged || editChanged || configChanged) {
-                updateCacheManifest(() => 
+                updateCacheManifest(() =>
                     upload(() => adapter.stop()));
             } else {
                 adapter.stop();
@@ -148,7 +148,7 @@ function checkFiles(configChanged, isBeta) {
 
 function copyFiles(root, filesOrDirs, callback) {
     if (!filesOrDirs) {
-        adapter.readDir('vis.0', root, (err, filesOrDirs) => 
+        adapter.readDir('vis.0', root, (err, filesOrDirs) =>
             copyFiles(root, filesOrDirs || [], callback));
         return;
     }
@@ -159,12 +159,12 @@ function copyFiles(root, filesOrDirs, callback) {
 
     const task = filesOrDirs.shift();
     if (task.isDir) {
-        copyFiles(root + task.file + '/', null, () => 
+        copyFiles(root + task.file + '/', null, () =>
             setTimeout(copyFiles, 0, root, filesOrDirs, callback));
     } else {
         adapter.readFile('vis.0', root + task.file, (err, data) => {
             if (data || data === 0 || data === '') {
-                adapter.writeFile(adapterName + '.0', root + task.file, data, () => 
+                adapter.writeFile(adapterName + '.0', root + task.file, data, () =>
                     setTimeout(copyFiles, 0, root, filesOrDirs, callback));
             } else {
                 setTimeout(copyFiles, 0, root, filesOrDirs, callback);
@@ -178,30 +178,29 @@ function generatePages(isLicenseError) {
     let changed = false;
 
     if (!isBeta) {
-        changed = syncWidgetSets(false, isLicenseError);
+        changed = !!syncWidgetSets(false, isLicenseError);
 
-        if (changed) {
-            // upload config.js
-            count++;
-            const config = changed;
-            adapter.readFile(adapterName, 'js/config.js', (err, data) => {
-                if (data && data !== config) {
-                    adapter.log.info('config.js changed. Upload.');
-                    adapter.writeFile(adapterName, 'js/config.js', config, () => 
-                        !--count && checkFiles(changed, isBeta));
-                } else {
-                    !--count && checkFiles(changed, isBeta);
-                }
-            });
-            changed = true;
-        }
+        // upload config.js
+        count++;
+        adapter.readFile(adapterName, 'js/config.js', (err, data) => {
+            const config = fs.existsSync(__dirname + '/www/js/config.js') ? fs.readFileSync(__dirname + '/www/js/config.js').toString('utf8') : '';
+            data = data ? data.toString('utf8') : '';
+            if (!data || data !== config) {
+                changed = true;
+                adapter.log.info('config.js changed. Upload.');
+                adapter.writeFile(adapterName, 'js/config.js', config, () =>
+                    !--count && checkFiles(changed, isBeta));
+            } else {
+                !--count && checkFiles(changed, isBeta);
+            }
+        });
     } else {
         count++;
         // try to read vis-beta.0/files
         adapter.readDir(adapterName + '.0', '/', (err, dirs) => {
             if (!dirs || !dirs.length) {
                 // copy all directories
-                copyFiles('/', null, () => 
+                copyFiles('/', null, () =>
                     !--count && checkFiles(changed, isBeta));
             } else {
                 !--count && checkFiles(changed, isBeta);
@@ -245,7 +244,7 @@ function generatePages(isLicenseError) {
     count++;
     adapter.readFile(adapterName, 'css/vis-common-user.css', (err, data) => {
         if (err || data === null || data === undefined) {
-            adapter.writeFile(adapterName, 'css/vis-common-user.css', '', () => 
+            adapter.writeFile(adapterName, 'css/vis-common-user.css', '', () =>
                 !--count && checkFiles(changed, isBeta));
         } else {
             !--count && checkFiles(changed, isBeta);
@@ -259,7 +258,7 @@ function indicateError(callback) {
         data = data.replace('const visConfig = {', 'const visConfig = {license: false,');
         fs.writeFileSync(__dirname + '/www/js/config.js', data);
 
-        adapter.writeFile(adapterName, 'js/config.js', data, () => 
+        adapter.writeFile(adapterName, 'js/config.js', data, () =>
             updateCacheManifest(callback));
     } else {
         callback && callback();
@@ -267,16 +266,6 @@ function indicateError(callback) {
 }
 
 function main() {
-    // Check if noConfig = false
-    if (adapter.common.noConfig) {
-        adapter.getForeignObject('system.adapter.' + adapter.namespace, (err, obj) => {
-            obj.common.noConfig = false;
-            adapter.setForeignObject(obj._id, obj, () => adapter.stop());
-        });
-
-        return;
-    }
-
     // first of all check license
     if (!adapter.config.license || typeof adapter.config.license !== 'string') {
         indicateError(() => {
@@ -339,7 +328,7 @@ function main() {
                             }
                         } catch (e) {
                             indicateError(() => {
-                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + (data ? data.result : 'unknown'));
+                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + e);
                                 generatePages(true);
                             });
                         }

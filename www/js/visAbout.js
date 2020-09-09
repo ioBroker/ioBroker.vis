@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -23,7 +23,7 @@ function fillAbout() {
     html += '    </li>';
     html += '</ul>';
 
-    html += '<h4>Copyright &copy; 2013-2016 <a href="https://github.com/GermanBluefox" target="_blank">Bluefox</a>,';
+    html += '<h4>Copyright &copy; 2013-2020 <a href="https://github.com/GermanBluefox" target="_blank">Bluefox</a>,';
 	html += '   <a href="https://hobbyquaker.github.io" target="_blank">hobbyquaker</a></h4>';
 
     html += '<p>CC BY-NC License 4.0</p><a href="http://creativecommons.org/licenses/by-nc/4.0/"><img src="img/cc-nc-by.png"/></a>';

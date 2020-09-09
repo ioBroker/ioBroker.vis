@@ -1,0 +1,133 @@
+<script type="text/javascript">
+    'use strict';
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            // Bars
+            "picVisible":       {"en": "Background",        "de": "Hintergrund",        "ru": "Фон"},
+            "oid-state":        {"en": "ID state",          "de": "Zustands ID",        "ru": "ID старт/стоп"},
+            "oid-start":        {"en": "ID to start",       "de": "ID für Start",       "ru": "ID to start"},
+            "oid-pause":        {"en": "ID to pause",       "de": "ID für Pause",       "ru": "ID to pause"},
+            "oid-find":         {"en": "ID for search",     "de": "ID für Suche",       "ru": "ID для поиска"},
+            "oid-home":         {"en": "ID go home",        "de": "ID zu Homebase",     "ru": "ID идти к базе"},
+            "oid-power-level":  {"en": "ID for power level","de": "ID für Saugstufe",   "ru": "ID для мощности"},
+            "oid-power-level-1":  {"en": "Value for power level 1","de": "Wert für Saugstufe 1",   "ru": "Value для мощности 1"},
+            "oid-power-level-2":  {"en": "Value for power level 2","de": "Wert für Saugstufe 2",   "ru": "Value для мощности 2"},
+            "oid-power-level-3":  {"en": "Value for power level 3","de": "Wert für Saugstufe 3",   "ru": "Value для мощности 3"},
+            "oid-connected":    {"en": "ID is connected",   "de": "ID ist verbunden",   "ru": "ID online"}
+        });
+    }
+    vis.binds['mihome-vacuum'] = {
+        onclick: function (el, isRunning) {
+            var oid = $(el).data('oid');
+            if (oid) {
+                var val = $(el).data('value');
+                if (val) {
+                    vis.setValue(oid, parseInt(val));
+                } else {
+                    if ($(el).data('type') === 'state') {
+                        if (isRunning) {
+                            vis.setValue($(el).data('pause'), true);
+                        } else {
+                            vis.setValue($(el).data('start'), true);
+                        }
+                    } else {
+                        if ($(el).data('type') === 'home' && isRunning) {
+                            // pause first to send back to the dock;
+                            vis.setValue($(el).data('pause'), true);
+                        }
+                        vis.setValue(oid, true);
+                    }
+                }
+            }
+        }
+    };
+
+    if (vis.editMode) {
+        vis.binds['mihome-vacuum'].changedId = function (widgetID, view, newId, attr, isCss, oldValue) {
+            var obj = vis.objects[newId];
+            var changed = [];
+
+            if (oldValue) return false;
+
+            if (obj) {
+                var ids = newId.split('.');
+                ids.pop();
+                ids.pop();
+                var id = ids.join('.');
+                if (!vis.views[view].widgets[widgetID].data['oid-home'] && vis.objects[id + '.control.home']) {
+                    vis.views[view].widgets[widgetID].data['oid-home'] = id + '.control.home';
+                    vis.widgets[widgetID].data['oid-home'] = id + '.control.home';
+                    changed.push('oid-home');
+                }
+                if (!vis.views[view].widgets[widgetID].data['oid-start'] && vis.objects[id + '.control.start']) {
+                    vis.views[view].widgets[widgetID].data['oid-start'] = id + '.control.start';
+                    vis.widgets[widgetID].data['oid-start'] = id + '.control.start';
+                    changed.push('oid-start');
+                }
+                if (!vis.views[view].widgets[widgetID].data['oid-pause'] && vis.objects[id + '.control.pause']) {
+                    vis.views[view].widgets[widgetID].data['oid-pause'] = id + '.control.pause';
+                    vis.widgets[widgetID].data['oid-pause'] = id + '.control.pause';
+                    changed.push('oid-pause');
+                }
+                if (!vis.views[view].widgets[widgetID].data['oid-connected'] && vis.objects[id + '.info.connection']) {
+                    vis.views[view].widgets[widgetID].data['oid-connected'] = id + '.info.connection';
+                    vis.widgets[widgetID].data['oid-connected'] = id + '.info.connection';
+                    changed.push('oid-connected');
+                }
+                if (!vis.views[view].widgets[widgetID].data['oid-find'] && vis.objects[id + '.control.find']) {
+                    vis.views[view].widgets[widgetID].data['oid-find'] = id + '.control.find';
+                    vis.widgets[widgetID].data['oid-find'] = id + '.control.find';
+                    changed.push('oid-find');
+                }
+                if (!vis.views[view].widgets[widgetID].data['oid-power-level'] && vis.objects[id + '.control.fan_power']) {
+                    vis.views[view].widgets[widgetID].data['oid-power-level'] = id + '.control.fan_power';
+                    vis.widgets[widgetID].data['oid-power-level'] = id + '.control.fan_power';
+                    changed.push('oid-power-level');
+                }
+            }
+            return changed.length ? changed : null;
+        };
+    }
+
+</script>
+<script id="tplXiaomiVacuum"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="ctrl"
+        data-vis-set="mihome-vacuum"
+        data-vis-name="Control"
+        data-vis-prev='<img src="widgets/mihome-vacuum/img/previewControl.png"></img>'
+        data-vis-attrs="oid-state/id/changedId;oid-home;oid-start;oid-pause;oid-connected;oid-find;oid-power-level;oid-power-level-1[101]/number;oid-power-level-2[102]/number;oid-power-level-3[104]/number;picVisible[true]/checkbox;"
+>
+<%
+    function isRunning(data) {
+        var val= vis.states.attr(data['oid-state'] + '.val');
+        // 5 = Cleaning, 6 = Returning home, 11 = Spot cleaning, 17 = Zone cleaning
+        return (val == 5 || val == 6 || val == 11 || val == 17);
+    }
+%>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 130px; height: 130px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="overflow: visible">
+        <img src="widgets/mihome-vacuum/img/vacuum.png" style="width: 100%; height: 100%; <%= this.data.picVisible === true || this.data.picVisible === 'true' ? '' : 'display: none' %>"/>
+        <div style="position: absolute;width: 33%;top: 0;left: 31%;border: 4px solid black; height: calc(100% - 8px);border-radius: 100px;">
+            <div style="width: calc(100% - 8px); border: 4px solid <%= vis.states.attr(this.data['oid-connected'] + '.val') ? '#C6D4FF' : 'gray' %>; height: calc(100% - 8px); border-radius: 100px;
+            /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#9e9e9e+0,4c4c4c+100,4c4c4c+100 */
+        background: rgb(158,158,158); /* Old browsers */
+        background: -moz-linear-gradient(left,  rgba(158,158,158,1) 0%, rgba(76,76,76,1) 100%, rgba(76,76,76,1) 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left,  rgba(158,158,158,1) 0%,rgba(76,76,76,1) 100%,rgba(76,76,76,1) 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right,  rgba(158,158,158,1) 0%,rgba(76,76,76,1) 100%,rgba(76,76,76,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9e9e9e', endColorstr='#4c4c4c',GradientType=1 ); /* IE6-9 */
+        ">
+            </div>
+            <img onclick="vis.binds['mihome-vacuum'].onclick(this, <%= isRunning(this.data) %>)" data-pause="<%= this.data['oid-pause'] %>" data-start="<%= this.data['oid-start'] %>" data-type="state" data-oid="<%= this.data['oid-state'] %>" style="position: absolute; width: 60%; left: 20%; top: 15%;cursor: pointer;<%= this.data['oid-state'] ? '' : 'display: none;' %>" src="widgets/mihome-vacuum/img/<%= isRunning(this.data) ? 'on' : 'off' %>.png"  />
+            <img onclick="vis.binds['mihome-vacuum'].onclick(this, <%= isRunning(this.data) %>)" data-type="home" data-pause="<%= this.data['oid-pause'] %>" data-oid="<%= this.data['oid-home'] %>" style="position: absolute;width: 60%;left: 20%;bottom: 15%;cursor: pointer;<%= this.data['oid-home'] ? '' : 'display: none;' %>" src="widgets/mihome-vacuum/img/home.png" />
+        </div>
+        </div>
+        <img onclick="vis.binds['mihome-vacuum'].onclick(this)" data-oid="<%= this.data['oid-find'] %>" style="position: absolute; width: 20%; left: 8%; top: 39%;<%= this.data['oid-find'] ? 'cursor: pointer;' : 'display: none;' %>" src="widgets/mihome-vacuum/img/search.png"  />
+        <div onclick="vis.binds['mihome-vacuum'].onclick(this)" data-value="<%= this.data['oid-power-level-1'] %>" data-oid="<%= this.data['oid-power-level'] %>" style="position: absolute;top: calc(27% - 8px); left: 72%; border: 1px gray solid; border-radius: 25px; width: 16px; height: 16px; text-align: center;cursor: pointer;<%= this.data['oid-power-level'] ? '' : 'display: none;' %>">1</div>
+        <div onclick="vis.binds['mihome-vacuum'].onclick(this)" data-value="<%= this.data['oid-power-level-2'] %>" data-oid="<%= this.data['oid-power-level'] %>" style="position: absolute;top: calc(47% - 8px); left: 77%; border: 1px gray solid; border-radius: 25px; width: 16px; height: 16px; text-align: center;cursor: pointer;<%= this.data['oid-power-level'] ? '' : 'display: none;' %>">2</div>
+        <div onclick="vis.binds['mihome-vacuum'].onclick(this)" data-value="<%= this.data['oid-power-level-3'] %>" data-oid="<%= this.data['oid-power-level'] %>" style="position: absolute;top: calc(66% - 8px); left: 72%; border: 1px gray solid; border-radius: 25px; width: 16px; height: 16px; text-align: center;cursor: pointer;<%= this.data['oid-power-level'] ? '' : 'display: none;' %>">3</div>
+    </div>
+</script>

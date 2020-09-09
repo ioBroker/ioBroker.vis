@@ -1,7 +1,7 @@
 {
   "Check license": "Controlla la licenza",
-  "License:": "Chiave di licenza:",
-  "Service is offline. Please try later.": "Il servizio è offline o non disponibile su Internet. Si prega di provare più tardi o controllare la connessione internet.",
-  "instruction": "Per utilizzare <b> vis </b>, devi ottenere il codice di licenza per esso. <br> <b>vis</b> è gratuito per uso privato, ma per uso commerciale ha un prezzo. <br> Tu può ottenere la licenza su <a href='https://iobroker.net' target='_blank'>iobroker.net</a> dopo una breve registrazione.",
-  "vis adapter settings": "impostazioni della scheda vis"
+  "License:": "Chiave licenza:",
+  "Service is offline. Please try later.": "Il servizio è offline oppure nessun Internet disponibile. Si prega di rirovare più tardi oppure di controllare la connessione internet.",
+  "instruction": "Per utilizzare <b> vis </b>, devi ottenere un codice di licenza. <br> <b>vis</b> è gratuito per uso privato, ed a pagamento per uso commerciale. <br> Puoi ottenere una chiave di licenza su <a href='https://iobroker.net' target='_blank'>iobroker.net</a> dopo una breve registrazione.",
+  "vis adapter settings": "Impostazioni dell'adattatore vis"
 }

@@ -45,6 +45,7 @@ if (vis.editMode) {
         "table_oid":        {"en": "Table Object ID",           "de": "Table Object ID",        "ru": "ID таблицы"},
         "static_value":     {"en": "Static JSON(If no ID)",     "de": "Static JSON(If no ID)",  "ru": "Значение, если нет ID таблицы"},
         "event_oid":        {"en": "Event ID",                  "de": "Ereigniss ID",           "ru": "ID события"},
+        "selected_oid":     {"en": "Selected ID",               "de": "Ausgewählt ID",          "ru": "ID для отмеченного"},
         "hide_header":      {"en": "Hide header",               "de": "Kein Header",            "ru": "Скрыть заголовок"},
         "show_scroll":      {"en": "Show scroll",               "de": "Zeige Scrollbar",        "ru": "Показать прокрутку"},
         "detailed_wid":     {"en": "Detailed widget",           "de": "Detailed widget",        "ru": "Виджет детализации"},
@@ -96,6 +97,10 @@ vis.binds.table = {
         $('#' + data.wid + ' .vis-table-row').removeClass(data.tClass + '-tr-selected');
         // Select a new one
         $this.addClass(data.tClass + '-tr-selected');
+
+        if (data.selected_oid) {
+            vis.setValue(data.selected_oid, typeof data.content === 'string' ? data.content : JSON.stringify(data.content));
+        }
 
         // Get container for detailed information
         var $el = $('#' + data.detailed_wid);
@@ -435,7 +440,8 @@ vis.binds.table = {
                     content:      table[i],
                     detailed_wid: options.detailed_wid,
                     tClass:       tClass,
-                    wid:          wid
+                    wid:          wid,
+                    selected_oid: options.selected_oid,
                 });
             }
 
@@ -444,6 +450,23 @@ vis.binds.table = {
                     $elem.find('.vis-table-row[data-index="' + selectedId + '"]').trigger('click');
                 }, 200);
             }
+        } else if (options.selected_oid) {
+            $elem.find('.vis-table-row').unbind('click touchstart').bind('click touchstart', function (e) {
+                // Protect against two events
+                if (vis.detectBounce(this)) return;
+
+                vis.binds.table.onRowClick.call(this, e);
+                // Set additional data for every row
+                for (i = 0, len = table.length; i < len; i++) {
+                    if (!table[i]) continue;
+                    $elem.find('.vis-table-row[data-index="' + i + '"]')
+                        .data('options', {
+                            content:      table[i],
+                            wid:          wid,
+                            selected_oid: options.selected_oid,
+                        });
+                }
+            });
         }
 
         // Remember index to calculate even or odd

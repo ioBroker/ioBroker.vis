@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -281,7 +281,8 @@ vis = $.extend(true, vis, {
                 reloadOnSleep:      30, // seconds
                 reconnectInterval:  10000, // milliseconds
                 darkReloadScreen:   false,
-                destroyViewsAfter:  30  // seconds
+                destroyViewsAfter:  30,  // seconds
+                statesDebounceTime: 1000
             };
         }
         this.$selectView           = $('#select_view');
@@ -1349,6 +1350,7 @@ vis = $.extend(true, vis, {
             $('#reconnectInterval').val(that.views.___settings.reconnectInterval);
             if (that.views.___settings.destroyViewsAfter === undefined) that.views.___settings.destroyViewsAfter = 30;
             $('#destroyViewsAfter').val(that.views.___settings.destroyViewsAfter);
+            $('#statesDebounceTime').val(that.views.___settings.statesDebounceTime);
             $('#dialog-settings').dialog({
                 autoPen:    true,
                 width:      800,
@@ -1386,6 +1388,11 @@ vis = $.extend(true, vis, {
                             val = $('#darkReloadScreen').prop('checked');
                             if (that.views.___settings.darkReloadScreen != val) {
                                 that.views.___settings.darkReloadScreen = val;
+                                changed = true;
+                            }
+                            val = $('#statesDebounceTime').val();
+                            if (that.views.___settings.statesDebounceTime != val) {
+                                that.views.___settings.statesDebounceTime = val;
                                 changed = true;
                             }
                             if (changed) {
@@ -5998,7 +6005,7 @@ vis = $.extend(true, vis, {
     },
     bindInstanceEdit:       function () {
         var that = this;
-        if (!this.instance) this.generateInstance();
+        !this.instance && this.generateInstance();
 
         $('#vis_instance').change(function () {
             that.instance = $(this).val();

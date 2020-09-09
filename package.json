@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
-  "description": "Graphical user interface for iobroker.",
-  "version": "1.2.3",
+  "description": "Graphical user interface for ioBroker.",
+  "version": "1.2.12",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -15,12 +15,6 @@
     "type": "git",
     "url": "https://github.com/iobroker/iobroker.vis"
   },
-  "licenses": [
-    {
-      "type": "CC-BY-NC-4.0",
-      "url": "https://github.com/iobroker/iobroker.vis/blob/master/LICENSE"
-    }
-  ],
   "keywords": [
     "iobroker",
     "GUI",
@@ -34,6 +28,7 @@
     "@iobroker/adapter-core": "^1.0.3"
   },
   "devDependencies": {
+    "@alcalzone/release-script": "^1.7.0",
     "gulp": "^4.0.2",
     "gulp-replace": "^1.0.0",
     "iobroker.web": "*",
@@ -46,7 +41,10 @@
   "main": "main.js",
   "scripts": {
     "test": "node node_modules/mocha/bin/mocha --exit",
-    "install": "node main.js --install"
+    "install": "node main.js --install",
+    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
+    "build": "node node_modules/gulp/bin/gulp.js",
+    "release": "release-script"
   },
   "license": "CC-BY-NC-4.0"
 }

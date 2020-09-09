@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.3",
+        "version": "1.2.12",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,78 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.2.12": {
+                "en": "only parse arrays and json objects, not booleans, normal strings etc",
+                "de": "Analysieren Sie nur Arrays und JSON-Objekte, keine Booleschen Werte, normale Zeichenfolgen usw.",
+                "ru": "анализировать только массивы и объекты json, а не логические значения, обычные строки и т. д.",
+                "pt": "analisa apenas matrizes e objetos json, não booleanos, strings normais, etc.",
+                "nl": "alleen arrays en json-objecten ontleden, geen booleans, normale strings enz",
+                "fr": "analyser uniquement les tableaux et les objets json, pas les booléens, les chaînes normales, etc.",
+                "it": "analizza solo array e oggetti json, non booleani, stringhe normali ecc",
+                "es": "solo analizar matrices y objetos json, no booleanos, cadenas normales, etc.",
+                "pl": "analizuje tylko tablice i obiekty json, a nie wartości logiczne, zwykłe ciągi znaków itp",
+                "zh-cn": "仅解析数组和json对象，不解析布尔值，普通字符串等"
+            },
+            "1.2.11": {
+                "en": "The error message about the non-found chart view was fixed.",
+                "de": "Die Fehlermeldung zur nicht gefundenen Diagrammansicht wurde behoben.",
+                "ru": "Исправлено сообщение об ошибке о ненайденном просмотре диаграммы.",
+                "pt": "A mensagem de erro sobre a exibição do gráfico não encontrado foi corrigida.",
+                "nl": "Het foutbericht over de niet-gevonden kaartweergave is opgelost.",
+                "fr": "Le message d'erreur concernant la vue graphique non trouvée a été corrigé.",
+                "it": "Il messaggio di errore relativo alla visualizzazione del grafico non trovata è stato corretto.",
+                "es": "Se solucionó el mensaje de error sobre la vista de gráfico no encontrado.",
+                "pl": "Komunikat o błędzie dotyczący nieodnalezionego widoku wykresu został naprawiony.",
+                "zh-cn": "有关未找到的图表视图的错误消息已修复。"
+            },
+            "1.2.10": {
+                "en": "JSON strings will be parsed in VIS bindings",
+                "de": "JSON-Zeichenfolgen werden in VIS-Bindungen analysiert",
+                "ru": "Строки JSON будут анализироваться в привязках VIS",
+                "pt": "Strings JSON serão analisadas em associações VIS",
+                "nl": "JSON-strings worden geparseerd in VIS-bindingen",
+                "fr": "Les chaînes JSON seront analysées dans les liaisons VIS",
+                "it": "Le stringhe JSON verranno analizzate nelle associazioni VIS",
+                "es": "Las cadenas JSON se analizarán en enlaces VIS",
+                "pl": "Ciągi JSON będą analizowane w powiązaniach VIS",
+                "zh-cn": "JSON字符串将在VIS绑定中解析"
+            },
+            "1.2.9": {
+                "en": "Charts are now supported",
+                "de": "Diagramme werden jetzt unterstützt",
+                "ru": "Графики теперь поддерживаются",
+                "pt": "Gráficos agora são suportados",
+                "nl": "Grafieken worden nu ondersteund",
+                "fr": "Les graphiques sont désormais pris en charge",
+                "it": "I grafici sono ora supportati",
+                "es": "Los gráficos ahora son compatibles",
+                "pl": "Wykresy są teraz obsługiwane",
+                "zh-cn": "现在支持图表"
+            },
+            "1.2.6": {
+                "en": "Added the better error message if license could not be parsed",
+                "de": "Die bessere Fehlermeldung wurde hinzugefügt, wenn die Lizenz nicht analysiert werden konnte",
+                "ru": "Добавлено лучшее сообщение об ошибке, если лицензия не может быть проанализирована",
+                "pt": "Adicionada a melhor mensagem de erro se a licença não puder ser analisada",
+                "nl": "Het betere foutbericht toegevoegd als de licentie niet kon worden geparseerd",
+                "fr": "Ajout du meilleur message d'erreur si la licence n'a pas pu être analysée",
+                "it": "Aggiunto il messaggio di errore migliore se non è stato possibile analizzare la licenza",
+                "es": "Se agregó el mejor mensaje de error si no se pudo analizar la licencia",
+                "pl": "Dodano lepszy komunikat o błędzie, jeśli nie można przeanalizować licencji",
+                "zh-cn": "如果无法解析许可证，则添加了更好的错误消息"
+            },
+            "1.2.4": {
+                "en": "Table widget was extended with the selected object ID.",
+                "de": "Das Tabellenwidget wurde um die ausgewählte Objekt-ID erweitert.",
+                "ru": "Табличный виджет был расширен с выбранным идентификатором объекта.",
+                "pt": "O widget de tabela foi estendido com o ID do objeto selecionado.",
+                "nl": "Tabelwidget is uitgebreid met de geselecteerde object-ID.",
+                "fr": "Le widget de table a été étendu avec l'ID d'objet sélectionné.",
+                "it": "Il widget della tabella è stato esteso con l'ID oggetto selezionato.",
+                "es": "El widget de tabla se amplió con el ID de objeto seleccionado.",
+                "pl": "Widżet tabeli został rozszerzony o wybrany identyfikator obiektu.",
+                "zh-cn": "表窗口小部件已扩展为具有选定的对象ID。"
+            },
             "1.2.3": {
                 "en": "Small changes in license handling were made",
                 "de": "Kleine Änderungen in der Lizenzverwaltung wurden vorgenommen",
@@ -154,7 +226,7 @@
         "license": "CC BY-NC",
         "dependencies": [
             {
-                "web": ">=1.5.4"
+                "web": ">=3.0.12"
             }
         ],
         "restartAdapters": [

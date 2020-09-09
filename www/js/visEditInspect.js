@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -66,6 +66,7 @@
 //              html - dialog box with html editor
 //              widget - existing widget selector
 //              history - select history instances
+//              password - password
 
 'use strict';
 
@@ -91,10 +92,37 @@ vis = $.extend(true, vis, {
             isHistory = false;
         }
 
+        if (onChange && onChange.match(/^filterType/)) {
+            var typeFilter = onChange.substring('filterType'.length).toLowerCase();
+
+            // Select
+            var tLine = {
+                input: '<select type="text" id="inspect_' + widAttr + '">'
+            };
+            if (onChange) {
+                tLine.onchange = onChange;
+            }
+
+            // get values
+            var values = Object.keys(that.objects)
+                .filter(function (id) {return that.objects[id].type === typeFilter})
+                .filter(function (id) {return typeFilter !== 'chart' || id.match(/^echarts\./)})
+                .map(id => id)
+                .sort();
+
+            if (values.length && values[0] !== undefined) {
+                for (var t = 0; t < values.length; t++) {
+                    tLine.input += '<option value="' + values[t] + '">' + values[t] + '</option>';
+                }
+            }
+            tLine.input += '</select>';
+            return tLine;
+        }
+
         // Edit for Object ID
         var line = [
             {
-                input: '<input type="text" id="inspect_' + widAttr + '" data-onchange="' + (onChange || '')+ '">'
+                input: '<input type="text" id="inspect_' + widAttr + '" data-onchange="' + (onChange || '') + '">'
             }
         ];
 
@@ -1342,6 +1370,9 @@ vis = $.extend(true, vis, {
                 break;
             case 'history':
                 line = this.editHistoryInstance(widAttr.name);
+                break;
+            case 'password':
+                line = '<input type="password" id="inspect_' + widAttr.name + '"/>';
                 break;
             default:
                 line = '<input type="text" id="inspect_' + widAttr.name + '"/>';

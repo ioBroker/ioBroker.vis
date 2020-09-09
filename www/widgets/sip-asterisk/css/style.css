@@ -1,0 +1,84 @@
+.sip-asterisk .widget-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.sip-asterisk .header {
+	text-align: center;
+}
+
+.sip-asterisk .hidden {
+	display: none !important;
+}
+
+.sip-asterisk .label {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.sip-asterisk .phone-number-input {
+	height: 48px;
+	box-sizing: border-box;
+	text-align: center;
+	width: calc(100% - 2px);
+}
+
+.sip-asterisk .button-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 32px;
+}
+.sip-asterisk .status-message {
+	width: 100%;
+	text-align: center;
+}
+
+.sip-asterisk .button-wrapper {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.sip-asterisk .button-wrapper button {
+	padding: 8px;
+}
+
+.sip-asterisk .button-wrapper i {
+	vertical-align: middle;
+}
+
+.sip-asterisk .button-wrapper span {
+	margin-left: 4px;
+}
+
+.sip-asterisk .volume-slider {
+	-webkit-appearance: none;
+	background: lightgray;
+	cursor: pointer;
+	height: 20px;
+	overflow: hidden;
+	outline: none;
+}
+
+.sip-asterisk .volume-slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 0;
+	height: 0;
+	background: dodgerblue;
+	cursor: pointer;
+	box-shadow: -100vw 0 0 100vw dodgerblue;
+}
+
+.sip-asterisk .volume-slider::-moz-range-thumb {
+	width: 0;
+	height: 0;
+	background: dodgerblue;
+	cursor: pointer;
+	box-shadow: -100vw 0 0 100vw dodgerblue;
+	border: none;
+}
+

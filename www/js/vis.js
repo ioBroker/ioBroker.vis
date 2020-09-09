@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2019 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -99,16 +99,16 @@ if (typeof systemDictionary !== 'undefined') {
             "pl": "Nie znaleziono stron!",
             "zh-cn": "找不到页面！"},
         "No valid license found!": {
-            "en": "No valid license found!",
-            "de": "Keine gültige Lizenz gefunden!",
-            "ru": "Действительная лицензия не найдена!",
-            "pt": "Nenhuma licença válida encontrada!",
-            "nl": "Geen geldige licentie gevonden!",
-            "fr": "Aucune licence valide trouvée!",
-            "it": "Nessuna licenza valida trovata!",
-            "es": "No se encontró una licencia válida!",
-            "pl": "Nie znaleziono ważnej licencji!",
-            "zh-cn": "找不到有效的许可证！"
+            "en": "No valid vis license found! Please check vis instance.",
+            "de": "Keine gültige vis Lizenz gefunden! Bitte vis Instanz prüfen.",
+            "ru": "Действительная лицензия не найдена! Пожалуйста, проверьте пример.",
+            "pt": "Nenhuma licença válida encontrada! Por favor, verifique vis instance.",
+            "nl": "Geen geldige licentie gevonden! Controleer de vis-aankondiging.",
+            "fr": "Aucune licence valide trouvée ! Veuillez vérifier vis instance.",
+            "it": "Nessuna licenza valida trovata! Si prega di controllare di persona.",
+            "es": "No se encontró ninguna licencia válida! Por favor, compruebe la instancia de visita.",
+            "pl": "Nie znaleziono ważnej licencji! Proszę sprawdzić vis instance.",
+            "zh-cn": "找不到有效的许可证！请检查vis实例。"
         },
         'No Views found on Server': {
             'en': 'No Views found on Server',
@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.2.3',
+    version: '1.2.12',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -280,6 +280,7 @@ var vis = {
     editMode:           false,
     language:           (typeof systemLang !== 'undefined') ? systemLang : visConfig.language,
     statesDebounce:     {},
+    statesDebounceTime: 1000,
     visibility:         {},
     signals:            {},
     lastChanges:        {},
@@ -326,7 +327,11 @@ var vis = {
 
                 // Inform other widgets, that does not support canJS
                 for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
-                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                    try {
+                        that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                    } catch (e) {
+                        that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                    }
                 }
             }
         });
@@ -370,7 +375,7 @@ var vis = {
                         if (that.statesDebounce[id].state) that._setValue(id, that.statesDebounce[id].state);
                         delete that.statesDebounce[id];
                     }
-                }, 1000, id),
+                }, that.statesDebounceTime, id),
                 state: null
             };
         } else {
@@ -631,6 +636,7 @@ var vis = {
             }
             if (this.views.___settings.reconnectInterval !== undefined) this.conn.setReconnectInterval(this.views.___settings.reconnectInterval);
             if (this.views.___settings.destroyViewsAfter !== undefined) this.views.___settings.destroyViewsAfter = parseInt(this.views.___settings.destroyViewsAfter, 10);
+            if (this.views.___settings.statesDebounceTime > 0) this.statesDebounceTime = parseInt(this.views.___settings.statesDebounceTime);
         }
 
         // Navigation
@@ -1594,7 +1600,8 @@ var vis = {
                     val:     this.states.attr(widget.data.oid + '.val'),
                     data:    widgetData,
                     viewDiv: viewDiv,
-                    view:    view
+                    view:    view,
+                    style:   widget.style
                 });
                 if ($widget.length) {
                     if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
@@ -1607,7 +1614,8 @@ var vis = {
                 canWidget = can.view(widget.tpl, {
                     data:    widgetData,
                     viewDiv: viewDiv,
-                    view:    view
+                    view:    view,
+                    style:   widget.style
                 });
                 if ($widget.length) {
                     if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
@@ -2370,7 +2378,17 @@ var vis = {
                                 if (value === undefined || value === null) {
                                     value = this.states.attr(oids[t].operations[k].arg[a].visOid);
                                 }
-                                string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                try {
+                                    value = JSON.parse(value);
+                                    // if array or object, we format it correctly, else it should be a string
+                                    if (typeof value === 'object') {
+                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = JSON.parse("' + JSON.stringify(value).replace(/\x22/g, '\\\x22') + '");';
+                                    } else {
+                                        string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                    }
+                                } catch (e) {
+                                    string += 'var ' + oids[t].operations[k].arg[a].name + ' = "' + value + '";';
+                                }
                             }
                             var formula = oids[t].operations[k].formula;
                             if (formula && formula.indexOf('widget.') !== -1) {
@@ -2866,9 +2884,13 @@ var vis = {
 
         // Inform other widgets, that do not support canJS
         for (var j = 0, len = this.onChangeCallbacks.length; j < len; j++) {
-            this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
+            try {
+                this.onChangeCallbacks[j].callback(this.onChangeCallbacks[j].arg, id, state.val, state.ack);
+            } catch (e) {
+                this.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+            }
         }
-        if (this.editMode && $.fn.selectId) $.fn.selectId('stateAll', id, state);
+        this.editMode && $.fn.selectId && $.fn.selectId('stateAll', id, state);
     },
     updateStates:       function (data) {
         if (data) {

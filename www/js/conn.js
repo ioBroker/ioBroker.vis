@@ -473,8 +473,8 @@ var servConn = {
     getVersion:       function (callback) {
         if (!this._checkConnection('getVersion', arguments)) return;
 
-        this._socket.emit('getVersion', function (version) {
-            if (callback) callback(version);
+        this._socket.emit('getVersion', function (error, version) {
+            callback && callback(version || error);
         });
     },
     subscribe:        function (idOrArray, callback) {
@@ -497,9 +497,8 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('getVersion', function (version) {
-            if (callback)
-                callback(version);
+        this._socket.emit('getVersion', function (error, version) {
+            callback && callback(version || error);
         });
     },
     readFile:         function (filename, callback, isRemote) {
@@ -755,6 +754,27 @@ var servConn = {
             }
         }
     },
+    getCharts: function (data, callback) {
+        var that = this;
+        // Check if chart view exists
+        this._socket.emit('getObject', '_design/chart', function (err, obj) {
+            if (obj && obj.views && obj.views.chart) {
+                // Read all charts
+                that._socket.emit('getObjectView', 'chart', 'chart', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    for (var i = 0; i < res.rows.length; i++) {
+                        data[res.rows[i].value._id] = res.rows[i].value;
+                    }
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        });
+    },
     // callback(err, data)
     getObjects:       function (useCache, callback) {
         if (typeof useCache === 'function') {
@@ -802,18 +822,10 @@ var servConn = {
                         that._defaultMode = data['system.adapter.' + that.namespace].native.defaultFileMode;
                     }
 
-                    // Read all channels for images
-                    that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
-                        if (err) {
-                            callback(err);
-                            return;
-                        }
-                        for (var i = 0; i < res.rows.length; i++) {
-                            data[res.rows[i].id] = res.rows[i].value;
-                        }
-
-                        // Read all devices for images
-                        that._socket.emit('getObjectView', 'system', 'device', {startkey: '', endkey: '\u9999'}, function (err, res) {
+                    // Read all charts
+                    that.getCharts(data, function () {
+                        // Read all channels for images
+                        that._socket.emit('getObjectView', 'system', 'channel', {startkey: '', endkey: '\u9999'}, function (err, res) {
                             if (err) {
                                 callback(err);
                                 return;
@@ -821,20 +833,33 @@ var servConn = {
                             for (var i = 0; i < res.rows.length; i++) {
                                 data[res.rows[i].id] = res.rows[i].value;
                             }
-
-                            if (that._useStorage) {
-                                that._fillChildren(data);
-                                that._objects = data;
-                                that._enums   = enums;
-
-                                if (typeof storage !== 'undefined') {
-                                    storage.set('objects',  data);
-                                    storage.set('enums',    enums);
-                                    storage.set('timeSync', Date.now());
+                            // Read all devices for images
+                            that._socket.emit('getObjectView', 'system', 'device', {
+                                startkey: '',
+                                endkey: '\u9999'
+                            }, function (err, res) {
+                                if (err) {
+                                    callback(err);
+                                    return;
                                 }
-                            }
+                                for (var i = 0; i < res.rows.length; i++) {
+                                    data[res.rows[i].id] = res.rows[i].value;
+                                }
 
-                            if (callback) callback(err, data);
+                                if (that._useStorage) {
+                                    that._fillChildren(data);
+                                    that._objects = data;
+                                    that._enums = enums;
+
+                                    if (typeof storage !== 'undefined') {
+                                        storage.set('objects', data);
+                                        storage.set('enums', enums);
+                                        storage.set('timeSync', Date.now());
+                                    }
+                                }
+
+                                if (callback) callback(err, data);
+                            });
                         });
                     });
                 });

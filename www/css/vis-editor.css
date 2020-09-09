@@ -28,8 +28,8 @@ body {
 .vis_container_edit {
     width: -webkit-calc(100% - 5px)!important;
     width: calc(100% - 2px)!important;
-    height: -webkit-calc(100% - 30px)!important;
-    height: calc(100% - 30px)!important;
+    height: -webkit-calc(100% - 32px)!important;
+    height: calc(100% - 32px)!important;
     position: relative;
     overflow: auto;
     border-bottom-width: 0;
@@ -181,7 +181,7 @@ body {
 }
 
 #attr_wrap .vis-edit-textbox-with-button {
-    width: calc(100% - 30px);
+    width: calc(100% - 32px);
 }
 .vis-edit-percent-calc {
     margin-top: -2px !important;
@@ -631,6 +631,7 @@ body {
     height: -webkit-calc(100% - 70px);
     height: calc(100% - 70px);
     overflow: auto;
+    width: calc(100% - 5px);
 }
 
 #attr_wrap {

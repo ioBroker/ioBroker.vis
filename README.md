@@ -159,6 +159,12 @@ If user changes the view or at start the variables will be filled by vis with
 
 You can write the JSON-string or Object into control.command as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case the instance and data will be taken from JSON object.
 
+Example for javascript adapter:
+
+```
+setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data": ""});
+```
+
 ## Default view
 You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
 
@@ -186,7 +192,30 @@ Notice that this settings is valid only for reconnection and not for the first c
 
 ![Dark](img/dark_screen.png)
 
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### __WORK IN PROGRESS__
+-->
+
 ## Changelog
+### 1.2.12 (2020-09-08)
+* (foxriver76) only parse arrays and json objects, not booleans, normal strings etc
+
+### 1.2.11 (2020-08-25)
+* (bluefox) The error message about the non-found chart view was fixed. 
+
+### 1.2.10 (2020-08-23)
+* (gsicilia82/fceller) JSON strings will be parsed in VIS bindings
+
+### 1.2.9 (2020-08-22)
+* (bluefox) Charts are now supported
+
+### 1.2.6 (2020-03-22)
+* (bluefox) Added the better error message if license could not be parsed
+
+### 1.2.4 (2020-02-11)
+* (bluefox) Table widget was extended with the selected object ID.
+
 ### 1.2.3 (2019-12-14)
 * (bluefox) Small changes in license handling were made
 
@@ -421,7 +450,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2019 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2020 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  
