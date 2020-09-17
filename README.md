@@ -51,6 +51,7 @@ Following operations are supported:
 - `random(R)` - Math.random() * R, or just Math.random() if no argument
 - `formatValue(decimals)` - format value according to system settings and use decimals
 - `date(format)` - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
+- `momentDate(format)` - format value as date using Moment.js. [Approved formats must be entered according to the moment.js library](https://momentjs.com/docs/#/displaying/format/)
 - `array(element1,element2[,element3,element4])` - returns the element of index. e.g.: `{id.ack;array(ack is false,ack is true)}`
 
 You can use this pattern in any text, like
