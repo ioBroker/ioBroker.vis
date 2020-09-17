@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.12",
+        "version": "1.3.0",
         "title": "Visualisation",
         "titleLang": {
             "en": "Visualisation",
@@ -16,6 +16,18 @@
             "zh-cn": "可视化"
         },
         "news": {
+            "1.3.0": {
+                "en": "On pending getStates, try again instead of drop\nFixed the file manager typos\nAdded momentDate for the bindings",
+                "de": "Versuchen Sie es bei ausstehenden getStates erneut, anstatt es zu löschen\nDie Tippfehler im Dateimanager wurden behoben\nMomentDate für die Bindungen hinzugefügt",
+                "ru": "В ожидании getStates попробуйте снова вместо того, чтобы отбрасывать\nИсправлены опечатки в файловом менеджере\nДобавлен моментDate для привязок",
+                "pt": "Em getStates pendentes, tente novamente em vez de descartar\nCorrigidos erros de digitação do gerenciador de arquivos\nAdicionado momentDate para as ligações",
+                "nl": "Probeer het op getStates in afwachting opnieuw in plaats van te laten vallen\nTypefouten in bestandsbeheer opgelost\nMomentDate toegevoegd voor de bindingen",
+                "fr": "Sur getStates en attente, réessayez au lieu de supprimer\nCorrection des fautes de frappe du gestionnaire de fichiers\nMomentDate ajouté pour les fixations",
+                "it": "In attesa di getStates, riprova invece di rilasciare\nRisolti gli errori di battitura del file manager\nMomentDate aggiunto per le associazioni",
+                "es": "En getStates pendientes, inténtelo de nuevo en lugar de soltar\nSe corrigieron los errores tipográficos del administrador de archivos\nMomento añadido Fecha para las fijaciones",
+                "pl": "W oczekiwaniu na getStates spróbuj ponownie zamiast upuszczać\nNaprawiono literówki w menedżerze plików\nDodano momentDate dla wiązań",
+                "zh-cn": "在待处理的getStates上，重试而不是drop\n修复了文件管理器输入错误\n为绑定添加了momentDate"
+            },
             "1.2.12": {
                 "en": "only parse arrays and json objects, not booleans, normal strings etc",
                 "de": "Analysieren Sie nur Arrays und JSON-Objekte, keine Booleschen Werte, normale Zeichenfolgen usw.",
