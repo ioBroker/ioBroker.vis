@@ -243,7 +243,19 @@
             "star":             {"en": "star",                      "de": "Stern",                  "ru": "звезда"},
             "arrow":            {"en": "arrow",                     "de": "Pfeil",                  "ru": "стрела"},
             "scaleWidth":       {"en": "Scale width",               "de": "breiten Skala",          "ru": "Масштаб по ширине"},
-            "scaleHeight":      {"en": "Scale height",              "de": "höhen Skala",            "ru": "Масштаб по высоте"}
+            "scaleHeight":      {"en": "Scale height",              "de": "höhen Skala",            "ru": "Масштаб по высоте"},
+            "autoFocus": {
+                "en": "Auto focus",
+                "de": "Autofokus",
+                "ru": "Автофокус",
+                "pt": "Auto-foco",
+                "nl": "Autofocus",
+                "fr": "Mise au point automatique",
+                "it": "Messa a fuoco automatica",
+                "es": "Enfoque automático",
+                "pl": "Automatyczne ustawianie ostrości",
+                "zh-cn": "自动对焦"
+            }
         });
     }
 
@@ -2575,10 +2587,12 @@
         data-vis-set="basic"
         data-vis-type="filter"
         data-vis-name="filter - dropdown"
-        data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100">
+        data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
         <div class="vis-widget-body">
-            <select id="" name="">
+            <select id="" name="" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
                 <option value=""><%= _('all') %></option>
             </select>
         </div>
@@ -2844,11 +2858,20 @@
         data-vis-set="basic"
         data-vis-type="ctrl"
         data-vis-name="Bool Checkbox"
-        data-vis-attrs="oid;html_prepend;html_append">
+        data-vis-attrs="oid;html_prepend;html_append;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
 			<%== this.data.attr('html_prepend') %>
-			<input type="checkbox" name="<%= this.data.attr('wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.checkbox(el) %>/>
+			<input
+			    type="checkbox"
+			    name="<%= this.data.attr('wid') %>_checkbox"
+			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
+			    id="<%= this.data.attr('wid') %>_checkbox"
+			    data-oid="<%= this.data.attr('oid') %>"
+			    <%= (el) -> vis.binds.basic.checkbox(el) %>
+            />
 			<%== this.data.attr('html_append') %>
         </div>
     </div>
@@ -2861,11 +2884,17 @@
         data-vis-type="ctrl"
         data-vis-update-style="true"
         data-vis-name="Input val"
-        data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox;readOnly/checkbox">
+        data-vis-attrs="oid;html_prepend;html_append;numeric/checkbox;min;max;autoSet/checkbox;readOnly/checkbox;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="background: white; color: black; border: 2px inset" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body">
 			<%== this.data.attr('html_prepend') %>
-			<input type="text" <%= (this.data.attr('readOnly') === true || this.data.attr('readOnly') === 'true') ? 'readonly' : '' %> data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"/>
+			<input type="text"
+			    <%= (this.data.attr('readOnly') === true || this.data.attr('readOnly') === 'true') ? 'readonly ' : '' %>
+			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus ' : '' %>
+			    data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.basic.input(el, this.data) %> style="width: calc(100% - 5px);"
+            />
 			<%== this.data.attr('html_append') %>
         </div>
     </div>
@@ -2878,11 +2907,13 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueBoolSelect.png"></img>'
         data-vis-type="ctrl"
         data-vis-name="Bool Select"
-        data-vis-attrs="oid;html_prepend;html_append;text_true;text_false">
+        data-vis-attrs="oid;html_prepend;html_append;text_true;text_false;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:false" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body"  style="overflow:false">
 			<%== this.data.attr('html_prepend') %>
-			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>">
+			<select id="<%= this.data.attr('wid') %>_select" data-oid="<%= this.data.attr('oid') %>" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
 				<option value="0" selected='selected'><%= this.data.attr('text_false') %></option>
 				<option value="1"><%= this.data.attr('text_true') %></option>
 			</select>

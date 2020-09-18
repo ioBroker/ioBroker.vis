@@ -199,6 +199,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### 1.3.1 (2020-09-18)
+* (bluefox) Added the auto-focus option to the input widgets
+
 ### 1.3.0 (2020-09-17)
 * (foxriver76) on pending getStates, try again instead of drop
 * (foxriver76) fixed the file manager typos

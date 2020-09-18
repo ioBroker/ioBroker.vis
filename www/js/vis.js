@@ -1774,7 +1774,9 @@ var vis = {
                     var $view = $('#visview_' + _viewDiv);
 
                     // Get the view, if required, from Container
-                    if ($view.parent().attr('id') !== 'vis_container') $view.appendTo('#vis_container');
+                    if ($view.parent().attr('id') !== 'vis_container') {
+                        $view.appendTo('#vis_container');
+                    }
 
                     var oldView = that.activeView;
                     that.postChangeView(_viewDiv, _view, callback);
@@ -1845,6 +1847,19 @@ var vis = {
             });
         }
     },
+    selectAutoFocus: function () {
+        var $view = $('#visview_' + this.activeView);
+        var $inputs = $view.find('input[autofocus]');
+        if (!$inputs.length) {
+            $inputs = $view.find('select[autofocus]');
+        }
+        if ($inputs.length) {
+            if ($inputs[0] !== document.activeElement) {
+                $inputs[0].focus();
+            }
+            $inputs[0].select();
+        }
+    },
     postChangeView:     function (viewDiv, view, callback) {
         this.activeView = view;
         this.activeViewDiv = viewDiv;
@@ -1869,6 +1884,8 @@ var vis = {
         for (var i = 0; i < this.navChangeCallbacks.length; i++) {
             this.navChangeCallbacks[i](viewDiv, view);
         }
+
+        this.selectAutoFocus();
 
         // --------- Editor -----------------
         if (this.editMode) {
@@ -2209,11 +2226,11 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatMomentDate: function formatMomentDate(dateObj, _format) {     
+    formatMomentDate: function formatMomentDate(dateObj, _format) {
                 if (!dateObj) return '';
                 var type = typeof dateObj;
                 if (type === 'string') dateObj = moment(dateObj);
-        
+
                 if (type !== 'object') {
                     var j = parseInt(dateObj, 10);
                     if (j == dateObj) {
@@ -2229,7 +2246,7 @@ var vis = {
                     }
                 }
                 var format = _format || this.dateFormat || 'DD.MM.YYYY';
-                
+
                 return moment(dateObj).format(format);
     },
     formatDate:         function formatDate(dateObj, isDuration, _format) {
@@ -2495,7 +2512,7 @@ var vis = {
                             break;
                         case 'momentDate':
                             value = this.formatMomentDate(value, oids[t].operations[k].arg);
-                            break;                            
+                            break;
                         case 'min':
                             value = parseFloat(value);
                             value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
