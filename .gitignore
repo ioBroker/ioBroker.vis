@@ -32,3 +32,4 @@
 /package-lock.json
 admin/i18n/*/flat.txt
 admin/i18n/flat.txt
+*.vis.code-workspace
