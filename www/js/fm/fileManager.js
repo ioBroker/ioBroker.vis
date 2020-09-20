@@ -130,7 +130,7 @@ var fmFolder    =    'js/fm/';
             'Preview'                           : {'de': 'Vorschau',                       'en': 'Preview',                     'ru': 'Предпросмотр'},
             'Play'                              : {'de': 'Play',                           'en': 'Play',                        'ru': 'Воспроизвести'},
             'Stop'                              : {'de': 'Stop',                           'en': 'Stop',                        'ru': 'Стоп'},
-            'Show all files'                    : {'de': 'Alle Datein anzeigen',           'en': 'Show all files',              'ru': 'Показать все'},
+            'Show all files'                    : {'de': 'Alle Dateien anzeigen',           'en': 'Show all files',              'ru': 'Показать все'},
             'File name:'                        : {'de': 'Datei Name:',                    'en': 'File name:',                  'ru': 'Имя файла: '},
             'Path:'                             : {'de': 'Pfad:',                          'en': 'Path:',                       'ru': 'Путь к файлу: '},
             'Save'                              : {'de': 'Speichern',                      'en': 'Save',                        'ru': 'Сохранить'},
@@ -138,8 +138,8 @@ var fmFolder    =    'js/fm/';
             'Cancel'                            : {'de': 'Abbrechen',                      'en': 'Cancel',                      'ru': 'Отмена'},
             'Upload to'                         : {'de': 'Upload nach',                    'en': 'Upload to',                   'ru': 'Загрузить в'},
             'Dropbox'                           : {'de': 'Dropbox',                        'en': 'Dropbox',                     'ru': 'Dropbox'},
-            'Drop the files here'               : {'de': 'Hier Datein reinziehen oder clicken', 'en': 'Drop the files or click here',         'ru': 'Перетяните файлы сюда или нажмите'},
-            'Close'                             : {'de': 'Schliesen',                      'en': 'Close',                       'ru': 'Закрыть'},
+            'Drop the files here'               : {'de': 'Hier Dateien reinziehen oder klicken', 'en': 'Drop the files or click here',         'ru': 'Перетяните файлы сюда или нажмите'},
+            'Close'                             : {'de': 'Schließen',                      'en': 'Close',                       'ru': 'Закрыть'},
             'OK'                                : {'de': 'OK',                             'en': 'OK',                          'ru': 'Ok'},
             'Cannot create folder'              : {'de': 'Ordner erstellen nicht möglich', 'en': 'Failed to create folder',     'ru': 'Невозможно создать папку'},
             'New name'                          : {'de': 'Neuer Name',                     'en': 'New name',                    'ru': 'Новое имя'},
@@ -964,7 +964,7 @@ var fmFolder    =    'js/fm/';
                                     name = name.join('.');
                                     fmConn.writeFile64(o.path + name, uploadArray[0].value.split('base64,')[1], function (err, data) {
 
-                                        // TODO Leerzeichem im Dateinmaen Berucksichtigen (da in classen keine leertzeichen sein dürfen)
+                                        // TODO Leerzeichem im Dateinnamen berücksichtigen (da in Klassen keine Leerzeichen sein dürfen)
                                         var class_name = uploadArray[0].name.split('.')[0].replace(" ", "_");
                                         $("." + class_name).remove();
 

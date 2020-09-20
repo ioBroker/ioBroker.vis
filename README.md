@@ -199,6 +199,14 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### 1.3.1 (2020-09-18)
+* (bluefox) Added the auto-focus option to the input widgets
+
+### 1.3.0 (2020-09-17)
+* (foxriver76) on pending getStates, try again instead of drop
+* (foxriver76) fixed the file manager typos
+* (Scrounger) Added momentDate for the bindings
+
 ### 1.2.12 (2020-09-08)
 * (foxriver76) only parse arrays and json objects, not booleans, normal strings etc
 

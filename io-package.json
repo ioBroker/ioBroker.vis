@@ -1,21 +1,32 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.2.12",
-        "title": "Visualisation",
-        "titleLang": {
-            "en": "Visualisation",
-            "de": "Visualisierung",
-            "ru": "Визуализация",
-            "pt": "Visualização",
-            "nl": "Visualisatie",
-            "fr": "Visualisation",
-            "it": "Visualizzazione",
-            "es": "Visualización",
-            "pl": "Wizualizacja",
-            "zh-cn": "可视化"
-        },
+        "version": "1.3.1",
         "news": {
+            "1.3.1": {
+                "en": "Added the auto-focus option to the input widgets",
+                "de": "Die Autofokus-Option wurde zu den Eingabe-Widgets hinzugefügt",
+                "ru": "Добавлена опция автофокуса для виджетов ввода",
+                "pt": "Adicionada a opção de foco automático aos widgets de entrada",
+                "nl": "De auto-focus-optie toegevoegd aan de invoerwidgets",
+                "fr": "Ajout de l'option de mise au point automatique aux widgets d'entrée",
+                "it": "Aggiunta l'opzione di messa a fuoco automatica ai widget di input",
+                "es": "Se agregó la opción de enfoque automático a los widgets de entrada.",
+                "pl": "Dodano opcję automatycznego ustawiania ostrości do widżetów wejściowych",
+                "zh-cn": "在输入小部件中添加了自动对焦选项"
+            },
+            "1.3.0": {
+                "en": "On pending getStates, try again instead of drop\nFixed the file manager typos\nAdded momentDate for the bindings",
+                "de": "Versuchen Sie es bei ausstehenden getStates erneut, anstatt es zu löschen\nDie Tippfehler im Dateimanager wurden behoben\nMomentDate für die Bindungen hinzugefügt",
+                "ru": "В ожидании getStates попробуйте снова вместо того, чтобы отбрасывать\nИсправлены опечатки в файловом менеджере\nДобавлен моментDate для привязок",
+                "pt": "Em getStates pendentes, tente novamente em vez de descartar\nCorrigidos erros de digitação do gerenciador de arquivos\nAdicionado momentDate para as ligações",
+                "nl": "Probeer het op getStates in afwachting opnieuw in plaats van te laten vallen\nTypefouten in bestandsbeheer opgelost\nMomentDate toegevoegd voor de bindingen",
+                "fr": "Sur getStates en attente, réessayez au lieu de supprimer\nCorrection des fautes de frappe du gestionnaire de fichiers\nMomentDate ajouté pour les fixations",
+                "it": "In attesa di getStates, riprova invece di rilasciare\nRisolti gli errori di battitura del file manager\nMomentDate aggiunto per le associazioni",
+                "es": "En getStates pendientes, inténtelo de nuevo en lugar de soltar\nSe corrigieron los errores tipográficos del administrador de archivos\nMomento añadido Fecha para las fijaciones",
+                "pl": "W oczekiwaniu na getStates spróbuj ponownie zamiast upuszczać\nNaprawiono literówki w menedżerze plików\nDodano momentDate dla wiązań",
+                "zh-cn": "在待处理的getStates上，重试而不是drop\n修复了文件管理器输入错误\n为绑定添加了momentDate"
+            },
             "1.2.12": {
                 "en": "only parse arrays and json objects, not booleans, normal strings etc",
                 "de": "Analysieren Sie nur Arrays und JSON-Objekte, keine Booleschen Werte, normale Zeichenfolgen usw.",
@@ -193,6 +204,19 @@
                 "es": "Se admiten nuevos enlaces especiales\nSe corrigió el error con los cambios de vista rápida\ncorregir (jqui - ctrl - IconState / val - Icon Bool)",
                 "pl": "Nowe powiązania specjalne są obsługiwane\nNaprawiono błąd związany z szybkimi zmianami widoku\nnapraw (jqui - ctrl - IconState / val - Icon Bool)"
             }
+        },
+        "title": "Visualisation",
+        "titleLang": {
+            "en": "Visualisation",
+            "de": "Visualisierung",
+            "ru": "Визуализация",
+            "pt": "Visualização",
+            "nl": "Visualisatie",
+            "fr": "Visualisation",
+            "it": "Visualizzazione",
+            "es": "Visualización",
+            "pl": "Wizualizacja",
+            "zh-cn": "可视化"
         },
         "desc": {
             "en": "Graphical user interface for iobroker",

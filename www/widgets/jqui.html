@@ -1605,11 +1605,22 @@
         data-vis-set="jqui"
         data-vis-type="ctrl"
         data-vis-name="Input"
-        data-vis-attrs="label[Input];oid;asString/checkbox;digits[0]/slider,0,10,1;size[10]/slider,10,100,1">
+        data-vis-attrs="label[Input];oid;asString/checkbox;digits[0]/slider,0,10,1;size[10]/slider,10,100,1;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:275px;height:44px;" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.input(el, data.digits, data.asString); %> />
+            <input
+                type="text"
+                name="<%= this.data.attr('wid') %>_input"
+                id="<%= this.data.attr('wid') %>_input"
+                value=""
+                size="<%= this.data.attr('size') %>"
+                data-oid="<%= this.data.attr('oid') %>"
+                <%= (el) -> vis.binds.jqueryui.input(el, data.digits, data.asString); %>
+			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? ' autofocus ' : '' %>
+            />
         </div>
     </div>
 </script>
@@ -1667,13 +1678,25 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputDate" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 110px; height: 25px; overflow: visible; "> <div class="vis-widget-prev-body"> <input type="text" value="2015-09-20" size="10" class="ui-widget ui-button ui-corner-all ui-state-default" style="font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; text-align: left; outline: none; cursor: text;text-align:center;"></div> </div></div>'
         data-vis-name="ctrl - Input Date"
-        data-vis-attrs="oid/id;size[10]/slider,1,50,1">
+        data-vis-attrs="oid/id;size[10]/slider,1,50,1;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:200px;height:40px;overflow: visible;text-align:center;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body">
-            <input type="text"  style="text-align:center;padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDate(el); %> />
+            <input
+                type="text"
+                style="text-align: center; padding-left: 5px"
+                name="<%= this.data.attr('wid') %>_input"
+                id="<%= this.data.attr('wid') %>_input"
+                value=""
+                size="<%= this.data.attr('size') %>"
+                data-oid="<%= this.data.attr('oid') %>"
+                <%= (el) -> vis.binds.jqueryui.inputDate(el); %>
+			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
+            />
         </div>
     </div>
 </script>
@@ -1684,13 +1707,25 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputDatetime" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 110px; height: 39px; overflow: visible; text-align: center;"> <div class="vis-widget-prev-body"> <input type="text" style="text-align: left; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; outline: none; cursor: text; " value="18:00:00" size="5" class="ui-state-default ui-widget ui-button ui-corner-all"> </div> </div></div>'
         data-vis-name="ctrl - Input Datetime"
-        data-vis-attrs="oid;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox;stepMinute/slider,1,30,1;showGrid/checkbox">
+        data-vis-attrs="oid;size/slider,1,50,1;timeOnly/checkbox;hideSeconds/checkbox;stepMinute/slider,1,30,1;showGrid/checkbox;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:200px;height:40px;overflow: visible;text-align:center;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
 			<div class="editmode-helper" />
 		<% } %>
         <div class="vis-widget-body">
-            <input type="text" style="text-align: center; padding-left: 5px" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" value="" size="<%= this.data.attr('size') %>" data-oid="<%= this.data.attr('oid') %>" <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds'), stepMinute: data.attr('stepMinute'), showGrid: data.attr('showGrid')}); %> />
+            <input
+                type="text"
+                style="text-align: center; padding-left: 5px"
+                name="<%= this.data.attr('wid') %>_input"
+                id="<%= this.data.attr('wid') %>_input"
+                value=""
+                size="<%= this.data.attr('size') %>"
+                data-oid="<%= this.data.attr('oid') %>"
+                <%= (el) -> vis.binds.jqueryui.inputDatetime(el, {timeOnly: data.attr('timeOnly'), showSecond: !data.attr('hideSeconds'), stepMinute: data.attr('stepMinute'), showGrid: data.attr('showGrid')}); %>
+			    <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
+            />
         </div>
     </div>
 </script>
@@ -1700,11 +1735,21 @@
         data-vis-set="jqui"
         data-vis-prev='<div id="prev_tplJquiInputSet" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 32px; overflow: visible;"> <div class="vis-widget-prev-body"> <label></label> <input type="text" value="Input" size="2" style="font-size: inherit; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; padding-left: 5px; padding-right: 5px; text-align: left; outline: none; cursor: text;height:14px" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> <input type="button" style="padding-left: 5px; padding-right: 5px;" value="Set" class="ui-button ui-widget ui-state-default ui-corner-all" role="button"> </div> </div></div>'
         data-vis-name="ctrl - Input + Set-Button"
-        data-vis-attrs="title;buttontext[Text];oid;unit;asString/checkbox;digits/slider,0,10,1;size/slider,1,50,1">
+        data-vis-attrs="title;buttontext[Text];oid;unit;asString/checkbox;digits/slider,0,10,1;size/slider,1,50,1;"
+        data-vis-attrs0="autoFocus/checkbox;"
+>
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:300px;height:44px;overflow:visible" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <label for="<%= this.data.attr('wid') %>_input"><%== this.data.attr('title') %></label>
-            <input type="text" name="<%= this.data.attr('wid') %>_input" id="<%= this.data.attr('wid') %>_input" data-no-style="<%= this.data.attr('no_style') %>" size="<%= this.data.attr('size') %>" style="font-size: 1.1em !important; padding: 0 0; "/>
+            <input
+                type="text"
+                name="<%= this.data.attr('wid') %>_input"
+                id="<%= this.data.attr('wid') %>_input"
+                data-no-style="<%= this.data.attr('no_style') %>"
+                size="<%= this.data.attr('size') %>"
+                style="font-size: 1.1em !important; padding: 0 0"
+                <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %>
+            />
             <%== this.data.attr('unit') %>
             <input type="button" style="height: 100%" data-oid="<%= this.data.attr('oid') %>" name="<%= this.data.attr('wid') %>_set" id="<%= this.data.attr('wid') %>_set" value="<%== this.data.attr('buttontext') %>"  data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.inputset(el, data.digits, data.asString); %>/>
         </div>
