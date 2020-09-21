@@ -252,7 +252,9 @@
                     if ($dlg.data('preload')) $dlg.html(html);
 
                     if (persistent) {
-                        if (options.setId) vis.setValue(options.setId, options.setValue);
+                        if (options.setId) {
+                            vis.setValue(options.setId, options.setValue);
+                        }
                         $dlg.dialog('open');
                         $dlg.parent().css('z-index', 998);
                         $dlg.parent().find('.ui-widget-header button .ui-button-text').html('');
@@ -1563,7 +1565,7 @@
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <%== this.data.attr('html_prepend') %>
-            <button style="width:100%; height:100%" data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.button(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> ><%== this.data.attr('buttontext') %></button>
+            <button style="width: 100%; height: 100%" data-no-style="<%= this.data.attr('no_style') %>" <%= (el) -> vis.binds.jqueryui.button(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view:data.attr('nav_view'),hideOptions:{effect:data.attr('hide_effect'),options:{},duration:data.attr('hide_duration')},showOptions:{effect:data.attr('show_effect'),options:{},duration:data.attr('show_duration')}}) %> ><%== this.data.attr('buttontext') %></button>
             <%== this.data.attr('html_append') %>
         </div>
     </div>
@@ -1576,10 +1578,15 @@
         data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 100px; height: 28px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;">&nbsp;Nav</div></div></div>'
         data-vis-name="navigation - Icon"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
-    <div data-vis-nav="<%= this.data.attr('nav_view') %>" class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>" style="width: 76px; height: 76px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>>
+    <div
+        data-vis-nav="<%= this.data.attr('nav_view') %>"
+        class="vis-widget ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state <%== this.data.attr('class') %>"
+        style="width: 76px; height: 76px;"
+        id="<%= this.data.attr('wid') %>"
+        <%= (el) -> vis.binds.jqueryui.classes(el); vis.binds.jqueryui.navigationActive(el, data.attr('nav_view')); vis.binds.basic.navigation(el, {nav_view: data.attr('nav_view'), hideOptions: {effect: data.attr('hide_effect'), options: {}, duration: data.attr('hide_duration')}, showOptions: {effect: data.attr('show_effect'), options: {}, duration: data.attr('show_duration')}}) %>
+    >
         <div class="vis-widget-body">
             <img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %>
-
         </div>
     </div>
 </script>
