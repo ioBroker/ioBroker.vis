@@ -3245,6 +3245,11 @@ function main($, onReady) {
                         _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
                     }
                 }
+            } else if (!vis.editMode && vis.bindings[_id] && (_id === 'username' || _id === 'login')) {
+                for (var k = 0; k < vis.bindings[_id].length; k++) {
+                    var _widget = vis.views[vis.bindings[_id][k].view].widgets[vis.bindings[_id][k].widget];
+                    _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
+                }
             }
         }
         try {
