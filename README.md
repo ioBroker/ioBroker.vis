@@ -199,9 +199,10 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
-### 1.3.2 (2020-09-21)
+### 1.3.3 (2020-09-21)
 * (bluefox) Return de-bounce settings back
 * (bluefox) Corrected error with {username} binding
+* (bluefox) Fixed "show last change" option
 
 ### 1.3.1 (2020-09-18)
 * (bluefox) Added the auto-focus option to the input widgets

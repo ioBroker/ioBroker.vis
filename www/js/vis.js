@@ -250,7 +250,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.3.2',
+    version: '1.3.3',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1481,7 +1481,7 @@ var vis = {
         } else if (data['lc-position-horz'] === 'middle') {
             css.left = 'calc(50% + ' + offset + 'px)';
         }
-        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']) + '</div>';
+        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.' + (data['lc-type'] === 'last-change' ? 'lc' : 'ts')), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']) + '</div>';
         $('#' + wid).prepend($(text).css(css)).css('overflow', 'visible');
     },
     isUserMemberOf:     function (user, userGroups) {
@@ -2906,7 +2906,8 @@ var vis = {
                 var uWidget = document.getElementById(update.widget);
                 if (uWidget) {
                     var $lc = $(uWidget).find('.vis-last-change');
-                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), $lc.data('interval') === 'true'));
+                    var isInterval = $lc.data('interval');
+                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), isInterval === 'true' || isInterval === true));
                 }
             }
         }
