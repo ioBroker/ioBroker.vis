@@ -241,7 +241,31 @@ if (typeof systemDictionary !== 'undefined') {
             "es": "Vista deshabilitada para el usuario <b>%s</b>",
             "pl": "Widok wyłączony dla użytkownika <b>%s</b>",
             "zh-cn": "用户<b>%s</b>的视图已停用"
-        }
+        },
+        "Today": {
+            "en": "Today",
+            "de": "Heute",
+            "ru": "Cегодня",
+            "pt": "Hoje",
+            "nl": "Vandaag",
+            "fr": "Aujourd'hui",
+            "it": "Oggi",
+            "es": "Hoy",
+            "pl": "Dzisiaj",
+            "zh-cn": "今天"
+        },
+        "Yesterday": {
+            "en": "Yesterday",
+            "de": "Gestern",
+            "ru": "Вчерашний день",
+            "pt": "Ontem",
+            "nl": "Gisteren",
+            "fr": "Hier",
+            "it": "Ieri",
+            "es": "Ayer",
+            "pl": "Wczoraj",
+            "zh-cn": "昨天"
+        }        
     });
 }
 
@@ -2226,28 +2250,36 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatMomentDate: function formatMomentDate(dateObj, _format) {
-                if (!dateObj) return '';
-                var type = typeof dateObj;
-                if (type === 'string') dateObj = moment(dateObj);
+    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday = false) {
+        if (!dateObj) return '';
+        var type = typeof dateObj;
+        if (type === 'string') dateObj = moment(dateObj);
 
-                if (type !== 'object') {
-                    var j = parseInt(dateObj, 10);
-                    if (j == dateObj) {
-                        // may this is interval
-                        if (j < 946681200) {
-                            dateObj = moment(dateObj);
-                        } else {
-                            // if less 2000.01.01 00:00:00
-                            dateObj = (j < 946681200000) ? moment(j * 1000) : moment(j);
-                        }
-                    } else {
-                        dateObj = moment(dateObj);
-                    }
+        if (type !== 'object') {
+            var j = parseInt(dateObj, 10);
+            if (j == dateObj) {
+                // may this is interval
+                if (j < 946681200) {
+                    dateObj = moment(dateObj);
+                } else {
+                    // if less 2000.01.01 00:00:00
+                    dateObj = (j < 946681200000) ? moment(j * 1000) : moment(j);
                 }
-                var format = _format || this.dateFormat || 'DD.MM.YYYY';
+            } else {
+                dateObj = moment(dateObj);
+            }
+        }
+        var format = _format || this.dateFormat || 'DD.MM.YYYY';
 
-                return moment(dateObj).format(format);
+        if (useTodayOrYesterday) {
+            if (dateObj.isSame(moment(), 'day')) {
+                return moment(dateObj).format(format.replace('dddd', `[${_('Today')}]`).replace('ddd', `[${_('Today')}]`).replace('dd', `[${_('Today')}]`));
+            } else if (dateObj.isSame(moment().subtract(1, 'day'), 'day')) {
+                return moment(dateObj).format(format.replace('dddd', `[${_('Yesterday')}]`).replace('ddd', `[${_('Yesterday')}]`).replace('dd', `[${_('Yesterday')}]`));
+            }
+        } else {
+            return moment(dateObj).format(format);
+        }
     },
     formatDate:         function formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
@@ -2511,7 +2543,17 @@ var vis = {
                             value = this.formatDate(value, oids[t].operations[k].arg);
                             break;
                         case 'momentDate':
-                            value = this.formatMomentDate(value, oids[t].operations[k].arg);
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                let params = oids[t].operations[k].arg.split(',');
+
+                                if (params.length === 1) {
+                                    value = this.formatMomentDate(value, params[0]);
+                                } else if (params.length === 2) {
+                                    value = this.formatMomentDate(value, params[0], params[1]);
+                                } else {
+                                    value = 'error';
+                                }
+                            }
                             break;
                         case 'min':
                             value = parseFloat(value);
