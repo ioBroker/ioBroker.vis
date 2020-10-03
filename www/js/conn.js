@@ -715,7 +715,10 @@ var servConn = {
             if (this.gettingStates > 0) {
                 // fix for slow devices -> if getStates still in progress, wait and try again
                 console.log('Trying to get states again, because emitted getStates still pending');
-                setTimeout(() => this.getStates(IDs, callback), 50);
+                var that = this;
+                setTimeout(function () {
+                    that.getStates(IDs, callback);
+                }, 50);
                 return;
             }
 
