@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.3",
+        "version": "1.3.4",
         "news": {
+            "1.3.4": {
+                "en": "Corrected the error on older devices",
+                "de": "Der Fehler auf älteren Geräten wurde behoben",
+                "ru": "Исправлена ошибка на старых устройствах",
+                "pt": "Corrigido o erro em dispositivos mais antigos",
+                "nl": "De fout op oudere apparaten gecorrigeerd",
+                "fr": "Correction de l'erreur sur les appareils plus anciens",
+                "it": "Corretto l'errore sui dispositivi meno recenti",
+                "es": "Corregido el error en dispositivos más antiguos.",
+                "pl": "Poprawiono błąd na starszych urządzeniach",
+                "zh-cn": "更正了旧设备上的错误"
+            },
             "1.3.3": {
                 "en": "Return de-bounce settings back\nCorrected error with {username} binding",
                 "de": "Geben Sie die De-Bounce-Einstellungen zurück\nFehler mit Bindung {Benutzername} behoben",

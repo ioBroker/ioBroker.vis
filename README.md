@@ -199,6 +199,9 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### 1.3.4 (2020-10-04)
+* (foxriver76) Corrected the error on older devices 
+
 ### 1.3.3 (2020-09-21)
 * (bluefox) Return de-bounce settings back
 * (bluefox) Corrected error with {username} binding
