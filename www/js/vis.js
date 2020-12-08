@@ -2395,8 +2395,8 @@ var vis = {
         put(s);
         return result;
     },
-    extractBinding:     function (format) {
-        if (this.editMode || !format) return null;
+    extractBinding:     function (format, ignoreEditMode = true) {
+        if (ignoreEditMode && this.editMode || !format) return null;
         if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
 
         var result = extractBinding(format);
@@ -2429,8 +2429,8 @@ var vis = {
                 return undefined;
         }
     },
-    formatBinding:      function (format, view, wid, widget) {
-        var oids = this.extractBinding(format);
+    formatBinding:      function (format, view, wid, widget, ignoreEditMode = true) {
+        var oids = this.extractBinding(format, ignoreEditMode);
         for (var t = 0; t < oids.length; t++) {
             var value;
             if (oids[t].visOid) {
