@@ -320,6 +320,7 @@ var vis = {
     debounceInterval:   700,
     user:               '',   // logged in user
     loginRequired:      false,
+    sound:              $('<audio id="external_sound" autoplay muted></audio>').appendTo('body'),
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -3583,20 +3584,10 @@ function main($, onReady) {
                             }
                             // force read from server
                             href += '?' + Date.now();
-
-                            if (typeof Audio !== 'undefined') {
-                                var snd = new Audio(href); // buffers automatically when created
-                                snd.play();
-                            } else {
-                                //noinspection JSJQueryEfficiency
-                                var $sound = $('#external_sound');
-                                if (!$sound.length) {
-                                    $('body').append('<audio id="external_sound"></audio>');
-                                    $sound = $('#external_sound');
-                                }
-                                $sound.attr('src', href);
-                                document.getElementById('external_sound').play();
-                            }
+                            
+                            vis.sound.src = href;
+                            vis.sound.muted = false;
+                            vis.sound.play();
                         }, 1);
                         break;
                     case 'tts':
