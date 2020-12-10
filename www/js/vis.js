@@ -3585,9 +3585,9 @@ function main($, onReady) {
                             // force read from server
                             href += '?' + Date.now();
                             
-                            vis.sound.src = href;
-                            vis.sound.muted = false;
-                            vis.sound.play();
+                            vis.sound.attr('src', href);
+                            vis.sound.attr('muted, false);                         
+                            document.getElementById('external_sound').play();
                         }, 1);
                         break;
                     case 'tts':
