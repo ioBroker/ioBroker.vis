@@ -2250,7 +2250,9 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday = false) {
+    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday) {
+        useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
+
         if (!dateObj) return '';
         var type = typeof dateObj;
         if (type === 'string') dateObj = moment(dateObj);
