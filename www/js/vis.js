@@ -2250,7 +2250,9 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday = false) {
+    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday) {
+        useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
+
         if (!dateObj) return '';
         var type = typeof dateObj;
         if (type === 'string') dateObj = moment(dateObj);
@@ -2273,9 +2275,11 @@ var vis = {
 
         if (useTodayOrYesterday) {
             if (dateObj.isSame(moment(), 'day')) {
-                return moment(dateObj).format(format.replace('dddd', `[${_('Today')}]`).replace('ddd', `[${_('Today')}]`).replace('dd', `[${_('Today')}]`));
+                var todayStr = _('Today');
+                return moment(dateObj).format(format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr));
             } else if (dateObj.isSame(moment().subtract(1, 'day'), 'day')) {
-                return moment(dateObj).format(format.replace('dddd', `[${_('Yesterday')}]`).replace('ddd', `[${_('Yesterday')}]`).replace('dd', `[${_('Yesterday')}]`));
+                var yesterdayStr = _('Yesterday');
+                return moment(dateObj).format(format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr));
             }
         } else {
             return moment(dateObj).format(format);
@@ -2544,7 +2548,7 @@ var vis = {
                             break;
                         case 'momentDate':
                             if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                let params = oids[t].operations[k].arg.split(',');
+                                var params = oids[t].operations[k].arg.split(',');
 
                                 if (params.length === 1) {
                                     value = this.formatMomentDate(value, params[0]);
