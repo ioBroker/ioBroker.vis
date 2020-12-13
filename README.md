@@ -189,7 +189,7 @@ Set the interval between the connection attempts if disconnected. If you will se
 ### Dark reconnect screen
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
 
-Notice that this settings is valid only for reconnection and not for the first connect.
+Notice that these settings are valid only for reconnection and not for the first connect.
 
 ![Dark](img/dark_screen.png)
 
@@ -199,6 +199,11 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### 1.3.5 (2020-12-13)
+* (twonky4) Corrected: old browser issue
+* (rbaranga) Corrected: play sounds on iOS Safari
+* (Scrounger) Added the optional arguments to support Material Design Widgets
+
 ### 1.3.4 (2020-10-04)
 * (foxriver76) Corrected the error on older devices 
 

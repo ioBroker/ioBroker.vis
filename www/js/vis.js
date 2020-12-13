@@ -265,7 +265,7 @@ if (typeof systemDictionary !== 'undefined') {
             "es": "Ayer",
             "pl": "Wczoraj",
             "zh-cn": "昨天"
-        }        
+        }
     });
 }
 
@@ -1071,7 +1071,7 @@ var vis = {
         this.destroyWidget(viewDiv, view, widget);
         this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : null);
 
-        if (updateContainers) this.updateContainers(viewDiv, view);
+        updateContainers && this.updateContainers(viewDiv, view);
     },
     changeFilter:       function (view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.activeView;
@@ -1281,6 +1281,11 @@ var vis = {
 
         $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0) + '%; left: ' + (data['signals-horz-' + index] || 0) + '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
             (data['signals-text-' + index] ? ('<div class="vis-signal-text " style="' + (data['signals-text-style-' + index] || '') + '">' + data['signals-text-' + index] + '</div>') : '') + '</div>');
+    },
+    addChart:           function ($wid, wData) {
+        $wid.on('click', function () {
+            console.log('Show dialog with chart for ' + wData['echart-oid']);
+        });
     },
     addGestures:        function (id, wdata) {
         // gestures
@@ -1693,7 +1698,9 @@ var vis = {
                 }
 
                 // Processing of gestures
-                if (typeof $$ !== 'undefined') this.addGestures(id, widget.data);
+                if (typeof $$ !== 'undefined') {
+                    this.addGestures(id, widget.data);
+                }
             }
 
             // processing of signals
@@ -1704,6 +1711,9 @@ var vis = {
             }
             if (widget.data['lc-oid']) {
                 this.addLastChange(view, id, widget.data);
+            }
+            if (!this.editMode && widget.data['echart-oid']) {
+                this.addChart($wid, widget.data);
             }
 
             // If edit mode, bind on click event to open this widget in edit dialog
@@ -2400,9 +2410,13 @@ var vis = {
         put(s);
         return result;
     },
-    extractBinding:     function (format, ignoreEditMode = true) {
-        if (ignoreEditMode && this.editMode || !format) return null;
-        if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+    extractBinding:     function (format, doNotIgnoreEditMode) {
+        if ((!doNotIgnoreEditMode && this.editMode) || !format) {
+            return null;
+        }
+        if (this.bindingsCache[format]) {
+            return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+        }
 
         var result = extractBinding(format);
 
@@ -2434,8 +2448,8 @@ var vis = {
                 return undefined;
         }
     },
-    formatBinding:      function (format, view, wid, widget, ignoreEditMode = true) {
-        var oids = this.extractBinding(format, ignoreEditMode);
+    formatBinding:      function (format, view, wid, widget, doNotIgnoreEditMode) {
+        var oids = this.extractBinding(format, doNotIgnoreEditMode);
         for (var t = 0; t < oids.length; t++) {
             var value;
             if (oids[t].visOid) {
@@ -3588,9 +3602,9 @@ function main($, onReady) {
                             }
                             // force read from server
                             href += '?' + Date.now();
-                            
+
                             vis.sound.attr('src', href);
-                            vis.sound.attr('muted, false);                         
+                            vis.sound.attr('muted, false);
                             document.getElementById('external_sound').play();
                         }, 1);
                         break;
