@@ -199,7 +199,7 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
-### 1.3.5 (2020-12-13)
+### 1.3.6 (2020-12-13)
 * (twonky4) Corrected: old browser issue
 * (rbaranga) Corrected: play sounds on iOS Safari
 * (Scrounger) Added the optional arguments to support Material Design Widgets

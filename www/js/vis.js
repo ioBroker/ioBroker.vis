@@ -3604,7 +3604,7 @@ function main($, onReady) {
                             href += '?' + Date.now();
 
                             vis.sound.attr('src', href);
-                            vis.sound.attr('muted, false);
+                            vis.sound.attr('muted', false);
                             document.getElementById('external_sound').play();
                         }, 1);
                         break;

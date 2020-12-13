@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.5",
+        "version": "1.3.6",
         "news": {
-            "1.3.5": {
+            "1.3.6": {
                 "en": "Corrected: old browser issue\nCorrected: play sounds on iOS Safari\nAdded the optional arguments to support Material Design Widgets\n",
                 "de": "Behoben: altes Browserproblem\nKorrigiert: Spielen Sie Sounds auf iOS Safari ab\nDie optionalen Argumente zur Unterstützung von Material Design Widgets wurden hinzugefügt\n",
                 "ru": "Исправлено: старая проблема с браузером.\nИсправлено: воспроизведение звуков в iOS Safari.\nДобавлены необязательные аргументы для поддержки виджетов Material Design.\n",
