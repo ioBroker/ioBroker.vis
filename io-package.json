@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.4",
+        "version": "1.3.5",
         "news": {
+            "1.3.5": {
+                "en": "Corrected: old browser issue\nCorrected: play sounds on iOS Safari\nAdded the optional arguments to support Material Design Widgets\n",
+                "de": "Behoben: altes Browserproblem\nKorrigiert: Spielen Sie Sounds auf iOS Safari ab\nDie optionalen Argumente zur Unterstützung von Material Design Widgets wurden hinzugefügt\n",
+                "ru": "Исправлено: старая проблема с браузером.\nИсправлено: воспроизведение звуков в iOS Safari.\nДобавлены необязательные аргументы для поддержки виджетов Material Design.\n",
+                "pt": "Corrigido: problema do navegador antigo\nCorrigido: reproduzir sons no iOS Safari\nAdicionados os argumentos opcionais para oferecer suporte a Widgets de Material Design\n",
+                "nl": "Opgelost: oud browserprobleem\nGecorrigeerd: speel geluiden af op iOS Safari\nDe optionele argumenten toegevoegd om Material Design Widgets te ondersteunen\n",
+                "fr": "Corrigé: ancien problème de navigateur\nCorrigé: jouer des sons sur iOS Safari\nAjout des arguments facultatifs pour prendre en charge les widgets de conception de matériaux\n",
+                "it": "Corretto: vecchio problema del browser\nCorretto: riproduci suoni su iOS Safari\nAggiunti gli argomenti opzionali per supportare i widget di Material Design\n",
+                "es": "Corregido: problema del navegador antiguo\nCorregido: reproducir sonidos en iOS Safari\nSe agregaron los argumentos opcionales para admitir widgets de diseño de materiales.\n",
+                "pl": "Poprawione: stary problem z przeglądarką\nPoprawiono: odtwarzaj dźwięki w iOS Safari\nDodano opcjonalne argumenty do obsługi widżetów Material Design\n",
+                "zh-cn": "更正的：旧的浏览器问题\n纠正：在iOS Safari上播放声音\n添加了可选参数以支持Material Design Widgets\n"
+            },
             "1.3.4": {
                 "en": "Corrected the error on older devices",
                 "de": "Der Fehler auf älteren Geräten wurde behoben",
