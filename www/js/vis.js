@@ -2486,6 +2486,11 @@ var vis = {
                                 string += 'var widget = ' + JSON.stringify(widget) + ';';
                             }
                             string += 'return ' + oids[t].operations[k].formula + ';';
+                            
+                            if (string.indexOf('\\"') >= 0) {
+                                string = string.replace(/\\"/g, '"');
+                            }
+                            
                             //string += '}())';
                             try {
                                 value = new Function(string)();
