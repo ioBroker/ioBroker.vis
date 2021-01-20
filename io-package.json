@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.6",
+        "version": "1.3.7",
         "news": {
+            "1.3.7": {
+                "en": "Bug Fixed - Binding in JSON string",
+                "de": "Fehler behoben - Bindung in JSON-Zeichenfolge",
+                "ru": "Исправлена ошибка - привязка в строке JSON",
+                "pt": "Bug corrigido - vinculação em string JSON",
+                "nl": "Bug opgelost - Binding in JSON-string",
+                "fr": "Bug corrigé - Liaison dans la chaîne JSON",
+                "it": "Bug risolto: binding nella stringa JSON",
+                "es": "Error solucionado: enlace en cadena JSON",
+                "pl": "Naprawiono błąd - wiązanie w ciągu JSON",
+                "zh-cn": "错误修复-JSON字符串绑定"
+            },
             "1.3.6": {
                 "en": "Corrected: old browser issue\nCorrected: play sounds on iOS Safari\nAdded the optional arguments to support Material Design Widgets\n",
                 "de": "Behoben: altes Browserproblem\nKorrigiert: Spielen Sie Sounds auf iOS Safari ab\nDie optionalen Argumente zur Unterstützung von Material Design Widgets wurden hinzugefügt\n",
@@ -228,17 +240,6 @@
                 "it": "view8 corretta",
                 "es": "view8 corregido",
                 "pl": "view8 poprawiony"
-            },
-            "1.1.6": {
-                "en": "New special bindings are supported\nError with fast view changes is fixed\nfix (jqui - ctrl - IconState / val - Icon Bool)",
-                "de": "Neue spezielle Bindungen werden unterstützt\nFehler bei schnellen Ansichtsänderungen ist behoben\nfix (jqui - Strg - IconState / val - Icon Bool)",
-                "ru": "Поддерживаются новые специальные привязки\nИсправлена ​​ошибка с быстрым изменением вида\nfix (jqui - ctrl - IconState / val - Icon Bool)",
-                "pt": "Novas ligações especiais são suportadas\nErro com alterações de visualização rápida corrigidas\ncorrigir (jqui - ctrl - IconState / val - Bool de ícone)",
-                "nl": "Nieuwe speciale bindingen worden ondersteund\nFout bij snelle wijzigingen in weergave is opgelost\nfix (jqui - ctrl - IconState / val - Icon Bool)",
-                "fr": "Les nouvelles liaisons spéciales sont prises en charge\nErreur avec les changements d'affichage rapide est fixée\ncorriger (jqui - ctrl - IconState / val - Icône Bool)",
-                "it": "Sono supportati nuovi binding speciali\nL'errore con le modifiche veloci alla vista è stato risolto\ncorreggere (jqui - ctrl - IconState / val - Icon Bool)",
-                "es": "Se admiten nuevos enlaces especiales\nSe corrigió el error con los cambios de vista rápida\ncorregir (jqui - ctrl - IconState / val - Icon Bool)",
-                "pl": "Nowe powiązania specjalne są obsługiwane\nNaprawiono błąd związany z szybkimi zmianami widoku\nnapraw (jqui - ctrl - IconState / val - Icon Bool)"
             }
         },
         "title": "Visualisation",

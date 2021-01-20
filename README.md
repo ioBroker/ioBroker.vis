@@ -199,7 +199,7 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.3.7 (2021-01-20)
 * (Scrounger) Bug Fixed - Binding in JSON string
 
 ### 1.3.6 (2020-12-13)
