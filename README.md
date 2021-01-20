@@ -199,6 +199,9 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (Scrounger) Bug Fixed - Binding in JSON string
+
 ### 1.3.6 (2020-12-13)
 * (twonky4) Corrected: old browser issue
 * (rbaranga) Corrected: play sounds on iOS Safari
@@ -472,7 +475,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2020 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2021 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  
