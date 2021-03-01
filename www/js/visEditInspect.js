@@ -624,10 +624,7 @@ vis = $.extend(true, vis, {
                 });
             }
         };
-        if (onchange) {
-            console.error('we changed');
-            line.onchange = onchange;
-        } 
+        if (onchange) line.onchange = onchange;
         return line;
     },    
     editButton:         function (widAttr, options, onchange) {
