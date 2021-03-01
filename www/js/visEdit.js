@@ -90,13 +90,19 @@ vis = $.extend(true, vis, {
     removeUnusedFields:     function () {
         var regExp = /^gestures-/;
         for (var view in this.views) {
-            if (!this.views.hasOwnProperty(view) || view === '___settings') continue;
+            if (!this.views.hasOwnProperty(view) || view === '___settings') {
+                continue;
+            }
             for (var id in this.views[view].widgets) {
-                if (!this.views[view].widgets.hasOwnProperty(id)) continue;
+                if (!this.views[view].widgets.hasOwnProperty(id)) {
+                    continue;
+                }
                 // Check all attributes
                 var data = this.views[view].widgets[id].data;
                 for (var attr in data) {
-                    if (!data.hasOwnProperty(attr)) continue;
+                    if (!data.hasOwnProperty(attr)) {
+                        continue;
+                    }
                     if ((data[attr] === '' || data[attr] === null) && regExp.test(attr)) {
                         delete data[attr];
                     }
@@ -1126,7 +1132,7 @@ vis = $.extend(true, vis, {
             // try to extract project name from 2016-05-09-project.zip
             var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
             if (m && !$project.val()) $project.val(m[1]);
-            
+
             $('#start_import_project').prop('disabled', !$name.data('file') || !$project.val());
         };
         reader.readAsDataURL(file);
@@ -1561,7 +1567,7 @@ vis = $.extend(true, vis, {
                 });
             });
         });
-        
+
         if ($.fm) {
             $('#li_menu_file_manager').click(function () {
                 var defPath = ('/' + (that.conn.namespace ? that.conn.namespace + '/' : '') + that.projectPrefix + 'img/');
@@ -2480,7 +2486,7 @@ vis = $.extend(true, vis, {
         $('.wid-prev').dblclick(function () {
             that.editShowWizard(that.activeViewDiv, that.activeView, $(this).clone());
         });
-        
+
         if (this.config['button/btn_prev_type']) {
             $('#btn_prev_type').trigger('click');
         }
@@ -2953,7 +2959,7 @@ vis = $.extend(true, vis, {
                 }
             }
         });
-        
+
         if (this.editTemplatesInit) {
             this.editTemplatesInit();
         }
@@ -3346,7 +3352,7 @@ vis = $.extend(true, vis, {
         }
         this.$selectView.html(text);
         this.$selectView.val(this.activeView);
-        
+
         // if not yet created
         if (!this.$selectView.data('inited')) {
             this.$selectView.data('inited', true);
@@ -3363,7 +3369,7 @@ vis = $.extend(true, vis, {
 
         this.$copyWidgetSelectView.html(text);
         this.$copyWidgetSelectView.val(this.activeView);
-        
+
         // if not yet created
         if (!this.$copyWidgetSelectView.data('inited')) {
             this.$copyWidgetSelectView.data('inited', true);
@@ -3534,7 +3540,7 @@ vis = $.extend(true, vis, {
                 $('[aria-describedby="dialog_import_widgets"]').css('z-index', 1002);
                 $('.ui-widget-overlay').css('z-index', 1001);
                 $(event.target).parent().find('.ui-dialog-titlebar-close .ui-button-text').html('');
-                
+
                 $('#start_import_widgets').unbind('click').click(function () {
                     $('#dialog_import_widgets').dialog('close');
                     var importObject;
@@ -4331,10 +4337,10 @@ vis = $.extend(true, vis, {
                         }
                         // Create
                         this.addWidget(this.views[v_] ? v_: this.getViewOfWidget(v_), v_, {
-                            tpl:    this.views[view].widgets[widgets[i]].tpl, 
+                            tpl:    this.views[view].widgets[widgets[i]].tpl,
                             data:   data || this.views[view].widgets[widgets[i]].data,
-                            style:  this.views[view].widgets[widgets[i]].style, 
-                            wid:    wid + '_' + v_, 
+                            style:  this.views[view].widgets[widgets[i]].style,
+                            wid:    wid + '_' + v_,
                             view:   v_,
                             noSave: true,
                             grouped:this.views[view].widgets[widgets[i]].grouped || false

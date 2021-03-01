@@ -923,6 +923,11 @@ vis = $.extend(true, vis, {
         }
 
     },
+    editChart:          function () {
+        var group = 'echart';
+        this.groups[group] = this.groups[group] || {};
+        this.addToInspect(this.activeWidgets, {name: 'echart-oid', type: 'id', onChangeWidget: 'filterTypeChart'}, group);
+    },
     editLastChange:     function () {
         var group = 'last_change';
         this.groups[group] = this.groups[group] || {};
@@ -998,14 +1003,16 @@ vis = $.extend(true, vis, {
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-oid',    type: 'id'},     group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-value',  default: ''},    group);
             this.addToInspect(this.activeWidgets, {name: 'gestures-' + gesture + '-limit',  type: 'number'}, group);
-            if (j < gestures.length - 1) this.addToInspect('delimiterInGroup', group);
+            if (j < gestures.length - 1) {
+                this.addToInspect('delimiterInGroup', group);
+            }
         }
         var that = this;
         // install handlers
         setTimeout(function () {
             for (var j = 0; j < gesturesAnalog.length; j++) {
                 gesture = gesturesAnalog[j];
-                $('#inspect_gestures-' + gesture + '-oid').change(function () {
+                $('#inspect_gestures-' + gesture + '-oid').on('change', function () {
                     var id  = $(this).attr('id');
                     var val = $(this).val();
                     var g   = id.split('-');
@@ -1281,7 +1288,6 @@ vis = $.extend(true, vis, {
                         break;
                     }
                 }
-
             }
         }
 
@@ -1385,15 +1391,23 @@ vis = $.extend(true, vis, {
             line[0].attrIndex      = widAttr.index;
             line[0].type           = widAttr.type;
             line[0].onChangeWidget = widAttr.onChangeWidget;
-            if (widAttr.title) line[0].attrTitle = widAttr.title;
-            if (widAttr.depends && widAttr.depends.length) line[0].depends = widAttr.depends;
+            if (widAttr.title) {
+                line[0].attrTitle = widAttr.title;
+            }
+            if (widAttr.depends && widAttr.depends.length) {
+                line[0].depends = widAttr.depends;
+            }
         } else {
             line.attrName       = widAttr.clearName;
             line.attrIndex      = widAttr.index;
             line.type           = widAttr.type;
             line.onChangeWidget = widAttr.onChangeWidget;
-            if (widAttr.title) line.attrTitle = widAttr.title;
-            if (widAttr.depends && widAttr.depends.length) line.depends = widAttr.depends;
+            if (widAttr.title) {
+                line.attrTitle = widAttr.title;
+            }
+            if (widAttr.depends && widAttr.depends.length) {
+                line.depends = widAttr.depends;
+            }
         }
 
         // <tr><td>title:</td><td><input /></td><td>button</td></tr>
@@ -1454,7 +1468,9 @@ vis = $.extend(true, vis, {
 
             if (isGroupEnabled) {
                 for (widAttr in this.groups[group]) {
-                    if (!this.groups[group].hasOwnProperty(widAttr) || widAttr === '___enabled') continue;
+                    if (!this.groups[group].hasOwnProperty(widAttr) || widAttr === '___enabled') {
+                        continue;
+                    }
 
                     var line = this.groups[group][widAttr];
                     if (line === 'delimiter') {
@@ -1465,8 +1481,12 @@ vis = $.extend(true, vis, {
                         $widgetAttrs.append('<tr><td colspan="5" style="height: 2px" class="ui-widget-header group-' + group + '"></td></tr>');
                         continue;
                     }
-                    if (line[0]) line = line[0];
-                    if (typeof line === 'string') line = {input: line};
+                    if (line[0]) {
+                        line = line[0];
+                    }
+                    if (typeof line === 'string') {
+                        line = {input: line};
+                    }
 
                     var title = line.attrTitle;
 
@@ -2479,11 +2499,14 @@ vis = $.extend(true, vis, {
         if ($widgetTpl.attr('data-vis-no-gestures') !== 'true') {
             this.editGestures(view);
         }
-        if ($widgetTpl.attr('data-vis-no-signals')  !== 'true') {
+        if ($widgetTpl.attr('data-vis-no-signals') !== 'true') {
             this.editSignalIcons(view);
         }
-        if ($widgetTpl.attr('data-vis-no-ls')  !== 'true') {
+        if ($widgetTpl.attr('data-vis-no-ls') !== 'true') {
             this.editLastChange(view);
+        }
+        if ($widgetTpl.attr('data-vis-no-echart') !== 'true') {
+            //this.editChart(view);
         }
         // Re-render all widgets, where default values applied
         if (this.reRenderList && this.reRenderList.length) {

@@ -189,7 +189,7 @@ Set the interval between the connection attempts if disconnected. If you will se
 ### Dark reconnect screen
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
 
-Notice that this settings is valid only for reconnection and not for the first connect.
+Notice that these settings are valid only for reconnection and not for the first connect.
 
 ![Dark](img/dark_screen.png)
 
@@ -199,6 +199,22 @@ Notice that this settings is valid only for reconnection and not for the first c
 -->
 
 ## Changelog
+### 1.3.7 (2021-01-20)
+* (Scrounger) Bug Fixed - Binding in JSON string
+
+### 1.3.6 (2020-12-13)
+* (twonky4) Corrected: old browser issue
+* (rbaranga) Corrected: play sounds on iOS Safari
+* (Scrounger) Added the optional arguments to support Material Design Widgets
+
+### 1.3.4 (2020-10-04)
+* (foxriver76) Corrected the error on older devices 
+
+### 1.3.3 (2020-09-21)
+* (bluefox) Return de-bounce settings back
+* (bluefox) Corrected error with {username} binding
+* (bluefox) Fixed "show last change" option
+
 ### 1.3.1 (2020-09-18)
 * (bluefox) Added the auto-focus option to the input widgets
 
@@ -459,7 +475,7 @@ Notice that this settings is valid only for reconnection and not for the first c
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2020 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2021 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  

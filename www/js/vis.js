@@ -265,7 +265,7 @@ if (typeof systemDictionary !== 'undefined') {
             "es": "Ayer",
             "pl": "Wczoraj",
             "zh-cn": "昨天"
-        }        
+        }
     });
 }
 
@@ -274,7 +274,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.3.1',
+    version: '1.3.7',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -320,6 +320,7 @@ var vis = {
     debounceInterval:   700,
     user:               '',   // logged in user
     loginRequired:      false,
+    sound:              $('<audio id="external_sound" autoplay muted></audio>').appendTo('body'),
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -1070,7 +1071,7 @@ var vis = {
         this.destroyWidget(viewDiv, view, widget);
         this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : null);
 
-        if (updateContainers) this.updateContainers(viewDiv, view);
+        updateContainers && this.updateContainers(viewDiv, view);
     },
     changeFilter:       function (view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.activeView;
@@ -1280,6 +1281,11 @@ var vis = {
 
         $('#' + wid).append('<div class="vis-signal ' + (data['signals-blink-' + index] ? 'vis-signals-blink' : '') + ' ' + (data['signals-text-class-' + index] || '') + ' " data-index="' + index + '" style="display: ' + display + '; pointer-events: none; position: absolute; z-index: 10; top: ' + (data['signals-vert-' + index] || 0) + '%; left: ' + (data['signals-horz-' + index] || 0) + '%"><img class="vis-signal-icon" src="' + data['signals-icon-' + index] + '" style="width: ' + (data['signals-icon-size-' + index] || 32) + 'px; height: auto;' + (data['signals-icon-style-' + index] || '') + '"/>' +
             (data['signals-text-' + index] ? ('<div class="vis-signal-text " style="' + (data['signals-text-style-' + index] || '') + '">' + data['signals-text-' + index] + '</div>') : '') + '</div>');
+    },
+    addChart:           function ($wid, wData) {
+        $wid.on('click', function () {
+            console.log('Show dialog with chart for ' + wData['echart-oid']);
+        });
     },
     addGestures:        function (id, wdata) {
         // gestures
@@ -1505,7 +1511,7 @@ var vis = {
         } else if (data['lc-position-horz'] === 'middle') {
             css.left = 'calc(50% + ' + offset + 'px)';
         }
-        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.ts'), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']) + '</div>';
+        var text = '<div class="vis-last-change" data-type="' + data['lc-type'] + '" data-format="' + data['lc-format'] + '" data-interval="' + data['lc-is-interval'] + '">' + this.binds.basic.formatDate(this.states.attr(data['lc-oid'] + '.' + (data['lc-type'] === 'last-change' ? 'lc' : 'ts')), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']) + '</div>';
         $('#' + wid).prepend($(text).css(css)).css('overflow', 'visible');
     },
     isUserMemberOf:     function (user, userGroups) {
@@ -1692,7 +1698,9 @@ var vis = {
                 }
 
                 // Processing of gestures
-                if (typeof $$ !== 'undefined') this.addGestures(id, widget.data);
+                if (typeof $$ !== 'undefined') {
+                    this.addGestures(id, widget.data);
+                }
             }
 
             // processing of signals
@@ -1703,6 +1711,9 @@ var vis = {
             }
             if (widget.data['lc-oid']) {
                 this.addLastChange(view, id, widget.data);
+            }
+            if (!this.editMode && widget.data['echart-oid']) {
+                this.addChart($wid, widget.data);
             }
 
             // If edit mode, bind on click event to open this widget in edit dialog
@@ -2250,7 +2261,9 @@ var vis = {
         }
         return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     },
-    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday = false) {
+    formatMomentDate: function formatMomentDate(dateObj, _format, useTodayOrYesterday) {
+        useTodayOrYesterday = typeof useTodayOrYesterday !== 'undefined' ? useTodayOrYesterday : false;
+
         if (!dateObj) return '';
         var type = typeof dateObj;
         if (type === 'string') dateObj = moment(dateObj);
@@ -2273,9 +2286,11 @@ var vis = {
 
         if (useTodayOrYesterday) {
             if (dateObj.isSame(moment(), 'day')) {
-                return moment(dateObj).format(format.replace('dddd', `[${_('Today')}]`).replace('ddd', `[${_('Today')}]`).replace('dd', `[${_('Today')}]`));
+                var todayStr = _('Today');
+                return moment(dateObj).format(format.replace('dddd', todayStr).replace('ddd', todayStr).replace('dd', todayStr));
             } else if (dateObj.isSame(moment().subtract(1, 'day'), 'day')) {
-                return moment(dateObj).format(format.replace('dddd', `[${_('Yesterday')}]`).replace('ddd', `[${_('Yesterday')}]`).replace('dd', `[${_('Yesterday')}]`));
+                var yesterdayStr = _('Yesterday');
+                return moment(dateObj).format(format.replace('dddd', yesterdayStr).replace('ddd', yesterdayStr).replace('dd', yesterdayStr));
             }
         } else {
             return moment(dateObj).format(format);
@@ -2395,9 +2410,13 @@ var vis = {
         put(s);
         return result;
     },
-    extractBinding:     function (format) {
-        if (this.editMode || !format) return null;
-        if (this.bindingsCache[format]) return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+    extractBinding:     function (format, doNotIgnoreEditMode) {
+        if ((!doNotIgnoreEditMode && this.editMode) || !format) {
+            return null;
+        }
+        if (this.bindingsCache[format]) {
+            return JSON.parse(JSON.stringify(this.bindingsCache[format]));
+        }
 
         var result = extractBinding(format);
 
@@ -2429,8 +2448,8 @@ var vis = {
                 return undefined;
         }
     },
-    formatBinding:      function (format, view, wid, widget) {
-        var oids = this.extractBinding(format);
+    formatBinding:      function (format, view, wid, widget, doNotIgnoreEditMode) {
+        var oids = this.extractBinding(format, doNotIgnoreEditMode);
         for (var t = 0; t < oids.length; t++) {
             var value;
             if (oids[t].visOid) {
@@ -2467,6 +2486,11 @@ var vis = {
                                 string += 'var widget = ' + JSON.stringify(widget) + ';';
                             }
                             string += 'return ' + oids[t].operations[k].formula + ';';
+                            
+                            if (string.indexOf('\\"') >= 0) {
+                                string = string.replace(/\\"/g, '"');
+                            }
+                            
                             //string += '}())';
                             try {
                                 value = new Function(string)();
@@ -2544,7 +2568,7 @@ var vis = {
                             break;
                         case 'momentDate':
                             if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                let params = oids[t].operations[k].arg.split(',');
+                                var params = oids[t].operations[k].arg.split(',');
 
                                 if (params.length === 1) {
                                     value = this.formatMomentDate(value, params[0]);
@@ -2948,7 +2972,8 @@ var vis = {
                 var uWidget = document.getElementById(update.widget);
                 if (uWidget) {
                     var $lc = $(uWidget).find('.vis-last-change');
-                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), $lc.data('interval') === 'true'));
+                    var isInterval = $lc.data('interval');
+                    $lc.html(this.binds.basic.formatDate($lc.data('type') === 'last-change' ? state.lc : state.ts, $lc.data('format'), isInterval === 'true' || isInterval === true));
                 }
             }
         }
@@ -3287,6 +3312,11 @@ function main($, onReady) {
                         _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
                     }
                 }
+            } else if (!vis.editMode && vis.bindings[_id] && (_id === 'username' || _id === 'login')) {
+                for (var k = 0; k < vis.bindings[_id].length; k++) {
+                    var _widget = vis.views[vis.bindings[_id][k].view].widgets[vis.bindings[_id][k].widget];
+                    _widget[vis.bindings[_id][k].type][vis.bindings[_id][k].attr] = vis.formatBinding(vis.bindings[_id][k].format, vis.bindings[_id][k].view, vis.bindings[_id][k].widget, _widget);
+                }
             }
         }
         try {
@@ -3578,19 +3608,9 @@ function main($, onReady) {
                             // force read from server
                             href += '?' + Date.now();
 
-                            if (typeof Audio !== 'undefined') {
-                                var snd = new Audio(href); // buffers automatically when created
-                                snd.play();
-                            } else {
-                                //noinspection JSJQueryEfficiency
-                                var $sound = $('#external_sound');
-                                if (!$sound.length) {
-                                    $('body').append('<audio id="external_sound"></audio>');
-                                    $sound = $('#external_sound');
-                                }
-                                $sound.attr('src', href);
-                                document.getElementById('external_sound').play();
-                            }
+                            vis.sound.attr('src', href);
+                            vis.sound.attr('muted', false);
+                            document.getElementById('external_sound').play();
                         }, 1);
                         break;
                     case 'tts':
