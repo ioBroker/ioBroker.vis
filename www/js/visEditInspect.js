@@ -49,6 +49,7 @@
 //              checkbox
 //              image - image
 //              number,min,max,step - non-float number. min,max,step are optional
+//              dimension - text input with button for px or %
 //              color - color picker
 //              views - Name of the view
 //              effect - jquery UI show/hide effects
@@ -581,6 +582,51 @@ vis = $.extend(true, vis, {
         if (onchange) line.onchange = onchange;
         return line;
     },
+    editDimension: function (widAttr, options, onchange) {
+        var line = {
+            input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_' + widAttr + '"/><button class="vis-edit-dimension-calc" data-attr="' + widAttr + '"></button>',
+            init: function (w, data) {
+                let $btn = $(this).parent().children('.vis-edit-dimension-calc');
+                var val = $(this).val();
+
+                if (val.toString().indexOf('%') === -1 && val.toString().indexOf('px') === -1) {
+                    $(this).val(val + 'px').trigger('change');
+                    $btn.html('px');
+                } else if (val.toString().indexOf('%') === -1) {
+                    $btn.html('px');
+                } else {
+                    $btn.html('%');
+                }
+
+                $btn.button().css({ width: 18, height: 18 }).click(function () {
+                    var attr = $(this).data('attr');
+                    var $input = $(this).parent().children('#inspect_' + attr);
+                    var val = $input.val();
+
+                    if (val.toString().indexOf('%') === -1 && val.toString().indexOf('px') === -1) {
+                        $(this).html('px');
+                        $input.val(val + 'px');
+                    } else if (val.toString().indexOf('%') === -1) {
+                        // convert to %
+                        $(this).html('%');
+                        $input.val(val.replace('px', '%'));
+                    } else {
+                        // convert to px
+                        $(this).html('px');
+                        if (val.toString().indexOf('px') === -1) {
+                            $input.val(val.replace('%', 'px'));
+                        } else {
+                            $input.val(val + 'px');
+                        }
+                    }
+
+                    $input.trigger('change');
+                });
+            }
+        };
+        if (onchange) line.onchange = onchange;
+        return line;
+    },    
     editButton:         function (widAttr, options, onchange) {
         // options = {min: ?,max: ?,step: ?}
         // Select
@@ -1325,6 +1371,9 @@ vis = $.extend(true, vis, {
             case 'number':
                 line = this.editNumber(widAttr.name, widAttr.options);
                 break;
+            case 'dimension':
+                line = this.editDimension(widAttr.name);
+                break;                
             case 'button':
                 line = this.editButton(widAttr.name, widAttr.options);
                 break;
