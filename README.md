@@ -16,11 +16,11 @@ WEB visualisation for ioBroker platform.
 [Online Demos](https://iobroker.click/)
 
 ## Bindings of objects
-Normally most of widgets have ObjectID attribute. And this attribute can be bound with some value of object ID.
+Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
 But there is another option how to bind *any* attribute of widget to some ObjectID. 
 
 Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
-If you will use special format, you can even make some simple operations with it, e.g. multiplying or formatting.
+If you use the special format, you can even make some simple operations with it, e.g. multiplying or formatting.
 Patten has following format:
 
 ```
@@ -38,11 +38,11 @@ Following operations are supported:
 - `round(N)` - round the value with N places after point, e.g. 34.678;round(1) => 34.7
 - `hex` - convert value to hexadecimal value. All letters are lower cased.
 - `hex2` - convert value to hexadecimal value. All letters are lower cased. If value less 16, so the leading zero will be added.
-- `HEX` - same as hex, but upper cased.
-- `HEX2` - same as hex2, but upper cased.
+- `HEX` - same as hex, but upper-cased.
+- `HEX2` - same as hex2, but upper-cased.
 - `date` - format date according to given format. Format is the same as in [iobroker.javascript](https://github.com/iobroker/iobroker.javascript/blob/master/README.md#formatdate)
-- `min(N)` - if value is less than N, take the N, elsewise value
-- `max(M)` - if value is greater than M, take the M, elsewise value
+- `min(N)` - if value is less than N, take the N, else value
+- `max(M)` - if value is greater than M, take the M, else value
 - `sqrt` - square root
 - `pow(n)` - power of N.
 - `pow` - power of 2.
@@ -72,7 +72,7 @@ To show timestamp of object write `.ts` or `.lc` (for last change) at the end of
 Last change: {objectRed.lc;date(hh:mm)}
 ```
 
-There is another possibility to write pattern:
+There is another possibility to write the pattern:
 
 ```
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(h*h + w*w))}
@@ -98,7 +98,7 @@ Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Ma
 
 ### Special bindings
 There are a number different internal bindings to provide additional information in views:
-* `username` - shows logged in user
+* `username` - shows logged-in user
 * `view` - name of actual view
 * `wname` - widget name
 * `widget` - is an object with all data of widget. Can be used only in JS part, like `{a:a;widget.data.name}`
@@ -133,9 +133,9 @@ Vis creates 3 variables:
 
 Commands:
 
-* `alert` - show alert window in vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
-* `changeView` - switch to desired view. "control.data" must have name of view. You can specify project name too as "project/view". Default project is "main".
-* `refresh` - reload vis, for instance after project is changed to reload on all browsers.
+* `alert` - show alert window in the vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
+* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify project name too as "project/view". Default project is "main".
+* `refresh` - reload the vis, for instance after project is changed to reload on all browsers.
 * `reload` - same as refresh.
 * `dialog` - Show dialog window. Dialog must exist on view. One of:
 
@@ -152,7 +152,7 @@ Commands:
 * `playSound` - play sound file. The link to file is specified in `control.data`, e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis and let it play as for instance `/vis.0/main/img/myFile.mp3`.
 
-If user changes the view or at start the variables will be filled by vis with
+If user changes the view or at start the variables will be filled by the vis with
 
 - `control.instance`: browser instance and `ack=true`
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
@@ -169,10 +169,10 @@ setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data"
 ## Default view
 You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
 
-Additionally you can define if this view must be used as default for this resolution. 
+Additionally, you can define if this view must be used as default for this resolution. 
 
 So every time the `index.html` (without `#viewName`) is called, the best suitable for this resolution view will be opened.
-If only one view has *"Default"* flag, so this view will be opened independent from screen resolution or orientation.      
+If only one view has *"Default"* flag, so this view will be opened independently from screen resolution or orientation.      
 
 E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
 
@@ -181,10 +181,10 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 ## Settings
 ### Reload if sleep longer than
 There is a rule, that after some disconnection period the whole VIS page will be reloaded to synchronise the project.
-You can configure it in menu "Settings...". If you set interval to "never" so the page will be never reloaded.
+You can configure it in the menu "Settings...". If you set interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
-Set the interval between the connection attempts if disconnected. If you will set 2 seconds, it will try to establish the connection every 2 seconds.
+Set the interval between the connection attempts if disconnected. If you set 2 seconds, it will try to establish the connection every 2 seconds.
 
 ### Dark reconnect screen
 Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
@@ -199,6 +199,13 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
+### 1.3.8 (2021-03-03)
+* (bluefox) fix play sounds on iOS Safari an android
+* (Scrounger) visEditInspect: format dimension added
+* (foxriver76) Replace travis and appveyor by the github actions
+* (Excodibur) Allow resources to be loaded as blob
+* (Excodibur ) Allow resources to be loaded as blob
+
 ### 1.3.7 (2021-01-20)
 * (Scrounger) Bug Fixed - Binding in JSON string
 

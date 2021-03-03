@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.7",
+        "version": "1.3.8",
         "news": {
+            "1.3.8": {
+                "en": "fix play sounds on iOS Safari an android\nvisEditInspect: format dimension added\nReplace travis and appveyor by the github actions\nAllow resources to be loaded as blob\n(Excodibur ) Allow resources to be loaded as blob",
+                "de": "Fix Play Sounds auf iOS Safari und Android\nvisEditInspect: Formatdimension hinzugefügt\nErsetzen Sie Travis und Appveyor durch die Github-Aktionen\nZulassen, dass Ressourcen als Blob geladen werden\n(Excodibur) Ermöglicht das Laden von Ressourcen als Blob",
+                "ru": "исправить звуки воспроизведения на iOS Safari и Android\nvisEditInspect: добавлено измерение формата\nЗамените travis и appveyor действиями github\nРазрешить загрузку ресурсов как blob\n(Excodibur) Разрешить загрузку ресурсов как blob",
+                "pt": "corrigir sons de reprodução no iOS Safari e Android\nvisEditInspect: dimensão do formato adicionada\nSubstitua travis e appveyor pelas ações do github\nPermitir que recursos sejam carregados como blob\n(Excodibur) Permite que os recursos sejam carregados como blob",
+                "nl": "repareer afspeelgeluiden op iOS Safari en Android\nvisEditInspect: formaatdimensie toegevoegd\nVervang travis en appveyor door de github-acties\nToestaan dat resources als blob worden geladen\n(Excodibur) Toestaan dat bronnen als blob worden geladen",
+                "fr": "réparer les sons de lecture sur iOS Safari et Android\nvisEditInspect: dimension de format ajoutée\nRemplacez travis et appveyor par les actions github\nAutoriser le chargement des ressources en tant qu'objet blob\n(Excodibur) Autoriser le chargement des ressources en tant que blob",
+                "it": "correggere i suoni di riproduzione su iOS Safari e Android\nvisEditInspect: dimensione del formato aggiunta\nSostituisci travis e appveyor con le azioni github\nConsenti il caricamento delle risorse come BLOB\n(Excodibur) Consenti il caricamento delle risorse come BLOB",
+                "es": "arreglar sonidos de reproducción en iOS Safari y Android\nvisEditInspect: dimensión de formato agregada\nReemplaza travis y appveyor por las acciones de github\nPermitir que los recursos se carguen como blob\n(Excodibur) Permitir que los recursos se carguen como blob",
+                "pl": "naprawianie odtwarzania dźwięków w iOS Safari i Androidzie\nvisEditInspect: dodano wymiar formatu\nZastąp travis i appveyor akcjami github\nZezwalaj na ładowanie zasobów jako obiektu blob\n(Excodibur) Zezwalaj na ładowanie zasobów jako obiektu blob",
+                "zh-cn": "修复iOS Safari和Android上的播放声音\nvisEditInspect：添加了格式尺寸\n用github操作替换travis和appveyor\n允许将资源加载为Blob\n（Excodibur）允许将资源加载为Blob"
+            },
             "1.3.7": {
                 "en": "Bug Fixed - Binding in JSON string",
                 "de": "Fehler behoben - Bindung in JSON-Zeichenfolge",
@@ -229,17 +241,6 @@
                 "it": "La finestra di dialogo del file è stata corretta",
                 "es": "Se corrigió el diálogo del archivo",
                 "pl": "Okno dialogowe pliku zostało poprawione"
-            },
-            "1.1.7": {
-                "en": "view8 corrected",
-                "de": "view8 korrigiert",
-                "ru": "view8 исправлено",
-                "pt": "view8 corrigido",
-                "nl": "view8 gecorrigeerd",
-                "fr": "view8 corrigé",
-                "it": "view8 corretta",
-                "es": "view8 corregido",
-                "pl": "view8 poprawiony"
             }
         },
         "title": "Visualisation",
