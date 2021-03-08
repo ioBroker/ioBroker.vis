@@ -600,7 +600,7 @@ vis = $.extend(true, vis, {
                         if (!isNaN(val)) {
                             $(this).val(val + 'px').trigger('change');
                         } else {
-                            $(this).val('');
+                            $(this).val('').trigger('change');
                         }
                     }
                     $btn.html('px');
