@@ -274,7 +274,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.3.7',
+    version: '1.3.8',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -320,7 +320,7 @@ var vis = {
     debounceInterval:   700,
     user:               '',   // logged in user
     loginRequired:      false,
-    sound:              $('<audio id="external_sound" autoplay muted></audio>').appendTo('body'),
+    sound:              /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? $('<audio id="external_sound" autoplay muted></audio>').appendTo('body') : null,
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
@@ -2486,11 +2486,11 @@ var vis = {
                                 string += 'var widget = ' + JSON.stringify(widget) + ';';
                             }
                             string += 'return ' + oids[t].operations[k].formula + ';';
-                            
+
                             if (string.indexOf('\\"') >= 0) {
                                 string = string.replace(/\\"/g, '"');
                             }
-                            
+
                             //string += '}())';
                             try {
                                 value = new Function(string)();
@@ -3607,10 +3607,25 @@ function main($, onReady) {
                             }
                             // force read from server
                             href += '?' + Date.now();
-
-                            vis.sound.attr('src', href);
-                            vis.sound.attr('muted', false);
-                            document.getElementById('external_sound').play();
+                            if (vis.sound) {
+                                vis.sound.attr('src', href);
+                                vis.sound.attr('muted', false);
+                                document.getElementById('external_sound').play();
+                            } else {
+                                if (typeof Audio !== 'undefined') {
+                                    var snd = new Audio(href); // buffers automatically when created
+                                    snd.play();
+                                } else {
+                                    //noinspection JSJQueryEfficiency
+                                    var $sound = $('#external_sound');
+                                    if (!$sound.length) {
+                                        $('body').append('<audio id="external_sound"></audio>');
+                                        $sound = $('#external_sound');
+                                    }
+                                    $sound.attr('src', href);
+                                    document.getElementById('external_sound').play();
+                                }
+                            }
                         }, 1);
                         break;
                     case 'tts':

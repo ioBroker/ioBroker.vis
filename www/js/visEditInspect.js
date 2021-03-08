@@ -311,8 +311,12 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<select type="text" id="inspect_' + widAttr + '">'
         };
-        if (onchange) line.onchange = onchange;
-        if (init)     line.init = init;
+        if (onchange) {
+            line.onchange = onchange;
+        }
+        if (init) {
+            line.init = init;
+        }
         if (values.length && values[0] !== undefined) {
             for (var t = 0; t < values.length; t++) {
                 line.input += '<option value="' + values[t] + '">' + (notTranslate ? values[t] : _(values[t])) + '</option>';
@@ -626,7 +630,7 @@ vis = $.extend(true, vis, {
         };
         if (onchange) line.onchange = onchange;
         return line;
-    },    
+    },
     editButton:         function (widAttr, options, onchange) {
         // options = {min: ?,max: ?,step: ?}
         // Select
@@ -1373,7 +1377,7 @@ vis = $.extend(true, vis, {
                 break;
             case 'dimension':
                 line = this.editDimension(widAttr.name);
-                break;                
+                break;
             case 'button':
                 line = this.editButton(widAttr.name, widAttr.options);
                 break;

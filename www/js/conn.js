@@ -47,6 +47,7 @@ var servConn = {
     _timeout:           0,           // 0 - use transport default timeout to detect disconnect
     _reconnectInterval: 10000,       // reconnect interval
     _reloadInterval:    30,          // if connection was absent longer than 30 seconds
+    _reconnectionCount: 0,           // if we have many reconnections in a row, try to reload instead - workaround for https://github.com/ioBroker/ioBroker.vis/issues/332
     _cmdData:           null,
     _cmdInstance:       null,
     _isSecure:          false,
@@ -144,6 +145,12 @@ var servConn = {
     },
     reconnect:        function (connOptions) {
         var that = this;
+        if (++this._reconnectionCount >= 5) {
+            this._reconnectionCount = 0; // reset counter
+            // try reload instead
+            this.reload();
+            return;
+        }
         // reconnect
         if ((!connOptions.mayReconnect || connOptions.mayReconnect()) && !this._connectInterval) {
             this._connectInterval = setInterval(function () {
@@ -267,6 +274,8 @@ var servConn = {
             });
 
             this._socket.on('connect', function () {
+                that._reconnectionCount = 0; // reset counter
+
                 if (that._disconnectedSince) {
                     var offlineTime = Date.now() - that._disconnectedSince;
                     console.log('was offline for ' + (offlineTime / 1000) + 's');
