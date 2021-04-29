@@ -106,6 +106,7 @@ There are a number different internal bindings to provide additional information
 * `language` - can be `de`, `en` or `ru`.
 * `instance` - browser instance
 * `login` - if login required or not (e.g. to show/hide logout button)
+* `local_*` - if state name is started from `local_` it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)
 
 Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 

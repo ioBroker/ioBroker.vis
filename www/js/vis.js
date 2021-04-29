@@ -311,9 +311,9 @@ var vis = {
     bindings:           {},
     bindingsCache:      {},
     subscribing:        {
-        IDs: [],
-        byViews: {},
-        active: [],
+        IDs:         [],
+        byViews:     {},
+        active:      [],
         activeViews: []
     },
     commonStyle:        null,
@@ -325,21 +325,20 @@ var vis = {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
 
+        // If Id start from 'local_', do not send changes to the server, we assume that it is a local variable of the client
+        if (id.indexOf('local_') === 0) {
+            that.states.attr(state);
 
-        //If Id start from "loc_", do not send changes to the server, we assume that it is a local variable of the client
-        if (id.indexOf("loc_")==0){
-	       that.states.attr(state);
-
-	       // Inform other widgets, that does not support canJS
-                for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
-                    try {
-                        that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
-                    } catch (e) {
-                        that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
-                    }
+            // Inform other widgets, that does not support canJS
+            for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
+                try {
+                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                } catch (e) {
+                    that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
                 }
-	return;
-	}
+            }
+            return;
+        }
 
         this.conn.setState(id, state[id + '.val'], function (err) {
             if (err) {

@@ -594,8 +594,6 @@ vis = $.extend(true, vis, {
                 var val = $(this).val();
 
                 if (val.toString().indexOf('%') === -1 && val.toString().indexOf('px') === -1) {
-                    let val = $(this).val();
-
                     if (val) {
                         if (!isNaN(val)) {
                             $(this).val(val + 'px').trigger('change');
