@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.8",
+        "version": "1.3.9",
         "news": {
+            "1.3.9": {
+                "en": "Added support of local browser variables\nBug fix for null & NaN values in width and height\nAdded support for admin5",
+                "de": "Unterstützung für lokale Browservariablen hinzugefügt\nFehlerbehebung für Null- und NaN-Werte in Breite und Höhe\nUnterstützung für admin5 hinzugefügt",
+                "ru": "Добавлена поддержка локальных переменных браузера.\nИсправлена ошибка для значений NULL и NaN по ширине и высоте\nДобавлена поддержка admin5",
+                "pt": "Adicionado suporte para variáveis locais do navegador\nCorreção de bug para valores nulos e NaN em largura e altura\nAdicionado suporte para admin5",
+                "nl": "Ondersteuning toegevoegd voor lokale browservariabelen\nBugfix voor null & NaN-waarden in breedte en hoogte\nOndersteuning toegevoegd voor admin5",
+                "fr": "Ajout de la prise en charge des variables de navigateur locales\nCorrection de bogue pour les valeurs null et NaN en largeur et en hauteur\nAjout du support pour admin5",
+                "it": "Aggiunto il supporto delle variabili del browser locale\nCorrezione di bug per valori null e NaN in larghezza e altezza\nAggiunto supporto per admin5",
+                "es": "Se agregó soporte para las variables del navegador local.\nCorrección de errores para valores nulos y NaN en ancho y alto\nSoporte agregado para admin5",
+                "pl": "Dodano obsługę zmiennych lokalnych przeglądarki\nNaprawiono błąd wartości null i NaN w szerokości i wysokości\nDodano wsparcie dla admin5",
+                "zh-cn": "增加了对本地浏览器变量的支持\n错误修复宽度和高度的null和NaN值\n添加了对admin5的支持"
+            },
             "1.3.8": {
                 "en": "fix play sounds on iOS Safari an android\nvisEditInspect: format dimension added\nReplace travis and appveyor by the github actions\nAllow resources to be loaded as blob\n(Excodibur ) Allow resources to be loaded as blob",
                 "de": "Fix Play Sounds auf iOS Safari und Android\nvisEditInspect: Formatdimension hinzugefügt\nErsetzen Sie Travis und Appveyor durch die Github-Aktionen\nZulassen, dass Ressourcen als Blob geladen werden\n(Excodibur) Ermöglicht das Laden von Ressourcen als Blob",
@@ -230,17 +242,6 @@
                 "es": "Añadir soporte chino",
                 "pl": "Dodaj chińskie wsparcie",
                 "zh-cn": "添加中文支持"
-            },
-            "1.1.8": {
-                "en": "File dialog was corrected",
-                "de": "Dateidialog wurde korrigiert",
-                "ru": "Исправлено диалоговое окно файла",
-                "pt": "A caixa de diálogo do arquivo foi corrigida",
-                "nl": "Bestandsdialoog is gecorrigeerd",
-                "fr": "Le dialogue de fichier a été corrigé",
-                "it": "La finestra di dialogo del file è stata corretta",
-                "es": "Se corrigió el diálogo del archivo",
-                "pl": "Okno dialogowe pliku zostało poprawione"
             }
         },
         "title": "Visualisation",
@@ -284,7 +285,9 @@
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],
-        "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
+        "localLinks": {
+            "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
+        },
         "license": "CC BY-NC",
         "dependencies": [
             {
@@ -297,8 +300,10 @@
         "serviceStates": "lib/states.js",
         "singleton": true,
         "type": "visualization",
-        "highlight": true,
         "noConfig": false,
+        "adminUI": {
+            "config": "none"
+        },
         "materialize": true,
         "welcomeScreen": {
             "link": "vis/index.html",
