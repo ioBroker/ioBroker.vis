@@ -594,7 +594,15 @@ vis = $.extend(true, vis, {
                 var val = $(this).val();
 
                 if (val.toString().indexOf('%') === -1 && val.toString().indexOf('px') === -1) {
-                    $(this).val(val + 'px').trigger('change');
+                    let val = $(this).val();
+
+                    if (val) {
+                        if (!isNaN(val)) {
+                            $(this).val(val + 'px').trigger('change');
+                        } else {
+                            $(this).val('').trigger('change');
+                        }
+                    }
                     $btn.html('px');
                 } else if (val.toString().indexOf('%') === -1) {
                     $btn.html('px');
