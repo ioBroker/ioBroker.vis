@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -42,7 +42,7 @@ $.extend(systemDictionary, {
     "light":            {"en": "light",         "de": "Licht",              "ru": "Свет"},
     "Outside":          {"en": "Outside",       "de": "Außen",              "ru": "Снаружи"},
     "You can install more widget-sets and icon-sets (over 20)": {
-        "en": "You can install more widget-sets and icon-sets (over 20)", 
+        "en": "You can install more widget-sets and icon-sets (over 20)",
         "de": "Es können auch weiter schöne Widgets und Icons installiert werden (über 20)",
         "ru": "Можно установить другие наборы элементов и картинки (свыше 20ти)"
     },

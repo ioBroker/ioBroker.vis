@@ -200,9 +200,11 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (thost96) fixes for issues found by adapter-checker
 
-### 1.3.10 (2021-05-08)
-* (thost96) fixes for issues found by adapter-checker - issue #364
+### 1.3.10 (2021-05-25)
+* (bluefox) Fixed the support of admin5
 
 ### 1.3.9 (2021-04-29)
 * (agav99) Added support of local browser variables
