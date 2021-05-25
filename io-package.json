@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.9",
+        "version": "1.3.10",
         "news": {
+            "1.3.10": {
+                "en": "Fixed the support of admin5",
+                "de": "Die Unterstützung von admin5 wurde behoben",
+                "ru": "Исправлена поддержка admin5",
+                "pt": "Corrigido o suporte de admin5",
+                "nl": "Ondersteuning van admin5 opgelost",
+                "fr": "Correction du support d'admin5",
+                "it": "Risolto il problema con il supporto di admin5",
+                "es": "Se corrigió el soporte de admin5.",
+                "pl": "Naprawiono wsparcie dla admin5",
+                "zh-cn": "修复了对admin5的支持"
+            },
             "1.3.9": {
                 "en": "Added support of local browser variables\nBug fix for null & NaN values in width and height\nAdded support for admin5",
                 "de": "Unterstützung für lokale Browservariablen hinzugefügt\nFehlerbehebung für Null- und NaN-Werte in Breite und Höhe\nUnterstützung für admin5 hinzugefügt",
@@ -230,18 +242,6 @@
                 "es": "Bool HTML fue mejorado",
                 "pl": "Bool HTML został ulepszony",
                 "zh-cn": "“Bool HTML”得到了改进"
-            },
-            "1.1.10": {
-                "en": "Add Chinese support",
-                "de": "Chinesische Unterstützung hinzufügen",
-                "ru": "Добавить поддержку китайцев",
-                "pt": "Adicionar suporte chinês",
-                "nl": "Voeg Chinese ondersteuning toe",
-                "fr": "Ajouter un support chinois",
-                "it": "Aggiungi supporto cinese",
-                "es": "Añadir soporte chino",
-                "pl": "Dodaj chińskie wsparcie",
-                "zh-cn": "添加中文支持"
             }
         },
         "title": "Visualisation",
@@ -302,7 +302,7 @@
         "type": "visualization",
         "noConfig": false,
         "adminUI": {
-            "config": "none"
+            "config": "materialize"
         },
         "materialize": true,
         "welcomeScreen": {

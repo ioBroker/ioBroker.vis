@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -264,28 +264,28 @@ var colorSelect = {
         onselectArg: null,
         result:      '',
         current:     null,   // current value
-        parent:      $('body'), 
+        parent:      $('body'),
         elemName:    'idialog_',
         zindex:      5050
     },
     _selectText: '',
     _cancelText: '',
     _titleText:  '',
-    
+
     show:  function (options) {
         if (!this._selectText) {
             this._selectText = _('Select');
             this._cancelText = _('Cancel');
             this._titleText  = _('Select color');
         }
-           
+
         if (!options.elemName) {
             options.elemName = 'idialog_';
         }
         if (!options.parent) {
             options.parent = $('body');
         }
-        
+
         if (document.getElementById(options.elemName) !== undefined) {
             $('#' + options.elemName).remove();
         }
@@ -295,10 +295,10 @@ var colorSelect = {
         htmlElem.settings = $.extend(htmlElem.settings, this.settings);
         htmlElem.settings = $.extend(htmlElem.settings, options);
         $(htmlElem).css({'z-index': htmlElem.settings.zindex});
-        
+
          // Define dialog buttons
-        var dialog_buttons = {}; 
-        dialog_buttons[this._selectText] = function () { 
+        var dialog_buttons = {};
+        dialog_buttons[this._selectText] = function () {
             $(this).dialog('close');
             if (this.settings.onselect)
                 this.settings.onselect ($('#colortext').val(), this.settings.onselectArg);
