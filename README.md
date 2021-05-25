@@ -200,6 +200,9 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (thost96) fixes for issues found by adapter-checker
+
 ### 1.3.10 (2021-05-25)
 * (bluefox) Fixed the support of admin5
 

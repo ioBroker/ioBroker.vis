@@ -288,7 +288,7 @@
         "localLinks": {
             "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
         },
-        "license": "CC BY-NC",
+        "license": "CC-BY-NC-4.0",
         "dependencies": [
             {
                 "web": ">=3.0.12"
@@ -300,6 +300,8 @@
         "serviceStates": "lib/states.js",
         "singleton": true,
         "type": "visualization",
+        "connectionType": "local",
+        "dataSource": "push",
         "noConfig": false,
         "adminUI": {
             "config": "materialize"
