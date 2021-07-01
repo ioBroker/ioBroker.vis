@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2020, bluefox
+ *      Copyright (c) 2014-2021, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -284,7 +284,7 @@ function main() {
                 // An object of options to indicate where to post to
                 const postOptions = {
                     host: 'iobroker.net',
-                    path: '/cert/',
+                    path: '/api/v1/public/cert/',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain',
