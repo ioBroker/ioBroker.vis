@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.10",
+        "version": "1.4.0",
         "news": {
+            "1.4.0": {
+                "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
+                "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
+                "ru": "Изменен путь проверки сертификатов\nисправления проблем, обнаруженных при проверке адаптера",
+                "pt": "Caminho alterado para verificação de certificados\ncorreções para problemas encontrados pelo verificador de adaptador",
+                "nl": "Pad gewijzigd voor controle van certificaten\noplossingen voor problemen gevonden door adapter-checker",
+                "fr": "Chemin modifié pour la vérification des certificats\ncorrectifs pour les problèmes trouvés par adapter-checker",
+                "it": "Percorso modificato per il controllo dei certificati\ncorrezioni per problemi rilevati da adapter-checker",
+                "es": "Ruta cambiada para la verificación de certificados\narreglos para problemas encontrados por el verificador de adaptadores",
+                "pl": "Zmieniona ścieżka do sprawdzenia certyfikatów\npoprawki problemów znalezionych przez adapter-checker",
+                "zh-cn": "更改了检查证书的路径\n修复适配器检查器发现的问题"
+            },
             "1.3.10": {
                 "en": "Fixed the support of admin5",
                 "de": "Die Unterstützung von admin5 wurde behoben",
@@ -230,18 +242,6 @@
                 "es": "Se agregaron traducciones",
                 "pl": "Dodano tłumaczenia",
                 "zh-cn": "翻译增加了"
-            },
-            "1.1.11": {
-                "en": "Bool HTML was Improved ",
-                "de": "Bool HTML wurde verbessert",
-                "ru": "Bool HTML был улучшен",
-                "pt": "Bool HTML foi melhorado",
-                "nl": "Bool HTML is verbeterd",
-                "fr": "Bool HTML a été amélioré",
-                "it": "Bool HTML è stato migliorato",
-                "es": "Bool HTML fue mejorado",
-                "pl": "Bool HTML został ulepszony",
-                "zh-cn": "“Bool HTML”得到了改进"
             }
         },
         "title": "Visualisation",
