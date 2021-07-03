@@ -160,14 +160,14 @@ function copyFiles(root, filesOrDirs, callback) {
     const task = filesOrDirs.shift();
     if (task.isDir) {
         copyFiles(root + task.file + '/', null, () =>
-            setTimeout(copyFiles, 0, root, filesOrDirs, callback));
+            setImmediate(copyFiles, root, filesOrDirs, callback));
     } else {
         adapter.readFile('vis.0', root + task.file, (err, data) => {
             if (data || data === 0 || data === '') {
                 adapter.writeFile(adapterName + '.0', root + task.file, data, () =>
-                    setTimeout(copyFiles, 0, root, filesOrDirs, callback));
+                    setImmediate(copyFiles, root, filesOrDirs, callback));
             } else {
-                setTimeout(copyFiles, 0, root, filesOrDirs, callback);
+                setImmediate(copyFiles, root, filesOrDirs, callback);
             }
         });
     }
@@ -368,9 +368,7 @@ function main() {
                     });
 
                     res.on('error', error => check(uuidObj, error));
-                }).on('error', error => {
-                    check(uuidObj, error);
-                });
+                }).on('error', error => check(uuidObj, error));
 
                 postReq.write(adapter.config.license);
                 postReq.end();

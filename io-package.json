@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.0",
+        "version": "1.4.1",
         "news": {
+            "1.4.1": {
+                "en": "Added possibility to check license offline (only special once)",
+                "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
+                "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
+                "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
+                "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
+                "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
+                "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
+                "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
+                "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
+                "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
+            },
             "1.4.0": {
                 "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
                 "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
@@ -230,18 +242,6 @@
                 "es": "carga fija de archivos",
                 "pl": "naprawione przesyłanie plików",
                 "zh-cn": "修复了文件上传"
-            },
-            "1.2.0": {
-                "en": "Translations were added",
-                "de": "Übersetzungen wurden hinzugefügt",
-                "ru": "Добавлены переводы",
-                "pt": "Traduções foram adicionadas",
-                "nl": "Vertalingen zijn toegevoegd",
-                "fr": "Les traductions ont été ajoutées",
-                "it": "Sono state aggiunte traduzioni",
-                "es": "Se agregaron traducciones",
-                "pl": "Dodano tłumaczenia",
-                "zh-cn": "翻译增加了"
             }
         },
         "title": "Visualisation",
