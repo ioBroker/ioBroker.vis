@@ -91,7 +91,13 @@
                     headers: {},
                     success: function(data, status, request) {
                         $('#check').removeClass('disabled');
-                        $('#checkResult').html(data ? data.result : 'error').removeClass('error').addClass(data.result === 'OK' ? 'success': '');
+                        var text = data ? data.result : 'error';
+                        if (data && data.type === 'commercial') {
+                            text += ' (offline)';
+                        } else {
+                            text += ' (community)';
+                        }
+                        $('#checkResult').html(text).removeClass('error').addClass(data.result === 'OK' ? 'success': '');
                     },
                     error: function (res, error) {
                         $('#check').removeClass('disabled');
