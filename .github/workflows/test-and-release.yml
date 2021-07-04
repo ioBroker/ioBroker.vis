@@ -103,6 +103,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Extract the version and commit body from the tag
+        id: extract_release
         # The body may be multiline, therefore we need to escape some characters
         run: |
           VERSION="${{ github.ref }}"
@@ -118,11 +119,8 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build
+      - name: Create a clean build
         run: npm run build
-
-#      - name: Create a clean build
-#        run: npm run build
       - name: Publish package to npm
         run: |
           npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
