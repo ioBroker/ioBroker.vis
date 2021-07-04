@@ -1,6 +1,6 @@
 {
   "Check license": "Sprawdź licencję",
-  "License:": "Klucz licencyjny:",
+  "License": "Klucz licencyjny",
   "Service is offline. Please try later.": "Usługa jest niedostępna lub nie ma dostępu do Internetu. Spróbuj później lub sprawdź połączenie internetowe.",
   "instruction": "Aby użyć <b> vis </b>, musisz uzyskać klucz licencyjny. <B> vis </b> jest bezpłatny do użytku prywatnego, ale do celów komercyjnych ma swoją cenę. może uzyskać licencję na <a href='https://iobroker.net' target='_blank'>iobroker.net</a> po krótkiej rejestracji.",
   "vis adapter settings": "ustawienia adaptera vis"

@@ -91,5 +91,17 @@ systemDictionary = {
         "es": "inválido",
         "pl": "nieważny",
         "zh-cn": "无效的"
+    },
+    " serial number (UUID) in license is for other device": {
+        "en": " serial number (UUID) in license is for other device",
+        "de": " Seriennummer (UUID) in der Lizenz gilt für anderes Gerät",
+        "ru": " серийный номер (UUID) в лицензии предназначен для другого устройства",
+        "pt": " o número de série (UUID) na licença é para outro dispositivo",
+        "nl": " serienummer (UUID) in licentie is voor ander apparaat",
+        "fr": " le numéro de série (UUID) dans la licence est pour un autre appareil",
+        "it": " il numero di serie (UUID) nella licenza è per un altro dispositivo",
+        "es": " el número de serie (UUID) en la licencia es para otro dispositivo",
+        "pl": " numer seryjny (UUID) w licencji dotyczy innego urządzenia",
+        "zh-cn": " 许可证中的序列号 (UUID) 用于其他设备"
     }
 };
