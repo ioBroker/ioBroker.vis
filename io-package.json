@@ -15,7 +15,6 @@
                 "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
                 "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
             },
-
             "1.4.0": {
                 "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
                 "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
@@ -291,6 +290,7 @@
         "type": "visualization",
         "connectionType": "local",
         "dataSource": "push",
+        "tier": 3,
         "noConfig": false,
         "adminUI": {
             "config": "materialize"
