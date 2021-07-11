@@ -317,6 +317,8 @@ function main() {
                     generatePages(true);
                 });
             } else {
+                const data = JSON.stringify({json: adapter.config.license, uuid: uuidObj.native.uuid});
+
                 // An object of options to indicate where to post to
                 const postOptions = {
                     host: 'iobroker.net',
@@ -324,7 +326,7 @@ function main() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain',
-                        'Content-Length': Buffer.byteLength(adapter.config.license)
+                        'Content-Length': Buffer.byteLength(data)
                     }
                 };
 
@@ -370,7 +372,7 @@ function main() {
                     res.on('error', error => check(uuidObj, error));
                 }).on('error', error => check(uuidObj, error));
 
-                postReq.write(adapter.config.license);
+                postReq.write(data);
                 postReq.end();
             }
         });
