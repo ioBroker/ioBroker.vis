@@ -208,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
-### 1.4.2 (2021-07-04)
+### 1.4.3 (2021-07-11)
 * (bluefox) Added possibility to check license offline (only special once)
 
 ### 1.4.0 (2021-07-01)
