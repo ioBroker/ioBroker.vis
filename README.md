@@ -11,7 +11,7 @@ WEB visualisation for ioBroker platform.
 ## License requirements
 To use this adapter in ioBroker you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
-Additionally you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
+Additionally, you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
 * **Community-License: Free for private use!**: Get a free license by registering an account on https://iobroker.net . The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this timepoint is required!
 * **Private use Offline-License**: For paying a small support fee you can get rid of the required online license check on adapter startup. **Only for Private use!**
 * **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers this license is for you. License check is also not requiring an online connection.
@@ -29,7 +29,7 @@ But there is another option how to bind *any* attribute of widget to some Object
 
 Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
 If you use the special format, you can even make some simple operations with it, e.g. multiplying or formatting.
-Patten has following format:
+Patten has the following format:
 
 ```
 {objectID;operation1;operation2;...}
@@ -142,7 +142,7 @@ Vis creates 3 variables:
 
 Commands:
 
-* `alert` - show alert window in the vis. "control.data" has following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
+* `alert` - show alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
 * `changeView` - switch to desired view. "control.data" must have the name of view. You can specify project name too as "project/view". Default project is "main".
 * `refresh` - reload the vis, for instance after project is changed to reload on all browsers.
 * `reload` - same as refresh.
@@ -208,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.4.4 (2021-08-31)
 * (jobe451) Allowed to have ":" in the binding object IDs
  
 ### 1.4.3 (2021-07-11)

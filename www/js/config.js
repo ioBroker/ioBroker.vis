@@ -1,29 +1,13 @@
-var visConfig = {license: false,
+var visConfig = {
     "widgetSets": [
         "basic",
-        "dwd",
-        "hqwidgets",
         "jqplot",
-        {
-            "name": "jqui-mfd",
-            "depends": [
-                "basic",
-                "jqui"
-            ]
-        },
         {
             "name": "jqui",
             "depends": [
                 "basic"
             ]
         },
-        {
-            "name": "justgage",
-            "depends": []
-        },
-        "map",
-        "mihome-vacuum",
-        "sip-asterisk",
         "swipe",
         "tabs"
     ]

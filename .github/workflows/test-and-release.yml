@@ -66,7 +66,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --ignore-scripts
 
       - name: Run local tests
         run: npm test
@@ -117,7 +117,7 @@ jobs:
           echo "::set-output name=BODY::$BODY"
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install --ignore-scripts
 
       - name: Create a clean build
         run: npm run build
@@ -135,7 +135,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: Release v${{ steps.extract_release.outputs.VERSION }}
           draft: false
-          # Prerelease versions create pre-releases on Github
+          # Prerelease versions create pre-releases on GitHub
           prerelease: ${{ contains(steps.extract_release.outputs.VERSION, '-') }}
           body: ${{ steps.extract_release.outputs.BODY }}
 
