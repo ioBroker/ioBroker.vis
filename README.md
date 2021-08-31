@@ -208,6 +208,9 @@ Notice that these settings are valid only for reconnection and not for the first
 -->
 
 ## Changelog
+### __WORK IN PROGRESS__
+* (jobe451) Allowed to have ":" in the binding object IDs
+ 
 ### 1.4.3 (2021-07-11)
 * (bluefox) Added possibility to check license offline (only special once)
 

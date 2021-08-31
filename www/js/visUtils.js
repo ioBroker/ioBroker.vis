@@ -62,7 +62,7 @@ function extractBinding(format) {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             var operations = null;
-            var isEval = visOid.match(/[^\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            var isEval = visOid.match(/^[\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
                 var xx = visOid.split(':', 2);
