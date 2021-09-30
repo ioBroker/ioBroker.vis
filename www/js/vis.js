@@ -337,6 +337,21 @@ var vis = {
                     that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
                 }
             }
+            
+            // local variable can be used in bindings
+            if (!that.editMode && that.bindings[id]) {
+                for (var i = 0; i < that.bindings[id].length; i++) {
+                    var widget = that.views[that.bindings[id][i].view].widgets[that.bindings[id][i].widget];
+                    var value = that.formatBinding(that.bindings[id][i].format, that.bindings[id][i].view, that.bindings[id][i].widget, widget);
+    
+                    widget[that.bindings[id][i].type][that.bindings[id][i].attr] = value;
+                    if (that.widgets[that.bindings[id][i].widget] && that.bindings[id][i].type === 'data') {
+                        that.widgets[that.bindings[id][i].widget][that.bindings[id][i].type + '.' + that.bindings[id][i].attr] = value;
+                    }
+                    that.reRenderWidget(that.bindings[id][i].view, that.bindings[id][i].view, that.bindings[id][i].widget);
+                }
+            }            
+            
             return;
         }
 
