@@ -1,6 +1,6 @@
 {
   "Check license": "Lizenz prüfen",
-  "License:": "License Key:",
+  "License": "License Key",
   "Service is offline. Please try later.": "Der Service ist momentan nicht erreichbar oder es ist keine Internetverbindung vorhanden. Bitte versuchen Sie es später noch einmal oder prüfen Sie die Internetverbindung.",
   "instruction": "Man braucht eine Lizenz, um <b>vis</b> zu nutzen.<br><b>vis</b> ist kostenlos für die private Nutzung. Nur für den kommerziellen Gebrauch muss man eine Lizenz kaufen.<br>Für den nicht kommerziellen Gebrauch erhält man eine Lizenz nach der Registrierung auf <a href='https://iobroker.net' target='_blank'>iobroker.net</a>.",
   "vis adapter settings": "vis Adapter-Einstellungen"

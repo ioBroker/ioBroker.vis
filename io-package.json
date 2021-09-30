@@ -1,8 +1,80 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.3.8",
+        "version": "1.4.4",
         "news": {
+            "1.4.4": {
+                "en": "Allowed to have \":\" in the binding object IDs",
+                "de": "Darf \":\" in den Bindungsobjekt-IDs enthalten",
+                "ru": "Допускается наличие \":\" в идентификаторах объектов привязки.",
+                "pt": "É permitido ter \":\" nos IDs de objeto de ligação",
+                "nl": "Toegestaan om \":\" in de bindende object-ID's te hebben",
+                "fr": "Autorisé à avoir \":\" dans les ID d'objet de liaison",
+                "it": "Consentito di avere \":\" negli ID oggetto di associazione",
+                "es": "Se permite tener \":\" en los ID de objeto de vinculación",
+                "pl": "Dozwolone mieć \":\" w powiązanych identyfikatorach obiektów",
+                "zh-cn": "允许在绑定对象 ID 中包含“:”"
+            },
+            "1.4.3": {
+                "en": "Added possibility to check license offline (only special once)",
+                "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
+                "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
+                "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
+                "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
+                "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
+                "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
+                "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
+                "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
+                "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
+            },
+            "1.4.2": {
+                "en": "Added possibility to check license offline (only special once)",
+                "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
+                "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
+                "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
+                "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
+                "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
+                "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
+                "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
+                "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
+                "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
+            },
+            "1.4.0": {
+                "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
+                "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
+                "ru": "Изменен путь проверки сертификатов\nисправления проблем, обнаруженных при проверке адаптера",
+                "pt": "Caminho alterado para verificação de certificados\ncorreções para problemas encontrados pelo verificador de adaptador",
+                "nl": "Pad gewijzigd voor controle van certificaten\noplossingen voor problemen gevonden door adapter-checker",
+                "fr": "Chemin modifié pour la vérification des certificats\ncorrectifs pour les problèmes trouvés par adapter-checker",
+                "it": "Percorso modificato per il controllo dei certificati\ncorrezioni per problemi rilevati da adapter-checker",
+                "es": "Ruta cambiada para la verificación de certificados\narreglos para problemas encontrados por el verificador de adaptadores",
+                "pl": "Zmieniona ścieżka do sprawdzenia certyfikatów\npoprawki problemów znalezionych przez adapter-checker",
+                "zh-cn": "更改了检查证书的路径\n修复适配器检查器发现的问题"
+            },
+            "1.3.10": {
+                "en": "Fixed the support of admin5",
+                "de": "Die Unterstützung von admin5 wurde behoben",
+                "ru": "Исправлена поддержка admin5",
+                "pt": "Corrigido o suporte de admin5",
+                "nl": "Ondersteuning van admin5 opgelost",
+                "fr": "Correction du support d'admin5",
+                "it": "Risolto il problema con il supporto di admin5",
+                "es": "Se corrigió el soporte de admin5.",
+                "pl": "Naprawiono wsparcie dla admin5",
+                "zh-cn": "修复了对admin5的支持"
+            },
+            "1.3.9": {
+                "en": "Added support of local browser variables\nBug fix for null & NaN values in width and height\nAdded support for admin5",
+                "de": "Unterstützung für lokale Browservariablen hinzugefügt\nFehlerbehebung für Null- und NaN-Werte in Breite und Höhe\nUnterstützung für admin5 hinzugefügt",
+                "ru": "Добавлена поддержка локальных переменных браузера.\nИсправлена ошибка для значений NULL и NaN по ширине и высоте\nДобавлена поддержка admin5",
+                "pt": "Adicionado suporte para variáveis locais do navegador\nCorreção de bug para valores nulos e NaN em largura e altura\nAdicionado suporte para admin5",
+                "nl": "Ondersteuning toegevoegd voor lokale browservariabelen\nBugfix voor null & NaN-waarden in breedte en hoogte\nOndersteuning toegevoegd voor admin5",
+                "fr": "Ajout de la prise en charge des variables de navigateur locales\nCorrection de bogue pour les valeurs null et NaN en largeur et en hauteur\nAjout du support pour admin5",
+                "it": "Aggiunto il supporto delle variabili del browser locale\nCorrezione di bug per valori null e NaN in larghezza e altezza\nAggiunto supporto per admin5",
+                "es": "Se agregó soporte para las variables del navegador local.\nCorrección de errores para valores nulos y NaN en ancho y alto\nSoporte agregado para admin5",
+                "pl": "Dodano obsługę zmiennych lokalnych przeglądarki\nNaprawiono błąd wartości null i NaN w szerokości i wysokości\nDodano wsparcie dla admin5",
+                "zh-cn": "增加了对本地浏览器变量的支持\n错误修复宽度和高度的null和NaN值\n添加了对admin5的支持"
+            },
             "1.3.8": {
                 "en": "fix play sounds on iOS Safari an android\nvisEditInspect: format dimension added\nReplace travis and appveyor by the github actions\nAllow resources to be loaded as blob\n(Excodibur ) Allow resources to be loaded as blob",
                 "de": "Fix Play Sounds auf iOS Safari und Android\nvisEditInspect: Formatdimension hinzugefügt\nErsetzen Sie Travis und Appveyor durch die Github-Aktionen\nZulassen, dass Ressourcen als Blob geladen werden\n(Excodibur) Ermöglicht das Laden von Ressourcen als Blob",
@@ -170,77 +242,6 @@
                 "es": "Se hicieron pequeños cambios en el manejo de la licencia.",
                 "pl": "Wprowadzono niewielkie zmiany w obsłudze licencji",
                 "zh-cn": "许可证处理方面进行了一些小的更改"
-            },
-            "1.2.2": {
-                "en": "Preparations for js-controller 2.0",
-                "de": "Vorbereitungen für js-controller 2.0",
-                "ru": "Подготовка к js-controller 2.0",
-                "pt": "Preparativos para js-controller 2.0",
-                "nl": "Voorbereidingen voor js-controller 2.0",
-                "fr": "Préparations pour js-controller 2.0",
-                "it": "Preparativi per js-controller 2.0",
-                "es": "Preparativos para js-controller 2.0",
-                "pl": "Przygotowania do js-kontrolera 2.0",
-                "zh-cn": "js-controller 2.0的准备"
-            },
-            "1.2.1": {
-                "en": "fixed upload of files",
-                "de": "Fehler beim Hochladen von Dateien behoben",
-                "ru": "исправлена загрузка файлов",
-                "pt": "upload fixo de arquivos",
-                "nl": "vaste upload van bestanden",
-                "fr": "téléchargement fixe de fichiers",
-                "it": "caricamento fisso di file",
-                "es": "carga fija de archivos",
-                "pl": "naprawione przesyłanie plików",
-                "zh-cn": "修复了文件上传"
-            },
-            "1.2.0": {
-                "en": "Translations were added",
-                "de": "Übersetzungen wurden hinzugefügt",
-                "ru": "Добавлены переводы",
-                "pt": "Traduções foram adicionadas",
-                "nl": "Vertalingen zijn toegevoegd",
-                "fr": "Les traductions ont été ajoutées",
-                "it": "Sono state aggiunte traduzioni",
-                "es": "Se agregaron traducciones",
-                "pl": "Dodano tłumaczenia",
-                "zh-cn": "翻译增加了"
-            },
-            "1.1.11": {
-                "en": "Bool HTML was Improved ",
-                "de": "Bool HTML wurde verbessert",
-                "ru": "Bool HTML был улучшен",
-                "pt": "Bool HTML foi melhorado",
-                "nl": "Bool HTML is verbeterd",
-                "fr": "Bool HTML a été amélioré",
-                "it": "Bool HTML è stato migliorato",
-                "es": "Bool HTML fue mejorado",
-                "pl": "Bool HTML został ulepszony",
-                "zh-cn": "“Bool HTML”得到了改进"
-            },
-            "1.1.10": {
-                "en": "Add Chinese support",
-                "de": "Chinesische Unterstützung hinzufügen",
-                "ru": "Добавить поддержку китайцев",
-                "pt": "Adicionar suporte chinês",
-                "nl": "Voeg Chinese ondersteuning toe",
-                "fr": "Ajouter un support chinois",
-                "it": "Aggiungi supporto cinese",
-                "es": "Añadir soporte chino",
-                "pl": "Dodaj chińskie wsparcie",
-                "zh-cn": "添加中文支持"
-            },
-            "1.1.8": {
-                "en": "File dialog was corrected",
-                "de": "Dateidialog wurde korrigiert",
-                "ru": "Исправлено диалоговое окно файла",
-                "pt": "A caixa de diálogo do arquivo foi corrigida",
-                "nl": "Bestandsdialoog is gecorrigeerd",
-                "fr": "Le dialogue de fichier a été corrigé",
-                "it": "La finestra di dialogo del file è stata corretta",
-                "es": "Se corrigió el diálogo del archivo",
-                "pl": "Okno dialogowe pliku zostało poprawione"
             }
         },
         "title": "Visualisation",
@@ -284,8 +285,10 @@
         "authors": [
             "bluefox <dogafox@gmail.com>"
         ],
-        "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
-        "license": "CC BY-NC",
+        "localLinks": {
+            "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
+        },
+        "license": "CC-BY-NC-4.0",
         "dependencies": [
             {
                 "web": ">=3.0.12"
@@ -297,8 +300,13 @@
         "serviceStates": "lib/states.js",
         "singleton": true,
         "type": "visualization",
-        "highlight": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "tier": 3,
         "noConfig": false,
+        "adminUI": {
+            "config": "materialize"
+        },
         "materialize": true,
         "welcomeScreen": {
             "link": "vis/index.html",

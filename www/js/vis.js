@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -274,7 +274,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 }
 
 var vis = {
-    version: '1.3.8',
+    version: '1.4.4',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -311,9 +311,9 @@ var vis = {
     bindings:           {},
     bindingsCache:      {},
     subscribing:        {
-        IDs: [],
-        byViews: {},
-        active: [],
+        IDs:         [],
+        byViews:     {},
+        active:      [],
         activeViews: []
     },
     commonStyle:        null,
@@ -324,6 +324,22 @@ var vis = {
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
+
+        // If Id start from 'local_', do not send changes to the server, we assume that it is a local variable of the client
+        if (id.indexOf('local_') === 0) {
+            that.states.attr(state);
+
+            // Inform other widgets, that does not support canJS
+            for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
+                try {
+                    that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
+                } catch (e) {
+                    that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                }
+            }
+            return;
+        }
+
         this.conn.setState(id, state[id + '.val'], function (err) {
             if (err) {
                 //state[id + '.val'] = oldValue;

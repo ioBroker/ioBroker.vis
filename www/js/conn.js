@@ -1253,7 +1253,7 @@ var servConn = {
         });
     },
     logError:         function (errorText) {
-        console.log("Error: " + errorText);
+        console.log('Error: ' + errorText);
         if (!this._isConnected) {
             //console.log('No connection!');
             return;
@@ -1263,7 +1263,7 @@ var servConn = {
             console.log('socket.io not initialized');
             return;
         }
-        this._socket.emit('log', 'error', 'Addon DashUI  ' + errorText);
+        this._socket.emit('log', 'error', 'Addon vis ' + errorText);
     },
     _queueCmdIfRequired: function (func, args) {
         var that = this;

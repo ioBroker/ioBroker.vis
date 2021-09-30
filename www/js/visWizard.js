@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2020 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -21,8 +21,8 @@
 jQuery.extend(systemDictionary, {
 	"All except Low battery": {"en" : "All except 'Battery Indicator'", "de": "Alle außer 'Battery Indicator'", "ru": "Все, кроме 'Battery Indicator'"},
 	"Place following widget to the room and start wizard again": {
-		"en" : "Place following widget to the room and start wizard again", 
-		"de" : "Platziere diesen Widget auf dem View im zugehörigen Raum und starte Wizard neu", 
+		"en" : "Place following widget to the room and start wizard again",
+		"de" : "Platziere diesen Widget auf dem View im zugehörigen Raum und starte Wizard neu",
 		"ru" : "Поместите элемент в комнате, где он должен быть и запустите Помошника снова"
 		}
 });
@@ -30,14 +30,14 @@ jQuery.extend(systemDictionary, {
 vis = $.extend(true, vis, {
 	hm2Widget: {
 		'tplHqButton' : {findImage: false, hssType: ['HM-LC-Sw1-Pl', 'HM-LC-Sw1-FM', 'HM-LC-Sw1-PB-FM', 'HM-LC-Sw2-PB-FM', 'HM-LC-Sw2-FM','HM-ES-PMSw1-Pl','HM-LC-Sw1PBU-FM','HM-LC-Sw1-SM','HM-LC-Sw4-SM']},
-		'tplHqLowbat' : {findImage: true,  hssType: ['HM-PB-4-WM', 'HM-PB-2-WM', 'HM-PB-4Dis-WM', 
+		'tplHqLowbat' : {findImage: true,  hssType: ['HM-PB-4-WM', 'HM-PB-2-WM', 'HM-PB-4Dis-WM',
 		                                             'HM-PB-2-WM55','HM-CC-VD',//'HM-SCI-3-FM',
 													 'HM-Sec-WDS','HM-Sec-SD','HM-Sec-TiS',
 													 'HM-RC-4-2', 'HM-RC-Key4-2', 'HM-RC-Sec4-2',
-													 'HM-RC-4', 'HM-RC-4-B', 'HM-RC-Sec3', 
-													 'HM-RC-Key3', 'HM-RC-Key3-B', 'HM-RC-12', 
+													 'HM-RC-4', 'HM-RC-4-B', 'HM-RC-Sec3',
+													 'HM-RC-Key3', 'HM-RC-Key3-B', 'HM-RC-12',
 													 'HM-RC-12-B', 'HM-RC-19', 'HM-RC-19-B',
-													 'HM-RC-P1', 'HM-PB-6-WM55', 'HM-Sen-EP', 
+													 'HM-RC-P1', 'HM-PB-6-WM55', 'HM-Sen-EP',
 													 'HM-SCI-3-FM', 'HM-SwI-3-FM', 'HM-PBI-4-FM',
 													 'HM-LC-Sw4-Ba-PCB', 'HM-WDS30-OT2-SM','HM-Sen-Wa-Od',
 													 'HM-Dis-TD-T'], point: "LOWBAT"},
@@ -46,8 +46,8 @@ vis = $.extend(true, vis, {
 		'tplHqGong'   : {findImage: false, hssType: ['HM-OU-CF-PL', 'HM-OU-CFM-Pl']},
 		'tplHqOutTemp': {findImage: false, hssType: ['HM-WDC7000','HM-WDS10-TH-O','HM-WDS40-TH-I','HM-WDS100-C6-O','HM-WDS30-T-O']},
 		'tplHqInTemp' : {findImage: false, hssType: ['HM-CC-TC','HM-CC-RT-DN'], aux: [{hssType: ['HM-CC-VD'], attr:'hm_idV'}], useDevice: true},
-		'tplHqShutter': {findImage: false, hssType: ['HM-LC-Bl1-SM','HMW-LC-Bl1-DR','HM-LC-Bl1-FM','HM-LC-Bl1-PB-FM','HM-LC-Bl1PBU-FM'], 
-		                 aux : [{hssType: ['HM-Sec-RHS'], attr:'hm_id_hnd0'}, 
+		'tplHqShutter': {findImage: false, hssType: ['HM-LC-Bl1-SM','HMW-LC-Bl1-DR','HM-LC-Bl1-FM','HM-LC-Bl1-PB-FM','HM-LC-Bl1PBU-FM'],
+		                 aux : [{hssType: ['HM-Sec-RHS'], attr:'hm_id_hnd0'},
 						        {hssType: ['HM-Sec-SC','CC-SC-Rd-WM-W-R5','FHT80TF-2'],  attr:'hm_id0'}]},
 		'tplHqDimmer' : {findImage: false, hssType: ['HM-LC-Dim1TPBU-FM','HM-LC-Dim1PWM-CV','HM-LC-Dim1T-FM','HM-LC-Dim1T-CV','HM-LC-Dim1T-PI','HM-LC-Dim1L-CV','HM-LC-Dim1L-Pl','HM-LC-Dim2L-SM','HMW-LC-Dim1L-DR']},
 		'tplHqLock'   : {findImage: false, hssType: ['HM-Sec-Key-S']}
@@ -79,7 +79,7 @@ vis = $.extend(true, vis, {
 			}
 			if (func)
 				break;
-				
+
 			hm_id = localData.metaObjects[hm_id]['Parent'];
 		}
 		return func;
@@ -111,7 +111,7 @@ vis = $.extend(true, vis, {
 			while (localData.metaObjects[channel]["Parent"]) {
 				channel = localData.metaObjects[channel]["Parent"];
 			}
-		}	
+		}
 		return channel;
 	},
 	findUniqueDeviceInRoom: function (devNames, roomID) {
@@ -137,13 +137,13 @@ vis = $.extend(true, vis, {
 		if (pos) {
 			field = {x: pos.left, y: pos.top, width: 500};
 		}
-	
+
 		// Find empty position for new widget
 		var style = vis.findFreePosition (view, null, field, hqWidgets.gOptions.gBtWidth, hqWidgets.gOptions.gBtHeight);
-		
+
 		// Find function of the widget for filter key
 		func = func || vis.wizardGetFunction (channel);
-		
+
 		// get device description
 		var title = hmSelect._convertName(localData.metaObjects[channel].Name);
 		// Remove ROOM from device name
@@ -152,11 +152,11 @@ vis = $.extend(true, vis, {
 		// Remove the leading dot
 		if (title.length > 0 && title[0] == '.')
 			title = title.substring(1);
-		
+
 		// Get default settings
 		var hqoptions = vis.binds.hqWidgetsExt.hqEditDefault(widgetName);
 		hqoptions = $.extend(hqoptions, {"x": style.left,"y": style.top, "title": title, "hm_id": point, "room": localData.metaObjects[roomID]["Name"]});
-		
+
 		// Set image of widget
 		if (vis.hm2Widget[widgetName].findImage) {
 			hqoptions['iconName'] = hmSelect._getImage(localData.metaObjects[devID].HssType);
@@ -170,7 +170,7 @@ vis = $.extend(true, vis, {
 				}
 			}
 		}
-		
+
 		//var data = {"filterkey":func, "hqoptions": hqoptions}; TODO hqoptions stringify
         var data = {"filterkey":func, "hqoptions": JSON.stringify (hqoptions)};
 		var wid = vis.addWidget (widgetName, data, style, null, view);
@@ -196,7 +196,7 @@ vis = $.extend(true, vis, {
 			max: 1.00,
 			step: 0.01
 		};
-	
+
 		if (!vis.wizardIsWidgetExists (view, "tplTwSimpleClock")) {
 			var wid = vis.addWidget ("tplTwSimpleClock", {"hideSeconds": "true"});
 			$("#select_active_widget").append("<option value='"+wid+"'>"+wid+" ("+$("#"+vis.views[view].widgets[wid].tpl).attr("data-dashui-name")+")</option>");
@@ -236,7 +236,7 @@ vis = $.extend(true, vis, {
 					if (pos.top > wObj.style.top) {
 						pos.top = wObj.style.top;
 					}
-				}	
+				}
 				break;
 			}
 		}
@@ -253,16 +253,16 @@ vis = $.extend(true, vis, {
 						if (widgetName == "tplHqLowbat") {
 							continue;
 						}
-					} else 
+					} else
 					if (widgetName != widgets) {
-						continue;				
+						continue;
 					}
 				}
-			
+
 				var isFound = false;
 				var func = null;
 				var hm_id = vis.wizardGetPoint(widgetName, elems[i]);
-				
+
 				// Check if this widget exists
 				for (var w in vis.views[view].widgets) {
 					if (vis.views[view].widgets[w].data.hqoptions) {
@@ -283,7 +283,7 @@ vis = $.extend(true, vis, {
 						continue;
 					}
 				}
-								
+
 				if (!isFound) {
 					if (pos == null && idCreated) {
 						return idCreated;
@@ -313,7 +313,7 @@ vis = $.extend(true, vis, {
 				} else {
 					vis.wizardRunGeneral (view);
 				}
-			}		
+			}
 		} else {
 			if (room != '_general') {
 				var wid = vis.wizardRunOneRoom (view, room, $('#wizard_funcs').val(), $('#wizard_widgets').val());
@@ -331,7 +331,7 @@ vis = $.extend(true, vis, {
 			}
 			vis.inspectWidget(widgetIds[widgetIds.length - 1]);
 		}
-		
+
 		// Save the changes
 		vis.binds.hqWidgetsExt.hqEditSave ();
 	},
@@ -343,7 +343,7 @@ vis = $.extend(true, vis, {
 		}
 		jSelect.append('<option value="_general">' + _("General")+'</option>');
 		jSelect.append('<option value="">' + _("All")+'</option>');
-		
+
 		elems = localData.metaIndex['ENUM_FUNCTIONS'];// IDs of all ROOMS
 		jSelect = $('#wizard_funcs').html("").addClass('dashui-wizard-select');
 		jSelect.append('<option value="">' + _("All")+'</option>');
@@ -360,7 +360,7 @@ vis = $.extend(true, vis, {
 					if (r == $(this).attr("id")) {
 						$('#wizard_widgets').append("<option value='"+$(this).attr("id")+"'>"+$(this).attr("data-dashui-name")+"</option>\n");
 					}
-				});	
+				});
 			}
 		}
 		$( "#wizard_run" ).button ({icons: {primary: "ui-icon-wrench"}}).bind( "click", function() {

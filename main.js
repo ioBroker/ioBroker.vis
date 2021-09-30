@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2020, bluefox
+ *      Copyright (c) 2014-2021, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -160,14 +160,14 @@ function copyFiles(root, filesOrDirs, callback) {
     const task = filesOrDirs.shift();
     if (task.isDir) {
         copyFiles(root + task.file + '/', null, () =>
-            setTimeout(copyFiles, 0, root, filesOrDirs, callback));
+            setImmediate(copyFiles, root, filesOrDirs, callback));
     } else {
         adapter.readFile('vis.0', root + task.file, (err, data) => {
             if (data || data === 0 || data === '') {
                 adapter.writeFile(adapterName + '.0', root + task.file, data, () =>
-                    setTimeout(copyFiles, 0, root, filesOrDirs, callback));
+                    setImmediate(copyFiles, root, filesOrDirs, callback));
             } else {
-                setTimeout(copyFiles, 0, root, filesOrDirs, callback);
+                setImmediate(copyFiles, root, filesOrDirs, callback);
             }
         });
     }
@@ -265,6 +265,42 @@ function indicateError(callback) {
     }
 }
 
+function check(uuidObj, originalError) {
+    jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), (err, decoded) => {
+        if (err) {
+            adapter.log.error('Cannot check license: ' + originalError);
+            generatePages(true);
+        } else {
+            if (decoded && decoded.expires * 1000 < new Date().getTime()) {
+                adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
+                adapter.stop();
+            } else if (!decoded) {
+                adapter.log.error('Cannot check license: License is empty' + (originalError ? ' and ' + originalError : ''));
+                generatePages(true);
+            } else if (uuidObj.native.uuid.length !== 36) {
+                if (decoded.invoice === 'free') {
+                    adapter.log.error('Cannot use free license with commercial device!');
+                    generatePages(true);
+                } else {
+                    generatePages(false);
+                }
+            } else {
+                const code = [];
+                for (let i = 0; i < decoded.type.length; i++) {
+                    code.push('\\u00' + decoded.type.charCodeAt(i).toString(16));
+                }
+
+                if (code.join('') !== '\u0063\u006f\u006d\u006d\u0065\u0072\u0063\u0069\u0061\u006c') {
+                    generatePages(false);
+                } else {
+                    originalError && adapter.log.error('Cannot check license: ' + originalError);
+                    generatePages(true);
+                }
+            }
+        }
+    });
+}
+
 function main() {
     // first of all check license
     if (!adapter.config.license || typeof adapter.config.license !== 'string') {
@@ -281,14 +317,16 @@ function main() {
                     generatePages(true);
                 });
             } else {
+                const data = JSON.stringify({json: adapter.config.license, uuid: uuidObj.native.uuid});
+
                 // An object of options to indicate where to post to
                 const postOptions = {
                     host: 'iobroker.net',
-                    path: '/cert/',
+                    path: '/api/v1/public/cert/',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'text/plain',
-                        'Content-Length': Buffer.byteLength(adapter.config.license)
+                        'Content-Length': Buffer.byteLength(data)
                     }
                 };
 
@@ -322,44 +360,19 @@ function main() {
                                 }
                             } else {
                                 indicateError(() => {
-                                    adapter.log.error('License is invalid! Nothing updated. Error: ' + (data ? data.result : 'unknown'));
+                                    adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? data.result : 'unknown'}`);
                                     generatePages(true);
                                 });
                             }
                         } catch (e) {
-                            indicateError(() => {
-                                adapter.log.error('Cannot check license! Nothing updated. Error: ' + e);
-                                generatePages(true);
-                            });
+                            check(uuidObj, e);
                         }
                     });
-                }).on('error', error => {
-                    jwt.verify(adapter.config.license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'), (err, decoded) => {
-                        if (err) {
-                            adapter.log.error('Cannot check license: ' + error);
-                            generatePages(true);
-                        } else {
-                            if (decoded && decoded.expires * 1000 < new Date().getTime()) {
-                                adapter.log.error('Cannot check license: Expired on ' + new Date(decoded.expires * 1000).toString());
-                                adapter.stop();
-                            } else if (!decoded) {
-                                adapter.log.error('Cannot check license: License is empty');
-                                generatePages(true);
-                            } else if (uuidObj.native.uuid.length !== 36) {
-                                if (decoded.invoice === 'free') {
-                                    adapter.log.error('Cannot use free license with commercial device!');
-                                    generatePages(true);
-                                } else {
-                                    generatePages(false);
-                                }
-                            } else {
-                                generatePages(false);
-                            }
-                        }
-                    });
-                });
 
-                postReq.write(adapter.config.license);
+                    res.on('error', error => check(uuidObj, error));
+                }).on('error', error => check(uuidObj, error));
+
+                postReq.write(data);
                 postReq.end();
             }
         });

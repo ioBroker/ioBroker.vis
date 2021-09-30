@@ -36,8 +36,27 @@
         .m .col .select-wrapper+label {
             top: -26px;
         }
+        #uuid {
+            width: 320px;
+        }
+        #copyUuid {
+            cursor: pointer;
+            display: inline-block;
+        }
     </style>
     <script type="text/javascript">
+        function copyToClipboard(text, e) {
+            const el = window.document.createElement('textarea');
+            el.value = text;
+            window.document.body.appendChild(el);
+            el.select();
+            window.document.execCommand('copy');
+            window.document.body.removeChild(el);
+            console.log(text);
+            e && e.stopPropagation();
+            e && e.preventDefault();
+        }
+
         function setValue(id, value, onChange) {
             var $value = $('#' + id + '.value');
             if ($value.attr('type') === 'checkbox') {
@@ -75,6 +94,18 @@
                     setValue(key, settings[key], onChange);
                 }
             }
+
+            socket.emit('getObject', 'system.meta.uuid', function (err, obj) {
+                if (obj && obj.native && obj.native.uuid) {
+                    $('#uuid').val(obj.native.uuid);
+                    M.updateTextFields();
+                }
+            });
+            $('#copyUuid').on('click', function (e) {
+                copyToClipboard($('#uuid').val(), e);
+                showToast(null, _('Copied'));
+            });
+
             var $check = $('#check');
             $check.click(function () {
                 $('#check').addClass('disabled');
@@ -82,8 +113,8 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: 'https://iobroker.net/cert/',
-                    data:  $('#license').val(),
+                    url: 'https://iobroker.net/api/v1/public/cert/',
+                    data:  JSON.stringify({json: $('#license').val(), uuid: $('#uuid').val()}),
                     contentType: 'text/plain',
                     xhrFields: {
                         withCredentials: false
@@ -91,7 +122,19 @@
                     headers: {},
                     success: function(data, status, request) {
                         $('#check').removeClass('disabled');
-                        $('#checkResult').html(data ? data.result : 'error').removeClass('error').addClass(data.result === 'OK' ? 'success': '');
+                        var text = data ? data.result : 'error';
+                        if (!data && data.error) {
+                            if (data.type === 'commercial') {
+                                text += ' (offline)';
+                            } else {
+                                text += ' (community)';
+                            }
+                        }
+                        if (data && data.error) {
+                            $('#checkResult').html(_(data.error)).addClass('error').removeClass('success');
+                        } else {
+                            $('#checkResult').html(text).removeClass('error').addClass(data.result === 'OK' ? 'success': '');
+                        }
                     },
                     error: function (res, error) {
                         $('#check').removeClass('disabled');
@@ -128,13 +171,24 @@
         <div class="col s12">
             <div class="row">
                 <div class="col s12 m3 l2">
-                    <img src="vis.png" class="logo">
+                    <img src="vis.png" class="logo" alt="logo"/>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s12">
                     <textarea class="value materialize-textarea license" id="license"></textarea>
                     <label class="translate" for="license">License:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="uuid" type="text" readonly />
+                    <label class="translate" for="uuid">Serial number</label>
+                    <div id="copyUuid" class="translateT" title="Copy to clipboard">
+                        <svg viewBox="0 0 512 512" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="currentColor" d="M433.941 65.941l-51.882-51.882A48 48 0 0 0 348.118 0H176c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h224c26.51 0 48-21.49 48-48v-48h80c26.51 0 48-21.49 48-48V99.882a48 48 0 0 0-14.059-33.941zM266 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h74v224c0 26.51 21.49 48 48 48h96v42a6 6 0 0 1-6 6zm128-96H182a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h106v88c0 13.255 10.745 24 24 24h88v202a6 6 0 0 1-6 6zm6-256h-64V48h9.632c1.591 0 3.117.632 4.243 1.757l48.368 48.368a6 6 0 0 1 1.757 4.243V112z"/>
+                        </svg>
+                    </div>
                 </div>
             </div>
             <div class="row">
