@@ -338,19 +338,8 @@ var vis = {
                 }
             }
             
-            // local variable can be used in bindings
-            if (!that.editMode && that.bindings[id]) {
-                for (var i = 0; i < that.bindings[id].length; i++) {
-                    var widget = that.views[that.bindings[id][i].view].widgets[that.bindings[id][i].widget];
-                    var value = that.formatBinding(that.bindings[id][i].format, that.bindings[id][i].view, that.bindings[id][i].widget, widget);
-    
-                    widget[that.bindings[id][i].type][that.bindings[id][i].attr] = value;
-                    if (that.widgets[that.bindings[id][i].widget] && that.bindings[id][i].type === 'data') {
-                        that.widgets[that.bindings[id][i].widget][that.bindings[id][i].type + '.' + that.bindings[id][i].attr] = value;
-                    }
-                    that.reRenderWidget(that.bindings[id][i].view, that.bindings[id][i].view, that.bindings[id][i].widget);
-                }
-            }            
+            // update local variable state -> needed for binding, etc.
+            vis.updateState(id, state);           
             
             return;
         }
@@ -2932,28 +2921,31 @@ var vis = {
         if (oids.length) this.conn.unsubscribe(oids);
     },
     updateState:        function (id, state) {
-        if (this.editMode) {
-            this.states[id + '.val'] = state.val;
-            this.states[id + '.ts']  = state.ts;
-            this.states[id + '.ack'] = state.ack;
-            this.states[id + '.lc']  = state.lc;
-            if (state.q !== undefined && state.q !== null) {
-                this.states[id + '.q'] = state.q;
-            }
-        } else {
-            var o = {};
-            // Check new model
-            o[id + '.val'] = state.val;
-            o[id + '.ts']  = state.ts;
-            o[id + '.ack'] = state.ack;
-            o[id + '.lc']  = state.lc;
-            if (state.q !== undefined && state.q !== null) {
-                o[id + '.q'] = state.q;
-            }
-            try {
-                this.states.attr(o);
-            } catch (e) {
-                this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+        if (id.indexOf('local_') !== 0) {
+            // not needed for local variables
+            if (this.editMode) {
+                this.states[id + '.val'] = state.val;
+                this.states[id + '.ts']  = state.ts;
+                this.states[id + '.ack'] = state.ack;
+                this.states[id + '.lc']  = state.lc;
+                if (state.q !== undefined && state.q !== null) {
+                    this.states[id + '.q'] = state.q;
+                }
+            } else {
+                var o = {};
+                // Check new model
+                o[id + '.val'] = state.val;
+                o[id + '.ts']  = state.ts;
+                o[id + '.ack'] = state.ack;
+                o[id + '.lc']  = state.lc;
+                if (state.q !== undefined && state.q !== null) {
+                    o[id + '.q'] = state.q;
+                }
+                try {
+                    this.states.attr(o);
+                } catch (e) {
+                    this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                }
             }
         }
 
@@ -3038,6 +3030,20 @@ var vis = {
             for (var id in data) {
                 if (!data.hasOwnProperty(id)) continue;
                 var obj = data[id];
+
+                if (id.indexOf('local_') === 0) {
+                    // if its a local variable, we have to initiate this
+                    obj = {
+                        val: this.getUrlParameter(id),              // using url parameter to set intital value of local variable
+                        ts: Date.now(),
+                        lc: Date.now(),
+                        ack: false,
+                        from: "system.adapter.vis.0",
+                        user: `system.user.${vis.user}` || "system.user.admin",
+                        q: 0
+                    }
+                }
+
                 if (!obj) continue;
 
                 try {
@@ -3088,6 +3094,21 @@ var vis = {
                 }
             });
         }
+    },
+    getUrlParameter: function (localId) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === localId) {
+                return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+        return '';
     }
 };
 
