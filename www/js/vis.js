@@ -3011,6 +3011,9 @@ var vis = {
                 if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
                     this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
                 }
+
+                this.subscribeOidAtRuntime(value);
+
                 this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
             }
         }
@@ -3073,7 +3076,11 @@ var vis = {
                 if (!this.editMode && this.bindings[id]) {
                     for (var i = 0; i < this.bindings[id].length; i++) {
                         var widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
-                        widget[this.bindings[id][i].type][this.bindings[id][i].attr] = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+                        var value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+
+                        widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
+
+                        this.subscribeOidAtRuntime(value);
                     }
                 }
             }
@@ -3109,6 +3116,20 @@ var vis = {
             }
         }
         return '';
+    },
+    subscribeOidAtRuntime: function (oid) {
+        // if state value is an oid and it is not subscribe then subscribe it at runtime
+        if (this.subscribing.active.indexOf(oid) === -1) {
+            if ((/^.*\.\d*\..*/).test(oid)){
+                this.subscribing.active.push(oid);
+
+                let that = this;
+                this.conn._socket.emit('getStates', oid, function (error, data) {
+                    console.log(`Create inner vis object ${oid} at runtime`);                
+                    that.updateStates(data);
+                });
+            }
+        }
     }
 };
 
