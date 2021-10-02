@@ -3119,17 +3119,19 @@ var vis = {
         }
         return '';
     },
-    subscribeOidAtRuntime: function (oid) {
+    subscribeOidAtRuntime: function (oid, callback, force = false) {
         // if state value is an oid and it is not subscribe then subscribe it at runtime, can heppen if binding are used in oid attributes
-        if (this.subscribing.active.indexOf(oid) === -1) {
-            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)){
+        if (this.subscribing.active.indexOf(oid) === -1 || force) {
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 this.subscribing.active.push(oid);
 
                 let that = this;
                 this.conn._socket.emit('getStates', oid, function (error, data) {
-                    console.log(`Create inner vis object ${oid} at runtime`);                
+                    console.log(`Create inner vis object ${oid} at runtime`);
                     that.updateStates(data);
                     that.conn.subscribe(oid);
+
+                    if (callback) callback();                    
                 });
             }
         }
@@ -3137,9 +3139,9 @@ var vis = {
     visibilityOidBinding: function (binding, oid) {
         // if attribute 'visibility-oid' contains binding
         if (binding.attr === "visibility-oid") {
-            
+
             // runs only if we have a valid id
-            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {                
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 let obj = {
                     view: binding.view,
                     widget: binding.widget
@@ -3171,6 +3173,25 @@ var vis = {
                     this.visibility[oid] = [];
                     this.visibility[oid].push(obj);
                     // console.log(`widget ${obj.widget} added to ${id} - oid not exist in visibilty list`);
+                }
+
+                // on runtime load oid, check if oid need subscribe
+                if (!this.editMode) {
+                    let val = this.states.attr(oid + '.val');
+                    if (val === undefined || val === null || val === "null") {
+                        let that = this;
+                        this.subscribeOidAtRuntime(oid, function () {
+                            if (that.isWidgetHidden(obj.view, obj.widget)) {
+                                var mWidget = document.getElementById(obj.widget);
+                                $(mWidget).hide();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onHide) {
+                                    mWidget._customHandlers.onHide(mWidget, obj.widget);
+                                }
+                            }
+                        }, true);
+                    }
                 }
             }
         }
