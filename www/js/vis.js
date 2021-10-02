@@ -3118,15 +3118,16 @@ var vis = {
         return '';
     },
     subscribeOidAtRuntime: function (oid) {
-        // if state value is an oid and it is not subscribe then subscribe it at runtime
+        // if state value is an oid and it is not subscribe then subscribe it at runtime, can heppen if binding are used in oid attributes
         if (this.subscribing.active.indexOf(oid) === -1) {
-            if ((/^.*\.\d*\..*/).test(oid)){
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)){
                 this.subscribing.active.push(oid);
 
                 let that = this;
                 this.conn._socket.emit('getStates', oid, function (error, data) {
                     console.log(`Create inner vis object ${oid} at runtime`);                
                     that.updateStates(data);
+                    that.conn.subscribe(oid);
                 });
             }
         }
