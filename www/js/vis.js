@@ -3013,6 +3013,7 @@ var vis = {
                 }
 
                 this.subscribeOidAtRuntime(value);
+                this.visibilityOidBinding(this.bindings[id][i], value);
 
                 this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
             }
@@ -3081,6 +3082,7 @@ var vis = {
                         widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
 
                         this.subscribeOidAtRuntime(value);
+                        this.visibilityOidBinding(this.bindings[id][i], value);
                     }
                 }
             }
@@ -3129,6 +3131,47 @@ var vis = {
                     that.updateStates(data);
                     that.conn.subscribe(oid);
                 });
+            }
+        }
+    },
+    visibilityOidBinding: function (binding, oid) {
+        // if attribute 'visibility-oid' contains binding
+        if (binding.attr === "visibility-oid") {
+            
+            // runs only if we have a valid id
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {                
+                let obj = {
+                    view: binding.view,
+                    widget: binding.widget
+                }
+
+                for (var id in this.visibility) {
+                    // remove or add widget to existing oid's in visibilty list
+                    if (this.visibility.hasOwnProperty(id)) {
+                        let widgetIndex = this.visibility[id].findIndex(x => x.widget === obj.widget);
+
+                        if (widgetIndex >= 0) {
+                            // widget exists in visibilty list
+                            if (id !== oid) {
+                                this.visibility[id].splice(widgetIndex, 1);
+                                // console.log(`widget ${obj.widget} removed from ${id}`);
+                            }
+                        } else {
+                            // widget not exists in visibilty list
+                            if (id === oid) {
+                                this.visibility[id].push(obj);
+                                // console.log(`widget ${obj.widget} added to ${id}`);
+                            }
+                        }
+                    }
+                }
+
+                if (!this.visibility[oid]) {
+                    // oid not exist in visibilty list -> add oid and widget to visibilty list
+                    this.visibility[oid] = [];
+                    this.visibility[oid].push(obj);
+                    // console.log(`widget ${obj.widget} added to ${id} - oid not exist in visibilty list`);
+                }
             }
         }
     }
