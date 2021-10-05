@@ -337,6 +337,10 @@ var vis = {
                     that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
                 }
             }
+            
+            // update local variable state -> needed for binding, etc.
+            vis.updateState(id, state);           
+            
             return;
         }
 
@@ -2917,28 +2921,31 @@ var vis = {
         if (oids.length) this.conn.unsubscribe(oids);
     },
     updateState:        function (id, state) {
-        if (this.editMode) {
-            this.states[id + '.val'] = state.val;
-            this.states[id + '.ts']  = state.ts;
-            this.states[id + '.ack'] = state.ack;
-            this.states[id + '.lc']  = state.lc;
-            if (state.q !== undefined && state.q !== null) {
-                this.states[id + '.q'] = state.q;
-            }
-        } else {
-            var o = {};
-            // Check new model
-            o[id + '.val'] = state.val;
-            o[id + '.ts']  = state.ts;
-            o[id + '.ack'] = state.ack;
-            o[id + '.lc']  = state.lc;
-            if (state.q !== undefined && state.q !== null) {
-                o[id + '.q'] = state.q;
-            }
-            try {
-                this.states.attr(o);
-            } catch (e) {
-                this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+        if (id.indexOf('local_') !== 0) {
+            // not needed for local variables
+            if (this.editMode) {
+                this.states[id + '.val'] = state.val;
+                this.states[id + '.ts']  = state.ts;
+                this.states[id + '.ack'] = state.ack;
+                this.states[id + '.lc']  = state.lc;
+                if (state.q !== undefined && state.q !== null) {
+                    this.states[id + '.q'] = state.q;
+                }
+            } else {
+                var o = {};
+                // Check new model
+                o[id + '.val'] = state.val;
+                o[id + '.ts']  = state.ts;
+                o[id + '.ack'] = state.ack;
+                o[id + '.lc']  = state.lc;
+                if (state.q !== undefined && state.q !== null) {
+                    o[id + '.q'] = state.q;
+                }
+                try {
+                    this.states.attr(o);
+                } catch (e) {
+                    this.conn.logError('Error: can\'t create states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
+                }
             }
         }
 
@@ -3004,6 +3011,10 @@ var vis = {
                 if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
                     this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
                 }
+
+                this.subscribeOidAtRuntime(value);
+                this.visibilityOidBinding(this.bindings[id][i], value);
+
                 this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
             }
         }
@@ -3023,6 +3034,20 @@ var vis = {
             for (var id in data) {
                 if (!data.hasOwnProperty(id)) continue;
                 var obj = data[id];
+
+                if (id.indexOf('local_') === 0) {
+                    // if its a local variable, we have to initiate this
+                    obj = {
+                        val: this.getUrlParameter(id),              // using url parameter to set intital value of local variable
+                        ts: Date.now(),
+                        lc: Date.now(),
+                        ack: false,
+                        from: "system.adapter.vis.0",
+                        user: `system.user.${vis.user}` || "system.user.admin",
+                        q: 0
+                    }
+                }
+
                 if (!obj) continue;
 
                 try {
@@ -3052,7 +3077,12 @@ var vis = {
                 if (!this.editMode && this.bindings[id]) {
                     for (var i = 0; i < this.bindings[id].length; i++) {
                         var widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
-                        widget[this.bindings[id][i].type][this.bindings[id][i].attr] = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+                        var value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+
+                        widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
+
+                        this.subscribeOidAtRuntime(value);
+                        this.visibilityOidBinding(this.bindings[id][i], value);
                     }
                 }
             }
@@ -3072,6 +3102,98 @@ var vis = {
                     this.contentWindow.document.body.style.zoom = zoom;
                 }
             });
+        }
+    },
+    getUrlParameter: function (localId) {
+        var sPageURL = window.location.search.substring(1),
+            sURLVariables = sPageURL.split('&'),
+            sParameterName,
+            i;
+
+        for (i = 0; i < sURLVariables.length; i++) {
+            sParameterName = sURLVariables[i].split('=');
+
+            if (sParameterName[0] === localId) {
+                return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            }
+        }
+        return '';
+    },
+    subscribeOidAtRuntime: function (oid, callback, force = false) {
+        // if state value is an oid and it is not subscribe then subscribe it at runtime, can heppen if binding are used in oid attributes
+        if (this.subscribing.active.indexOf(oid) === -1 || force) {
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
+                this.subscribing.active.push(oid);
+
+                let that = this;
+                this.conn._socket.emit('getStates', oid, function (error, data) {
+                    console.log(`Create inner vis object ${oid} at runtime`);
+                    that.updateStates(data);
+                    that.conn.subscribe(oid);
+
+                    if (callback) callback();                    
+                });
+            }
+        }
+    },
+    visibilityOidBinding: function (binding, oid) {
+        // if attribute 'visibility-oid' contains binding
+        if (binding.attr === "visibility-oid") {
+
+            // runs only if we have a valid id
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
+                let obj = {
+                    view: binding.view,
+                    widget: binding.widget
+                }
+
+                for (var id in this.visibility) {
+                    // remove or add widget to existing oid's in visibilty list
+                    if (this.visibility.hasOwnProperty(id)) {
+                        let widgetIndex = this.visibility[id].findIndex(x => x.widget === obj.widget);
+
+                        if (widgetIndex >= 0) {
+                            // widget exists in visibilty list
+                            if (id !== oid) {
+                                this.visibility[id].splice(widgetIndex, 1);
+                                // console.log(`widget ${obj.widget} removed from ${id}`);
+                            }
+                        } else {
+                            // widget not exists in visibilty list
+                            if (id === oid) {
+                                this.visibility[id].push(obj);
+                                // console.log(`widget ${obj.widget} added to ${id}`);
+                            }
+                        }
+                    }
+                }
+
+                if (!this.visibility[oid]) {
+                    // oid not exist in visibilty list -> add oid and widget to visibilty list
+                    this.visibility[oid] = [];
+                    this.visibility[oid].push(obj);
+                    // console.log(`widget ${obj.widget} added to ${id} - oid not exist in visibilty list`);
+                }
+
+                // on runtime load oid, check if oid need subscribe
+                if (!this.editMode) {
+                    let val = this.states.attr(oid + '.val');
+                    if (val === undefined || val === null || val === "null") {
+                        let that = this;
+                        this.subscribeOidAtRuntime(oid, function () {
+                            if (that.isWidgetHidden(obj.view, obj.widget)) {
+                                var mWidget = document.getElementById(obj.widget);
+                                $(mWidget).hide();
+                                if (mWidget &&
+                                    mWidget._customHandlers &&
+                                    mWidget._customHandlers.onHide) {
+                                    mWidget._customHandlers.onHide(mWidget, obj.widget);
+                                }
+                            }
+                        }, true);
+                    }
+                }
+            }
         }
     }
 };
