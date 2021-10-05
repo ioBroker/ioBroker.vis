@@ -207,6 +207,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### __WORK IN PROGRESS__
 -->
 
+### __WORK IN PROGRESS__
+* (jens-maus) Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).
+
 ## Changelog
 ### 1.4.4 (2021-08-31)
 * (jobe451) Allowed to have ":" in the binding object IDs
