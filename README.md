@@ -206,16 +206,14 @@ Notice that these settings are valid only for reconnection and not for the first
     Placeholder for the next version (at the beginning of the line):
     ### __WORK IN PROGRESS__
 -->
-
-### __WORK IN PROGRESS__
+### 1.4.5 (2021-10-08)
 * (jens-maus) Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).
 * (bluefox) Showed the extended error messages by license check
 * (Scrounger) Patch visibility oid binding
 
-## Changelog
 ### 1.4.4 (2021-08-31)
 * (jobe451) Allowed to have ":" in the binding object IDs
- 
+
 ### 1.4.3 (2021-07-11)
 * (bluefox) Added possibility to check license offline (only special once)
 
@@ -247,7 +245,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (Scrounger) Added the optional arguments to support Material Design Widgets
 
 ### 1.3.4 (2020-10-04)
-* (foxriver76) Corrected the error on older devices 
+* (foxriver76) Corrected the error on older devices
 
 ### 1.3.3 (2020-09-21)
 * (bluefox) Return de-bounce settings back
@@ -266,7 +264,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (foxriver76) only parse arrays and json objects, not booleans, normal strings etc
 
 ### 1.2.11 (2020-08-25)
-* (bluefox) The error message about the non-found chart view was fixed. 
+* (bluefox) The error message about the non-found chart view was fixed.
 
 ### 1.2.10 (2020-08-23)
 * (gsicilia82/fceller) JSON strings will be parsed in VIS bindings
