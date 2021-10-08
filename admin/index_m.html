@@ -137,8 +137,16 @@
                         }
                     },
                     error: function (res, error) {
+                        if (res && res.responseJSON && res.responseJSON.error) {
+                            if (res.responseJSON.error === 'not found') {
+                                $('#checkResult').html(_('License does not exist.')).addClass('error').removeClass('success');
+                            } else {
+                                $('#checkResult').html(_('Error:') + ' ' + res.responseJSON.error).addClass('error').removeClass('success');
+                            }
+                        } else {
+                            $('#checkResult').html(_('Service is offline. Please try later.')).addClass('error').removeClass('success');
+                        }
                         $('#check').removeClass('disabled');
-                        $('#checkResult').html(_('Service is offline. Please try later.')).addClass('error').removeClass('success');
                     }
                 });
             });

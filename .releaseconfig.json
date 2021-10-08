@@ -1,8 +1,7 @@
 {
   "all": true,
-  "lerna": false,
-
-  "scripts": {
+  "plugins": ["iobroker"],
+  "exec": {
     "beforePush": "npm run build"
   }
 }
