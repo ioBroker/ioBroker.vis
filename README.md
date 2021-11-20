@@ -206,7 +206,7 @@ Notice that these settings are valid only for reconnection and not for the first
     Placeholder for the next version (at the beginning of the line):
     ### __WORK IN PROGRESS__
 -->
-### __WORK IN PROGRESS__
+### 1.4.6 (2021-11-20)
 * (bluefox) Added the license check even without internet
 
 ### 1.4.5 (2021-10-08)

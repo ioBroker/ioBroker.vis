@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.5",
+        "version": "1.4.6",
         "news": {
+            "1.4.6": {
+                "en": "Added the license check even without internet",
+                "de": "Lizenzprüfung auch ohne Internet hinzugefügt",
+                "ru": "Добавлена проверка лицензии даже без интернета",
+                "pt": "Adicionada a verificação de licença mesmo sem internet",
+                "nl": "De licentiecontrole toegevoegd, zelfs zonder internet",
+                "fr": "Ajout du contrôle de licence même sans internet",
+                "it": "Aggiunto il controllo della licenza anche senza internet",
+                "es": "Se agregó la verificación de licencia incluso sin Internet.",
+                "pl": "Dodano sprawdzanie licencji nawet bez internetu",
+                "zh-cn": "即使没有互联网也添加了许可证检查"
+            },
             "1.4.5": {
                 "en": "Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).\nShowed the extended error messages by license check\nPatch visibility oid binding",
                 "de": "Frame-src-Spezifikation zum Content-Security-Policy-Header hinzugefügt, um Probleme beim Blockieren von Frame-bezogenen Inhalten zu beheben (z. B. bei Verwendung der KioskPro iOS-App).\nZeigte die erweiterten Fehlermeldungen bei der Lizenzprüfung an\nPatch-Sichtbarkeit ohne Bindung",
@@ -74,18 +86,6 @@
                 "es": "Se corrigió el soporte de admin5.",
                 "pl": "Naprawiono wsparcie dla admin5",
                 "zh-cn": "修复了对admin5的支持"
-            },
-            "1.3.9": {
-                "en": "Added support of local browser variables\nBug fix for null & NaN values in width and height\nAdded support for admin5",
-                "de": "Unterstützung für lokale Browservariablen hinzugefügt\nFehlerbehebung für Null- und NaN-Werte in Breite und Höhe\nUnterstützung für admin5 hinzugefügt",
-                "ru": "Добавлена поддержка локальных переменных браузера.\nИсправлена ошибка для значений NULL и NaN по ширине и высоте\nДобавлена поддержка admin5",
-                "pt": "Adicionado suporte para variáveis locais do navegador\nCorreção de bug para valores nulos e NaN em largura e altura\nAdicionado suporte para admin5",
-                "nl": "Ondersteuning toegevoegd voor lokale browservariabelen\nBugfix voor null & NaN-waarden in breedte en hoogte\nOndersteuning toegevoegd voor admin5",
-                "fr": "Ajout de la prise en charge des variables de navigateur locales\nCorrection de bogue pour les valeurs null et NaN en largeur et en hauteur\nAjout du support pour admin5",
-                "it": "Aggiunto il supporto delle variabili del browser locale\nCorrezione di bug per valori null e NaN in larghezza e altezza\nAggiunto supporto per admin5",
-                "es": "Se agregó soporte para las variables del navegador local.\nCorrección de errores para valores nulos y NaN en ancho y alto\nSoporte agregado para admin5",
-                "pl": "Dodano obsługę zmiennych lokalnych przeglądarki\nNaprawiono błąd wartości null i NaN w szerokości i wysokości\nDodano wsparcie dla admin5",
-                "zh-cn": "增加了对本地浏览器变量的支持\n错误修复宽度和高度的null和NaN值\n添加了对admin5的支持"
             }
         },
         "title": "Visualisation",
