@@ -206,6 +206,9 @@ Notice that these settings are valid only for reconnection and not for the first
     Placeholder for the next version (at the beginning of the line):
     ### __WORK IN PROGRESS__
 -->
+### __WORK IN PROGRESS__
+* (bluefox) Added the license check even without internet
+
 ### 1.4.5 (2021-10-08)
 * (jens-maus) Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).
 * (bluefox) Showed the extended error messages by license check

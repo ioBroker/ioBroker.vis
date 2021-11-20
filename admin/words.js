@@ -104,18 +104,6 @@ systemDictionary = {
         "pl": " numer seryjny (UUID) w licencji dotyczy innego urządzenia",
         "zh-cn": " 许可证中的序列号 (UUID) 用于其他设备"
     },
-    "License": {
-        "en": "License",
-        "de": "Lizenz",
-        "ru": "Лицензия",
-        "pt": "Licença",
-        "nl": "Vergunning",
-        "fr": "Licence",
-        "it": "Licenza",
-        "es": "Licencia",
-        "pl": "Licencja",
-        "zh-cn": "执照"
-    },
     "License does not exist.": {
         "en": "License does not exist.",
         "de": "Lizenz existiert nicht.",
@@ -139,5 +127,29 @@ systemDictionary = {
         "es": "Error:",
         "pl": "Błąd:",
         "zh-cn": "错误："
+    },
+    "License:": {
+        "en": "License:",
+        "de": "Lizenz:",
+        "ru": "Лицензия:",
+        "pt": "Licença:",
+        "nl": "Vergunning:",
+        "fr": "Licence:",
+        "it": "Licenza:",
+        "es": "Licencia:",
+        "pl": "Licencja:",
+        "zh-cn": "执照："
+    },
+    "OK - offline check": {
+        "en": "OK - offline check",
+        "de": "OK - Offline-Check",
+        "ru": "ОК - проверка офлайн",
+        "pt": "OK - verificação offline",
+        "nl": "OK - offline controle",
+        "fr": "OK - vérification hors ligne",
+        "it": "OK - controllo offline",
+        "es": "Aceptar: verificación fuera de línea",
+        "pl": "OK - sprawdzenie offline",
+        "zh-cn": "OK - 离线检查"
     }
 };
