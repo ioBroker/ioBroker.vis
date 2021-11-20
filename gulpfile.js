@@ -62,7 +62,7 @@ function readWordJs(src) {
 
         const lines = words.split(/\r\n|\r|\n/g);
         let i = 0;
-        while (!lines[i].match(/^\$\.extend\(systemDictionary, {/)) {
+        while (!lines[i].includes('$.extend(systemDictionary,') && !lines[i].includes('systemDictionary =')) {
             i++;
         }
         lines.splice(0, i);
@@ -77,7 +77,9 @@ function readWordJs(src) {
         }
 
         lines[0] = lines[0].replace('$.extend(systemDictionary, ', '');
+        lines[0] = lines[0].replace('systemDictionary = {', '{');
         lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/}\);$/, '}');
+        lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/};$/, '}');
         words = lines.join('\n');
         const resultFunc = new Function('return ' + words + ';');
 
@@ -407,7 +409,7 @@ gulp.task('adminLanguages2words', done => {
 });
 
 
-gulp.task('replacePkg', () => 
+gulp.task('replacePkg', () =>
     gulp.src([
         srcDir + 'package.json',
         srcDir + 'io-package.json'
@@ -428,7 +430,7 @@ gulp.task('replaceVis', () =>
         .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
         .pipe(gulp.dest( srcDir + '/www/js')));
 
-gulp.task('replaceHtml', () => 
+gulp.task('replaceHtml', () =>
     gulp.src([
         srcDir + 'www/cache.manifest',
         srcDir + 'www/index.html',
