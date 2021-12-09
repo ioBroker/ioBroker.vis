@@ -82,7 +82,10 @@ async function writeFile(fileName) {
                 removeStyleLinkTypeAttributes: true
             });*/
 
-            const data = await adapter.readFileAsync(adapterName, fileName);
+            let data = await adapter.readFileAsync(adapterName, fileName);
+            if (typeof data === 'object') {
+                data = data.file;
+            }
             if (data && data !== index) {
                 fs.writeFileSync(__dirname + '/www/' + fileName, index);
                 await adapter.writeFileAsync(adapterName, fileName, index);
@@ -128,7 +131,7 @@ async function updateCacheManifest() {
 // Update index.html
 async function checkFiles(configChanged, isBeta) {
     if (isBeta) {
-        return adapter.stop();
+        return;
     }
     const indexChanged = await writeFile('index.html');
     // Update edit.html
@@ -137,8 +140,6 @@ async function checkFiles(configChanged, isBeta) {
         await updateCacheManifest();
         await upload();
     }
-
-    adapter.stop();
 }
 
 async function copyFiles(root, filesOrDirs) {
@@ -161,7 +162,10 @@ async function copyFiles(root, filesOrDirs) {
             await copyFiles(root + task.file + '/');
         } else {
             try {
-                const data = await adapter.readFileAsync('vis.0', root + task.file);
+                let data = await adapter.readFileAsync('vis.0', root + task.file);
+                if (typeof data === 'object') {
+                    data = data.file;
+                }
                 if (data || data === 0 || data === '') {
                     await adapter.writeFileAsync(adapterName + '.0', root + task.file, data);
                 }
@@ -180,6 +184,9 @@ async function generatePages(isLicenseError) {
 
         // upload config.js
         let data = await adapter.readFileAsync(adapterName, 'js/config.js');
+        if (typeof data === 'object') {
+            data = data.file;
+        }
         const config = fs.existsSync(__dirname + '/www/js/config.js') ? fs.readFileSync(__dirname + '/www/js/config.js').toString('utf8') : '';
         data = data ? data.toString('utf8') : '';
         if (!data || data !== config) {
@@ -223,16 +230,21 @@ async function generatePages(isLicenseError) {
     }
 
     // Create common user CSS file
+    let data;
     try {
-        const data = await adapter.readFileAsync(adapterName, 'css/vis-common-user.css');
-        if (data === null || data === undefined) {
-            await adapter.writeFileAsync(adapterName, 'css/vis-common-user.css', '');
+        data = await adapter.readFileAsync(adapterName, 'css/vis-common-user.css');
+        if (typeof data === 'object') {
+            data = data.file;
         }
-    } catch (err) {
+    } catch {
+        data = null;
+    }
+
+    if (data === null || data === undefined) {
         await adapter.writeFileAsync(adapterName, 'css/vis-common-user.css', '');
     }
 
-    await checkFiles(changed, isBeta);
+    return changed;
 }
 
 async function indicateError() {
@@ -296,7 +308,6 @@ async function getSuitableLicenses(all) {
 function checkLicense(license, uuid, originalError) {
     if (license && license.expires * 1000 < new Date().getTime()) {
         adapter.log.error(`Cannot check license: Expired on ${new Date(license.expires * 1000).toString()}`);
-        adapter.stop();
         return true;
     } else if (!license) {
         adapter.log.error(`Cannot check license: License is empty${originalError ? ' and ' + originalError : ''}`);
@@ -395,17 +406,18 @@ function doLicense(license, uuid) {
 }
 
 async function main() {
+    let isLicenseError;
     // first of all check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
         await indicateError();
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-        await generatePages(true);
+        isLicenseError = true;
     } else {
         const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
         if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
             await indicateError();
             adapter.log.error('UUID not found!');
-            await generatePages(true);
+            isLicenseError = true;
         } else {
             let license = adapter.config.license;
             if (adapter.config.useLicenseManager) {
@@ -416,18 +428,18 @@ async function main() {
             if (!license) {
                 await indicateError();
                 adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-                await generatePages(true);
+                isLicenseError = true;
             } else {
-                let isLicenseError;
-
                 try {
                     isLicenseError = await doLicense(license, uuidObj.native.uuid);
                 } catch (err) {
                     isLicenseError = check(license, uuidObj.native.uuid, err);
                 }
-
-                await generatePages(isLicenseError);
             }
         }
     }
+
+    const filesChanged = await generatePages(isLicenseError);
+    await checkFiles(filesChanged, isBeta);
+    adapter.stop();
 }
