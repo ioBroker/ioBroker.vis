@@ -14,11 +14,11 @@
 
     <style>
         .success {
-            color: forestgreen;
+            color: forestgreen !important;
             font-weight: bold;
         }
         .error {
-            color: #ab0000;
+            color: #ab0000 !important;
         }
         .license {
             height: 100px !important;
@@ -88,6 +88,51 @@
             }).join(''));
 
             return JSON.parse(jsonPayload);
+        }
+
+        function checkLicenses(settings) {
+            // read if license manager is supported
+            socket.emit('getObject', 'system.licenses', function (err, obj) {
+                if (obj && obj.native && obj.native.licenses && obj.native.licenses.length) {
+                    // enable license manager
+                    var useLicense;
+                    $('.useLicenseManager').show();
+                    var now = Date.now();
+                    var uuid = $('#uuid').val();
+                    // find license for vis
+                    obj.native.licenses.forEach(function (license) {
+                        if (!license.validTill || license.validTill === '0000-00-00 00:00:00' || new Date(license.validTill).getTime() > now) {
+                            if (license.product.startsWith('iobroker.vis') &&
+                                (!useLicense || license.invoice !== 'free') &&
+                                (!license.uuid || license.uuid === uuid)
+                            ) {
+                                useLicense = license;
+                            }
+                        }
+                    });
+
+                    var $licenseFound = $('#licenseFound > div');
+                    if (useLicense) {
+                        if (settings.useLicenseManager === 0 || settings.useLicenseManager === undefined) {
+                            $('#licenseFound').show();
+                            $('#checkButton').hide();
+                            $('.license').hide();
+                            $('#useLicenseManager').prop('checked', true).trigger('change');
+                        }
+                        // show used license
+                        $licenseFound.html(`${_('Suitable license found')}: ${useLicense.product} (${new Date(useLicense.time).toLocaleDateString()})`).addClass('success');
+                        $licenseFound[0].setAttribute('style', 'color: #52ab63 !important');
+                    } else {
+                        $licenseFound.html(_('Suitable license not found')).addClass('error').css('color', '#ab0000 !important');
+                        $licenseFound[0].setAttribute('style', 'color: #ab0000 !important');
+                    }
+                } else {
+                    $('.useLicenseManager').hide();
+                    $('#licenseFound').hide();
+                    $('#checkButton').show();
+                    $('.license').show();
+                }
+            });
         }
 
         function load(settings, onChange) {
@@ -184,6 +229,28 @@
                 $check.addClass('disabled');
             }
 
+            $('#useLicenseManager').on('change', function () {
+                var val = $(this).prop('checked');
+                if (val) {
+                    $('#licenseFound').show();
+                    $('.license').hide();
+                    $('#checkButton').hide();
+                    checkLicenses(settings);
+                } else {
+                    $('#licenseFound').hide();
+                    $('.license').show();
+                    $('#checkButton').show();
+                }
+            });
+
+            if (settings.useLicenseManager) {
+                $('#licenseFound').show();
+                $('.license').hide();
+                $('#checkButton').hide();
+            }
+
+            checkLicenses(settings);
+
             M.updateTextFields();
             onChange(false);
         }
@@ -212,7 +279,17 @@
                     <img src="vis.png" class="logo" alt="logo"/>
                 </div>
             </div>
-            <div class="row">
+            <div class="row useLicenseManager" style="display: none">
+                <div class="input-field col s12">
+                    <input class="value" id="useLicenseManager" type="checkbox"/>
+                    <label class="translate" for="useLicenseManager">Use license manager</label>
+                </div>
+            </div>
+            <div class="row" style="display: none" id="licenseFound">
+                <div class="input-field col s12">
+                </div>
+            </div>
+            <div class="row license">
                 <div class="input-field col s12">
                     <textarea class="value materialize-textarea license" id="license"></textarea>
                     <label class="translate" for="license">License:</label>
@@ -229,7 +306,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" id="checkButton">
                 <div class="input-field col s6">
                     <a class="waves-effect waves-light btn" id="check"><i class="material-icons">help</i><span class="translate">Check license</span></a>
                     <div id="checkResult"></div>

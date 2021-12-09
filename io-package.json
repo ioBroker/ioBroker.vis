@@ -169,7 +169,8 @@
     },
     "native": {
         "defaultFileMode": 1604,
-        "license": ""
+        "license": "",
+        "useLicenseManager": 0
     },
     "instanceObjects": [
         {
