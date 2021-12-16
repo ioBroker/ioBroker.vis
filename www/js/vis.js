@@ -3120,8 +3120,13 @@ var vis = {
         return '';
     },
     subscribeOidAtRuntime: function (oid, callback, force = false) {
-        // if state value is an oid and it is not subscribe then subscribe it at runtime, can heppen if binding are used in oid attributes
+        // if state value is an oid and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
+        const FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
         if (this.subscribing.active.indexOf(oid) === -1 || force) {
+            if (FORBIDDEN_CHARS.test(oid)) {
+                // the value contains characters not allowed in oid's
+                return;
+            }
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 this.subscribing.active.push(oid);
 
