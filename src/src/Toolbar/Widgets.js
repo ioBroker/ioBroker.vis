@@ -1,10 +1,28 @@
-import AlignHorizontalCenterIcon from '@material-ui/icons-material/AlignHorizontalCenter';
-import AlignHorizontalLeftIcon from '@material-ui/icons-material/AlignHorizontalLeft';
-import AlignHorizontalRightIcon from '@material-ui/icons-material/AlignHorizontalRight';
-import AlignVerticalBottomIcon from '@material-ui/icons-material/AlignVerticalBottom';
-import AlignVerticalCenterIcon from '@material-ui/icons-material/AlignVerticalCenter';
-import AlignVerticalTopIcon from '@material-ui/icons-material/AlignVerticalTop';
+import { Button, Divider, IconButton } from '@material-ui/core';
+import {
+    MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight, MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
+} from 'react-icons/md';
+import { CgArrowAlignH, CgArrowAlignV } from 'react-icons/cg';
 
-const Widgets = props => <div>Widgets</div>;
+import I18n from '@iobroker/adapter-react/i18n';
+
+const alignButtons = [
+    { icon: <MdAlignHorizontalLeft /> },
+    { icon: <MdAlignHorizontalRight /> },
+    { icon: <MdAlignVerticalTop /> },
+    { icon: <MdAlignVerticalBottom /> },
+    { icon: <MdAlignHorizontalCenter /> },
+    { icon: <MdAlignVerticalCenter /> },
+    { icon: <CgArrowAlignH /> },
+    { icon: <CgArrowAlignV /> },
+];
+
+const Widgets = props => <div className={props.classes.toolbar}>
+    Widgets
+    <Divider orientation="vertical" flexItem />
+    {alignButtons.map((button, key) => <IconButton size="small" key={key}>{button.icon}</IconButton>)}
+    <Button>{I18n.t('Export Widgets')}</Button>
+    <Button>{I18n.t('Import Widgets')}</Button>
+</div>;
 
 export default Widgets;

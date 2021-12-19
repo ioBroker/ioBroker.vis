@@ -22,6 +22,7 @@ Vis
                         value={tab}
                         className={props.classes.viewTab}
                         onClick={() => setSelected(tab)}
+                        key={tab}
                     />)
                 }
             </Tabs>

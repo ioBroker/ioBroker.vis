@@ -22,6 +22,10 @@ const styles = theme => ({
         minWidth: 0,
         minHeight: 0,
     },
+    toolbar: {
+        display: 'flex',
+        alignItems: 'center',
+    }
 });
 
 class App extends GenericApp {
@@ -46,7 +50,7 @@ class App extends GenericApp {
 
         this.state = {
             ...this.state,
-            selectedView: null,
+            selectedView: '',
         };
 
         // icon cache
@@ -90,6 +94,7 @@ class App extends GenericApp {
                                         className={this.props.classes.viewTab}
                                         value={view}
                                         onClick={() => this.changeView(view)}
+                                        key={view}
                                     />)
                             }
                         </Tabs>
