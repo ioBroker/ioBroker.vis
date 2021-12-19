@@ -12,8 +12,17 @@ import I18n from '@iobroker/adapter-react/i18n';
 
 import Attributes from './Attributes';
 import Widgets from './Widgets';
+import Menu from './Menu';
 
-const styles = theme => {};
+const styles = theme => ({
+    viewTabs: {
+        minHeight: 0,
+    },
+    viewTab: {
+        minWidth: 0,
+        minHeight: 0,
+    },
+});
 
 class App extends GenericApp {
     constructor(props) {
@@ -37,6 +46,7 @@ class App extends GenericApp {
 
         this.state = {
             ...this.state,
+            selectedView: null,
         };
 
         // icon cache
@@ -47,6 +57,10 @@ class App extends GenericApp {
         this.socket.readFile('vis.0', 'main/vis-views.json').then(file => this.setState({ project: JSON.parse(file) }));
     }
 
+    changeView = view => {
+        this.setState({ selectedView: view });
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project) {
             return <MuiThemeProvider theme={this.state.theme}>
@@ -55,34 +69,38 @@ class App extends GenericApp {
         }
 
         return <MuiThemeProvider theme={this.state.theme}>
-            <div style={{ overflow: 'scroll', height: '100%' }}>
-                <div>
-Vis
-                    <Tabs>
-                        {
-                            ['View', 'Widgets', 'Tools', 'Setup', 'Help'].map(tab => <Tab label={I18n.t(tab)} />)
-                        }
-                    </Tabs>
-                </div>
-                <div>Panel</div>
+            <div>
+                <Menu
+                    classes={this.props.classes}
+                    selectedView={this.state.selectedView}
+                    project={this.state.project}
+                    changeView={this.changeView}
+                />
                 <Grid container>
                     <Grid item xs={2}>
                         <Widgets />
                     </Grid>
                     <Grid item xs={8}>
-                        <Tabs>
+                        <Tabs value={this.state.selectedView} className={this.props.classes.viewTabs}>
                             {
                                 Object.keys(this.state.project)
-                                    .filter(project => !project.startsWith('__'))
-                                    .map(project => <Tab label={project} />)
+                                    .filter(view => !view.startsWith('__'))
+                                    .map(view => <Tab
+                                        label={view}
+                                        className={this.props.classes.viewTab}
+                                        value={view}
+                                        onClick={() => this.changeView(view)}
+                                    />)
                             }
                         </Tabs>
-                        <pre>
-                            {JSON.stringify(this.state.project, null, 2)}
-                        </pre>
+                        <div style={{ overflow: 'scroll', height: '100vh' }}>
+                            <pre>
+                                {JSON.stringify(this.state.project, null, 2)}
+                            </pre>
+                        </div>
                     </Grid>
                     <Grid item xs={2}>
-                        <Attributes />
+                        <Attributes classes={this.props.classes} />
                     </Grid>
                 </Grid>
             </div>
