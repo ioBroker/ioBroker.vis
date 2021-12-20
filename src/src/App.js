@@ -8,11 +8,13 @@ import {
     Grid, Tab, Tabs,
 } from '@material-ui/core';
 
+import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
+
 import I18n from '@iobroker/adapter-react/i18n';
 
 import Attributes from './Attributes';
 import Widgets from './Widgets';
-import Menu from './Menu';
+import MainMenu from './Menu';
 
 const styles = theme => ({
     viewTabs: {
@@ -25,7 +27,14 @@ const styles = theme => ({
     toolbar: {
         display: 'flex',
         alignItems: 'center',
-    }
+    },
+    block: {
+        overflow: 'auto',
+        height: 'calc(100vh - 106px)',
+    },
+    menu: {
+        display: 'flex',
+    },
 });
 
 class App extends GenericApp {
@@ -58,7 +67,13 @@ class App extends GenericApp {
     }
 
     onConnectionReady() {
-        this.socket.readFile('vis.0', 'main/vis-views.json').then(file => this.setState({ project: JSON.parse(file) }));
+        this.socket.readFile('vis.0', 'main/vis-views.json').then(file => {
+            const project = JSON.parse(file);
+            this.setState({
+                project,
+                selectedView: Object.keys(project).find(view => !view.startsWith('__')) || '',
+            });
+        });
     }
 
     changeView = view => {
@@ -74,40 +89,47 @@ class App extends GenericApp {
 
         return <MuiThemeProvider theme={this.state.theme}>
             <div>
-                <Menu
+                <MainMenu
                     classes={this.props.classes}
                     selectedView={this.state.selectedView}
                     project={this.state.project}
                     changeView={this.changeView}
                 />
-                <Grid container>
-                    <Grid item xs={2}>
-                        <Widgets />
-                    </Grid>
-                    <Grid item xs={8}>
-                        <Tabs value={this.state.selectedView} className={this.props.classes.viewTabs}>
-                            {
-                                Object.keys(this.state.project)
-                                    .filter(view => !view.startsWith('__'))
-                                    .map(view => <Tab
-                                        label={view}
-                                        className={this.props.classes.viewTab}
-                                        value={view}
-                                        onClick={() => this.changeView(view)}
-                                        key={view}
-                                    />)
-                            }
-                        </Tabs>
-                        <div style={{ overflow: 'scroll', height: '100vh' }}>
-                            <pre>
-                                {JSON.stringify(this.state.project, null, 2)}
-                            </pre>
+                <div>
+                    <ReactSplit
+                        direction={SplitDirection.Horizontal}
+                        initialSizes={[20, 60, 20]}
+                        theme={GutterTheme.Light}
+                        gutterClassName="Light visGutter"
+                    >
+                        <div className={this.props.classes.block}>
+                            <Widgets />
                         </div>
-                    </Grid>
-                    <Grid item xs={2}>
-                        <Attributes classes={this.props.classes} />
-                    </Grid>
-                </Grid>
+                        <div className={this.props.classes.block}>
+                            <Tabs value={this.state.selectedView} className={this.props.classes.viewTabs}>
+                                {
+                                    Object.keys(this.state.project)
+                                        .filter(view => !view.startsWith('__'))
+                                        .map(view => <Tab
+                                            label={view}
+                                            className={this.props.classes.viewTab}
+                                            value={view}
+                                            onClick={() => this.changeView(view)}
+                                            key={view}
+                                        />)
+                                }
+                            </Tabs>
+                            <div>
+                                <pre>
+                                    {JSON.stringify(this.state.project, null, 2)}
+                                </pre>
+                            </div>
+                        </div>
+                        <div className={this.props.classes.block}>
+                            <Attributes classes={this.props.classes} />
+                        </div>
+                    </ReactSplit>
+                </div>
             </div>
         </MuiThemeProvider>;
     }
