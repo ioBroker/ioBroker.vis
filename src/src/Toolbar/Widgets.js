@@ -1,5 +1,5 @@
 import {
-    Button, Divider, IconButton, Select, MenuItem,
+    Button, Divider, IconButton, Select, MenuItem, FormControl, InputLabel,
 } from '@material-ui/core';
 import {
     MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight, MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
@@ -37,19 +37,25 @@ const alignButtons = [
 ];
 
 const Widgets = props => <div className={props.classes.toolbar}>
-    Widgets
-    <Select>
-        {Object.keys(props.project[props.selectedView].widgets).map(widget => <MenuItem
-            value={widget}
-            key={widget}
-        >
-            {I18n.t(widget)}
-        </MenuItem>)}
-    </Select>
+    <FormControl>
+        <InputLabel>{I18n.t('Active view')}</InputLabel>
+        <Select>
+            {Object.keys(props.project[props.selectedView].widgets).map(widget => <MenuItem
+                value={widget}
+                key={widget}
+            >
+                {I18n.t(widget)}
+            </MenuItem>)}
+        </Select>
+    </FormControl>
     {widgetButtons.map((button, key) => <IconButton size="small" key={key}><button.Icon fontSize="small" /></IconButton>)}
     <Divider orientation="vertical" flexItem />
+    {I18n.t('Align widgets')}
     {alignButtons.map((button, key) => <IconButton size="small" key={key}><button.Icon fontSize="small" /></IconButton>)}
+    <Divider orientation="vertical" flexItem />
+    {I18n.t('All widgets')}
     {widgetsButtons.map((button, key) => <IconButton size="small" key={key}><button.Icon fontSize="small" /></IconButton>)}
+    <Divider orientation="vertical" flexItem />
     <Button>{I18n.t('Export Widgets')}</Button>
     <Button>{I18n.t('Import Widgets')}</Button>
 </div>;

@@ -1,5 +1,5 @@
 import {
-    Tab, Tabs,
+    Tab, Tabs, Typography,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
@@ -20,8 +20,15 @@ const Attributes = props => {
     const TabContent = tabs[selected];
 
     return <>
-        {I18n.t('Attributes')}
-        <Tabs className={props.classes.viewTabs} value={selected}>
+        <Typography variant="h6" gutterBottom>
+            {I18n.t('Attributes')}
+        </Typography>
+        <Tabs
+            className={props.classes.viewTabs}
+            value={selected}
+            variant="scrollable"
+            scrollButtons="on"
+        >
             {
                 ['View', 'Widget', 'CSS', 'Scripts'].map(tab => <Tab
                     label={I18n.t(tab)}

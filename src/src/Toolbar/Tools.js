@@ -1,4 +1,7 @@
-import { MenuItem, Select } from '@material-ui/core';
+import {
+    Button,
+    Checkbox, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField,
+} from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
 
@@ -32,14 +35,43 @@ const resolution = [
 ];
 
 const Tools = props => <div className={props.classes.toolbar}>
-    <Select>
-        {resolution.map(item => <MenuItem
-            value={item.value}
-            key={item.value}
-        >
-            {I18n.t(item.name)}
-        </MenuItem>)}
-    </Select>
+    <FormControl>
+        <InputLabel>{I18n.t('Resolution')}</InputLabel>
+        <Select>
+            {resolution.map(item => <MenuItem
+                value={item.value}
+                key={item.value}
+            >
+                {I18n.t(item.name)}
+            </MenuItem>)}
+        </Select>
+    </FormControl>
+    <FormControlLabel
+        control={<Checkbox />}
+        label={I18n.t('Default')}
+    />
+    <FormControlLabel
+        control={<Checkbox />}
+        label={I18n.t('Render always')}
+    />
+    <Divider orientation="vertical" flexItem />
+    <FormControl>
+        <InputLabel>{I18n.t('Grid')}</InputLabel>
+        <Select>
+            <MenuItem value={0}>Disabled</MenuItem>
+            <MenuItem value={1}>Elements</MenuItem>
+            <MenuItem value={2}>Grid</MenuItem>
+        </Select>
+    </FormControl>
+    <TextField label={I18n.t('Grid size')} />
+    <Divider orientation="vertical" flexItem />
+    <TextField label={I18n.t('Instance ID')} />
+    <Button>{I18n.t('Create Instance')}</Button>
+    <Divider orientation="vertical" flexItem />
+    <FormControlLabel
+        control={<Checkbox />}
+        label={I18n.t('Available for all')}
+    />
 </div>;
 
 export default Tools;
