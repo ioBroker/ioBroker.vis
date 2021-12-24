@@ -1,45 +1,33 @@
-import {
-    Button,
-    Divider,
-    FormControl, InputLabel, MenuItem, Select,
-    IconButton,
-} from '@material-ui/core';
-
-import I18n from '@iobroker/adapter-react/i18n';
-
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 
-const viewButtons = [
-    { icon: <AddIcon /> },
-    { icon: <EditIcon /> },
-    { icon: <DeleteIcon /> },
-    { icon: <FileCopyIcon /> },
-];
+import ToolbarItems from './ToolbarItems';
 
-const View = props => <div className={props.classes.toolbar}>
-    <FormControl>
-        <InputLabel>{I18n.t('Active view')}</InputLabel>
-        <Select
-            value={props.selectedView}
-        >
-            { Object.keys(props.project)
+const View = props => {
+    const toolbar = [
+        {
+            type: 'select',
+            name: 'Active view',
+            value: props.selectedView,
+            onChange: event => props.changeView(event.target.value),
+            items: Object.keys(props.project)
                 .filter(view => !view.startsWith('__'))
-                .map(view => <MenuItem
-                    value={view}
-                    onClick={() => props.changeView(view)}
-                    key={view}
-                >
-                    {I18n.t(view)}
-                </MenuItem>)}
-        </Select>
-    </FormControl>
-    {viewButtons.map((button, key) => <IconButton size="small" key={key}>{button.icon}</IconButton>)}
-    <Divider orientation="vertical" flexItem />
-    <Button>{I18n.t('Export Item')}</Button>
-    <Button>{I18n.t('Import Item')}</Button>
-</div>;
+                .map(view => ({ name: view, value: view })),
+        },
+        { type: 'icon-button', Icon: AddIcon },
+        { type: 'icon-button', Icon: EditIcon },
+        { type: 'icon-button', Icon: DeleteIcon },
+        { type: 'icon-button', Icon: FileCopyIcon },
+        { type: 'divider' },
+        { type: 'button', name: 'Export item' },
+        { type: 'button', name: 'Import item' },
+    ];
+
+    return <div className={props.classes.toolbar}>
+        <ToolbarItems items={toolbar} />
+    </div>;
+};
 
 export default View;

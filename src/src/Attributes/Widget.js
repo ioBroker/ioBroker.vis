@@ -1,3 +1,3 @@
-const Widget = props => <div>Widget</div>;
+const Widget = () => <div>Widget</div>;
 
 export default Widget;

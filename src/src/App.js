@@ -5,18 +5,16 @@ import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import GenericApp from '@iobroker/adapter-react/GenericApp';
 import Loader from '@iobroker/adapter-react/Components/Loader';
 import {
-    Grid, Tab, Tabs,
+    Tab, Tabs,
 } from '@material-ui/core';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
-
-import I18n from '@iobroker/adapter-react/i18n';
 
 import Attributes from './Attributes';
 import Widgets from './Widgets';
 import MainMenu from './Menu';
 
-const styles = theme => ({
+const styles = () => ({
     viewTabs: {
         minHeight: 0,
     },

@@ -3,7 +3,7 @@ import { Typography } from '@material-ui/core';
 
 import Widget from './Widget';
 
-const Widgets = props => <>
+const Widgets = () => <>
     <Typography variant="h6" gutterBottom>
         {I18n.t('Add widget')}
     </Typography>

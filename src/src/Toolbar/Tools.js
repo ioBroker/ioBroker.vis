@@ -1,9 +1,4 @@
-import {
-    Button,
-    Checkbox, Divider, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField,
-} from '@material-ui/core';
-
-import I18n from '@iobroker/adapter-react/i18n';
+import ToolbarItems from './ToolbarItems';
 
 const resolution = [
     { value: '" class="translate" data-lang="not defined', name: 'not defined' },
@@ -34,44 +29,30 @@ const resolution = [
     { value: '1920x1080', name: 'Full HD - Landscape' },
 ];
 
+const toolbar = [
+    { type: 'select', name: 'Resolution', items: resolution },
+    { type: 'checkbox', name: 'Default' },
+    { type: 'checkbox', name: 'Render always' },
+    { type: 'divider' },
+    {
+        type: 'select',
+        name: 'Grid',
+        items: [
+            { name: 'Disabled', value: 'Disabled' },
+            { name: 'Elements', value: 'Elements' },
+            { name: 'Grid', value: 'Grid' },
+        ],
+    },
+    { name: 'Grid size' },
+    { type: 'divider' },
+    { name: 'Instance ID' },
+    { type: 'button', name: 'Create instance' },
+    { type: 'divider' },
+    { type: 'checkbox', name: 'Available for all' },
+];
+
 const Tools = props => <div className={props.classes.toolbar}>
-    <FormControl>
-        <InputLabel>{I18n.t('Resolution')}</InputLabel>
-        <Select>
-            {resolution.map(item => <MenuItem
-                value={item.value}
-                key={item.value}
-            >
-                {I18n.t(item.name)}
-            </MenuItem>)}
-        </Select>
-    </FormControl>
-    <FormControlLabel
-        control={<Checkbox />}
-        label={I18n.t('Default')}
-    />
-    <FormControlLabel
-        control={<Checkbox />}
-        label={I18n.t('Render always')}
-    />
-    <Divider orientation="vertical" flexItem />
-    <FormControl>
-        <InputLabel>{I18n.t('Grid')}</InputLabel>
-        <Select>
-            <MenuItem value={0}>Disabled</MenuItem>
-            <MenuItem value={1}>Elements</MenuItem>
-            <MenuItem value={2}>Grid</MenuItem>
-        </Select>
-    </FormControl>
-    <TextField label={I18n.t('Grid size')} />
-    <Divider orientation="vertical" flexItem />
-    <TextField label={I18n.t('Instance ID')} />
-    <Button>{I18n.t('Create Instance')}</Button>
-    <Divider orientation="vertical" flexItem />
-    <FormControlLabel
-        control={<Checkbox />}
-        label={I18n.t('Available for all')}
-    />
+    <ToolbarItems items={toolbar} />
 </div>;
 
 export default Tools;

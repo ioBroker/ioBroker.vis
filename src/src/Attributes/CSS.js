@@ -8,7 +8,7 @@ import { IconButton } from '@material-ui/core';
 
 import SaveIcon from '@material-ui/icons/Save';
 
-const CSS = props => <div>
+const CSS = () => <div>
     <IconButton>
         <SaveIcon />
     </IconButton>

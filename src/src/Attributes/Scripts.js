@@ -8,7 +8,7 @@ import { IconButton } from '@material-ui/core';
 
 import SaveIcon from '@material-ui/icons/Save';
 
-const Scripts = props => <div>
+const Scripts = () => <div>
     <IconButton>
         <SaveIcon />
     </IconButton>
