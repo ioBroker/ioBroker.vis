@@ -1,5 +1,5 @@
 import {
-    Tab, Tabs, Button,
+    Tab, Tabs, Button, IconButton,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
@@ -11,6 +11,8 @@ import {
     SubMenu,
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
+
+import UndoIcon from '@material-ui/icons/Undo';
 
 import Toolbar from '../Toolbar';
 
@@ -74,6 +76,9 @@ Vis
                         : <MenuItem key={level2.name}>{level2.name}</MenuItem>))}
                 </Menu>)
             }
+            <IconButton>
+                <UndoIcon />
+            </IconButton>
         </div>
         <Toolbar
             selected={selected}
