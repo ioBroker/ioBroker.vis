@@ -30,20 +30,24 @@ const resolution = [
 ];
 
 const toolbar = [
-    { type: 'select', name: 'Resolution', items: resolution },
-    { type: 'checkbox', name: 'Default' },
-    { type: 'checkbox', name: 'Render always' },
+    {
+        type: 'select', name: 'Resolution', items: resolution, width: 240,
+    },
+    { type: 'checkbox', name: 'Default', field: 'useAsDefault' },
+    { type: 'checkbox', name: 'Render always', field: 'alwaysRender' },
     { type: 'divider' },
     {
         type: 'select',
         name: 'Grid',
+        field: 'snapType',
         items: [
-            { name: 'Disabled', value: 'Disabled' },
-            { name: 'Elements', value: 'Elements' },
-            { name: 'Grid', value: 'Grid' },
+            { name: 'Disabled', value: 0 },
+            { name: 'Elements', value: 1 },
+            { name: 'Grid', value: 2 },
         ],
+        width: 120,
     },
-    { name: 'Grid size' },
+    { name: 'Grid size', field: 'gridSize' },
     { type: 'divider' },
     { name: 'Instance ID' },
     { type: 'button', name: 'Create instance' },
@@ -52,7 +56,7 @@ const toolbar = [
 ];
 
 const Tools = props => <div className={props.classes.toolbar}>
-    <ToolbarItems items={toolbar} />
+    <ToolbarItems items={toolbar} {...props} />
 </div>;
 
 export default Tools;

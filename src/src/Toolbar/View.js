@@ -12,6 +12,7 @@ const View = props => {
             name: 'Active view',
             value: props.selectedView,
             onChange: event => props.changeView(event.target.value),
+            width: 120,
             items: Object.keys(props.project)
                 .filter(view => !view.startsWith('__'))
                 .map(view => ({ name: view, value: view })),
@@ -26,7 +27,7 @@ const View = props => {
     ];
 
     return <div className={props.classes.toolbar}>
-        <ToolbarItems items={toolbar} />
+        <ToolbarItems items={toolbar} {...props} />
     </div>;
 };
 

@@ -17,8 +17,8 @@ const Widgets = props => {
             type: 'select',
             name: 'Active widget',
             value: props.selectedView,
-            onChange: event => props.changeView(event.target.value),
             items: Object.keys(props.project[props.selectedView].widgets).map(widget => ({ name: widget, value: widget })),
+            width: 120,
         },
         { type: 'icon-button', Icon: DeleteIcon },
         { type: 'icon-button', Icon: FileCopyIcon },
@@ -43,7 +43,7 @@ const Widgets = props => {
     ];
 
     return <div className={props.classes.toolbar}>
-        <ToolbarItems items={toolbar} />
+        <ToolbarItems items={toolbar} {...props} />
     </div>;
 };
 

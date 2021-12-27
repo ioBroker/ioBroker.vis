@@ -32,6 +32,7 @@ const styles = () => ({
     },
     menu: {
         display: 'flex',
+        alignItems: 'center',
     },
 });
 
@@ -72,14 +73,19 @@ class App extends GenericApp {
                 selectedView: Object.keys(project).find(view => !view.startsWith('__')) || '',
             });
         });
+        this.socket.getGroups().then(groups => this.setState({ groups }));
     }
 
     changeView = view => {
         this.setState({ selectedView: view });
     }
 
+    changeProject = project => {
+        this.setState({ project });
+    }
+
     render() {
-        if (!this.state.loaded || !this.state.project) {
+        if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <MuiThemeProvider theme={this.state.theme}>
                 <Loader theme={this.state.themeType} />
             </MuiThemeProvider>;
@@ -92,6 +98,7 @@ class App extends GenericApp {
                     selectedView={this.state.selectedView}
                     project={this.state.project}
                     changeView={this.changeView}
+                    changeProject={this.changeProject}
                 />
                 <div>
                     <ReactSplit
@@ -124,7 +131,13 @@ class App extends GenericApp {
                             </div>
                         </div>
                         <div className={this.props.classes.block}>
-                            <Attributes classes={this.props.classes} />
+                            <Attributes
+                                classes={this.props.classes}
+                                selectedView={this.state.selectedView}
+                                groups={this.state.groups}
+                                project={this.state.project}
+                                changeProject={this.changeProject}
+                            />
                         </div>
                     </ReactSplit>
                 </div>

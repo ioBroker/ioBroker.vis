@@ -76,7 +76,7 @@ Vis
                         : <MenuItem key={level2.name}>{level2.name}</MenuItem>))}
                 </Menu>)
             }
-            <IconButton>
+            <IconButton size="small">
                 <UndoIcon />
             </IconButton>
         </div>
