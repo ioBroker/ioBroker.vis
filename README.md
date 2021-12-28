@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### __WORK IN PROGRESS__
 -->
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.4.7 (2021-12-28)
 * (mswiege) Fixed subscribeOidAtRuntime if called with invalid IDs
 * (bluefox) Added support of license manager
 
