@@ -206,6 +206,11 @@ Notice that these settings are valid only for reconnection and not for the first
     Placeholder for the next version (at the beginning of the line):
     ### __WORK IN PROGRESS__
 -->
+## Changelog
+### __WORK IN PROGRESS__
+* (mswiege) Fixed subscribeOidAtRuntime if called with invalid IDs
+* (bluefox) Added support of license manager
+
 ### 1.4.6 (2021-11-20)
 * (bluefox) Added the license check even without internet
 
