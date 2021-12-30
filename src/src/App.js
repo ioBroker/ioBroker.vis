@@ -28,7 +28,11 @@ const styles = () => ({
     },
     block: {
         overflow: 'auto',
-        height: 'calc(100vh - 106px)',
+        height: 'calc(100vh - 86px)',
+    },
+    canvas: {
+        overflow: 'auto',
+        height: 'calc(100vh - 134px)',
     },
     menu: {
         display: 'flex',
@@ -110,7 +114,7 @@ class App extends GenericApp {
                         <div className={this.props.classes.block}>
                             <Widgets />
                         </div>
-                        <div className={this.props.classes.block}>
+                        <div>
                             <Tabs value={this.state.selectedView} className={this.props.classes.viewTabs}>
                                 {
                                     Object.keys(this.state.project)
@@ -124,7 +128,7 @@ class App extends GenericApp {
                                         />)
                                 }
                             </Tabs>
-                            <div>
+                            <div className={this.props.classes.canvas}>
                                 <pre>
                                     {JSON.stringify(this.state.project, null, 2)}
                                 </pre>

@@ -1,15 +1,24 @@
 import {
     Button,
-    Checkbox, Divider, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField,
+    Checkbox, Divider, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip, withStyles,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
+
+const styles = () => ({
+    text: { paddingRight: 4 },
+    button: { margin: 4 },
+});
 
 const ToolbarItems = props => {
     const view = props.project[props.selectedView];
 
     return props.items.map((item, key) => {
-        let value = view.settings[item.field];
+        if (item.hide) {
+            return null;
+        }
+
+        let value = view ? view.settings[item.field] : null;
         if (item.field && (value === null || value === undefined)) {
             value = '';
         }
@@ -26,10 +35,10 @@ const ToolbarItems = props => {
 
         if (item.type === 'select') {
             return <FormControl key={key} style={{ margin: '0px 10px' }}>
-                <InputLabel>{I18n.t(item.name)}</InputLabel>
+                <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
                 <Select
                     style={{ width: item.width }}
-                    value={value}
+                    value={item.value ? item.value : value}
                     onChange={item.onChange ? item.onChange : e => change(e.target.value)}
                 >
                     {item.items.map(selectItem => <MenuItem
@@ -47,18 +56,31 @@ const ToolbarItems = props => {
                 control={<Checkbox
                     checked={value}
                     onChange={item.onChange ? item.onChange : e => change(e.target.checked)}
+                    size="small"
                 />}
                 label={I18n.t(item.name)}
             />;
         }
         if (item.type === 'icon-button') {
-            return <IconButton size="small" key={key}><item.Icon fontSize="small" /></IconButton>;
+            return <Tooltip title={item.name}>
+                <IconButton size="small" key={key} onClick={item.onClick}>
+                    <item.Icon fontSize={item.size ? item.size : 'small'} />
+                </IconButton>
+            </Tooltip>;
         }
         if (item.type === 'text') {
-            return <span key={key}>{I18n.t(item.text)}</span>;
+            return <span key={key} className={props.classes.text}>{`${I18n.t(item.text)}:`}</span>;
         }
         if (item.type === 'button') {
-            return <Button key={key}>{I18n.t(item.name)}</Button>;
+            return <Button
+                key={key}
+                variant="outlined"
+                onClick={item.onClick}
+                size="small"
+                className={props.classes.button}
+            >
+                {I18n.t(item.name)}
+            </Button>;
         }
         if (item.type === 'divider') {
             return <Divider key={key} orientation="vertical" flexItem style={{ margin: '0px 10px' }} />;
@@ -66,10 +88,15 @@ const ToolbarItems = props => {
         return <TextField
             key={key}
             value={value}
+            type={item.type}
             onChange={item.onChange ? item.onChange : e => change(e.target.value)}
+            InputLabelProps={{
+                shrink: true,
+            }}
             label={I18n.t(item.name)}
+            style={{ width: 120 }}
         />;
     });
 };
 
-export default ToolbarItems;
+export default withStyles(styles)(ToolbarItems);

@@ -1,9 +1,9 @@
 import {
-    Tab, Tabs, Button, IconButton,
+    Tab, Tabs, Button, IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
     Menu,
@@ -13,45 +13,61 @@ import {
 import '@szhsin/react-menu/dist/index.css';
 
 import UndoIcon from '@material-ui/icons/Undo';
+import CloseIcon from '@material-ui/icons/Close';
+import SyncIcon from '@material-ui/icons/Sync';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import { withStyles } from '@material-ui/styles';
 
 import Toolbar from '../Toolbar';
+import Settings from './Settings';
+
+const styles = () => ({
+    right: {
+        marginLeft: 'auto',
+    },
+});
 
 const toolbarItems = ['View', 'Widgets', 'Tools'];
 
-const menuItems = [
-    {
-        name: 'Setup',
-        submenu: [
-            {
-                name: 'Projects',
-                submenu: [
-                    { name: 'main' },
-                ],
-            },
-            {
-                name: 'Project export/import',
-                submenu: [
-                    { name: 'Export (normal)' },
-                    { name: 'Export (anonymized)' },
-                    { name: 'Import' },
-                ],
-            },
-            { name: 'New project...' },
-            { name: 'File manager...' },
-            { name: 'Settings...' },
-            { name: 'Object browser...' },
-        ],
-    },
-    {
-        name: 'Help',
-        submenu: [
-            { name: 'Shortcuts' },
-            { name: 'About' },
-        ],
-    }];
-
 const MainMenu = props => {
     const [selected, setSelected] = useState('View');
+    const [settingsDialog, setSettingsDialog] = useState(false);
+
+    const [right, setRight] = useState(false);
+    const rightRef = useRef(null);
+
+    const menuItems = [
+        {
+            name: 'Setup',
+            submenu: [
+                {
+                    name: 'Projects',
+                    submenu: [
+                        { name: 'main' },
+                    ],
+                },
+                {
+                    name: 'Project export/import',
+                    submenu: [
+                        { name: 'Export (normal)' },
+                        { name: 'Export (anonymized)' },
+                        { name: 'Import' },
+                    ],
+                },
+                { name: 'New project...' },
+                { name: 'File manager...' },
+                { name: 'Settings...', onClick: () => setSettingsDialog(true) },
+                { name: 'Object browser...' },
+            ],
+        },
+        {
+            name: 'Help',
+            submenu: [
+                { name: 'Shortcuts' },
+                { name: 'About' },
+            ],
+        }];
 
     return <>
         <div className={props.classes.menu}>
@@ -73,18 +89,57 @@ Vis
                         ? <SubMenu key={level2.name} label={level2.name}>
                             {level2.submenu.map(level3 => <MenuItem key={level3.name}>{level3.name}</MenuItem>)}
                         </SubMenu>
-                        : <MenuItem key={level2.name}>{level2.name}</MenuItem>))}
+                        : <MenuItem
+                            key={level2.name}
+                            onClick={level2.onClick}
+                        >
+                            {level2.name}
+                        </MenuItem>))}
                 </Menu>)
             }
-            <IconButton size="small">
-                <UndoIcon />
-            </IconButton>
+            <Tooltip title={I18n.t('Undo')}>
+                <IconButton size="small">
+                    <UndoIcon />
+                </IconButton>
+            </Tooltip>
+            <span className={props.classes.right}>
+                <IconButton size="small">
+                    <CloseIcon />
+                </IconButton>
+                <IconButton ref={rightRef} onClick={() => setRight(!right)} size="small">
+                    <ArrowDropDownIcon />
+                </IconButton>
+                <DropMenu
+                    open={right}
+                    anchorEl={rightRef.current}
+                    onClose={() => setRight(false)}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                    }}
+                    getContentAnchorEl={null}
+                >
+                    <DropMenuItem>
+                        <CloseIcon />
+                        {I18n.t('Close editor')}
+                    </DropMenuItem>
+                    <DropMenuItem>
+                        <PlayArrowIcon />
+                        {I18n.t('Open runtime in new window')}
+                    </DropMenuItem>
+                    <DropMenuItem>
+                        <SyncIcon />
+                        {I18n.t('Reload all runtimes')}
+                    </DropMenuItem>
+                </DropMenu>
+            </span>
         </div>
         <Toolbar
             selected={selected}
             {...props}
         />
+        <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} />
     </>;
 };
 
-export default MainMenu;
+export default withStyles(styles)(MainMenu);

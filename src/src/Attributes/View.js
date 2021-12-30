@@ -1,5 +1,5 @@
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, InputLabel, ListItemText, MenuItem, Select, TextField,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, InputLabel, ListItemText, MenuItem, Select, TextField, withStyles,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
@@ -7,7 +7,44 @@ import I18n from '@iobroker/adapter-react/i18n';
 
 import ColorPicker from '@iobroker/adapter-react/Components/ColorPicker';
 
+import './backgrounds.css';
+
+const styles = () => ({
+    backgroundClass: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    backgroundClassSquare: {
+        width: 40,
+        height: 40,
+        display: 'inline-block',
+    },
+});
+
 const theme = [
+    { value: 'black-tie', name: 'black-tie' },
+    { value: 'blitzer', name: 'blitzer' },
+    { value: 'cupertino', name: 'cupertino' },
+    { value: 'custom-dark', name: 'custom-dark' },
+    { value: 'custom-light', name: 'custom-light' },
+    { value: 'dark-hive', name: 'dark-hive' },
+    { value: 'dot-luv', name: 'dot-luv' },
+    { value: 'eggplant', name: 'eggplant' },
+    { value: 'excite-bike', name: 'excite-bike' },
+    { value: 'flick', name: 'flick' },
+    { value: 'hot-sneaks', name: 'hot-sneaks' },
+    { value: 'humanity', name: 'humanity' },
+    { value: 'overcast', name: 'overcast' },
+    { value: 'redmond', name: 'redmond' },
+    { value: 'smoothness', name: 'smoothness' },
+    { value: 'start', name: 'start' },
+    { value: 'sunny', name: 'sunny' },
+    { value: 'ui-darkness', name: 'ui-darkness' },
+    { value: 'ui-lightness', name: 'ui-lightness' },
+    { value: 'vader', name: 'vader' },
+];
+
+const background = [
     { value: '', name: 'none' },
     { value: 'fm-dark-background', name: 'Fm dark background' },
     { value: 'fm-light-background', name: 'Fm light background' },
@@ -75,9 +112,6 @@ const View = props => {
                 { name: 'CSS Class', field: 'class', notStyle: true },
                 { name: 'Initial filter', field: 'filterkey', notStyle: true },
                 {
-                    name: 'Theme', type: 'select', items: theme, field: 'background_class',
-                },
-                {
                     name: 'Only for groups',
                     field: 'group',
                     notStyle: true,
@@ -86,6 +120,13 @@ const View = props => {
                         name: typeof group.common.name === 'string' ? group.common.name : group.common.name[I18n.getLanguage()],
                         value: group._id.split('.')[2],
                     })),
+                },
+                {
+                    name: 'Theme',
+                    field: 'theme',
+                    notStyle: true,
+                    type: 'select',
+                    items: theme,
                 },
                 {
                     name: 'If user not in group',
@@ -103,15 +144,32 @@ const View = props => {
             name: 'CSS background (background-...)',
             fields: [
                 {
+                    name: 'Background class',
+                    type: 'select',
+                    items: background,
+                    field: 'background_class',
+                    itemModify: item => <>
+                        <span className={`${props.classes.backgroundClassSquare} ${item.value}`}></span>
+                        {I18n.t(item.name)}
+                    </>,
+                    renderValue: value => <div className={props.classes.backgroundClass}>
+                        <span className={`${props.classes.backgroundClassSquare} ${value}`}></span>
+                        {I18n.t(background.find(item => item.value === value).name)}
+                    </div>,
+                },
+                {
                     name: 'Use background', type: 'checkbox', field: 'useBackground', notStyle: true,
                 },
-                { name: 'background', field: 'background' },
-                { name: '-color', type: 'color', field: 'background-color' },
-                { name: '-image', field: 'background-image' },
+                { name: 'background', field: 'background', hide: !view.settings.useBackground },
+                {
+                    name: '-color', type: 'color', field: 'background-color', hide: view.settings.useBackground,
+                },
+                { name: '-image', field: 'background-image', hide: view.settings.useBackground },
                 {
                     name: '-repeat',
                     type: 'autocomplete',
                     field: 'background-repeat',
+                    hide: view.settings.useBackground,
                     items: [
                         'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit',
                     ],
@@ -120,30 +178,35 @@ const View = props => {
                     name: '-attachment',
                     field: 'background-attachment',
                     type: 'autocomplete',
+                    hide: view.settings.useBackground,
                     items: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
                 },
                 {
                     name: '-position',
                     field: 'background-position',
                     type: 'autocomplete',
+                    hide: view.settings.useBackground,
                     items: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
                 },
                 {
                     name: '-size',
                     field: 'background-size',
                     type: 'autocomplete',
+                    hide: view.settings.useBackground,
                     items: ['auto', 'cover', 'contain', 'initial', 'inherit'],
                 },
                 {
                     name: '-clip',
                     field: 'background-clip',
                     type: 'autocomplete',
+                    hide: view.settings.useBackground,
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
                 {
                     name: '-origin',
                     field: 'background-origin',
                     type: 'autocomplete',
+                    hide: view.settings.useBackground,
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
 
@@ -167,11 +230,15 @@ const View = props => {
     ];
 
     return <div>
-        {fields.map((group, key) => <Accordion key={key}>
+        {fields.map((group, key) => <Accordion key={key} elevation={4}>
             <AccordionSummary>{group.name}</AccordionSummary>
             <AccordionDetails style={{ flexDirection: 'column' }}>
                 {
                     group.fields.map((field, key2) => {
+                        if (field.hide) {
+                            return null;
+                        }
+
                         let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
                         if (value === null || value === undefined) {
                             value = '';
@@ -215,12 +282,12 @@ const View = props => {
                         if (field.type === 'select') {
                             return <FormControl key={key2}>
                                 <InputLabel>{I18n.t(field.name)}</InputLabel>
-                                <Select value={value} onChange={e => change(e.target.value)}>
+                                <Select value={value} onChange={e => change(e.target.value)} renderValue={field.renderValue}>
                                     {field.items.map(selectItem => <MenuItem
                                         value={selectItem.value}
                                         key={selectItem.value}
                                     >
-                                        {I18n.t(selectItem.name)}
+                                        {field.itemModify ? field.itemModify(selectItem) : I18n.t(selectItem.name)}
                                     </MenuItem>)}
                                 </Select>
                             </FormControl>;
@@ -265,4 +332,4 @@ const View = props => {
     </div>;
 };
 
-export default View;
+export default withStyles(styles)(View);

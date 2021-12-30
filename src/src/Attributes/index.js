@@ -17,6 +17,10 @@ const tabs = {
 const Attributes = props => {
     const [selected, setSelected] = useState('View');
 
+    if (!Object.keys(props.project).find(view => !view.startsWith('__'))) {
+        return null;
+    }
+
     const TabContent = tabs[selected];
 
     return <>
