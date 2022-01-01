@@ -29,7 +29,7 @@
     "axios": "^0.24.0"
   },
   "devDependencies": {
-    "@alcalzone/release-script": "^3.4.1",
+    "@alcalzone/release-script": "^3.4.2",
     "@alcalzone/release-script-plugin-iobroker": "^3.4.1",
     "@alcalzone/release-script-plugin-license": "^3.4.1",
     "gulp": "^4.0.2",
