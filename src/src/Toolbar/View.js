@@ -4,6 +4,7 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,
@@ -122,6 +123,15 @@ const View = props => {
         add: I18n.t('Name'),
     };
 
+    const dialogIcons = {
+        delete: DeleteIcon,
+        copy: FileCopyIcon,
+        rename: EditIcon,
+        add: AddIcon,
+    };
+
+    const DialogIcon = dialogIcons[dialog];
+
     let dialogDisabled = false;
     if (dialog !== 'delete') {
         if (props.project[dialogName]) {
@@ -138,8 +148,22 @@ const View = props => {
                     : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
             </DialogContent>
             <DialogActions>
-                <Button onClick={dialogActions[dialog]} disabled={dialogDisabled}>{dialogButtons[dialog]}</Button>
-                <Button onClick={() => setDialog(null)}>{I18n.t('Cancel')}</Button>
+                <Button
+                    startIcon={DialogIcon ? <DialogIcon /> : null}
+                    onClick={dialogActions[dialog]}
+                    variant="contained"
+                    color={dialog === 'delete' ? 'secondary' : 'primary'}
+                    disabled={dialogDisabled}
+                >
+                    {dialogButtons[dialog]}
+                </Button>
+                <Button
+                    startIcon={<CloseIcon />}
+                    onClick={() => setDialog(null)}
+                    variant="contained"
+                >
+                    {I18n.t('Cancel')}
+                </Button>
             </DialogActions>
         </Dialog>
     </div>;

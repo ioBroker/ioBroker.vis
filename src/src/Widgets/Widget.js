@@ -14,6 +14,7 @@ const styles = () => ({
 const Widget = props => <Card style={{ display: 'inline-block', margin: 4 }} elevation={4}>
     <CardContent>
         <div className={props.classes.widgetTitle}>{I18n.t('HTML')}</div>
+        {props.type ? <div className={props.classes.widgetTypeTitle}>{I18n.t('Type')}</div> : null}
         <div className={props.classes.widgetImage}>
             <img src={image} alt="" style={{ width: props.small ? 40 : null, height: props.small ? 40 : null }} />
             <img src={staticImage} alt="" className={props.classes.widgetType} />

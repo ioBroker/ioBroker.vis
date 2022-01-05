@@ -26,6 +26,12 @@ const selectItems = [
 const styles = () => ({
     widgets: { textAlign: 'center' },
     toggle: { width: 30, height: 30 },
+    right: {
+        float: 'right',
+    },
+    button: {
+        padding: '0px 4px',
+    },
 });
 
 const Widgets = props => {
@@ -35,23 +41,29 @@ const Widgets = props => {
     return <>
         <Typography variant="h6" gutterBottom>
             {I18n.t('Add widget')}
-            <Tooltip title={I18n.t('Small widgets')}>
-                <ToggleButton className={props.classes.toggle} size="small" selected={small} onClick={() => setSmall(!small)}>
-                    <ZoomOutIcon fontSize="small" />
-                </ToggleButton>
-            </Tooltip>
-            <Tooltip title={I18n.t('Show type of widgets')}>
-                <ToggleButton className={props.classes.toggle} size="small" selected={type} onClick={() => setType(!type)}>
-                    <LocalOfferIcon fontSize="small" />
-                </ToggleButton>
-            </Tooltip>
+            <span className={props.classes.right}>
+                <span className={props.classes.button}>
+                    <Tooltip title={I18n.t('Small widgets')}>
+                        <ToggleButton className={props.classes.toggle} size="small" selected={small} onClick={() => setSmall(!small)}>
+                            <ZoomOutIcon fontSize="small" />
+                        </ToggleButton>
+                    </Tooltip>
+                </span>
+                <span className={props.classes.button}>
+                    <Tooltip title={I18n.t('Show type of widgets')}>
+                        <ToggleButton className={props.classes.toggle} size="small" selected={type} onClick={() => setType(!type)}>
+                            <LocalOfferIcon fontSize="small" />
+                        </ToggleButton>
+                    </Tooltip>
+                </span>
+            </span>
         </Typography>
         <div>
             <Autocomplete
                 freeSolo
                 options={[]}
                 renderInput={params => (
-                    <TextField {...params} label={I18n.t('filter')} margin="normal" />
+                    <TextField {...params} label={I18n.t('filter')} />
                 )}
             />
         </div>

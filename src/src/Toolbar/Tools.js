@@ -50,7 +50,7 @@ const Tools = props => {
             type: 'select',
             name: 'Resolution',
             items: resolution,
-            width: 240,
+            width: 236,
             hide: userResolution,
             value: resolutionSelect,
             onChange: e => {

@@ -8,6 +8,9 @@ import I18n from '@iobroker/adapter-react/i18n';
 import ColorPicker from '@iobroker/adapter-react/Components/ColorPicker';
 
 import './backgrounds.css';
+import { useState } from 'react';
+
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 const styles = () => ({
     backgroundClass: {
@@ -18,6 +21,7 @@ const styles = () => ({
         width: 40,
         height: 40,
         display: 'inline-block',
+        marginRight: 4,
     },
 });
 
@@ -229,9 +233,25 @@ const View = props => {
         },
     ];
 
+    const [accordionOpen, setAccordionOpen] = useState(
+        window.localStorage.getItem('attributesView')
+            ? JSON.parse(window.localStorage.getItem('attributesView'))
+            : fields.map(() => false),
+    );
+
     return <div>
-        {fields.map((group, key) => <Accordion key={key} elevation={4}>
-            <AccordionSummary>{group.name}</AccordionSummary>
+        {fields.map((group, key) => <Accordion
+            key={key}
+            elevation={4}
+            expanded={accordionOpen[key]}
+            onChange={(e, expanded) => {
+                const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                newAccordionOpen[key] = expanded;
+                window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+                setAccordionOpen(newAccordionOpen);
+            }}
+        >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>{group.name}</AccordionSummary>
             <AccordionDetails style={{ flexDirection: 'column' }}>
                 {
                     group.fields.map((field, key2) => {
@@ -264,7 +284,7 @@ const View = props => {
                                     onInputChange={(e, inputValue) => change(inputValue)}
                                     onChange={(e, inputValue) => change(inputValue)}
                                     renderInput={params => (
-                                        <TextField {...params} label={I18n.t(field.name)} margin="normal" />
+                                        <TextField {...params} label={I18n.t(field.name)} />
                                     )}
                                 />
                             </div>;

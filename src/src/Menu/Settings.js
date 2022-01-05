@@ -1,8 +1,17 @@
 import I18n from '@iobroker/adapter-react/i18n';
 import {
-    Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField,
+    Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, withStyles,
 } from '@material-ui/core';
 import { useEffect, useState } from 'react';
+
+import CloseIcon from '@material-ui/icons/Close';
+import SaveIcon from '@material-ui/icons/Save';
+
+const styles = () => ({
+    dialog: {
+        width: 400,
+    },
+});
 
 const fields = [
     {
@@ -62,7 +71,7 @@ const fields = [
             { value: 86400, name: '1 day' },
         ],
     },
-    { name: 'States Debounce Time (millis)', field: 'statesDebounceTime' },
+    { name: 'States Debounce Time (millis)', field: 'statesDebounceTime', type: 'number' },
 ];
 
 const Settings = props => {
@@ -80,7 +89,7 @@ const Settings = props => {
 
     return <Dialog open={props.open} onClose={props.onClose}>
         <DialogTitle>{I18n.t('Settings')}</DialogTitle>
-        <DialogContent>
+        <DialogContent className={props.classes.dialog}>
             {fields.map((field, key) => {
                 const value = settings[field.field];
 
@@ -115,15 +124,28 @@ const Settings = props => {
                     </div>;
                 }
                 return <div key={key}>
-                    <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} />
+                    <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />
                 </div>;
             })}
         </DialogContent>
         <DialogActions>
-            <Button onClick={save}>{I18n.t('Save')}</Button>
-            <Button onClick={props.onClose}>{I18n.t('Cancel')}</Button>
+            <Button
+                startIcon={<SaveIcon />}
+                variant="contained"
+                color="primary"
+                onClick={save}
+            >
+                {I18n.t('Save')}
+            </Button>
+            <Button
+                startIcon={<CloseIcon />}
+                variant="contained"
+                onClick={props.onClose}
+            >
+                {I18n.t('Cancel')}
+            </Button>
         </DialogActions>
     </Dialog>;
 };
 
-export default Settings;
+export default withStyles(styles)(Settings);

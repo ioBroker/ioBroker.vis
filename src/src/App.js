@@ -25,14 +25,16 @@ const styles = () => ({
     toolbar: {
         display: 'flex',
         alignItems: 'center',
+        padding: '10px 0px',
     },
     block: {
         overflow: 'auto',
-        height: 'calc(100vh - 86px)',
+        height: 'calc(100vh - 106px)',
+        padding: '0px 8px',
     },
     canvas: {
         overflow: 'auto',
-        height: 'calc(100vh - 134px)',
+        height: 'calc(100vh - 154px)',
     },
     menu: {
         display: 'flex',
@@ -63,6 +65,9 @@ class App extends GenericApp {
         this.state = {
             ...this.state,
             selectedView: '',
+            splitSizes: window.localStorage.getItem('splitSizes')
+                ? JSON.parse(window.localStorage.getItem('splitSizes'))
+                : [20, 60, 20],
         };
 
         // icon cache
@@ -72,9 +77,15 @@ class App extends GenericApp {
     onConnectionReady() {
         this.socket.readFile('vis.0', 'main/vis-views.json').then(file => {
             const project = JSON.parse(file);
+            let selectedView;
+            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+                selectedView = window.localStorage.getItem('selectedView');
+            } else {
+                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+            }
             this.setState({
                 project,
-                selectedView: Object.keys(project).find(view => !view.startsWith('__')) || '',
+                selectedView,
             });
         });
         this.socket.getGroups().then(groups => this.setState({ groups }));
@@ -82,6 +93,7 @@ class App extends GenericApp {
 
     changeView = view => {
         this.setState({ selectedView: view });
+        window.localStorage.setItem('selectedView', view);
     }
 
     changeProject = project => {
@@ -107,7 +119,11 @@ class App extends GenericApp {
                 <div>
                     <ReactSplit
                         direction={SplitDirection.Horizontal}
-                        initialSizes={[20, 60, 20]}
+                        initialSizes={this.state.splitSizes}
+                        onResizeFinished={(gutterIdx, newSizes) => {
+                            this.setState({ splitSizes: newSizes });
+                            window.localStorage.setItem('splitSizes', JSON.stringify(newSizes));
+                        }}
                         theme={GutterTheme.Light}
                         gutterClassName="Light visGutter"
                     >

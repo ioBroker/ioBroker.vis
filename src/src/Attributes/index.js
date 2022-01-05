@@ -15,7 +15,9 @@ const tabs = {
 };
 
 const Attributes = props => {
-    const [selected, setSelected] = useState('View');
+    const [selected, setSelected] = useState(window.localStorage.getItem('Attributes')
+        ? window.localStorage.getItem('Attributes')
+        : 'View');
 
     if (!Object.keys(props.project).find(view => !view.startsWith('__'))) {
         return null;
@@ -39,7 +41,10 @@ const Attributes = props => {
                     value={tab}
                     key={tab}
                     className={props.classes.viewTab}
-                    onClick={() => setSelected(tab)}
+                    onClick={() => {
+                        setSelected(tab);
+                        window.localStorage.setItem('Attributes', tab);
+                    }}
                 />)
             }
         </Tabs>

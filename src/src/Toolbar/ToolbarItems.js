@@ -8,6 +8,7 @@ import I18n from '@iobroker/adapter-react/i18n';
 const styles = () => ({
     text: { paddingRight: 4 },
     button: { margin: 4 },
+    textInput: { margin: '0px 4px', width: 120 },
 });
 
 const ToolbarItems = props => {
@@ -94,7 +95,7 @@ const ToolbarItems = props => {
                 shrink: true,
             }}
             label={I18n.t(item.name)}
-            style={{ width: 120 }}
+            className={props.classes.textInput}
         />;
     });
 };

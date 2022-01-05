@@ -1,5 +1,5 @@
 import {
-    Tab, Tabs, Button, IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem,
+    Tab, Tabs, Button, IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem, Typography,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
@@ -26,12 +26,18 @@ const styles = () => ({
     right: {
         marginLeft: 'auto',
     },
+    header: {
+        padding: '0px 10px',
+        fontSize: '140%',
+    },
 });
 
 const toolbarItems = ['View', 'Widgets', 'Tools'];
 
 const MainMenu = props => {
-    const [selected, setSelected] = useState('View');
+    const [selected, setSelected] = useState(window.localStorage.getItem('selectedMenu')
+        ? window.localStorage.getItem('selectedMenu')
+        : 'View');
     const [settingsDialog, setSettingsDialog] = useState(false);
 
     const [right, setRight] = useState(false);
@@ -71,14 +77,17 @@ const MainMenu = props => {
 
     return <>
         <div className={props.classes.menu}>
-Vis
+            <Typography variant="h4" className={props.classes.header}>Vis</Typography>
             <Tabs className={props.classes.viewTabs} value={selected}>
                 {
                     toolbarItems.map(tab => <Tab
                         label={I18n.t(tab)}
                         value={tab}
                         className={props.classes.viewTab}
-                        onClick={() => setSelected(tab)}
+                        onClick={() => {
+                            setSelected(tab);
+                            window.localStorage.setItem('selectedMenu', tab);
+                        }}
                         key={tab}
                     />)
                 }
@@ -103,9 +112,11 @@ Vis
                 </IconButton>
             </Tooltip>
             <span className={props.classes.right}>
-                <IconButton size="small">
-                    <CloseIcon />
-                </IconButton>
+                <Tooltip title={I18n.t('Close editor')}>
+                    <IconButton size="small">
+                        <CloseIcon />
+                    </IconButton>
+                </Tooltip>
                 <IconButton ref={rightRef} onClick={() => setRight(!right)} size="small">
                     <ArrowDropDownIcon />
                 </IconButton>
