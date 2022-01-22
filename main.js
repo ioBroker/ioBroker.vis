@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2021, bluefox
+ *      Copyright (c) 2014-2022, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -81,8 +81,12 @@ async function writeFile(fileName) {
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true
             });*/
-
-            let data = await adapter.readFileAsync(adapterName, fileName);
+            let data;
+            try {
+                data = await adapter.readFileAsync(adapterName, fileName);
+            } catch (err) {
+                // ignore
+            }
             if (typeof data === 'object') {
                 data = data.file;
             }
@@ -213,6 +217,7 @@ async function generatePages(isLicenseError) {
                     name: 'Command for vis',
                     type: 'string',
                     desc: 'Writing this variable akt as the trigger. Instance and data must be preset before \'command\' will be written. \'changedView\' will be signalled too',
+                    role: 'state',
                     states: {
                         alert: 'alert',
                         changeView: 'changeView',
@@ -266,6 +271,16 @@ async function getSuitableLicenses(all) {
         const licenses = [];
         try {
             const obj = await adapter.getForeignObjectAsync('system.licenses');
+            const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
+
+            let uuid;
+            if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
+                adapter.log.error('No UUID found!');
+                return licenses;
+            } else {
+                uuid = uuidObj.native.uuid;
+            }
+
             if (obj && obj.native && obj.native.licenses && obj.native.licenses.length) {
                 const now = Date.now();
                 const cert = fs.readFileSync(__dirname + '/lib/cloudCert.crt');
@@ -274,19 +289,49 @@ async function getSuitableLicenses(all) {
                 obj.native.licenses.forEach(license => {
                     try {
                         const decoded = jwt.verify(license.json, cert);
-                        if (decoded.name && (!decoded.valid_till || license.valid_till === '0000-00-00 00:00:00' || new Date(license.valid_till).getTime() > now)) {
-                            if (decoded.name.startsWith('iobroker.' + adapter.name) && (all || !license.usedBy || license.usedBy === adapter.namespace)) {
-                                if (decoded.version === '<2' || decoded.version === '<1' || decoded.version === '<=1') {
-                                    if (version !== '0' && version !== '1') {
+                        if (
+                            decoded.name &&
+                            (!decoded.valid_till ||
+                                decoded.valid_till === '0000-00-00 00:00:00' ||
+                                new Date(decoded.valid_till).getTime() > now)
+                        ) {
+                            if (
+                                decoded.name.startsWith('iobroker.' + this.name) &&
+                                (all || !license.usedBy || license.usedBy === this.namespace)
+                            ) {
+                                // Licenses for version ranges 0.x and 1.x are handled identically and are valid for both version ranges.
+                                //
+                                // If license is for adapter with version 0 or 1
+                                if (
+                                    decoded.version === '&lt;2' ||
+                                    decoded.version === '<2' ||
+                                    decoded.version === '<1' ||
+                                    decoded.version === '<=1'
+                                ) {
+                                    // check the current adapter major version
+                                    if (version !== 0 && version !== 1) {
                                         return;
                                     }
                                 } else if (decoded.version && decoded.version !== version) {
+                                    // Licenses for adapter versions >=2 need to match to the adapter major version
+                                    // which means that a new major version requires new licenses if it would be "included"
+                                    // in last purchase
+
+                                    // decoded.version could be only '<2' or direct version, like "2", "3" and so on
                                     return;
                                 }
+
+                                if (decoded.uuid && decoded.uuid !== uuid) {
+                                    // License is not for this server
+                                    return;
+                                }
+
                                 // remove free license if commercial license found
                                 if (decoded.invoice !== 'free') {
                                     const pos = licenses.findIndex(item => item.invoice === 'free');
-                                    pos !== -1 && licenses.splice(pos, 1);
+                                    if (pos !== -1) {
+                                        licenses.splice(pos, 1);
+                                    }
                                 }
                                 license.decoded = decoded;
                                 licenses.push(license);
@@ -300,6 +345,18 @@ async function getSuitableLicenses(all) {
         } catch {
             // ignore
         }
+
+        licenses.sort((a, b) => {
+            const aInvoice = a.decoded.invoice !== 'free';
+            const bInvoice = b.decoded.invoice !== 'free';
+            if (aInvoice === bInvoice) {
+                return 0;
+            } else if (aInvoice) {
+                return -1;
+            } else if (bInvoice) {
+                return 1;
+            }
+        });
 
         return licenses;
     }
@@ -407,7 +464,20 @@ function doLicense(license, uuid) {
 
 async function main() {
     let isLicenseError;
-    // first of all check license
+
+    const visObj = await adapter.getForeignObjectAsync(adapterName);
+    if (!visObj || visObj.type !== 'meta') {
+        await adapter.setForeignObjectAsync(adapterName, {
+            type: 'meta',
+            common: {
+                name: 'user files and images for vis',
+                type: 'meta.user'
+            },
+            native: {}
+        });
+    }
+
+    // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
         await indicateError();
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');

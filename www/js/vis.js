@@ -99,9 +99,9 @@ if (typeof systemDictionary !== 'undefined') {
             "pl": "Nie znaleziono stron!",
             "zh-cn": "找不到页面！"},
         "No valid license found!": {
-            "en": "No valid vis license found! Please check vis instance.",
-            "de": "Keine gültige vis Lizenz gefunden! Bitte vis Instanz prüfen.",
-            "ru": "Действительная лицензия не найдена! Пожалуйста, проверьте пример.",
+            "en": "No valid vis license found! Please check vis settings.",
+            "de": "Keine gültige vis Lizenz gefunden! Bitte vis Einstellungen prüfen.",
+            "ru": "Действительная лицензия не найдена! Пожалуйста, проверьте настройки.",
             "pt": "Nenhuma licença válida encontrada! Por favor, verifique vis instance.",
             "nl": "Geen geldige licentie gevonden! Controleer de vis-aankondiging.",
             "fr": "Aucune licence valide trouvée ! Veuillez vérifier vis instance.",
@@ -273,6 +273,8 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
     systemLang = visConfig.language || systemLang;
 }
 
+var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
+
 var vis = {
     version: '1.4.6',
     requiredServerVersion: '0.0.0',
@@ -337,10 +339,10 @@ var vis = {
                     that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
                 }
             }
-            
+
             // update local variable state -> needed for binding, etc.
-            vis.updateState(id, state);           
-            
+            vis.updateState(id, state);
+
             return;
         }
 
@@ -567,7 +569,7 @@ var vis = {
                 }, 100, j);
             }
         } else {
-            if (callback) callback.call(this);
+            callback && callback.call(this);
         }
     },
     bindInstance:       function () {
@@ -802,8 +804,7 @@ var vis = {
         index = index || 0;
 
         if (!views || index >= views.length) {
-            if (callback) callback(viewDiv, views);
-            return;
+            return callback && callback(viewDiv, views);
         }
         var item = views[index];
         var that = this;
@@ -972,7 +973,7 @@ var vis = {
                     if (!hidden) $view.show();
 
                     $('#visview_' + _viewDiv).trigger('rendered');
-                    if (callback) callback(_viewDiv, view);
+                    callback && callback(_viewDiv, view);
                 });
             }
 
@@ -991,7 +992,7 @@ var vis = {
 
                 setTimeout(function () {
                     $('#visview_' + viewDiv).trigger('rendered');
-                    if (callback) callback(viewDiv, view);
+                    callback && callback(viewDiv, view);
                 }, 0);
             }
 
@@ -1953,8 +1954,7 @@ var vis = {
     loadRemote:         function (callback, callbackArg) {
         var that = this;
         if (!this.projectPrefix) {
-            if (callback) callback.call(that, callbackArg);
-            return;
+            return callback && callback.call(that, callbackArg);
         }
         this.conn.readFile(this.projectPrefix + 'vis-views.json', function (err, data) {
             if (err) {
@@ -1988,7 +1988,7 @@ var vis = {
                 that.views = null;
             }
 
-            if (callback) callback.call(that, callbackArg);
+            callback && callback.call(that, callbackArg);
         });
     },
     wakeUpCallbacks:    [],
@@ -2852,14 +2852,12 @@ var vis = {
     },
     subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {
-            if (callback) callback();
-            return;
+            return callback && callback();
         }
 
         // view yet active
         if (this.subscribing.activeViews.indexOf(view) !== -1) {
-            if (callback) callback();
-            return;
+            return callback && callback();
         }
 
         this.subscribing.activeViews.push(view);
@@ -2882,10 +2880,10 @@ var vis = {
 
                 that.updateStates(data);
                 that.conn.subscribe(oids);
-                if (callback) callback();
+                callback && callback();
             });
         } else {
-            if (callback) callback();
+            callback && callback();
         }
     },
     unsubscribeStates:  function (view) {
@@ -3120,8 +3118,9 @@ var vis = {
         return '';
     },
     subscribeOidAtRuntime: function (oid, callback, force = false) {
-        // if state value is an oid and it is not subscribe then subscribe it at runtime, can heppen if binding are used in oid attributes
-        if (this.subscribing.active.indexOf(oid) === -1 || force) {
+        // if state value is an oid and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
+        // the id with invalid contains characters not allowed in oid's
+        if (!FORBIDDEN_CHARS.test(oid) && (this.subscribing.active.indexOf(oid) === -1 || force)) {
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 this.subscribing.active.push(oid);
 
@@ -3131,7 +3130,7 @@ var vis = {
                     that.updateStates(data);
                     that.conn.subscribe(oid);
 
-                    if (callback) callback();                    
+                    callback && callback();
                 });
             }
         }
