@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2021, bluefox
+ *      Copyright (c) 2014-2022, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -81,8 +81,12 @@ async function writeFile(fileName) {
                 removeScriptTypeAttributes: true,
                 removeStyleLinkTypeAttributes: true
             });*/
-
-            let data = await adapter.readFileAsync(adapterName, fileName);
+            let data;
+            try {
+                data = await adapter.readFileAsync(adapterName, fileName);
+            } catch (err) {
+                // ignore
+            }
             if (typeof data === 'object') {
                 data = data.file;
             }
@@ -213,6 +217,7 @@ async function generatePages(isLicenseError) {
                     name: 'Command for vis',
                     type: 'string',
                     desc: 'Writing this variable akt as the trigger. Instance and data must be preset before \'command\' will be written. \'changedView\' will be signalled too',
+                    role: 'state',
                     states: {
                         alert: 'alert',
                         changeView: 'changeView',
@@ -459,7 +464,20 @@ function doLicense(license, uuid) {
 
 async function main() {
     let isLicenseError;
-    // first of all check license
+
+    const visObj = await adapter.getForeignObjectAsync(adapterName);
+    if (!visObj || visObj.type !== 'meta') {
+        await adapter.setForeignObjectAsync(adapterName, {
+            type: 'meta',
+            common: {
+                name: 'user files and images for vis',
+                type: 'meta.user'
+            },
+            native: {}
+        });
+    }
+
+    // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
         await indicateError();
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
