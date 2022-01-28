@@ -62,33 +62,38 @@ class App extends GenericApp {
 
         super(props, extendedProps);
 
-        this.state = {
-            ...this.state,
-            selectedView: '',
-            splitSizes: window.localStorage.getItem('splitSizes')
-                ? JSON.parse(window.localStorage.getItem('splitSizes'))
-                : [20, 60, 20],
-        };
-
         // icon cache
         this.icons = {};
     }
 
     onConnectionReady() {
-        this.socket.readFile('vis.0', 'main/vis-views.json').then(file => {
-            const project = JSON.parse(file);
-            let selectedView;
-            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-                selectedView = window.localStorage.getItem('selectedView');
-            } else {
-                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
-            }
-            this.setState({
-                project,
-                selectedView,
-            });
-        });
-        this.socket.getGroups().then(groups => this.setState({ groups }));
+        this.setState({
+            selectedView: '',
+            splitSizes: window.localStorage.getItem('splitSizes')
+                ? JSON.parse(window.localStorage.getItem('splitSizes'))
+                : [20, 60, 20],
+        }, () => this.socket.readFile('vis.0', 'main/vis-views.json')
+            .catch(err => {
+                console.warn('Cannot read project file vis-views.json: ' + err);
+                return '{}';
+            })
+            .then(file => {
+                const project = JSON.parse(file);
+                project.___settings = project.___settings || {};
+                let selectedView;
+                if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+                    selectedView = window.localStorage.getItem('selectedView');
+                } else {
+                    selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+                }
+                this.setState({
+                    project,
+                    selectedView,
+                });
+
+                return this.socket.getGroups();
+            })
+            .then(groups => this.setState({ groups })));
     }
 
     changeView = view => {

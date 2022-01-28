@@ -1,8 +1,6 @@
 /* eslint-disable */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import * as Sentry from '@sentry/browser';
-import * as SentryIntegrations from '@sentry/integrations';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import './index.css';
 // import theme from '@iobroker/adapter-react/Theme';
@@ -16,13 +14,13 @@ window.adapterName = 'vis';
 let themeName = Utils.getThemeName();
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);
-window.sentryDSN = 'https://6ccbeba86d86457b82ded80109fa7aba@sentry.iobroker.net/144';
+//window.sentryDSN = 'https://6ccbeba86d86457b82ded80109fa7aba@sentry.iobroker.net/144';
 
 function build() {
     return ReactDOM.render(
         <MuiThemeProvider theme={theme(themeName)}>
-            <App 
-                socket={{port: 8081}}
+            <App
+                socket={{port: 8082}}
                 onThemeChange={(_theme) => {
                     themeName = _theme;
                     build();

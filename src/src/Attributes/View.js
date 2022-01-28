@@ -122,6 +122,7 @@ const View = props => {
                     type: 'multi-select',
                     items: props.groups.map(group => ({
                         name: typeof group.common.name === 'string' ? group.common.name : group.common.name[I18n.getLanguage()],
+                        /* eslint no-underscore-dangle: 0 */
                         value: group._id.split('.')[2],
                     })),
                 },

@@ -76,9 +76,8 @@ const fields = [
 
 const Settings = props => {
     const [settings, setSettings] = useState({});
-    useEffect(() => {
-        setSettings(props.project.___settings);
-    }, [props.open]);
+    /* eslint no-underscore-dangle: 0 */
+    useEffect(() => setSettings(props.project.___settings), [props.open]);
 
     const save = () => {
         const project = JSON.parse(JSON.stringify(props.project));
