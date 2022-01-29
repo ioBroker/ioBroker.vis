@@ -276,7 +276,7 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
 var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
 var vis = {
-    version: '1.4.6',
+    version: '1.4.7',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',

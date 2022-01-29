@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### __WORK IN PROGRESS__
 -->
 ## Changelog
-### __WORK IN PROGRESS__
+### 1.4.8 (2022-01-29)
 * (bluefox) Added support for js-controller 4.x
 
 ### 1.4.7 (2021-12-28)

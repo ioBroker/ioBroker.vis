@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "vis",
-    "version": "1.4.7",
+    "version": "1.4.8",
     "news": {
+      "1.4.8": {
+        "en": "Added support for js-controller 4.x",
+        "de": "Unterstützung für js-controller 4.x hinzugefügt",
+        "ru": "Добавлена поддержка js-контроллера 4.x",
+        "pt": "Adicionado suporte para js-controller 4.x",
+        "nl": "Ondersteuning toegevoegd voor js-controller 4.x",
+        "fr": "Ajout de la prise en charge de js-controller 4.x",
+        "it": "Aggiunto supporto per js-controller 4.x",
+        "es": "Se agregó soporte para js-controller 4.x",
+        "pl": "Dodano wsparcie dla js-controller 4.x",
+        "zh-cn": "添加了对 js-controller 4.x 的支持"
+      },
       "1.4.7": {
         "en": "Fixed subscribeOidAtRuntime if called with invalid IDs\nAdded support of license manager",
         "de": "AbonnierenOidAtRuntime behoben, wenn mit ungültigen IDs aufgerufen\nUnterstützung des Lizenzmanagers hinzugefügt",
@@ -74,18 +86,6 @@
         "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
         "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
         "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
-      },
-      "1.4.0": {
-        "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
-        "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
-        "ru": "Изменен путь проверки сертификатов\nисправления проблем, обнаруженных при проверке адаптера",
-        "pt": "Caminho alterado para verificação de certificados\ncorreções para problemas encontrados pelo verificador de adaptador",
-        "nl": "Pad gewijzigd voor controle van certificaten\noplossingen voor problemen gevonden door adapter-checker",
-        "fr": "Chemin modifié pour la vérification des certificats\ncorrectifs pour les problèmes trouvés par adapter-checker",
-        "it": "Percorso modificato per il controllo dei certificati\ncorrezioni per problemi rilevati da adapter-checker",
-        "es": "Ruta cambiada para la verificación de certificados\narreglos para problemas encontrados por el verificador de adaptadores",
-        "pl": "Zmieniona ścieżka do sprawdzenia certyfikatów\npoprawki problemów znalezionych przez adapter-checker",
-        "zh-cn": "更改了检查证书的路径\n修复适配器检查器发现的问题"
       }
     },
     "title": "Visualisation",
