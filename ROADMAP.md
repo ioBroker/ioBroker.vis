@@ -3,7 +3,7 @@
 
 * show last update time for most of widgets
 
-* excpert mode
+* expert mode
 
 * Build in help for widgets
 
