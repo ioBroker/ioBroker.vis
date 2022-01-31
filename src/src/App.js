@@ -5,8 +5,11 @@ import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import GenericApp from '@iobroker/adapter-react/GenericApp';
 import Loader from '@iobroker/adapter-react/Components/Loader';
 import {
+    IconButton,
     Tab, Tabs,
 } from '@material-ui/core';
+
+import CloseIcon from '@material-ui/icons/Close';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
@@ -74,12 +77,13 @@ class App extends GenericApp {
                 : [20, 60, 20],
         }, () => this.socket.readFile('vis.0', 'main/vis-views.json')
             .catch(err => {
-                console.warn('Cannot read project file vis-views.json: ' + err);
+                console.warn(`Cannot read project file vis-views.json: ${err}`);
                 return '{}';
             })
             .then(file => {
                 const project = JSON.parse(file);
                 project.___settings = project.___settings || {};
+                project.___settings.folders = project.___settings.folders || [];
                 let selectedView;
                 if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
                     selectedView = window.localStorage.getItem('selectedView');
@@ -89,6 +93,7 @@ class App extends GenericApp {
                 this.setState({
                     project,
                     selectedView,
+                    openedViews: [selectedView],
                 });
 
                 return this.socket.getGroups();
@@ -136,12 +141,20 @@ class App extends GenericApp {
                             <Widgets />
                         </div>
                         <div>
-                            <Tabs value={this.state.selectedView} className={this.props.classes.viewTabs}>
+                            <Tabs
+                                value={this.state.selectedView}
+                                className={this.props.classes.viewTabs}
+                                variant="scrollable"
+                                scrollButtons="auto"
+                            >
                                 {
                                     Object.keys(this.state.project)
                                         .filter(view => !view.startsWith('__'))
                                         .map(view => <Tab
-                                            label={view}
+                                            label={<span>
+                                                {view}
+                                                <IconButton size="small"><CloseIcon fontSize="small" /></IconButton>
+                                            </span>}
                                             className={this.props.classes.viewTab}
                                             value={view}
                                             onClick={() => this.changeView(view)}

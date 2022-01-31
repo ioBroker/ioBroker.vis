@@ -33,7 +33,7 @@ const Attributes = props => {
             className={props.classes.viewTabs}
             value={selected}
             variant="scrollable"
-            scrollButtons="on"
+            scrollButtons="auto"
         >
             {
                 ['View', 'Widget', 'CSS', 'Scripts'].map(tab => <Tab

@@ -77,7 +77,6 @@ const MainMenu = props => {
 
     return <>
         <div className={props.classes.menu}>
-            <Typography variant="h4" className={props.classes.header}>Vis</Typography>
             <Tabs className={props.classes.viewTabs} value={selected}>
                 {
                     toolbarItems.map(tab => <Tab
