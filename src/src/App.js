@@ -67,15 +67,12 @@ class App extends GenericApp {
 
         // icon cache
         this.icons = {};
+
+        this.state = { projectName: 'main', ...this.state };
     }
 
-    onConnectionReady() {
-        this.setState({
-            selectedView: '',
-            splitSizes: window.localStorage.getItem('splitSizes')
-                ? JSON.parse(window.localStorage.getItem('splitSizes'))
-                : [20, 60, 20],
-        }, () => this.socket.readFile('vis.0', 'main/vis-views.json')
+    loadProject(projectName) {
+        return this.socket.readFile('vis.0', `${projectName}/vis-views.json`)
             .catch(err => {
                 console.warn(`Cannot read project file vis-views.json: ${err}`);
                 return '{}';
@@ -98,7 +95,19 @@ class App extends GenericApp {
 
                 return this.socket.getGroups();
             })
-            .then(groups => this.setState({ groups })));
+            .then(groups => this.setState({ groups }));
+    }
+
+    onConnectionReady() {
+        this.setState({
+            selectedView: '',
+            splitSizes: window.localStorage.getItem('splitSizes')
+                ? JSON.parse(window.localStorage.getItem('splitSizes'))
+                : [20, 60, 20],
+        }, () => this.loadProject(this.state.projectName));
+        this.socket.readDir('vis.0', '').then(projects => this.setState({
+            projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
+        }));
     }
 
     changeView = view => {
@@ -108,6 +117,20 @@ class App extends GenericApp {
 
     changeProject = project => {
         this.setState({ project });
+    }
+
+    toggleView = (view, isShow) => {
+        const openedViews = JSON.parse(JSON.stringify(this.state.openedViews));
+        if (isShow && !openedViews.includes(view)) {
+            openedViews.push(view);
+        }
+        if (!isShow && openedViews.includes(view)) {
+            openedViews.splice(openedViews.indexOf(view), 1);
+        }
+        this.setState({ openedViews });
+        if (!openedViews.includes(this.state.selectedView)) {
+            this.setState({ selectedView: openedViews[0] });
+        }
     }
 
     render() {
@@ -125,6 +148,10 @@ class App extends GenericApp {
                     project={this.state.project}
                     changeView={this.changeView}
                     changeProject={this.changeProject}
+                    openedViews={this.state.openedViews}
+                    toggleView={this.toggleView}
+                    socket={this.socket}
+                    projects={this.state.projects}
                 />
                 <div>
                     <ReactSplit
@@ -150,10 +177,13 @@ class App extends GenericApp {
                                 {
                                     Object.keys(this.state.project)
                                         .filter(view => !view.startsWith('__'))
+                                        .filter(view => this.state.openedViews.includes(view))
                                         .map(view => <Tab
                                             label={<span>
                                                 {view}
-                                                <IconButton size="small"><CloseIcon fontSize="small" /></IconButton>
+                                                <IconButton size="small" onClick={() => this.toggleView(view, false)}>
+                                                    <CloseIcon fontSize="small" />
+                                                </IconButton>
                                             </span>}
                                             className={this.props.classes.viewTab}
                                             value={view}

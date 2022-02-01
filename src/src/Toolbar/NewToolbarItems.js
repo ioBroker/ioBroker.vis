@@ -4,11 +4,7 @@ import {
     Checkbox, Divider, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip, withStyles,
 } from '@material-ui/core';
 
-import MenuIcon from '@material-ui/icons/Menu';
-
 import I18n from '@iobroker/adapter-react/i18n';
-
-import widgetsToolbar from './NewWidgets';
 
 const styles = () => ({
     text: { paddingRight: 4 },
@@ -69,7 +65,7 @@ const getItem = (item, key, props, full) => {
     if (item.type === 'icon-button') {
         return full
             ? <div style={{ textAlign: 'center' }}>
-                <ButtonBase style={{ flexDirection: 'column', width: 60, borderRadius: 4 }}>
+                <ButtonBase onClick={item.onClick} style={{ flexDirection: 'column', width: 60, borderRadius: 4 }}>
                     <div><item.Icon fontSize={item.size ? item.size : 'small'} /></div>
                     <div>{I18n.t(item.name)}</div>
                 </ButtonBase>
@@ -110,54 +106,26 @@ const getItem = (item, key, props, full) => {
     />;
 };
 
-const NewToolbarItems = props.group => {
-    const toolbar = [
+const NewToolbarItems = props => <div
+    style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', borderStyle: 'solid', borderWidth: 1,
+    }}
+>
+    <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
         {
-            name: 'Views',
-            items: [
-                {
-                    type: 'icon-button', Icon: MenuIcon, name: 'Manage views',
-                },
-            ],
-        },
-        widgetsToolbar(props),
-        {
-            name: 'Projects',
-            items: [
-                {
-                    type: 'icon-button', Icon: MenuIcon, name: 'Manage projects',
-                },
-            ],
-        },
-    ];
-    return <div className={props.classes.toolbar} style={{ alignItems: 'initial' }}>
-        {toolbar.map((group, groupKey) => <div
-            key={groupKey}
-            style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', borderStyle: 'solid', borderWidth: 1,
-            }}
-        >
-            <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
-                {
-                    group.items.map((item, key) => {
-                        if (Array.isArray(item)) {
-                            return <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
-                                {item.map((subItem, subKey) => <div key={subKey} style={{ display: 'flex', flexDirection: 'row' }}>
-                                    {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
-                                </div>)}
-                            </div>;
-                        }
-                        return <div>
-                            {
-                                getItem(item, key, props, true)
-                            }
-                        </div>;
-                    })
+            props.group.items.map((item, key) => {
+                if (Array.isArray(item)) {
+                    return <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+                        {item.map((subItem, subKey) => <div key={subKey} style={{ display: 'flex', flexDirection: 'row' }}>
+                            {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
+                        </div>)}
+                    </div>;
                 }
-            </div>
-            <div>{I18n.t(group.name)}</div>
-        </div>)}
-    </div>;
-};
+                return getItem(item, key, props, true);
+            })
+        }
+    </div>
+    <div>{I18n.t(props.group.name)}</div>
+</div>;
 
-export default NewToolbar;
+export default NewToolbarItems;

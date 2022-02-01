@@ -9,10 +9,15 @@ import CloseIcon from '@material-ui/icons/Close';
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField,
 } from '@material-ui/core';
+import MenuIcon from '@material-ui/icons/Menu';
 import I18n from '@iobroker/adapter-react/i18n';
-import ToolbarItems from './ToolbarItems';
+import { BiImport, BiExport } from 'react-icons/bi';
+
+import ViewsManage from './ViewsManage';
+import ToolbarItems from './NewToolbarItems';
 
 const View = props => {
+    const [viewsManage, setViewsManage] = useState(false);
     const [dialog, setDialog] = useState(null);
     const [dialogName, setDialogName] = useState('');
 
@@ -68,33 +73,38 @@ const View = props => {
         setDialog(null);
     };
 
-    const toolbar = [
-        {
-            type: 'select',
-            name: 'Active view',
-            value: props.selectedView,
-            onChange: event => props.changeView(event.target.value),
-            width: 120,
-            items: Object.keys(props.project)
-                .filter(view => !view.startsWith('__'))
-                .map(view => ({ name: view, value: view })),
-        },
-        {
-            type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
-        },
-        {
-            type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
-        },
-        {
-            type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
-        },
-        {
-            type: 'icon-button', Icon: FileCopyIcon, name: 'Copy view', onClick: () => showDialog('copy'),
-        },
-        { type: 'divider' },
-        { type: 'button', name: 'Export item' },
-        { type: 'button', name: 'Import item' },
-    ];
+    const toolbar = {
+        name: 'Views',
+        items: [
+            {
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),
+            },
+            [[
+                {
+                    type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
+                },
+                {
+                    type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
+                },
+            ], [
+                {
+                    type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
+                },
+                {
+                    type: 'icon-button', Icon: FileCopyIcon, name: 'Copy view', onClick: () => showDialog('copy'),
+                },
+            ]],
+            { type: 'divider' },
+            [
+                [{
+                    type: 'icon-button', Icon: BiImport, name: 'Import widgets', size: 'normal',
+                }],
+                [{
+                    type: 'icon-button', Icon: BiExport, name: 'Export widgets', size: 'normal',
+                }],
+            ],
+        ],
+    };
 
     const dialogTitles = {
         delete: `${I18n.t('Are you want to delete view ') + props.selectedView}?`,
@@ -139,8 +149,8 @@ const View = props => {
         }
     }
 
-    return <div className={props.classes.toolbar}>
-        <ToolbarItems items={toolbar} {...props} />
+    return <>
+        <ToolbarItems group={toolbar} {...props} />
         <Dialog open={!!dialog} onClose={() => setDialog(null)}>
             <DialogTitle>{dialogTitles[dialog]}</DialogTitle>
             <DialogContent>
@@ -166,7 +176,8 @@ const View = props => {
                 </Button>
             </DialogActions>
         </Dialog>
-    </div>;
+        <ViewsManage open={viewsManage} onClose={() => setViewsManage(false)} {...props} />
+    </>;
 };
 
 export default View;

@@ -3,17 +3,23 @@ import {
 } from 'react-icons/md';
 import { CgArrowAlignH, CgArrowAlignV } from 'react-icons/cg';
 import { AiOutlineColumnWidth, AiOutlineColumnHeight } from 'react-icons/ai';
-import { BiImport, BiExport } from 'react-icons/bi';
+import {
+    BiImport, BiExport, BiCut, BiCopy, BiPaste,
+} from 'react-icons/bi';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import InfoIcon from '@material-ui/icons/Info';
 import LockIcon from '@material-ui/icons/Lock';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import UndoIcon from '@material-ui/icons/Undo';
 
-const widgetsToolbar = props => ({
-    name: 'Widgets',
-    items:
+import NewToolbarItems from './NewToolbarItems';
+
+const Widgets = props => {
+    const toolbar = {
+        name: 'Widgets',
+        items:
 [
     {
         type: 'select',
@@ -24,9 +30,23 @@ const widgetsToolbar = props => ({
     [[
         { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
         { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
+        {
+            type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
+        },
     ], [
         { type: 'icon-button', Icon: InfoIcon, name: 'Help about widget' },
+        {
+            type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
+        },
+        {
+            type: 'icon-button', Icon: BiPaste, name: 'Paste', size: 'normal',
+        },
     ]],
+
+    {
+        type: 'icon-button', Icon: UndoIcon, name: 'Undo',
+    },
+
     { type: 'divider' },
     [
         [
@@ -77,6 +97,8 @@ const widgetsToolbar = props => ({
         }],
     ],
 ],
-});
+    };
+    return <NewToolbarItems group={toolbar} {...props} />;
+};
 
-export default widgetsToolbar;
+export default Widgets;

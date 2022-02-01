@@ -12,7 +12,6 @@ import {
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 
-import UndoIcon from '@material-ui/icons/Undo';
 import CloseIcon from '@material-ui/icons/Close';
 import SyncIcon from '@material-ui/icons/Sync';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -105,11 +104,6 @@ const MainMenu = props => {
                         </MenuItem>))}
                 </Menu>)
             }
-            <Tooltip title={I18n.t('Undo')}>
-                <IconButton size="small">
-                    <UndoIcon />
-                </IconButton>
-            </Tooltip>
             <span className={props.classes.right}>
                 <Tooltip title={I18n.t('Close editor')}>
                     <IconButton size="small">
