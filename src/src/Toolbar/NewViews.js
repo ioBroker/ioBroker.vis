@@ -74,7 +74,7 @@ const View = props => {
     };
 
     const toolbar = {
-        name: 'Views',
+        name: `Views of ${props.projectName}`,
         items: [
             {
                 type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),

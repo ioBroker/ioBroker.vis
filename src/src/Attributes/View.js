@@ -232,6 +232,31 @@ const View = props => {
                 { name: 'word-spacing', field: 'word-spacing' },
             ],
         },
+        {
+            name: 'Options',
+            fields: [
+                {
+                    type: 'checkbox', name: 'Default', field: 'useAsDefault', notStyle: true,
+                },
+                {
+                    type: 'checkbox', name: 'Render always', field: 'alwaysRender', notStyle: true,
+                },
+                {
+                    type: 'select',
+                    name: 'Grid',
+                    field: 'snapType',
+                    items: [
+                        { name: 'Disabled', value: 0 },
+                        { name: 'Elements', value: 1 },
+                        { name: 'Grid', value: 2 },
+                    ],
+                    notStyle: true,
+                },
+                {
+                    type: 'number', name: 'Grid size', field: 'gridSize', notStyle: true,
+                },
+            ],
+        },
     ];
 
     const [accordionOpen, setAccordionOpen] = useState(
@@ -344,7 +369,13 @@ const View = props => {
                             </div>;
                         }
                         return <div key={key2}>
-                            <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} />
+                            <TextField
+                                fullWidth
+                                value={value}
+                                onChange={e => change(e.target.value)}
+                                label={I18n.t(field.name)}
+                                type={field.type}
+                            />
                         </div>;
                     })
                 }

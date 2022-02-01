@@ -32,12 +32,12 @@ const styles = () => ({
     },
     block: {
         overflow: 'auto',
-        height: 'calc(100vh - 106px)',
+        height: 'calc(100vh - 106px - 100px)',
         padding: '0px 8px',
     },
     canvas: {
         overflow: 'auto',
-        height: 'calc(100vh - 154px)',
+        height: 'calc(100vh - 154px - 100px)',
     },
     menu: {
         display: 'flex',
@@ -71,32 +71,31 @@ class App extends GenericApp {
         this.state = { projectName: 'main', ...this.state };
     }
 
-    loadProject(projectName) {
-        return this.socket.readFile('vis.0', `${projectName}/vis-views.json`)
-            .catch(err => {
-                console.warn(`Cannot read project file vis-views.json: ${err}`);
-                return '{}';
-            })
-            .then(file => {
-                const project = JSON.parse(file);
-                project.___settings = project.___settings || {};
-                project.___settings.folders = project.___settings.folders || [];
-                let selectedView;
-                if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-                    selectedView = window.localStorage.getItem('selectedView');
-                } else {
-                    selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
-                }
-                this.setState({
-                    project,
-                    selectedView,
-                    openedViews: [selectedView],
-                });
+    loadProject = projectName => this.socket.readFile('vis.0', `${projectName}/vis-views.json`)
+        .catch(err => {
+            console.warn(`Cannot read project file vis-views.json: ${err}`);
+            return '{}';
+        })
+        .then(file => {
+            const project = JSON.parse(file);
+            project.___settings = project.___settings || {};
+            project.___settings.folders = project.___settings.folders || [];
+            let selectedView;
+            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+                selectedView = window.localStorage.getItem('selectedView');
+            } else {
+                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+            }
+            this.setState({
+                project,
+                selectedView,
+                openedViews: [selectedView],
+                projectName,
+            });
 
-                return this.socket.getGroups();
-            })
-            .then(groups => this.setState({ groups }));
-    }
+            return this.socket.getGroups();
+        })
+        .then(groups => this.setState({ groups }))
 
     onConnectionReady() {
         this.setState({
@@ -108,6 +107,8 @@ class App extends GenericApp {
         this.socket.readDir('vis.0', '').then(projects => this.setState({
             projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
         }));
+
+        this.socket.getCurrentUser().then(user => this.setState({ user }));
     }
 
     changeView = view => {
@@ -152,6 +153,8 @@ class App extends GenericApp {
                     toggleView={this.toggleView}
                     socket={this.socket}
                     projects={this.state.projects}
+                    loadProject={this.loadProject}
+                    projectName={this.state.projectName}
                 />
                 <div>
                     <ReactSplit
