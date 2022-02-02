@@ -267,8 +267,9 @@ const View = props => {
 
     return <div>
         {fields.map((group, key) => <Accordion
+            square
             key={key}
-            elevation={4}
+            elevation={0}
             expanded={accordionOpen[key]}
             onChange={(e, expanded) => {
                 const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
@@ -279,30 +280,32 @@ const View = props => {
         >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>{group.name}</AccordionSummary>
             <AccordionDetails style={{ flexDirection: 'column' }}>
-                {
-                    group.fields.map((field, key2) => {
-                        if (field.hide) {
-                            return null;
-                        }
-
-                        let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
-                        if (value === null || value === undefined) {
-                            value = '';
-                        }
-
-                        const change = changeValue => {
-                            const project = JSON.parse(JSON.stringify(props.project));
-                            if (field.notStyle) {
-                                project[props.selectedView].settings[field.field] = changeValue;
-                            } else {
-                                project[props.selectedView].settings.style[field.field] = changeValue;
+                <table>
+                    {
+                        group.fields.map((field, key2) => {
+                            if (field.hide) {
+                                return null;
                             }
-                            props.changeProject(project);
-                        };
 
-                        if (field.type === 'autocomplete') {
-                            return <div key={key2}>
-                                <Autocomplete
+                            let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
+                            if (value === null || value === undefined) {
+                                value = '';
+                            }
+
+                            const change = changeValue => {
+                                const project = JSON.parse(JSON.stringify(props.project));
+                                if (field.notStyle) {
+                                    project[props.selectedView].settings[field.field] = changeValue;
+                                } else {
+                                    project[props.selectedView].settings.style[field.field] = changeValue;
+                                }
+                                props.changeProject(project);
+                            };
+
+                            let result = null;
+
+                            if (field.type === 'autocomplete') {
+                                result = <Autocomplete
                                     freeSolo
                                     options={field.items}
                                     inputValue={value}
@@ -310,42 +313,30 @@ const View = props => {
                                     onInputChange={(e, inputValue) => change(inputValue)}
                                     onChange={(e, inputValue) => change(inputValue)}
                                     renderInput={params => (
-                                        <TextField {...params} label={I18n.t(field.name)} />
+                                        <TextField {...params} />
                                     )}
-                                />
-                            </div>;
-                        }
-                        if (field.type === 'checkbox') {
-                            return <div key={key2}>
-                                <FormControlLabel
-                                    key={key}
-                                    control={<Checkbox checked={value} />}
+                                />;
+                            } else if (field.type === 'checkbox') {
+                                result = <Checkbox
+                                    checked={value}
                                     onChange={e => change(e.target.checked)}
-                                    label={I18n.t(field.name)}
-                                />
-                            </div>;
-                        }
-                        if (field.type === 'select') {
-                            return <FormControl key={key2}>
-                                <InputLabel>{I18n.t(field.name)}</InputLabel>
-                                <Select value={value} onChange={e => change(e.target.value)} renderValue={field.renderValue}>
+                                />;
+                            } else if (field.type === 'select') {
+                                result = <Select value={value} onChange={e => change(e.target.value)} renderValue={field.renderValue} fullWidth>
                                     {field.items.map(selectItem => <MenuItem
                                         value={selectItem.value}
                                         key={selectItem.value}
                                     >
                                         {field.itemModify ? field.itemModify(selectItem) : I18n.t(selectItem.name)}
                                     </MenuItem>)}
-                                </Select>
-                            </FormControl>;
-                        }
-                        if (field.type === 'multi-select') {
-                            return <FormControl key={key2}>
-                                <InputLabel>{I18n.t(field.name)}</InputLabel>
-                                <Select
+                                </Select>;
+                            } else if (field.type === 'multi-select') {
+                                result = <Select
                                     renderValue={selected => selected.join(', ')}
                                     value={value || []}
                                     onChange={e => change(e.target.value)}
                                     multiple
+                                    fullWidth
                                 >
                                     {field.items.map(selectItem => <MenuItem
                                         value={selectItem.value}
@@ -354,31 +345,30 @@ const View = props => {
                                         <Checkbox checked={value.includes(selectItem.value)} />
                                         <ListItemText primary={I18n.t(selectItem.name)} />
                                     </MenuItem>)}
-                                </Select>
-                            </FormControl>;
-                        }
-                        if (field.type === 'color') {
-                            return <div key={key2}>
-                                <ColorPicker
-                                    name={I18n.t(field.name)}
+                                </Select>;
+                            } else if (field.type === 'color') {
+                                result = <ColorPicker
                                     value={value}
                                     onChange={color => change(color)}
                                     openAbove
                                     color={field.value || ''}
-                                />
-                            </div>;
-                        }
-                        return <div key={key2}>
-                            <TextField
-                                fullWidth
-                                value={value}
-                                onChange={e => change(e.target.value)}
-                                label={I18n.t(field.name)}
-                                type={field.type}
-                            />
-                        </div>;
-                    })
-                }
+                                />;
+                            } else {
+                                result = <TextField
+                                    fullWidth
+                                    value={value}
+                                    onChange={e => change(e.target.value)}
+                                    type={field.type}
+                                />;
+                            }
+
+                            return <tr key={key2}>
+                                <td>{I18n.t(field.name)}</td>
+                                <td>{result}</td>
+                            </tr>;
+                        })
+                    }
+                </table>
             </AccordionDetails>
         </Accordion>)}
     </div>;

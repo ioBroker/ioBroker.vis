@@ -104,12 +104,14 @@ class App extends GenericApp {
                 ? JSON.parse(window.localStorage.getItem('splitSizes'))
                 : [20, 60, 20],
         }, () => this.loadProject(this.state.projectName));
-        this.socket.readDir('vis.0', '').then(projects => this.setState({
-            projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
-        }));
+        this.refreshProjects();
 
         this.socket.getCurrentUser().then(user => this.setState({ user }));
     }
+
+    refreshProjects = () => this.socket.readDir('vis.0', '').then(projects => this.setState({
+        projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
+    }));
 
     changeView = view => {
         this.setState({ selectedView: view });
@@ -118,6 +120,35 @@ class App extends GenericApp {
 
     changeProject = project => {
         this.setState({ project });
+    }
+
+    addProject = projectName => {
+        const project = {
+            ___settings: {
+                folders: [],
+            },
+            DemoView: {
+                name: 'DemoView',
+                settings: {
+                    style: {},
+                },
+                widgets: {},
+                activeWidgets: {},
+            },
+        };
+        this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project)).then(
+            () => this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, ''),
+        ).then(
+            () => this.refreshProjects(),
+        ).then(
+            () => this.loadProject(projectName),
+        );
+    }
+
+    deleteProject = projectName => {
+        this.socket.deleteFolder('vis.0', projectName).then(
+            () => this.refreshProjects(),
+        );
     }
 
     toggleView = (view, isShow) => {
@@ -130,7 +161,7 @@ class App extends GenericApp {
         }
         this.setState({ openedViews });
         if (!openedViews.includes(this.state.selectedView)) {
-            this.setState({ selectedView: openedViews[0] });
+            this.changeView(openedViews[0]);
         }
     }
 
@@ -155,6 +186,8 @@ class App extends GenericApp {
                     projects={this.state.projects}
                     loadProject={this.loadProject}
                     projectName={this.state.projectName}
+                    addProject={this.addProject}
+                    deleteProject={this.deleteProject}
                 />
                 <div>
                     <ReactSplit
@@ -184,7 +217,13 @@ class App extends GenericApp {
                                         .map(view => <Tab
                                             label={<span>
                                                 {view}
-                                                <IconButton size="small" onClick={() => this.toggleView(view, false)}>
+                                                <IconButton
+                                                    size="small"
+                                                    onClick={e => {
+                                                        e.stopPropagation();
+                                                        this.toggleView(view, false);
+                                                    }}
+                                                >
                                                     <CloseIcon fontSize="small" />
                                                 </IconButton>
                                             </span>}
