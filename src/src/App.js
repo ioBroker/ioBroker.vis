@@ -107,6 +107,13 @@ class App extends GenericApp {
         this.refreshProjects();
 
         this.socket.getCurrentUser().then(user => this.setState({ user }));
+
+        setInterval(() => {
+            if (this.state.needSave) {
+                this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project));
+                this.setState({ needSave: false });
+            }
+        }, 1000);
     }
 
     refreshProjects = () => this.socket.readDir('vis.0', '').then(projects => this.setState({
@@ -119,7 +126,7 @@ class App extends GenericApp {
     }
 
     changeProject = project => {
-        this.setState({ project });
+        this.setState({ project, needSave: true });
     }
 
     addProject = projectName => {
