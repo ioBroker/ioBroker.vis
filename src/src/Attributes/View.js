@@ -12,6 +12,8 @@ import { useState } from 'react';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import { theme, background } from './ViewData';
+
 const styles = () => ({
     backgroundClass: {
         display: 'flex',
@@ -23,87 +25,17 @@ const styles = () => ({
         display: 'inline-block',
         marginRight: 4,
     },
+    clearPadding: {
+        '&&&&': {
+            padding: 0,
+            margin: 0,
+            minHeight: 'initial',
+        },
+    },
+    fieldTitle: {
+        width: 140,
+    },
 });
-
-const theme = [
-    { value: 'black-tie', name: 'black-tie' },
-    { value: 'blitzer', name: 'blitzer' },
-    { value: 'cupertino', name: 'cupertino' },
-    { value: 'custom-dark', name: 'custom-dark' },
-    { value: 'custom-light', name: 'custom-light' },
-    { value: 'dark-hive', name: 'dark-hive' },
-    { value: 'dot-luv', name: 'dot-luv' },
-    { value: 'eggplant', name: 'eggplant' },
-    { value: 'excite-bike', name: 'excite-bike' },
-    { value: 'flick', name: 'flick' },
-    { value: 'hot-sneaks', name: 'hot-sneaks' },
-    { value: 'humanity', name: 'humanity' },
-    { value: 'overcast', name: 'overcast' },
-    { value: 'redmond', name: 'redmond' },
-    { value: 'smoothness', name: 'smoothness' },
-    { value: 'start', name: 'start' },
-    { value: 'sunny', name: 'sunny' },
-    { value: 'ui-darkness', name: 'ui-darkness' },
-    { value: 'ui-lightness', name: 'ui-lightness' },
-    { value: 'vader', name: 'vader' },
-];
-
-const background = [
-    { value: '', name: 'none' },
-    { value: 'fm-dark-background', name: 'Fm dark background' },
-    { value: 'fm-light-background', name: 'Fm light background' },
-    { value: 'no_background', name: 'No background' },
-    { value: 'hq-background-blue-marine-lines', name: 'Blue marine lines' },
-    { value: 'hq-background-blue-marine', name: 'Blue marine' },
-    { value: 'hq-background-radial-blue', name: 'Radial blue' },
-    { value: 'hq-background-gradient-box', name: 'Gradient box' },
-    { value: 'hq-background-h-gradient-black-0', name: 'H gradient black 0' },
-    { value: 'hq-background-h-gradient-black-1', name: 'H gradient black 1' },
-    { value: 'hq-background-h-gradient-black-2', name: 'H gradient black 2' },
-    { value: 'hq-background-h-gradient-black-3', name: 'H gradient black 3' },
-    { value: 'hq-background-h-gradient-black-4', name: 'H gradient black 4' },
-    { value: 'hq-background-h-gradient-black-5', name: 'H gradient black 5' },
-    { value: 'hq-background-h-gradient-orange-0', name: 'H gradient orange 0' },
-    { value: 'hq-background-h-gradient-orange-1', name: 'H gradient orange 1' },
-    { value: 'hq-background-h-gradient-orange-2', name: 'H gradient orange 2' },
-    { value: 'hq-background-h-gradient-orange-3', name: 'H gradient orange 3' },
-    { value: 'hq-background-h-gradient-blue-0', name: 'H gradient blue 0' },
-    { value: 'hq-background-h-gradient-blue-1', name: 'H gradient blue 1' },
-    { value: 'hq-background-h-gradient-blue-2', name: 'H gradient blue 2' },
-    { value: 'hq-background-h-gradient-blue-3', name: 'H gradient blue 3' },
-    { value: 'hq-background-h-gradient-blue-4', name: 'H gradient blue 4' },
-    { value: 'hq-background-h-gradient-blue-5', name: 'H gradient blue 5' },
-    { value: 'hq-background-h-gradient-blue-6', name: 'H gradient blue 6' },
-    { value: 'hq-background-h-gradient-blue-7', name: 'H gradient blue 7' },
-    { value: 'hq-background-h-gradient-yellow-0', name: 'H gradient yellow 0' },
-    { value: 'hq-background-h-gradient-yellow-1', name: 'H gradient yellow 1' },
-    { value: 'hq-background-h-gradient-yellow-2', name: 'H gradient yellow 2' },
-    { value: 'hq-background-h-gradient-yellow-3', name: 'H gradient yellow 3' },
-    { value: 'hq-background-h-gradient-green-0', name: 'H gradient green 0' },
-    { value: 'hq-background-h-gradient-green-1', name: 'H gradient green 1' },
-    { value: 'hq-background-h-gradient-green-2', name: 'H gradient green 2' },
-    { value: 'hq-background-h-gradient-green-3', name: 'H gradient green 3' },
-    { value: 'hq-background-h-gradient-green-4', name: 'H gradient green 4' },
-    { value: 'hq-background-gray-0', name: 'Gray 0' },
-    { value: 'hq-background-gray-1', name: 'Gray 1' },
-    { value: 'hq-background-h-gradient-gray-0', name: 'H gradient gray 0' },
-    { value: 'hq-background-h-gradient-gray-1', name: 'H gradient gray 1' },
-    { value: 'hq-background-h-gradient-gray-2', name: 'H gradient gray 2' },
-    { value: 'hq-background-h-gradient-gray-3', name: 'H gradient gray 3' },
-    { value: 'hq-background-h-gradient-gray-4', name: 'H gradient gray 4' },
-    { value: 'hq-background-h-gradient-gray-5', name: 'H gradient gray 5' },
-    { value: 'hq-background-h-gradient-gray-6', name: 'H gradient gray 6' },
-    { value: 'hq-background-aluminium1', name: 'Aluminium1' },
-    { value: 'hq-background-aluminium2', name: 'Aluminium2' },
-    { value: 'hq-background-colorful', name: 'Colorful' },
-    { value: 'hq-background-carbon-fibre1', name: 'Carbon fibre1' },
-    { value: 'hq-background-carbon-fibre', name: 'Carbon fibre' },
-    { value: 'hq-background-bricks', name: 'Bricks' },
-    { value: 'hq-background-lined-paper', name: 'Lined paper' },
-    { value: 'hq-background-blueprint-grid', name: 'Blueprint grid' },
-    { value: 'hq-background-blue-flowers', name: 'Blue flowers' },
-    { value: 'group-view-css-background', name: 'Group view css background' },
-];
 
 const View = props => {
     const view = props.project[props.selectedView];
@@ -267,6 +199,10 @@ const View = props => {
 
     return <div>
         {fields.map((group, key) => <Accordion
+            classes={{
+                root: props.classes.clearPadding,
+                expanded: props.classes.clearPadding,
+            }}
             square
             key={key}
             elevation={0}
@@ -278,8 +214,18 @@ const View = props => {
                 setAccordionOpen(newAccordionOpen);
             }}
         >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>{group.name}</AccordionSummary>
-            <AccordionDetails style={{ flexDirection: 'column' }}>
+            <AccordionSummary
+                classes={{
+                    root: props.classes.clearPadding,
+                    content: props.classes.clearPadding,
+                    expanded: props.classes.clearPadding,
+                    expandIcon: props.classes.clearPadding,
+                }}
+                expandIcon={<ExpandMoreIcon />}
+            >
+                {group.name}
+            </AccordionSummary>
+            <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                 <table>
                     {
                         group.fields.map((field, key2) => {
@@ -312,17 +258,34 @@ const View = props => {
                                     value={value}
                                     onInputChange={(e, inputValue) => change(inputValue)}
                                     onChange={(e, inputValue) => change(inputValue)}
+                                    classes={{
+                                        input: props.classes.clearPadding,
+                                    }}
                                     renderInput={params => (
-                                        <TextField {...params} />
+                                        <TextField
+                                            {...params}
+                                        />
                                     )}
                                 />;
                             } else if (field.type === 'checkbox') {
                                 result = <Checkbox
                                     checked={value}
+                                    classes={{
+                                        root: props.classes.clearPadding,
+                                    }}
+                                    size="small"
                                     onChange={e => change(e.target.checked)}
                                 />;
                             } else if (field.type === 'select') {
-                                result = <Select value={value} onChange={e => change(e.target.value)} renderValue={field.renderValue} fullWidth>
+                                result = <Select
+                                    value={value}
+                                    classes={{
+                                        root: props.classes.clearPadding,
+                                    }}
+                                    onChange={e => change(e.target.value)}
+                                    renderValue={field.renderValue}
+                                    fullWidth
+                                >
                                     {field.items.map(selectItem => <MenuItem
                                         value={selectItem.value}
                                         key={selectItem.value}
@@ -333,6 +296,9 @@ const View = props => {
                             } else if (field.type === 'multi-select') {
                                 result = <Select
                                     renderValue={selected => selected.join(', ')}
+                                    classes={{
+                                        root: props.classes.clearPadding,
+                                    }}
                                     value={value || []}
                                     onChange={e => change(e.target.value)}
                                     multiple
@@ -352,10 +318,18 @@ const View = props => {
                                     onChange={color => change(color)}
                                     openAbove
                                     color={field.value || ''}
+                                    classes={{
+                                        root: props.classes.clearPadding,
+                                    }}
                                 />;
                             } else {
                                 result = <TextField
                                     fullWidth
+                                    InputProps={{
+                                        classes: {
+                                            input: props.classes.clearPadding,
+                                        },
+                                    }}
                                     value={value}
                                     onChange={e => change(e.target.value)}
                                     type={field.type}
@@ -363,7 +337,7 @@ const View = props => {
                             }
 
                             return <tr key={key2}>
-                                <td>{I18n.t(field.name)}</td>
+                                <td className={props.classes.fieldTitle}>{I18n.t(field.name)}</td>
                                 <td>{result}</td>
                             </tr>;
                         })

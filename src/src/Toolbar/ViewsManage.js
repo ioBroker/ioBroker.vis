@@ -43,6 +43,7 @@ const ViewsManage = props => {
     };
 
     const renderViews = parentId => Object.keys(props.project)
+        .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? props.project[name].parentId === parentId : !props.project[name].parentId))
         .map((name, key) => <div key={key}>
             {props.openedViews.includes(name)
@@ -63,7 +64,6 @@ const ViewsManage = props => {
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
         return folders.map((folder, key) => <div key={key}>
             <FolderIcon />
-            {folder.id}
             {folder.name}
             <AddIcon onClick={() => createFolder('folder', folder.id)} />
             <EditIcon />

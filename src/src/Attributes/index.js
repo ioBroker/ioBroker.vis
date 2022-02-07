@@ -19,7 +19,7 @@ const Attributes = props => {
         ? window.localStorage.getItem('Attributes')
         : 'View');
 
-    if (!Object.keys(props.project).find(view => !view.startsWith('__'))) {
+    if (!props.openedViews.length) {
         return null;
     }
 

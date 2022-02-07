@@ -254,6 +254,7 @@ class App extends GenericApp {
                                 groups={this.state.groups}
                                 project={this.state.project}
                                 changeProject={this.changeProject}
+                                openedViews={this.state.openedViews}
                             />
                         </div>
                     </ReactSplit>

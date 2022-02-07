@@ -17,6 +17,10 @@ import UndoIcon from '@material-ui/icons/Undo';
 import NewToolbarItems from './NewToolbarItems';
 
 const Widgets = props => {
+    if (!props.openedViews.length) {
+        return null;
+    }
+
     const toolbar = {
         name: 'Widgets',
         items:

@@ -77,12 +77,9 @@ const View = props => {
         name: `Views of ${props.projectName}`,
         items: [
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),
+                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
             },
             [[
-                {
-                    type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
-                },
                 {
                     type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
                 },
@@ -90,10 +87,10 @@ const View = props => {
                 {
                     type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
                 },
-                {
-                    type: 'icon-button', Icon: FileCopyIcon, name: 'Copy view', onClick: () => showDialog('copy'),
-                },
             ]],
+            {
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),
+            },
             { type: 'divider' },
             [
                 [{
