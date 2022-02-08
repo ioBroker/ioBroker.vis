@@ -3,7 +3,9 @@ import MenuIcon from '@material-ui/icons/Menu';
 import { useState } from 'react';
 import ObjectBrowser from '@iobroker/adapter-react/Components/ObjectBrowser';
 import I18n from '@iobroker/adapter-react/i18n';
-import { Dialog } from '@material-ui/core';
+import {
+    Button, Dialog, DialogActions, DialogContent, DialogTitle,
+} from '@material-ui/core';
 import ToolbarItems from './NewToolbarItems';
 
 import Settings from '../Menu/Settings';
@@ -37,10 +39,16 @@ const Tools = props => {
             open={objectsDialog}
             onClose={() => setObjectsDialog(false)}
         >
-            <ObjectBrowser
-                socket={props.socket}
-                t={I18n.t}
-            />
+            <DialogTitle>{I18n.t('Select object')}</DialogTitle>
+            <DialogContent>
+                <ObjectBrowser
+                    socket={props.socket}
+                    t={I18n.t}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => setObjectsDialog(false)}>{I18n.t('Close')}</Button>
+            </DialogActions>
         </Dialog>
     </>;
 };

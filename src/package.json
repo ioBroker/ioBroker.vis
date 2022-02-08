@@ -17,6 +17,8 @@
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.0.3",
         "eslint-plugin-react": "^7.25.1",
+        "file-saver": "^2.0.5",
+        "jszip": "^3.7.1",
         "node-sass": "^6.0.1",
         "react": "^17.0.2",
         "react-ace": "^9.5.0",

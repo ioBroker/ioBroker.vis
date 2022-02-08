@@ -65,7 +65,16 @@ const getItem = (item, key, props, full) => {
     if (item.type === 'icon-button') {
         return full
             ? <div style={{ textAlign: 'center' }}>
-                <ButtonBase onClick={item.onClick} style={{ flexDirection: 'column', width: 60, borderRadius: 4 }}>
+                <ButtonBase
+                    onClick={item.onClick}
+                    style={{
+                        flexDirection: 'column',
+                        width: 60,
+                        borderRadius: 4,
+                        height: '100%',
+                        justifyContent: 'start',
+                    }}
+                >
                     <div><item.Icon fontSize={item.size ? item.size : 'small'} /></div>
                     <div>{I18n.t(item.name)}</div>
                 </ButtonBase>

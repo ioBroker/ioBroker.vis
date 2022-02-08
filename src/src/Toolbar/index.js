@@ -1,7 +1,6 @@
 import Tools from './Tools';
 import View from './View';
 import Widgets from './Widgets';
-import NewToolbar from './NewToolbar';
 
 const toolbars = { Tools, View, Widgets };
 
@@ -12,7 +11,6 @@ const Toolbar = props => {
         {Tab ? <Tab
             {...props}
         /> : null}
-        <NewToolbar {...props} />
     </div>;
 };
 

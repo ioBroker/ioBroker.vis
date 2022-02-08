@@ -12,10 +12,6 @@ import {
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 
-import CloseIcon from '@material-ui/icons/Close';
-import SyncIcon from '@material-ui/icons/Sync';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import { withStyles } from '@material-ui/styles';
 
 import Toolbar from '../Toolbar';
@@ -38,9 +34,6 @@ const MainMenu = props => {
         ? window.localStorage.getItem('selectedMenu')
         : 'View');
     const [settingsDialog, setSettingsDialog] = useState(false);
-
-    const [right, setRight] = useState(false);
-    const rightRef = useRef(null);
 
     const menuItems = [
         {
@@ -104,39 +97,6 @@ const MainMenu = props => {
                         </MenuItem>))}
                 </Menu>)
             }
-            <span className={props.classes.right}>
-                <Tooltip title={I18n.t('Close editor')}>
-                    <IconButton size="small">
-                        <CloseIcon />
-                    </IconButton>
-                </Tooltip>
-                <IconButton ref={rightRef} onClick={() => setRight(!right)} size="small">
-                    <ArrowDropDownIcon />
-                </IconButton>
-                <DropMenu
-                    open={right}
-                    anchorEl={rightRef.current}
-                    onClose={() => setRight(false)}
-                    anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                    }}
-                    getContentAnchorEl={null}
-                >
-                    <DropMenuItem>
-                        <CloseIcon />
-                        {I18n.t('Close editor')}
-                    </DropMenuItem>
-                    <DropMenuItem>
-                        <PlayArrowIcon />
-                        {I18n.t('Open runtime in new window')}
-                    </DropMenuItem>
-                    <DropMenuItem>
-                        <SyncIcon />
-                        {I18n.t('Reload all runtimes')}
-                    </DropMenuItem>
-                </DropMenu>
-            </span>
         </div>
         <Toolbar
             selected={selected}

@@ -11,6 +11,10 @@ const styles = () => ({
     dialog: {
         width: 400,
     },
+    field: {
+        display: 'flex',
+        alignItems: 'center',
+    },
 });
 
 const Settings = props => {
@@ -114,36 +118,31 @@ const Settings = props => {
                     setSettings(newSettings);
                 };
 
+                let result = null;
+
                 if (field.type === 'checkbox') {
-                    return <div key={key}>
-                        <FormControlLabel
-                            control={<Checkbox checked={value} />}
-                            onChange={e => change(e.target.checked)}
-                            label={I18n.t(field.name)}
-                        />
-                    </div>;
-                }
-                if (field.type === 'select') {
-                    return <div key={key}>
-                        <FormControl fullWidth>
-                            <InputLabel>{I18n.t(field.name)}</InputLabel>
-                            <Select value={value} onChange={e => change(e.target.value)}>
-                                {field.items.map(selectItem => <MenuItem
-                                    value={selectItem.value}
-                                    key={selectItem.value}
-                                >
-                                    {I18n.t(selectItem.name)}
-                                </MenuItem>)}
-                            </Select>
-                        </FormControl>
-                    </div>;
-                }
-                if (field.type === 'raw') {
-                    return <div key={key}>{field.Node}</div>;
-                }
-                return <div key={key}>
-                    <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />
-                </div>;
+                    result = <FormControlLabel
+                        control={<Checkbox checked={value} />}
+                        onChange={e => change(e.target.checked)}
+                        label={I18n.t(field.name)}
+                    />;
+                } else if (field.type === 'select') {
+                    result = <FormControl fullWidth>
+                        <InputLabel>{I18n.t(field.name)}</InputLabel>
+                        <Select value={value} onChange={e => change(e.target.value)}>
+                            {field.items.map(selectItem => <MenuItem
+                                value={selectItem.value}
+                                key={selectItem.value}
+                            >
+                                {I18n.t(selectItem.name)}
+                            </MenuItem>)}
+                        </Select>
+                    </FormControl>;
+                } else if (field.type === 'raw') {
+                    result = field.Node;
+                } else result = <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
+
+                return <div key={key} className={props.classes.field}>{result}</div>;
             })}
         </DialogContent>
         <DialogActions>

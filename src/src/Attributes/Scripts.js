@@ -8,13 +8,16 @@ import { IconButton } from '@material-ui/core';
 
 import SaveIcon from '@material-ui/icons/Save';
 
-const Scripts = () => <div>
-    <IconButton>
-        <SaveIcon />
-    </IconButton>
+const Scripts = props => <div>
     <AceEditor
         mode="javascript"
         width="100%"
+        value={props.project.___settings.scripts}
+        onChange={newValue => {
+            const project = JSON.parse(JSON.stringify(props.project));
+            project.___settings.scripts = newValue;
+            props.changeProject(project);
+        }}
         setOptions={{
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,

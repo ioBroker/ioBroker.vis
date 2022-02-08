@@ -94,10 +94,10 @@ const View = props => {
             { type: 'divider' },
             [
                 [{
-                    type: 'icon-button', Icon: BiImport, name: 'Import widgets', size: 'normal',
+                    type: 'icon-button', Icon: BiImport, name: 'Import view', size: 'normal',
                 }],
                 [{
-                    type: 'icon-button', Icon: BiExport, name: 'Export widgets', size: 'normal',
+                    type: 'icon-button', Icon: BiExport, name: 'Export view', size: 'normal',
                 }],
             ],
         ],

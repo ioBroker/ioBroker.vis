@@ -1,7 +1,12 @@
 import I18n from '@iobroker/adapter-react/i18n';
 import {
-    Dialog, DialogActions, DialogContent, DialogTitle, IconButton,
+    Dialog, DialogActions, DialogContent, DialogTitle, IconButton, withStyles,
 } from '@material-ui/core';
+
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage, HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { usePreview } from 'react-dnd-preview';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -12,6 +17,33 @@ import FileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+
+const styles = () => ({
+    buttonActions: {
+        float: 'right',
+    },
+    dialog: {
+        width: 400,
+    },
+    folderContainer: {
+        clear: 'right',
+        '& $buttonActions': {
+            visibility: 'hidden',
+        },
+        '&:hover $buttonActions': {
+            visibility: 'initial',
+        },
+    },
+    viewContainer: {
+        clear: 'right',
+        '& $buttonActions': {
+            visibility: 'hidden',
+        },
+        '&:hover $buttonActions': {
+            visibility: 'initial',
+        },
+    },
+});
 
 const ViewsManage = props => {
     const createFolder = (name, parentId) => {
@@ -45,29 +77,46 @@ const ViewsManage = props => {
     const renderViews = parentId => Object.keys(props.project)
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? props.project[name].parentId === parentId : !props.project[name].parentId))
-        .map((name, key) => <div key={key}>
-            {props.openedViews.includes(name)
-                ? <IconButton onClick={() => props.toggleView(name, false)}>
-                    <VisibilityIcon />
-                </IconButton>
-                : <IconButton onClick={() => props.toggleView(name, true)}>
-                    <VisibilityOffIcon />
-                </IconButton>}
+        .map((name, key) => <div key={key} className={props.classes.viewContainer}>
+            <IconButton size="small" onClick={() => props.toggleView(name, !props.openedViews.includes(name))}>
+                {props.openedViews.includes(name) ? <VisibilityIcon /> : <VisibilityOffIcon />}
+            </IconButton>
             <FileIcon />
             <span>{name}</span>
-            <EditIcon />
-            <DeleteIcon />
+            <span className={props.classes.buttonActions}>
+                <IconButton size="small">
+                    <EditIcon />
+                </IconButton>
+                <IconButton size="small">
+                    <DeleteIcon />
+                </IconButton>
+            </span>
         </div>);
 
     const renderFolders = parentId => {
         const folders = props.project.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
-        return folders.map((folder, key) => <div key={key}>
+        return folders.map((folder, key) => <div key={key} className={props.classes.folderContainer}>
+            <span className={props.classes.buttonActions}>
+                <IconButton size="small" onClick={() => createFolder('folder', folder.id)}>
+                    <AddIcon />
+                </IconButton>
+                <IconButton size="small">
+                    <EditIcon />
+                </IconButton>
+
+                <IconButton
+                    size="small"
+                    onClick={() => deleteFolder(folder.id)}
+                    disabled={props.project.___settings.folders.find(foundFolder => foundFolder.parentId === folder.id)
+                            || Object.values(props.project).find(foundView => foundView.parentId === folder.id)}
+                >
+                    <DeleteIcon />
+                </IconButton>
+
+            </span>
             <FolderIcon />
             {folder.name}
-            <AddIcon onClick={() => createFolder('folder', folder.id)} />
-            <EditIcon />
-            <DeleteIcon onClick={() => deleteFolder(folder.id)} />
             {renderViews(folder.id)}
             <div style={{ paddingLeft: 10 }}>
                 {renderFolders(folder.id)}
@@ -77,10 +126,11 @@ const ViewsManage = props => {
 
     return <Dialog open={props.open} onClose={props.onClose}>
         <DialogTitle>{I18n.t('Manage views')}</DialogTitle>
-        <DialogContent>
+        <DialogContent className={props.classes.dialog}>
             <div>
-                Folders
-                <AddIcon onClick={() => createFolder('folder')} />
+                <IconButton size="small" onClick={() => createFolder('folder')}>
+                    <AddIcon />
+                </IconButton>
             </div>
             {renderFolders()}
             {renderViews()}
@@ -89,4 +139,4 @@ const ViewsManage = props => {
     </Dialog>;
 };
 
-export default ViewsManage;
+export default withStyles(styles)(ViewsManage);

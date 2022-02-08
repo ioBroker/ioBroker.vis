@@ -16,6 +16,7 @@ import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 import Attributes from './Attributes';
 import Widgets from './Widgets';
 import MainMenu from './Menu';
+import NewToolbar from './Toolbar/NewToolbar';
 
 const styles = () => ({
     viewTabs: {
@@ -181,6 +182,22 @@ class App extends GenericApp {
 
         return <MuiThemeProvider theme={this.state.theme}>
             <div>
+                <NewToolbar
+                    classes={this.props.classes}
+                    selectedView={this.state.selectedView}
+                    project={this.state.project}
+                    changeView={this.changeView}
+                    changeProject={this.changeProject}
+                    openedViews={this.state.openedViews}
+                    toggleView={this.toggleView}
+                    socket={this.socket}
+                    projects={this.state.projects}
+                    loadProject={this.loadProject}
+                    projectName={this.state.projectName}
+                    addProject={this.addProject}
+                    deleteProject={this.deleteProject}
+                    needSave={this.state.needSave}
+                />
                 <MainMenu
                     classes={this.props.classes}
                     selectedView={this.state.selectedView}
