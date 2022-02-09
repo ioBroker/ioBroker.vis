@@ -6792,6 +6792,7 @@ vis = $.extend(true, vis, {
 
             $('#' + widgets[w]).remove();
             this.views[view].widgets[widgets[w]].grouped = true;
+            this.views[view].widgets[widgets[w]].groupid = groupId;
         }
         this.views[view].widgets[groupId] = {
             tpl: '_tplGroup',
@@ -6821,6 +6822,7 @@ vis = $.extend(true, vis, {
             for (w = 0; w < widgets.length; w++) {
                 if (!this.views[view].widgets[widgets[w]]) continue;
                 if (this.views[view].widgets[widgets[w]].grouped !== undefined) delete this.views[view].widgets[widgets[w]].grouped;
+                if (this.views[view].widgets[widgets[w]].groupid !== undefined) delete this.views[view].widgets[widgets[w]].groupid;
                 var wRect = this.editWidgetsRect(viewDiv, view, widgets[w]);
                 this.views[view].widgets[widgets[w]].style.top    = wRect.top    + 'px';
                 this.views[view].widgets[widgets[w]].style.left   = wRect.left   + 'px';
