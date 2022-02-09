@@ -17,16 +17,33 @@ const View = props => {
     const [dialog, setDialog] = useState(null);
     const [dialogName, setDialogName] = useState('');
 
-    const dialogDefaultName = {
-        add: 'New view',
-        rename: props.selectedView,
-        copy: `${props.selectedView} ${I18n.t('Copy')}`,
-    };
-
-    const showDialog = type => {
-        setDialog(type);
-        setDialogName(dialogDefaultName[type]);
-    };
+    const toolbar = [
+        {
+            type: 'select',
+            name: 'Active view',
+            value: props.selectedView,
+            onChange: event => props.changeView(event.target.value),
+            width: 120,
+            items: Object.keys(props.project)
+                .filter(view => !view.startsWith('__'))
+                .map(view => ({ name: view, value: view })),
+        },
+        {
+            type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
+        },
+        {
+            type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
+        },
+        {
+            type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
+        },
+        {
+            type: 'icon-button', Icon: FileCopyIcon, name: 'Copy view', onClick: () => showDialog('copy'),
+        },
+        { type: 'divider' },
+        { type: 'button', name: 'Export item' },
+        { type: 'button', name: 'Import item' },
+    ];
 
     const deleteView = () => {
         const project = JSON.parse(JSON.stringify(props.project));
@@ -67,37 +84,7 @@ const View = props => {
         props.changeProject(project);
         props.changeView(dialogName);
         setDialog(null);
-    };
-
-    const toolbar = [
-        {
-            type: 'select',
-            name: 'Active view',
-            value: props.selectedView,
-            onChange: event => props.changeView(event.target.value),
-            width: 120,
-            items: Object.keys(props.project)
-                .filter(view => !view.startsWith('__'))
-                .map(view => ({ name: view, value: view })),
-        },
-        {
-            type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
-        },
-        {
-            type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
-        },
-        {
-            type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
-        },
-        {
-            type: 'icon-button', Icon: FileCopyIcon, name: 'Copy view', onClick: () => showDialog('copy'),
-        },
-        { type: 'divider' },
-        { type: 'button', name: 'Export item' },
-        { type: 'button', name: 'Import item' },
-    ];
-
-    const dialogTitles = {
+    }; const dialogTitles = {
         delete: `${I18n.t('Are you want to delete view ') + props.selectedView}?`,
         copy: `${I18n.t('Copy view ') + props.selectedView}`,
         rename: `${I18n.t('Rename view ') + props.selectedView}`,
@@ -139,6 +126,17 @@ const View = props => {
             dialogDisabled = true;
         }
     }
+
+    const dialogDefaultName = {
+        add: 'New view',
+        rename: props.selectedView,
+        copy: `${props.selectedView} ${I18n.t('Copy')}`,
+    };
+
+    const showDialog = type => {
+        setDialog(type);
+        setDialogName(dialogDefaultName[type]);
+    };
 
     return <div className={props.classes.toolbar}>
         <ToolbarItems items={toolbar} {...props} />

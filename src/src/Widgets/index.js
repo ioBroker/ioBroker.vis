@@ -34,58 +34,37 @@ const styles = () => ({
     },
 });
 
-const Widgets = props => {
-    const [small, setSmall] = useState(false);
-    const [type, setType] = useState(false);
-
-    return <>
-        <Typography variant="h6" gutterBottom>
-            {I18n.t('Add widget')}
-            <span className={props.classes.right}>
-                <span className={props.classes.button}>
-                    <Tooltip title={I18n.t('Small widgets')}>
-                        <ToggleButton className={props.classes.toggle} size="small" selected={small} onClick={() => setSmall(!small)}>
-                            <ZoomOutIcon fontSize="small" />
-                        </ToggleButton>
-                    </Tooltip>
-                </span>
-                <span className={props.classes.button}>
-                    <Tooltip title={I18n.t('Show type of widgets')}>
-                        <ToggleButton className={props.classes.toggle} size="small" selected={type} onClick={() => setType(!type)}>
-                            <LocalOfferIcon fontSize="small" />
-                        </ToggleButton>
-                    </Tooltip>
-                </span>
-            </span>
-        </Typography>
-        <div>
-            <Autocomplete
-                freeSolo
-                options={[]}
-                renderInput={params => (
-                    <TextField {...params} label={I18n.t('filter')} />
-                )}
-            />
-        </div>
-        <div>
-            <FormControl fullWidth>
-                <InputLabel>{I18n.t('type')}</InputLabel>
-                <Select>
-                    {selectItems.map(selectItem => <MenuItem
-                        value={selectItem.value}
-                        key={selectItem.value}
-                    >
-                        {I18n.t(selectItem.name)}
-                    </MenuItem>)}
-                </Select>
-            </FormControl>
-        </div>
-        <div className={props.classes.widgets}>
-            {
-                Array(4).fill(null).map((value, key) => <Widget key={key} small={small} type={type} />)
-            }
-        </div>
-    </>;
-};
+const Widgets = props => <>
+    <Typography variant="h6" gutterBottom>
+        {I18n.t('Add widget')}
+    </Typography>
+    <div>
+        <Autocomplete
+            freeSolo
+            options={[]}
+            renderInput={params => (
+                <TextField {...params} label={I18n.t('filter')} />
+            )}
+        />
+    </div>
+    <div>
+        <FormControl fullWidth>
+            <InputLabel>{I18n.t('type')}</InputLabel>
+            <Select>
+                {selectItems.map(selectItem => <MenuItem
+                    value={selectItem.value}
+                    key={selectItem.value}
+                >
+                    {I18n.t(selectItem.name)}
+                </MenuItem>)}
+            </Select>
+        </FormControl>
+    </div>
+    <div className={props.classes.widgets}>
+        {
+            Array(4).fill(null).map((value, key) => <Widget key={key} />)
+        }
+    </div>
+</>;
 
 export default withStyles(styles)(Widgets);

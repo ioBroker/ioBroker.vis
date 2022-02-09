@@ -6,20 +6,31 @@ import image from '../img/Prev_HTML.png';
 import staticImage from '../img/static.png';
 
 const styles = () => ({
-    widgetTitle: { textAlign: 'center' },
-    widgetImage: { display: 'flex', alignItems: 'start' },
-    widgetType: { opacity: 0.2 },
+    widget: {
+        borderStyle: 'solid',
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 8,
+        backgroundColor: 'orange',
+        width: 200,
+        display: 'inline-flex',
+        margin: 4,
+        height: 50,
+    },
+    widgetTitle: { textAlign: 'center', flex: 1, alignSelf: 'center' },
+    widgetImage: {
+        width: 40,
+    },
+    widgetImageContainer: {
+        borderLeftStyle: 'solid', borderLeftWidth: 1, borderLeftColor: 'gray', display: 'flex', padding: 4, alignItems: 'center',
+    },
 });
 
-const Widget = props => <Card style={{ display: 'inline-block', margin: 4 }} elevation={4}>
-    <CardContent>
-        <div className={props.classes.widgetTitle}>{I18n.t('HTML')}</div>
-        {props.type ? <div className={props.classes.widgetTypeTitle}>{I18n.t('Type')}</div> : null}
-        <div className={props.classes.widgetImage}>
-            <img src={image} alt="" style={{ width: props.small ? 40 : null, height: props.small ? 40 : null }} />
-            <img src={staticImage} alt="" className={props.classes.widgetType} />
-        </div>
-    </CardContent>
-</Card>;
+const Widget = props => <div className={props.classes.widget}>
+    <div className={props.classes.widgetTitle}>{I18n.t('HTML')}</div>
+    <span className={props.classes.widgetImageContainer}>
+        <img className={props.classes.widgetImage} src={image} alt="" />
+    </span>
+</div>;
 
 export default withStyles(styles)(Widget);
