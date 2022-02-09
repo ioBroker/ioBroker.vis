@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import I18n from '@iobroker/adapter-react/i18n';
 import ToolbarItems from './ToolbarItems';
+import IODialog from '../Components/IODialog';
 
 const View = props => {
     const [dialog, setDialog] = useState(null);
@@ -141,31 +142,19 @@ const View = props => {
 
     return <div className={props.classes.toolbar}>
         <ToolbarItems items={toolbar} {...props} />
-        <Dialog open={!!dialog} onClose={() => setDialog(null)}>
-            <DialogTitle>{dialogTitles[dialog]}</DialogTitle>
-            <DialogContent>
-                {dialog === 'delete' ? null
-                    : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    startIcon={DialogIcon ? <DialogIcon /> : null}
-                    onClick={dialogActions[dialog]}
-                    variant="contained"
-                    color={dialog === 'delete' ? 'secondary' : 'primary'}
-                    disabled={dialogDisabled}
-                >
-                    {dialogButtons[dialog]}
-                </Button>
-                <Button
-                    startIcon={<CloseIcon />}
-                    onClick={() => setDialog(null)}
-                    variant="contained"
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>
+        <IODialog
+            title={dialogTitles[dialog]}
+            actionTitle={dialogButtons[dialog]}
+            open={!!dialog}
+            onClose={() => setDialog(null)}
+            ActionIcon={DialogIcon || null}
+            action={dialogActions[dialog]}
+            actionColor={dialog === 'delete' ? 'secondary' : 'primary'}
+            actionDisabled={dialogDisabled}
+        >
+            {dialog === 'delete' ? null
+                : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
+        </IODialog>
     </div>;
 };
 

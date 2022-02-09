@@ -15,27 +15,33 @@ import { BiImport, BiExport } from 'react-icons/bi';
 
 import ViewsManage from './ViewsManage';
 import ToolbarItems from './NewToolbarItems';
+import IODialog from '../Components/IODialog';
 
 const View = props => {
     const [viewsManage, setViewsManage] = useState(false);
     const [dialog, setDialog] = useState(null);
     const [dialogName, setDialogName] = useState('');
+    const [dialogView, setDialogView] = useState(null);
 
-    const dialogDefaultName = {
-        add: 'New view',
-        rename: props.selectedView,
-        copy: `${props.selectedView} ${I18n.t('Copy')}`,
-    };
+    const showDialog = (type, view) => {
+        view = view || props.selectedView;
 
-    const showDialog = type => {
+        const dialogDefaultName = {
+            add: 'New view',
+            rename: view,
+            copy: `${view} ${I18n.t('Copy')}`,
+        };
+
         setDialog(type);
+        setDialogView(view);
         setDialogName(dialogDefaultName[type]);
     };
 
     const deleteView = () => {
+        const view = dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
-        delete project[props.selectedView];
-        props.changeView(Object.keys(project).filter(view => !view.startsWith('__'))[0]);
+        delete project[view];
+        props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
         props.changeProject(project);
         setDialog(null);
     };
@@ -57,17 +63,19 @@ const View = props => {
     };
 
     const renameView = () => {
+        const view = dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
-        project[dialogName] = project[props.selectedView];
-        delete project[props.selectedView];
+        project[dialogName] = project[view];
+        delete project[view];
         props.changeProject(project);
         props.changeView(dialogName);
         setDialog(null);
     };
 
     const copyView = () => {
+        const view = dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
-        project[dialogName] = project[props.selectedView];
+        project[dialogName] = project[view];
         props.changeProject(project);
         props.changeView(dialogName);
         setDialog(null);
@@ -104,9 +112,9 @@ const View = props => {
     };
 
     const dialogTitles = {
-        delete: `${I18n.t('Are you want to delete view ') + props.selectedView}?`,
-        copy: `${I18n.t('Copy view ') + props.selectedView}`,
-        rename: `${I18n.t('Rename view ') + props.selectedView}`,
+        delete: `${I18n.t('Are you want to delete view ') + (dialogView || props.selectedView)}?`,
+        copy: `${I18n.t('Copy view ') + (dialogView || props.selectedView)}`,
+        rename: `${I18n.t('Rename view ') + (dialogView || props.selectedView)}`,
         add: I18n.t('Add view '),
     };
 
@@ -148,32 +156,23 @@ const View = props => {
 
     return <>
         <ToolbarItems group={toolbar} {...props} />
-        <Dialog open={!!dialog} onClose={() => setDialog(null)}>
-            <DialogTitle>{dialogTitles[dialog]}</DialogTitle>
-            <DialogContent>
-                {dialog === 'delete' ? null
-                    : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    startIcon={DialogIcon ? <DialogIcon /> : null}
-                    onClick={dialogActions[dialog]}
-                    variant="contained"
-                    color={dialog === 'delete' ? 'secondary' : 'primary'}
-                    disabled={dialogDisabled}
-                >
-                    {dialogButtons[dialog]}
-                </Button>
-                <Button
-                    startIcon={<CloseIcon />}
-                    onClick={() => setDialog(null)}
-                    variant="contained"
-                >
-                    {I18n.t('Cancel')}
-                </Button>
-            </DialogActions>
-        </Dialog>
-        <ViewsManage open={viewsManage} onClose={() => setViewsManage(false)} {...props} />
+        <IODialog
+            title={dialogTitles[dialog]}
+            actionTitle={dialogButtons[dialog]}
+            open={!!dialog}
+            onClose={() => {
+                setDialog(null);
+                setDialogView(null);
+            }}
+            ActionIcon={DialogIcon || null}
+            action={dialogActions[dialog]}
+            actionColor={dialog === 'delete' ? 'secondary' : 'primary'}
+            actionDisabled={dialogDisabled}
+        >
+            {dialog === 'delete' ? null
+                : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
+        </IODialog>
+        <ViewsManage open={viewsManage} onClose={() => setViewsManage(false)} showDialog={showDialog} {...props} />
     </>;
 };
 

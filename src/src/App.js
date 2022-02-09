@@ -72,31 +72,40 @@ class App extends GenericApp {
         this.state = { projectName: 'main', ...this.state };
     }
 
-    loadProject = projectName => this.socket.readFile('vis.0', `${projectName}/vis-views.json`)
-        .catch(err => {
+    loadProject = async projectName => {
+        let file;
+        try {
+            file = await this.socket.readFile('vis.0', `${projectName}/vis-views.json`);
+        } catch (err) {
             console.warn(`Cannot read project file vis-views.json: ${err}`);
-            return '{}';
-        })
-        .then(file => {
-            const project = JSON.parse(file);
-            project.___settings = project.___settings || {};
-            project.___settings.folders = project.___settings.folders || [];
-            let selectedView;
-            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-                selectedView = window.localStorage.getItem('selectedView');
-            } else {
-                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
-            }
-            this.setState({
-                project,
-                selectedView,
-                openedViews: [selectedView],
-                projectName,
-            });
+            file = '{}';
+        }
+        const project = JSON.parse(file);
+        project.___settings = project.___settings || {};
+        project.___settings.folders = project.___settings.folders || [];
+        let selectedView;
+        if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+            selectedView = window.localStorage.getItem('selectedView');
+        } else {
+            selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+        }
+        let openedViews;
+        if (window.localStorage.getItem('openedViews')) {
+            openedViews = JSON.parse(window.localStorage.getItem('openedViews'));
+        } else {
+            openedViews = [selectedView];
+        }
+        this.setState({
+            project,
+            selectedView,
+            openedViews,
+            projectName,
+        });
 
-            return this.socket.getGroups();
-        })
-        .then(groups => this.setState({ groups }))
+        const groups = await this.socket.getGroups();
+        this.setState({ groups });
+        window.localStorage.setItem('projectName', projectName);
+    }
 
     onConnectionReady() {
         this.setState({
@@ -104,7 +113,12 @@ class App extends GenericApp {
             splitSizes: window.localStorage.getItem('splitSizes')
                 ? JSON.parse(window.localStorage.getItem('splitSizes'))
                 : [20, 60, 20],
-        }, () => this.loadProject(this.state.projectName));
+        });
+        if (window.localStorage.getItem('projectName')) {
+            this.loadProject(window.localStorage.getItem('projectName'));
+        } else {
+            this.socket.readDir('vis.0', '').then(projects => this.loadProject(projects[0].file));
+        }
         this.refreshProjects();
 
         this.socket.getCurrentUser().then(user => this.setState({ user }));
@@ -130,7 +144,7 @@ class App extends GenericApp {
         this.setState({ project, needSave: true });
     }
 
-    addProject = projectName => {
+    addProject = async projectName => {
         const project = {
             ___settings: {
                 folders: [],
@@ -144,13 +158,10 @@ class App extends GenericApp {
                 activeWidgets: {},
             },
         };
-        this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project)).then(
-            () => this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, ''),
-        ).then(
-            () => this.refreshProjects(),
-        ).then(
-            () => this.loadProject(projectName),
-        );
+        await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project));
+        await this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, '');
+        await this.refreshProjects();
+        await this.loadProject(projectName);
     }
 
     deleteProject = projectName => {
@@ -168,6 +179,7 @@ class App extends GenericApp {
             openedViews.splice(openedViews.indexOf(view), 1);
         }
         this.setState({ openedViews });
+        window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
         if (!openedViews.includes(this.state.selectedView)) {
             this.changeView(openedViews[0]);
         }
@@ -272,6 +284,8 @@ class App extends GenericApp {
                                 project={this.state.project}
                                 changeProject={this.changeProject}
                                 openedViews={this.state.openedViews}
+                                projectName={this.state.projectName}
+                                socket={this.socket}
                             />
                         </div>
                     </ReactSplit>

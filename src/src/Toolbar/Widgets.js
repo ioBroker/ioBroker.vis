@@ -17,6 +17,10 @@ const Widgets = props => {
         return null;
     }
 
+    if (!props.project[props.selectedView]) {
+        return null;
+    }
+
     const toolbar = [
         {
             type: 'select',

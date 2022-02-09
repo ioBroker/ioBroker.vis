@@ -36,6 +36,10 @@ const resolution = [
 const Tools = props => {
     const [userResolution, setUserResolution] = useState(false);
 
+    if (!props.project[props.selectedView]) {
+        return null;
+    }
+
     const view = props.project[props.selectedView];
 
     let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;

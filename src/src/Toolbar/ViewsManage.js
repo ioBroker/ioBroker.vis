@@ -84,10 +84,10 @@ const ViewsManage = props => {
             <FileIcon />
             <span>{name}</span>
             <span className={props.classes.buttonActions}>
-                <IconButton size="small">
+                <IconButton onClick={() => props.showDialog('rename', name)} size="small">
                     <EditIcon />
                 </IconButton>
-                <IconButton size="small">
+                <IconButton onClick={() => props.showDialog('delete', name)} size="small">
                     <DeleteIcon />
                 </IconButton>
             </span>
@@ -96,28 +96,30 @@ const ViewsManage = props => {
     const renderFolders = parentId => {
         const folders = props.project.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
-        return folders.map((folder, key) => <div key={key} className={props.classes.folderContainer}>
-            <span className={props.classes.buttonActions}>
-                <IconButton size="small" onClick={() => createFolder('folder', folder.id)}>
-                    <AddIcon />
-                </IconButton>
-                <IconButton size="small">
-                    <EditIcon />
-                </IconButton>
+        return folders.map((folder, key) => <div key={key}>
+            <div className={props.classes.folderContainer}>
+                <span className={props.classes.buttonActions}>
+                    <IconButton size="small" onClick={() => createFolder('folder', folder.id)}>
+                        <AddIcon />
+                    </IconButton>
+                    <IconButton size="small">
+                        <EditIcon />
+                    </IconButton>
 
-                <IconButton
-                    size="small"
-                    onClick={() => deleteFolder(folder.id)}
-                    disabled={props.project.___settings.folders.find(foundFolder => foundFolder.parentId === folder.id)
+                    <IconButton
+                        size="small"
+                        onClick={() => deleteFolder(folder.id)}
+                        disabled={props.project.___settings.folders.find(foundFolder => foundFolder.parentId === folder.id)
                             || Object.values(props.project).find(foundView => foundView.parentId === folder.id)}
-                >
-                    <DeleteIcon />
-                </IconButton>
+                    >
+                        <DeleteIcon />
+                    </IconButton>
 
-            </span>
-            <FolderIcon />
-            {folder.name}
-            {renderViews(folder.id)}
+                </span>
+                <FolderIcon />
+                {folder.name}
+                {renderViews(folder.id)}
+            </div>
             <div style={{ paddingLeft: 10 }}>
                 {renderFolders(folder.id)}
             </div>
