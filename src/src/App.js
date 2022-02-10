@@ -16,7 +16,7 @@ import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 import Attributes from './Attributes';
 import Widgets from './Widgets';
 import MainMenu from './Menu';
-import NewToolbar from './Toolbar/NewToolbar';
+import Toolbar from './Toolbar';
 
 const styles = () => ({
     viewTabs: {
@@ -125,7 +125,7 @@ class App extends GenericApp {
 
         setInterval(() => {
             if (this.state.needSave) {
-                this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project));
+                this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
                 this.setState({ needSave: false });
             }
         }, 1000);
@@ -194,7 +194,7 @@ class App extends GenericApp {
 
         return <MuiThemeProvider theme={this.state.theme}>
             <div>
-                <NewToolbar
+                <Toolbar
                     classes={this.props.classes}
                     selectedView={this.state.selectedView}
                     project={this.state.project}

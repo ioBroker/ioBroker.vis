@@ -57,6 +57,8 @@ module.exports = {
         'linebreak-style': ['off'],
         'no-param-reassign': 'off',
         'no-await-in-loop': 'off',
+        'no-console': ['error', { allow: ['warn', 'error'] }],
+        'no-underscore-dangle': 'off',
         radix: 'off',
         indent: ['error', 4],
     },

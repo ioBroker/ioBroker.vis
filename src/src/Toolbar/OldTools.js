@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import SyncIcon from '@material-ui/icons/Sync';
 
-import ToolbarItems from './ToolbarItems';
+import ToolbarItems from './OldToolbarItems';
 
 const resolution = [
     { value: 'none', name: 'not defined' },

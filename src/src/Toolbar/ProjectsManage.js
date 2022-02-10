@@ -1,7 +1,6 @@
 import I18n from '@iobroker/adapter-react/i18n';
 import {
-    Button,
-    Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField,
+    Button, IconButton, TextField,
 } from '@material-ui/core';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -37,7 +36,7 @@ const ProjectsManage = props => {
                 <AddIcon />
             </IconButton>
         </div>
-        {props.projects.map(projectName => <div>
+        {props.projects.map((projectName, key) => <div key={key}>
             <Button onClick={() => props.loadProject(projectName)}>{projectName}</Button>
             <IconButton onClick={() => props.deleteProject(projectName)} size="small">
                 <DeleteIcon />

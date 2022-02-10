@@ -1,14 +1,9 @@
 import I18n from '@iobroker/adapter-react/i18n';
 import {
-    FormControl, InputLabel, MenuItem, Select, TextField, Tooltip, Typography, withStyles,
+    FormControl, InputLabel, MenuItem, Select, TextField, Typography, withStyles,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 
-import ZoomOutIcon from '@material-ui/icons/ZoomOut';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-
-import { useState } from 'react';
 import Widget from './Widget';
 
 const selectItems = [

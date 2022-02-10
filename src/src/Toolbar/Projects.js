@@ -1,12 +1,14 @@
-import MenuIcon from '@material-ui/icons/Menu';
-
 import { useState } from 'react';
 import ObjectBrowser from '@iobroker/adapter-react/Components/ObjectBrowser';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
 } from '@material-ui/core';
-import ToolbarItems from './NewToolbarItems';
+
+import MenuIcon from '@material-ui/icons/Menu';
+import SettingsIcon from '@material-ui/icons/Settings';
+import ListIcon from '@material-ui/icons/List';
+import ToolbarItems from './ToolbarItems';
 
 import Settings from '../Menu/Settings';
 import ProjectsManage from './ProjectsManage';
@@ -20,13 +22,13 @@ const Tools = props => {
         name: 'Projects',
         items: [
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Settings', onClick: () => setSettingsDialog(true),
+                type: 'icon-button', Icon: SettingsIcon, name: 'Settings', onClick: () => setSettingsDialog(true),
             },
             {
                 type: 'icon-button', Icon: MenuIcon, name: 'Manage projects', onClick: () => setProjectsDialog(true),
             },
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Objects', onClick: () => setObjectsDialog(true),
+                type: 'icon-button', Icon: ListIcon, name: 'Objects', onClick: () => setObjectsDialog(true),
             },
         ],
     };

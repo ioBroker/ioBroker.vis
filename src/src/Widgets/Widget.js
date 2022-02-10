@@ -1,9 +1,7 @@
 import I18n from '@iobroker/adapter-react/i18n';
-import { Card, CardContent } from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 
 import image from '../img/Prev_HTML.png';
-import staticImage from '../img/static.png';
 
 const styles = () => ({
     widget: {

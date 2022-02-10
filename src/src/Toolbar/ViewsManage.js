@@ -17,6 +17,7 @@ import FileIcon from '@material-ui/icons/InsertDriveFile';
 import FolderIcon from '@material-ui/icons/Folder';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import { useEffect, useRef } from 'react';
 
 const styles = () => ({
     buttonActions: {
@@ -44,6 +45,161 @@ const styles = () => ({
         },
     },
 });
+
+const DndPreview = () => {
+    const { display/* , itemType */, item, style } = usePreview();
+    if (!display) {
+        return null;
+    }
+    return <div style={style}>{item.preview}</div>;
+};
+
+function isTouchDevice() {
+    return (('ontouchstart' in window)
+        || (navigator.maxTouchPoints > 0)
+        || (navigator.msMaxTouchPoints > 0));
+}
+
+const View = props => {
+    const viewBlock = <>
+        <IconButton size="small" onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}>
+            {props.openedViews.includes(props.name) ? <VisibilityIcon /> : <VisibilityOffIcon />}
+        </IconButton>
+        <FileIcon />
+        <span>{props.name}</span>
+        <span className={props.classes.buttonActions}>
+            <IconButton onClick={() => props.showDialog('rename', props.name)} size="small">
+                <EditIcon />
+            </IconButton>
+            <IconButton onClick={() => props.showDialog('delete', props.name)} size="small">
+                <DeleteIcon />
+            </IconButton>
+        </span>
+    </>;
+
+    const widthRef = useRef();
+    const [{ isDragging }, dragRef, preview] = useDrag(
+        {
+            type: 'view',
+            item: () => ({
+                name: props.name,
+                preview: <div style={{ width: widthRef.current.offsetWidth }}>
+                    {viewBlock}
+                </div>,
+            }),
+            end: (item, monitor) => {
+                const dropResult = monitor.getDropResult();
+                if (item && dropResult) {
+                    props.moveView(item.name, dropResult.folder.id);
+                }
+            },
+            collect: monitor => ({
+                isDragging: monitor.isDragging(),
+                handlerId: monitor.getHandlerId(),
+            }),
+        }, [props.project],
+    );
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.project]);
+
+    return <div ref={dragRef}>
+        <div ref={widthRef}>
+            {viewBlock}
+        </div>
+    </div>;
+};
+
+const Folder = props => {
+    const folderBlock = <>
+        {props.folder.id ? <span className={props.classes.buttonActions}>
+            <IconButton size="small" onClick={() => props.createFolder('folder', props.folder.id)}>
+                <AddIcon />
+            </IconButton>
+            <IconButton size="small">
+                <EditIcon />
+            </IconButton>
+            <IconButton
+                size="small"
+                onClick={() => props.deleteFolder(props.folder.id)}
+                disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
+                || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
+            >
+                <DeleteIcon />
+            </IconButton>
+        </span> : null}
+        <FolderIcon />
+        {props.folder.name}
+    </>;
+
+    const [{ CanDrop, isOver, isCanDrop }, drop] = useDrop(() => ({
+        accept: ['view', 'folder'],
+        drop: () => ({ folder: props.folder }),
+        canDrop: (item, monitor) => {
+            if (monitor.getItemType() === 'view') {
+                return props.project[item.name].parentId !== props.folder.id;
+            }
+            if (monitor.getItemType() === 'folder') {
+                let currentFolder = props.folder;
+                if (currentFolder.id === item.folder.parentId) {
+                    return false;
+                }
+                while (true) {
+                    if (currentFolder.id === item.folder.id) {
+                        return false;
+                    }
+                    if (!currentFolder.parentId) {
+                        return true;
+                    }
+                    currentFolder = props.project.___settings.folders.find(foundFolder => foundFolder.id === currentFolder.parentId);
+                }
+            }
+            return false;
+        },
+        collect: (monitor, item) => ({
+            isOver: monitor.isOver(),
+            CanDrop: monitor.canDrop(),
+        }),
+    }), [props.project]);
+
+    const widthRef = useRef();
+    const [{ isDragging }, dragRef, preview] = useDrag(
+        {
+            type: 'folder',
+            item: () => ({
+                folder: props.folder,
+                preview: <div style={{ width: widthRef.current.offsetWidth }}>
+                    {folderBlock}
+                </div>,
+            }),
+            end: (item, monitor) => {
+                const dropResult = monitor.getDropResult();
+                if (item && dropResult) {
+                    props.moveFolder(item.folder.id, dropResult.folder.id);
+                }
+            },
+            collect: monitor => ({
+                isDragging: monitor.isDragging(),
+                handlerId: monitor.getHandlerId(),
+            }),
+        }, [props.project],
+    );
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.project]);
+
+    return <div ref={drop}>
+        <div ref={dragRef}>
+            <div ref={widthRef}>
+                {folderBlock}
+            </div>
+        </div>
+    </div>;
+};
 
 const ViewsManage = props => {
     const createFolder = (name, parentId) => {
@@ -74,23 +230,21 @@ const ViewsManage = props => {
         props.changeProject(project);
     };
 
+    const moveView = (name, parentId) => {
+        const project = JSON.parse(JSON.stringify(props.project));
+        project[name].parentId = parentId;
+        props.changeProject(project);
+    };
+
     const renderViews = parentId => Object.keys(props.project)
         .filter(name => !name.startsWith('___'))
         .filter(name => (parentId ? props.project[name].parentId === parentId : !props.project[name].parentId))
         .map((name, key) => <div key={key} className={props.classes.viewContainer}>
-            <IconButton size="small" onClick={() => props.toggleView(name, !props.openedViews.includes(name))}>
-                {props.openedViews.includes(name) ? <VisibilityIcon /> : <VisibilityOffIcon />}
-            </IconButton>
-            <FileIcon />
-            <span>{name}</span>
-            <span className={props.classes.buttonActions}>
-                <IconButton onClick={() => props.showDialog('rename', name)} size="small">
-                    <EditIcon />
-                </IconButton>
-                <IconButton onClick={() => props.showDialog('delete', name)} size="small">
-                    <DeleteIcon />
-                </IconButton>
-            </span>
+            <View
+                name={name}
+                moveView={moveView}
+                {...props}
+            />
         </div>);
 
     const renderFolders = parentId => {
@@ -98,30 +252,17 @@ const ViewsManage = props => {
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
         return folders.map((folder, key) => <div key={key}>
             <div className={props.classes.folderContainer}>
-                <span className={props.classes.buttonActions}>
-                    <IconButton size="small" onClick={() => createFolder('folder', folder.id)}>
-                        <AddIcon />
-                    </IconButton>
-                    <IconButton size="small">
-                        <EditIcon />
-                    </IconButton>
-
-                    <IconButton
-                        size="small"
-                        onClick={() => deleteFolder(folder.id)}
-                        disabled={props.project.___settings.folders.find(foundFolder => foundFolder.parentId === folder.id)
-                            || Object.values(props.project).find(foundView => foundView.parentId === folder.id)}
-                    >
-                        <DeleteIcon />
-                    </IconButton>
-
-                </span>
-                <FolderIcon />
-                {folder.name}
-                {renderViews(folder.id)}
+                <Folder
+                    folder={folder}
+                    createFolder={createFolder}
+                    deleteFolder={deleteFolder}
+                    moveFolder={moveFolder}
+                    {...props}
+                />
             </div>
             <div style={{ paddingLeft: 10 }}>
                 {renderFolders(folder.id)}
+                {renderViews(folder.id)}
             </div>
         </div>);
     };
@@ -129,13 +270,25 @@ const ViewsManage = props => {
     return <Dialog open={props.open} onClose={props.onClose}>
         <DialogTitle>{I18n.t('Manage views')}</DialogTitle>
         <DialogContent className={props.classes.dialog}>
-            <div>
-                <IconButton size="small" onClick={() => createFolder('folder')}>
-                    <AddIcon />
-                </IconButton>
-            </div>
-            {renderFolders()}
-            {renderViews()}
+            <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
+                <DndPreview />
+                <div>
+                    <IconButton size="small" onClick={() => createFolder('folder')}>
+                        <AddIcon />
+                    </IconButton>
+                </div>
+                <Folder
+                    folder={{ name: I18n.t('root') }}
+                    createFolder={createFolder}
+                    deleteFolder={deleteFolder}
+                    moveFolder={moveFolder}
+                    {...props}
+                />
+                <div style={{ paddingLeft: 10 }}>
+                    {renderFolders()}
+                    {renderViews()}
+                </div>
+            </DndProvider>
         </DialogContent>
         <DialogActions></DialogActions>
     </Dialog>;

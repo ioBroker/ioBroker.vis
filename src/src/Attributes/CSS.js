@@ -21,8 +21,6 @@ const CSS = props => {
     }, []);
     useEffect(() => {
         const saveInterval = setInterval(() => {
-            console.log(globalCss);
-            console.log(localCss);
             props.socket.writeFile64('vis', 'css/vis-common-user.css', globalCss);
             props.socket.writeFile64('vis.0', `${props.projectName}/vis-user.css`, localCss);
         }, 2000);

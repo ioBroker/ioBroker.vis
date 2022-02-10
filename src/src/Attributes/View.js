@@ -1,5 +1,5 @@
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, FormControl, FormControlLabel, InputLabel, ListItemText, MenuItem, Select, TextField, withStyles,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, ListItemText, MenuItem, Select, TextField, withStyles,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
@@ -38,6 +38,10 @@ const styles = () => ({
 });
 
 const View = props => {
+    if (!props.project[props.selectedView]) {
+        return null;
+    }
+
     const view = props.project[props.selectedView];
 
     const fields = [

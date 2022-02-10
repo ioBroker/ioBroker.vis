@@ -1,9 +1,9 @@
 import {
-    Tab, Tabs, Button, IconButton, Tooltip, Menu as DropMenu, MenuItem as DropMenuItem, Typography,
+    Tab, Tabs, Button,
 } from '@material-ui/core';
 
 import I18n from '@iobroker/adapter-react/i18n';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 import {
     Menu,
@@ -14,7 +14,7 @@ import '@szhsin/react-menu/dist/index.css';
 
 import { withStyles } from '@material-ui/styles';
 
-import Toolbar from '../Toolbar';
+import Toolbar from '../Toolbar/OldToolbar';
 import Settings from './Settings';
 
 const styles = () => ({
