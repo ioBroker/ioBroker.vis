@@ -40,15 +40,6 @@ const View = props => {
             {
                 type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),
             },
-            { type: 'divider' },
-            [
-                [{
-                    type: 'icon-button', Icon: BiImport, name: 'Import view', size: 'normal',
-                }],
-                [{
-                    type: 'icon-button', Icon: BiExport, name: 'Export view', size: 'normal',
-                }],
-            ],
         ],
     };
 

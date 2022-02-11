@@ -7,13 +7,26 @@ import {
 import I18n from '@iobroker/adapter-react/i18n';
 
 const styles = () => ({
-    toolbarItems: {
+    toolbarBlock: {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         borderRightStyle: 'solid',
         padding: '0px 10px',
         borderWidth: 1,
+    },
+    toolbarItems: {
+        display: 'flex', flexDirection: 'row', flex: 1,
+    },
+    toolbarCol: {
+        display: 'flex', flexDirection: 'column',
+    },
+    toolbarRow: {
+        display: 'flex', flexDirection: 'row',
+    },
+    toolbarLabel: {
+        fontSize: '80%',
+        paddingTop: 4,
     },
 });
 
@@ -121,14 +134,14 @@ const getItem = (item, key, props, full) => {
 };
 
 const ToolbarItems = props => <div
-    className={props.classes.toolbarItems}
+    className={props.classes.toolbarBlock}
 >
-    <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+    <div className={props.classes.toolbarItems}>
         {
             props.group.items.map((item, key) => {
                 if (Array.isArray(item)) {
-                    return <div key={key} style={{ display: 'flex', flexDirection: 'column' }}>
-                        {item.map((subItem, subKey) => <div key={subKey} style={{ display: 'flex', flexDirection: 'row' }}>
+                    return <div key={key} className={props.classes.toolbarCol}>
+                        {item.map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
                             {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
                         </div>)}
                     </div>;
@@ -137,7 +150,7 @@ const ToolbarItems = props => <div
             })
         }
     </div>
-    <div>{I18n.t(props.group.name)}</div>
+    <div className={props.classes.toolbarLabel}>{I18n.t(props.group.name)}</div>
 </div>;
 
 export default withStyles(styles)(ToolbarItems);

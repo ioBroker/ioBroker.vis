@@ -107,6 +107,11 @@ class App extends GenericApp {
         window.localStorage.setItem('projectName', projectName);
     }
 
+    importProject = async (projectName, data) => {
+        await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, data);
+        this.loadProject(projectName);
+    }
+
     onConnectionReady() {
         this.setState({
             selectedView: '',
