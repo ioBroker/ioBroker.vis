@@ -1,235 +1,235 @@
 {
-  "common": {
-    "name": "vis",
-    "version": "1.4.7",
-    "news": {
-      "1.4.7": {
-        "en": "Fixed subscribeOidAtRuntime if called with invalid IDs\nAdded support of license manager",
-        "de": "AbonnierenOidAtRuntime behoben, wenn mit ungültigen IDs aufgerufen\nUnterstützung des Lizenzmanagers hinzugefügt",
-        "ru": "Исправлена ошибка subscribeOidAtRuntime при вызове с недопустимыми идентификаторами\nДобавлена поддержка менеджера лицензий.",
-        "pt": "SubscribeOidAtRuntime corrigido se chamado com IDs inválidos\nAdicionado suporte de gerenciador de licença",
-        "nl": "Vaste subscribeOidAtRuntime indien aangeroepen met ongeldige ID's\nOndersteuning van licentiemanager toegevoegd",
-        "fr": "Abonnement fixeOidAtRuntime si appelé avec des identifiants invalides\nAjout de la prise en charge du gestionnaire de licence",
-        "it": "Risolto il problema con subscribeOidAtRuntime se chiamato con ID non validi\nAggiunto il supporto del gestore delle licenze",
-        "es": "SubscribeOidAtRuntime fijo si se llama con ID no válidos\nSoporte agregado del administrador de licencias",
-        "pl": "Naprawiono subscribeOidAtRuntime w przypadku wywołania z nieprawidłowymi identyfikatorami\nDodano obsługę menedżera licencji",
-        "zh-cn": "如果使用无效 ID 调用，则修复了 subscribeOidAtRuntime\n添加了许可证管理器的支持"
-      },
-      "1.4.6": {
-        "en": "Added the license check even without internet",
-        "de": "Lizenzprüfung auch ohne Internet hinzugefügt",
-        "ru": "Добавлена проверка лицензии даже без интернета",
-        "pt": "Adicionada a verificação de licença mesmo sem internet",
-        "nl": "De licentiecontrole toegevoegd, zelfs zonder internet",
-        "fr": "Ajout du contrôle de licence même sans internet",
-        "it": "Aggiunto il controllo della licenza anche senza internet",
-        "es": "Se agregó la verificación de licencia incluso sin Internet.",
-        "pl": "Dodano sprawdzanie licencji nawet bez internetu",
-        "zh-cn": "即使没有互联网也添加了许可证检查"
-      },
-      "1.4.5": {
-        "en": "Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).\nShowed the extended error messages by license check\nPatch visibility oid binding",
-        "de": "Frame-src-Spezifikation zum Content-Security-Policy-Header hinzugefügt, um Probleme beim Blockieren von Frame-bezogenen Inhalten zu beheben (z. B. bei Verwendung der KioskPro iOS-App).\nZeigte die erweiterten Fehlermeldungen bei der Lizenzprüfung an\nPatch-Sichtbarkeit ohne Bindung",
-        "ru": "Добавлена спецификация frame-src в заголовок content-security-policy, исправляющая проблемы блокировки содержимого, связанные с кадрами (например, с помощью приложения KioskPro для iOS).\nПоказал расширенные сообщения об ошибках при проверке лицензии\nОбвязка oid видимости исправлений",
-        "pt": "Adicionada especificação frame-src ao cabeçalho da política de segurança de conteúdo, corrigindo problemas de bloqueio de conteúdo relacionados a frame (por exemplo, usando o aplicativo KioskPro iOS).\nMostrou as mensagens de erro estendidas por verificação de licença\nVisibilidade do remendo oid vinculativo",
-        "nl": "Frame-src-specificatie toegevoegd aan content-security-policy header om frame-gerelateerde contentblokkeringsproblemen op te lossen (bijv. bij gebruik van de KioskPro iOS-app).\nToonde de uitgebreide foutmeldingen door licentiecontrole\nPatch zichtbaarheid oid binding",
-        "fr": "Ajout de la spécification frame-src à l'en-tête content-security-policy fixant les problèmes de blocage de contenu liés au cadre (par exemple, en utilisant l'application KioskPro iOS).\nAffichage des messages d'erreur étendus par vérification de licence\nLiaison oid de visibilité des correctifs",
-        "it": "Aggiunte le specifiche frame-src all'intestazione content-security-policy che risolve i problemi di blocco dei contenuti relativi ai frame (ad esempio utilizzando l'app KioskPro iOS).\nHa mostrato i messaggi di errore estesi dal controllo della licenza\nRilegatura oid visibilità patch",
-        "es": "Se agregó la especificación frame-src al encabezado content-security-policy que corrige problemas de bloqueo de contenido relacionados con el marco (por ejemplo, usando la aplicación KioskPro para iOS).\nMostró los mensajes de error extendidos por verificación de licencia\nParche visibilidad oid vinculante",
-        "pl": "Dodano specyfikację frame-src do nagłówka content-security-policy naprawiającego problemy z blokowaniem treści związane z ramkami (np. przy użyciu aplikacji KioskPro na iOS).\nPokazano rozszerzone komunikaty o błędach przy sprawdzaniu licencji\nWiązanie poprawki widoczności oid",
-        "zh-cn": "向 content-security-policy 标头添加了 frame-src 规范，修复了与框架相关的内容阻塞问题（例如，使用 KioskPro iOS 应用程序）。\n通过许可证检查显示扩展错误消息\n补丁可见性 oid 绑定"
-      },
-      "1.4.4": {
-        "en": "Allowed to have \":\" in the binding object IDs",
-        "de": "Darf \":\" in den Bindungsobjekt-IDs enthalten",
-        "ru": "Допускается наличие \":\" в идентификаторах объектов привязки.",
-        "pt": "É permitido ter \":\" nos IDs de objeto de ligação",
-        "nl": "Toegestaan om \":\" in de bindende object-ID's te hebben",
-        "fr": "Autorisé à avoir \":\" dans les ID d'objet de liaison",
-        "it": "Consentito di avere \":\" negli ID oggetto di associazione",
-        "es": "Se permite tener \":\" en los ID de objeto de vinculación",
-        "pl": "Dozwolone mieć \":\" w powiązanych identyfikatorach obiektów",
-        "zh-cn": "允许在绑定对象 ID 中包含“:”"
-      },
-      "1.4.3": {
-        "en": "Added possibility to check license offline (only special once)",
-        "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
-        "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
-        "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
-        "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
-        "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
-        "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
-        "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
-        "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
-        "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
-      },
-      "1.4.2": {
-        "en": "Added possibility to check license offline (only special once)",
-        "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
-        "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
-        "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
-        "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
-        "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
-        "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
-        "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
-        "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
-        "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
-      },
-      "1.4.0": {
-        "en": "Changed path for check of certificates \nfixes for issues found by adapter-checker",
-        "de": "Geänderter Pfad zur Prüfung von Zertifikaten\nFixes für Probleme, die vom Adapter-Checker gefunden wurden",
-        "ru": "Изменен путь проверки сертификатов\nисправления проблем, обнаруженных при проверке адаптера",
-        "pt": "Caminho alterado para verificação de certificados\ncorreções para problemas encontrados pelo verificador de adaptador",
-        "nl": "Pad gewijzigd voor controle van certificaten\noplossingen voor problemen gevonden door adapter-checker",
-        "fr": "Chemin modifié pour la vérification des certificats\ncorrectifs pour les problèmes trouvés par adapter-checker",
-        "it": "Percorso modificato per il controllo dei certificati\ncorrezioni per problemi rilevati da adapter-checker",
-        "es": "Ruta cambiada para la verificación de certificados\narreglos para problemas encontrados por el verificador de adaptadores",
-        "pl": "Zmieniona ścieżka do sprawdzenia certyfikatów\npoprawki problemów znalezionych przez adapter-checker",
-        "zh-cn": "更改了检查证书的路径\n修复适配器检查器发现的问题"
-      }
-    },
-    "title": "Visualisation",
-    "titleLang": {
-      "en": "Visualisation",
-      "de": "Visualisierung",
-      "ru": "Визуализация",
-      "pt": "Visualização",
-      "nl": "Visualisatie",
-      "fr": "Visualisation",
-      "it": "Visualizzazione",
-      "es": "Visualización",
-      "pl": "Wizualizacja",
-      "zh-cn": "可视化"
-    },
-    "desc": {
-      "en": "Graphical user interface for iobroker",
-      "de": "Grafische Benutzeroberfläche für iobroker",
-      "ru": "Графический пользовательский интерфейс для iobroker",
-      "pt": "Interface gráfica do usuário para iobroker",
-      "nl": "Grafische gebruikersinterface voor iobroker",
-      "fr": "Interface utilisateur graphique pour iobroker",
-      "it": "Interfaccia utente grafica per iobroker",
-      "es": "Interfaz gráfica de usuario para iobroker",
-      "pl": "Graficzny interfejs użytkownika dla iobroker",
-      "zh-cn": "iobroker的图形化用户界面"
-    },
-    "platform": "Javascript/Node.js",
-    "loglevel": "info",
-    "icon": "vis.png",
-    "enabled": true,
-    "mode": "once",
-    "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
-    "keywords": [
-      "DashUI",
-      "GUI",
-      "graphical",
-      "scada"
-    ],
-    "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
-    "authors": [
-      "bluefox <dogafox@gmail.com>"
-    ],
-    "localLinks": {
-      "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
-    },
-    "license": "CC-BY-NC-4.0",
-    "dependencies": [
-      {
-        "web": ">=3.0.12"
-      }
-    ],
-    "restartAdapters": [
-      "vis"
-    ],
-    "serviceStates": "lib/states.js",
-    "singleton": true,
-    "type": "visualization",
-    "connectionType": "local",
-    "dataSource": "push",
-    "tier": 3,
-    "noConfig": false,
-    "adminUI": {
-      "config": "materialize"
-    },
-    "materialize": true,
-    "welcomeScreen": {
-      "link": "vis/index.html",
-      "name": "vis runtime",
-      "img": "vis/img/favicon.png",
-      "color": "#ffe9c8",
-      "order": 0
-    },
-    "welcomeScreenPro": {
-      "link": "vis/edit.html",
-      "name": "vis editor",
-      "img": "vis/img/faviconEdit.png",
-      "color": "#c8ffe1",
-      "order": 1
-    }
-  },
-  "native": {
-    "defaultFileMode": 1604,
-    "license": "",
-    "useLicenseManager": 0
-  },
-  "instanceObjects": [
-    {
-      "_id": "",
-      "type": "meta",
-      "common": {
-        "name": "user files and images for vis",
-        "type": "meta.user"
-      },
-      "native": {}
-    },
-    {
-      "_id": "control",
-      "type": "channel",
-      "common": {
-        "name": "Control vis"
-      },
-      "native": {}
-    },
-    {
-      "_id": "control.instance",
-      "type": "state",
-      "common": {
-        "name": "Control vis",
-        "type": "string",
-        "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
-      },
-      "native": {}
-    },
-    {
-      "_id": "control.command",
-      "type": "state",
-      "common": {
-        "name": "Command for vis",
-        "type": "string",
-        "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
-        "states": {
-          "alert": "alert",
-          "changeView": "changeView",
-          "refresh": "refresh",
-          "reload": "reload",
-          "dialog": "dialog",
-          "popup": "popup",
-          "playSound": "playSound",
-          "changedView": "changedView",
-          "tts": "tts"
+    "common": {
+        "name": "vis",
+        "version": "1.4.11",
+        "news": {
+            "1.4.11": {
+                "en": "Removed ES6 commands to be supported by older browsers\nFixed problem with update of grouped widgets\nAdded web manifest to be able to handle vis as the web app",
+                "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen\nProblem mit der Aktualisierung von gruppierten Widgets behoben\nWeb-Manifest hinzugefügt, um vis als Web-App handhaben zu können",
+                "ru": "Удалены команды ES6 для поддержки старых браузеров.\nИсправлена проблема с обновлением сгруппированных виджетов\nДобавлен веб-манифест, позволяющий обрабатывать vis как веб-приложение.",
+                "pt": "Comandos ES6 removidos para serem suportados por navegadores mais antigos\nCorrigido problema com atualização de widgets agrupados\nManifesto da web adicionado para poder lidar com vis como o aplicativo da web",
+                "nl": "ES6-commando's verwijderd om door oudere browsers te worden ondersteund\nProbleem opgelost met update van gegroepeerde widgets\nWebmanifest toegevoegd om vis als webapp te kunnen gebruiken",
+                "fr": "Suppression des commandes ES6 pour qu'elles soient prises en charge par les anciens navigateurs\nCorrection d'un problème avec la mise à jour des widgets groupés\nAjout d'un manifeste Web pour pouvoir gérer vis en tant qu'application Web",
+                "it": "Rimossi i comandi ES6 per essere supportati dai browser meno recenti\nRisolto il problema con l'aggiornamento dei widget raggruppati\nAggiunto manifesto web per poter gestire vis come app web",
+                "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.\nSolucionado el problema con la actualización de widgets agrupados\nSe agregó un manifiesto web para poder manejar vis como la aplicación web.",
+                "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki\nNaprawiono problem z aktualizacją zgrupowanych widżetów\nDodano manifest internetowy, aby móc obsługiwać vis jako aplikację internetową",
+                "zh-cn": "删除了旧浏览器支持的 ES6 命令\n修复了分组小部件更新的问题\n添加了 Web 清单，以便能够将 vis 作为 Web 应用程序处理"
+            },
+            "1.4.8": {
+                "en": "Added support for js-controller 4.x",
+                "de": "Unterstützung für js-controller 4.x hinzugefügt",
+                "ru": "Добавлена поддержка js-контроллера 4.x",
+                "pt": "Adicionado suporte para js-controller 4.x",
+                "nl": "Ondersteuning toegevoegd voor js-controller 4.x",
+                "fr": "Ajout de la prise en charge de js-controller 4.x",
+                "it": "Aggiunto supporto per js-controller 4.x",
+                "es": "Se agregó soporte para js-controller 4.x",
+                "pl": "Dodano wsparcie dla js-controller 4.x",
+                "zh-cn": "添加了对 js-controller 4.x 的支持"
+            },
+            "1.4.7": {
+                "en": "Fixed subscribeOidAtRuntime if called with invalid IDs\nAdded support of license manager",
+                "de": "AbonnierenOidAtRuntime behoben, wenn mit ungültigen IDs aufgerufen\nUnterstützung des Lizenzmanagers hinzugefügt",
+                "ru": "Исправлена ошибка subscribeOidAtRuntime при вызове с недопустимыми идентификаторами\nДобавлена поддержка менеджера лицензий.",
+                "pt": "SubscribeOidAtRuntime corrigido se chamado com IDs inválidos\nAdicionado suporte de gerenciador de licença",
+                "nl": "Vaste subscribeOidAtRuntime indien aangeroepen met ongeldige ID's\nOndersteuning van licentiemanager toegevoegd",
+                "fr": "Abonnement fixeOidAtRuntime si appelé avec des identifiants invalides\nAjout de la prise en charge du gestionnaire de licence",
+                "it": "Risolto il problema con subscribeOidAtRuntime se chiamato con ID non validi\nAggiunto il supporto del gestore delle licenze",
+                "es": "SubscribeOidAtRuntime fijo si se llama con ID no válidos\nSoporte agregado del administrador de licencias",
+                "pl": "Naprawiono subscribeOidAtRuntime w przypadku wywołania z nieprawidłowymi identyfikatorami\nDodano obsługę menedżera licencji",
+                "zh-cn": "如果使用无效 ID 调用，则修复了 subscribeOidAtRuntime\n添加了许可证管理器的支持"
+            },
+            "1.4.6": {
+                "en": "Added the license check even without internet",
+                "de": "Lizenzprüfung auch ohne Internet hinzugefügt",
+                "ru": "Добавлена проверка лицензии даже без интернета",
+                "pt": "Adicionada a verificação de licença mesmo sem internet",
+                "nl": "De licentiecontrole toegevoegd, zelfs zonder internet",
+                "fr": "Ajout du contrôle de licence même sans internet",
+                "it": "Aggiunto il controllo della licenza anche senza internet",
+                "es": "Se agregó la verificación de licencia incluso sin Internet.",
+                "pl": "Dodano sprawdzanie licencji nawet bez internetu",
+                "zh-cn": "即使没有互联网也添加了许可证检查"
+            },
+            "1.4.5": {
+                "en": "Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).\nShowed the extended error messages by license check\nPatch visibility oid binding",
+                "de": "Frame-src-Spezifikation zum Content-Security-Policy-Header hinzugefügt, um Probleme beim Blockieren von Frame-bezogenen Inhalten zu beheben (z. B. bei Verwendung der KioskPro iOS-App).\nZeigte die erweiterten Fehlermeldungen bei der Lizenzprüfung an\nPatch-Sichtbarkeit ohne Bindung",
+                "ru": "Добавлена спецификация frame-src в заголовок content-security-policy, исправляющая проблемы блокировки содержимого, связанные с кадрами (например, с помощью приложения KioskPro для iOS).\nПоказал расширенные сообщения об ошибках при проверке лицензии\nОбвязка oid видимости исправлений",
+                "pt": "Adicionada especificação frame-src ao cabeçalho da política de segurança de conteúdo, corrigindo problemas de bloqueio de conteúdo relacionados a frame (por exemplo, usando o aplicativo KioskPro iOS).\nMostrou as mensagens de erro estendidas por verificação de licença\nVisibilidade do remendo oid vinculativo",
+                "nl": "Frame-src-specificatie toegevoegd aan content-security-policy header om frame-gerelateerde contentblokkeringsproblemen op te lossen (bijv. bij gebruik van de KioskPro iOS-app).\nToonde de uitgebreide foutmeldingen door licentiecontrole\nPatch zichtbaarheid oid binding",
+                "fr": "Ajout de la spécification frame-src à l'en-tête content-security-policy fixant les problèmes de blocage de contenu liés au cadre (par exemple, en utilisant l'application KioskPro iOS).\nAffichage des messages d'erreur étendus par vérification de licence\nLiaison oid de visibilité des correctifs",
+                "it": "Aggiunte le specifiche frame-src all'intestazione content-security-policy che risolve i problemi di blocco dei contenuti relativi ai frame (ad esempio utilizzando l'app KioskPro iOS).\nHa mostrato i messaggi di errore estesi dal controllo della licenza\nRilegatura oid visibilità patch",
+                "es": "Se agregó la especificación frame-src al encabezado content-security-policy que corrige problemas de bloqueo de contenido relacionados con el marco (por ejemplo, usando la aplicación KioskPro para iOS).\nMostró los mensajes de error extendidos por verificación de licencia\nParche visibilidad oid vinculante",
+                "pl": "Dodano specyfikację frame-src do nagłówka content-security-policy naprawiającego problemy z blokowaniem treści związane z ramkami (np. przy użyciu aplikacji KioskPro na iOS).\nPokazano rozszerzone komunikaty o błędach przy sprawdzaniu licencji\nWiązanie poprawki widoczności oid",
+                "zh-cn": "向 content-security-policy 标头添加了 frame-src 规范，修复了与框架相关的内容阻塞问题（例如，使用 KioskPro iOS 应用程序）。\n通过许可证检查显示扩展错误消息\n补丁可见性 oid 绑定"
+            },
+            "1.4.4": {
+                "en": "Allowed to have \":\" in the binding object IDs",
+                "de": "Darf \":\" in den Bindungsobjekt-IDs enthalten",
+                "ru": "Допускается наличие \":\" в идентификаторах объектов привязки.",
+                "pt": "É permitido ter \":\" nos IDs de objeto de ligação",
+                "nl": "Toegestaan om \":\" in de bindende object-ID's te hebben",
+                "fr": "Autorisé à avoir \":\" dans les ID d'objet de liaison",
+                "it": "Consentito di avere \":\" negli ID oggetto di associazione",
+                "es": "Se permite tener \":\" en los ID de objeto de vinculación",
+                "pl": "Dozwolone mieć \":\" w powiązanych identyfikatorach obiektów",
+                "zh-cn": "允许在绑定对象 ID 中包含“:”"
+            },
+            "1.4.3": {
+                "en": "Added possibility to check license offline (only special once)",
+                "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
+                "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
+                "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
+                "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
+                "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
+                "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
+                "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
+                "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
+                "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
+            }
+        },
+        "title": "Visualisation",
+        "titleLang": {
+            "en": "Visualisation",
+            "de": "Visualisierung",
+            "ru": "Визуализация",
+            "pt": "Visualização",
+            "nl": "Visualisatie",
+            "fr": "Visualisation",
+            "it": "Visualizzazione",
+            "es": "Visualización",
+            "pl": "Wizualizacja",
+            "zh-cn": "可视化"
+        },
+        "desc": {
+            "en": "Graphical user interface for iobroker",
+            "de": "Grafische Benutzeroberfläche für iobroker",
+            "ru": "Графический пользовательский интерфейс для iobroker",
+            "pt": "Interface gráfica do usuário para iobroker",
+            "nl": "Grafische gebruikersinterface voor iobroker",
+            "fr": "Interface utilisateur graphique pour iobroker",
+            "it": "Interfaccia utente grafica per iobroker",
+            "es": "Interfaz gráfica de usuario para iobroker",
+            "pl": "Graficzny interfejs użytkownika dla iobroker",
+            "zh-cn": "iobroker的图形化用户界面"
+        },
+        "platform": "Javascript/Node.js",
+        "loglevel": "info",
+        "icon": "vis.png",
+        "enabled": true,
+        "mode": "once",
+        "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
+        "keywords": [
+            "DashUI",
+            "GUI",
+            "graphical",
+            "scada"
+        ],
+        "readme": "https://github.com/iobroker/iobroker.vis/blob/master/README.md",
+        "authors": [
+            "bluefox <dogafox@gmail.com>"
+        ],
+        "localLinks": {
+            "_default": "%web_protocol%://%ip%:%web_port%/vis/edit.html"
+        },
+        "license": "CC-BY-NC-4.0",
+        "dependencies": [
+            {"web": ">=3.0.12"},
+            {"js-controller": ">=2.0.0"}
+        ],
+        "restartAdapters": [
+            "vis"
+        ],
+        "serviceStates": "lib/states.js",
+        "singleton": true,
+        "type": "visualization",
+        "connectionType": "local",
+        "dataSource": "push",
+        "tier": 3,
+        "noConfig": false,
+        "adminUI": {
+            "config": "materialize"
+        },
+        "compact": true,
+        "materialize": true,
+        "welcomeScreen": {
+            "link": "vis/index.html",
+            "name": "vis runtime",
+            "img": "vis/img/favicon.png",
+            "color": "#ffe9c8",
+            "order": 0
+        },
+        "welcomeScreenPro": {
+            "link": "vis/edit.html",
+            "name": "vis editor",
+            "img": "vis/img/faviconEdit.png",
+            "color": "#c8ffe1",
+            "order": 1
         }
-      },
-      "native": {}
     },
-    {
-      "_id": "control.data",
-      "type": "state",
-      "common": {
-        "name": "Data for control vis",
-        "type": "string",
-        "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
-      },
-      "native": {}
-    }
-  ]
+    "native": {
+        "defaultFileMode": 1604,
+        "license": "",
+        "useLicenseManager": 0
+    },
+    "instanceObjects": [
+        {
+            "_id": "",
+            "type": "meta",
+            "common": {
+                "name": "user files and images for vis",
+                "type": "meta.user"
+            },
+            "native": {}
+        },
+        {
+            "_id": "control",
+            "type": "channel",
+            "common": {
+                "name": "Control vis"
+            },
+            "native": {}
+        },
+        {
+            "_id": "control.instance",
+            "type": "state",
+            "common": {
+                "name": "Control vis",
+                "type": "string",
+                "desc": "Write here browser instance ID to control or 'FFFFFFFF' to control all instances"
+            },
+            "native": {}
+        },
+        {
+            "_id": "control.command",
+            "type": "state",
+            "common": {
+                "name": "Command for vis",
+                "type": "string",
+                "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                "states": {
+                    "alert": "alert",
+                    "changeView": "changeView",
+                    "refresh": "refresh",
+                    "reload": "reload",
+                    "dialog": "dialog",
+                    "popup": "popup",
+                    "playSound": "playSound",
+                    "changedView": "changedView",
+                    "tts": "tts"
+                }
+            },
+            "native": {}
+        },
+        {
+            "_id": "control.data",
+            "type": "state",
+            "common": {
+                "name": "Data for control vis",
+                "type": "string",
+                "desc": "Used for: alert, changeView, dialog, popup, playSound, changedView"
+            },
+            "native": {}
+        }
+    ]
 }

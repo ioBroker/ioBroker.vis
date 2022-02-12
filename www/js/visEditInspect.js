@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2022 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -108,7 +108,6 @@ vis = $.extend(true, vis, {
             var values = Object.keys(that.objects)
                 .filter(function (id) {return that.objects[id].type === typeFilter})
                 .filter(function (id) {return typeFilter !== 'chart' || id.match(/^echarts\./)})
-                .map(id => id)
                 .sort();
 
             if (values.length && values[0] !== undefined) {
@@ -590,7 +589,7 @@ vis = $.extend(true, vis, {
         var line = {
             input: '<input class="vis-edit-textbox-with-button" type="text" id="inspect_' + widAttr + '"/><button class="vis-edit-dimension-calc" data-attr="' + widAttr + '"></button>',
             init: function (w, data) {
-                let $btn = $(this).parent().children('.vis-edit-dimension-calc');
+                var $btn = $(this).parent().children('.vis-edit-dimension-calc');
                 var val = $(this).val();
 
                 if (val.toString().indexOf('%') === -1 && val.toString().indexOf('px') === -1) {

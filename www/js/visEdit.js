@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2013-2021 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2013-2022 bluefox https://github.com/GermanBluefox,
  *  Copyright (c) 2013-2014 hobbyquaker https://github.com/hobbyquaker
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
@@ -6792,6 +6792,7 @@ vis = $.extend(true, vis, {
 
             $('#' + widgets[w]).remove();
             this.views[view].widgets[widgets[w]].grouped = true;
+            this.views[view].widgets[widgets[w]].groupid = groupId;
         }
         this.views[view].widgets[groupId] = {
             tpl: '_tplGroup',
@@ -6820,7 +6821,12 @@ vis = $.extend(true, vis, {
             //var rect = this.editWidgetsRect(viewDiv, view, groupId);
             for (w = 0; w < widgets.length; w++) {
                 if (!this.views[view].widgets[widgets[w]]) continue;
-                if (this.views[view].widgets[widgets[w]].grouped !== undefined) delete this.views[view].widgets[widgets[w]].grouped;
+                if (this.views[view].widgets[widgets[w]].grouped !== undefined) {
+                    delete this.views[view].widgets[widgets[w]].grouped;
+                }
+                if (this.views[view].widgets[widgets[w]].groupid !== undefined) {
+                    delete this.views[view].widgets[widgets[w]].groupid;
+                }
                 var wRect = this.editWidgetsRect(viewDiv, view, widgets[w]);
                 this.views[view].widgets[widgets[w]].style.top    = wRect.top    + 'px';
                 this.views[view].widgets[widgets[w]].style.left   = wRect.left   + 'px';
