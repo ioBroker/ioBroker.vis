@@ -3607,14 +3607,17 @@ vis = $.extend(true, vis, {
         var wid;
         if (!isAll) {
             for (var widget in exportView.widgets) {
-                wid = 'e' + (('0000' + num).slice(-5));
+                wid = 'e' + ('0000' + num).slice(-5);
                 num += 1;
                 exportView.widgets[wid] = exportView.widgets[widget];
                 delete exportView.widgets[widget];
             }
-            if (exportView.activeWidgets) delete exportView.activeWidgets;
+            if (exportView.activeWidgets) {
+                delete exportView.activeWidgets;
+            }
         }
-        $('#textarea_export_view').html(JSON.stringify(exportView, null, '  '));
+
+        $('#textarea_export_view').val(JSON.stringify(exportView, null, 4));
 
         document.getElementById('textarea_export_view').select();
 
