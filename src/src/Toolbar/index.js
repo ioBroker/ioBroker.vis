@@ -1,4 +1,4 @@
-import PropTypes from "prop-types"
+import PropTypes from 'prop-types';
 import {
     IconButton, Tooltip, withStyles,
     Menu as DropMenu, MenuItem as DropMenuItem, CircularProgress,
@@ -72,7 +72,18 @@ const Toolbar = props => {
                     <PersonIcon fontSize="small" />
                     <span>{props.currentUser}</span>
                     <Tooltip title={I18n.t('Exit')}>
-                        <IconButton size="small" onClick={() => window.location.reload()}>
+                        <IconButton
+                            size="small"
+                            onClick={async () => {
+                                try {
+                                    await props.socket.logout();
+                                } catch (e) {
+                                    console.error(e);
+                                    return;
+                                }
+                                window.location.reload();
+                            }}
+                        >
                             <ExitToAppIcon />
                         </IconButton>
                     </Tooltip>
@@ -88,9 +99,10 @@ const Toolbar = props => {
 };
 
 Toolbar.propTypes = {
-  classes: PropTypes.object,
-  currentUser: PropTypes.string,
-  needSave: PropTypes.bool
-}
+    classes: PropTypes.object,
+    currentUser: PropTypes.string,
+    needSave: PropTypes.bool,
+    socket: PropTypes.object,
+};
 
 export default withStyles(styles)(Toolbar);
