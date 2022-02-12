@@ -1,0 +1,13 @@
+{
+	"name": "ioBroker vis",
+	"short_name": "vis",
+	"start_url": ".",
+	"display": "standalone",
+	"background_color" : "#ffffff" ,
+	"description": "WEB visualisation for ioBroker platform",
+	"icons": [{
+		"src": "img/vis.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	}]
+}
