@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "vis",
-    "version": "1.4.8",
+    "version": "1.4.9",
     "news": {
+      "1.4.9": {
+        "en": "Removed ES6 commands to be supported by older browsers",
+        "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen",
+        "ru": "Удалены команды ES6 для поддержки старых браузеров.",
+        "pt": "Comandos ES6 removidos para serem suportados por navegadores mais antigos",
+        "nl": "ES6-commando's verwijderd om door oudere browsers te worden ondersteund",
+        "fr": "Suppression des commandes ES6 pour qu'elles soient prises en charge par les anciens navigateurs",
+        "it": "Rimossi i comandi ES6 per essere supportati dai browser meno recenti",
+        "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.",
+        "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki",
+        "zh-cn": "删除了旧浏览器支持的 ES6 命令"
+      },
       "1.4.8": {
         "en": "Added support for js-controller 4.x",
         "de": "Unterstützung für js-controller 4.x hinzugefügt",
@@ -64,18 +76,6 @@
         "zh-cn": "允许在绑定对象 ID 中包含“:”"
       },
       "1.4.3": {
-        "en": "Added possibility to check license offline (only special once)",
-        "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
-        "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
-        "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
-        "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
-        "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
-        "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
-        "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
-        "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
-        "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
-      },
-      "1.4.2": {
         "en": "Added possibility to check license offline (only special once)",
         "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
         "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
