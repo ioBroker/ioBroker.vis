@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import {
     MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight, MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
 } from 'react-icons/md';
@@ -39,17 +40,16 @@ const Widgets = props => {
     },
     [[
         { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
-        { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
     ], [
-        { type: 'icon-button', Icon: InfoIcon, name: 'Help about widget' },
-        {
-            type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
-        },
+        { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
     ]],
     { type: 'divider' },
     [[
         {
             type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
+        },
+        {
+            type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
         },
     ], [
         {
@@ -117,6 +117,12 @@ const Widgets = props => {
 ],
     };
     return <ToolbarItems group={toolbar} {...props} />;
+};
+
+Widgets.propTypes = {
+    openedViews: PropTypes.array,
+    project: PropTypes.object,
+    selectedView: PropTypes.string,
 };
 
 export default Widgets;

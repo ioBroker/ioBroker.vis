@@ -59,6 +59,8 @@ module.exports = {
         'no-await-in-loop': 'off',
         'no-console': ['error', { allow: ['warn', 'error'] }],
         'no-underscore-dangle': 'off',
+        'no-constant-condition': 'off',
+        'no-loop-func': 'off',
         radix: 'off',
         indent: ['error', 4],
     },

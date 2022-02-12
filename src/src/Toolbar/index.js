@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"
 import {
     IconButton, Tooltip, withStyles,
     Menu as DropMenu, MenuItem as DropMenuItem, CircularProgress,
@@ -85,5 +86,11 @@ const Toolbar = props => {
         </div>
     </div>;
 };
+
+Toolbar.propTypes = {
+  classes: PropTypes.object,
+  currentUser: PropTypes.string,
+  needSave: PropTypes.bool
+}
 
 export default withStyles(styles)(Toolbar);

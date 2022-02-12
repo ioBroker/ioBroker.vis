@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
     IconButton, Tooltip,
@@ -18,19 +19,36 @@ const Folder = props => {
         {props.folder.name}
         {props.folder.id ? <span className={props.classes.buttonActions}>
             <Tooltip title={I18n.t('Add subfolder')}>
-                <IconButton size="small" onClick={() => props.createFolder('folder', props.folder.id)}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.setFolderDialog('add');
+                        props.setFolderDialogName('');
+                        props.setFolderDialogParentId(props.folder.id);
+                    }}
+                >
                     <CreateNewFolderIcon />
                 </IconButton>
             </Tooltip>
             <Tooltip title={I18n.t('Rename')}>
-                <IconButton size="small">
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.setFolderDialog('rename');
+                        props.setFolderDialogName(props.folder.name);
+                        props.setFolderDialogId(props.folder.id);
+                    }}
+                >
                     <EditIcon />
                 </IconButton>
             </Tooltip>
             <Tooltip title={I18n.t('Delete')}>
                 <IconButton
                     size="small"
-                    onClick={() => props.deleteFolder(props.folder.id)}
+                    onClick={() => {
+                        props.setFolderDialog('delete');
+                        props.setFolderDialogId(props.folder.id);
+                    }}
                     disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
                 || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
                 >
@@ -107,6 +125,17 @@ const Folder = props => {
             </div>
         </div>
     </div>;
+};
+
+Folder.propTypes = {
+    classes: PropTypes.object,
+    folder: PropTypes.object,
+    moveFolder: PropTypes.func,
+    project: PropTypes.object,
+    setFolderDialog: PropTypes.func,
+    setFolderDialogId: PropTypes.func,
+    setFolderDialogName: PropTypes.func,
+    setFolderDialogParentId: PropTypes.func,
 };
 
 export default Folder;

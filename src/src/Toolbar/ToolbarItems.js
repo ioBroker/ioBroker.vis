@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import {
     Button,
     ButtonBase,
@@ -153,5 +154,11 @@ const ToolbarItems = props => <div
     </div>
     <div className={props.classes.toolbarLabel}>{I18n.t(props.group.name)}</div>
 </div>;
+
+ToolbarItems.propTypes = {
+    classes: PropTypes.object,
+    group: PropTypes.object,
+    last: PropTypes.bool,
+};
 
 export default withStyles(styles)(ToolbarItems);

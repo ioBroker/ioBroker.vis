@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 
 import I18n from '@iobroker/adapter-react/i18n';
@@ -86,6 +87,18 @@ const View = props => {
             {viewBlock}
         </div>
     </div>;
+};
+
+View.propTypes = {
+    classes: PropTypes.object,
+    moveView: PropTypes.func,
+    name: PropTypes.string,
+    openedViews: PropTypes.array,
+    project: PropTypes.object,
+    setExportDialog: PropTypes.func,
+    setImportDialog: PropTypes.func,
+    showDialog: PropTypes.func,
+    toggleView: PropTypes.func,
 };
 
 export default View;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import AceEditor from 'react-ace';
 import IODialog from '../../Components/IODialog';
@@ -20,5 +21,13 @@ const ExportDialog = props => <IODialog
         height="200px"
     />
 </IODialog>;
+
+ExportDialog.propTypes = {
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    project: PropTypes.object,
+    themeName: PropTypes.string,
+    view: PropTypes.string,
+};
 
 export default ExportDialog;

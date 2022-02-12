@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import { withStyles } from '@material-ui/styles';
 
@@ -32,5 +33,9 @@ const Widget = props => <div className={props.classes.widget}>
         <img className={props.classes.widgetImage} src={image} alt="" />
     </span>
 </div>;
+
+Widget.propTypes = {
+    classes: PropTypes.object,
+};
 
 export default withStyles(styles)(Widget);

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
     Accordion,
@@ -96,6 +97,10 @@ const Widgets = props => {
             }
         </div>
     </>;
+};
+
+Widgets.propTypes = {
+    classes: PropTypes.object,
 };
 
 export default withStyles(styles)(Widgets);

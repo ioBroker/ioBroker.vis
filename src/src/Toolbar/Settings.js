@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
     Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, withStyles,
@@ -164,6 +165,14 @@ const Settings = props => {
             </Button>
         </DialogActions>
     </Dialog>;
+};
+
+Settings.propTypes = {
+    changeProject: PropTypes.func,
+    classes: PropTypes.object,
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    project: PropTypes.object,
 };
 
 export default withStyles(styles)(Settings);

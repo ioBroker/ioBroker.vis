@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import {
     Tab, Tabs, Typography,
 } from '@material-ui/core';
@@ -50,6 +51,11 @@ const Attributes = props => {
         </Tabs>
         <TabContent {...props} />
     </>;
+};
+
+Attributes.propTypes = {
+    classes: PropTypes.object,
+    openedViews: PropTypes.array,
 };
 
 export default Attributes;

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import {
     Accordion, AccordionDetails, AccordionSummary, Checkbox, Input, ListItemText, MenuItem, Select, TextField, withStyles,
 } from '@material-ui/core';
@@ -482,6 +483,14 @@ const View = props => {
             </AccordionDetails>
         </Accordion>)}
     </div>;
+};
+
+View.propTypes = {
+    changeProject: PropTypes.func,
+    classes: PropTypes.object,
+    groups: PropTypes.array,
+    project: PropTypes.object,
+    selectedView: PropTypes.string,
 };
 
 export default withStyles(styles)(View);

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import AceEditor from 'react-ace';
 
@@ -68,5 +69,14 @@ const ImportDialog = props => {
             <TextField label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
         </div>
     </IODialog>;
+};
+
+ImportDialog.propTypes = {
+    importViewAction: PropTypes.func,
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    project: PropTypes.object,
+    themeName: PropTypes.string,
+    view: PropTypes.string,
 };
 export default ImportDialog;

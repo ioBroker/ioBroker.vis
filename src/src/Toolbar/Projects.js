@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import ObjectBrowser from '@iobroker/adapter-react/Components/ObjectBrowser';
 import I18n from '@iobroker/adapter-react/i18n';
@@ -53,6 +54,10 @@ const Tools = props => {
             </DialogActions>
         </Dialog>
     </>;
+};
+
+Tools.propTypes = {
+    socket: PropTypes.object,
 };
 
 export default Tools;

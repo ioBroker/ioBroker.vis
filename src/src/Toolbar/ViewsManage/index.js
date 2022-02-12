@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
     IconButton, Tooltip, withStyles,
@@ -8,17 +9,17 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { usePreview } from 'react-dnd-preview';
 
-import { v4 as uuidv4 } from 'uuid';
-
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import AddIcon from '@material-ui/icons/Add';
 import { useState } from 'react';
 import { BiImport } from 'react-icons/bi';
+
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
 import View from './View';
 import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
+import FolderDialog from './FolderDialog';
 
 const styles = () => ({
     viewManageBlock: {
@@ -71,27 +72,10 @@ const ViewsManage = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
-    const createFolder = (name, parentId) => {
-        const project = JSON.parse(JSON.stringify(props.project));
-        project.___settings.folders.push({
-            id: uuidv4(),
-            name,
-            parentId,
-        });
-        props.changeProject(project);
-    };
-
-    const deleteFolder = id => {
-        const project = JSON.parse(JSON.stringify(props.project));
-        project.___settings.folders.splice(project.___settings.folders.findIndex(folder => folder.id === id), 1);
-        props.changeProject(project);
-    };
-
-    const renameFolder = (id, name) => {
-        const project = JSON.parse(JSON.stringify(props.project));
-        project.___settings.folders.find(folder => folder.id === id).name = name;
-        props.changeProject(project);
-    };
+    const [folderDialog, setFolderDialog] = useState(null);
+    const [folderDialogName, setFolderDialogName] = useState('');
+    const [folderDialogId, setFolderDialogId] = useState(null);
+    const [folderDialogParentId, setFolderDialogParentId] = useState(null);
 
     const moveFolder = (id, parentId) => {
         const project = JSON.parse(JSON.stringify(props.project));
@@ -136,8 +120,10 @@ const ViewsManage = props => {
             <div className={props.classes.folderContainer}>
                 <Folder
                     folder={folder}
-                    createFolder={createFolder}
-                    deleteFolder={deleteFolder}
+                    setFolderDialog={setFolderDialog}
+                    setFolderDialogName={setFolderDialogName}
+                    setFolderDialogId={setFolderDialogId}
+                    setFolderDialogParentId={setFolderDialogParentId}
                     moveFolder={moveFolder}
                     {...props}
                 />
@@ -165,15 +151,24 @@ const ViewsManage = props => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={I18n.t('Add folder')}>
-                        <IconButton size="small" onClick={() => createFolder('folder')}>
+                        <IconButton
+                            size="small"
+                            onClick={() => {
+                                setFolderDialog('add');
+                                setFolderDialogName('');
+                                setFolderDialogParentId(null);
+                            }}
+                        >
                             <CreateNewFolderIcon />
                         </IconButton>
                     </Tooltip>
                 </div>
                 <Folder
                     folder={{ name: I18n.t('root') }}
-                    createFolder={createFolder}
-                    deleteFolder={deleteFolder}
+                    setFolderDialog={setFolderDialog}
+                    setFolderDialogName={setFolderDialogName}
+                    setFolderDialogId={setFolderDialogId}
+                    setFolderDialogParentId={setFolderDialogParentId}
                     moveFolder={moveFolder}
                     {...props}
                 />
@@ -183,6 +178,16 @@ const ViewsManage = props => {
                 </div>
             </DndProvider>
         </div>
+        <FolderDialog
+            dialog={folderDialog}
+            dialogFolder={folderDialogId}
+            dialogName={folderDialogName}
+            dialogParentId={folderDialogParentId}
+            setDialog={setFolderDialog}
+            setDialogFolder={setFolderDialogId}
+            setDialogName={setFolderDialogName}
+            {...props}
+        />
         <ImportDialog
             open={importDialog !== false}
             onClose={() => setImportDialog(false)}
@@ -199,6 +204,17 @@ const ViewsManage = props => {
             themeName={props.themeName}
         />
     </IODialog>;
+};
+
+ViewsManage.propTypes = {
+    changeProject: PropTypes.func,
+    classes: PropTypes.object,
+    name: PropTypes.string,
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    project: PropTypes.object,
+    showDialog: PropTypes.func,
+    themeName: PropTypes.string,
 };
 
 export default withStyles(styles)(ViewsManage);

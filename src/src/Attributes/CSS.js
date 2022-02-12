@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
 import 'ace-builds/webpack-resolver';
@@ -51,6 +52,12 @@ const CSS = props => {
             }}
         />
     </div>;
+};
+
+CSS.propTypes = {
+    projectName: PropTypes.string,
+    socket: PropTypes.object,
+    themeName: PropTypes.string,
 };
 
 export default CSS;

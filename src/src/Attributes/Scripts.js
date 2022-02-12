@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
 import 'ace-builds/webpack-resolver';
@@ -25,5 +26,11 @@ const Scripts = props => <div>
         }}
     />
 </div>;
+
+Scripts.propTypes = {
+    changeProject: PropTypes.func,
+    project: PropTypes.object,
+    themeName: PropTypes.string,
+};
 
 export default Scripts;
