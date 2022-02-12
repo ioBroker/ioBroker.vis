@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### __WORK IN PROGRESS__
 -->
 ## Changelog
-### 1.4.9 (2022-02-12)
+### 1.4.10 (2022-02-12)
 * (bluefox) Removed ES6 commands to be supported by older browsers
 
 ### 1.4.8 (2022-01-29)
