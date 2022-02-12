@@ -26,7 +26,7 @@
   "dependencies": {
     "jsonwebtoken": "^8.5.1",
     "@iobroker/adapter-core": "^2.5.1",
-    "axios": "^0.24.0"
+    "axios": "^0.25.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.2",
