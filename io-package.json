@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.11",
+        "version": "1.4.12",
         "news": {
+            "1.4.12": {
+                "en": "Fixed bug with the export of specific widgets",
+                "de": "Fehler beim Export bestimmter Widgets behoben",
+                "ru": "Исправлена ошибка с экспортом определенных виджетов",
+                "pt": "Corrigido bug com a exportação de widgets específicos",
+                "nl": "Bug opgelost met het exporteren van specifieke widgets",
+                "fr": "Correction d'un bug avec l'export de widgets spécifiques",
+                "it": "Risolto bug con l'esportazione di widget specifici",
+                "es": "Error solucionado con la exportación de widgets específicos.",
+                "pl": "Naprawiono błąd z eksportem określonych widżetów",
+                "zh-cn": "修复了导出特定小部件的错误"
+            },
             "1.4.11": {
                 "en": "Removed ES6 commands to be supported by older browsers\nFixed problem with update of grouped widgets\nAdded web manifest to be able to handle vis as the web app",
                 "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen\nProblem mit der Aktualisierung von gruppierten Widgets behoben\nWeb-Manifest hinzugefügt, um vis als Web-App handhaben zu können",
@@ -74,18 +86,6 @@
                 "es": "Se permite tener \":\" en los ID de objeto de vinculación",
                 "pl": "Dozwolone mieć \":\" w powiązanych identyfikatorach obiektów",
                 "zh-cn": "允许在绑定对象 ID 中包含“:”"
-            },
-            "1.4.3": {
-                "en": "Added possibility to check license offline (only special once)",
-                "de": "Möglichkeit zur Offline-Lizenzprüfung hinzugefügt (nur einmalig)",
-                "ru": "Добавлена возможность проверить лицензию в автономном режиме (только один раз)",
-                "pt": "Adicionada a possibilidade de verificar a licença offline (especial apenas uma vez)",
-                "nl": "Mogelijkheid toegevoegd om licentie offline te controleren (slechts één keer speciaal)",
-                "fr": "Ajout de la possibilité de vérifier la licence hors ligne (une seule fois spéciale)",
-                "it": "Aggiunta la possibilità di controllare la licenza offline (speciale solo una volta)",
-                "es": "Se agregó la posibilidad de verificar la licencia fuera de línea (solo especial una vez)",
-                "pl": "Dodano możliwość sprawdzenia licencji offline (tylko raz)",
-                "zh-cn": "添加了离线检查许可证的可能性（仅特殊一次）"
             }
         },
         "title": "Visualisation",
@@ -134,8 +134,12 @@
         },
         "license": "CC-BY-NC-4.0",
         "dependencies": [
-            {"web": ">=3.0.12"},
-            {"js-controller": ">=2.0.0"}
+            {
+                "web": ">=3.0.12"
+            },
+            {
+                "js-controller": ">=2.0.0"
+            }
         ],
         "restartAdapters": [
             "vis"
