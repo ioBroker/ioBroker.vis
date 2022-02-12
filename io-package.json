@@ -1,19 +1,19 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.10",
+        "version": "1.4.11",
         "news": {
-            "1.4.10": {
-                "en": "Removed ES6 commands to be supported by older browsers",
-                "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen",
-                "ru": "Удалены команды ES6 для поддержки старых браузеров.",
-                "pt": "Comandos ES6 removidos para serem suportados por navegadores mais antigos",
-                "nl": "ES6-commando's verwijderd om door oudere browsers te worden ondersteund",
-                "fr": "Suppression des commandes ES6 pour qu'elles soient prises en charge par les anciens navigateurs",
-                "it": "Rimossi i comandi ES6 per essere supportati dai browser meno recenti",
-                "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.",
-                "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki",
-                "zh-cn": "删除了旧浏览器支持的 ES6 命令"
+            "1.4.11": {
+                "en": "Removed ES6 commands to be supported by older browsers\nFixed problem with update of grouped widgets\nAdded web manifest to be able to handle vis as the web app",
+                "de": "Entfernte ES6-Befehle, die von älteren Browsern unterstützt werden sollen\nProblem mit der Aktualisierung von gruppierten Widgets behoben\nWeb-Manifest hinzugefügt, um vis als Web-App handhaben zu können",
+                "ru": "Удалены команды ES6 для поддержки старых браузеров.\nИсправлена проблема с обновлением сгруппированных виджетов\nДобавлен веб-манифест, позволяющий обрабатывать vis как веб-приложение.",
+                "pt": "Comandos ES6 removidos para serem suportados por navegadores mais antigos\nCorrigido problema com atualização de widgets agrupados\nManifesto da web adicionado para poder lidar com vis como o aplicativo da web",
+                "nl": "ES6-commando's verwijderd om door oudere browsers te worden ondersteund\nProbleem opgelost met update van gegroepeerde widgets\nWebmanifest toegevoegd om vis als webapp te kunnen gebruiken",
+                "fr": "Suppression des commandes ES6 pour qu'elles soient prises en charge par les anciens navigateurs\nCorrection d'un problème avec la mise à jour des widgets groupés\nAjout d'un manifeste Web pour pouvoir gérer vis en tant qu'application Web",
+                "it": "Rimossi i comandi ES6 per essere supportati dai browser meno recenti\nRisolto il problema con l'aggiornamento dei widget raggruppati\nAggiunto manifesto web per poter gestire vis come app web",
+                "es": "Se eliminaron los comandos de ES6 para que sean compatibles con navegadores más antiguos.\nSolucionado el problema con la actualización de widgets agrupados\nSe agregó un manifiesto web para poder manejar vis como la aplicación web.",
+                "pl": "Usunięto polecenia ES6, które mają być obsługiwane przez starsze przeglądarki\nNaprawiono problem z aktualizacją zgrupowanych widżetów\nDodano manifest internetowy, aby móc obsługiwać vis jako aplikację internetową",
+                "zh-cn": "删除了旧浏览器支持的 ES6 命令\n修复了分组小部件更新的问题\n添加了 Web 清单，以便能够将 vis 作为 Web 应用程序处理"
             },
             "1.4.8": {
                 "en": "Added support for js-controller 4.x",

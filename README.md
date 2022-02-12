@@ -207,8 +207,10 @@ Notice that these settings are valid only for reconnection and not for the first
     ### __WORK IN PROGRESS__
 -->
 ## Changelog
-### 1.4.10 (2022-02-12)
+### 1.4.11 (2022-02-12)
 * (bluefox) Removed ES6 commands to be supported by older browsers
+* (oweitman) Fixed problem with update of grouped widgets
+* (stephanritscher) Added web manifest to be able to handle vis as the web app
 
 ### 1.4.8 (2022-01-29)
 * (bluefox) Added support for js-controller 4.x

@@ -6821,8 +6821,12 @@ vis = $.extend(true, vis, {
             //var rect = this.editWidgetsRect(viewDiv, view, groupId);
             for (w = 0; w < widgets.length; w++) {
                 if (!this.views[view].widgets[widgets[w]]) continue;
-                if (this.views[view].widgets[widgets[w]].grouped !== undefined) delete this.views[view].widgets[widgets[w]].grouped;
-                if (this.views[view].widgets[widgets[w]].groupid !== undefined) delete this.views[view].widgets[widgets[w]].groupid;
+                if (this.views[view].widgets[widgets[w]].grouped !== undefined) {
+                    delete this.views[view].widgets[widgets[w]].grouped;
+                }
+                if (this.views[view].widgets[widgets[w]].groupid !== undefined) {
+                    delete this.views[view].widgets[widgets[w]].groupid;
+                }
                 var wRect = this.editWidgetsRect(viewDiv, view, widgets[w]);
                 this.views[view].widgets[widgets[w]].style.top    = wRect.top    + 'px';
                 this.views[view].widgets[widgets[w]].style.left   = wRect.left   + 'px';

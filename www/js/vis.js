@@ -277,7 +277,7 @@ var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
 var vis = {
-    version: '1.4.10',
+    version: '1.4.11',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1119,7 +1119,9 @@ var vis = {
         viewDiv = viewDiv || this.activeViewDiv;
 
         this.destroyWidget(viewDiv, view, widget);
-        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : vis.views[view].widgets[widget].groupid ? vis.views[view].widgets[widget].groupid : null);
+        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ?
+            viewDiv :
+            (vis.views[view].widgets[widget].groupid ? vis.views[view].widgets[widget].groupid : null));
 
         updateContainers && this.updateContainers(viewDiv, view);
     },
