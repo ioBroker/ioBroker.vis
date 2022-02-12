@@ -4,6 +4,8 @@ import AceEditor from 'react-ace';
 import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/theme-clouds_midnight';
+import 'ace-builds/src-noconflict/theme-chrome';
 
 import { useEffect, useRef, useState } from 'react';
 import { TextField } from '@material-ui/core';
@@ -53,6 +55,7 @@ const ImportDialog = props => {
         <div>
             <AceEditor
                 mode="json"
+                theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
                 ref={editor}
                 value={data}
                 onChange={newValue => {

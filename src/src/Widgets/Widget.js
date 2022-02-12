@@ -10,14 +10,16 @@ const styles = () => ({
         borderWidth: 1,
         borderRadius: 8,
         backgroundColor: 'orange',
-        width: 200,
+        width: 120,
         display: 'inline-flex',
         margin: 4,
-        height: 50,
+        height: 30,
     },
-    widgetTitle: { textAlign: 'center', flex: 1, alignSelf: 'center' },
+    widgetTitle: {
+        textAlign: 'center', flex: 1, alignSelf: 'center', color: 'black',
+    },
     widgetImage: {
-        width: 40,
+        width: 20,
     },
     widgetImageContainer: {
         borderLeftStyle: 'solid', borderLeftWidth: 1, borderLeftColor: 'gray', display: 'flex', padding: 4, alignItems: 'center',

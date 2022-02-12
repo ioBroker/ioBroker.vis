@@ -10,87 +10,60 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import I18n from '@iobroker/adapter-react/i18n';
-import { BiImport, BiExport } from 'react-icons/bi';
 
 import ViewsManage from './ViewsManage';
 import ToolbarItems from './ToolbarItems';
 import IODialog from '../Components/IODialog';
 
-const View = props => {
-    const [viewsManage, setViewsManage] = useState(false);
-    const [dialog, setDialog] = useState(null);
-    const [dialogName, setDialogName] = useState('');
-    const [dialogView, setDialogView] = useState(null);
-
-    const toolbar = {
-        name: `Views of ${props.projectName}`,
-        items: [
-            {
-                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
-            },
-            [[
-                {
-                    type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
-                },
-            ], [
-                {
-                    type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
-                },
-            ]],
-            {
-                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => setViewsManage(true),
-            },
-        ],
-    };
-
+const ViewDialog = props => {
     const deleteView = () => {
-        const view = dialogView || props.selectedView;
+        const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
         delete project[view];
         props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
         props.changeProject(project);
-        setDialog(null);
+        props.setDialog(null);
     };
 
     const addView = () => {
         const project = JSON.parse(JSON.stringify(props.project));
         const newProject = {
-            name: dialogName,
+            name: props.dialogName,
             settings: {
                 style: {},
             },
             widgets: {},
             activeWidgets: {},
         };
-        project[dialogName] = newProject;
+        project[props.dialogName] = newProject;
         props.changeProject(project);
-        props.changeView(dialogName);
-        setDialog(null);
+        props.changeView(props.dialogName);
+        props.setDialog(null);
     };
 
     const renameView = () => {
-        const view = dialogView || props.selectedView;
+        const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
-        project[dialogName] = project[view];
+        project[props.dialogName] = project[view];
         delete project[view];
         props.changeProject(project);
-        props.changeView(dialogName);
-        setDialog(null);
+        props.changeView(props.dialogName);
+        props.setDialog(null);
     };
 
     const copyView = () => {
-        const view = dialogView || props.selectedView;
+        const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
-        project[dialogName] = project[view];
+        project[props.dialogName] = project[view];
         props.changeProject(project);
-        props.changeView(dialogName);
-        setDialog(null);
+        props.changeView(props.dialogName);
+        props.setDialog(null);
     };
 
     const dialogTitles = {
-        delete: `${I18n.t('Are you want to delete view ') + (dialogView || props.selectedView)}?`,
-        copy: `${I18n.t('Copy view ') + (dialogView || props.selectedView)}`,
-        rename: `${I18n.t('Rename view ') + (dialogView || props.selectedView)}`,
+        delete: `${I18n.t('Are you want to delete view ') + (props.dialogView || props.selectedView)}?`,
+        copy: `${I18n.t('Copy view ') + (props.dialogView || props.selectedView)}`,
+        rename: `${I18n.t('Rename view ') + (props.dialogView || props.selectedView)}`,
         add: I18n.t('Add view '),
     };
 
@@ -121,14 +94,62 @@ const View = props => {
         add: AddIcon,
     };
 
-    const DialogIcon = dialogIcons[dialog];
+    const DialogIcon = dialogIcons[props.dialog];
 
     let dialogDisabled = false;
-    if (dialog !== 'delete') {
-        if (props.project[dialogName]) {
+    if (props.dialog !== 'delete') {
+        if (props.project[props.dialogName]) {
             dialogDisabled = true;
         }
     }
+
+    return <IODialog
+        title={dialogTitles[props.dialog]}
+        actionTitle={dialogButtons[props.dialog]}
+        open={!!props.dialog}
+        onClose={() => {
+            props.setDialog(null);
+            props.setDialogView(null);
+        }}
+        ActionIcon={DialogIcon || null}
+        action={dialogActions[props.dialog]}
+        actionColor={props.dialog === 'delete' ? 'secondary' : 'primary'}
+        actionDisabled={dialogDisabled}
+    >
+        {props.dialog === 'delete' ? null
+            : <TextField
+                label={dialogInputs[props.dialog]}
+                value={props.dialogName}
+                onChange={e => props.setDialogName(e.target.value)}
+            /> }
+    </IODialog>;
+};
+
+const View = props => {
+    const [dialog, setDialog] = useState(null);
+    const [dialogName, setDialogName] = useState('');
+    const [dialogView, setDialogView] = useState(null);
+
+    const toolbar = {
+        name: `Views of ${props.projectName}`,
+        items: [
+            {
+                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'),
+            },
+            [[
+                {
+                    type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'),
+                },
+            ], [
+                {
+                    type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'),
+                },
+            ]],
+            {
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManage(true),
+            },
+        ],
+    };
 
     const showDialog = (type, view) => {
         view = view || props.selectedView;
@@ -146,23 +167,16 @@ const View = props => {
 
     return <>
         <ToolbarItems group={toolbar} {...props} />
-        <IODialog
-            title={dialogTitles[dialog]}
-            actionTitle={dialogButtons[dialog]}
-            open={!!dialog}
-            onClose={() => {
-                setDialog(null);
-                setDialogView(null);
-            }}
-            ActionIcon={DialogIcon || null}
-            action={dialogActions[dialog]}
-            actionColor={dialog === 'delete' ? 'secondary' : 'primary'}
-            actionDisabled={dialogDisabled}
-        >
-            {dialog === 'delete' ? null
-                : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
-        </IODialog>
-        <ViewsManage open={viewsManage} onClose={() => setViewsManage(false)} showDialog={showDialog} {...props} />
+        <ViewDialog
+            dialog={dialog}
+            dialogView={dialogView}
+            dialogName={dialogName}
+            setDialog={setDialog}
+            setDialogView={setDialogView}
+            setDialogName={setDialogName}
+            {...props}
+        />
+        <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} />
     </>;
 };
 

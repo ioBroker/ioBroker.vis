@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import AddIcon from '@material-ui/icons/Add';
 import { useState } from 'react';
+import { BiImport } from 'react-icons/bi';
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
 import View from './View';
@@ -158,6 +159,11 @@ const ViewsManage = props => {
                             <AddIcon />
                         </IconButton>
                     </Tooltip>
+                    <Tooltip title={I18n.t('Import')}>
+                        <IconButton onClick={() => setImportDialog('')} size="small">
+                            <BiImport />
+                        </IconButton>
+                    </Tooltip>
                     <Tooltip title={I18n.t('Add folder')}>
                         <IconButton size="small" onClick={() => createFolder('folder')}>
                             <CreateNewFolderIcon />
@@ -183,12 +189,14 @@ const ViewsManage = props => {
             view={importDialog}
             importViewAction={importViewAction}
             project={props.project}
+            themeName={props.themeName}
         />
         <ExportDialog
             open={exportDialog !== false}
             onClose={() => setExportDialog(false)}
             view={exportDialog}
             project={props.project}
+            themeName={props.themeName}
         />
     </IODialog>;
 };

@@ -4,6 +4,8 @@ import IODialog from '../../Components/IODialog';
 
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-min-noconflict/ext-language_tools';
+import 'ace-builds/src-noconflict/theme-clouds_midnight';
+import 'ace-builds/src-noconflict/theme-chrome';
 
 const ExportDialog = props => <IODialog
     open={props.open}
@@ -13,6 +15,7 @@ const ExportDialog = props => <IODialog
 >
     <AceEditor
         mode="json"
+        theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
         value={JSON.stringify(props.project[props.view], null, 2)}
         height="200px"
     />

@@ -6,19 +6,20 @@ import GenericApp from '@iobroker/adapter-react/GenericApp';
 import Loader from '@iobroker/adapter-react/Components/Loader';
 import {
     IconButton,
-    Tab, Tabs,
+    Tab, Tabs, Tooltip,
 } from '@material-ui/core';
 
 import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
+import I18n from '@iobroker/adapter-react/i18n';
 import Attributes from './Attributes';
 import Widgets from './Widgets';
-import MainMenu from './Menu';
 import Toolbar from './Toolbar';
 
-const styles = () => ({
+const styles = theme => ({
     viewTabs: {
         minHeight: 0,
     },
@@ -29,18 +30,27 @@ const styles = () => ({
     toolbar: {
         display: 'flex',
         alignItems: 'center',
-        padding: '10px 0px',
+        paddingTop: '10px',
+        paddingBottom: '30px',
     },
     block: {
         overflow: 'auto',
-        height: 'calc(100vh - 106px - 100px)',
+        height: 'calc(100vh - 106px - 12px)',
         padding: '0px 8px',
     },
     canvas: {
         overflow: 'auto',
-        height: 'calc(100vh - 154px - 100px)',
+        height: 'calc(100vh - 154px)',
     },
     menu: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    app: {
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.text.primary,
+    },
+    tabsContainer: {
         display: 'flex',
         alignItems: 'center',
     },
@@ -69,7 +79,7 @@ class App extends GenericApp {
         // icon cache
         this.icons = {};
 
-        this.state = { projectName: 'main', ...this.state };
+        this.state = { projectName: 'main', viewsManage: false, ...this.state };
     }
 
     loadProject = async projectName => {
@@ -104,12 +114,9 @@ class App extends GenericApp {
 
         const groups = await this.socket.getGroups();
         this.setState({ groups });
+        const currentUser = await this.socket.getCurrentUser();
+        this.setState({ currentUser });
         window.localStorage.setItem('projectName', projectName);
-    }
-
-    importProject = async (projectName, data) => {
-        await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, data);
-        this.loadProject(projectName);
     }
 
     onConnectionReady() {
@@ -139,6 +146,8 @@ class App extends GenericApp {
     refreshProjects = () => this.socket.readDir('vis.0', '').then(projects => this.setState({
         projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
     }));
+
+    setViewsManage = newValue => this.setState({ viewsManage: newValue })
 
     changeView = view => {
         this.setState({ selectedView: view });
@@ -198,7 +207,7 @@ class App extends GenericApp {
         }
 
         return <MuiThemeProvider theme={this.state.theme}>
-            <div>
+            <div className={this.props.classes.app}>
                 <Toolbar
                     classes={this.props.classes}
                     selectedView={this.state.selectedView}
@@ -214,21 +223,11 @@ class App extends GenericApp {
                     addProject={this.addProject}
                     deleteProject={this.deleteProject}
                     needSave={this.state.needSave}
-                />
-                <MainMenu
-                    classes={this.props.classes}
-                    selectedView={this.state.selectedView}
-                    project={this.state.project}
-                    changeView={this.changeView}
-                    changeProject={this.changeProject}
-                    openedViews={this.state.openedViews}
-                    toggleView={this.toggleView}
-                    socket={this.socket}
-                    projects={this.state.projects}
-                    loadProject={this.loadProject}
-                    projectName={this.state.projectName}
-                    addProject={this.addProject}
-                    deleteProject={this.deleteProject}
+                    currentUser={this.state.currentUser}
+                    themeName={this.state.themeName}
+                    refreshProjects={this.refreshProjects}
+                    viewsManage={this.state.viewsManage}
+                    setViewsManage={this.setViewsManage}
                 />
                 <div>
                     <ReactSplit
@@ -238,43 +237,52 @@ class App extends GenericApp {
                             this.setState({ splitSizes: newSizes });
                             window.localStorage.setItem('splitSizes', JSON.stringify(newSizes));
                         }}
-                        theme={GutterTheme.Light}
-                        gutterClassName="Light visGutter"
+                        theme={this.state.themeName === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
+                        gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                     >
                         <div className={this.props.classes.block}>
                             <Widgets />
                         </div>
                         <div>
-                            <Tabs
-                                value={this.state.selectedView}
-                                className={this.props.classes.viewTabs}
-                                variant="scrollable"
-                                scrollButtons="auto"
-                            >
-                                {
-                                    Object.keys(this.state.project)
-                                        .filter(view => !view.startsWith('__'))
-                                        .filter(view => this.state.openedViews.includes(view))
-                                        .map(view => <Tab
-                                            label={<span>
-                                                {view}
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={e => {
-                                                        e.stopPropagation();
-                                                        this.toggleView(view, false);
-                                                    }}
-                                                >
-                                                    <CloseIcon fontSize="small" />
-                                                </IconButton>
-                                            </span>}
-                                            className={this.props.classes.viewTab}
-                                            value={view}
-                                            onClick={() => this.changeView(view)}
-                                            key={view}
-                                        />)
-                                }
-                            </Tabs>
+                            <div className={this.props.classes.tabsContainer}>
+                                <Tooltip title={I18n.t('Show view')}>
+                                    <IconButton onClick={() => this.setViewsManage(true)} size="small">
+                                        <AddIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tabs
+                                    value={this.state.selectedView}
+                                    className={this.props.classes.viewTabs}
+                                    variant="scrollable"
+                                    scrollButtons="auto"
+                                >
+                                    {
+                                        Object.keys(this.state.project)
+                                            .filter(view => !view.startsWith('__'))
+                                            .filter(view => this.state.openedViews.includes(view))
+                                            .map(view => <Tab
+                                                label={<span>
+                                                    {view}
+                                                    <Tooltip title={I18n.t('Hide')}>
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={e => {
+                                                                e.stopPropagation();
+                                                                this.toggleView(view, false);
+                                                            }}
+                                                        >
+                                                            <CloseIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </span>}
+                                                className={this.props.classes.viewTab}
+                                                value={view}
+                                                onClick={() => this.changeView(view)}
+                                                key={view}
+                                            />)
+                                    }
+                                </Tabs>
+                            </div>
                             <div className={this.props.classes.canvas}>
                                 <pre>
                                     {JSON.stringify(this.state.project, null, 2)}
@@ -291,6 +299,7 @@ class App extends GenericApp {
                                 openedViews={this.state.openedViews}
                                 projectName={this.state.projectName}
                                 socket={this.socket}
+                                themeName={this.state.themeName}
                             />
                         </div>
                     </ReactSplit>

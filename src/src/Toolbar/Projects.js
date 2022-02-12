@@ -10,7 +10,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import ListIcon from '@material-ui/icons/List';
 import ToolbarItems from './ToolbarItems';
 
-import Settings from '../Menu/Settings';
+import Settings from './Settings';
 import ProjectsManage from './ProjectsManage';
 
 const Tools = props => {
@@ -34,7 +34,7 @@ const Tools = props => {
     };
 
     return <>
-        <ToolbarItems group={toolbar} {...props} />
+        <ToolbarItems group={toolbar} last {...props} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} />
         <ProjectsManage open={projectsDialog} onClose={() => setProjectsDialog(false)} {...props} />
         <Dialog

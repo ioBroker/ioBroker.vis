@@ -6,6 +6,9 @@ import { AiOutlineColumnWidth, AiOutlineColumnHeight } from 'react-icons/ai';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
+import {
+    RiBringToFront, RiSendToBack,
+} from 'react-icons/ri';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
@@ -37,19 +40,22 @@ const Widgets = props => {
     [[
         { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
         { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
-        {
-            type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
-        },
     ], [
         { type: 'icon-button', Icon: InfoIcon, name: 'Help about widget' },
         {
             type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
         },
+    ]],
+    { type: 'divider' },
+    [[
+        {
+            type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
+        },
+    ], [
         {
             type: 'icon-button', Icon: BiPaste, name: 'Paste', size: 'normal',
         },
     ]],
-
     {
         type: 'icon-button', Icon: UndoIcon, name: 'Undo',
     },
@@ -72,6 +78,10 @@ const Widgets = props => {
             {
                 type: 'icon-button', Icon: MdAlignHorizontalCenter, name: 'Align horizontal/center', size: 'normal',
             },
+            { type: 'icon-button', Icon: LockIcon, name: 'Disable interaction' },
+            {
+                type: 'icon-button', Icon: RiBringToFront, name: 'Bring to front', size: 'normal',
+            },
         ],
         [
             {
@@ -89,11 +99,12 @@ const Widgets = props => {
             {
                 type: 'icon-button', Icon: AiOutlineColumnHeight, name: 'Align height. Press more time to get the desired height.', size: 'normal',
             },
+            { type: 'icon-button', Icon: OpenInNewIcon, name: 'Lock dragging' },
+            {
+                type: 'icon-button', Icon: RiSendToBack, name: 'Send to back', size: 'normal',
+            },
         ],
     ],
-    { type: 'divider' },
-    { type: 'icon-button', Icon: LockIcon, name: 'Disable interaction' },
-    { type: 'icon-button', Icon: OpenInNewIcon, name: 'Lock dragging' },
     { type: 'divider' },
     [
         [{

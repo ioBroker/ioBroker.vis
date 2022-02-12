@@ -15,7 +15,7 @@ import '@szhsin/react-menu/dist/index.css';
 import { withStyles } from '@material-ui/styles';
 
 import Toolbar from '../Toolbar/OldToolbar';
-import Settings from './Settings';
+import Settings from '../Toolbar/Settings';
 
 const styles = () => ({
     right: {

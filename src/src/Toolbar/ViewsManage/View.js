@@ -10,6 +10,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import FileIcon from '@material-ui/icons/InsertDriveFile';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
@@ -40,6 +41,11 @@ const View = props => {
                     <EditIcon />
                 </IconButton>
             </Tooltip>
+            <Tooltip title={I18n.t('Copy')}>
+                <IconButton onClick={() => props.showDialog('copy', props.name)} size="small">
+                    <FileCopyIcon />
+                </IconButton>
+            </Tooltip>
             <Tooltip title={I18n.t('Delete')}>
                 <IconButton onClick={() => props.showDialog('delete', props.name)} size="small">
                     <DeleteIcon />
@@ -49,7 +55,7 @@ const View = props => {
     </div>;
 
     const widthRef = useRef();
-    const [{ isDragging }, dragRef, preview] = useDrag(
+    const [, dragRef, preview] = useDrag(
         {
             type: 'view',
             item: () => ({
@@ -73,7 +79,6 @@ const View = props => {
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.project]);
 
     return <div ref={dragRef}>

@@ -9,8 +9,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import Widget from './Widget';
 import { useState } from 'react';
+import Widget from './Widget';
 
 const selectItems = [
     { value: 'all', name: '*' },
@@ -77,6 +77,7 @@ const Widgets = props => {
             {
                 widgetsList.map((category, categoryKey) => <Accordion
                     key={categoryKey}
+                    elevation={0}
                     expanded={accordionOpen[categoryKey]}
                     onChange={(e, expanded) => {
                         const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));

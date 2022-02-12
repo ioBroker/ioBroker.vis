@@ -97,6 +97,7 @@ const Settings = props => {
                 </Button>
             </>,
         },
+        { type: 'checkbox', name: 'Available for all', field: '??' },
     ];
 
     const save = () => {

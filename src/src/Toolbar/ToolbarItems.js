@@ -135,6 +135,7 @@ const getItem = (item, key, props, full) => {
 
 const ToolbarItems = props => <div
     className={props.classes.toolbarBlock}
+    style={props.last ? { borderRightWidth: 0 } : null}
 >
     <div className={props.classes.toolbarItems}>
         {

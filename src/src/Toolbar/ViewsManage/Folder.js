@@ -6,7 +6,6 @@ import {
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
@@ -41,7 +40,7 @@ const Folder = props => {
         </span> : null}
     </div>;
 
-    const [{ CanDrop, isOver, isCanDrop }, drop] = useDrop(() => ({
+    const [{ CanDrop, isOver }, drop] = useDrop(() => ({
         accept: ['view', 'folder'],
         drop: () => ({ folder: props.folder }),
         canDrop: (item, monitor) => {
@@ -65,14 +64,14 @@ const Folder = props => {
             }
             return false;
         },
-        collect: (monitor, item) => ({
+        collect: monitor => ({
             isOver: monitor.isOver(),
             CanDrop: monitor.canDrop(),
         }),
     }), [props.project]);
 
     const widthRef = useRef();
-    const [{ isDragging }, dragRef, preview] = useDrag(
+    const [, dragRef, preview] = useDrag(
         {
             type: 'folder',
             item: () => ({
@@ -96,10 +95,12 @@ const Folder = props => {
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props.project]);
 
-    return <div ref={drop}>
+    return <div
+        ref={drop}
+        style={isOver && CanDrop ? { borderStyle: 'dashed', borderRadius: 4, borderWidth: 1 } : null}
+    >
         <div ref={dragRef}>
             <div ref={widthRef}>
                 {folderBlock}

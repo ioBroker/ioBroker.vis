@@ -1,7 +1,8 @@
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, ListItemText, MenuItem, Select, TextField, withStyles,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, Input, ListItemText, MenuItem, Select, TextField, withStyles,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import clsx from 'clsx';
 
 import I18n from '@iobroker/adapter-react/i18n';
 
@@ -12,6 +13,7 @@ import { useState } from 'react';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+import CloseIcon from '@material-ui/icons/Close';
 import { theme, background } from './ViewData';
 
 const styles = () => ({
@@ -34,15 +36,78 @@ const styles = () => ({
     },
     fieldTitle: {
         width: 140,
+        fontSize: '80%',
+    },
+    fieldContent: {
+        '&&&&&&': {
+            fontSize: '80%',
+        },
+        '& svg': {
+            fontSize: '1rem',
+        },
+    },
+    fieldContentColor: {
+        '&&&&&& label': {
+            display: 'none',
+        },
+        '&&&&&& input': {
+            fontSize: '80%',
+        },
+    },
+    groupSummary: {
+        '&&&&&&': {
+            paddingTop: 20,
+        },
     },
 });
+
+const resolution = [
+    { value: 'none', name: 'not defined' },
+    { value: 'user', name: 'User defined' },
+    { value: '320x460', name: 'iPhone 3G, 3GS, 4, 4S - Portrait' },
+    { value: '480x300', name: 'iPhone 3G, 3GS, 4, 4S - Landscape' },
+    { value: '320x548', name: 'iPhone 5, 5S - Portrait' },
+    { value: '568x300', name: 'iPhone 5, 5S - Landscape' },
+    { value: '768x1004', name: 'iPad - Portrait' },
+    { value: '1024x748', name: 'iPad - Landscape' },
+    { value: '320x533', name: 'Samsung S2 - Portrait' },
+    { value: '533x320', name: 'Samsung S2 - Landscape' },
+    { value: '360x640', name: 'Samsung S3, Note 2 - Portrait' },
+    { value: '640x360" selected="selected', name: 'Samsung S3, Note 2 - Landscape' },
+    { value: '360x640', name: 'Samsung S4, S5, Note 3 - Portrait' },
+    { value: '640x360', name: 'Samsung S4, S5, Note 3 - Landscape' },
+    { value: '384x640', name: 'Nexus 4 - Portrait' },
+    { value: '640x384', name: 'Nexus 4 - Landscape' },
+    { value: '360x640', name: 'Nexus 5 - Portrait' },
+    { value: '640x360', name: 'Nexus 5 - Landscape' },
+    { value: '604x966', name: 'Nexus 7 (2012) - Portrait' },
+    { value: '966x604', name: 'Nexus 7 (2012) - Landscape' },
+    { value: '800x1280', name: 'Nexus 10 - Portrait' },
+    { value: '1280x800', name: 'Nexus 10 - Landscape' },
+    { value: '720x1280', name: 'HD - Portrait' },
+    { value: '1280x720', name: 'HD - Landscape' },
+    { value: '1080x1920', name: 'Full HD - Portrait' },
+    { value: '1920x1080', name: 'Full HD - Landscape' },
+];
 
 const View = props => {
     if (!props.project[props.selectedView]) {
         return null;
     }
 
+    const [userResolution, setUserResolution] = useState(false);
+
     const view = props.project[props.selectedView];
+
+    let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
+    if (userResolution) {
+        resolutionSelect = 'user';
+    } else if (!(view.settings.sizex && view.settings.sizey)) {
+        resolutionSelect = 'none';
+    } else if (!resolution.find(item => item.value === `${view.settings.sizex}x${view.settings.sizey}`)) {
+        resolutionSelect = 'user';
+        setUserResolution(true);
+    }
 
     const fields = [
         {
@@ -191,6 +256,68 @@ const View = props => {
                 {
                     type: 'number', name: 'Grid size', field: 'gridSize', notStyle: true,
                 },
+                {
+                    type: 'select',
+                    name: 'Resolution',
+                    items: resolution,
+                    width: 236,
+                    value: resolutionSelect,
+                    onChange: e => {
+                        const project = JSON.parse(JSON.stringify(props.project));
+                        const match = e.target.value.match(/^([0-9]+)x([0-9]+)$/);
+                        if (e.target.value === 'none') {
+                            project[props.selectedView].settings.sizex = 0;
+                            project[props.selectedView].settings.sizey = 0;
+                            setUserResolution(false);
+                        } else if (e.target.value === 'user') {
+                            setUserResolution(true);
+                        } else {
+                            [, project[props.selectedView].settings.sizex, project[props.selectedView].settings.sizey] = match;
+                            setUserResolution(false);
+                        }
+                        props.changeProject(project);
+                    },
+                },
+                {
+                    type: 'raw',
+                    name: 'Width x height (px)',
+                    hide: !userResolution,
+                    Component:
+                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                        <TextField
+                            value={view.settings.sizex}
+                            InputProps={{
+                                classes: {
+                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                },
+                            }}
+                            onChange={e => {
+                                const project = JSON.parse(JSON.stringify(props.project));
+                                project[props.selectedView].settings.sizex = e.target.value;
+                                props.changeProject(project);
+                            }}
+                        />
+                        <CloseIcon
+                            fontSize="small"
+                            style={{
+                                padding: '0px 10px',
+                            }}
+                        />
+                        <TextField
+                            value={view.settings.sizey}
+                            InputProps={{
+                                classes: {
+                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                },
+                            }}
+                            onChange={e => {
+                                const project = JSON.parse(JSON.stringify(props.project));
+                                project[props.selectedView].settings.sizey = e.target.value;
+                                props.changeProject(project);
+                            }}
+                        />
+                    </span>,
+                },
             ],
         },
     ];
@@ -220,7 +347,7 @@ const View = props => {
         >
             <AccordionSummary
                 classes={{
-                    root: props.classes.clearPadding,
+                    root: clsx(props.classes.clearPadding, props.classes.groupSummary),
                     content: props.classes.clearPadding,
                     expanded: props.classes.clearPadding,
                     expandIcon: props.classes.clearPadding,
@@ -263,7 +390,7 @@ const View = props => {
                                     onInputChange={(e, inputValue) => change(inputValue)}
                                     onChange={(e, inputValue) => change(inputValue)}
                                     classes={{
-                                        input: props.classes.clearPadding,
+                                        input: clsx(props.classes.clearPadding, props.classes.fieldContent),
                                     }}
                                     renderInput={params => (
                                         <TextField
@@ -275,18 +402,19 @@ const View = props => {
                                 result = <Checkbox
                                     checked={value}
                                     classes={{
-                                        root: props.classes.clearPadding,
+                                        root: clsx(props.classes.fieldContent, props.classes.clearPadding),
                                     }}
                                     size="small"
                                     onChange={e => change(e.target.checked)}
                                 />;
                             } else if (field.type === 'select') {
                                 result = <Select
-                                    value={value}
+                                    value={field.value ? field.value : value}
                                     classes={{
                                         root: props.classes.clearPadding,
+                                        select: props.classes.fieldContent,
                                     }}
-                                    onChange={e => change(e.target.value)}
+                                    onChange={field.onChange ? field.onChange : e => change(e.target.value)}
                                     renderValue={field.renderValue}
                                     fullWidth
                                 >
@@ -302,6 +430,7 @@ const View = props => {
                                     renderValue={selected => selected.join(', ')}
                                     classes={{
                                         root: props.classes.clearPadding,
+                                        select: props.classes.fieldContent,
                                     }}
                                     value={value || []}
                                     onChange={e => change(e.target.value)}
@@ -316,9 +445,12 @@ const View = props => {
                                         <ListItemText primary={I18n.t(selectItem.name)} />
                                     </MenuItem>)}
                                 </Select>;
+                            } else if (field.type === 'raw') {
+                                result = field.Component;
                             } else if (field.type === 'color') {
                                 result = <ColorPicker
                                     value={value}
+                                    className={props.classes.fieldContentColor}
                                     onChange={color => change(color)}
                                     openAbove
                                     color={field.value || ''}
@@ -331,7 +463,7 @@ const View = props => {
                                     fullWidth
                                     InputProps={{
                                         classes: {
-                                            input: props.classes.clearPadding,
+                                            input: clsx(props.classes.clearPadding, props.classes.fieldContent),
                                         },
                                     }}
                                     value={value}
@@ -342,7 +474,7 @@ const View = props => {
 
                             return <tr key={key2}>
                                 <td className={props.classes.fieldTitle}>{I18n.t(field.name)}</td>
-                                <td>{result}</td>
+                                <td className={props.classes.fieldContent}>{result}</td>
                             </tr>;
                         })
                     }
