@@ -1119,7 +1119,7 @@ var vis = {
         viewDiv = viewDiv || this.activeViewDiv;
 
         this.destroyWidget(viewDiv, view, widget);
-        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : null);
+        this.renderWidget(viewDiv, view, widget, !this.views[viewDiv] && viewDiv !== widget ? viewDiv : vis.views[view].widgets[widget].groupid ? vis.views[view].widgets[widget].groupid : null);
 
         updateContainers && this.updateContainers(viewDiv, view);
     },
