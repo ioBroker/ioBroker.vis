@@ -13,11 +13,11 @@ import {
 
 import DeleteIcon from '@material-ui/icons/Delete';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import InfoIcon from '@material-ui/icons/Info';
 import LockIcon from '@material-ui/icons/Lock';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import UndoIcon from '@material-ui/icons/Undo';
 
+import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';
 
 const Widgets = props => {
@@ -28,15 +28,19 @@ const Widgets = props => {
         return null;
     }
 
+    const [selectedWidgets, setSelectedWidgets] = useState([]);
+
     const toolbar = {
         name: 'Widgets',
         items:
 [
     {
-        type: 'select',
+        type: 'multiselect',
         name: 'Active widget',
         items: Object.keys(props.project[props.selectedView].widgets).map(widget => ({ name: widget, value: widget })),
         width: 120,
+        value: selectedWidgets,
+        onChange: e => setSelectedWidgets(e.target.value),
     },
     [[
         { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },

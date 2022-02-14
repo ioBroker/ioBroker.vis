@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
+    AppBar,
     IconButton, Tooltip, withStyles,
 } from '@material-ui/core';
 
@@ -21,7 +22,7 @@ import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 
-const styles = () => ({
+const styles = theme => ({
     viewManageBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -32,7 +33,12 @@ const styles = () => ({
         flex: 1,
     },
     dialog: {
-        width: 400,
+        minWidth: 400,
+    },
+    topBar: {
+        flexDirection: 'row',
+        borderRadius: 4,
+        marginBottom: 12,
     },
     folderContainer: {
         clear: 'right',
@@ -139,7 +145,7 @@ const ViewsManage = props => {
         <div className={props.classes.dialog}>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />
-                <div>
+                <AppBar position="static" className={props.classes.topBar}>
                     <Tooltip title={I18n.t('Add view')}>
                         <IconButton size="small" onClick={() => props.showDialog('add', props.name)}>
                             <AddIcon />
@@ -162,7 +168,7 @@ const ViewsManage = props => {
                             <CreateNewFolderIcon />
                         </IconButton>
                     </Tooltip>
-                </div>
+                </AppBar>
                 <Folder
                     folder={{ name: I18n.t('root') }}
                     setFolderDialog={setFolderDialog}

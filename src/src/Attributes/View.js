@@ -57,7 +57,10 @@ const styles = () => ({
     },
     groupSummary: {
         '&&&&&&': {
-            paddingTop: 20,
+            marginTop: 20,
+            borderTopRightRadius: '4px',
+            borderTopLeftRadius: '4px',
+            padding: '2px',
         },
     },
 });
@@ -348,7 +351,7 @@ const View = props => {
         >
             <AccordionSummary
                 classes={{
-                    root: clsx(props.classes.clearPadding, props.classes.groupSummary),
+                    root: clsx(props.classes.clearPadding, props.classes.groupSummary, props.classes.lightedPanel),
                     content: props.classes.clearPadding,
                     expanded: props.classes.clearPadding,
                     expandIcon: props.classes.clearPadding,

@@ -6,16 +6,19 @@ import {
 
 import CloseIcon from '@material-ui/icons/Close';
 
-const IODialog = props => <Dialog onClose={props.onClose} open={props.open}>
+const IODialog = props => <Dialog onClose={props.onClose} open={props.open} fullScreen={props.fullScreen}>
     <DialogTitle>{I18n.t(props.title)}</DialogTitle>
     <DialogContent>{props.children}</DialogContent>
     <DialogActions>
+        { props.dialogActions ? props.dialogActions : null}
         { props.actionTitle
             ? <Button
                 variant="contained"
                 onClick={() => {
                     props.action();
-                    props.onClose();
+                    if (!props.actionNoClose) {
+                        props.onClose();
+                    }
                 }}
                 color={props.actionColor ? props.actionColor : 'primary'}
                 disabled={props.actionDisabled}
@@ -38,12 +41,15 @@ IODialog.propTypes = {
     action: PropTypes.func,
     actionColor: PropTypes.string,
     actionDisabled: PropTypes.bool,
+    actionNoClose: PropTypes.bool,
     actionTitle: PropTypes.string,
     children: PropTypes.any,
     closeTitle: PropTypes.string,
+    dialogActions: PropTypes.any,
     onClose: PropTypes.func,
     open: PropTypes.bool,
     title: PropTypes.string,
+    fullScreen: PropTypes.bool,
 };
 
 export default IODialog;

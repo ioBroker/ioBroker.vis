@@ -11,6 +11,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { useState } from 'react';
+import clsx from 'clsx';
 import Widget from './Widget';
 
 const selectItems = [
@@ -34,6 +35,21 @@ const styles = () => ({
     button: {
         padding: '0px 4px',
     },
+    clearPadding: {
+        '&&&&': {
+            padding: 0,
+            margin: 0,
+            minHeight: 'initial',
+        },
+    },
+    groupSummary: {
+        '&&&&&&': {
+            marginTop: 20,
+            borderTopRightRadius: '4px',
+            borderTopLeftRadius: '4px',
+            padding: '2px',
+        },
+    },
 });
 
 const widgetsList = [
@@ -49,7 +65,7 @@ const Widgets = props => {
     );
 
     return <>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom className={props.classes.blockHeader}>
             {I18n.t('Add widget')}
         </Typography>
         <div>
@@ -57,7 +73,10 @@ const Widgets = props => {
                 freeSolo
                 options={[]}
                 renderInput={params => (
-                    <TextField {...params} label={I18n.t('filter')} />
+                    <TextField
+                        {...params}
+                        label={I18n.t('filter')}
+                    />
                 )}
             />
         </div>
@@ -87,7 +106,17 @@ const Widgets = props => {
                         setAccordionOpen(newAccordionOpen);
                     }}
                 >
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>{category.name}</AccordionSummary>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        classes={{
+                            root: clsx(props.classes.clearPadding, props.classes.groupSummary, props.classes.lightedPanel),
+                            content: props.classes.clearPadding,
+                            expanded: props.classes.clearPadding,
+                            expandIcon: props.classes.clearPadding,
+                        }}
+                    >
+                        {category.name}
+                    </AccordionSummary>
                     <AccordionDetails>
                         <div>
                             {category.items.map((value, widgetKey) => <Widget key={widgetKey} />)}

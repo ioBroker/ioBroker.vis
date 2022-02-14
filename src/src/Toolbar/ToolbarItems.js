@@ -52,12 +52,29 @@ const getItem = (item, key, props, full) => {
 
         props.changeProject(project);
     };
-
     if (item.type === 'select') {
         return <FormControl key={key} style={{ margin: '0px 10px' }}>
             <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
             <Select
                 style={{ width: item.width }}
+                value={item.value ? item.value : value}
+                onChange={item.onChange ? item.onChange : e => change(e.target.value)}
+            >
+                {item.items.map(selectItem => <MenuItem
+                    value={selectItem.value}
+                    key={selectItem.value}
+                >
+                    {I18n.t(selectItem.name)}
+                </MenuItem>)}
+            </Select>
+        </FormControl>;
+    }
+    if (item.type === 'multiselect') {
+        return <FormControl key={key} style={{ margin: '0px 10px' }}>
+            <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
+            <Select
+                style={{ width: item.width }}
+                multiple
                 value={item.value ? item.value : value}
                 onChange={item.onChange ? item.onChange : e => change(e.target.value)}
             >

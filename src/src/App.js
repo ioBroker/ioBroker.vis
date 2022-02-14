@@ -20,6 +20,11 @@ import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 
 const styles = theme => ({
+    blockHeader: {
+        fontSize: '18px',
+        textAlign: 'center',
+        paddingTop: '8px',
+    },
     viewTabs: {
         minHeight: 0,
     },
@@ -27,11 +32,14 @@ const styles = theme => ({
         minWidth: 0,
         minHeight: 0,
     },
+    lightedPanel: {
+        backgroundColor: theme.palette.type === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 96%)',
+    },
     toolbar: {
         display: 'flex',
         alignItems: 'center',
         paddingTop: '10px',
-        paddingBottom: '30px',
+        paddingBottom: '10px',
     },
     block: {
         overflow: 'auto',
@@ -79,7 +87,26 @@ class App extends GenericApp {
         // icon cache
         this.icons = {};
 
-        this.state = { projectName: 'main', viewsManage: false, ...this.state };
+        this.state = {
+            projectName: 'main',
+            viewsManage: false,
+            projectsDialog: false,
+            ...this.state,
+        };
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        window.addEventListener('hashchange', this.onHashChange, false);
+    }
+
+    componentWillUnmount() {
+        super.componentWillUnmount();
+        window.removeEventListener('hashchange', this.onHashChange, false);
+    }
+
+    onHashChange = () => {
+        this.changeView(decodeURIComponent(window.location.hash.slice(1)));
     }
 
     loadProject = async projectName => {
@@ -94,7 +121,9 @@ class App extends GenericApp {
         project.___settings = project.___settings || {};
         project.___settings.folders = project.___settings.folders || [];
         let selectedView;
-        if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+        if (decodeURIComponent(window.location.hash.slice(1)).length) {
+            selectedView = decodeURIComponent(window.location.hash.slice(1));
+        } else if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
             selectedView = window.localStorage.getItem('selectedView');
         } else {
             selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
@@ -105,12 +134,15 @@ class App extends GenericApp {
         } else {
             openedViews = [selectedView];
         }
+        if (openedViews && !openedViews.includes(selectedView)) {
+            selectedView = openedViews[0];
+        }
         this.setState({
             project,
-            selectedView,
             openedViews,
             projectName,
         });
+        this.changeView(selectedView);
 
         const groups = await this.socket.getGroups();
         this.setState({ groups });
@@ -149,9 +181,12 @@ class App extends GenericApp {
 
     setViewsManage = newValue => this.setState({ viewsManage: newValue })
 
+    setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
+
     changeView = view => {
         this.setState({ selectedView: view });
         window.localStorage.setItem('selectedView', view);
+        window.location.hash = view;
     }
 
     changeProject = project => {
@@ -228,6 +263,10 @@ class App extends GenericApp {
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
+                    projectsDialog={this.state.projectsDialog}
+                    setProjectsDialog={this.setProjectsDialog}
+                    adapterName={this.adapterName}
+                    instance={this.instance}
                 />
                 <div>
                     <ReactSplit
@@ -241,7 +280,9 @@ class App extends GenericApp {
                         gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                     >
                         <div className={this.props.classes.block}>
-                            <Widgets />
+                            <Widgets
+                                classes={this.props.classes}
+                            />
                         </div>
                         <div>
                             <div className={this.props.classes.tabsContainer}>

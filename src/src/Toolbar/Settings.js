@@ -15,6 +15,7 @@ const styles = () => ({
     field: {
         display: 'flex',
         alignItems: 'center',
+        padding: '4px 0px',
     },
 });
 
@@ -87,12 +88,14 @@ const Settings = props => {
             type: 'raw',
             Node: <>
                 <TextField label={I18n.t('Instance id')} value={instance} onChange={e => setInstance(e.target.value)} />
-                <Button onClick={() => {
-                    let newInstance = (Math.random() * 4294967296).toString(16);
-                    newInstance = `0000000${newInstance}`;
-                    newInstance = newInstance.substring(newInstance.length - 8);
-                    setInstance(newInstance);
-                }}
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        let newInstance = (Math.random() * 4294967296).toString(16);
+                        newInstance = `0000000${newInstance}`;
+                        newInstance = newInstance.substring(newInstance.length - 8);
+                        setInstance(newInstance);
+                    }}
                 >
                     {I18n.t('Create instance')}
                 </Button>
@@ -153,6 +156,7 @@ const Settings = props => {
                 variant="contained"
                 color="primary"
                 onClick={save}
+                disabled={JSON.stringify(props.project.___settings) === JSON.stringify(settings)}
             >
                 {I18n.t('Save')}
             </Button>

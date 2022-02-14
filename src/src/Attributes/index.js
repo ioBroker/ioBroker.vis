@@ -27,7 +27,7 @@ const Attributes = props => {
     const TabContent = tabs[selected];
 
     return <>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h6" gutterBottom className={props.classes.blockHeader}>
             {I18n.t('Attributes')}
         </Typography>
         <Tabs

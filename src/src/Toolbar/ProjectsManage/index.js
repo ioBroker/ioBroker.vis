@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import I18n from '@iobroker/adapter-react/i18n';
 import {
+    AppBar,
     Button, IconButton, TextField, Tooltip, withStyles,
 } from '@material-ui/core';
 import JSZip from 'jszip';
@@ -17,12 +18,20 @@ const styles = () => ({
         display: 'flex',
         alignItems: 'center',
     },
+    projectButton: {
+        justifyContent: 'left',
+    },
     buttonActions: {
         textAlign: 'right',
-        flex: 1,
+        width: 100,
     },
     dialog: {
-        width: 200,
+        minWidth: 200,
+    },
+    topBar: {
+        flexDirection: 'row',
+        borderRadius: 4,
+        marginBottom: 12,
     },
 });
 
@@ -48,7 +57,7 @@ const ProjectsManage = props => {
 
     return <IODialog open={props.open} onClose={props.onClose} title="Manage projects" closeTitle="Close">
         <div className={props.classes.dialog}>
-            <div>
+            <AppBar position="static" className={props.classes.topBar}>
                 <Tooltip title={I18n.t('Add')} size="small">
                     <IconButton onClick={() => setAddDialog('')}>
                         <AddIcon />
@@ -59,9 +68,16 @@ const ProjectsManage = props => {
                         <BiImport fontSize="20" onClick={() => setImportDialog('')} />
                     </IconButton>
                 </Tooltip>
-            </div>
+            </AppBar>
             {props.projects.map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
-                <Button color={projectName === props.projectName ? 'primary' : undefined} onClick={() => props.loadProject(projectName)}>{projectName}</Button>
+                <Button
+                    fullWidth
+                    className={props.classes.projectButton}
+                    color={projectName === props.projectName ? 'primary' : undefined}
+                    onClick={() => props.loadProject(projectName)}
+                >
+                    {projectName}
+                </Button>
                 <span className={props.classes.buttonActions}>
                     <Tooltip title={I18n.t('Import')}>
                         <IconButton size="small">

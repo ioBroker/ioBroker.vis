@@ -31,12 +31,17 @@ const Toolbar = props => {
     const [right, setRight] = useState(false);
     const rightRef = useRef(null);
 
-    return <div>
+    return <div className={props.classes.lightedPanel}>
         <span className={props.classes.right}>
             <div className={props.classes.rightBlock}>
                 {props.needSave ? <CircularProgress size={20} /> : null}
                 <Tooltip title={I18n.t('Close editor')}>
-                    <IconButton size="small">
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            window.location.href = `${window.location.protocol}//${window.location.host}/vis/index.html`;
+                        }}
+                    >
                         <CloseIcon />
                     </IconButton>
                 </Tooltip>
@@ -53,15 +58,26 @@ const Toolbar = props => {
                     }}
                     getContentAnchorEl={null}
                 >
-                    <DropMenuItem>
+                    <DropMenuItem onClick={() => {
+                        window.location.href = `${window.location.protocol}//${window.location.host}/vis/index.html`;
+                    }}
+                    >
                         <CloseIcon />
                         {I18n.t('Close editor')}
                     </DropMenuItem>
-                    <DropMenuItem>
+                    <DropMenuItem onClick={() => {
+                        window.open(`${window.location.protocol}//${window.location.host}/vis/index.html`, '_blank');
+                    }}
+                    >
                         <PlayArrowIcon />
                         {I18n.t('Open runtime in new window')}
                     </DropMenuItem>
-                    <DropMenuItem>
+                    <DropMenuItem onClick={() => {
+                        props.socket.setState(`${props.adapterName}.${props.instance}.control.instance`, { val: '*', ack: true });
+                        props.socket.setState(`${props.adapterName}.${props.instance}.control.data`, { val: null, ack: true });
+                        props.socket.setState(`${props.adapterName}.${props.instance}.control.command`, { val: 'refresh', ack: true });
+                    }}
+                    >
                         <SyncIcon />
                         {I18n.t('Reload all runtimes')}
                     </DropMenuItem>
@@ -71,22 +87,24 @@ const Toolbar = props => {
                 ? <div className={props.classes.rightBlock}>
                     <PersonIcon fontSize="small" />
                     <span>{props.currentUser}</span>
-                    <Tooltip title={I18n.t('Exit')}>
-                        <IconButton
-                            size="small"
-                            onClick={async () => {
-                                try {
-                                    await props.socket.logout();
-                                } catch (e) {
-                                    console.error(e);
-                                    return;
-                                }
-                                window.location.reload();
-                            }}
-                        >
-                            <ExitToAppIcon />
-                        </IconButton>
-                    </Tooltip>
+                    { props.socket.isSecure
+                        ? <Tooltip title={I18n.t('Exit')}>
+                            <IconButton
+                                size="small"
+                                onClick={async () => {
+                                    try {
+                                        await props.socket.logout();
+                                    } catch (e) {
+                                        console.error(e);
+                                        return;
+                                    }
+                                    window.location.reload();
+                                }}
+                            >
+                                <ExitToAppIcon />
+                            </IconButton>
+                        </Tooltip>
+                        : null}
                 </div>
                 : null }
         </span>
