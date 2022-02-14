@@ -32,6 +32,7 @@ const View = props => {
     const [dialog, setDialog] = useState(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
+    const [dialogParentId, setDialogParentId] = useState(null);
 
     const toolbar = {
         name: <span className={props.classes.label}>
@@ -62,7 +63,7 @@ const View = props => {
         ],
     };
 
-    const showDialog = (type, view) => {
+    const showDialog = (type, view, parentId) => {
         view = view || props.selectedView;
 
         const dialogDefaultName = {
@@ -73,6 +74,7 @@ const View = props => {
 
         setDialog(type);
         setDialogView(view);
+        setDialogParentId(parentId);
         setDialogName(dialogDefaultName[type]);
     };
 
@@ -82,9 +84,11 @@ const View = props => {
             dialog={dialog}
             dialogView={dialogView}
             dialogName={dialogName}
+            dialogParentId={dialogParentId}
             setDialog={setDialog}
             setDialogView={setDialogView}
             setDialogName={setDialogName}
+            setDialogParentId={setDialogParentId}
             {...props}
         />
         <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} />

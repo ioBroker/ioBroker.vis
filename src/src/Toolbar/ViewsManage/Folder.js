@@ -7,6 +7,7 @@ import {
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
+import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
@@ -18,6 +19,16 @@ const Folder = props => {
         <FolderIcon />
         {props.folder.name}
         {props.folder.id ? <span className={props.classes.buttonActions}>
+            <Tooltip title={I18n.t('Add view')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.showDialog('add', null, props.folder.id);
+                    }}
+                >
+                    <AddIcon />
+                </IconButton>
+            </Tooltip>
             <Tooltip title={I18n.t('Add subfolder')}>
                 <IconButton
                     size="small"

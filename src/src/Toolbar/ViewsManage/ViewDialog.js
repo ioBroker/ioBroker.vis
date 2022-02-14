@@ -25,6 +25,7 @@ const ViewDialog = props => {
         const project = JSON.parse(JSON.stringify(props.project));
         const newProject = {
             name: props.dialogName,
+            parentId: props.dialogParentId,
             settings: {
                 style: {},
             },
@@ -106,6 +107,7 @@ const ViewDialog = props => {
         onClose={() => {
             props.setDialog(null);
             props.setDialogView(null);
+            props.setDialogParentId(null);
         }}
         ActionIcon={DialogIcon || null}
         action={dialogActions[props.dialog]}

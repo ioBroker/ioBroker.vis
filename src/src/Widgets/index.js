@@ -35,6 +35,12 @@ const styles = () => ({
     button: {
         padding: '0px 4px',
     },
+    label: {
+        top: '-10px',
+    },
+    labelShrink: {
+        display: 'none',
+    },
     clearPadding: {
         '&&&&': {
             padding: 0,
@@ -64,6 +70,9 @@ const Widgets = props => {
             : widgetsList.map(() => false),
     );
 
+    const [filter, setFilter] = useState('');
+    const [type, setType] = useState('');
+
     return <>
         <Typography variant="h6" gutterBottom className={props.classes.blockHeader}>
             {I18n.t('Add widget')}
@@ -75,15 +84,42 @@ const Widgets = props => {
                 renderInput={params => (
                     <TextField
                         {...params}
-                        label={I18n.t('filter')}
+                        value={filter}
+                        onChange={e => setFilter(e.target.value)}
+                        label={filter.length ? ' ' : I18n.t('filter')}
+                        InputProps={{
+                            className: props.classes.clearPadding,
+                        }}
+                        InputLabelProps={{
+                            shrink: false,
+                            classes: {
+                                root: props.classes.label,
+                                shrink: props.classes.labelShrink,
+                            },
+                        }}
                     />
                 )}
             />
         </div>
         <div>
             <FormControl fullWidth>
-                <InputLabel>{I18n.t('type')}</InputLabel>
-                <Select>
+                <InputLabel
+                    shrink={false}
+                    classes={{
+                        root: props.classes.label,
+                        shrink: props.classes.labelShrink,
+                    }}
+                >
+                    {type.length ? ' ' : I18n.t('type')}
+                </InputLabel>
+                <Select
+                    value={type}
+                    onChange={e => setType(e.target.value)}
+                    classes={{
+                        root: props.classes.clearPadding,
+                        select: props.classes.fieldContent,
+                    }}
+                >
                     {selectItems.map(selectItem => <MenuItem
                         value={selectItem.value}
                         key={selectItem.value}

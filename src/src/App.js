@@ -194,29 +194,55 @@ class App extends GenericApp {
     }
 
     addProject = async projectName => {
-        const project = {
-            ___settings: {
-                folders: [],
-            },
-            DemoView: {
-                name: 'DemoView',
-                settings: {
-                    style: {},
+        try {
+            const project = {
+                ___settings: {
+                    folders: [],
                 },
-                widgets: {},
-                activeWidgets: {},
-            },
-        };
-        await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project));
-        await this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, '');
-        await this.refreshProjects();
-        await this.loadProject(projectName);
+                DemoView: {
+                    name: 'DemoView',
+                    settings: {
+                        style: {},
+                    },
+                    widgets: {},
+                    activeWidgets: {},
+                },
+            };
+            await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project));
+            await this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, '');
+            await this.refreshProjects();
+            await this.loadProject(projectName);
+        } catch (e) {
+            console.error(e);
+        }
     }
 
-    deleteProject = projectName => {
-        this.socket.deleteFolder('vis.0', projectName).then(
-            () => this.refreshProjects(),
-        );
+    renameProject = async (fromProjectName, toProjectName) => {
+        try {
+            const files = await this.socket.readDir('vis.0', fromProjectName);
+            await Promise.all(files.map(async file => {
+                const content = await this.socket.readFile('vis.0', `${fromProjectName}/${file.file}`);
+                return this.socket.writeFile64('vis.0', `${toProjectName}/${file.file}`, content);
+            }));
+            await this.socket.deleteFolder('vis.0', fromProjectName);
+            if (this.state.projectName === fromProjectName) {
+                await this.loadProject(toProjectName);
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    deleteProject = async projectName => {
+        try {
+            await this.socket.deleteFolder('vis.0', projectName);
+            await this.refreshProjects();
+            if (this.state.projectName === projectName) {
+                await this.loadProject(this.state.projects[0]);
+            }
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     toggleView = (view, isShow) => {
@@ -256,6 +282,7 @@ class App extends GenericApp {
                     loadProject={this.loadProject}
                     projectName={this.state.projectName}
                     addProject={this.addProject}
+                    renameProject={this.renameProject}
                     deleteProject={this.deleteProject}
                     needSave={this.state.needSave}
                     currentUser={this.state.currentUser}

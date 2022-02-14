@@ -9,9 +9,12 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 import AddIcon from '@material-ui/icons/Add';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { BiImport, BiExport } from 'react-icons/bi';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog from './ImportProjectDialog';
+import ProjectDialog from './ProjectDialog';
 
 const styles = () => ({
     projectBlock: {
@@ -23,7 +26,7 @@ const styles = () => ({
     },
     buttonActions: {
         textAlign: 'right',
-        width: 100,
+        width: 160,
     },
     dialog: {
         minWidth: 200,
@@ -36,12 +39,28 @@ const styles = () => ({
 });
 
 const ProjectsManage = props => {
-    const [addDialog, setAddDialog] = useState(false);
+    const [dialog, setDialog] = useState(null);
+    const [dialogName, setDialogName] = useState('');
+    const [dialogProject, setDialogProject] = useState(null);
+
     const [importDialog, setImportDialog] = useState(false);
 
     if (!props.projects) {
         return null;
     }
+
+    const showDialog = (type, project) => {
+        project = project || props.selectedView;
+
+        const dialogDefaultName = {
+            add: 'New project',
+            rename: project,
+        };
+
+        setDialog(type);
+        setDialogProject(project);
+        setDialogName(dialogDefaultName[type]);
+    };
 
     const exportProject = projectName => {
         props.socket.readFile('vis.0', `${projectName}/vis-views.json`).then(project => {
@@ -59,13 +78,13 @@ const ProjectsManage = props => {
         <div className={props.classes.dialog}>
             <AppBar position="static" className={props.classes.topBar}>
                 <Tooltip title={I18n.t('Add')} size="small">
-                    <IconButton onClick={() => setAddDialog('')}>
+                    <IconButton onClick={() => showDialog('add')}>
                         <AddIcon />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={I18n.t('Import')}>
-                    <IconButton size="small">
-                        <BiImport fontSize="20" onClick={() => setImportDialog('')} />
+                    <IconButton size="small" onClick={() => setImportDialog('')}>
+                        <BiImport fontSize="20" />
                     </IconButton>
                 </Tooltip>
             </AppBar>
@@ -79,9 +98,9 @@ const ProjectsManage = props => {
                     {projectName}
                 </Button>
                 <span className={props.classes.buttonActions}>
-                    <Tooltip title={I18n.t('Import')}>
+                    <Tooltip title={I18n.t('Import')} onClick={() => setImportDialog(projectName)}>
                         <IconButton size="small">
-                            <BiImport fontSize="20" onClick={() => setImportDialog(projectName)} />
+                            <BiImport fontSize="20" />
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={I18n.t('Export')}>
@@ -89,20 +108,28 @@ const ProjectsManage = props => {
                             <BiExport fontSize="20" />
                         </IconButton>
                     </Tooltip>
+                    <Tooltip title={I18n.t('Edit')}>
+                        <IconButton size="small" onClick={() => showDialog('rename', projectName)}>
+                            <EditIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)}>
+                        <IconButton size="small">
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
                 </span>
             </div>)}
         </div>
-        <IODialog
-            title="Add project"
-            action={() => props.addProject(addDialog)}
-            actionTitle="Add project"
-            ActionIcon={AddIcon}
-            actionDisabled={props.projects.includes(addDialog)}
-            open={addDialog !== false}
-            onClose={() => setAddDialog(false)}
-        >
-            <TextField value={addDialog} onChange={e => setAddDialog(e.target.value)} label={I18n.t('Project name')} />
-        </IODialog>
+        <ProjectDialog
+            dialog={dialog}
+            dialogProject={dialogProject}
+            dialogName={dialogName}
+            setDialog={setDialog}
+            setDialogProject={setDialogProject}
+            setDialogName={setDialogName}
+            {...props}
+        />
         <ImportProjectDialog
             open={importDialog !== false}
             onClose={() => setImportDialog(false)}
