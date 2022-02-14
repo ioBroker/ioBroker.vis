@@ -26,7 +26,8 @@ const styles = () => ({
         display: 'flex', flexDirection: 'row',
     },
     toolbarLabel: {
-        fontSize: '80%',
+        fontSize: '72%',
+        opacity: '80%',
         paddingTop: 4,
     },
 });
