@@ -10,6 +10,7 @@ import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
+import clsx from 'clsx';
 
 const tabs = {
     CSS, Scripts, View, Widget,
@@ -27,7 +28,7 @@ const Attributes = props => {
     const TabContent = tabs[selected];
 
     return <>
-        <Typography variant="h6" gutterBottom className={props.classes.blockHeader}>
+        <Typography variant="h6" gutterBottom className={clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
             {I18n.t('Attributes')}
         </Typography>
         <Tabs

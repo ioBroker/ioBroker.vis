@@ -117,6 +117,7 @@ const ViewDialog = props => {
         {props.dialog === 'delete' ? null
             : <TextField
                 label={dialogInputs[props.dialog]}
+                fullWidth
                 value={props.dialogName}
                 onChange={e => props.setDialogName(e.target.value)}
             /> }

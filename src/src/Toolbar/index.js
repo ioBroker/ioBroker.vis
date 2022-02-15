@@ -60,6 +60,7 @@ const Toolbar = props => {
                 >
                     <DropMenuItem onClick={() => {
                         window.location.href = `${window.location.protocol}//${window.location.host}/vis/index.html`;
+                        setRight(false);
                     }}
                     >
                         <CloseIcon />
@@ -67,6 +68,7 @@ const Toolbar = props => {
                     </DropMenuItem>
                     <DropMenuItem onClick={() => {
                         window.open(`${window.location.protocol}//${window.location.host}/vis/index.html`, '_blank');
+                        setRight(false);
                     }}
                     >
                         <PlayArrowIcon />
@@ -76,6 +78,7 @@ const Toolbar = props => {
                         props.socket.setState(`${props.adapterName}.${props.instance}.control.instance`, { val: '*', ack: true });
                         props.socket.setState(`${props.adapterName}.${props.instance}.control.data`, { val: null, ack: true });
                         props.socket.setState(`${props.adapterName}.${props.instance}.control.command`, { val: 'refresh', ack: true });
+                        setRight(false);
                     }}
                     >
                         <SyncIcon />

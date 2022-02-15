@@ -21,9 +21,11 @@ import Toolbar from './Toolbar';
 
 const styles = theme => ({
     blockHeader: {
-        fontSize: '18px',
-        textAlign: 'center',
-        paddingTop: '8px',
+        fontSize: '16px',
+        textAlign: 'left',
+        marginTop: '8px',
+        borderRadius: '2px',
+        paddingLeft: '2px',
     },
     viewTabs: {
         minHeight: 0,
@@ -43,12 +45,12 @@ const styles = theme => ({
     },
     block: {
         overflow: 'auto',
-        height: 'calc(100vh - 106px - 12px)',
+        height: 'calc(100vh - 100px)',
         padding: '0px 8px',
     },
     canvas: {
         overflow: 'auto',
-        height: 'calc(100vh - 154px)',
+        height: 'calc(100vh - 138px)',
     },
     menu: {
         display: 'flex',
@@ -299,6 +301,7 @@ class App extends GenericApp {
                     <ReactSplit
                         direction={SplitDirection.Horizontal}
                         initialSizes={this.state.splitSizes}
+                        minWidths={[240, 0, 240]}
                         onResizeFinished={(gutterIdx, newSizes) => {
                             this.setState({ splitSizes: newSizes });
                             window.localStorage.setItem('splitSizes', JSON.stringify(newSizes));

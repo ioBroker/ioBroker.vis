@@ -8,7 +8,19 @@ import CloseIcon from '@material-ui/icons/Close';
 
 const IODialog = props => <Dialog onClose={props.onClose} open={props.open} fullScreen={props.fullScreen}>
     <DialogTitle>{I18n.t(props.title)}</DialogTitle>
-    <DialogContent>{props.children}</DialogContent>
+    <DialogContent onKeyUp={e => {
+        if (props.action) {
+            if (e.keyCode === 13) {
+                props.action();
+                if (!props.actionNoClose) {
+                    props.onClose();
+                }
+            }
+        }
+    }}
+    >
+        {props.children}
+    </DialogContent>
     <DialogActions>
         { props.dialogActions ? props.dialogActions : null}
         { props.actionTitle

@@ -11,12 +11,28 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderIcon from '@material-ui/icons/Folder';
+import FolderOpenIcon from '@material-ui/icons/FolderOpen';
+
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import { useEffect, useRef } from 'react';
 
 const Folder = props => {
     const folderBlock = <div className={props.classes.viewManageBlock}>
-        <FolderIcon />
+        {props.foldersCollapsed.includes(props.folder.id)
+            ? <FolderIcon onClick={() => {
+                const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
+                props.setFoldersCollapsed(foldersCollapsed);
+                window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+            }}
+            />
+            : <FolderOpenIcon onClick={() => {
+                const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                foldersCollapsed.push(props.folder.id);
+                props.setFoldersCollapsed(foldersCollapsed);
+                window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+            }}
+            />}
         {props.folder.name}
         {props.folder.id ? <span className={props.classes.buttonActions}>
             <Tooltip title={I18n.t('Add view')}>

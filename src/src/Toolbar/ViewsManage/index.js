@@ -12,7 +12,7 @@ import { usePreview } from 'react-dnd-preview';
 
 import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import AddIcon from '@material-ui/icons/Add';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BiImport } from 'react-icons/bi';
 
 import IODialog from '../../Components/IODialog';
@@ -92,6 +92,13 @@ const ViewsManage = props => {
     const [folderDialogId, setFolderDialogId] = useState(null);
     const [folderDialogParentId, setFolderDialogParentId] = useState(null);
 
+    const [foldersCollapsed, setFoldersCollapsed] = useState([]);
+    useEffect(() => {
+        if (window.localStorage.getItem('ViewsManage.foldersCollapsed')) {
+            setFoldersCollapsed(JSON.parse(window.localStorage.getItem('ViewsManage.foldersCollapsed')));
+        }
+    }, []);
+
     const moveFolder = (id, parentId) => {
         const project = JSON.parse(JSON.stringify(props.project));
         project.___settings.folders.find(folder => folder.id === id).parentId = parentId;
@@ -140,13 +147,15 @@ const ViewsManage = props => {
                     setFolderDialogId={setFolderDialogId}
                     setFolderDialogParentId={setFolderDialogParentId}
                     moveFolder={moveFolder}
+                    foldersCollapsed={foldersCollapsed}
+                    setFoldersCollapsed={setFoldersCollapsed}
                     {...props}
                 />
             </div>
-            <div style={{ paddingLeft: 10 }}>
+            {foldersCollapsed.includes(folder.id) ? null : <div style={{ paddingLeft: 10 }}>
                 {renderFolders(folder.id)}
                 {renderViews(folder.id)}
-            </div>
+            </div>}
         </div>);
     };
 
@@ -179,18 +188,21 @@ const ViewsManage = props => {
                     </Tooltip>
                 </AppBar>
                 <Folder
-                    folder={{ name: I18n.t('root') }}
+                    folder={{ name: I18n.t('root'), id: null }}
                     setFolderDialog={setFolderDialog}
                     setFolderDialogName={setFolderDialogName}
                     setFolderDialogId={setFolderDialogId}
                     setFolderDialogParentId={setFolderDialogParentId}
                     moveFolder={moveFolder}
+                    foldersCollapsed={foldersCollapsed}
+                    setFoldersCollapsed={setFoldersCollapsed}
                     {...props}
                 />
-                <div style={{ paddingLeft: 10 }}>
-                    {renderFolders()}
-                    {renderViews()}
-                </div>
+                {foldersCollapsed.includes(null) ? null
+                    : <div style={{ paddingLeft: 10 }}>
+                        {renderFolders()}
+                        {renderViews()}
+                    </div>}
             </DndProvider>
         </div>
         <FolderDialog
