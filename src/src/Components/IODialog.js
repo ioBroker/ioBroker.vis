@@ -10,10 +10,12 @@ const IODialog = props => <Dialog onClose={props.onClose} open={props.open} full
     <DialogTitle>{I18n.t(props.title)}</DialogTitle>
     <DialogContent onKeyUp={e => {
         if (props.action) {
-            if (e.keyCode === 13) {
-                props.action();
-                if (!props.actionNoClose) {
-                    props.onClose();
+            if (!props.actionDisabled) {
+                if (e.keyCode === 13) {
+                    props.action();
+                    if (!props.actionNoClose) {
+                        props.onClose();
+                    }
                 }
             }
         }

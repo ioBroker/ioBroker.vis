@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 
 import CloseIcon from '@material-ui/icons/Close';
 import SaveIcon from '@material-ui/icons/Save';
+import IODialog from '../Components/IODialog';
 
 const styles = () => ({
     dialog: {
@@ -111,9 +112,16 @@ const Settings = props => {
         props.onClose();
     };
 
-    return <Dialog open={props.open} onClose={props.onClose}>
-        <DialogTitle>{I18n.t('Settings')}</DialogTitle>
-        <DialogContent className={props.classes.dialog}>
+    return <IODialog
+        open={props.open}
+        onClose={props.onClose}
+        title="Settings"
+        ActionIcon={SaveIcon}
+        action={save}
+        actionTitle="Save"
+        actionDisabled={JSON.stringify(props.project.___settings) === JSON.stringify(settings)}
+    >
+        <div className={props.classes.dialog}>
             {fields.map((field, key) => {
                 const value = settings[field.field];
 
@@ -149,26 +157,8 @@ const Settings = props => {
 
                 return <div key={key} className={props.classes.field}>{result}</div>;
             })}
-        </DialogContent>
-        <DialogActions>
-            <Button
-                startIcon={<SaveIcon />}
-                variant="contained"
-                color="primary"
-                onClick={save}
-                disabled={JSON.stringify(props.project.___settings) === JSON.stringify(settings)}
-            >
-                {I18n.t('Save')}
-            </Button>
-            <Button
-                startIcon={<CloseIcon />}
-                variant="contained"
-                onClick={props.onClose}
-            >
-                {I18n.t('Cancel')}
-            </Button>
-        </DialogActions>
-    </Dialog>;
+        </div>
+    </IODialog>;
 };
 
 Settings.propTypes = {
