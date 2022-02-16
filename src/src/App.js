@@ -36,7 +36,7 @@ const styles = theme => ({
         minHeight: 0,
     },
     lightedPanel: {
-        backgroundColor: theme.palette.type === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 96%)',
+        backgroundColor: theme.palette.type === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 90%)',
     },
     toolbar: {
         display: 'flex',
@@ -290,10 +290,7 @@ class App extends GenericApp {
                     needSave={this.state.needSave}
                     currentUser={this.state.currentUser}
                     themeName={this.state.themeName}
-                    toggleTheme={() => {
-                        this.toggleTheme();
-                        this.props.onThemeChange(window.localStorage.getItem('App.themeName'));
-                    }}
+                    toggleTheme={() => this.toggleTheme()}
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
