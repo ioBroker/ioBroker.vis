@@ -14,6 +14,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import I18n from '@iobroker/adapter-react/i18n';
+import ToggleThemeMenu from '@iobroker/adapter-react/Components/ToggleThemeMenu';
 
 import Views from './Views';
 import Widgets from './Widgets';
@@ -88,6 +89,10 @@ const Toolbar = props => {
             </div>
             {props.currentUser
                 ? <div className={props.classes.rightBlock}>
+                    <ToggleThemeMenu
+                        toggleTheme={props.toggleTheme}
+                        themeName={props.themeName}
+                        t={I18n.t} />
                     <PersonIcon fontSize="small" />
                     <span>{props.currentUser}</span>
                     { props.socket.isSecure
@@ -124,6 +129,8 @@ Toolbar.propTypes = {
     currentUser: PropTypes.string,
     needSave: PropTypes.bool,
     socket: PropTypes.object,
+    toggleTheme: PropTypes.func,
+    themeName: PropTypes.string,
 };
 
 export default withStyles(styles)(Toolbar);

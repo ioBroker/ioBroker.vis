@@ -290,10 +290,11 @@ class App extends GenericApp {
                     needSave={this.state.needSave}
                     currentUser={this.state.currentUser}
                     themeName={this.state.themeName}
+                    toggleTheme={() => this.toggleTheme()}
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
-                    projectsDialog={this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
+                    projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
                     setProjectsDialog={this.setProjectsDialog}
                     adapterName={this.adapterName}
                     instance={this.instance}
