@@ -39,7 +39,8 @@ const Tools = props => {
             open={objectsDialog}
             onClose={() => setObjectsDialog(false)}
             title="Browse objects"
-            fullScreen
+            maxWidth="lg"
+            closeTitle={I18n.t('Close')}
         >
             <div>
                 <ObjectBrowser

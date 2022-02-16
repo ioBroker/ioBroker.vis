@@ -6,7 +6,12 @@ import {
 
 import CloseIcon from '@material-ui/icons/Close';
 
-const IODialog = props => <Dialog onClose={props.onClose} open={props.open} fullScreen={props.fullScreen}>
+const IODialog = props => <Dialog
+    onClose={props.onClose}
+    open={props.open}
+    fullScreen={!!props.fullScreen}
+    maxWidth={props.maxWidth || 'md'}
+>
     <DialogTitle>{I18n.t(props.title)}</DialogTitle>
     <DialogContent onKeyUp={e => {
         if (props.action) {
@@ -64,6 +69,7 @@ IODialog.propTypes = {
     open: PropTypes.bool,
     title: PropTypes.string,
     fullScreen: PropTypes.bool,
+    maxWidth: PropTypes.string,
 };
 
 export default IODialog;

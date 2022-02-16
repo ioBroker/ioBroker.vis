@@ -221,16 +221,14 @@ class App extends GenericApp {
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {
-            const files = await this.socket.readDir('vis.0', fromProjectName);
-            await Promise.all(files.map(async file => {
-                const content = await this.socket.readFile('vis.0', `${fromProjectName}/${file.file}`);
-                return this.socket.writeFile64('vis.0', `${toProjectName}/${file.file}`, content);
-            }));
-            await this.socket.deleteFolder('vis.0', fromProjectName);
+            // const files = await this.socket.readDir('vis.0', fromProjectName);
+            await this.socket.rename('vis.0', fromProjectName, toProjectName);
+            await this.refreshProjects();
             if (this.state.projectName === fromProjectName) {
                 await this.loadProject(toProjectName);
             }
         } catch (e) {
+            window.alert('Cannot rename: ' + e);
             console.error(e);
         }
     }
