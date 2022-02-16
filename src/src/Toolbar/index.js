@@ -94,7 +94,7 @@ const Toolbar = props => {
             {props.currentUser
                 ? <div className={props.classes.rightBlock}>
                     <PersonIcon fontSize="small" />
-                    <span>{props.currentUser}</span>
+                    <span style={{ paddingRight: 8 }}>{props.currentUser}</span>
                     { props.socket.isSecure
                         ? <Tooltip title={I18n.t('Exit')}>
                             <IconButton

@@ -105,6 +105,8 @@ class App extends GenericApp {
     }
 
     componentWillUnmount() {
+        this.savingTimer && clearTimeout(this.savingTimer);
+        this.savingTimer = null;
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
     }
@@ -155,34 +157,30 @@ class App extends GenericApp {
         window.localStorage.setItem('projectName', projectName);
     }
 
-    onConnectionReady() {
+    async onConnectionReady() {
         this.setState({
             selectedView: '',
             splitSizes: window.localStorage.getItem('splitSizes')
                 ? JSON.parse(window.localStorage.getItem('splitSizes'))
                 : [20, 60, 20],
         });
+
         if (window.localStorage.getItem('projectName')) {
             this.loadProject(window.localStorage.getItem('projectName'));
         } else {
             this.socket.readDir('vis.0', '').then(projects => this.loadProject(projects[0].file));
         }
-        this.refreshProjects();
+
+        await this.refreshProjects();
 
         this.socket.getCurrentUser().then(user => this.setState({ user }));
-
-        setInterval(() => {
-            if (this.state.needSave) {
-                this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
-                this.setState({ needSave: false });
-            }
-        }, 1000);
     }
 
-    refreshProjects = () => this.socket.readDir('vis.0', '').then(projects => this.setState({
-        projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
-        createFirstProjectDialog: !projects.length,
-    }));
+    refreshProjects = () => this.socket.readDir('vis.0', '')
+        .then(projects => this.setState({
+            projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
+            createFirstProjectDialog: !projects.length,
+        }));
 
     setViewsManage = newValue => this.setState({ viewsManage: newValue })
 
@@ -196,6 +194,14 @@ class App extends GenericApp {
 
     changeProject = project => {
         this.setState({ project, needSave: true });
+
+        // save changes after 1 second
+        this.savingTimer && clearTimeout(this.savingTimer);
+        this.savingTimer = setTimeout(() => {
+            this.savingTimer = null;
+            this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+            this.setState({ needSave: false });
+        }, 1000);
     }
 
     addProject = async projectName => {
