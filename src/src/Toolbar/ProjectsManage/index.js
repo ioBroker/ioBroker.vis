@@ -74,7 +74,13 @@ const ProjectsManage = props => {
         });
     };
 
-    return <IODialog open={props.open} onClose={props.onClose} title="Manage projects" closeTitle="Close">
+    return <IODialog
+        open={props.open}
+        onClose={props.onClose}
+        title="Manage projects"
+        closeTitle="Close"
+        closeDisabled={!props.projects.length}
+    >
         <div className={props.classes.dialog}>
             <AppBar position="static" className={props.classes.topBar}>
                 <Tooltip title={I18n.t('Add')} size="small">

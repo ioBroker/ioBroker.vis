@@ -7,7 +7,7 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 
 const IODialog = props => <Dialog
-    onClose={props.onClose}
+    onClose={props.closeDisabled ? null : props.onClose}
     open={props.open}
     fullScreen={!!props.fullScreen}
     maxWidth={props.maxWidth || 'md'}
@@ -48,6 +48,7 @@ const IODialog = props => <Dialog
         <Button
             variant="contained"
             onClick={props.onClose}
+            disabled={props.closeDisabled}
             startIcon={<CloseIcon />}
         >
             {I18n.t(props.closeTitle ? props.closeTitle : 'Cancel')}
@@ -64,6 +65,7 @@ IODialog.propTypes = {
     actionTitle: PropTypes.string,
     children: PropTypes.any,
     closeTitle: PropTypes.string,
+    closeDisabled: PropTypes.bool,
     dialogActions: PropTypes.any,
     onClose: PropTypes.func,
     open: PropTypes.bool,

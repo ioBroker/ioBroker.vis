@@ -1,4 +1,3 @@
-import I18n from '@iobroker/adapter-react/i18n';
 import IODialog from './Components/IODialog';
 
 const CreateFirstProjectDialog = props => <IODialog
