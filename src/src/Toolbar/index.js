@@ -43,7 +43,8 @@ const Toolbar = props => {
                 <ToggleThemeMenu
                     toggleTheme={props.toggleTheme}
                     themeName={props.themeName}
-                    t={I18n.t} />
+                    t={I18n.t}
+                />
                 <Tooltip title={I18n.t('Close editor')}>
                     <IconButton
                         size="small"
