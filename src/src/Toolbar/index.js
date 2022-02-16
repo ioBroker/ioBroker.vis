@@ -36,6 +36,10 @@ const Toolbar = props => {
         <span className={props.classes.right}>
             <div className={props.classes.rightBlock}>
                 {props.needSave ? <CircularProgress size={20} /> : null}
+                <ToggleThemeMenu
+                    toggleTheme={props.toggleTheme}
+                    themeName={props.themeName}
+                    t={I18n.t} />
                 <Tooltip title={I18n.t('Close editor')}>
                     <IconButton
                         size="small"
@@ -89,10 +93,6 @@ const Toolbar = props => {
             </div>
             {props.currentUser
                 ? <div className={props.classes.rightBlock}>
-                    <ToggleThemeMenu
-                        toggleTheme={props.toggleTheme}
-                        themeName={props.themeName}
-                        t={I18n.t} />
                     <PersonIcon fontSize="small" />
                     <span>{props.currentUser}</span>
                     { props.socket.isSecure
