@@ -21,11 +21,11 @@ import Toolbar from './Toolbar';
 
 const styles = theme => ({
     blockHeader: {
-        fontSize: '16px',
+        fontSize: 16,
         textAlign: 'left',
-        marginTop: '8px',
-        borderRadius: '2px',
-        paddingLeft: '2px',
+        marginTop: 8,
+        borderRadius: 2,
+        paddingLeft: 8,
     },
     viewTabs: {
         minHeight: 0,
