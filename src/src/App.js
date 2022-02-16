@@ -290,7 +290,10 @@ class App extends GenericApp {
                     needSave={this.state.needSave}
                     currentUser={this.state.currentUser}
                     themeName={this.state.themeName}
-                    toggleTheme={() => this.toggleTheme()}
+                    toggleTheme={() => {
+                        this.toggleTheme();
+                        this.props.onThemeChange(window.localStorage.getItem('App.themeName'));
+                    }}
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
