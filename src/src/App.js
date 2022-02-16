@@ -152,8 +152,6 @@ class App extends GenericApp {
 
         const groups = await this.socket.getGroups();
         this.setState({ groups });
-        const currentUser = await this.socket.getCurrentUser();
-        this.setState({ currentUser });
         window.localStorage.setItem('projectName', projectName);
     }
 
@@ -173,7 +171,9 @@ class App extends GenericApp {
 
         await this.refreshProjects();
 
-        this.socket.getCurrentUser().then(user => this.setState({ user }));
+        const user = await this.socket.getCurrentUser();
+        const currentUser = await this.socket.getObject('system.user.' + (user || 'admin'));
+        this.setState({ currentUser });
     }
 
     refreshProjects = () => this.socket.readDir('vis.0', '')

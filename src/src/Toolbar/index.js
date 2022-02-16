@@ -15,6 +15,8 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 import I18n from '@iobroker/adapter-react/i18n';
 import ToggleThemeMenu from '@iobroker/adapter-react/Components/ToggleThemeMenu';
+import Icon from '@iobroker/adapter-react/Components/Icon';
+import Utils from '@iobroker/adapter-react/Components/Utils';
 
 import Views from './Views';
 import Widgets from './Widgets';
@@ -31,6 +33,8 @@ const styles = () => ({
 const Toolbar = props => {
     const [right, setRight] = useState(false);
     const rightRef = useRef(null);
+
+    const lang = I18n.getLanguage();
 
     return <div className={props.classes.lightedPanel}>
         <span className={props.classes.right}>
@@ -94,7 +98,7 @@ const Toolbar = props => {
             {props.currentUser
                 ? <div className={props.classes.rightBlock}>
                     <PersonIcon fontSize="small" />
-                    <span style={{ paddingRight: 8 }}>{props.currentUser}</span>
+                    <span style={{ paddingRight: 8 }}><Icon src={props.currentUser?.common?.icon} className={props.classes.icon} />{ Utils.getObjectNameFromObj(props.currentUser, lang) }</span>
                     { props.socket.isSecure
                         ? <Tooltip title={I18n.t('Exit')}>
                             <IconButton
@@ -126,7 +130,7 @@ const Toolbar = props => {
 
 Toolbar.propTypes = {
     classes: PropTypes.object,
-    currentUser: PropTypes.string,
+    currentUser: PropTypes.object,
     needSave: PropTypes.bool,
     socket: PropTypes.object,
     toggleTheme: PropTypes.func,
