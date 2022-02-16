@@ -18,6 +18,7 @@ import I18n from '@iobroker/adapter-react/i18n';
 import Attributes from './Attributes';
 import Widgets from './Widgets';
 import Toolbar from './Toolbar';
+import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 
 const styles = theme => ({
     blockHeader: {
@@ -93,6 +94,7 @@ class App extends GenericApp {
             projectName: 'main',
             viewsManage: false,
             projectsDialog: false,
+            createFirstProjectDialog: false,
             ...this.state,
         };
     }
@@ -179,6 +181,7 @@ class App extends GenericApp {
 
     refreshProjects = () => this.socket.readDir('vis.0', '').then(projects => this.setState({
         projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
+        createFirstProjectDialog: !projects.length,
     }));
 
     setViewsManage = newValue => this.setState({ viewsManage: newValue })
@@ -290,7 +293,7 @@ class App extends GenericApp {
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
-                    projectsDialog={this.state.projects.length ? this.state.projectsDialog : true}
+                    projectsDialog={this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
                     setProjectsDialog={this.setProjectsDialog}
                     adapterName={this.adapterName}
                     instance={this.instance}
@@ -374,6 +377,11 @@ class App extends GenericApp {
                     </ReactSplit>
                 </div>
             </div>
+            <CreateFirstProjectDialog
+                open={this.state.createFirstProjectDialog}
+                onClose={() => this.setState({ createFirstProjectDialog: false })}
+                addProject={this.addProject}
+            />
         </MuiThemeProvider>;
     }
 }
