@@ -4,11 +4,12 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    FormControl, InputLabel, MenuItem, Select, TextField, Typography, withStyles,
+    FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, withStyles,
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ClearIcon from '@material-ui/icons/Clear';
 
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -85,27 +86,23 @@ const Widgets = props => {
             {I18n.t('Add widget')}
         </Typography>
         <div>
-            <Autocomplete
-                freeSolo
-                options={[]}
-                renderInput={params => (
-                    <TextField
-                        {...params}
-                        value={filter}
-                        onChange={e => setFilter(e.target.value)}
-                        label={filter.length ? ' ' : I18n.t('filter')}
-                        InputProps={{
-                            className: props.classes.clearPadding,
-                        }}
-                        InputLabelProps={{
-                            shrink: false,
-                            classes: {
-                                root: props.classes.label,
-                                shrink: props.classes.labelShrink,
-                            },
-                        }}
-                    />
-                )}
+            <TextField
+                value={filter}
+                onChange={e => setFilter(e.target.value)}
+                label={filter.length ? ' ' : I18n.t('filter')}
+                InputProps={{
+                    className: props.classes.clearPadding,
+                    endAdornment: filter.length ? <IconButton size="small" onClick={() => setFilter('')}>
+                        <ClearIcon />
+                    </IconButton> : null,
+                }}
+                InputLabelProps={{
+                    shrink: false,
+                    classes: {
+                        root: props.classes.label,
+                        shrink: props.classes.labelShrink,
+                    },
+                }}
             />
         </div>
         <div>
@@ -126,6 +123,11 @@ const Widgets = props => {
                         root: props.classes.clearPadding,
                         select: props.classes.fieldContent,
                     }}
+                    endAdornment={
+                        type.length ? <IconButton size="small" onClick={() => setType('')}>
+                            <ClearIcon />
+                        </IconButton> : null
+                    }
                 >
                     {selectItems.map(selectItem => <MenuItem
                         value={selectItem.value}

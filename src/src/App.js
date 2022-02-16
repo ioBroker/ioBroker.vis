@@ -228,7 +228,7 @@ class App extends GenericApp {
                 await this.loadProject(toProjectName);
             }
         } catch (e) {
-            window.alert('Cannot rename: ' + e);
+            window.alert(`Cannot rename: ${e}`);
             console.error(e);
         }
     }
@@ -290,7 +290,7 @@ class App extends GenericApp {
                     refreshProjects={this.refreshProjects}
                     viewsManage={this.state.viewsManage}
                     setViewsManage={this.setViewsManage}
-                    projectsDialog={this.state.projectsDialog}
+                    projectsDialog={this.state.projects.length ? this.state.projectsDialog : true}
                     setProjectsDialog={this.setProjectsDialog}
                     adapterName={this.adapterName}
                     instance={this.instance}
