@@ -8,9 +8,11 @@ import 'ace-builds/src-min-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-noconflict/theme-chrome';
 
-import {MenuItem, Select, Dialog, DialogTitle, Button, DialogContent, DialogActions, IconButton} from '@material-ui/core';
+import {
+    MenuItem, Select, Dialog, DialogTitle, Button, DialogContent, DialogActions, IconButton, CircularProgress,
+} from '@material-ui/core';
 
-import {HelpOutline, Check as CheckIcon} from '@material-ui/icons';
+import { HelpOutline, Check as CheckIcon } from '@material-ui/icons';
 
 import I18n from '@iobroker/adapter-react/i18n';
 import { useEffect, useState } from 'react';
@@ -22,22 +24,44 @@ const CSS = props => {
     const [globalCss, setGlobalCss] = useState('');
     const [showHelp, setShowHelp] = useState(false);
 
+    const [localCssTimer, setLocalCssTimer] = useState(null);
+    const [globalCssTimer, setGlobalCssTimer] = useState(null);
+
+    const timers = {
+        global: {
+            timer: globalCssTimer,
+            setTimer: setGlobalCssTimer,
+            value: globalCss,
+            setValue: setGlobalCss,
+            directory: 'vis',
+            file: 'css/vis-common-user.css',
+        },
+        local: {
+            timer: localCssTimer,
+            setTimer: setLocalCssTimer,
+            value: localCss,
+            setValue: setLocalCss,
+            directory: 'vis.0',
+            file: `${props.projectName}/vis-user.css`,
+        },
+    };
+
     useEffect(async () => {
         setGlobalCss(await props.socket.readFile('vis', 'css/vis-common-user.css'));
         setLocalCss(await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`));
     }, []);
 
-    useEffect(() => {
-        const saveInterval = setInterval(() => {
-            props.socket.writeFile64('vis', 'css/vis-common-user.css', globalCss);
-            props.socket.writeFile64('vis.0', `${props.projectName}/vis-user.css`, localCss);
-        }, 2000);
-
-        return () => clearInterval(saveInterval);
-    }, [globalCss, localCss]);
+    const save = (value, saveType) => {
+        timers[saveType].setValue(value);
+        clearTimeout(timers[saveType].timer);
+        timers[saveType].setTimer(setTimeout(() => {
+            timers[saveType].setTimer(null);
+            props.socket.writeFile64(timers[saveType].directory, timers[saveType].file, value);
+        }, 1000));
+    };
 
     return <div>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
             <Dialog
                 open={!!showHelp}
                 maxWidth={props.maxWidth || 'md'}
@@ -58,15 +82,16 @@ const CSS = props => {
             </Dialog>
             <Select value={type} onChange={e => setType(e.target.value)}>
                 <MenuItem value="global">{I18n.t('Global')}</MenuItem>
-                <MenuItem value="project">{I18n.t('Project')}</MenuItem>
+                <MenuItem value="local">{I18n.t('Project')}</MenuItem>
             </Select>
-            <IconButton onClick={ () => setShowHelp(true) } size="small"><HelpOutline /></IconButton>
+            <IconButton onClick={() => setShowHelp(true)} size="small"><HelpOutline /></IconButton>
+            {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
         </div>
         <AceEditor
             mode="css"
             theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
             value={type === 'global' ? globalCss : localCss}
-            onChange={newValue => (type === 'global' ? setGlobalCss(newValue) : setLocalCss(newValue))}
+            onChange={newValue => save(newValue, type)}
             width="100%"
             setOptions={{
                 enableBasicAutocompletion: true,
