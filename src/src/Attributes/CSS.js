@@ -49,6 +49,9 @@ const CSS = props => {
     useEffect(async () => {
         setGlobalCss(await props.socket.readFile('vis', 'css/vis-common-user.css'));
         setLocalCss(await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`));
+        if (window.localStorage.getItem('CSS.type')) {
+            setType(window.localStorage.getItem('CSS.type'));
+        }
     }, []);
 
     const save = (value, saveType) => {
@@ -80,7 +83,13 @@ const CSS = props => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Select value={type} onChange={e => setType(e.target.value)}>
+            <Select
+                value={type}
+                onChange={e => {
+                    setType(e.target.value);
+                    window.localStorage.setItem('CSS.type', e.target.value);
+                }}
+            >
                 <MenuItem value="global">{I18n.t('Global')}</MenuItem>
                 <MenuItem value="local">{I18n.t('Project')}</MenuItem>
             </Select>
