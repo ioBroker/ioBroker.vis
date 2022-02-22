@@ -1,10 +1,10 @@
 /* eslint-disable */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import './index.css';
-// import theme from '@iobroker/adapter-react/Theme';
-import Utils from '@iobroker/adapter-react/Components/Utils';
+// import theme from '@iobroker/adapter-react-v5/Theme';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import packageJson from '../package.json';
@@ -18,15 +18,17 @@ console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "
 
 function build() {
     return ReactDOM.render(
-        <MuiThemeProvider theme={theme(themeName)}>
-            <App
-                socket={{port: 8082}}
-                onThemeChange={(_theme) => {
-                    themeName = _theme;
-                    build();
-                }}
-            />
-        </MuiThemeProvider>,
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={theme(themeName)}>
+                <App
+                    socket={{port: 8082}}
+                    onThemeChange={(_theme) => {
+                        themeName = _theme;
+                        build();
+                    }}
+                />
+            </ThemeProvider>
+        </StyledEngineProvider>,
         document.getElementById('root'),
     );
 }

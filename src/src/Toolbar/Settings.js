@@ -1,12 +1,24 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
-    Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, withStyles,
-} from '@material-ui/core';
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    FormControlLabel,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { useEffect, useState } from 'react';
 
-import CloseIcon from '@material-ui/icons/Close';
-import SaveIcon from '@material-ui/icons/Save';
+import CloseIcon from '@mui/icons-material/Close';
+import SaveIcon from '@mui/icons-material/Save';
 import IODialog from '../Components/IODialog';
 
 const styles = () => ({

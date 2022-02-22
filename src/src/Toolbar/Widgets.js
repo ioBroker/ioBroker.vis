@@ -11,11 +11,11 @@ import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import LockIcon from '@material-ui/icons/Lock';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import UndoIcon from '@material-ui/icons/Undo';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import LockIcon from '@mui/icons-material/Lock';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import UndoIcon from '@mui/icons-material/Undo';
 
 import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';

@@ -10,11 +10,11 @@ import 'ace-builds/src-noconflict/theme-chrome';
 
 import {
     MenuItem, Select, Dialog, DialogTitle, Button, DialogContent, DialogActions, IconButton, CircularProgress,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import { HelpOutline, Check as CheckIcon } from '@material-ui/icons';
+import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import { useEffect, useState } from 'react';
 
 const CSS = props => {

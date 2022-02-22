@@ -1,8 +1,8 @@
 import {
     Tab, Tabs, Button,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import { useState } from 'react';
 
 import {
@@ -12,7 +12,7 @@ import {
 } from '@szhsin/react-menu';
 import '@szhsin/react-menu/dist/index.css';
 
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@mui/styles';
 
 import Toolbar from '../Toolbar/OldToolbar';
 import Settings from '../Toolbar/Settings';

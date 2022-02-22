@@ -1,16 +1,20 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import ObjectBrowser from '@iobroker/adapter-react/Components/ObjectBrowser';
-import I18n from '@iobroker/adapter-react/i18n';
+import ObjectBrowser from '@iobroker/adapter-react-v5/Components/ObjectBrowser';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
-import MenuIcon from '@material-ui/icons/Menu';
-import SettingsIcon from '@material-ui/icons/Settings';
-import ListIcon from '@material-ui/icons/List';
+import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ListIcon from '@mui/icons-material/List';
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
 import ProjectsManage from './ProjectsManage';
 import IODialog from '../Components/IODialog';
+import withStyles from '@mui/styles/withStyles';
+
+const styles = () => ({
+});
 
 const Tools = props => {
     const [settingsDialog, setSettingsDialog] = useState(false);
@@ -31,6 +35,8 @@ const Tools = props => {
         ],
     };
 
+    console.log(props);
+
     return <>
         <ToolbarItems group={toolbar} last {...props} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} />
@@ -46,6 +52,7 @@ const Tools = props => {
                 <ObjectBrowser
                     socket={props.socket}
                     t={I18n.t}
+                    theme={props.theme}
                 />
             </div>
         </IODialog>
@@ -56,4 +63,4 @@ Tools.propTypes = {
     socket: PropTypes.object,
 };
 
-export default Tools;
+export default withStyles(styles)(Tools);

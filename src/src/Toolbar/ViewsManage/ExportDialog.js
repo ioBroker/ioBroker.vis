@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import copy from 'copy-to-clipboard';
 import AceEditor from 'react-ace';
 
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 
 import IODialog from '../../Components/IODialog';
 

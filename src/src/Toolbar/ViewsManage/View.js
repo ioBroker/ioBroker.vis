@@ -1,20 +1,20 @@
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     IconButton, Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import FileIcon from '@material-ui/icons/InsertDriveFile';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import FileIcon from '@mui/icons-material/InsertDriveFile';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { BiImport, BiExport } from 'react-icons/bi';
 
 const View = props => {

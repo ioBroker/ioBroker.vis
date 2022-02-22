@@ -1,4 +1,4 @@
-import Theme from '@iobroker/adapter-react/Theme';
+import Theme from '@iobroker/adapter-react-v5/Theme';
 
 export default type => {
     const danger = '#dd5325';

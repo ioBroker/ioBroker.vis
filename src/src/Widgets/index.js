@@ -1,15 +1,22 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    FormControl, IconButton, InputLabel, MenuItem, Select, TextField, Typography, withStyles,
-} from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+    FormControl,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import Autocomplete from '@mui/material/Autocomplete';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ClearIcon from '@material-ui/icons/Clear';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import { useState } from 'react';
 import clsx from 'clsx';

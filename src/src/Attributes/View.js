@@ -1,20 +1,29 @@
 import PropTypes from 'prop-types';
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, Input, ListItemText, MenuItem, Select, TextField, withStyles,
-} from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Checkbox,
+    Input,
+    ListItemText,
+    MenuItem,
+    Select,
+    TextField,
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import Autocomplete from '@mui/material/Autocomplete';
 import clsx from 'clsx';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
-import ColorPicker from '@iobroker/adapter-react/Components/ColorPicker';
+import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 
 import './backgrounds.css';
 import { useState } from 'react';
 
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { theme, background } from './ViewData';
 
 const styles = () => ({

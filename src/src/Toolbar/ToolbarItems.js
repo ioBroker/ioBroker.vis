@@ -2,10 +2,21 @@ import PropTypes from 'prop-types';
 import {
     Button,
     ButtonBase,
-    Checkbox, Divider, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Select, TextField, Tooltip, withStyles,
-} from '@material-ui/core';
+    Checkbox,
+    Divider,
+    FormControl,
+    FormControlLabel,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Tooltip,
+} from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import withStyles from '@mui/styles/withStyles';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const styles = () => ({
     toolbarBlock: {

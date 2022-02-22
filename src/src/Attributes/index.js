@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import {
     Tab, Tabs, Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import { useState } from 'react';
 
 import CSS from './CSS';

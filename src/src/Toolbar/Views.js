@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-import MenuIcon from '@material-ui/icons/Menu';
-import I18n from '@iobroker/adapter-react/i18n';
+import MenuIcon from '@mui/icons-material/Menu';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import ViewsManage from './ViewsManage';
 import ToolbarItems from './ToolbarItems';
 

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import AceEditor from 'react-ace';
 
 import 'ace-builds/webpack-resolver';
@@ -9,7 +9,7 @@ import 'ace-builds/src-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-noconflict/theme-chrome';
 
 import { useEffect, useRef, useState } from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField } from '@mui/material';
 import IODialog from '../../Components/IODialog';
 
 const ImportDialog = props => {

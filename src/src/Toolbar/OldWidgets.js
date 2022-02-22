@@ -4,11 +4,11 @@ import {
 import { CgArrowAlignH, CgArrowAlignV } from 'react-icons/cg';
 import { AiOutlineColumnWidth, AiOutlineColumnHeight } from 'react-icons/ai';
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import InfoIcon from '@material-ui/icons/Info';
-import LockIcon from '@material-ui/icons/Lock';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import InfoIcon from '@mui/icons-material/Info';
+import LockIcon from '@mui/icons-material/Lock';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 import ToolbarItems from './OldToolbarItems';
 

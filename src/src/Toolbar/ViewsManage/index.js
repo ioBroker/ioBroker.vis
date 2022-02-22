@@ -1,17 +1,16 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
-import {
-    AppBar,
-    IconButton, Tooltip, withStyles,
-} from '@material-ui/core';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import { AppBar, IconButton, Tooltip } from '@mui/material';
+
+import withStyles from '@mui/styles/withStyles';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { usePreview } from 'react-dnd-preview';
 
-import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
-import AddIcon from '@material-ui/icons/Add';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
+import AddIcon from '@mui/icons-material/Add';
 import { useEffect, useState } from 'react';
 import { BiImport } from 'react-icons/bi';
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import SyncIcon from '@material-ui/icons/Sync';
+import SyncIcon from '@mui/icons-material/Sync';
 
 import ToolbarItems from './OldToolbarItems';
 

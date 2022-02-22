@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import {
     TextField,
-} from '@material-ui/core';
-import I18n from '@iobroker/adapter-react/i18n';
+} from '@mui/material';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import IODialog from '../../Components/IODialog';
 

@@ -1,19 +1,19 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     IconButton, Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FolderIcon from '@material-ui/icons/Folder';
-import FolderOpenIcon from '@material-ui/icons/FolderOpen';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
-import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { useEffect, useRef } from 'react';
 
 const Folder = props => {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
-import { withStyles } from '@material-ui/styles';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import { withStyles } from '@mui/styles';
 
 import image from '../img/Prev_HTML.png';
 

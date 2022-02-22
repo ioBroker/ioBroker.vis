@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     TextField,
-} from '@material-ui/core';
+} from '@mui/material';
 
 import IODialog from '../../Components/IODialog';
 
@@ -41,44 +41,46 @@ const ImportProjectDialog = props => {
         getRootProps, getInputProps, isDragActive, draggedFiles,
     } = useDropzone({ onDrop, accept: ['.json', '.css'] });
 
-    return <IODialog
-        title="Import project"
-        open={props.open}
-        onClose={props.onClose}
-        action={importProject}
-        actionTitle="Import"
-        actionDisabled={!projectName || !projectName.length || !files || !files.length}
-    >
-        <div
-            {...getRootProps()}
-            style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 200,
-                height: 200,
-                borderRadius: 4,
-                borderStyle: isDragActive ? 'solid' : 'dashed',
-                borderWidth: 1,
-            }}
+    return (
+        <IODialog
+            title="Import project"
+            open={props.open}
+            onClose={props.onClose}
+            action={importProject}
+            actionTitle="Import"
+            actionDisabled={!projectName || !projectName.length || !files || !files.length}
         >
-            <input {...getInputProps()} />
-            <p>
-                {files && files.length
-                    ? files.map(file => <div>{file.name}</div>)
-                    : (isDragActive
-                        ? `${I18n.t('Files')}: ${draggedFiles.length}`
-                        : I18n.t('Drop the files here ...'))}
-            </p>
-        </div>
-        <div>
-            <TextField
-                label={I18n.t('Project name')}
-                value={projectName}
-                onChange={e => setProjectName(e.target.value.replace(/[^0-9a-zA-Z\-_.]/, ''))}
-            />
-        </div>
-    </IODialog>;
+            <div
+                {...getRootProps()}
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 200,
+                    height: 200,
+                    borderRadius: 4,
+                    borderStyle: isDragActive ? 'solid' : 'dashed',
+                    borderWidth: 1,
+                }}
+            >
+                <input {...getInputProps()} />
+                <p>
+                    {files && files.length
+                        ? files.map(file => <div>{file.name}</div>)
+                        : (isDragActive
+                            ? `${I18n.t('Files')}: ${draggedFiles.length}`
+                            : I18n.t('Drop the files here ...'))}
+                </p>
+            </div>
+            <div>
+                <TextField
+                    label={I18n.t('Project name')}
+                    value={projectName}
+                    onChange={e => setProjectName(e.target.value.replace(/[^0-9a-zA-Z\-_.]/, ''))}
+                />
+            </div>
+        </IODialog>
+    );
 };
 
 ImportProjectDialog.propTypes = {

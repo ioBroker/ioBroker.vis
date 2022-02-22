@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
-} from '@material-ui/core';
+} from '@mui/material';
 
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 
 const IODialog = props => <Dialog
     onClose={props.closeDisabled ? null : props.onClose}

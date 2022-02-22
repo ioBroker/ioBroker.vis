@@ -1,16 +1,14 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import I18n from '@iobroker/adapter-react/i18n';
-import {
-    AppBar,
-    Button, IconButton, TextField, Tooltip, withStyles,
-} from '@material-ui/core';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import { AppBar, Button, IconButton, TextField, Tooltip } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
-import AddIcon from '@material-ui/icons/Add';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { BiImport, BiExport } from 'react-icons/bi';
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog from './ImportProjectDialog';
@@ -74,76 +72,78 @@ const ProjectsManage = props => {
         });
     };
 
-    return <IODialog
-        open={props.open}
-        onClose={props.onClose}
-        title="Manage projects"
-        closeTitle="Close"
-        closeDisabled={!props.projects.length}
-    >
-        <div className={props.classes.dialog}>
-            <AppBar position="static" className={props.classes.topBar}>
-                <Tooltip title={I18n.t('Add')} size="small">
-                    <IconButton onClick={() => showDialog('add')}>
-                        <AddIcon />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title={I18n.t('Import')}>
-                    <IconButton size="small" onClick={() => setImportDialog('')}>
-                        <BiImport fontSize="20" />
-                    </IconButton>
-                </Tooltip>
-            </AppBar>
-            {props.projects.map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
-                <Button
-                    fullWidth
-                    className={props.classes.projectButton}
-                    color={projectName === props.projectName ? 'primary' : undefined}
-                    onClick={() => props.loadProject(projectName)}
-                >
-                    {projectName}
-                </Button>
-                <span className={props.classes.buttonActions}>
-                    <Tooltip title={I18n.t('Import')} onClick={() => setImportDialog(projectName)}>
-                        <IconButton size="small">
+    return (
+        <IODialog
+            open={props.open}
+            onClose={props.onClose}
+            title="Manage projects"
+            closeTitle="Close"
+            closeDisabled={!props.projects.length}
+        >
+            <div className={props.classes.dialog}>
+                <AppBar position="static" className={props.classes.topBar}>
+                    <Tooltip title={I18n.t('Add')} size="small">
+                        <IconButton onClick={() => showDialog('add')} size="large">
+                            <AddIcon />
+                        </IconButton>
+                    </Tooltip>
+                    <Tooltip title={I18n.t('Import')}>
+                        <IconButton size="small" onClick={() => setImportDialog('')}>
                             <BiImport fontSize="20" />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={I18n.t('Export')}>
-                        <IconButton onClick={() => exportProject(projectName)} size="small">
-                            <BiExport fontSize="20" />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Edit')}>
-                        <IconButton size="small" onClick={() => showDialog('rename', projectName)}>
-                            <EditIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)}>
-                        <IconButton size="small">
-                            <DeleteIcon />
-                        </IconButton>
-                    </Tooltip>
-                </span>
-            </div>)}
-        </div>
-        <ProjectDialog
-            dialog={dialog}
-            dialogProject={dialogProject}
-            dialogName={dialogName}
-            setDialog={setDialog}
-            setDialogProject={setDialogProject}
-            setDialogName={setDialogName}
-            {...props}
-        />
-        <ImportProjectDialog
-            open={importDialog !== false}
-            onClose={() => setImportDialog(false)}
-            projectName={importDialog}
-            socket={props.socket}
-            refreshProjects={props.refreshProjects}
-        />
-    </IODialog>;
+                </AppBar>
+                {props.projects.map((projectName, key) => <div key={key} className={props.classes.projectBlock}>
+                    <Button
+                        fullWidth
+                        className={props.classes.projectButton}
+                        color={projectName === props.projectName ? 'primary' : undefined}
+                        onClick={() => props.loadProject(projectName)}
+                    >
+                        {projectName}
+                    </Button>
+                    <span className={props.classes.buttonActions}>
+                        <Tooltip title={I18n.t('Import')} onClick={() => setImportDialog(projectName)}>
+                            <IconButton size="small">
+                                <BiImport fontSize="20" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title={I18n.t('Export')}>
+                            <IconButton onClick={() => exportProject(projectName)} size="small">
+                                <BiExport fontSize="20" />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title={I18n.t('Edit')}>
+                            <IconButton size="small" onClick={() => showDialog('rename', projectName)}>
+                                <EditIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)}>
+                            <IconButton size="small">
+                                <DeleteIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </span>
+                </div>)}
+            </div>
+            <ProjectDialog
+                dialog={dialog}
+                dialogProject={dialogProject}
+                dialogName={dialogName}
+                setDialog={setDialog}
+                setDialogProject={setDialogProject}
+                setDialogName={setDialogName}
+                {...props}
+            />
+            <ImportProjectDialog
+                open={importDialog !== false}
+                onClose={() => setImportDialog(false)}
+                projectName={importDialog}
+                socket={props.socket}
+                refreshProjects={props.refreshProjects}
+            />
+        </IODialog>
+    );
 };
 
 ProjectsManage.propTypes = {

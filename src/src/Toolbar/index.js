@@ -1,22 +1,27 @@
 import PropTypes from 'prop-types';
 import {
-    IconButton, Tooltip, withStyles,
-    Menu as DropMenu, MenuItem as DropMenuItem, CircularProgress,
-} from '@material-ui/core';
+    IconButton,
+    Tooltip,
+    Menu as DropMenu,
+    MenuItem as DropMenuItem,
+    CircularProgress,
+} from '@mui/material';
+
+import withStyles from '@mui/styles/withStyles';
 
 import { useRef, useState } from 'react';
 
-import CloseIcon from '@material-ui/icons/Close';
-import SyncIcon from '@material-ui/icons/Sync';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import PersonIcon from '@material-ui/icons/Person';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import CloseIcon from '@mui/icons-material/Close';
+import SyncIcon from '@mui/icons-material/Sync';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PersonIcon from '@mui/icons-material/Person';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
-import I18n from '@iobroker/adapter-react/i18n';
-import ToggleThemeMenu from '@iobroker/adapter-react/Components/ToggleThemeMenu';
-import Icon from '@iobroker/adapter-react/Components/Icon';
-import Utils from '@iobroker/adapter-react/Components/Utils';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import ToggleThemeMenu from '@iobroker/adapter-react-v5/Components/ToggleThemeMenu';
+import Icon from '@iobroker/adapter-react-v5/Components/Icon';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import Views from './Views';
 import Widgets from './Widgets';
