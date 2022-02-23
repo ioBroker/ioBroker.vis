@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import I18n from '@iobroker/adapter-react-v5/i18n';
-import { AppBar, Button, IconButton, TextField, Tooltip } from '@mui/material';
+import {
+    AppBar, Button, IconButton, Tooltip,
+} from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
@@ -97,7 +99,7 @@ const ProjectsManage = props => {
                     <Button
                         fullWidth
                         className={props.classes.projectButton}
-                        color={projectName === props.projectName ? 'primary' : undefined}
+                        color={projectName === props.projectName ? 'primary' : 'grey'}
                         onClick={() => props.loadProject(projectName)}
                     >
                         {projectName}
@@ -138,7 +140,7 @@ const ProjectsManage = props => {
             <ImportProjectDialog
                 open={importDialog !== false}
                 onClose={() => setImportDialog(false)}
-                projectName={importDialog}
+                projectName={importDialog || ''}
                 socket={props.socket}
                 refreshProjects={props.refreshProjects}
             />

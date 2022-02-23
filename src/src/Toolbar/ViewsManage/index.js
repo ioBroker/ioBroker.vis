@@ -21,7 +21,7 @@ import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 
-const styles = theme => ({
+const styles = () => ({
     viewManageBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -217,7 +217,7 @@ const ViewsManage = props => {
         <ImportDialog
             open={importDialog !== false}
             onClose={() => setImportDialog(false)}
-            view={importDialog}
+            view={importDialog || ''}
             importViewAction={importViewAction}
             project={props.project}
             themeName={props.themeName}
@@ -225,7 +225,7 @@ const ViewsManage = props => {
         <ExportDialog
             open={exportDialog !== false}
             onClose={() => setExportDialog(false)}
-            view={exportDialog}
+            view={exportDialog || ''}
             project={props.project}
             themeName={props.themeName}
         />

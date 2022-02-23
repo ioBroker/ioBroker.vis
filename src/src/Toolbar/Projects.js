@@ -6,12 +6,12 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListIcon from '@mui/icons-material/List';
+import withStyles from '@mui/styles/withStyles';
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
 import ProjectsManage from './ProjectsManage';
 import IODialog from '../Components/IODialog';
-import withStyles from '@mui/styles/withStyles';
 
 const styles = () => ({
 });

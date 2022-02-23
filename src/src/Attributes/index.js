@@ -6,11 +6,11 @@ import {
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import { useState } from 'react';
 
+import clsx from 'clsx';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
-import clsx from 'clsx';
 
 const tabs = {
     CSS, Scripts, View, Widget,

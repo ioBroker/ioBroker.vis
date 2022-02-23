@@ -13,7 +13,6 @@ import {
     Typography,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import Autocomplete from '@mui/material/Autocomplete';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -93,7 +92,8 @@ const Widgets = props => {
             {I18n.t('Add widget')}
         </Typography>
         <div>
-            <TextField variant="standard"
+            <TextField
+                variant="standard"
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
                 label={filter.length ? ' ' : I18n.t('filter')}
@@ -123,7 +123,8 @@ const Widgets = props => {
                 >
                     {type.length ? ' ' : I18n.t('type')}
                 </InputLabel>
-                <Select variant="standard"
+                <Select
+                    variant="standard"
                     value={type}
                     onChange={e => setType(e.target.value)}
                     classes={{

@@ -174,7 +174,7 @@ class App extends GenericApp {
         await this.refreshProjects();
 
         const user = await this.socket.getCurrentUser();
-        const currentUser = await this.socket.getObject('system.user.' + (user || 'admin'));
+        const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
         this.setState({ currentUser });
     }
 
@@ -348,6 +348,7 @@ class App extends GenericApp {
                                                     .filter(view => !view.startsWith('__'))
                                                     .filter(view => this.state.openedViews.includes(view))
                                                     .map(view => <Tab
+                                                        component="span"
                                                         label={<span>
                                                             {view}
                                                             <Tooltip title={I18n.t('Hide')}>

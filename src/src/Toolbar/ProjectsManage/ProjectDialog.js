@@ -78,7 +78,8 @@ const ProjectDialog = props => {
         actionDisabled={dialogDisabled}
     >
         {props.dialog === 'delete' ? null
-            : <TextField variant="standard"
+            : <TextField
+                variant="standard"
                 label={dialogInputs[props.dialog]}
                 fullWidth
                 value={props.dialogName}
@@ -88,7 +89,6 @@ const ProjectDialog = props => {
 };
 
 ProjectDialog.propTypes = {
-    changeProject: PropTypes.func,
     dialog: PropTypes.string,
     dialogProject: PropTypes.string,
     dialogName: PropTypes.string,

@@ -47,6 +47,7 @@ const IODialog = props => <Dialog
             </Button> : null }
         <Button
             variant="contained"
+            color="grey"
             onClick={props.onClose}
             disabled={props.closeDisabled}
             startIcon={<CloseIcon />}

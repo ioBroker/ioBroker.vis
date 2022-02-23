@@ -75,6 +75,7 @@ const CSS = props => {
                 </DialogContent>
                 <DialogActions>
                     <Button
+                        color="grey"
                         variant="contained"
                         onClick={() => setShowHelp(false)}
                         startIcon={<CheckIcon />}
@@ -83,7 +84,8 @@ const CSS = props => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Select variant="standard"
+            <Select
+                variant="standard"
                 value={type}
                 onChange={e => {
                     setType(e.target.value);

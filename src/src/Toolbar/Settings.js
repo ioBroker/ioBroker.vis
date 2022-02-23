@@ -3,10 +3,6 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
     Button,
     Checkbox,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
     FormControl,
     FormControlLabel,
     InputLabel,
@@ -17,7 +13,6 @@ import {
 import withStyles from '@mui/styles/withStyles';
 import { useEffect, useState } from 'react';
 
-import CloseIcon from '@mui/icons-material/Close';
 import SaveIcon from '@mui/icons-material/Save';
 import IODialog from '../Components/IODialog';
 
@@ -103,6 +98,7 @@ const Settings = props => {
                 <TextField variant="standard" label={I18n.t('Instance id')} value={instance} onChange={e => setInstance(e.target.value)} />
                 <Button
                     variant="contained"
+                    color="grey"
                     onClick={() => {
                         let newInstance = (Math.random() * 4294967296).toString(16);
                         newInstance = `0000000${newInstance}`;
