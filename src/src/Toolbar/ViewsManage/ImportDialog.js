@@ -66,7 +66,7 @@ const ImportDialog = props => {
             />
         </div>
         <div>
-            <TextField label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
+            <TextField variant="standard" label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
         </div>
     </IODialog>;
 };

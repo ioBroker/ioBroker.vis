@@ -91,7 +91,7 @@ const FolderDialog = props => {
         actionDisabled={dialogDisabled}
     >
         {props.dialog === 'delete' ? null
-            : <TextField
+            : <TextField variant="standard"
                 label={dialogInputs[props.dialog]}
                 fullWidth
                 value={props.dialogName}

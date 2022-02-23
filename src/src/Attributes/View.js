@@ -304,7 +304,7 @@ const View = props => {
                     hide: !userResolution,
                     Component:
                     <span style={{ display: 'flex', alignItems: 'center' }}>
-                        <TextField
+                        <TextField variant="standard"
                             value={view.settings.sizex}
                             InputProps={{
                                 classes: {
@@ -323,7 +323,7 @@ const View = props => {
                                 padding: '0px 10px',
                             }}
                         />
-                        <TextField
+                        <TextField variant="standard"
                             value={view.settings.sizey}
                             InputProps={{
                                 classes: {
@@ -414,7 +414,7 @@ const View = props => {
                                         input: clsx(props.classes.clearPadding, props.classes.fieldContent),
                                     }}
                                     renderInput={params => (
-                                        <TextField
+                                        <TextField variant="standard"
                                             {...params}
                                         />
                                     )}
@@ -429,7 +429,7 @@ const View = props => {
                                     onChange={e => change(e.target.checked)}
                                 />;
                             } else if (field.type === 'select') {
-                                result = <Select
+                                result = <Select variant="standard"
                                     value={field.value ? field.value : value}
                                     classes={{
                                         root: props.classes.clearPadding,
@@ -447,7 +447,7 @@ const View = props => {
                                     </MenuItem>)}
                                 </Select>;
                             } else if (field.type === 'multi-select') {
-                                result = <Select
+                                result = <Select variant="standard"
                                     renderValue={selected => selected.join(', ')}
                                     classes={{
                                         root: props.classes.clearPadding,
@@ -480,7 +480,7 @@ const View = props => {
                                     }}
                                 />;
                             } else {
-                                result = <TextField
+                                result = <TextField variant="standard"
                                     fullWidth
                                     InputProps={{
                                         classes: {

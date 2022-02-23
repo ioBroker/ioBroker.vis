@@ -73,7 +73,7 @@ const ImportProjectDialog = props => {
                 </p>
             </div>
             <div>
-                <TextField
+                <TextField variant="standard"
                     label={I18n.t('Project name')}
                     value={projectName}
                     onChange={e => setProjectName(e.target.value.replace(/[^0-9a-zA-Z\-_.]/, ''))}

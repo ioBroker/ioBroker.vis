@@ -93,7 +93,7 @@ const Widgets = props => {
             {I18n.t('Add widget')}
         </Typography>
         <div>
-            <TextField
+            <TextField variant="standard"
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
                 label={filter.length ? ' ' : I18n.t('filter')}
@@ -113,7 +113,7 @@ const Widgets = props => {
             />
         </div>
         <div>
-            <FormControl fullWidth>
+            <FormControl variant="standard" fullWidth>
                 <InputLabel
                     shrink={false}
                     classes={{
@@ -123,7 +123,7 @@ const Widgets = props => {
                 >
                     {type.length ? ' ' : I18n.t('type')}
                 </InputLabel>
-                <Select
+                <Select variant="standard"
                     value={type}
                     onChange={e => setType(e.target.value)}
                     classes={{

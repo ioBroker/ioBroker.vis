@@ -148,7 +148,7 @@ const View = props => {
             actionDisabled={dialogDisabled}
         >
             {dialog === 'delete' ? null
-                : <TextField label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
+                : <TextField variant="standard" label={dialogInputs[dialog]} value={dialogName} onChange={e => setDialogName(e.target.value)} /> }
         </IODialog>
     </div>;
 };

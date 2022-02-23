@@ -46,9 +46,9 @@ const ToolbarItems = props => {
         };
 
         if (item.type === 'select') {
-            return <FormControl key={key} style={{ margin: '0px 10px' }}>
+            return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
                 <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
-                <Select
+                <Select variant="standard"
                     style={{ width: item.width }}
                     value={item.value ? item.value : value}
                     onChange={item.onChange ? item.onChange : e => change(e.target.value)}
@@ -97,7 +97,7 @@ const ToolbarItems = props => {
         if (item.type === 'divider') {
             return <Divider key={key} orientation="vertical" flexItem style={{ margin: '0px 10px' }} />;
         }
-        return <TextField
+        return <TextField variant="standard"
             key={key}
             value={value}
             type={item.type}

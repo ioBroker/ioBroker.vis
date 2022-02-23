@@ -83,7 +83,7 @@ const CSS = props => {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Select
+            <Select variant="standard"
                 value={type}
                 onChange={e => {
                     setType(e.target.value);

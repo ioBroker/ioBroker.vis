@@ -100,7 +100,7 @@ const Settings = props => {
         {
             type: 'raw',
             Node: <>
-                <TextField label={I18n.t('Instance id')} value={instance} onChange={e => setInstance(e.target.value)} />
+                <TextField variant="standard" label={I18n.t('Instance id')} value={instance} onChange={e => setInstance(e.target.value)} />
                 <Button
                     variant="contained"
                     onClick={() => {
@@ -152,9 +152,9 @@ const Settings = props => {
                         label={I18n.t(field.name)}
                     />;
                 } else if (field.type === 'select') {
-                    result = <FormControl fullWidth>
+                    result = <FormControl variant="standard" fullWidth>
                         <InputLabel>{I18n.t(field.name)}</InputLabel>
-                        <Select value={value} onChange={e => change(e.target.value)}>
+                        <Select variant="standard" value={value} onChange={e => change(e.target.value)}>
                             {field.items.map(selectItem => <MenuItem
                                 value={selectItem.value}
                                 key={selectItem.value}
@@ -165,7 +165,7 @@ const Settings = props => {
                     </FormControl>;
                 } else if (field.type === 'raw') {
                     result = field.Node;
-                } else result = <TextField fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
+                } else result = <TextField variant="standard" fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
 
                 return <div key={key} className={props.classes.field}>{result}</div>;
             })}

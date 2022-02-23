@@ -35,8 +35,6 @@ const Tools = props => {
         ],
     };
 
-    console.log(props);
-
     return <>
         <ToolbarItems group={toolbar} last {...props} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} />
@@ -52,7 +50,7 @@ const Tools = props => {
                 <ObjectBrowser
                     socket={props.socket}
                     t={I18n.t}
-                    theme={props.theme}
+                    lang={I18n.lang}
                 />
             </div>
         </IODialog>
