@@ -34,6 +34,21 @@ const View = props => {
     const [dialogView, setDialogView] = useState(null);
     const [dialogParentId, setDialogParentId] = useState(null);
 
+    const showDialog = (type, view, parentId) => {
+        view = view || props.selectedView;
+
+        const dialogDefaultName = {
+            add: 'New view',
+            rename: view,
+            copy: `${view} ${I18n.t('Copy noun')}`,
+        };
+
+        setDialog(type);
+        setDialogView(view);
+        setDialogParentId(parentId);
+        setDialogName(dialogDefaultName[type]);
+    };
+
     const toolbar = {
         name: <span className={props.classes.label}>
             <span>{I18n.t('Views of ')}</span>
@@ -61,21 +76,6 @@ const View = props => {
                 type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManage(true),
             },
         ],
-    };
-
-    const showDialog = (type, view, parentId) => {
-        view = view || props.selectedView;
-
-        const dialogDefaultName = {
-            add: 'New view',
-            rename: view,
-            copy: `${view} ${I18n.t('Copy noun')}`,
-        };
-
-        setDialog(type);
-        setDialogView(view);
-        setDialogParentId(parentId);
-        setDialogName(dialogDefaultName[type]);
     };
 
     return <>

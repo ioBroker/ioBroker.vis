@@ -107,6 +107,7 @@ class App extends GenericApp {
     }
 
     componentWillUnmount() {
+        // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = null;
         super.componentWillUnmount();
@@ -143,6 +144,7 @@ class App extends GenericApp {
             openedViews = [selectedView];
         }
         if (openedViews && !openedViews.includes(selectedView)) {
+            // eslint-disable-next-line prefer-destructuring
             selectedView = openedViews[0];
         }
         this.setState({
@@ -198,6 +200,7 @@ class App extends GenericApp {
         this.setState({ project, needSave: true });
 
         // save changes after 1 second
+        // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = setTimeout(() => {
             this.savingTimer = null;
@@ -239,6 +242,7 @@ class App extends GenericApp {
                 await this.loadProject(toProjectName);
             }
         } catch (e) {
+            // eslint-disable-next-line no-alert
             window.alert(`Cannot rename: ${e}`);
             console.error(e);
         }
