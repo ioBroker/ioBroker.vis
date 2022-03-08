@@ -27,12 +27,14 @@ import Views from './Views';
 import Widgets from './Widgets';
 import Projects from './Projects';
 
-const styles = () => ({
+const styles = theme => ({
     text: { paddingRight: 4 },
     button: { margin: 4 },
     textInput: { margin: '0px 4px', width: 120 },
     right: { float: 'right', display: 'inline-flex', flexDirection: 'column' },
     rightBlock: { display: 'flex', alignItems: 'center', justifyContent: 'end' },
+    lightedPanel: theme.classes.lightedPanel,
+    toolbar: theme.classes.toolbar,
 });
 
 const Toolbar = props => {
@@ -130,9 +132,9 @@ const Toolbar = props => {
                 : null }
         </span>
         <div className={props.classes.toolbar} style={{ alignItems: 'initial' }}>
-            <Views {...props} />
-            <Widgets {...props} />
-            <Projects {...props} />
+            <Views {...props} classes={{}} />
+            <Widgets {...props} classes={{}} />
+            <Projects {...props} classes={{}} />
         </div>
     </div>;
 };

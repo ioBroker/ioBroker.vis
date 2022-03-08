@@ -23,29 +23,6 @@ import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 
 const styles = theme => ({
-    blockHeader: {
-        fontSize: 16,
-        textAlign: 'left',
-        marginTop: 8,
-        borderRadius: 2,
-        paddingLeft: 8,
-    },
-    viewTabs: {
-        minHeight: 0,
-    },
-    viewTab: {
-        minWidth: 0,
-        minHeight: 0,
-    },
-    lightedPanel: {
-        backgroundColor: theme.palette.mode === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 90%)',
-    },
-    toolbar: {
-        display: 'flex',
-        alignItems: 'center',
-        paddingTop: '10px',
-        paddingBottom: '10px',
-    },
     block: {
         overflow: 'auto',
         height: 'calc(100vh - 100px)',
@@ -67,6 +44,8 @@ const styles = theme => ({
         display: 'flex',
         alignItems: 'center',
     },
+    viewTabs: theme.classes.viewTabs,
+    viewTab: theme.classes.viewTab,
 });
 
 class App extends GenericApp {
@@ -291,7 +270,7 @@ class App extends GenericApp {
                 <ThemeProvider theme={this.state.theme}>
                     <div className={this.props.classes.app}>
                         <Toolbar
-                            classes={this.props.classes}
+                            classes={{}}
                             selectedView={this.state.selectedView}
                             project={this.state.project}
                             changeView={this.changeView}
@@ -331,7 +310,7 @@ class App extends GenericApp {
                             >
                                 <div className={this.props.classes.block}>
                                     <Widgets
-                                        classes={this.props.classes}
+                                        classes={{}}
                                     />
                                 </div>
                                 <div>
@@ -383,7 +362,7 @@ class App extends GenericApp {
                                 </div>
                                 <div className={this.props.classes.block}>
                                     <Attributes
-                                        classes={this.props.classes}
+                                        classes={{}}
                                         selectedView={this.state.selectedView}
                                         groups={this.state.groups}
                                         project={this.state.project}

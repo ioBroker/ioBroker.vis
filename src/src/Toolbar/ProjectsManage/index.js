@@ -24,7 +24,7 @@ const styles = () => ({
     projectButton: {
         justifyContent: 'left',
     },
-    buttonActions: {
+    viewManageButtonActions: {
         textAlign: 'right',
         width: 220,
     },
@@ -104,7 +104,7 @@ const ProjectsManage = props => {
                     >
                         {projectName}
                     </Button>
-                    <span className={props.classes.buttonActions}>
+                    <span className={props.classes.viewManageButtonActions}>
                         <Tooltip title={I18n.t('Import')} onClick={() => setImportDialog(projectName)}>
                             <IconButton size="small">
                                 <BiImport fontSize="20" />
@@ -135,7 +135,7 @@ const ProjectsManage = props => {
                 setDialog={setDialog}
                 setDialogProject={setDialogProject}
                 setDialogName={setDialogName}
-                {...props}
+                {...props} classes={{}}
             />
             <ImportProjectDialog
                 open={importDialog !== false}

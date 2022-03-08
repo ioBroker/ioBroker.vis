@@ -33,7 +33,7 @@ const selectItems = [
     { value: 'tabs', name: 'tabs' },
 ];
 
-const styles = () => ({
+const styles = theme => ({
     widgets: { textAlign: 'center' },
     toggle: { width: 30, height: 30 },
     right: {
@@ -70,6 +70,8 @@ const styles = () => ({
             padding: '2px',
         },
     },
+    blockHeader: theme.classes.blockHeader,
+    lightedPanel: theme.classes.lightedPanel,
 });
 
 const widgetsList = [

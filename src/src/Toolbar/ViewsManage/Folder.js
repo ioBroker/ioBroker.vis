@@ -15,6 +15,12 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { useEffect, useRef } from 'react';
+import { withStyles } from '@mui/styles';
+
+const styles = theme => ({
+    viewManageBlock: theme.classes.viewManageBlock,
+    viewManageButtonActions: theme.classes.viewManageButtonActions,
+});
 
 const Folder = props => {
     const folderBlock = <div className={props.classes.viewManageBlock}>
@@ -34,7 +40,7 @@ const Folder = props => {
             }}
             />}
         {props.folder.name}
-        {props.folder.id ? <span className={props.classes.buttonActions}>
+        {props.folder.id ? <span className={props.classes.viewManageButtonActions}>
             <Tooltip title={I18n.t('Add view')}>
                 <IconButton
                     size="small"
@@ -165,4 +171,4 @@ Folder.propTypes = {
     setFolderDialogParentId: PropTypes.func,
 };
 
-export default Folder;
+export default withStyles(styles)(Folder);

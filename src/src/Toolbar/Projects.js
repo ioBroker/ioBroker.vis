@@ -39,9 +39,9 @@ const Tools = props => {
     };
 
     return <>
-        <ToolbarItems group={toolbar} last {...props} />
-        <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} />
-        <ProjectsManage open={props.projectsDialog} onClose={() => props.setProjectsDialog(false)} {...props} />
+        <ToolbarItems group={toolbar} last {...props} classes={{}} />
+        <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
+        <ProjectsManage open={props.projectsDialog} onClose={() => props.setProjectsDialog(false)} {...props} classes={{}} />
         <IODialog
             open={objectsDialog}
             onClose={() => setObjectsDialog(false)}

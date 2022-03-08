@@ -16,6 +16,12 @@ import FileIcon from '@mui/icons-material/InsertDriveFile';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { BiImport, BiExport } from 'react-icons/bi';
+import { withStyles } from '@mui/styles';
+
+const styles = theme => ({
+    viewManageBlock: theme.classes.viewManageBlock,
+    viewManageButtonActions: theme.classes.viewManageButtonActions,
+});
 
 const View = props => {
     const viewBlock = <div className={props.classes.viewManageBlock}>
@@ -26,7 +32,7 @@ const View = props => {
             </IconButton>
         </Tooltip>
         <span>{props.name}</span>
-        <span className={props.classes.buttonActions}>
+        <span className={props.classes.viewManageButtonActions}>
             <Tooltip title={I18n.t('Import')}>
                 <IconButton onClick={() => props.setImportDialog(props.name)} size="small">
                     <BiImport />
@@ -101,4 +107,4 @@ View.propTypes = {
     toggleView: PropTypes.func,
 };
 
-export default View;
+export default withStyles(styles)(View);

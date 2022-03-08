@@ -25,7 +25,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import { theme, background } from './ViewData';
 
-const styles = () => ({
+const styles = theme => ({
     backgroundClass: {
         display: 'flex',
         alignItems: 'center',
@@ -78,6 +78,7 @@ const styles = () => ({
             padding: '2px',
         },
     },
+    lightedPanel: theme.classes.lightedPanel,
 });
 
 const resolution = [
@@ -480,9 +481,6 @@ const View = props => {
                                         onChange={color => change(color)}
                                         openAbove
                                         color={field.value || ''}
-                                        classes={{
-                                            root: props.classes.clearPadding,
-                                        }}
                                     />;
                                 } else {
                                     result = <TextField

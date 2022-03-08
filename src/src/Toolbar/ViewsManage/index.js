@@ -21,16 +21,8 @@ import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
 import FolderDialog from './FolderDialog';
 
-const styles = () => ({
-    viewManageBlock: {
-        display: 'flex',
-        alignItems: 'center',
-        cursor: 'grab',
-    },
-    buttonActions: {
-        textAlign: 'right',
-        flex: 1,
-    },
+const styles = theme => ({
+    viewManageButtonActions: theme.classes.viewManageButtonActions,
     dialog: {
         minWidth: 400,
     },
@@ -41,19 +33,19 @@ const styles = () => ({
     },
     folderContainer: {
         clear: 'right',
-        '& $buttonActions': {
+        '& $viewManageButtonActions': {
             visibility: 'hidden',
         },
-        '&:hover $buttonActions': {
+        '&:hover $viewManageButtonActions': {
             visibility: 'initial',
         },
     },
     viewContainer: {
         clear: 'right',
-        '& $buttonActions': {
+        '& $viewManageButtonActions': {
             visibility: 'hidden',
         },
-        '&:hover $buttonActions': {
+        '&:hover $viewManageButtonActions': {
             visibility: 'initial',
         },
     },
@@ -137,6 +129,7 @@ const ViewsManage = props => {
                 setExportDialog={setExportDialog}
                 setImportDialog={setImportDialog}
                 {...props}
+                classes={{}}
             />
         </div>);
 
@@ -155,6 +148,7 @@ const ViewsManage = props => {
                     foldersCollapsed={foldersCollapsed}
                     setFoldersCollapsed={setFoldersCollapsed}
                     {...props}
+                    classes={{}}
                 />
             </div>
             {foldersCollapsed.includes(folder.id) ? null : <div style={{ paddingLeft: 10 }}>
@@ -202,6 +196,7 @@ const ViewsManage = props => {
                     foldersCollapsed={foldersCollapsed}
                     setFoldersCollapsed={setFoldersCollapsed}
                     {...props}
+                    classes={{}}
                 />
                 {foldersCollapsed.includes(null) ? null
                     : <div style={{ paddingLeft: 10 }}>
@@ -219,6 +214,7 @@ const ViewsManage = props => {
             setDialogFolder={setFolderDialogId}
             setDialogName={setFolderDialogName}
             {...props}
+            classes={{}}
         />
         <ImportDialog
             open={importDialog !== false}

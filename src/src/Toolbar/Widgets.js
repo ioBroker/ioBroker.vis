@@ -120,7 +120,7 @@ const Widgets = props => {
     ],
 ],
     };
-    return <ToolbarItems group={toolbar} {...props} />;
+    return <ToolbarItems group={toolbar} {...props} classes={{}} />;
 };
 
 Widgets.propTypes = {

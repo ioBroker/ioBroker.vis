@@ -7,10 +7,18 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import { useState } from 'react';
 
 import clsx from 'clsx';
+import { withStyles } from '@mui/styles';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
+
+const style = theme => ({
+    blockHeader: theme.classes.blockHeader,
+    lightedPanel: theme.classes.lightedPanel,
+    viewTabs: theme.classes.viewTabs,
+    viewTab: theme.classes.viewTab,
+});
 
 const tabs = {
     CSS, Scripts, View, Widget,
@@ -50,7 +58,7 @@ const Attributes = props => {
                 />)
             }
         </Tabs>
-        <TabContent {...props} />
+        <TabContent {...props} classes={{}} />
     </>;
 };
 
@@ -59,4 +67,4 @@ Attributes.propTypes = {
     openedViews: PropTypes.array,
 };
 
-export default Attributes;
+export default withStyles(style)(Attributes);
