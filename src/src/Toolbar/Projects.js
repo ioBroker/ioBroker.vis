@@ -14,6 +14,9 @@ import ProjectsManage from './ProjectsManage';
 import IODialog from '../Components/IODialog';
 
 const styles = () => ({
+    objectsDialog: {
+        minWidth: 400,
+    },
 });
 
 const Tools = props => {
@@ -46,7 +49,7 @@ const Tools = props => {
             maxWidth="lg"
             closeTitle={I18n.t('Close')}
         >
-            <div>
+            <div className={props.classes.objectsDialog}>
                 <ObjectBrowser
                     socket={props.socket}
                     t={I18n.t}

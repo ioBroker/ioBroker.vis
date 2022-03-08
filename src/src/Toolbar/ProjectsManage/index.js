@@ -26,7 +26,7 @@ const styles = () => ({
     },
     buttonActions: {
         textAlign: 'right',
-        width: 160,
+        width: 220,
     },
     dialog: {
         minWidth: 200,
