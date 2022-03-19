@@ -16,7 +16,7 @@ let themeName = Utils.getThemeName();
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);
 //window.sentryDSN = 'https://6ccbeba86d86457b82ded80109fa7aba@sentry.iobroker.net/144';
 
-const appTheme = {
+const appTheme = () => ({
     classes: {
         blockHeader: {
             fontSize: 16,
@@ -52,9 +52,9 @@ const appTheme = {
         },
     
     }
-};
+});
 
-const getTheme = () => createTheme(appTheme, theme(themeName));
+const getTheme = () => createTheme(appTheme(), theme(themeName));
 
 function build() {
     return ReactDOM.render(

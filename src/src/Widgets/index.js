@@ -72,6 +72,12 @@ const styles = theme => ({
     },
     blockHeader: theme.classes.blockHeader,
     lightedPanel: theme.classes.lightedPanel,
+    selectClearContainer: {
+        display: 'flex',
+    },
+    selectClear: {
+        flex: 1,
+    },
 });
 
 const widgetsList = [
@@ -96,6 +102,7 @@ const Widgets = props => {
         <div>
             <TextField
                 variant="standard"
+                fullWidth
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
                 label={filter.length ? ' ' : I18n.t('filter')}
@@ -125,27 +132,32 @@ const Widgets = props => {
                 >
                     {type.length ? ' ' : I18n.t('type')}
                 </InputLabel>
-                <Select
-                    variant="standard"
-                    value={type}
-                    onChange={e => setType(e.target.value)}
-                    classes={{
-                        root: props.classes.clearPadding,
-                        select: props.classes.fieldContent,
-                    }}
-                    endAdornment={
+                <div className={props.classes.selectClearContainer}>
+                    <span className={props.classes.selectClear}>
+                        <Select
+                            fullWidth
+                            variant="standard"
+                            value={type}
+                            onChange={e => setType(e.target.value)}
+                            classes={{
+                                root: props.classes.clearPadding,
+                                select: props.classes.fieldContent,
+                            }}
+                        >
+                            {selectItems.map(selectItem => <MenuItem
+                                value={selectItem.value}
+                                key={selectItem.value}
+                            >
+                                {I18n.t(selectItem.name)}
+                            </MenuItem>)}
+                        </Select>
+                    </span>
+                    {
                         type.length ? <IconButton size="small" onClick={() => setType('')}>
                             <ClearIcon />
                         </IconButton> : null
                     }
-                >
-                    {selectItems.map(selectItem => <MenuItem
-                        value={selectItem.value}
-                        key={selectItem.value}
-                    >
-                        {I18n.t(selectItem.name)}
-                    </MenuItem>)}
-                </Select>
+                </div>
             </FormControl>
         </div>
         <div className={props.classes.widgets}>

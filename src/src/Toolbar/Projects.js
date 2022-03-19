@@ -15,7 +15,7 @@ import IODialog from '../Components/IODialog';
 
 const styles = () => ({
     objectsDialog: {
-        minWidth: 400,
+        minWidth: 800,
     },
 });
 
@@ -54,6 +54,7 @@ const Tools = props => {
                     socket={props.socket}
                     t={I18n.t}
                     lang={I18n.lang}
+                    columns={['role', 'func', 'val', 'name']}
                 />
             </div>
         </IODialog>
