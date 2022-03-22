@@ -135,7 +135,8 @@ const ProjectsManage = props => {
                 setDialog={setDialog}
                 setDialogProject={setDialogProject}
                 setDialogName={setDialogName}
-                {...props} classes={{}}
+                {...props}
+                classes={{}}
             />
             <ImportProjectDialog
                 open={importDialog !== false}

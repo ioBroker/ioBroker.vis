@@ -89,7 +89,8 @@ const View = props => {
             setDialogView={setDialogView}
             setDialogName={setDialogName}
             setDialogParentId={setDialogParentId}
-            {...props} classes={{}}
+            classes={{}}
+            {...props}
         />
         <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} classes={{}} />
     </>;

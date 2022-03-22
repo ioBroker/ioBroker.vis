@@ -277,7 +277,7 @@ var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
 var vis = {
-    version: '1.4.12',
+    version: '1.4.13',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -1617,10 +1617,12 @@ var vis = {
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
-                $.map(widget.data, function(val, key) {
-                    var m;
-                    if (typeof val === 'string' && (m = val.match(/^groupAttr(\d+)$/))) {
-                        widget.data[key] = that.views[view].widgets[groupId].data[m[0]] || '';
+                $.map(widget.data, function (val, key) {
+                    if (typeof val === 'string') {
+                        var result = replaceGroupAttr(val, that.views[view].widgets[groupId].data);
+                        if (result.doesMatch) {
+                            widget.data[key] = result.newString || '';
+                        }
                     }
                 });
             }

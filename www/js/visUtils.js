@@ -14,11 +14,27 @@
  * (Free for non-commercial use).
  */
 
+function replaceGroupAttr(inputStr, groupAttrList) {
+    var newString = inputStr;
+    var match = false;
+    var ms = inputStr.match(/(groupAttr\d+)+?/g);
+    if (ms) {
+        match = true;
+        ms.forEach(function (m) {
+            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+        });
+        console.log('Replaced ' + inputStr + ' with ' + newString + ' (based on ' + ms + ')');
+    }
+    return {doesMatch: match, newString: newString};
+}
+
 function getWidgetGroup(views, view, widget) {
     var widgets = views[view].widgets;
     var members;
     for (var w in widgets) {
-        if (!widgets.hasOwnProperty(w)) continue;
+        if (!widgets.hasOwnProperty(w)) {
+            continue;
+        }
         members = views[view].widgets[w].data.members;
         if (members && members.indexOf(widget) !== -1) {
             return w;
@@ -418,16 +434,23 @@ function getUsedObjectIDs(views, isByViews) {
                     } else
                     if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/) || attr === 'lc-oid') && data[attr])) {
                         if (data[attr] && data[attr] !== 'nothing_selected') {
-                            if (IDs.indexOf(data[attr]) === -1) IDs.push(data[attr]);
-                            if (_views && _views[view].indexOf(data[attr]) === -1) _views[view].push(data[attr]);
+                            if (IDs.indexOf(data[attr]) === -1) {
+                                IDs.push(data[attr]);
+                            }
+                            if (_views && _views[view].indexOf(data[attr]) === -1) {
+                                _views[view].push(data[attr]);
+                            }
                         }
 
                         // Visibility binding
                         if (attr === 'visibility-oid' && data['visibility-oid']) {
                             var vid = data['visibility-oid'];
-                            if (vid.match(/^groupAttr(\d+)$/)) {
-                                var vgroup = getWidgetGroup(views, view, id);
-                                if (vgroup) vid = views[view].widgets[vgroup].data[vid];
+                            var vgroup = getWidgetGroup(views, view, id);
+                            if (vgroup) {
+                                var result1 = replaceGroupAttr(vid, views[view].widgets[vgroup].data);
+                                if (result1.doesMatch) {
+                                    vid = result1.newString;
+                                }
                             }
 
                             if (!visibility[vid]) visibility[vid] = [];
@@ -437,12 +460,17 @@ function getUsedObjectIDs(views, isByViews) {
                         // Signal binding
                         if (attr.match(/^signals-oid-/) && data[attr]) {
                             var sid = data[attr];
-                            if (sid.match(/^groupAttr(\d+)$/)) {
-                                var group = getWidgetGroup(views, view, id);
-                                if (group) sid = views[view].widgets[group].data[sid];
+                            var group = getWidgetGroup(views, view, id);
+                            if (group) {
+                                var result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
+                                if (result2.doesMatch) {
+                                    sid = result2.newString;
+                                }
                             }
 
-                            if (!signals[sid]) signals[sid] = [];
+                            if (!signals[sid]) {
+                                signals[sid] = [];
+                            }
                             signals[sid].push({
                                 view:   view,
                                 widget: id,
@@ -451,12 +479,17 @@ function getUsedObjectIDs(views, isByViews) {
                         }
                         if (attr === 'lc-oid') {
                             var lcsid = data[attr];
-                            if (lcsid.match(/^groupAttr(\d+)$/)) {
-                                var ggroup = getWidgetGroup(views, view, id);
-                                if (ggroup) lcsid = views[view].widgets[ggroup].data[lcsid];
+                            var ggroup = getWidgetGroup(views, view, id);
+                            if (ggroup) {
+                                var result3 = replaceGroupAttr(lcsid, views[view].widgets[ggroup].data);
+                                if (result3.doesMatch) {
+                                    lcsid = result3.newString;
+                                }
                             }
 
-                            if (!lastChanges[lcsid]) lastChanges[lcsid] = [];
+                            if (!lastChanges[lcsid]) {
+                                lastChanges[lcsid] = [];
+                            }
                             lastChanges[lcsid].push({
                                 view:   view,
                                 widget: id
@@ -466,8 +499,12 @@ function getUsedObjectIDs(views, isByViews) {
                     if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                         var _id = 'groupAttr' + m[1];
                         if (data[_id]) {
-                            if (IDs.indexOf(data[_id]) === -1) IDs.push(data[_id]);
-                            if (_views && _views[view].indexOf(data[_id]) === -1) _views[view].push(data[_id]);
+                            if (IDs.indexOf(data[_id]) === -1) {
+                                IDs.push(data[_id]);
+                            }
+                            if (_views && _views[view].indexOf(data[_id]) === -1) {
+                                _views[view].push(data[_id]);
+                            }
                         }
                     }
                 }

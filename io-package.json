@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.12",
+        "version": "1.4.13",
         "news": {
+            "1.4.13": {
+                "en": "The group attributes will be replaced recursively",
+                "de": "Die Gruppenattribute werden rekursiv ersetzt",
+                "ru": "Атрибуты группы будут заменены рекурсивно",
+                "pt": "Os atributos do grupo serão substituídos recursivamente",
+                "nl": "De groepsattributen worden recursief vervangen",
+                "fr": "Les attributs de groupe seront remplacés de manière récursive",
+                "it": "Gli attributi del gruppo verranno sostituiti in modo ricorsivo",
+                "es": "Los atributos del grupo serán reemplazados recursivamente",
+                "pl": "Atrybuty grupowe zostaną zastąpione rekursywnie",
+                "zh-cn": "组属性将被递归替换"
+            },
             "1.4.12": {
                 "en": "Fixed bug with the export of specific widgets",
                 "de": "Fehler beim Export bestimmter Widgets behoben",
@@ -74,18 +86,6 @@
                 "es": "Se agregó la especificación frame-src al encabezado content-security-policy que corrige problemas de bloqueo de contenido relacionados con el marco (por ejemplo, usando la aplicación KioskPro para iOS).\nMostró los mensajes de error extendidos por verificación de licencia\nParche visibilidad oid vinculante",
                 "pl": "Dodano specyfikację frame-src do nagłówka content-security-policy naprawiającego problemy z blokowaniem treści związane z ramkami (np. przy użyciu aplikacji KioskPro na iOS).\nPokazano rozszerzone komunikaty o błędach przy sprawdzaniu licencji\nWiązanie poprawki widoczności oid",
                 "zh-cn": "向 content-security-policy 标头添加了 frame-src 规范，修复了与框架相关的内容阻塞问题（例如，使用 KioskPro iOS 应用程序）。\n通过许可证检查显示扩展错误消息\n补丁可见性 oid 绑定"
-            },
-            "1.4.4": {
-                "en": "Allowed to have \":\" in the binding object IDs",
-                "de": "Darf \":\" in den Bindungsobjekt-IDs enthalten",
-                "ru": "Допускается наличие \":\" в идентификаторах объектов привязки.",
-                "pt": "É permitido ter \":\" nos IDs de objeto de ligação",
-                "nl": "Toegestaan om \":\" in de bindende object-ID's te hebben",
-                "fr": "Autorisé à avoir \":\" dans les ID d'objet de liaison",
-                "it": "Consentito di avere \":\" negli ID oggetto di associazione",
-                "es": "Se permite tener \":\" en los ID de objeto de vinculación",
-                "pl": "Dozwolone mieć \":\" w powiązanych identyfikatorach obiektów",
-                "zh-cn": "允许在绑定对象 ID 中包含“:”"
             }
         },
         "title": "Visualisation",
