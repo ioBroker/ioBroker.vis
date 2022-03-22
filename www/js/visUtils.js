@@ -14,6 +14,20 @@
  * (Free for non-commercial use).
  */
 
+function replaceGroupAttr(inputStr, groupAttrList) {
+    let newString = inputStr
+    let match = false
+    let ms = inputStr.match(/(groupAttr\d+)+?/g)
+    if (ms) {
+        match = true
+        ms.forEach(function (m){
+            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+        });
+        console.log("Replaced " + inputStr + " with " + newString + " (based on " + ms + ")")
+    }
+    return [match, newString]
+}
+
 function getWidgetGroup(views, view, widget) {
     var widgets = views[view].widgets;
     var members;
@@ -425,9 +439,10 @@ function getUsedObjectIDs(views, isByViews) {
                         // Visibility binding
                         if (attr === 'visibility-oid' && data['visibility-oid']) {
                             var vid = data['visibility-oid'];
-                            if (vid.match(/^groupAttr(\d+)$/)) {
-                                var vgroup = getWidgetGroup(views, view, id);
-                                if (vgroup) vid = views[view].widgets[vgroup].data[vid];
+                            var vgroup = getWidgetGroup(views, view, id);
+                            if (vgroup) {
+                                const [doesMatch, newString] = replaceGroupAttr(vid, views[view].widgets[vgroup].data)
+                                if (doesMatch) vid = newString;
                             }
 
                             if (!visibility[vid]) visibility[vid] = [];
@@ -437,9 +452,10 @@ function getUsedObjectIDs(views, isByViews) {
                         // Signal binding
                         if (attr.match(/^signals-oid-/) && data[attr]) {
                             var sid = data[attr];
-                            if (sid.match(/^groupAttr(\d+)$/)) {
-                                var group = getWidgetGroup(views, view, id);
-                                if (group) sid = views[view].widgets[group].data[sid];
+                            var group = getWidgetGroup(views, view, id);
+                            if(group) {
+                                const [doesMatch, newString] = replaceGroupAttr(sid, views[view].widgets[group].data)
+                                if (doesMatch) sid = newString;
                             }
 
                             if (!signals[sid]) signals[sid] = [];
@@ -451,9 +467,10 @@ function getUsedObjectIDs(views, isByViews) {
                         }
                         if (attr === 'lc-oid') {
                             var lcsid = data[attr];
-                            if (lcsid.match(/^groupAttr(\d+)$/)) {
-                                var ggroup = getWidgetGroup(views, view, id);
-                                if (ggroup) lcsid = views[view].widgets[ggroup].data[lcsid];
+                            var ggroup = getWidgetGroup(views, view, id);
+                            if(ggroup) {
+                                const [doesMatch, newString] = replaceGroupAttr(lcsid, views[view].widgets[ggroup].data)
+                                if (doesMatch) lcsid = newString;
                             }
 
                             if (!lastChanges[lcsid]) lastChanges[lcsid] = [];
