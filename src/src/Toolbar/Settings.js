@@ -161,7 +161,9 @@ const Settings = props => {
                     </FormControl>;
                 } else if (field.type === 'raw') {
                     result = field.Node;
-                } else result = <TextField variant="standard" fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
+                } else {
+                    result = <TextField variant="standard" fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
+                }
 
                 return <div key={key} className={props.classes.field}>{result}</div>;
             })}
