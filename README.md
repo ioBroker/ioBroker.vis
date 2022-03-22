@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.4.13 (2022-03-22)
 * (pascal-hari) The group attributes will be replaced recursively
 
 ### 1.4.12 (2022-02-12)
