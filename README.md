@@ -204,9 +204,12 @@ Notice that these settings are valid only for reconnection and not for the first
 
 <!--
     Placeholder for the next version (at the beginning of the line):
-    ### __WORK IN PROGRESS__
+    ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (pascal-hari) The group attributes will be replaced recursively
+
 ### 1.4.12 (2022-02-12)
 * (bluefox) Fixed bug with the export of specific widgets
 

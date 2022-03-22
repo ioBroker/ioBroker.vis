@@ -40,20 +40,6 @@
 /* jshint -W097 */// jshint strict:false
 'use strict';
 
-function replaceGroupAttr(inputStr, groupAttrList) {
-    let newString = inputStr
-    let match = false
-    let ms = inputStr.match(/(groupAttr\d+)+?/g)
-    if (ms) {
-        match = true
-        ms.forEach(function (m){
-            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
-        });
-        console.log("Replaced " + inputStr + " with " + newString + " (based on " + ms + ")")
-    }
-    return [match, newString]
-}
-
 if (typeof systemDictionary !== 'undefined') {
     $.extend(systemDictionary, {
         'No connection to Server':  {'en': 'No connection to Server',   'de': 'Keine Verbindung zum Server', 'ru': 'Нет соединения с сервером',
@@ -1631,11 +1617,11 @@ var vis = {
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
-                $.map(widget.data, function(val, key) {
+                $.map(widget.data, function (val, key) {
                     if (typeof val === 'string') {
-                        const [doesMatch, newString] = replaceGroupAttr(val, that.views[view].widgets[groupId].data)
-                        if(doesMatch) {
-                            widget.data[key] = newString || '';
+                        var result = replaceGroupAttr(val, that.views[view].widgets[groupId].data);
+                        if (result.doesMatch) {
+                            widget.data[key] = result.newString || '';
                         }
                     }
                 });
