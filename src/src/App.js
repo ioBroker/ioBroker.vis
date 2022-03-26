@@ -83,6 +83,7 @@ class App extends GenericApp {
     componentDidMount() {
         super.componentDidMount();
         window.addEventListener('hashchange', this.onHashChange, false);
+        this.loadWidgets();
     }
 
     componentWillUnmount() {
@@ -91,6 +92,18 @@ class App extends GenericApp {
         this.savingTimer = null;
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
+    }
+
+    loadWidgets() {
+        return fetch('widgets.html')
+            .then(data => data.text())
+            .then(text => {
+                const div = document.createElement('div');
+                div.innerHTML = text;
+                document.body.appendChild(div);
+                console.log('Loaded');
+            })
+            .catch(error => console.error('Cannot load widgets: ' + error));
     }
 
     onHashChange = () => {
