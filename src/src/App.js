@@ -21,19 +21,7 @@ import Attributes from './Attributes';
 import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
-
-
-function setInnerHTML(elm, html) {
-    elm.innerHTML = html;
-    Array.from(elm.querySelectorAll('script'))
-        .forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes)
-                .forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
-        });
-}
+import VisEngine from './Components/VisEngine';
 
 const styles = theme => ({
     block: {
@@ -96,7 +84,6 @@ class App extends GenericApp {
     componentDidMount() {
         super.componentDidMount();
         window.addEventListener('hashchange', this.onHashChange, false);
-        this.loadWidgets();
     }
 
     componentWillUnmount() {
@@ -105,25 +92,6 @@ class App extends GenericApp {
         this.savingTimer = null;
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
-    }
-
-    loadWidgets() {
-        window.vis = {
-            binds: {
-
-            },
-        };
-
-        return fetch('widgets.html')
-            .then(data => data.text())
-            .then(text => {
-                const div = document.createElement('div');
-                //div.innerHTML = text;
-                document.body.appendChild(div);
-                console.log('Loaded');
-                setInnerHTML(div, text);
-            })
-            .catch(error => console.error('Cannot load widgets: ' + error));
     }
 
     onHashChange = () => {
@@ -388,6 +356,7 @@ class App extends GenericApp {
                                     <pre>
                                         {JSON.stringify(this.state.project, null, 2)}
                                     </pre>
+                                    <VisEngine />
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>
