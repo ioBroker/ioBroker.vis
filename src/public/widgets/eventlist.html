@@ -1,0 +1,650 @@
+<!--
+    ioBroker.vis eventlist Widget-Set
+
+    version: "0.5.4"
+
+    Copyright 2020 ioBroker dogafox@gmail.com
+-->
+
+<link rel="stylesheet" href="widgets/eventlist/css/style.css" />
+
+<script type="text/javascript">
+    'use strict';
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            // Bars
+            "eventlistInstance":              {
+                "en": "Instance",
+                "de": "Instanz",
+                "ru": "Инстанция",
+                "pt": "Instância",
+                "nl": "Instance",
+                "fr": "Instance",
+                "it": "Instance",
+                "es": "Instance",
+                "pl": "Instancja",
+                "zh-cn": "实例"
+            },
+            "showEventTime": {
+                "en": "Time",
+                "de": "Zeit",
+                "ru": "Время",
+                "pt": "Tempo",
+                "nl": "Tijd",
+                "fr": "Temps",
+                "it": "Tempo",
+                "es": "Hora",
+                "pl": "Czas",
+                "zh-cn": "时间"
+            },
+            "showEventValue": {
+                "en": "Value",
+                "de": "Wert",
+                "ru": "Значение",
+                "pt": "Valor",
+                "nl": "Waarde",
+                "fr": "Valeur",
+                "it": "Valore",
+                "es": "Valor",
+                "pl": "Wartość",
+                "zh-cn": "值"
+            },
+            "showEventDuration": {
+                "en": "Duration",
+                "de": "Dauer",
+                "ru": "Продолжительность",
+                "pt": "Duração",
+                "nl": "Looptijd",
+                "fr": "Durée",
+                "it": "Durata",
+                "es": "Duración",
+                "pl": "Trwanie",
+                "zh-cn": "持续时间"
+            },
+            "textEventEvent": {
+                "en": "Event",
+                "de": "Ereignis",
+                "ru": "Мероприятие",
+                "pt": "Evento",
+                "nl": "Evenement",
+                "fr": "un événement",
+                "it": "Evento",
+                "es": "Evento",
+                "pl": "Zdarzenie",
+                "zh-cn": "事件"
+            },
+            "textEventTime": {
+                "en": "Time",
+                "de": "Zeit",
+                "ru": "Время",
+                "pt": "Tempo",
+                "nl": "Tijd",
+                "fr": "Temps",
+                "it": "Tempo",
+                "es": "Hora",
+                "pl": "Czas",
+                "zh-cn": "时间"
+            },
+            "textEventValue": {
+                "en": "Value",
+                "de": "Wert",
+                "ru": "Значение",
+                "pt": "Valor",
+                "nl": "Waarde",
+                "fr": "Valeur",
+                "it": "Valore",
+                "es": "Valor",
+                "pl": "Wartość",
+                "zh-cn": "值"
+            },
+            "textEventDuration": {
+                "en": "Duration",
+                "de": "Dauer",
+                "ru": "Продолжительность",
+                "pt": "Duração",
+                "nl": "Looptijd",
+                "fr": "Durée",
+                "it": "Durata",
+                "es": "Duración",
+                "pl": "Trwanie",
+                "zh-cn": "持续时间"
+            },
+            'group_headerTitle': {
+                "en": "Header texts",
+                "de": "Kopfzeilentexte",
+                "ru": "Тексты заголовков",
+                "pt": "Textos de cabeçalho",
+                "nl": "Kopteksten",
+                "fr": "Textes d'en-tête",
+                "it": "Testi di intestazione",
+                "es": "Textos de encabezado",
+                "pl": "Teksty nagłówka",
+                "zh-cn": "标题文字"
+            },
+            "widthEventEvent": {
+                "en": "Event",
+                "de": "Ereignis",
+                "ru": "Мероприятие",
+                "pt": "Evento",
+                "nl": "Evenement",
+                "fr": "un événement",
+                "it": "Evento",
+                "es": "Evento",
+                "pl": "Zdarzenie",
+                "zh-cn": "事件"
+            },
+            "widthEventTime": {
+                "en": "Time",
+                "de": "Zeit",
+                "ru": "Время",
+                "pt": "Tempo",
+                "nl": "Tijd",
+                "fr": "Temps",
+                "it": "Tempo",
+                "es": "Hora",
+                "pl": "Czas",
+                "zh-cn": "时间"
+            },
+            "widthEventValue": {
+                "en": "Value",
+                "de": "Wert",
+                "ru": "Значение",
+                "pt": "Valor",
+                "nl": "Waarde",
+                "fr": "Valeur",
+                "it": "Valore",
+                "es": "Valor",
+                "pl": "Wartość",
+                "zh-cn": "值"
+            },
+            "widthEventDuration": {
+                "en": "Duration",
+                "de": "Dauer",
+                "ru": "Продолжительность",
+                "pt": "Duração",
+                "nl": "Looptijd",
+                "fr": "Durée",
+                "it": "Durata",
+                "es": "Duración",
+                "pl": "Trwanie",
+                "zh-cn": "持续时间"
+            },
+            "group_headerWidths": {
+                "en": "Columns widths",
+                "de": "Spaltenbreiten",
+                "ru": "Ширина столбцов",
+                "pt": "Larguras das colunas",
+                "nl": "Kolombreedtes",
+                "fr": "Largeurs de colonnes",
+                "it": "Larghezze delle colonne",
+                "es": "Anchos de columnas",
+                "pl": "Szerokość kolumn",
+                "zh-cn": "列宽"
+            },
+            "eventListSampleEvent": {
+                "en": "Temperature outside changed to",
+                "de": "Außentemperatur auf geändert",
+                "ru": "Температура снаружи изменилась на",
+                "pt": "A temperatura externa mudou para",
+                "nl": "Temperatuur buiten veranderd naar",
+                "fr": "Température extérieure modifiée à",
+                "it": "La temperatura esterna è cambiata a",
+                "es": "La temperatura exterior cambió a",
+                "pl": "Temperatura na zewnątrz zmieniona na",
+                "zh-cn": "外界温度更改为"
+            },
+            "alignEventEvent": {
+                "en": "Event",
+                "de": "Ereignis",
+                "ru": "Мероприятие",
+                "pt": "Evento",
+                "nl": "Evenement",
+                "fr": "un événement",
+                "it": "Evento",
+                "es": "Evento",
+                "pl": "Zdarzenie",
+                "zh-cn": "事件"
+            },
+            "alignEventTime": {
+                "en": "Time",
+                "de": "Zeit",
+                "ru": "Время",
+                "pt": "Tempo",
+                "nl": "Tijd",
+                "fr": "Temps",
+                "it": "Tempo",
+                "es": "Hora",
+                "pl": "Czas",
+                "zh-cn": "时间"
+            },
+            "alignEventValue": {
+                "en": "Value",
+                "de": "Wert",
+                "ru": "Значение",
+                "pt": "Valor",
+                "nl": "Waarde",
+                "fr": "Valeur",
+                "it": "Valore",
+                "es": "Valor",
+                "pl": "Wartość",
+                "zh-cn": "值"
+            },
+            "alignEventDuration": {
+                "en": "Duration",
+                "de": "Dauer",
+                "ru": "Продолжительность",
+                "pt": "Duração",
+                "nl": "Looptijd",
+                "fr": "Durée",
+                "it": "Durata",
+                "es": "Duración",
+                "pl": "Trwanie",
+                "zh-cn": "持续时间"
+            },
+            "group_headerAligns": {
+                "en": "Align columns",
+                "de": "Spalten ausrichten",
+                "ru": "Выровнять столбцы",
+                "pt": "Alinhar colunas",
+                "nl": "Lijn kolommen uit",
+                "fr": "Aligner les colonnes",
+                "it": "Allinea le colonne",
+                "es": "Alinear columnas",
+                "pl": "Wyrównaj kolumny",
+                "zh-cn": "对齐列"
+            },
+            "showScroll": {
+                "en": "Show scroll",
+                "de": "Schriftrolle anzeigen",
+                "ru": "Показать прокрутку",
+                "pt": "Mostrar pergaminho",
+                "nl": "Toon scroll",
+                "fr": "Afficher le défilement",
+                "it": "Mostra scorrimento",
+                "es": "Mostrar desplazamiento",
+                "pl": "Pokaż przewijanie",
+                "zh-cn": "显示滚动"
+            },
+            "defaultStyle": {
+                "en": "Default style",
+                "de": "Standardstil",
+                "ru": "Стиль по умолчанию",
+                "pt": "Estilo padrão",
+                "nl": "Standaard stijl",
+                "fr": "Style par défaut",
+                "it": "Stile predefinito",
+                "es": "Estilo por Defecto",
+                "pl": "Domyślny styl",
+                "zh-cn": "默认样式"
+            },
+            "center": {
+                "en": "center",
+                "de": "Center",
+                "ru": "по центру",
+                "pt": "сentro",
+                "nl": "centrum",
+                "fr": "centre",
+                "it": "centro",
+                "es": "centrar",
+                "pl": "środek",
+                "zh-cn": "中央"
+            },
+            defaultStyle_tooltip: {
+                "en": "You can overload following classes: event-table for table, event-table-header for header",
+                "de": "Sie können folgende Klassen überladen: event-table für table, event-table-header für header",
+                "ru": "Вы можете перегрузить следующие классы: event-table для таблицы, event-table-header для заголовка.",
+                "pt": "Você pode sobrecarregar as seguintes classes: event-table para a tabela, event-table-header` para o cabeçalho",
+                "nl": "U kunt de volgende klassen overbelasten: event-table voor tabel, event-table-header` voor header",
+                "fr": "Vous pouvez surcharger les classes suivantes: event-table pour la table, event-table-header` pour l'en-tête",
+                "it": "Puoi sovraccaricare le seguenti classi: event-table per table, event-table-header` per header",
+                "es": "Puede sobrecargar las siguientes clases: event-table para la tabla, event-table-header` para el encabezado",
+                "pl": "Możesz przeciążać następujące klasy: event-table dla tabeli, event-table-header` dla nagłówka",
+                "zh-cn": "您可以重载以下类：表的“事件表”，标头的“事件表头”"
+            },
+            "oddBackground": {
+                "en": "Odd line background",
+                "de": "Ungerader Hintergrund",
+                "ru": "Фон нечетной линии",
+                "pt": "Fundo de linha ímpar",
+                "nl": "Oneven lijn achtergrond",
+                "fr": "Arrière-plan de ligne impaire",
+                "it": "Sfondo di linea dispari",
+                "es": "Fondo de línea impar",
+                "pl": "Dziwna linia tła",
+                "zh-cn": "奇数线背景"
+            },
+            "evenBackground": {
+                "en": "Even line background",
+                "de": "Gerade Hintergrund",
+                "ru": "Фон четной линии",
+                "pt": "Plano de fundo de linha uniforme",
+                "nl": "Zelfs lijnachtergrond",
+                "fr": "Fond de ligne uniforme",
+                "it": "Anche lo sfondo della linea",
+                "es": "Fondo de línea uniforme",
+                "pl": "Równe tło linii",
+                "zh-cn": "偶数线背景"
+            },
+            "filterById": {
+                "en": "Filter IDs",
+                "de": "Filter-IDs",
+                "ru": "Идентификаторы фильтра",
+                "pt": "IDs de filtro",
+                "nl": "Filter-ID's",
+                "fr": "ID de filtre",
+                "it": "ID filtro",
+                "es": "ID de filtro",
+                "pl": "Filtruj identyfikatory",
+                "zh-cn": "过滤器ID"
+            },
+            filterById_tooltip: {
+                "en": "You can provide multiple IDs divided by comma.",
+                "de": "Sie können mehrere durch Komma getrennte IDs angeben.",
+                "ru": "Вы можете указать несколько идентификаторов, разделенных запятыми.",
+                "pt": "Você pode fornecer vários IDs divididos por vírgula.",
+                "nl": "U kunt meerdere ID's opgeven, gescheiden door komma's.",
+                "fr": "Vous pouvez fournir plusieurs ID séparés par une virgule.",
+                "it": "Puoi fornire più ID divisi da virgole.",
+                "es": "Puede proporcionar varios ID divididos por comas.",
+                "pl": "Możesz podać wiele identyfikatorów rozdzielonych przecinkami.",
+                "zh-cn": "您可以提供多个ID，以逗号分隔。"
+            }
+        });
+    }
+
+    $.extend(true, systemDictionary, {
+        "eventtableTime": {
+            "en": "Time",
+            "de": "Zeit",
+            "ru": "Время",
+            "pt": "Tempo",
+            "nl": "Tijd",
+            "fr": "Temps",
+            "it": "Tempo",
+            "es": "Hora",
+            "pl": "Czas",
+            "zh-cn": "时间"
+        },
+        "eventtableValue": {
+            "en": "Value",
+            "de": "Wert",
+            "ru": "Значение",
+            "pt": "Valor",
+            "nl": "Waarde",
+            "fr": "Valeur",
+            "it": "Valore",
+            "es": "Valor",
+            "pl": "Wartość",
+            "zh-cn": "值"
+        },
+        "eventtableEvent": {
+            "en": "Event",
+            "de": "Ereignis",
+            "ru": "Мероприятие",
+            "pt": "Evento",
+            "nl": "Evenement",
+            "fr": "un événement",
+            "it": "Evento",
+            "es": "Evento",
+            "pl": "Zdarzenie",
+            "zh-cn": "事件"
+        },
+        "eventtableDuration": {
+            "en": "Duration",
+            "de": "Dauer",
+            "ru": "Продолжительность",
+            "pt": "Duração",
+            "nl": "Looptijd",
+            "fr": "Durée",
+            "it": "Durata",
+            "es": "Duración",
+            "pl": "Trwanie",
+            "zh-cn": "持续时间"
+        }
+    });
+
+    vis.binds.eventlist = {
+        version: "0.5.4",
+        showVersion: function () {
+            if (vis.binds.eventlist.version) {
+                console.log('Version eventlist: ' + vis.binds.eventlist.version);
+                vis.binds.eventlist.version = null;
+            }
+        },
+        renderHeader(el, wid, view, data) {
+            var text = '<tr class="' + (data.defaultStyle ? 'event-table-header' : '') + '">';
+            if (data.showEventTime || data.showEventTime === undefined) {
+                text += '<th width="' + data.widthEventTime + '" style="text-align: ' + data.alignEventTime + '">' + (data.textEventTime === '_' || data.textEventTime === undefined ? _('eventtableTime') : data.textEventTime) + '</th>';
+            }
+            text += '<th width="' + data.widthEventEvent + '" style="text-align: ' + data.alignEventEvent + '">' + (data.textEventEvent === '_' || data.textEventEvent === undefined ? _('eventtableEvent') : data.textEventEvent) + '</th>';
+            if (data.showEventValue || data.showEventValue === undefined) {
+                text += '<th width="' + data.widthEventValue + '" style="text-align: ' + data.alignEventValue + '">' + (data.textEventValue === '_' || data.textEventValue === undefined ? _('eventtableValue') : data.textEventValue) + '</th>';
+            }
+            if (data.showEventDuration || data.showEventDuration === undefined) {
+                text += '<th width="' + data.widthEventDuration + '" style="text-align: ' + data.alignEventDuration + '">' + (data.textEventDuration === '_' || data.textEventDuration === undefined ? _('eventtableDuration') : data.textEventDuration) + '</th>';
+            }
+            text += '</tr>\n';
+            return text;
+        },
+        renderRow(el, wid, view, data, json, i) {
+            var item = json[i];
+            var style = [];
+            if (item._style) {
+                var attrs = Object.keys(item._style);
+                for (var t = 0; t < attrs.length; t++) {
+                    style.push(attrs[t] + ': ' + item._style[attrs[t]]);
+                }
+            }
+            if ((i % 2) && data.oddBackground) {
+                style.push('background: ' + data.oddBackground);
+            } else if (!(i % 2) && data.evenBackground) {
+                style.push('background: ' + data.evenBackground);
+            }
+
+            var line = '<tr style="' + style.join('; ') + '">';
+            if (data.showEventTime) {
+                line += '<td style="text-align: ' + data.alignEventTime + '">' + item.ts + '</td>';
+            }
+            line += '<td style="text-align: ' + data.alignEventEvent + '">' + item.event + '</td>';
+            if (data.showEventValue) {
+                line += '<td style="text-align: ' + data.alignEventValue + '">' + (item.val === undefined || item.val === null ? '' : item.val) + '</td>';
+            }
+            if (data.showEventDuration) {
+                line += '<td style="text-align: ' + data.alignEventDuration + '">' + (item.duration === undefined || item.duration === null ? '' : item.duration) + '</td>';
+            }
+            line += '</tr>\n';
+            return line;
+        },
+        state2json(state) {
+            state = state || {};
+            let table = state.val || [];
+
+            if (typeof table !== 'object') {
+                try {
+                    table = JSON.parse(table);
+                } catch (e) {
+                    console.warn('Cannot parse event list: "' + table + '"');
+                    table = [];
+                }
+            }
+
+            table = table || [];
+
+            return table;
+        },
+        renderTable(el, wid, view, data, style, json, filterById) {
+            var table = '<table style="width: 100%;" class="' + (data.defaultStyle || data.defaultStyle === undefined ? 'event-table' : '') + '"><tbody style="width: 100%;">'
+            table += vis.binds.eventlist.renderHeader(el, wid, view, data);
+            for (var i = 0; i < json.length; i++) {
+                if (!data.max_rows || i < data.max_rows) {
+                    if (!filterById || filterById.indexOf(json[i].id) !== -1) {
+                        table += vis.binds.eventlist.renderRow(el, wid, view, data, json, i);
+                    }
+                } else {
+                    break;
+                }
+            }
+
+            table += '</tbody></table>\n';
+            return table;
+        },
+        subscribes: [],
+        init: function (el, wid, view, data, style) {
+            var $div = $('#' + wid);
+            if (!$div.length) {
+                return setTimeout(function () {
+                    vis.binds.eventlist.init(el, wid, view, data, style);
+                }, 100);
+            }
+            data.max_rows = parseInt(data.max_rows, 10) || 0;
+            data.widthEventTime     = data.widthEventTime     === parseFloat(data.widthEventTime).toString()     ? data.widthEventTime     + 'px' : data.widthEventTime || '';
+            data.widthEventEvent    = data.widthEventEvent    === parseFloat(data.widthEventEvent).toString()    ? data.widthEventEvent    + 'px' : data.widthEventEvent || '';
+            data.widthEventValue    = data.widthEventValue    === parseFloat(data.widthEventValue).toString()    ? data.widthEventValue    + 'px' : data.widthEventValue || '';
+            data.widthEventDuration = data.widthEventDuration === parseFloat(data.widthEventDuration).toString() ? data.widthEventDuration + 'px' : data.widthEventDuration || '';
+            data.showEventTime      = data.showEventTime      === undefined ? true : data.showEventTime;
+            data.showEventValue     = data.showEventValue     === undefined ? true : data.showEventValue;
+            data.showEventDuration  = data.showEventDuration  === undefined ? true : data.showEventDuration;
+
+            if (data.showScroll) {
+                $div.css('overflow-y', 'auto');
+            }
+
+            var jsonID = 'eventlist.' + (parseInt(data.eventlistInstance, 10) || 0) + '.eventJSONList';
+
+            vis.conn.getStates(jsonID, (err, state) => {
+                var json = vis.binds.eventlist.state2json(state[jsonID]);
+
+                var filterById = (data.filterById || '').trim();
+                if (filterById) {
+                    var parts = filterById.split(',');
+                    filterById = [];
+                    for (var p = 0; p < parts.length; p++) {
+                        if (parts[p].trim() && filterById.indexOf(parts[p].trim()) === -1) {
+                            filterById.push(parts[p]);
+                        }
+                    }
+                    if (!filterById.length) {
+                        filterById = null;
+                    }
+                }
+
+
+                if (vis.editMode && !json.length) {
+                    json.push({
+                        ts: new Date().toLocaleTimeString(),
+                        val: '5°C',
+                        event: _('eventListSampleEvent'),
+                        duration: '1h 2s'
+                    });
+                }
+
+                var text = vis.binds.eventlist.renderTable(el, wid, view, data, style, json, filterById);
+                $div.html(text);
+
+                function onChange(wid, id, newVal) {
+                    if (id === jsonID) {
+                        var json = vis.binds.eventlist.state2json({val: newVal});
+                        var text = vis.binds.eventlist.renderTable(el, wid, view, data, style, json, filterById);
+                        $div.html(text);
+                    }
+                }
+
+                if (vis.binds.eventlist.subscribes[jsonID]) {
+                    vis.binds.eventlist.subscribes[jsonID]++;
+                } else {
+                    vis.binds.eventlist.subscribes[jsonID] = 1;
+                    vis.conn.subscribe(jsonID);
+                    console.log('Subscribe on ' + jsonID);
+                }
+
+                vis.registerOnChange(onChange, jsonID);
+
+                $div.data('destroy', function () {
+                    if (vis.binds.eventlist.subscribes[jsonID]) {
+                        vis.binds.eventlist.subscribes[jsonID]--;
+                        if (!vis.binds.eventlist.subscribes[jsonID]) {
+                            console.log('Unsubscribe on ' + jsonID);
+                            vis.conn.unsubscribe(jsonID);
+                            delete vis.binds.eventlist.subscribes[jsonID];
+                        }
+                        vis.unregisterOnChange(onChange, jsonID);
+                    }
+                });
+            });
+        },
+        button: function (el, wid, view, data, style) {
+            var $div = $('#' + wid);
+            if (!$div.length) {
+                return setTimeout(function () {
+                    vis.binds.eventlist.button(el, wid, view, data, style);
+                }, 100);
+            }
+
+            var jsonID = 'eventlist.' + (parseInt(data.eventlistInstance, 10) || 0) + '.triggerPDF';
+
+            if (!data.no_style) {
+                $div.addClass('ui-state-default').button();
+                $div.find('.ui-button-text').css({width: '100%', height: '100%'});
+            }
+            if (!vis.editMode) {
+                $div.off('click').on('click', function () {
+                    vis.setValue(jsonID, true);
+                    setTimeout(function () {
+                        vis.conn.getStates([jsonID], function (error, data) {
+                            if (error) {
+                                vis.showError(error);
+                            } else if (data[jsonID] && data[jsonID].ack && !data[jsonID].val) {
+                                window.open('../eventlist/report.pdf?q=' + Date.now(), 'PDF');
+                            } else {
+                                setTimeout(function () {
+                                    window.open('../eventlist/report.pdf?q=' + Date.now(), 'PDF');
+                                }, 500);
+                            }
+                        });
+                    }, 100);
+                });
+            }
+        }
+    };
+
+    vis.binds.eventlist.showVersion();
+</script>
+
+<script id="tplEventlist"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="eventlist"
+        data-vis-type="json,table"
+        data-vis-name="Events"
+        data-vis-prev='<img src="widgets/eventlist/img/Prev_Eventlist.png"></img>'
+        data-vis-attrs="eventlistInstance[0]/instance,eventlist;"
+        data-vis-attrs0="max_rows/number;defaultStyle[true]/checkbox;defaultStyle[true]/checkbox;filterById/id;oddBackground/color;evenBackground/color;"
+        data-vis-attrs1="group.header;showEventTime[true]/checkbox;showEventValue[true]/checkbox;showEventDuration[false]/checkbox;"
+        data-vis-attrs2="group.headerTitle;textEventTime[_];textEventEvent[_];textEventValue[_];textEventDuration[_];"
+        data-vis-attrs3="group.headerWidths;widthEventTime;widthEventEvent;widthEventValue;widthEventDuration;"
+        data-vis-attrs4="group.headerAligns;alignEventTime[right]/select,left,right,center;alignEventEvent[right]/select,left,right,center;alignEventValue[right]/select,left,right,center;alignEventDuration[right]/select,left,right,center;"
+>
+    <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="width: 300px; height: 150px; overflow-x: hidden; overflow-y: auto">
+        <div class="vis-widget-body" style="display: inline-block" <%= (el) -> vis.binds.eventlist.init(el, this.data.wid, this.view, this.data, this.style) %> ></div>
+    </div>
+</script>
+
+<script id="tplEventlistButton"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="eventlist"
+        data-vis-type="button"
+        data-vis-name="PDF"
+        data-vis-prev='<img src="widgets/eventlist/img/Prev_EventlistButton.png"></img>'
+        data-vis-attrs="eventlistInstance[0]/instance,eventlist;src/image;imageHeight/slider,0,200,1;alt;text[PDF];no_style/checkbox">
+    <div
+        class="vis-widget ui-widget ui-button ui-corner-all <%== this.data.attr('class') %>"
+        style="width: 100px; height: 37px; z-index: 1;"
+        id="<%= this.data.attr('wid') %>"
+        <%= (el) -> vis.binds.eventlist.button(el, this.data.wid, this.view, this.data, this.style) %>
+    >
+        <div class="vis-widget-body"><img <%= this.data.attr('src') ? 'src="' +  this.data.attr('src') + '"' : '' %> style="vertical-align: middle; height: <%= this.data.attr('imageHeight') || 100 %>%;" alt="<%== this.data.attr('alt') %>" /><%== this.data.attr('text') %></div>
+    </div>
+</script>

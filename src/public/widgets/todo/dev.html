@@ -1,0 +1,72 @@
+<script type="text/javascript">
+    //jQuery.extend(true, vis.binds, {
+        vis.binds.debug = {
+            history: function (el, id) {
+                localData.uiState.bind('_' + id+".Value", function( e, newVal, oldVal ) {
+                    var timestamp = localData.uiState["_" + id + '.Timestamp'];
+                    var ack = localData.uiState['_' + id + '.Ack'];
+                    var type = typeof newVal;
+
+                    var row = "<tr><td width='70px'>"+type+"</td><td style='padding-right: 18px'>"+JSON.stringify(newVal)+"</td><td width='100px'>"+timestamp+"</td><td width='40px'>"+ack+"</td></tr>";
+                    jQuery(el).parent().find(".debugHistoryTable tr:first").after(row);
+                });
+            }
+        };
+    //});
+
+</script>
+
+<script type="text/ejs" id="tplJqhm" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug uiState" data-dashui-attrs="">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:600px;">
+        <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
+            <h3 style="margin-bottom:0px;">localData.uiState = {</h3>
+            <table style="white-space: nowrap;">
+                <% localData.uiState.each(function(i, obj) { %>
+                <tr><td>"<%= obj %>":</td><td colspan="2"><%= JSON.stringify(localData.uiState.attr(obj/*.replace(/\./g, "\\.")*/)) %>,</td></tr>
+                <% }) %>
+            </table>
+            }
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplDebugUiStateSingle" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug uiState[id]" data-dashui-attrs="hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; height:20px;width:960px">
+        <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
+            <% var obj = "_" + this.data.attr("hm_id") %>
+            <table style="white-space: nowrap;">
+                <tr><td>localData.uiState.<%= obj %> = </td><td colspan="2"><%= JSON.stringify({Value:localData.uiState.attr(obj+".Value"),Timestamp:localData.uiState.attr(obj+".Timestamp"),Certain:localData.uiState.attr(obj+".Certain"),LastChange:localData.uiState.attr(obj+".LastChange")}) %></td></tr>
+            </table>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="tplDebugUiStateHistory" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug uiState[id] History" data-dashui-attrs="hm_id">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; height:320px;width:480px">
+        <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
+            <% var obj = "_" + this.data.attr("hm_id") %>
+            <%= this.data.attr('hm_id') %>
+            <table class="debugHistoryTable" style="white-space: nowrap;">
+                <tr style="font-weight:bold;"><td widtd='70px'>typeof</td><td style='padding-right: 18px'>Value</td><td widtd='100px'>Timestamp</td><td widtd='40px'>Ack</td></tr>
+            </table>
+        </div>
+        <div <%= (el) -> vis.binds.debug.history(el, data.attr('hm_id')) %>></div>
+    </div>
+</script>
+
+
+<script type="text/ejs" id="tplDebugSetState" class="dashui-tpl" data-dashui-set="dev" data-dashui-name="Debug setState" data-dashui-attrs="">
+    <div class="dashui-widget <%== this.data.attr('class') %>" id="<%= this.data.attr("wid") %>" style="border:1px solid black; background-color:#333; color: #eee; font-family: courier; font-size:11px; padding: 4px; max-height:400px;">
+        <div class="dashui-widget-body" style="overflow-y: scroll; overflow-x: hidden;">
+            <h3 style="margin-bottom:0px;">localData.setState = {</h3>
+            <table>
+                <% localData.setState.each(function(i, obj) { %>
+                <% if (obj != 'nothing_selected') { %>
+                <tr><td>"<%= obj %>":{</td><td>"Value":"<%= localData.setState.attr(obj + ".Value") %>",</td><td>"Timestamp":"<%= localData.setState.attr(obj + ".Timestamp") %>"}</td></tr>
+                <% } %>
+                <% }) %>
+            </table>
+            }
+        </div>
+    </div>
+</script>

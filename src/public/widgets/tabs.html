@@ -1,0 +1,88 @@
+<link rel="stylesheet" href="widgets/tabs/styles/jquery.sliderTabs.css">
+<script src="widgets/tabs/jquery.sliderTabs.js"></script>
+<script type="text/javascript">
+    if (vis.editMode) {
+        // Add words for widgets
+        $.extend(true, systemDictionary, {
+            "show_tabs":        {"en": "Tabs count",    "de": "Tabs-Anzahl",    "ru": "Количество закладок"},
+            "title_tab_":       {"en": "Tab title",     "de": "Tab-Titel",      "ru": "Заголовок закладки"},
+            "contains_view_":   {"en": "Contains view", "de": "View für Tab",   "ru": "Имя страницы"}
+        });
+    }
+
+    vis.binds.tabs = {
+        stabs: function (view, wid, data) {
+            var $wid = $('#' + wid);
+            var id = $wid.attr('id');
+            if (id && id.match(/_removed$/)) {
+                return;
+            }
+
+            if (!$wid.length) {
+                return setTimeout(function () {
+                    vis.binds.tabs.stabs(view, wid, data);
+                }, 100);
+            }
+            // wait till widget will be visible
+            if (!$wid.is(':visible')) {
+                return setTimeout(function () {
+                    vis.binds.tabs.stabs(view, wid, data);
+                }, 1000);
+            }
+
+            $wid.find('.tabs-container').remove();
+            var i;
+            var text = '<span style="width: 100%; height: 100%" class="tabs-container">\n';
+            text += '<ul>\n';
+
+            data.show_tabs = parseInt(data.show_tabs, 10) || 1;
+
+            for (i = 1; i <= data.show_tabs; i++) {
+                text += '<li><a href="#' + wid + '_st' + i + '">' + (data['title_tab_' + i] || '') + '</a></li>';
+            }
+            text += '</ul>';
+
+            for (i = 1; i <= data.show_tabs; i++) {
+                text += '<div id="' + wid + '_st' + i + '" style="padding-left:0; height:100%">\n';
+                if (vis.editMode) text += '    <div class="editmode-helper" />\n';
+                text += '    <div data-vis-contains="' + (data['contains_view_' + i] || '') + '" class="vis-widget-body vis-view-container"></div>\n';
+                text += '</div>\n';
+            }
+            text += '</span>';
+            $wid.html(text);
+            $wid.find('.tabs-container').sliderTabs({
+                height: $wid.height() - 5
+            });
+
+            vis.updateContainers(view, view);
+
+            if (vis.editMode && vis.activeWidgets.indexOf(wid) !== -1) {
+                $wid.resizable('destroy');
+                vis.resizable(vis.activeViewDiv, vis.activeView, $wid);
+            }
+
+            $wid.data('destroy', function (id, $widget) {
+                try {
+                    $widget.resizable('destroy');
+                } catch (e) {
+
+                }
+            });
+        }
+    };
+</script>
+
+<script type="text/ejs" 
+        id="tplSTab" 
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplSTab" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 76px; left: 23px; width: 138px; height: 121px; position: absolute;" > <div class="vis-widget-prev-body"> <span style="width:100%;height:100%" class="ui-slider-tabs"> <!-- Unordered list representing the tabs --> <div class="ui-slider-tabs-list-wrapper"><div class="ui-slider-tabs-list-container" style="margin: 0px 35px;"><ul class="ui-slider-tabs-list" style="margin-left: 0px; width: 166px;"> <li class="selected" style="height: 32px;"><a href="#w00016_st1" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st2" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st3" style="height: 32px;">Tab</a></li></ul><a href="#" class="ui-slider-left-arrow edge" style="width: 35px; height: 32px;"><div></div></a><a href="#" class="ui-slider-right-arrow" style="width: 35px; height: 32px;"><div></div></a></div></div><div class="ui-slider-tabs-content-container" style="height: 86px;"><div style="padding-left: 0px; height: 100%; display: block; left: 0px; width: 126px;" class="ui-slider-tab-content selected"> <div class="editmode-helper"></div> <div data-vis-contains="hallo" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div></div></span> </div> </div>'
+        data-vis-set="tabs"
+        data-vis-update-style="true"
+        data-vis-name="SliderTabs" 
+        data-vis-attrs="height[100]/slider,20,1000,1;show_tabs[1]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body">
+            <% vis.binds.tabs.stabs(this.view, this.data.attr('wid'), data) %>
+        </div>
+    </div>
+</script>

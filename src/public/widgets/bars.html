@@ -1,0 +1,58 @@
+<!--
+    ioBroker.vis bars Widget-Set
+
+    version: "0.1.4"
+
+    Copyright 2013-2016 bluefox<dogafox@gmail.com>
+-->
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/barButtons.css" />
+<script type="text/javascript" src="widgets/bars/js/bars.js"></script>
+<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
+
+<script id="tplBarFilter" 
+		type="text/ejs"
+		class="vis-tpl"
+		data-vis-type="filter"
+		data-vis-set="bars"
+		data-vis-name="Filter bar"
+		data-vis-prev='<img src="widgets/bars/img/Prev_bars_filter.png"></img>'
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-red]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bOnlyOneSelected/checkbox;bValue/filters;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
+		data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters;"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    >
+        <div class="vis-widget-body" style="overflow: visible"></div>
+        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarFilter"); %>
+    </div>
+</script>
+
+<script id="tplBarNavigator" 
+		type="text/ejs"
+		class="vis-tpl"
+		data-vis-type="navigation"
+		data-vis-set="bars"
+		data-vis-prev='<img src="widgets/bars/img/Prev_bars_view.png"></img>'
+		data-vis-name="Views bar"
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-blue]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
+		data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views;"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    >
+        <div class="vis-widget-body" style="overflow: visible"></div>
+        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarNavigator"); %>
+    </div>
+</script>
