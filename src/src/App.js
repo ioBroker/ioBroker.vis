@@ -13,6 +13,8 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import CodeIcon from '@mui/icons-material/Code';
+import CodeOffIcon from '@mui/icons-material/CodeOff';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
@@ -77,6 +79,7 @@ class App extends GenericApp {
             viewsManage: false,
             projectsDialog: false,
             createFirstProjectDialog: false,
+            showCode: false,
             ...this.state,
         };
     }
@@ -316,6 +319,11 @@ class App extends GenericApp {
                             </div>
                             <div>
                                 <div className={this.props.classes.tabsContainer}>
+                                    <Tooltip title={I18n.t('Toggle code')}>
+                                        <IconButton onClick={() => this.setState({ showCode: !this.state.showCode })} size="small">
+                                            {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
+                                        </IconButton>
+                                    </Tooltip>
                                     <Tooltip title={I18n.t('Show view')}>
                                         <IconButton onClick={() => this.setViewsManage(true)} size="small">
                                             <AddIcon />
@@ -356,14 +364,17 @@ class App extends GenericApp {
                                     </Tabs>
                                 </div>
                                 <div className={this.props.classes.canvas}>
-                                    {/*<pre>
-                                        {JSON.stringify(this.state.project, null, 2)}
-                                    </pre>*/}
-                                    <VisEngine
-                                        socket={this.socket}
-                                        lang={this.socket.systemLang}
-                                        views={this.state.project}
-                                    />
+                                    {this.state.showCode
+                                        ? <pre>
+                                            {JSON.stringify(this.state.project, null, 2)}
+                                        </pre>
+                                        : <div style={{ position: 'relative' }}>
+                                            <VisEngine
+                                                socket={this.socket}
+                                                lang={this.socket.systemLang}
+                                                views={this.state.project}
+                                            />
+                                        </div>}
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>
