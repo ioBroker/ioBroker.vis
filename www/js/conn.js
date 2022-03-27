@@ -1316,7 +1316,7 @@ var servConn = {
         }
 
         if (!this._authInfo) {
-            console.log("No credentials!");
+            console.log('No credentials!');
         }
     },
     getConfig:        function (useCache, callback) {

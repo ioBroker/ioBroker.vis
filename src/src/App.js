@@ -21,7 +21,7 @@ import Attributes from './Attributes';
 import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
-import VisEngine from './Components/VisEngine';
+import VisEngine from './Vis/index';
 
 const styles = theme => ({
     block: {
@@ -102,6 +102,9 @@ class App extends GenericApp {
         let file;
         try {
             file = await this.socket.readFile('vis.0', `${projectName}/vis-views.json`);
+            if (typeof file === 'object') {
+                file = file.data;
+            }
         } catch (err) {
             console.warn(`Cannot read project file vis-views.json: ${err}`);
             file = '{}';
@@ -353,10 +356,14 @@ class App extends GenericApp {
                                     </Tabs>
                                 </div>
                                 <div className={this.props.classes.canvas}>
-                                    <pre>
+                                    {/*<pre>
                                         {JSON.stringify(this.state.project, null, 2)}
-                                    </pre>
-                                    <VisEngine />
+                                    </pre>*/}
+                                    <VisEngine
+                                        socket={this.socket}
+                                        lang={this.socket.systemLang}
+                                        views={this.state.project}
+                                    />
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>

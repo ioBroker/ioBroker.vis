@@ -1,0 +1,652 @@
+/* Reset all fonts settings */
+body, html {
+    font-style: normal;
+    font-stretch: normal;
+    text-shadow: none;
+    text-transform: none;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-indent: 0;
+    display: inline-block;
+    text-align: start;
+    font: 1em Arial;
+}
+
+/* set font as in editor */
+#vis_container {
+    font-family: Arial, sans-serif;
+}
+
+.vis-widget {
+    position: absolute;
+    overflow: hidden;
+}
+
+.vis-view {
+    top: 0;
+    min-height: 100%;
+    min-width: 100%;
+}
+.vis-no-user-select {
+    -webkit-touch-callout: none;
+    -ms-touch-select: none;
+    -ms-touch-action: none;
+
+    touch-callout: none;
+    touch-select: none;
+    touch-action: none;
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+
+    user-select: none;
+}
+
+.vis-no-pointer-events {
+    pointer-events: none
+}
+
+.tplSpanOnOff {
+    border: 1px solid blue;
+    display: block;
+    width: 50px;
+    height: 50px;
+}
+
+.tplSpanOnOff-on {
+    background-color: green;
+    text-shadow: none;
+}
+
+.tplSpanOnOff-off {
+
+}
+
+.ui-slider-vertical {
+
+    height: 93%;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding: .5em 0;
+}
+
+.vis-widget-button {
+    width: auto;
+    height: auto;
+}
+
+.vis-widget-body {
+    width: 100%;
+    height: 100%;
+}
+
+.vis-widget-prev-body {
+    width: 100%;
+    height: 100%;
+}
+
+.vis-signals-blink {
+    animation:          vis-blink-animation 1s steps(5, start) infinite;
+    -webkit-animation:  vis-blink-animation 1s steps(5, start) infinite;
+}
+@keyframes vis-blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+@-webkit-keyframes vis-blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes vis-waitico-rotate {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+#vis-waitico {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -24px 0 0 -24px;
+    height: 48px;
+    width: 48px;
+    text-indent: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    background: url(../img/gear-icon-md.png);
+    background-size: 100% auto;
+    -webkit-animation-duration: 2s;
+    -webkit-animation-name: vis-waitico-rotate;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+}
+
+#dialog-message {
+    padding-left: 15px;
+}
+
+.ui-selectable-helper {
+    opacity: 0.1 !important;
+    background: red !important;
+}
+.noTitle .ui-dialog-titlebar {
+    display: none;
+    margin-top: 30px;
+}
+
+button.ui-dialog-titlebar-close {
+    width: 30px !important;
+    height: 30px !important;
+    margin-top: -14px !important;
+}
+
+div.vis-editor-dialog {
+    /*    min-width: 440px !important;
+        max-width: 440px !important;*/
+}
+
+div.vis-editor-dialog div div button.ui-dialog-titlebar-close {
+    margin-left: 1px !important;
+    margin-top: -4px !important;
+}
+
+a.ui-dialog-titlebar-minimize {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 1px !important;
+    margin-top: -4px !important;
+}
+
+a.ui-dialog-titlebar-restore {
+    width: 26px !important;
+    height: 26px !important;
+    padding: 1px !important;
+    margin-top: -4px !important;
+}
+
+.ui-dialog-titlebar-restore span {
+    margin-top: 5px !important;
+    margin-left: 5px !important;
+}
+
+.ui-dialog-titlebar-minimize span {
+    margin-top: 5px !important;
+    margin-left: 5px !important;
+}
+
+.vis-panel h4 {
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 6px;
+    width: calc(100% - 7px);
+}
+
+.vis-no-spaces {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-spacing: 0;
+}
+
+.vis-wait-screen {
+    width: 100%;
+    height: 100%;
+    z-index: 5000;
+    /*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
+        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0)));
+        background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+        background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+        background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+        background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); */
+}
+
+.vis-progressbar {
+    position: absolute;
+    top: 50%;
+    left: 38%;
+    width: 20%;
+}
+
+.vis-wait-text {
+    position: absolute;
+    top: 10%;
+    left: 38%;
+    font-family: 'trebuchet MS', sans-serif;
+    color: #525252;
+    font-size: 1.5em;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+.vis-show-new {
+    border: 3px dotted rgba(167, 232, 226, 0.9);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.vis-edit-td-caption {
+}
+
+.vis-edit-td-field {
+    width: auto;
+}
+
+.vis-edit-textbox {
+    width: calc(100% - 4px);
+}
+
+.vis-edit-select {
+    width: auto;
+}
+
+.vis-wizard-select {
+    width: 200px;
+}
+
+.vis-group-button-width {
+    width: 100%;
+    font-weight: bold;
+}
+.vis-user-disabled {
+    background: gray !important;
+    opacity: 0.3 !important;
+    pointer-events: none;
+}
+.vis-view-disabled-text {
+    font-size: 24px;
+    position: absolute;
+    left: calc(50% - 150px);
+    top: calc(50% - 12px);
+}
+.vis-view-disabled {
+    position: absolute;
+    z-index: 10000;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0.4;
+    background: black;
+    cursor: not-allowed;
+}
+
+div#tabs {
+
+    height: 100%;
+    overflow: hidden;
+    min-width: 360px;
+}
+
+div#vis_editor {
+    min-width: 440px !important;
+    max-width: 440px !important;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+.vis-steal-css, .vis-clear-css {
+    display: inline-block;
+}
+
+.vis-steal-cursor {
+    cursor: crosshair !important;
+}
+
+.vis-inspect-css {
+    font-size: 11px !important;
+}
+
+.vis-steal-label {
+    width: 17px;
+    height: 17px;
+}
+
+#css_table {
+    width: 220px;
+}
+
+.editmode-helper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url(../img/editmode-pattern.png);
+    /*z-index: 89*/
+}
+
+.vis-wait-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.vis-clipboard {
+    position: absolute;
+    top: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: rgb(55, 169, 232);
+    opacity: 0.8;
+    z-index: 1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.vis-stealmode {
+    position: absolute;
+    top: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+    background-color: orange;
+    opacity: 0.8;
+    z-index: 1003;
+    -webkit-border-bottom-right-radius: 7px;
+    -webkit-border-bottom-left-radius: 7px;
+    -moz-border-radius-bottomright: 7px;
+    -moz-border-radius-bottomleft: 7px;
+    border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;
+}
+
+/*--------------------------------------------- Authentication dialog ------------------------------- */
+/* Mask for background, by default is not display */
+#login-mask {
+    display: none;
+    background: #000;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+    z-index: 999;
+}
+
+/* You can customize to your needs  */
+.login-popup {
+    display: none;
+    background: #333;
+    padding: 10px;
+    border: 2px solid #ddd;
+    float: left;
+    font-size: 1.2em;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 99999;
+    box-shadow: 0 0 20px #999;
+    /* CSS3 */
+    -moz-box-shadow: 0 0 20px #999;
+    /* Firefox */
+    -webkit-box-shadow: 0 0 20px #999;
+    /* Safari, Chrome */
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px;
+    /* Firefox */
+    -webkit-border-radius: 3px;
+    /* Safari, Chrome */;
+}
+
+.login-input-field label {
+    display: block;
+    padding-bottom: 7px;
+}
+
+.login-input-field span {
+    display: block;
+}
+
+.login-input-field span {
+    color: #999;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.login-input-field {
+    text-align: center;
+    background: #666666;
+    border-bottom: 1px solid #333;
+    border-left: 1px solid #000;
+    border-right: 1px solid #333;
+    border-top: 1px solid #000;
+    color: #fff;
+    border-radius: 3px 3px 3px 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    font: 13px Arial, Helvetica, sans-serif;
+    padding: 6px 6px 4px;
+}
+
+#login-password {
+    width: 205px;
+    text-align: left;
+}
+
+#login-username {
+    width: 220px;
+}
+
+.login-message {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+    color: white;
+    font-weight: bold;
+}
+
+#login-box input:-moz-placeholder {
+    color: #bbb;
+    text-shadow: 0 0 2px #000;
+}
+
+#login-box input::-webkit-input-placeholder {
+    color: #bbb;
+    text-shadow: 0 0 2px #000;
+}
+
+.login-button {
+    background: -moz-linear-gradient(center top, #f3f3f3, #dddddd);
+    background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#dddddd));
+    background: -o-linear-gradient(top, #f3f3f3, #dddddd);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#f3f3f3', EndColorStr='#dddddd');
+    border-color: #000;
+    border-width: 1px;
+    border-radius: 4px 4px 4px 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    color: #333;
+    cursor: pointer;
+    display: inline-block;
+    padding: 6px 6px 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    width: 220px;
+}
+
+.login-button:hover {
+    background: #ddd;
+}
+
+
+/* ---------------- Notifications themes (info, warn)--------------------------- */
+
+div.jGrowl div.info {
+    background-color: #FFF1C2;
+    color: navy;
+}
+
+div.jGrowl div.info {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    width: 280px;
+    height: 55px;
+    overflow: hidden;
+    opacity: 0.95;
+}
+
+div.jGrowl div.warn {
+    background-color: #FFF1C2;
+    color: red;
+}
+
+div.jGrowl div.warn {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    width: 280px;
+    height: 55px;
+    overflow: hidden;
+    opacity: 1;
+}
+
+/* ------------------ connecting -------------------------- */
+#server-disconnect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 5000;
+}
+.disconnect-light {
+    background-color: rgba(231,231,231,0.9);
+}
+.disconnect-dark {
+    background-color: rgba(25,25,25,0.9);
+}
+#server-disconnect > * {
+    /* center child divs  */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* x-border-box */
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    /* x-unselectable */
+    user-select: none;
+    -o-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+.splash-screen-circle-outer {
+    z-index: 20000;
+    width: 100px;
+    height: 100px;
+    border-radius: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    border: 5px solid rgba(87, 113, 145, 0.9);
+    opacity: .9;
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    box-shadow: 0 0 35px #577191;
+    -moz-animation: spinPulse 5s infinite ease-in-out;
+    -webkit-animation: spinPulse 5s infinite linear;
+}
+.splash-screen-circle-inner {
+    z-index: 20001;
+    width: 80px;
+    height: 80px;
+    border-radius: 80px;
+    margin-top: -40px;
+    margin-left: -40px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 5px solid rgba(87, 113, 145, 0.9);
+    opacity: .9;
+    border-left: 5px solid rgba(0, 0, 0, 0);
+    border-right: 5px solid rgba(0, 0, 0, 0);
+    box-shadow: 0 0 15px #577191;
+    -moz-animation: spinoffPulse 5s infinite linear;
+    -webkit-animation: spinoffPulse 5s infinite linear;
+}
+.splash-screen-text {
+    z-index: 20002;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    margin-top: -50px;
+    margin-left: -50px;
+    font-family: Verdana, Geneva, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    text-shadow: 1px 1px #cccccc;
+    vertical-align: middle;
+    color: #002951;
+}
+@-moz-keyframes spinPulse {
+    0% {
+        -moz-transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px #577191;
+    }
+    50% {
+        -moz-transform: rotate(145deg);
+        opacity: 1;
+    }
+    100% {
+        -moz-transform: rotate(-320deg);
+        opacity: 0;
+    }
+}
+@-moz-keyframes spinoffPulse {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes spinPulse {
+    0% {
+        -webkit-transform: rotate(160deg);
+        opacity: 0;
+        box-shadow: 0 0 1px #577191;
+    }
+    50% {
+        -webkit-transform: rotate(145deg);
+        opacity: 1;
+    }
+    100% {
+        -webkit-transform: rotate(-320deg);
+        opacity: 0;
+    }
+}
+@-webkit-keyframes spinoffPulse {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+
