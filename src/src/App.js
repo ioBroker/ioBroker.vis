@@ -368,7 +368,7 @@ class App extends GenericApp {
                                         ? <pre>
                                             {JSON.stringify(this.state.project, null, 2)}
                                         </pre>
-                                        : <div style={{ position: 'relative' }}>
+                                        : <div id="vis-react-container" style={{ position: 'relative' }}>
                                             <VisEngine
                                                 socket={this.socket}
                                                 lang={this.socket.systemLang}

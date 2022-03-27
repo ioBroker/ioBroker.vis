@@ -2562,7 +2562,7 @@ class Vis {
     showWaitScreen(isShow, appendText, newText, step) {
         let waitScreen = document.getElementById('waitScreen');
         if (!waitScreen && isShow) {
-            this.$('body').append('<div id="waitScreen" class="vis-wait-screen"><div id="waitDialog" class="waitDialog"><div class="vis-progressbar"></div><div class="vis-wait-text" id="waitText"></div></div></div>');
+            this.$('#vis-react-container').append('<div id="waitScreen" class="vis-wait-screen"><div id="waitDialog" class="waitDialog"><div class="vis-progressbar"></div><div class="vis-wait-text" id="waitText"></div></div></div>');
             waitScreen = document.getElementById('waitScreen');
             this.waitScreenVal = 0;
         }
