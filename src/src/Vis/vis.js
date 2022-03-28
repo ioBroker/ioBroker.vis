@@ -288,6 +288,9 @@ class Vis {
                         cb(error);
                     });
             },
+            getHttp: (url, callback) =>
+                this.socket.getRawSocket().emit('httpGet', url, data =>
+                    callback && callback(data)),
         };
 
         this.socket.registerConnectionHandler(this.onConnectionChanged);
@@ -1962,7 +1965,7 @@ class Vis {
     }
 
     isUserMemberOf(user, userGroups) {
-        if (!this.userGroups) {
+        if (!userGroups) {
             return true;
         }
         if (!Array.isArray(userGroups)) {
@@ -2470,7 +2473,10 @@ class Vis {
         }, 2500);
     }
 
-    onWakeUp(callback) {
+    onWakeUp(callback, wid) {
+        if (!wid) {
+            console.warn('No widget ID for onWakeUp callback! Please fix');
+        }
         this.wakeUpCallbacks.push(callback);
     }
 
@@ -2703,11 +2709,8 @@ class Vis {
         return w &&
             w.data &&
             w.data.filterkey &&
-            widget &&
-            widget.data &&
             v.length > 0 &&
-            !v.includes(widget.data.filterkey
-        );
+            !v.includes(widget.data.filterkey);
     }
 
     calcCommonStyle(recalc) {
@@ -3235,7 +3238,7 @@ class Vis {
     }
 
     createDemoStates() {
-        // Create demo constiables
+        // Create demo variables
         this.states.attr({ 'demoTemperature.val': 25.4 });
         this.states.attr({ 'demoHumidity.val': 55 });
     }
@@ -3487,7 +3490,7 @@ class Vis {
         }
 
         if (!id.startsWith('local_')) {
-            // not needed for local constiables
+            // not needed for local variables
             if (this.editMode) {
                 this.states[`${id}.val`] = state.val;
                 this.states[`${id}.ts`] = state.ts;
@@ -3577,18 +3580,20 @@ class Vis {
         // Bindings on every element
         if (!this.editMode && this.bindings[id]) {
             for (let i = 0; i < this.bindings[id].length; i++) {
-                const widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
-                const value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+                const bid = this.bindings[id][i].widget;
+                const widget = this.views[this.bindings[id][i].view].widgets[bid];
+                const value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, bid, widget);
 
                 widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
-                if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
-                    this.widgets[this.bindings[id][i].widget][`${this.bindings[id][i].type}.${this.bindings[id][i].attr}`] = value;
+
+                if (this.widgets[bid] && this.bindings[id][i].type === 'data') {
+                    this.widgets[bid][`${this.bindings[id][i].type}.${this.bindings[id][i].attr}`] = value;
                 }
 
                 this.subscribeOidAtRuntime(value);
                 this.visibilityOidBinding(this.bindings[id][i], value);
 
-                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
+                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, bid);
             }
         }
 
@@ -3702,7 +3707,7 @@ class Vis {
     }
 
     subscribeOidAtRuntime(oid, callback, force) {
-        // if state value is an oid, and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
+        // if state value is an oid, and it is not subscribed then subscribe it at runtime, can happen if binding are used in oid attributes
         // the id with invalid contains characters not allowed in oid's
         if (!FORBIDDEN_CHARS.test(oid) && (!this.subscribing.active.includes(oid) || force)) {
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {

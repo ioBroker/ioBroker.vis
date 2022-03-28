@@ -29,14 +29,16 @@ function replaceGroupAttr(inputStr, groupAttrList) {
 
 function getWidgetGroup(views, view, widget) {
     const widgets = views[view].widgets;
-    let members;
+    if (widgets[widget].groupid) {
+        return views[view].widgets[widget].groupid;
+    }
 
     for (const w in widgets) {
         if (!widgets.hasOwnProperty(w)) {
             continue;
         }
-        members = views[view].widgets[w].data.members;
-        if (members && members.includes(widget)) {
+        const members = widgets[w].data.members;
+        if (members?.includes(widget)) {
             return w;
         }
     }
@@ -250,7 +252,7 @@ function extractBinding(format) {
 // }
 function getUsedObjectIDsInWidget(views, view, id, outputs) {
     // Check all attributes
-    const widget = views[view].widgets[id];
+    let widget = views[view].widgets[id];
 
     // fix error in naming
     if (widget.groupped) {
@@ -333,7 +335,27 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
         widget.data.orientation = 'vertical';
     }
 
-    const { data, style } = widget;
+    let { data } = widget;
+    const { style } = widget;
+
+    // if widget is in the group => replace groupAttrX values
+    if (widget.grouped) {
+        const parentWidgetData = views[view].widgets[widget.groupid].data;
+        const aCount = parseInt(parentWidgetData.attrCount, 10);
+
+        if (aCount && data) {
+            data = JSON.parse(JSON.stringify(data));
+
+            Object.keys(data).forEach(attr => {
+                if (typeof data[attr] === 'string') {
+                    const result = replaceGroupAttr(data[attr], parentWidgetData);
+                    if (result.doesMatch) {
+                        data[attr] = result.newString || '';
+                    }
+                }
+            });
+        }
+    }
 
     Object.keys(data).forEach(attr => {
         if (!attr) {
@@ -411,7 +433,7 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                         outputs.bindings[ssid] = outputs.bindings[ssid] || [];
                         oids[t].type = 'data';
                         oids[t].attr = attr;
-                        oids[t].view = outputs.view;
+                        oids[t].view = view;
                         oids[t].widget = id;
 
                         outputs.bindings[ssid].push(oids[t]);
@@ -457,13 +479,15 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                 // Visibility binding
                 if (attr === 'visibility-oid' && data['visibility-oid']) {
                     let vid = data['visibility-oid'];
-                    const vGroup = getWidgetGroup(views, view, id);
-                    if (vGroup) {
-                        const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
-                        if (result1.doesMatch) {
-                            vid = result1.newString;
+                    /*if (widget.grouped) {
+                        const vGroup = getWidgetGroup(views, view, id);
+                        if (vGroup) {
+                            const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
+                            if (result1.doesMatch) {
+                                vid = result1.newString;
+                            }
                         }
-                    }
+                    }*/
 
                     outputs.visibility[vid] = outputs.visibility[vid] || [];
                     outputs.visibility[vid].push({ view, widget: id });
@@ -472,13 +496,15 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                 // Signal binding
                 if (attr.startsWith('signals-oid-') && data[attr]) {
                     let sid = data[attr];
-                    const group = getWidgetGroup(views, view, id);
-                    if (group) {
-                        const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
-                        if (result2.doesMatch) {
-                            sid = result2.newString;
+                    /*if (widget.grouped) {
+                        const group = getWidgetGroup(views, view, id);
+                        if (group) {
+                            const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
+                            if (result2.doesMatch) {
+                                sid = result2.newString;
+                            }
                         }
-                    }
+                    }*/
 
                     outputs.signals[sid] = outputs.signals[sid] || [];
 
@@ -490,13 +516,15 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                 }
                 if (attr === 'lc-oid') {
                     let lcsid = data[attr];
-                    const gGroup = getWidgetGroup(views, view, id);
-                    if (gGroup) {
-                        const result3 = replaceGroupAttr(lcsid, views[view].widgets[gGroup].data);
-                        if (result3.doesMatch) {
-                            lcsid = result3.newString;
+                    /*if (widget.grouped) {
+                        const gGroup = getWidgetGroup(views, view, id);
+                        if (gGroup) {
+                            const result3 = replaceGroupAttr(lcsid, views[view].widgets[gGroup].data);
+                            if (result3.doesMatch) {
+                                lcsid = result3.newString;
+                            }
                         }
-                    }
+                    }*/
 
                     outputs.lastChanges[lcsid] = outputs.lastChanges[lcsid] || [];
                     outputs.lastChanges[lcsid].push({ view, widget: id });
