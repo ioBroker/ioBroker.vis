@@ -42,6 +42,7 @@ function parseSearch() {
 
 class Vis {
     // expected options
+    //  editMode
     //  visConfig
     //  $
     //  can
@@ -120,7 +121,7 @@ class Vis {
             namespace: 'vis.0',
             logError: errorText => {
                 console.error(`Error: ${errorText}`);
-                this.socket.getRawSocket().emit('log', 'error', `Addon vis ${errorText}`);
+                this.socket.log(errorText, 'error');
             },
             getGroups: (groupName, useCache, cb) => {
                 if (typeof groupName === 'function') {
@@ -306,17 +307,18 @@ class Vis {
         const obj = {};
         for (j = index; j < this.subscribing.IDs.length && j < index + 100; j++) {
             const _id = this.subscribing.IDs[j];
-            if (this.states[`${_id}.val`] === undefined || this.states[`${_id}.val`] === null) {
+            const _val = `${_id}.val`;
+            if (this.states[_val] === undefined || this.states[_val] === null) {
                 if (!_id || !_id.match(/^dev\d+$/)) {
                     console.log(`Create inner vis object ${_id}`);
                 }
                 if (this.editMode) {
-                    this.states[`${_id}.val`] = 'null';
+                    this.states[_val] = 'null';
                     this.states[`${_id}.ts`] = now;
                     this.states[`${_id}.ack`] = false;
                     this.states[`${_id}.lc`] = now;
                 } else {
-                    obj[`${_id}.val`] = 'null';
+                    obj[_val] = 'null';
                     obj[`${_id}.ts`] = now;
                     obj[`${_id}.ack`] = false;
                     obj[`${_id}.lc`] = now;
@@ -338,10 +340,12 @@ class Vis {
             }
         }
 
-        try {
-            this.states.attr(obj);
-        } catch (e) {
-            this.conn.logError(`Error: can't create states objects (${e})`);
+        if (!this.editMode) {
+            try {
+                this.states.attr(obj);
+            } catch (e) {
+                this.conn.logError(`Error: can't create states objects (${e})`);
+            }
         }
 
         if (j < this.subscribing.IDs.length) {
@@ -699,6 +703,11 @@ class Vis {
         this.onConnectionChanged(true);
     }
 
+    setEditMode(editMode) {
+        this.editMode = editMode;
+        // re-render
+    }
+
     _setValue(id, state, isJustCreated) {
         const oldValue = this.states.attr(`${id}.val`);
 
@@ -883,9 +892,9 @@ class Vis {
         if (!result) {
             return result;
         }
-        this.visibility = result.visibility;
-        this.bindings = result.bindings;
-        this.signals = result.signals;
+        this.visibility  = result.visibility;
+        this.bindings    = result.bindings;
+        this.signals     = result.signals;
         this.lastChanges = result.lastChanges;
 
         return { IDs: result.IDs, byViews: result.byViews };
@@ -947,9 +956,9 @@ class Vis {
         }
         this.instance = this.instance || window.localStorage.getItem(this.storageKeyInstance);
 
-        if (this.editMode) {
-            this.bindInstanceEdit();
-        }
+        // if (this.editMode) {
+        //     this.bindInstanceEdit();
+        // }
         this.states.attr({ 'instance.val': this.instance, instance: this.instance });
     }
 
@@ -1076,7 +1085,7 @@ class Vis {
         this.bindInstance();
 
         // EDIT mode
-        this.editMode && this.editInitNext();
+        // this.editMode && this.editInitNext();
 
         this.initialized = true;
 
@@ -1098,14 +1107,12 @@ class Vis {
                 this.renderViews(this.activeViewDiv, containers, () => {
                     cnt--;
                     if (this.activeView) {
-                        this.changeView(this.activeViewDiv, this.activeView, () => {
-                            if (!cnt && onReady) {
-                                onReady();
-                            }
-                        });
+                        this.changeView(this.activeViewDiv, this.activeView, () =>
+                            !cnt && onReady && onReady());
                     }
                 });
             }
+
             this.checkLicense();
         }
 
@@ -2051,7 +2058,7 @@ class Vis {
 
             this.widgets[id] = {
                 wid: id,
-                data: new this.can.Map($.extend({ wid: id }, widget.data)),
+                data: new this.can.Map(Object.assign({ wid: id }, widget.data)),
             };
         } catch (e) {
             console.log(`Cannot bind data of widget widget: ${id}`);
@@ -2094,7 +2101,9 @@ class Vis {
                     style: widget.style,
                 });
                 if ($widget.length) {
-                    if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
+                    if ($widget.parent().attr('id') !== $view.attr('id')) {
+                        $widget.appendTo($view);
+                    }
                     $widget.replaceWith(canWidget);
                     // shift widget to group if required
                 } else {

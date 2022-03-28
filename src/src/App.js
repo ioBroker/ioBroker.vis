@@ -70,22 +70,19 @@ class App extends GenericApp {
         extendedProps.sentryDSN = window.sentryDSN;
 
         super(props, extendedProps);
+    }
 
-        // icon cache
-        this.icons = {};
-
-        this.state = {
+    componentDidMount() {
+        super.componentDidMount();
+        this.setState({
             projectName: 'main',
             viewsManage: false,
             projectsDialog: false,
             createFirstProjectDialog: false,
             showCode: false,
             ...this.state,
-        };
-    }
+        });
 
-    componentDidMount() {
-        super.componentDidMount();
         window.addEventListener('hashchange', this.onHashChange, false);
     }
 
@@ -313,9 +310,7 @@ class App extends GenericApp {
                             gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                         >
                             <div className={this.props.classes.block}>
-                                <Widgets
-                                    classes={{}}
-                                />
+                                <Widgets classes={{}} />
                             </div>
                             <div>
                                 <div className={this.props.classes.tabsContainer}>
@@ -370,6 +365,8 @@ class App extends GenericApp {
                                         </pre>
                                         : <div id="vis-react-container" style={{ position: 'relative' }}>
                                             <VisEngine
+                                                activeView={this.state.selectedView}
+                                                editMode
                                                 socket={this.socket}
                                                 lang={this.socket.systemLang}
                                                 views={this.state.project}
