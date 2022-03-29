@@ -17,7 +17,6 @@ import LockIcon from '@mui/icons-material/Lock';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
 
-import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';
 
 const Widgets = props => {
@@ -28,8 +27,6 @@ const Widgets = props => {
         return null;
     }
 
-    const [selectedWidgets, setSelectedWidgets] = useState([]);
-
     const toolbar = {
         name: 'Widgets',
         items:
@@ -37,10 +34,13 @@ const Widgets = props => {
     {
         type: 'multiselect',
         name: 'Active widget',
-        items: Object.keys(props.project[props.selectedView].widgets).map(widget => ({ name: widget, value: widget })),
+        items: Object.keys(props.project[props.selectedView].widgets).map(widget => ({
+            name: `${widget} (${props.project[props.selectedView].widgets[widget].tpl})`,
+            value: widget,
+        })),
         width: 120,
-        value: selectedWidgets,
-        onChange: e => setSelectedWidgets(e.target.value),
+        value: props.selectedWidgets,
+        onChange: e => props.setSelectedWidgets(e.target.value),
     },
     [[
         { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
@@ -127,6 +127,8 @@ Widgets.propTypes = {
     openedViews: PropTypes.array,
     project: PropTypes.object,
     selectedView: PropTypes.string,
+    selectedWidgets: PropTypes.array,
+    setSelectedWidgets: PropTypes.func,
 };
 
 export default Widgets;

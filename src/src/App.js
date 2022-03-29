@@ -79,7 +79,8 @@ class App extends GenericApp {
             viewsManage: false,
             projectsDialog: false,
             createFirstProjectDialog: false,
-            showCode: false,
+            selectedWidgets: [],
+            showCode: window.localStorage.getItem('showCode') || false,
             ...this.state,
         };
     }
@@ -137,6 +138,7 @@ class App extends GenericApp {
             project,
             openedViews,
             projectName,
+            selectedWidgets: [],
         });
         this.changeView(selectedView);
 
@@ -177,7 +179,7 @@ class App extends GenericApp {
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
     changeView = view => {
-        this.setState({ selectedView: view });
+        this.setState({ selectedView: view, selectedWidgets: [] });
         window.localStorage.setItem('selectedView', view);
         window.location.hash = view;
     }
@@ -261,6 +263,14 @@ class App extends GenericApp {
         }
     }
 
+    setSelectedWidgets = selectedWidgets => this.setState({ selectedWidgets })
+
+    toggleCode = () => {
+        const oldShowCode = this.state.showCode;
+        this.setState({ showCode: !oldShowCode });
+        window.localStorage.setItem('showCode', JSON.stringify(oldShowCode));
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -297,6 +307,8 @@ class App extends GenericApp {
                         setViewsManage={this.setViewsManage}
                         projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
                         setProjectsDialog={this.setProjectsDialog}
+                        selectedWidgets={this.state.selectedWidgets}
+                        setSelectedWidgets={this.setSelectedWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />
@@ -320,7 +332,7 @@ class App extends GenericApp {
                             <div>
                                 <div className={this.props.classes.tabsContainer}>
                                     <Tooltip title={I18n.t('Toggle code')}>
-                                        <IconButton onClick={() => this.setState({ showCode: !this.state.showCode })} size="small">
+                                        <IconButton onClick={() => this.toggleCode()} size="small">
                                             {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
                                         </IconButton>
                                     </Tooltip>
@@ -367,14 +379,14 @@ class App extends GenericApp {
                                     {this.state.showCode
                                         ? <pre>
                                             {JSON.stringify(this.state.project, null, 2)}
-                                        </pre>
-                                        : <div id="vis-react-container" style={{ position: 'relative' }}>
-                                            <VisEngine
-                                                socket={this.socket}
-                                                lang={this.socket.systemLang}
-                                                views={this.state.project}
-                                            />
-                                        </div>}
+                                        </pre> : null}
+                                    <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
+                                        <VisEngine
+                                            socket={this.socket}
+                                            lang={this.socket.systemLang}
+                                            views={this.state.project}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>
@@ -386,6 +398,7 @@ class App extends GenericApp {
                                     changeProject={this.changeProject}
                                     openedViews={this.state.openedViews}
                                     projectName={this.state.projectName}
+                                    selectedWidgets={this.state.selectedWidgets}
                                     socket={this.socket}
                                     themeName={this.state.themeName}
                                 />
