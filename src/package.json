@@ -25,6 +25,7 @@
         "file-saver": "^2.0.5",
         "jszip": "^3.7.1",
         "node-sass": "^6.0.1",
+        "moment": "^2.29.1",
         "react": "^17.0.2",
         "react-ace": "^9.5.0",
         "react-dnd": "14.0.3",

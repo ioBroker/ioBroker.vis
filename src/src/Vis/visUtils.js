@@ -250,9 +250,9 @@ function extractBinding(format) {
 //    visibility: {} //
 //    signals: {}    //
 // }
-function getUsedObjectIDsInWidget(views, view, id, outputs) {
+function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     // Check all attributes
-    let widget = views[view].widgets[id];
+    let widget = views[view].widgets[wid];
 
     // fix error in naming
     if (widget.groupped) {
@@ -420,23 +420,27 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
 
         if (typeof data[attr] === 'string') {
             let m;
+            // Process bindings in data attributes
             const oids = extractBinding(data[attr]);
 
             if (oids) {
                 for (let t = 0; t < oids.length; t++) {
                     const ssid = oids[t].systemOid;
                     if (ssid) {
-                        !outputs.IDs.includes(ssid) && outputs.IDs.push(ssid);
-                        if (outputs.byViews && !outputs.byViews[view].includes(ssid)) {
-                            outputs.byViews[view].push(ssid);
+                        // Save id for subscribe
+                        !linkContext.IDs.includes(ssid) && linkContext.IDs.push(ssid);
+
+                        if (linkContext.byViews && !linkContext.byViews[view].includes(ssid)) {
+                            linkContext.byViews[view].push(ssid);
                         }
-                        outputs.bindings[ssid] = outputs.bindings[ssid] || [];
+
+                        linkContext.bindings[ssid] = linkContext.bindings[ssid] || [];
                         oids[t].type = 'data';
                         oids[t].attr = attr;
                         oids[t].view = view;
-                        oids[t].widget = id;
+                        oids[t].widget = wid;
 
-                        outputs.bindings[ssid].push(oids[t]);
+                        linkContext.bindings[ssid].push(oids[t]);
                     }
 
                     if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
@@ -446,13 +450,14 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                                 continue;
                             }
 
-                            !outputs.IDs.includes(systemOid) && outputs.IDs.push(systemOid);
+                            !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
 
-                            if (outputs.byViews && outputs.byViews[view].includes(systemOid)) {
-                                outputs.byViews[view].push(systemOid);
+                            if (linkContext.byViews && linkContext.byViews[view].includes(systemOid)) {
+                                linkContext.byViews[view].push(systemOid);
                             }
-                            outputs.bindings[systemOid] = outputs.bindings[systemOid] || [];
-                            outputs.bindings[systemOid].push(oids[t]);
+
+                            linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
+                            linkContext.bindings[systemOid].push(oids[t]);
                         }
                     }
                 }
@@ -468,11 +473,11 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                 )
             ) {
                 if (data[attr] && data[attr] !== 'nothing_selected') {
-                    if (!outputs.IDs.includes(data[attr])) {
-                        outputs.IDs.push(data[attr]);
+                    if (!linkContext.IDs.includes(data[attr])) {
+                        linkContext.IDs.push(data[attr]);
                     }
-                    if (outputs.byViews && !outputs.byViews[view].includes(data[attr])) {
-                        outputs.byViews[view].push(data[attr]);
+                    if (linkContext.byViews && !linkContext.byViews[view].includes(data[attr])) {
+                        linkContext.byViews[view].push(data[attr]);
                     }
                 }
 
@@ -480,7 +485,7 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                 if (attr === 'visibility-oid' && data['visibility-oid']) {
                     let vid = data['visibility-oid'];
                     /*if (widget.grouped) {
-                        const vGroup = getWidgetGroup(views, view, id);
+                        const vGroup = getWidgetGroup(views, view, wid);
                         if (vGroup) {
                             const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
                             if (result1.doesMatch) {
@@ -489,15 +494,15 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                         }
                     }*/
 
-                    outputs.visibility[vid] = outputs.visibility[vid] || [];
-                    outputs.visibility[vid].push({ view, widget: id });
+                    linkContext.visibility[vid] = linkContext.visibility[vid] || [];
+                    linkContext.visibility[vid].push({ view, widget: wid });
                 }
 
                 // Signal binding
                 if (attr.startsWith('signals-oid-') && data[attr]) {
                     let sid = data[attr];
                     /*if (widget.grouped) {
-                        const group = getWidgetGroup(views, view, id);
+                        const group = getWidgetGroup(views, view, wid);
                         if (group) {
                             const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
                             if (result2.doesMatch) {
@@ -506,18 +511,18 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                         }
                     }*/
 
-                    outputs.signals[sid] = outputs.signals[sid] || [];
+                    linkContext.signals[sid] = linkContext.signals[sid] || [];
 
-                    outputs.signals[sid].push({
+                    linkContext.signals[sid].push({
                         view,
-                        widget: id,
+                        widget: wid,
                         index: parseInt(attr.substring(12), 10), // 'signals-oid-'.length = 12
                     });
                 }
                 if (attr === 'lc-oid') {
                     let lcsid = data[attr];
                     /*if (widget.grouped) {
-                        const gGroup = getWidgetGroup(views, view, id);
+                        const gGroup = getWidgetGroup(views, view, wid);
                         if (gGroup) {
                             const result3 = replaceGroupAttr(lcsid, views[view].widgets[gGroup].data);
                             if (result3.doesMatch) {
@@ -526,18 +531,18 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                         }
                     }*/
 
-                    outputs.lastChanges[lcsid] = outputs.lastChanges[lcsid] || [];
-                    outputs.lastChanges[lcsid].push({ view, widget: id });
+                    linkContext.lastChanges[lcsid] = linkContext.lastChanges[lcsid] || [];
+                    linkContext.lastChanges[lcsid].push({ view, widget: wid });
                 }
             } else
             if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                 const _id = `groupAttr${m[1]}`;
                 if (data[_id]) {
-                    if (!outputs.IDs.includes(data[_id])) {
-                        outputs.IDs.push(data[_id]);
+                    if (!linkContext.IDs.includes(data[_id])) {
+                        linkContext.IDs.push(data[_id]);
                     }
-                    if (outputs.byViews && !outputs.byViews[view].includes(data[_id])) {
-                        outputs.byViews[view].push(data[_id]);
+                    if (linkContext.byViews && !linkContext.byViews[view].includes(data[_id])) {
+                        linkContext.byViews[view].push(data[_id]);
                     }
                 }
             }
@@ -556,19 +561,19 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                     for (let tt = 0; tt < objIDs.length; tt++) {
                         const sidd = objIDs[tt].systemOid;
                         if (sidd) {
-                            !outputs.IDs.includes(sidd) && outputs.IDs.push(sidd);
-                            if (outputs.byViews && outputs.byViews[view].includes(sidd)) {
-                                outputs.byViews[view].push(sidd);
+                            !linkContext.IDs.includes(sidd) && linkContext.IDs.push(sidd);
+                            if (linkContext.byViews && linkContext.byViews[view].includes(sidd)) {
+                                linkContext.byViews[view].push(sidd);
                             }
 
-                            outputs.bindings[sidd] = outputs.bindings[sidd] || [];
+                            linkContext.bindings[sidd] = linkContext.bindings[sidd] || [];
 
                             objIDs[tt].type = 'style';
                             objIDs[tt].attr = cssAttr;
                             objIDs[tt].view = view;
-                            objIDs[tt].widget = id;
+                            objIDs[tt].widget = wid;
 
-                            outputs.bindings[sidd].push(objIDs[tt]);
+                            linkContext.bindings[sidd].push(objIDs[tt]);
                         }
 
                         if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
@@ -578,13 +583,13 @@ function getUsedObjectIDsInWidget(views, view, id, outputs) {
                                     continue;
                                 }
 
-                                !outputs.IDs.includes(systemOid) && outputs.IDs.push(systemOid);
+                                !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
 
-                                if (outputs.byViews && !outputs.byViews[view].includes(systemOid)) {
-                                    outputs.byViews[view].push(systemOid);
+                                if (linkContext.byViews && !linkContext.byViews[view].includes(systemOid)) {
+                                    linkContext.byViews[view].push(systemOid);
                                 }
-                                outputs.bindings[systemOid] = outputs.bindings[systemOid] || [];
-                                outputs.bindings[systemOid].push(objIDs[tt]);
+                                linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
+                                linkContext.bindings[systemOid].push(objIDs[tt]);
                             }
                         }
                     }
@@ -600,7 +605,7 @@ function getUsedObjectIDs(views, isByViews) {
         return null;
     }
 
-    const outputs = {
+    const linkContext = {
         IDs: [],
         visibility: {},
         bindings: {},
@@ -609,7 +614,7 @@ function getUsedObjectIDs(views, isByViews) {
     };
 
     if (isByViews) {
-        outputs.byViews = {};
+        linkContext.byViews = {};
     }
 
     Object.keys(views).forEach(view => {
@@ -617,11 +622,11 @@ function getUsedObjectIDs(views, isByViews) {
             return;
         }
 
-        if (outputs.byViews) {
-            outputs.byViews[view] = [];
+        if (linkContext.byViews) {
+            linkContext.byViews[view] = [];
         }
 
-        Object.keys(views[view].widgets).forEach(id => getUsedObjectIDsInWidget(views, view, id, outputs));
+        Object.keys(views[view].widgets).forEach(wid => getUsedObjectIDsInWidget(views, view, wid, linkContext));
     });
 
     if (isByViews) {
@@ -637,11 +642,11 @@ function getUsedObjectIDs(views, isByViews) {
                 Object.values(views[view].widgets).forEach(widget => {
                     // Add all OIDs from this view to parent
                     if (widget.tpl === 'tplContainerView' && widget.data.contains_view) {
-                        const ids = outputs.byViews[widget.data.contains_view];
+                        const ids = linkContext.byViews[widget.data.contains_view];
                         if (ids) {
                             for (let a = 0; a < ids.length; a++) {
-                                if (ids[a] && !outputs.byViews[view].includes(ids[a])) {
-                                    outputs.byViews[view].push(ids[a]);
+                                if (ids[a] && !linkContext.byViews[view].includes(ids[a])) {
+                                    linkContext.byViews[view].push(ids[a]);
                                     changed = true;
                                 }
                             }
@@ -654,7 +659,21 @@ function getUsedObjectIDs(views, isByViews) {
         } while (changed);
     }
 
-    return outputs;
+    return linkContext;
+}
+
+function getUrlParameter(attr) {
+    const sURLVariables = window.location.search.substring(1).split('&');
+
+    for (let i = 0; i < sURLVariables.length; i++) {
+        const sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === attr) {
+            return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+
+    return '';
 }
 
 module.exports = {
@@ -663,4 +682,5 @@ module.exports = {
     getWidgetGroup,
     replaceGroupAttr,
     getUsedObjectIDsInWidget,
+    getUrlParameter,
 };

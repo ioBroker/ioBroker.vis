@@ -15,6 +15,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import CodeIcon from '@mui/icons-material/Code';
 import CodeOffIcon from '@mui/icons-material/CodeOff';
+import PlayIcon from '@mui/icons-material/PlayArrow';
+import EditIcon from '@mui/icons-material/Edit';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
@@ -81,6 +83,7 @@ class App extends GenericApp {
             createFirstProjectDialog: false,
             selectedWidgets: [],
             showCode: window.localStorage.getItem('showCode') || false,
+            editMode: true,
             ...this.state,
         });
 
@@ -331,6 +334,11 @@ class App extends GenericApp {
                                             {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
                                         </IconButton>
                                     </Tooltip>
+                                    {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')}>
+                                        <IconButton onClick={() => this.setState({ editMode: !this.state.editMode })} size="small">
+                                            {this.state.editMode ? <EditIcon /> : <PlayIcon />}
+                                        </IconButton>
+                                    </Tooltip> : null}
                                     <Tooltip title={I18n.t('Show view')}>
                                         <IconButton onClick={() => this.setViewsManage(true)} size="small">
                                             <AddIcon />
@@ -375,15 +383,19 @@ class App extends GenericApp {
                                         ? <pre>
                                             {JSON.stringify(this.state.project, null, 2)}
                                         </pre> : null}
-                                    <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
-                                        <VisEngine
-                                            activeView={this.state.selectedView}
-                                            editMode
-                                            socket={this.socket}
-                                            lang={this.socket.systemLang}
-                                            views={this.state.project}
-                                        />
-                                    </div>
+                                        <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
+                                            <VisEngine
+                                                activeView={this.state.selectedView || ''}
+                                                editMode={this.state.editMode}
+                                                socket={this.socket}
+                                                lang={this.socket.systemLang}
+                                                views={this.state.project}
+                                                adapterName={this.adapterName}
+                                                instance={this.instance}
+                                                selectedWidgets={this.state.selectedWidgets}
+                                                setSelectedWidgets={this.setSelectedWidgets}
+                                            />
+                                        </div>
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>

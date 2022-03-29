@@ -3710,7 +3710,7 @@ class Vis {
         // if state value is an oid, and it is not subscribed then subscribe it at runtime, can happen if binding are used in oid attributes
         // the id with invalid contains characters not allowed in oid's
         if (!FORBIDDEN_CHARS.test(oid) && (!this.subscribing.active.includes(oid) || force)) {
-            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
+            if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid) && FORBIDDEN_CHARS.test(oid) && oid.length < 300) {
                 this.subscribing.active.push(oid);
 
                 this.conn.getStates(oid, (error, data) => {

@@ -2,70 +2,115 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { getUsedObjectIDsInWidget, replaceGroupAttr } from './visUtils';
 
+const FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
+// var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
+
+
 class VisCanWidget extends React.Component {
     constructor(props) {
         super(props);
 
-        const outputs = {
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+
+        this.editMode = this.props.editMode;
+
+        this.state = {
+            data: JSON.stringify(widget.data),
+            style: JSON.stringify(widget.style),
+            groupid: widget.groupid,
+            mounted: false,
+        };
+
+        this.bindings = {};
+        this.bindingsCache = {};
+
+        const linkContext = {
             IDs: [],
+            bindings: this.bindings,
             visibility: this.props.linkContext.visibility,
-            bindings: this.props.linkContext.bindings,
             lastChanges: this.props.linkContext.lastChanges,
             signals: this.props.linkContext.signals,
         };
 
         this.widDiv = null; // div with widget
 
-        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, outputs);
+        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, linkContext);
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
-        if (widget?.data?.members) {
-            widget.data.members.forEach(wid =>
-                getUsedObjectIDsInWidget(this.props.views, this.props.view, wid, outputs));
+        this.IDs = linkContext.IDs;
+
+        // merge bindings
+        Object.keys(this.bindings).forEach(id => {
+            this.props.linkContext.bindings[id] = this.props.linkContext.bindings[id] || [];
+            this.bindings[id].forEach(item => this.props.linkContext.bindings[id].push(item));
+        });
+
+        // free mem
+        Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
+
+        this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
+    }
+
+    componentDidMount() {
+        // subscribe on all IDs
+        this.props.linkContext.subscribe(this.IDs);
+
+        if (!this.widDiv) {
+            // link could be a ref or direct a div (e.g. by groups)
+            this.renderWidget();
+            this.setState({ mounted: true });
         }
+    }
 
-        this.IDs = outputs.IDs;
-        // attributes must exist before canJS renders the widget
-        this.IDs.forEach(id => {
-            if (this.props.canStates.attr(`${id}.val`) === undefined) {
-                const o = {};
-                // Check new model
-                o[`${id}.val`] = null;
-                o[`${id}.ts`] = null;
-                o[`${id}.ack`] = null;
-                o[`${id}.lc`] = null;
-                o[`${id}.q`] = null;
-
-                try {
-                    this.props.canStates.attr(o);
-                } catch (e) {
-                    this.props.socket.log(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
+    static removeFromArray(items, IDs, view, widget) {
+        Object.keys(items).forEach(id => {
+            if (!IDs || IDs.includes(id)) {
+                for (let i = items[id].length - 1; i >= 0; i--) {
+                    const item = items[id][i];
+                    if (item.view === view && item.widget === widget) {
+                        items[id].splice(i, 1);
+                    }
                 }
             }
         });
     }
 
-    componentDidMount() {
-        // subscribe on all IDs
-        this.props.subscribe(this.IDs);
-        if (!this.widDiv) {
-            this.renderWidget(this.props.id, this.props.refParent.current);
-        }
-    }
-
     componentWillUnmount() {
-        this.props.unsubscribe(this.IDs);
+        this.props.linkContext.unsubscribe(this.IDs);
+        this.props.linkContext.unregisterChangeHandler(this.props.id, this.changeHandler);
+        this.bindings = {};
+
+        // remove all bindings from prop.linkContexts
+        VisCanWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
+        VisCanWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
+        VisCanWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
+        VisCanWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+
         this.destroy(this.props.id, this.widDiv);
     }
 
-    destroy(wid, widDiv) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        const views = JSON.stringify(nextProps.views);
+        /*if (views !== this.jsonViews) {
+            //this.jsonViews = views;
+            //this.vis.updateViews(JSON.parse(JSON.stringify(nextProps.views)));
+        }*/
+
+        if (nextProps.editMode !== this.editMode) {
+            this.editMode = nextProps.editMode;
+            // rerender Widget
+            this.renderWidget(true);
+        }
+    }
+
+    destroy(update) {
         // destroy map
-        if (this.props.allWidgets[wid]) {
-            delete this.props.allWidgets[wid];
+        if (this.props.allWidgets[this.props.id]) {
+            delete this.props.allWidgets[this.props.id];
         }
 
-        if (widDiv) {
-            const $wid = this.props.jQuery(widDiv);
+        // do not destory groups by update
+        if (this.widDiv && (!update || !this.props.id.startsWith('g'))) {
+            const $wid = this.props.jQuery(this.widDiv);
             const destroy = $wid.data('destroy');
 
             if (typeof destroy === 'function') {
@@ -73,15 +118,82 @@ class VisCanWidget extends React.Component {
                 $wid.data('destroy', null);
             }
 
-            // if group => destroy every group element
-            const widget = this.props.views[this.props.view].widgets[wid];
-            if (widget.members) {
-                widget.members.forEach(_wid => this.destroy(_wid, widDiv.querySelector('#' + _wid)));
-            }
-
             // remove from DOM
-            widDiv.remove();
-            widDiv = null;
+            this.widDiv.remove();
+            this.widDiv = null;
+        }
+    }
+
+    changeHandler = (type, item, stateId) => {
+        // console.log(`[${this.props.id}] update widget because of "${type}" "${stateId}": ${JSON.stringify(state)}`);
+        if (this.widDiv) {
+            if (type === 'style') {
+                // apply style from this.props.allWidgets.style
+                VisCanWidget.applyStyle(this.widDiv, this.props.allWidgets[this.props.id].style);
+            } else if (type === 'signal') {
+                this.updateSignal(item);
+            } else if (type === 'visibility') {
+                this.updateVisibility(item);
+            } else if (type === 'lastChange') {
+                this.updateLastChange();
+            } else if (type === 'binding') {
+                this.applyBinding(stateId);
+            }
+        }
+    }
+
+    updateSignal(item) {
+        if (this.widDiv) {
+            const signalDiv = this.widDiv.querySelector(`.vis-signal[data-index="${item.index}"]`);
+            if (signalDiv) {
+                if (this.isSignalVisible(item.index)) {
+                    signalDiv.style.display = '';
+                } else {
+                    signalDiv.style.display = 'none';
+                }
+            }
+        }
+    }
+
+    updateLastChange() {
+        if (this.widDiv) {
+            const widgetData = this.props.allWidgets[this.props.id].data;
+            const lcDiv = this.widDiv.querySelector('.vis-last-change');
+            if (lcDiv) {
+                lcDiv.innerHTML = this.binds.basic.formatDate(
+                    this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
+                    widgetData['lc-format'], widgetData['lc-is-interval'],
+                    widgetData['lc-is-moment'],
+                );
+            } else {
+                console.warn(`[${this.props.id}] Last change not found!`);
+            }
+        }
+    }
+
+    updateVisibility() {
+        if (this.widDiv && !this.editMode) {
+            if (this.isWidgetHidden() || this.isWidgetFilteredOut()) {
+                this.widDiv._storedDisplay = this.widDiv.style.display;
+                this.widDiv.style.display = 'none';
+
+                if (this.widDiv
+                    && this.widDiv._customHandlers
+                    && this.widDiv._customHandlers.onHide
+                ) {
+                    this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
+                }
+            } else {
+                this.widDiv.style.display = this.widDiv._storedDisplay || 'block';
+                this.widDiv._storedDisplay = '';
+
+                if (this.widDiv &&
+                    this.widDiv._customHandlers &&
+                    this.widDiv._customHandlers.onShow
+                ) {
+                    this.widDiv._customHandlers.onShow(this.widDiv, this.props.id);
+                }
+            }
         }
     }
 
@@ -101,22 +213,22 @@ class VisCanWidget extends React.Component {
         });
     }
 
-    isWidgetFilteredOut(wid) {
-        const widget = this.props.views[this.props.view].widgets[wid];
+    isWidgetFilteredOut() {
+        const widgetData = this.props.allWidgets[this.props.id].data;
         const v = this.props.viewsActiveFilter[this.props.view];
 
-        return widget?.data?.filterkey && v?.length > 0 && !v.includes(widget.data.filterkey);
+        return widgetData?.filterkey && v?.length > 0 && !v.includes(widgetData.filterkey);
     }
 
-    isWidgetHidden(wid, val, widgetData) {
-        widgetData = widgetData || this.props.views[this.props.view].widgets[wid];
+    isWidgetHidden() {
+        const widgetData = this.props.allWidgets[this.props.id].data;
+
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];
 
         if (oid) {
-            if (val === undefined || val === null) {
-                val = this.props.canStates.attr(`${oid}.val`);
-            }
+            let val = this.props.canStates.attr(`${oid}.val`);
+
             if (val === undefined || val === null) {
                 return condition === 'not exist';
             }
@@ -181,7 +293,7 @@ class VisCanWidget extends React.Component {
                 case 'not exist':
                     return val !== 'null';
                 default:
-                    console.log(`Unknown visibility condition for ${wid}: ${condition}`);
+                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
                     return false;
             }
         } else {
@@ -189,11 +301,11 @@ class VisCanWidget extends React.Component {
         }
     }
 
-    addGestures(wid, widDiv, widgetData) {
+    addGestures(widgetData) {
         // gestures
         const gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
-        const $$wid = this.props.$$(`#${wid}`);
-        const $wid = this.props.jQuery(widDiv);
+        const $$wid = this.props.$$(`#${this.props.id}`);
+        const $wid = this.props.jQuery(this.widDiv);
         const offsetX = parseInt(widgetData['gestures-offsetX']) || 0;
         const offsetY = parseInt(widgetData['gestures-offsetY']) || 0;
 
@@ -351,14 +463,17 @@ class VisCanWidget extends React.Component {
         });
     }
 
-    isSignalVisible(wid, index, val, widgetData) {
-        widgetData = widgetData || this.props.views[this.props.view].widgets[wid].data;
+    isSignalVisible(index, widgetData) {
+        widgetData = widgetData || this.props.allWidgets[this.props.id].data;
+
+        if (this.editMode) {
+            return !widgetData[`signals-hide-edit-${index}`];
+        }
+
         const oid = widgetData[`signals-oid-${index}`];
 
         if (oid) {
-            if (val === undefined || val === null) {
-                val = this.props.canStates.attr(`${oid}.val`);
-            }
+            let val = this.props.canStates.attr(`${oid}.val`);
 
             const condition = widgetData[`signals-cond-${index}`];
             let value = widgetData[`signals-val-${index}`];
@@ -424,7 +539,7 @@ class VisCanWidget extends React.Component {
                 case 'not exist':
                     return value === 'null';
                 default:
-                    console.log(`Unknown signals condition for ${wid}: ${condition}`);
+                    console.log(`[${this.props.id}] Unknown signals condition: ${condition}`);
                     return false;
             }
         } else {
@@ -433,146 +548,272 @@ class VisCanWidget extends React.Component {
     }
 
     static applyStyle(el, style) {
-        (style || '').split(';').forEach(part => {
-            part = part.trim();
-            if (part) {
-                const [attr, value] = part.split(':');
-                el.style[attr.trim()] = value.trim();
-            }
-        });
+        if (typeof style === 'string') {
+            // style is a string
+            // "height: 10; width: 20"
+            (style || '').split(';').forEach(part => {
+                part = part.trim();
+                if (part) {
+                    let [attr, value] = part.split(':');
+                    attr = attr.trim();
+                    if (attr && value) {
+                        value = value.trim();
+                        if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
+                            if (value !== '0' && value.toString().match(/^[-+]?\d+$/)) {
+                                value = `${value}px`;
+                            }
+                        }
+                        if (value) {
+                            el.style[attr] = value;
+                        }
+                    }
+                }
+            });
+        } else if (style) {
+            // style is an object
+            // {
+            //      height: 10,
+            // }
+            Object.keys(style).forEach(attr => {
+                if (attr && style[attr] !== undefined && style[attr] !== null) {
+                    let value = style[attr];
+                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
+                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
+                            value = `${value}px`;
+                        }
+                    }
+                    if (value) {
+                        el.style[attr] = value;
+                    }
+                }
+            });
+        }
     }
 
-    addSignalIcon(wid, widDiv, data, index) {
-        // show icon
-        let display = this.editMode || this.isSignalVisible(wid, index, undefined, data) ? '' : 'none';
-        if (this.editMode && data[`signals-hide-edit-${index}`]) {
-            display = 'none';
-        }
+    addSignalIcon(widgetData, index) {
+        widgetData = widgetData || this.props.allWidgets[this.props.id].data;
 
         // <div class="vis-signal ${data[`signals-blink-${index}`] ? 'vis-signals-blink' : ''} ${data[`signals-text-class-${index}`] || ''} " data-index="${index}" style="display: ${display}; pointer-events: none; position: absolute; z-index: 10; top: ${data[`signals-vert-${index}`] || 0}%; left: ${data[`signals-horz-${index}`] || 0}%">
         const divSignal = window.document.createElement('div');
-        divSignal.className = `vis-signal ${data[`signals-blink-${index}`] ? 'vis-signals-blink' : ''} ${data[`signals-text-class-${index}`] || ''}`;
+        divSignal.className = `vis-signal ${widgetData[`signals-blink-${index}`] ? 'vis-signals-blink' : ''} ${widgetData[`signals-text-class-${index}`] || ''}`;
         divSignal.dataset.index = index;
-        divSignal.style.display = display;
+        divSignal.style.display = this.isSignalVisible(index) ? '' : 'none';
         divSignal.style.pointerEvents = 'none';
         divSignal.style.position = 'absolute';
         divSignal.style.zIndex = '10';
-        divSignal.style.top = `${data[`signals-vert-${index}`] || 0}%`;
-        divSignal.style.left = `${data[`signals-horz-${index}`] || 0}%`;
+        divSignal.style.top = `${widgetData[`signals-vert-${index}`] || 0}%`;
+        divSignal.style.left = `${widgetData[`signals-horz-${index}`] || 0}%`;
 
         // <img class="vis-signal-icon" src="${data[`signals-icon-${index}`]}" style="width: ${data[`signals-icon-size-${index}`] || 32}px; height: auto;${data[`signals-icon-style-${index}`] || ''}"/>
-        const divIcon = window.document.createElement('div');
+        const divIcon = window.document.createElement('img');
         divIcon.className = 'vis-signal-icon';
-        divIcon.src = data[`signals-icon-${index}`];
-        divIcon.style.width = (data[`signals-icon-size-${index}`] || 32) + 'px';
+        let src = widgetData[`signals-icon-${index}`];
+        if (src && src.startsWith('/vis/')) {
+            src = src.substring(5);
+        }
+        divIcon.src = src;
+        divIcon.style.width = (widgetData[`signals-icon-size-${index}`] || 32) + 'px';
         divIcon.style.height = 'auto';
-        VisCanWidget.applyStyle(divIcon, data[`signals-icon-style-${index}`]);
+        VisCanWidget.applyStyle(divIcon, widgetData[`signals-icon-style-${index}`]);
+        divSignal.appendChild(divIcon);
 
         // <div class="vis-signal-text " style="${data[`signals-text-style-${index}`] || ''}">${data[`signals-text-${index}`]}</div>
-        const text = data[`signals-text-${index}`];
+        const text = widgetData[`signals-text-${index}`];
         if (text) {
             const divText = window.document.createElement('div');
             divText.className = 'vis-signal-text';
-            VisCanWidget.applyStyle(divText, data[`signals-text-style-${index}`]);
+            VisCanWidget.applyStyle(divText, widgetData[`signals-text-style-${index}`]);
             divText.innerHTML = text;
             divSignal.appendChild(divText);
         }
 
-        widDiv.appendChild(divSignal);
+        this.widDiv.appendChild(divSignal);
     }
 
-    addLastChange(widDiv, data) {
+    addLastChange(widgetData) {
         // show last change
-        const border = `${parseInt(data['lc-border-radius'], 10) || 0}px`;
+        const border = `${parseInt(widgetData['lc-border-radius'], 10) || 0}px`;
         const css = {
             background: 'rgba(182,182,182,0.6)',
             fontFamily: 'Tahoma',
             position: 'absolute',
             zIndex: 0,
-            borderRadius: data['lc-position-horz'] === 'left' ? (`${border} 0 0 ${border}`) : (data['lc-position-horz'] === 'right' ? `0 ${border} ${border} 0` : border),
+            borderRadius: widgetData['lc-position-horz'] === 'left' ? (`${border} 0 0 ${border}`) : (widgetData['lc-position-horz'] === 'right' ? `0 ${border} ${border} 0` : border),
             whiteSpace: 'nowrap',
         };
-        if (data['lc-font-size']) {
-            css.fontSize = data['lc-font-size'];
+        if (widgetData['lc-font-size']) {
+            css.fontSize = widgetData['lc-font-size'];
         }
-        if (data['lc-font-style']) {
-            css.fontStyle = data['lc-font-style'];
+        if (widgetData['lc-font-style']) {
+            css.fontStyle = widgetData['lc-font-style'];
         }
-        if (data['lc-font-family']) {
-            css.fontFamily = data['lc-font-family'];
+        if (widgetData['lc-font-family']) {
+            css.fontFamily = widgetData['lc-font-family'];
         }
-        if (data['lc-bkg-color']) {
-            css.background = data['lc-bkg-color'];
+        if (widgetData['lc-bkg-color']) {
+            css.background = widgetData['lc-bkg-color'];
         }
-        if (data['lc-color']) {
-            css.color = data['lc-color'];
+        if (widgetData['lc-color']) {
+            css.color = widgetData['lc-color'];
         }
-        if (data['lc-border-width']) {
-            css.borderWidth = parseInt(data['lc-border-width'], 10) || 0;
+        if (widgetData['lc-border-width']) {
+            css.borderWidth = parseInt(widgetData['lc-border-width'], 10) || 0;
         }
-        if (data['lc-border-style']) {
-            css.borderStyle = data['lc-border-style'];
+        if (widgetData['lc-border-style']) {
+            css.borderStyle = widgetData['lc-border-style'];
         }
-        if (data['lc-border-color']) {
-            css.borderColor = data['lc-border-color'];
+        if (widgetData['lc-border-color']) {
+            css.borderColor = widgetData['lc-border-color'];
         }
-        if (data['lc-padding']) {
-            css.padding = data['lc-padding'];
+        if (widgetData['lc-padding']) {
+            css.padding = widgetData['lc-padding'];
         } else {
             css.paddingTop = 3;
             css.paddingBottom = 3;
         }
-        if (data['lc-zindex']) {
-            css.zIndex = data['lc-zindex'];
+        if (widgetData['lc-zindex']) {
+            css.zIndex = widgetData['lc-zindex'];
         }
-        if (data['lc-position-vert'] === 'top') {
-            css.top = parseInt(data['lc-offset-vert'], 10);
-        } else if (data['lc-position-vert'] === 'bottom') {
-            css.bottom = parseInt(data['lc-offset-vert'], 10);
-        } else if (data['lc-position-vert'] === 'middle') {
-            css.top = `calc(50% + ${parseInt(data['lc-offset-vert'], 10) - 10}px)`;
+        if (widgetData['lc-position-vert'] === 'top') {
+            css.top = parseInt(widgetData['lc-offset-vert'], 10);
+        } else if (widgetData['lc-position-vert'] === 'bottom') {
+            css.bottom = parseInt(widgetData['lc-offset-vert'], 10);
+        } else if (widgetData['lc-position-vert'] === 'middle') {
+            css.top = `calc(50% + ${parseInt(widgetData['lc-offset-vert'], 10) - 10}px)`;
         }
-        const offset = parseFloat(data['lc-offset-horz']) || 0;
-        if (data['lc-position-horz'] === 'left') {
+        const offset = parseFloat(widgetData['lc-offset-horz']) || 0;
+        if (widgetData['lc-position-horz'] === 'left') {
             css.right = `calc(100% - ${offset}px)`;
-            if (!data['lc-padding']) {
+            if (!widgetData['lc-padding']) {
                 css.paddingRight = '10px';
                 css.paddingLeft = '10px';
             }
-        } else if (data['lc-position-horz'] === 'right') {
+        } else if (widgetData['lc-position-horz'] === 'right') {
             css.left = `calc(100% + ${offset}px)`;
-            if (!data['lc-padding']) {
+            if (!widgetData['lc-padding']) {
                 css.paddingRight = '10px';
                 css.paddingLeft = '10px';
             }
-        } else if (data['lc-position-horz'] === 'middle') {
+        } else if (widgetData['lc-position-horz'] === 'middle') {
             css.left = `calc(50% + ${offset}px)`;
         }
 
         const divLastChange = window.document.createElement('div');
         // `<div class="vis-last-change" data-type="${data['lc-type']}" data-format="${data['lc-format']}" data-interval="${data['lc-is-interval']}">${this.binds.basic.formatDate(this.states.attr(`${data['lc-oid']}.${data['lc-type'] === 'last-change' ? 'lc' : 'ts'}`), data['lc-format'], data['lc-is-interval'], data['lc-is-moment'])}</div>`
         divLastChange.className = 'vis-last-change';
-        divLastChange.dataset.lcType = data['lc-type'];
-        divLastChange.dataset.format = data['lc-format'];
-        divLastChange.dataset.interval = data['lc-is-interval'];
-        divLastChange.innerHTML = this.binds.basic.formatDate(this.props.canStates.attr(`${data['lc-oid']}.${data['lc-type'] === 'last-change' ? 'lc' : 'ts'}`), data['lc-format'], data['lc-is-interval'], data['lc-is-moment']);
+        divLastChange.innerHTML = this.binds.basic.formatDate(
+            this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
+            widgetData['lc-format'],
+            widgetData['lc-is-interval'],
+            widgetData['lc-is-moment'],
+        );
         Object.keys(css).forEach(attr => divLastChange.style[attr] = css[attr]);
 
-        widDiv.prepend(divLastChange);
-        widDiv.style.overflow = 'visible';
+        this.widDiv.prepend(divLastChange);
+        this.widDiv.style.overflow = 'visible';
     }
 
-    addChart(widDiv, wData) {
-        widDiv.onclick = () => {
+    addChart(widgetData) {
+        this.widDiv.onclick = () => {
             // not yet implemented
-            console.log(`Show dialog with chart for ${wData['echart-oid']}`);
+            console.log(`[${this.props.id}] Show dialog with chart for ${widgetData['echart-oid']}`);
         };
     }
 
-    renderWidget(wid, parentDiv) {
+    visibilityOidBinding(binding, oid) {
+        // if attribute 'visibility-oid' contains binding
+        if (binding.attr === 'visibility-oid') {
+            // runs only if we have a valid id
+            if (oid && oid.length < 300 && (/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid) && FORBIDDEN_CHARS.test(oid)) {
+                const obj = {
+                    view: binding.view,
+                    widget: binding.widget,
+                };
+
+                // on runtime load oid, check if oid needs to be subscribed
+                Object.keys(this.props.linkContext.visibility).forEach(id => {
+                    const widgetIndex = this.props.linkContext.visibility[id].findIndex(x => x.widget === obj.widget);
+
+                    // remove or add widget to existing oid's in visibility list
+                    if (widgetIndex >= 0 && id !== oid) {
+                        // widget exists in visibility list
+                        this.props.linkContext.visibility[id].splice(widgetIndex, 1);
+                    } else if (widgetIndex < 0 && id === oid) {
+                        // widget not exists in visibility list
+                        this.props.linkContext.visibility[id].push(obj);
+                    }
+                });
+
+                if (!this.props.linkContext.visibility[oid]) {
+                    // oid not exist in visibility list -> add oid and widget to visibility list
+                    this.props.linkContext.visibility[oid] = [obj];
+                }
+
+                // on runtime load oid, check if oid need subscribe
+                if (!this.editMode) {
+                    if (this.IDs.includes(oid)) {
+                        this.updateVisibility();
+                    } else {
+                        this.IDs.push(oid);
+                        const val = this.props.canStates.attr(`${oid}.val`);
+                        if (val !== undefined) {
+                            this.updateVisibility();
+                        }
+
+                        this.props.linkContext.subscribe([oid]);
+                    }
+                }
+            }
+        }
+    }
+
+    applyBindings(doNotAllyStyles) {
+        Object.keys(this.bindings).forEach(id => this.applyBinding(id, doNotAllyStyles));
+    }
+
+    applyBinding(stateId, doNotAllyStyles) {
+        this.bindings[stateId].forEach(item => {
+            const widgetContext = this.props.allWidgets[this.props.id];
+
+            const value = this.props.formatUtils.formatBinding(
+                item.format,
+                item.view,
+                this.props.id,
+                this.props.views[item.view].widgets[this.props.id],
+                widgetContext.data,
+            );
+
+            // console.log(`[${new Date().toISOString()}](${item.widget}) BINDINGS: ${stateId}`);
+
+            if (widgetContext) {
+                if (item.type === 'data') {
+                    // trigger observable
+                    widgetContext.data.attr(item.attr, value);
+                } else if (item.type === 'style') {
+                    widgetContext.style[item.attr] = value;
+                    // update style
+                    !doNotAllyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
+                }
+            }
+            // TODO
+            // this.subscribeOidAtRuntime(value);
+            // this.visibilityOidBinding(binding, value);
+            // this.reRenderWidget(binding.view, binding.view, bid);
+        });
+    }
+
+    renderWidget(update) {
+        let parentDiv = this.props.refParent;
+        if (parentDiv.hasOwnProperty('current')) {
+            parentDiv = parentDiv.current;
+        }
+
+        const wid = this.props.id;
         let widget = this.props.views[this.props.view].widgets[wid];
 
+        // replace groupAttrX in groups
         if (widget?.groupid) {
+            // this widget belongs to group
             const parentWidgetData = this.props.views[this.props.view].widgets[widget.groupid].data;
             const aCount = parseInt(parentWidgetData.attrCount, 10);
 
@@ -590,9 +831,11 @@ class VisCanWidget extends React.Component {
             }
         }
 
+        this.destroy(update);
+
         // Add to the global array of widgets
         let userGroups = widget.data['visibility-groups'];
-        if (!this.props.editMode && userGroups?.length) {
+        if (!this.editMode && userGroups?.length) {
             if (widget.data['visibility-groups-action'] === 'hide') {
                 if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
                     return;
@@ -602,96 +845,93 @@ class VisCanWidget extends React.Component {
         }
 
         try {
-            let widDiv = parentDiv.querySelector('#' + wid);
-            this.destroy(wid, widDiv);
+            // try to apply bindings to every attribute
+            this.props.allWidgets[wid] = {
+                style: JSON.parse(JSON.stringify(widget.style)),
+                data: new this.props.can.Map({ wid, ...widget.data }),
+            };
 
-            try {
-                this.props.allWidgets[wid] = new this.props.can.Map({ wid, ...widget.data });
-            } catch (e) {
-                console.log(`Cannot bind data of widget widget: ${wid}`);
-                return;
-            }
+            this.applyBindings(true);
+        } catch (e) {
+            return console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
+        }
 
-            const widgetData = this.props.allWidgets[wid];
+        try {
+            const widgetData = this.props.allWidgets[wid].data;
+            const widgetStyle = this.props.allWidgets[wid].style;
 
             // Append html element to view
             if (widget.tpl) {
-                const options = {
-                    data: widgetData,
-                    viewDiv: this.props.view,
-                    view: this.props.view,
-                    style: widget.style,
-                };
-                if (widgetData?.oid) {
-                    options.val = this.props.canStates.attr(`${widgetData.oid}.val`);
+                if (!this.widDiv || !update || !widget?.data?.members.length) {
+                    const options = {
+                        data: widgetData,
+                        viewDiv: this.props.view,
+                        view: this.props.view,
+                        style: widgetStyle,
+                    };
+
+                    if (widgetData?.oid) {
+                        options.val = this.props.canStates.attr(`${widgetData.oid}.val`);
+                    }
+                    const widgetFragment = this.props.can.view(widget.tpl, options);
+                    parentDiv.appendChild(widgetFragment);
                 }
-                const widgetFragment = this.props.can.view(widget.tpl, options);
-                parentDiv.appendChild(widgetFragment);
             } else {
-                console.error(`Widget "${wid}" is invalid. Please delete it.`);
+                console.error(`[${this.props.id}] Widget is invalid. Please delete it.`);
                 return;
             }
 
-            widDiv = parentDiv.querySelector('#' + wid);
-            this.widDiv = this.widDiv || widDiv; // remember main div (group or simple)
+            this.widDiv = parentDiv.querySelector('#' + wid);
 
-            if (widDiv) {
-                if (widget.style && !widgetData._no_style) {
+            if (this.widDiv) {
+                if (widgetStyle && !widgetData._no_style) {
                     // fix position
-                    Object.keys(widget.style).forEach(attr => {
-                        const val = widget.style[attr];
-                        if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                            if (val !== '0' && val !== 0 && val !== null && val !== '' && val.toString().match(/^[-+]?\d+$/)) {
-                                widget.style[attr] = `${val}px`;
-                            }
-                        }
-                        widDiv.style[attr] = val;
-                    });
+                    VisCanWidget.applyStyle(this.widDiv, widgetStyle);
                 }
 
-                if (!this.props.isRelative) {
-                    widDiv.style.position = 'absolute';
+                const isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
+                    widgetStyle && (
+                        widgetStyle.position === 'relative' ||
+                        widgetStyle.position === 'static' ||
+                        widgetStyle.position === 'sticky'
+                    );
+
+                if (!isRelative) {
+                    this.widDiv.style.position = 'absolute';
                 }
 
                 if (widgetData && widgetData.class) {
-                    widDiv.className += ' ' + widgetData.class;
+                    this.widDiv.className += ' ' + widgetData.class;
                 }
 
                 // add template classes to div
                 const tplEl = window.document.getElementById(widget.tpl);
                 const visName = tplEl.dataset.visName || (wid[0] === 'g' ? 'group' : 'noname');
                 const visSet = tplEl.dataset.visSet || 'noset';
-                widDiv.className += ` vis-tpl-${visSet}-${visName.replace(/\s/g, '-')}`;
+                this.widDiv.className += ` vis-tpl-${visSet}-${visName.replace(/\s/g, '-')}`;
 
                 if (!this.editMode) {
-                    if (this.isWidgetFilteredOut(wid) || this.isWidgetHidden(wid, undefined, widgetData)) {
-                        widDiv._storedDisplay = widDiv.style.display;
-                        widDiv.style.display = 'none';
-
-                        if (widDiv._customHandlers?.onHide) {
-                            widDiv._customHandlers.onHide(widDiv, wid);
-                        }
-                    }
+                    this.updateVisibility();
 
                     // Processing of gestures
                     if (this.props.$$) {
-                        this.addGestures(wid, widDiv, widgetData);
+                        this.addGestures(widgetData);
                     }
                 }
 
                 // processing of signals
                 let s = 0;
                 while (widgetData[`signals-oid-${s}`]) {
-                    this.addSignalIcon(wid, widDiv, widgetData, s);
+                    this.addSignalIcon(widgetData, s);
                     s++;
                 }
 
                 if (widgetData['lc-oid']) {
-                    this.addLastChange(widDiv, widgetData);
+                    this.addLastChange(widgetData);
                 }
 
                 if (!this.editMode && widgetData['echart-oid']) {
-                    this.addChart(widDiv, widgetData);
+                    this.addChart(widgetData);
                 }
 
                 // If edit mode, bind on click event to open this widget in edit dialog
@@ -706,15 +946,11 @@ class VisCanWidget extends React.Component {
 
                 // this.$(document).trigger('wid_added', id);
 
-                if (userGroups && widDiv) {
+                if (userGroups && this.widDiv) {
                     if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
-                        widDiv.className += ' vis-user-disabled';
+                        this.widDiv.className += ' vis-user-disabled';
                     }
                 }
-
-                // if it is a group, render all sub widgets in this group
-                widgetData.members && widgetData.members.forEach(_wid =>
-                    _wid !== wid && this.renderWidget(_wid, widDiv));
             }
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
@@ -726,7 +962,34 @@ class VisCanWidget extends React.Component {
     }
 
     render() {
-        return <div id={'rx_' + this.props.id} style={{ display: 'none' }} />;
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const groupWidgets = widget?.data?.members;
+        let rxGroupWidgets = null;
+        if (groupWidgets?.length && this.state.mounted && this.widDiv) {
+            rxGroupWidgets = groupWidgets.map(wid =>
+                <VisCanWidget
+                    key={wid}
+                    id={wid}
+                    views={this.props.views}
+                    view={this.props.view}
+                    can={this.props.can}
+                    canStates={this.props.canStates}
+                    userGroups={this.props.userGroups}
+                    user={this.props.user}
+                    allWidgets={this.props.allWidgets}
+                    refParent={this.widDiv}
+                    editMode={this.props.editMode}
+                    jQuery={this.props.jQuery}
+                    socket={this.props.socket}
+                    viewsActiveFilter={this.props.viewsActiveFilter}
+                    setValue={this.props.setValue}
+                    $$={this.props.$$}
+                    linkContext={this.props.linkContext}
+                    formatUtils={this.props.formatUtils}
+                />);
+        }
+
+        return <div id={`rx_${this.props.id}`} style={{ display: 'none' }}>{ rxGroupWidgets }</div>;
     }
 }
 
@@ -734,22 +997,21 @@ VisCanWidget.propTypes = {
     id: PropTypes.string.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
-    subscribe: PropTypes.func.isRequired,
-    unsubscribe: PropTypes.func.isRequired,
     can: PropTypes.object.isRequired,
     canStates: PropTypes.object.isRequired,
-    editMode: PropTypes.bool,
+    editMode: PropTypes.bool.isRequired,
     userGroups: PropTypes.object.isRequired,
     user: PropTypes.string.isRequired,
     allWidgets: PropTypes.object.isRequired,
-    jQuery: PropTypes.func,
-    socket: PropTypes.object,
+    jQuery: PropTypes.func.isRequired,
+    socket: PropTypes.object.isRequired,
     isRelative: PropTypes.bool,
-    viewsActiveFilter: PropTypes.object,
-    setValue: PropTypes.func,
+    viewsActiveFilter: PropTypes.object.isRequired,
+    setValue: PropTypes.func.isRequired,
     $$: PropTypes.func, // Gestures library
     refParent: PropTypes.object.isRequired,
-    linkContext: PropTypes.object,
+    linkContext: PropTypes.object.isRequired,
+    formatUtils: PropTypes.object,
 };
 
 export default VisCanWidget;

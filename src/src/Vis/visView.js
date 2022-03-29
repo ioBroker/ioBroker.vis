@@ -22,7 +22,7 @@ class VisView extends React.Component {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
 
-        if (this.state.mounted) {
+        if (this.state.mounted && this.props.views) {
             const widgets = this.props.views[this.props.view]?.widgets;
             if (widgets) {
                 Object.keys(widgets).forEach(id => {
@@ -46,8 +46,6 @@ class VisView extends React.Component {
                         id={id}
                         view={this.props.view}
                         views={this.props.views}
-                        subscribe={this.props.subscribe}
-                        unsubscribe={this.props.unsubscribe}
                         can={this.props.can}
                         canStates={this.props.canStates}
                         userGroups={this.props.userGroups}
@@ -62,6 +60,7 @@ class VisView extends React.Component {
                         $$={this.props.$$}
                         refParent={isRelative ? this.refRelativeView : this.refView}
                         linkContext={this.props.linkContext}
+                        formatUtils={this.props.formatUtils}
                     />;
 
                     if (isRelative) {
@@ -73,27 +72,29 @@ class VisView extends React.Component {
             }
         }
 
-        const settings = this.props.views[this.props.view].settings;
         const relativeStyle = {};
-        // this was only if this.props.editMode
-        if (rxRelativeWidgets.length && settings.sizex) {
-            let ww = settings.sizex;
-            let hh = settings.sizey;
-            if (parseFloat(ww).toString() === ww.toString()) {
-                ww = parseFloat(ww);
-            }
-            if (parseFloat(hh).toString() === hh.toString()) {
-                hh = parseFloat(hh);
-            }
+        if (this.props.views && this.props.views[this.props.view]) {
+            const settings = this.props.views[this.props.view].settings;
+            // this was only if this.props.editMode
+            if (rxRelativeWidgets.length && settings.sizex) {
+                let ww = settings.sizex;
+                let hh = settings.sizey;
+                if (parseFloat(ww).toString() === ww.toString()) {
+                    ww = parseFloat(ww);
+                }
+                if (parseFloat(hh).toString() === hh.toString()) {
+                    hh = parseFloat(hh);
+                }
 
-            if (typeof ww === 'number' || ww.match(/\d$/)) {
-                ww += 'px';
+                if (typeof ww === 'number' || ww.match(/\d$/)) {
+                    ww += 'px';
+                }
+                if (typeof hh === 'number' || hh.match(/\d$/)) {
+                    hh += 'px';
+                }
+                relativeStyle.width = ww;
+                relativeStyle.height = hh;
             }
-            if (typeof hh === 'number' || hh.match(/\d$/)) {
-                hh += 'px';
-            }
-            relativeStyle.width = ww;
-            relativeStyle.height = hh;
         }
 
         return <div ref={this.refView} id={`visview_${this.props.view}`}>
@@ -110,8 +111,6 @@ class VisView extends React.Component {
 VisView.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
-    subscribe: PropTypes.func.isRequired,
-    unsubscribe: PropTypes.func.isRequired,
     can: PropTypes.object.isRequired,
     canStates: PropTypes.object.isRequired,
     editMode: PropTypes.bool,
@@ -124,6 +123,7 @@ VisView.propTypes = {
     setValue: PropTypes.func,
     $$: PropTypes.func, // Gestures library
     linkContext: PropTypes.object,
+    formatUtils: PropTypes.object,
 };
 
 export default VisView;
