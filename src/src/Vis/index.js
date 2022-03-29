@@ -13,7 +13,7 @@ import 'jquery-ui/ui/widgets/dialog';
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
-// import Vis from './vis';
+import Vis from './vis';
 import VisView from './visView';
 import { extractBinding } from './visUtils';
 
@@ -63,7 +63,7 @@ class VisEngine extends React.Component {
             ],
         };
 
-        /*this.vis = new Vis({
+        this.vis = new Vis({
             $: window.jQuery,
             can: window.can,
             views: props.views,
@@ -71,7 +71,7 @@ class VisEngine extends React.Component {
             lang: props.lang || 'en',
             socket: props.socket,
             _: window._,
-        });*/
+        });
 
         this.can = window.can;
 
