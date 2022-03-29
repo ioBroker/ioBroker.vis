@@ -3919,18 +3919,19 @@ vis = $.extend(true, vis, {
     },
     addWidget:              function (viewDiv, view, options, isCopied) {
         // tpl, data, style, wid, view, noSave, noAnimate
-        var isSelectWidget = (options.wid === undefined);
-        var $view          =  $('#visview_' + viewDiv);
+        var isSelectWidget = options.wid === undefined;
+        var $view          = $('#visview_' + viewDiv);
         var renderVisible  = options.data.renderVisible;
 
-        if (renderVisible) delete options.data.renderVisible;
+        if (renderVisible) {
+            delete options.data.renderVisible;
+        }
 
         if (isSelectWidget && !$view.length) {
             var that = this;
-            this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
+            return this.renderView(viewDiv, view, false, function (_viewDiv, _view) {
                 that.addWidget(_viewDiv, _view, options, isCopied);
             });
-            return;
         }
 
         var widgetId;
@@ -5173,10 +5174,14 @@ vis = $.extend(true, vis, {
                     var data = {};
                     if (attrs) {
                         attrs = attrs.split(';');
-                        if (attrs.indexOf('oid') !== -1) data.oid = 'nothing_selected';
+                        if (attrs.indexOf('oid') !== -1) {
+                            data.oid = 'nothing_selected';
+                        }
                     }
 
-                    if (renderVisible) data.renderVisible = true;
+                    if (renderVisible) {
+                        data.renderVisible = true;
+                    }
 
                     //tpl, data, style, wid, view, noSave, noAnimate
                     widgetId = that.addWidget(viewDiv, view, {

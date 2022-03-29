@@ -406,7 +406,7 @@
                         if (val === 'true'  || val === true)  val = 1;
                         if (val === 'false' || val === false) val = 0;
                         var src = srcArr[val];
-                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
             }
@@ -445,7 +445,7 @@
                         if (val === 'false' || val === false) val = 0;
 
                         var src = srcArr[val];
-                        if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
             }
@@ -621,8 +621,8 @@
                             vis.binds.basic.pressed = null;
                         }
                     }).data('destroy', function (id, $widget) {
-                    $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
-                });
+                        $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
+                    });
             }
         },
         navigation: function (el, options) {
@@ -1137,22 +1137,23 @@
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('iframe');
+                var wid = $this.attr('id');
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push(function (view) {
+                    vis.navChangeCallbacks.push({cb: function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
                         }
-                    });
+                    }, id: wid});
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
                             if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
                             }
                         }
                     }, refreshInterval);
@@ -1160,8 +1161,8 @@
                 if (refreshOnWakeUp) {
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
-                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
-                    });
+                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
+                    }, wid);
                 }
             }
         },
@@ -1201,22 +1202,23 @@
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('img');
+                var wid = $this.attr('id');
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push(function (view) {
+                    vis.navChangeCallbacks.push({cb: function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now()));
                         }
-                    });
+                    }, id: wid});
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
                             if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                                $this[0].src = src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now());
                             }
                         }
                     }, refreshInterval);
@@ -1226,9 +1228,9 @@
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
                         //console.log("wakeup refresh!");
-                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now());
                         //console.log($this.attr('src'));
-                    });
+                    }, wid);
                 }
             }
         },
@@ -1385,7 +1387,7 @@
         formatFloat: function (data, val) {
             if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
                 val = parseFloat(data.attr('test_html'));
-            } else if(val === undefined || val === null){
+            } else if (val === undefined || val === null) {
                 val = parseFloat(vis.states.attr(data.oid + '.val'));
             }else {
                 val = parseFloat(val);
@@ -1394,7 +1396,7 @@
             if (data.digits !== undefined && data.digits !== '') val = val.toFixed(parseFloat(data.digits, 10));
 
             if (data.attr('is_tdp')) {
-                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? ".," : ",.");
+                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? '.,' : ',.');
             } else if (data.attr('is_comma')) {
                 val = '' + val;
                 val = val.replace('.', ',');
@@ -1522,7 +1524,7 @@
             if (isMomentJs && typeof moment !== 'undefined') {
                 return moment(new Date(timestamp)).fromNow();
             }
-            var diff = new Date().getTime() - timestamp;
+            var diff = Date.now() - timestamp;
             diff = Math.round(diff / 1000);
             var text;
             if (diff <= 60) {
@@ -1761,8 +1763,8 @@
             return format;
         },
         detectScreen: function (wid) {
-            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) === -1) {
-                vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
+            if (!vis.navChangeCallbacks.find(item => typeof item === 'object' && item.cb === vis.binds.basic.detectScreen)) {
+                vis.navChangeCallbacks.push({ cb: vis.binds.basic.detectScreen, id: wid });
             }
 
             function onResize () {
@@ -2371,7 +2373,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
         data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;scrollX/checkbox;scrollY/checkbox;seamless[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
             <div class="editmode-helper" />
@@ -2444,7 +2446,7 @@
         data-vis-type="stateful"
         data-vis-name="iFrame 8"
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.frames;src_(0-count);noSandbox/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper"/>
         <% } %>
@@ -2513,7 +2515,7 @@
 
 <!-- TODO
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8 (persistent)" data-vis-attrs="oid;refreshInterval;src_(0-1)">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
@@ -2590,7 +2592,7 @@
         data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100;"
         data-vis-attrs0="autoFocus/checkbox;"
 >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left:0; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
         <div class="vis-widget-body">
             <select id="" name="" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
                 <option value=""><%= _('all') %></option>
@@ -2624,7 +2626,7 @@
         data-vis-name="String"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueString.png"></img>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + '.val'))) : (vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
@@ -2641,7 +2643,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : (typeof app !== 'undefined' ? app.replaceFilePathSrc(vis.states.attr(this.data.oid + '.val')) : vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
@@ -2658,7 +2660,7 @@
         data-vis-type="val"
         data-vis-name="String img src"
         data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left:0; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %>
@@ -2678,7 +2680,7 @@
         data-vis-name="TimesValue"
         data-vis-prev='<img src="widgets/basic/img/Prev_TimeValue.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.val'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2695,7 +2697,7 @@
         data-vis-name="Timestamp Value"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.val'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2712,7 +2714,7 @@
         data-vis-name="Timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2729,7 +2731,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
         data-vis-name="Last change Timestamp"
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2746,7 +2748,7 @@
         data-vis-type="val"
         data-vis-name="ValueList Text"
         data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%= (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
@@ -2763,7 +2765,7 @@
         data-vis-type="val"
         data-vis-name="ValueList HTML"
         data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
@@ -3070,7 +3072,7 @@
         data-vis-attrs="oid;min[0];max[100];orientation[horizontal]/select,horizontal,vertical/onOrientation;color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
         <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body"
-        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0px; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
+        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
     </div>
 </script>
 

@@ -42,6 +42,7 @@ function parseSearch() {
 
 class Vis {
     // expected options
+    //  editMode
     //  visConfig
     //  $
     //  can
@@ -120,7 +121,7 @@ class Vis {
             namespace: 'vis.0',
             logError: errorText => {
                 console.error(`Error: ${errorText}`);
-                this.socket.getRawSocket().emit('log', 'error', `Addon vis ${errorText}`);
+                this.socket.log(errorText, 'error');
             },
             getGroups: (groupName, useCache, cb) => {
                 if (typeof groupName === 'function') {
@@ -287,6 +288,9 @@ class Vis {
                         cb(error);
                     });
             },
+            getHttp: (url, callback) =>
+                this.socket.getRawSocket().emit('httpGet', url, data =>
+                    callback && callback(data)),
         };
 
         this.socket.registerConnectionHandler(this.onConnectionChanged);
@@ -306,17 +310,18 @@ class Vis {
         const obj = {};
         for (j = index; j < this.subscribing.IDs.length && j < index + 100; j++) {
             const _id = this.subscribing.IDs[j];
-            if (this.states[`${_id}.val`] === undefined || this.states[`${_id}.val`] === null) {
+            const _val = `${_id}.val`;
+            if (this.states[_val] === undefined || this.states[_val] === null) {
                 if (!_id || !_id.match(/^dev\d+$/)) {
                     console.log(`Create inner vis object ${_id}`);
                 }
                 if (this.editMode) {
-                    this.states[`${_id}.val`] = 'null';
+                    this.states[_val] = 'null';
                     this.states[`${_id}.ts`] = now;
                     this.states[`${_id}.ack`] = false;
                     this.states[`${_id}.lc`] = now;
                 } else {
-                    obj[`${_id}.val`] = 'null';
+                    obj[_val] = 'null';
                     obj[`${_id}.ts`] = now;
                     obj[`${_id}.ack`] = false;
                     obj[`${_id}.lc`] = now;
@@ -338,10 +343,12 @@ class Vis {
             }
         }
 
-        try {
-            this.states.attr(obj);
-        } catch (e) {
-            this.conn.logError(`Error: can't create states objects (${e})`);
+        if (!this.editMode) {
+            try {
+                this.states.attr(obj);
+            } catch (e) {
+                this.conn.logError(`Error: can't create states objects (${e})`);
+            }
         }
 
         if (j < this.subscribing.IDs.length) {
@@ -699,6 +706,11 @@ class Vis {
         this.onConnectionChanged(true);
     }
 
+    setEditMode(editMode) {
+        this.editMode = editMode;
+        // re-render
+    }
+
     _setValue(id, state, isJustCreated) {
         const oldValue = this.states.attr(`${id}.val`);
 
@@ -883,9 +895,9 @@ class Vis {
         if (!result) {
             return result;
         }
-        this.visibility = result.visibility;
-        this.bindings = result.bindings;
-        this.signals = result.signals;
+        this.visibility  = result.visibility;
+        this.bindings    = result.bindings;
+        this.signals     = result.signals;
         this.lastChanges = result.lastChanges;
 
         return { IDs: result.IDs, byViews: result.byViews };
@@ -947,9 +959,9 @@ class Vis {
         }
         this.instance = this.instance || window.localStorage.getItem(this.storageKeyInstance);
 
-        if (this.editMode) {
-            this.bindInstanceEdit();
-        }
+        // if (this.editMode) {
+        //     this.bindInstanceEdit();
+        // }
         this.states.attr({ 'instance.val': this.instance, instance: this.instance });
     }
 
@@ -1076,7 +1088,7 @@ class Vis {
         this.bindInstance();
 
         // EDIT mode
-        this.editMode && this.editInitNext();
+        // this.editMode && this.editInitNext();
 
         this.initialized = true;
 
@@ -1098,14 +1110,12 @@ class Vis {
                 this.renderViews(this.activeViewDiv, containers, () => {
                     cnt--;
                     if (this.activeView) {
-                        this.changeView(this.activeViewDiv, this.activeView, () => {
-                            if (!cnt && onReady) {
-                                onReady();
-                            }
-                        });
+                        this.changeView(this.activeViewDiv, this.activeView, () =>
+                            !cnt && onReady && onReady());
                     }
                 });
             }
+
             this.checkLicense();
         }
 
@@ -1955,7 +1965,7 @@ class Vis {
     }
 
     isUserMemberOf(user, userGroups) {
-        if (!this.userGroups) {
+        if (!userGroups) {
             return true;
         }
         if (!Array.isArray(userGroups)) {
@@ -2051,7 +2061,7 @@ class Vis {
 
             this.widgets[id] = {
                 wid: id,
-                data: new this.can.Map($.extend({ wid: id }, widget.data)),
+                data: new this.can.Map(Object.assign({ wid: id }, widget.data)),
             };
         } catch (e) {
             console.log(`Cannot bind data of widget widget: ${id}`);
@@ -2094,7 +2104,9 @@ class Vis {
                     style: widget.style,
                 });
                 if ($widget.length) {
-                    if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
+                    if ($widget.parent().attr('id') !== $view.attr('id')) {
+                        $widget.appendTo($view);
+                    }
                     $widget.replaceWith(canWidget);
                     // shift widget to group if required
                 } else {
@@ -2461,7 +2473,10 @@ class Vis {
         }, 2500);
     }
 
-    onWakeUp(callback) {
+    onWakeUp(callback, wid) {
+        if (!wid) {
+            console.warn('No widget ID for onWakeUp callback! Please fix');
+        }
         this.wakeUpCallbacks.push(callback);
     }
 
@@ -2694,11 +2709,8 @@ class Vis {
         return w &&
             w.data &&
             w.data.filterkey &&
-            widget &&
-            widget.data &&
             v.length > 0 &&
-            !v.includes(widget.data.filterkey
-        );
+            !v.includes(widget.data.filterkey);
     }
 
     calcCommonStyle(recalc) {
@@ -3226,7 +3238,7 @@ class Vis {
     }
 
     createDemoStates() {
-        // Create demo constiables
+        // Create demo variables
         this.states.attr({ 'demoTemperature.val': 25.4 });
         this.states.attr({ 'demoHumidity.val': 55 });
     }
@@ -3478,7 +3490,7 @@ class Vis {
         }
 
         if (!id.startsWith('local_')) {
-            // not needed for local constiables
+            // not needed for local variables
             if (this.editMode) {
                 this.states[`${id}.val`] = state.val;
                 this.states[`${id}.ts`] = state.ts;
@@ -3568,18 +3580,20 @@ class Vis {
         // Bindings on every element
         if (!this.editMode && this.bindings[id]) {
             for (let i = 0; i < this.bindings[id].length; i++) {
-                const widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
-                const value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+                const bid = this.bindings[id][i].widget;
+                const widget = this.views[this.bindings[id][i].view].widgets[bid];
+                const value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, bid, widget);
 
                 widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
-                if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
-                    this.widgets[this.bindings[id][i].widget][`${this.bindings[id][i].type}.${this.bindings[id][i].attr}`] = value;
+
+                if (this.widgets[bid] && this.bindings[id][i].type === 'data') {
+                    this.widgets[bid][`${this.bindings[id][i].type}.${this.bindings[id][i].attr}`] = value;
                 }
 
                 this.subscribeOidAtRuntime(value);
                 this.visibilityOidBinding(this.bindings[id][i], value);
 
-                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
+                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, bid);
             }
         }
 
@@ -3693,7 +3707,7 @@ class Vis {
     }
 
     subscribeOidAtRuntime(oid, callback, force) {
-        // if state value is an oid, and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
+        // if state value is an oid, and it is not subscribed then subscribe it at runtime, can happen if binding are used in oid attributes
         // the id with invalid contains characters not allowed in oid's
         if (!FORBIDDEN_CHARS.test(oid) && (!this.subscribing.active.includes(oid) || force)) {
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
