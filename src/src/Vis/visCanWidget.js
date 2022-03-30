@@ -1078,6 +1078,7 @@ class VisCanWidget extends React.Component {
         }
 
         const style = {};
+        let classNames = this.props.selectedWidgets?.includes(this.props.id) ? 'editmode-selected ' : '';
 
         if (this.editMode) {
             if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
@@ -1112,11 +1113,16 @@ class VisCanWidget extends React.Component {
                 // style.userSelect = 'none';
                 style.opacity = 0; // block interactions
             }
+
+            if (widget.tpl.toLowerCase().includes('image')) {
+                classNames += 'editmode-helper';
+            }
         } else {
             style.display = 'none';
         }
 
         return <div
+            className={classNames}
             id={`rx_${this.props.id}`}
             ref={this.refService}
             style={style}
