@@ -99,11 +99,87 @@ const getFieldsBefore = () => [
 ];
 
 const getFieldsAfter = () => [
-    { name: 'css_common', fields: [] },
-    { name: 'css_font', fields: [] },
-    { name: 'css_background', fields: [] },
-    { name: 'css_border', fields: [] },
-    { name: 'css_padding', fields: [] },
+    {
+        name: 'css_common',
+        isStyle: true,
+        fields: [{ name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
+            { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
+            { name: 'left', type: 'dimension' },
+            { name: 'top', type: 'dimension' },
+            { name: 'width', type: 'dimension' },
+            { name: 'height', type: 'dimension' },
+            { name: 'z-index' },
+            { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
+            { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
+            { name: 'opacity' },
+            { name: 'cursor', type: 'auto' },
+            { name: 'transform' }],
+    },
+    {
+        name: 'css_font',
+        isStyle: true,
+        fields: [{ name: 'color', type: 'color' },
+            { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
+            { name: 'text-shadow' },
+            {
+                name: 'font-family',
+                type: 'auto',
+                options: ['Verdana, Geneva, sans-serif',
+                    'Georgia, "Times New Roman", Times, serif',
+                    '"Courier New", Courier, monospace',
+                    'Arial, Helvetica, sans-serif',
+                    'Tahoma, Geneva, sans-serif',
+                    '"Trebuchet MS", Arial, Helvetica, sans-serif',
+                    '"Arial Black", Gadget, sans-serif',
+                    '"Times New Roman", Times, serif',
+                    '"Palatino Linotype", "Book Antiqua", Palatino, serif',
+                    '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+                    '"MS Serif", "New York", serif',
+                    '"Comic Sans MS", cursive'],
+            },
+            { name: 'font-style', type: 'nselect', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'] },
+            { name: 'font-variant', type: 'nselect', options: ['', 'normal', 'small-caps', 'initial', 'inherit'] },
+            { name: 'font-weight', type: 'auto', options: ['normal', 'bold', 'bolder', 'lighter', 'initial', 'inherit'] },
+            { name: 'font-size', type: 'auto', options: ['medium', 'xx-small', 'x-small', 'small', 'large', 'x-large', 'xx-large', 'smaller', 'larger', 'initial', 'inherit'] },
+            { name: 'line-height' },
+            { name: 'letter-spacing' },
+            { name: 'word-spacing' }],
+    },
+    {
+        name: 'css_background',
+        isStyle: true,
+        fields: [{ name: 'background' },
+            { name: 'background-color', type: 'color' },
+            { name: 'background-image' },
+            { name: 'background-repeat', type: 'nselect', options: ['', 'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit'] },
+            { name: 'background-attachment', type: 'nselect', options: ['', 'scroll', 'fixed', 'local', 'initial', 'inherit'] },
+            { name: 'background-position' },
+            { name: 'background-size' },
+            { name: 'background-clip', type: 'nselect', options: ['', 'border-box', 'padding-box', 'content-box', 'initial', 'inherit'] },
+            { name: 'background-origin', type: 'nselect', options: ['', 'padding-box', 'border-box', 'content-box', 'initial', 'inherit'] }],
+    },
+    {
+        name: 'css_border',
+        isStyle: true,
+        fields: [{ name: 'border-width' },
+            { name: 'border-style' },
+            { name: 'border-color', type: 'color' },
+            { name: 'border-radius' }],
+    },
+    {
+        name: 'css_padding',
+        isStyle: true,
+        fields: [{ name: 'padding' },
+            { name: 'padding-left' },
+            { name: 'padding-top' },
+            { name: 'padding-right' },
+            { name: 'padding-bottom' },
+            { name: 'box-shadow' },
+            { name: 'margin-left' },
+            { name: 'margin-top' },
+            { name: 'margin-right' },
+            { name: 'margin-bottom' }],
+    },
     { name: 'gestures', fields: [] },
     { name: 'notification', fields: [] },
     {
@@ -272,7 +348,7 @@ const Widget = props => {
                                 group.fields.map((field, key2) => <tr key={key2}>
                                     <td className={props.classes.fieldTitle}>{i18n.t(field.name)}</td>
                                     <td className={props.classes.fieldContent}>
-                                        <WidgetField field={field} widget={widget} {...props} />
+                                        <WidgetField field={field} widget={widget} isStyle={group.isStyle} {...props} />
                                     </td>
                                 </tr>)
                             }

@@ -402,7 +402,7 @@ class App extends GenericApp {
                                             instance={this.instance}
                                             selectedWidgets={this.state.selectedWidgets}
                                             setSelectedWidgets={this.setSelectedWidgets}
-                                            onLoaded={() => this.setState({widgetsLoaded: true})}
+                                            onLoaded={() => this.setState({ widgetsLoaded: true })}
                                         />
                                     </div>
                                 </div>

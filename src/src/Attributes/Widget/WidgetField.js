@@ -19,11 +19,14 @@ const WidgetField = props => {
 
     const change = changeValue => {
         const project = JSON.parse(JSON.stringify(props.project));
-        project[props.selectedView].widgets[props.selectedWidgets[0]].data[field.name] = changeValue;
+        const data = props.isStyle
+            ? project[props.selectedView].widgets[props.selectedWidgets[0]].style
+            : project[props.selectedView].widgets[props.selectedWidgets[0]].data;
+        data[field.name] = changeValue;
         props.changeProject(project);
     };
 
-    const value = widget.data[field.name];
+    const value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
 
     if (field.type === 'id') {
         return <>
@@ -93,11 +96,20 @@ const WidgetField = props => {
         </>;
     }
     if (field.type === 'dimension') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
+        const parts = (value || '').match(/^(-?[0-9]+)(.*)$/) || ['', ''];
+
+        return <TextField
+            variant="standard"
+            fullWidth
+            InputProps={{
+                classes: {
+                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                },
+                endAdornment: <Button onClick={() => change(parts[1] + (parts[2] === 'px' ? '%' : 'px'))}>{parts[2]}</Button>,
+            }}
+            value={parts[1]}
+            onChange={e => change(e.target.value === '' ? '' : (e.target.value + (parts[2] ? parts[2] : 'px')))}
+        />;
     }
     if (field.type === 'color') {
         return <ColorPicker
@@ -148,7 +160,7 @@ const WidgetField = props => {
             />
         </div>;
     }
-    if (field.type === 'select' || field.type === 'nselect' || field.type === 'fontname' || field.type === 'effect') {
+    if (field.type === 'select' || field.type === 'nselect' || field.type === 'fontname' || field.type === 'effect' || field.type === 'widget') {
         let { options } = field;
 
         if (field.type === 'fontname') {
@@ -187,6 +199,10 @@ const WidgetField = props => {
                 'size',
                 'slide',
             ];
+        }
+
+        if (field.type === 'widget') {
+            options = Object.keys(props.project[props.selectedView].widgets);
         }
 
         return <Select
