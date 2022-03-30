@@ -1,5 +1,5 @@
-window.systemLang = 'en';
 window.systemDictionary = {};
+window.systemLang = 'en';
 
 function translateWord(text, lang, dictionary) {
     if (!text) {
@@ -58,7 +58,7 @@ window.addWords = function (words) {
     Object.assign(window.systemDictionary, words);
 };
 
-addWords({
+window.addWords({
     'No connection to Server': {
         'en': 'No connection to Server',
         'de': 'Keine Verbindung zum Server',

@@ -13,9 +13,10 @@ import 'jquery-ui/ui/widgets/dialog';
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
-import Vis from './vis';
+// import Vis from './vis';
 import VisView from './visView';
-import { extractBinding } from './visUtils';
+import VisFormatUtils from './visFormatUtils';
+import { getUrlParameter } from './visUtils';
 
 class VisEngine extends React.Component {
     constructor(props) {
@@ -23,17 +24,16 @@ class VisEngine extends React.Component {
         window.jQuery = $;
         window.$ = $; // jQuery library
         window.$$ = $$; // Gestures library
-        window.systemDictionary = {};
+        window.systemLang = this.props.lang || window.systemLang || 'en';
 
         this.state = {
             ready: false,
-            editMode: !!props.editMode,
         };
         this.jsonViews = JSON.stringify(props.views);
 
-        this.divRef = React.createRef();
+        //this.divRef = React.createRef();
 
-        const visConfig = {
+        /*const visConfig = {
             widgetSets: [
                 {
                     name: 'bars',
@@ -71,13 +71,14 @@ class VisEngine extends React.Component {
             lang: props.lang || 'en',
             socket: props.socket,
             _: window._,
-        });
+        });*/
 
         this.can = window.can;
 
         this.subscribes = {};
         this.allWidgets = {};
         this.wakeUpCallbacks = [];
+        this.widgetChangeHandlers = {};
         this.fontNames = [
             'Verdana, Geneva, sans-serif',
             'Georgia, "Times New Roman", Times, serif',
@@ -97,25 +98,37 @@ class VisEngine extends React.Component {
         this.onChangeCallbacks = [];
         this.bindingsCache = {};
 
+        this.idControlInstance = `${this.props.adapterName}.${this.props.instance}.control.instance`;
+        this.idControlData = `${this.props.adapterName}.${this.props.instance}.control.data`;
+        this.idControlCommand = `${this.props.adapterName}.${this.props.instance}.control.command`;
+
         this.linkContext = {
             visibility: {},
             signals: {},
             lastChanges: {},
             bindings: {},
-            denis: true
+            unregisterChangeHandler: this.unregisterChangeHandler,
+            registerChangeHandler: this.registerChangeHandler,
+            subscribe: this.subscribe,
+            unsubscribe: this.unsubscribe,
         };
 
         this.createConnection();
         this.initCanObjects();
 
-        window.vis = {
+        this.vis = {
             states: this.canStates,
             navChangeCallbacks: [],
-            editMode: this.props.editMode,
+            editMode: !!this.props.editMode,
             binds: {},
             views: this.props.views,
             activeView: this.props.activeView,
             language: this.props.lang,
+            user: '',
+            _: window._,
+            dateFormat: '',
+            instance: this.props.instance,
+            loginRequired: false,
             viewsActiveFilter: this.viewsActiveFilter,
             onChangeCallbacks: this.onChangeCallbacks,
             conn: this.conn,
@@ -132,7 +145,7 @@ class VisEngine extends React.Component {
             detectBounce: (el, isUp) => {
                 console.warn('detectBounce not implemented: ', el, isUp);
             },
-            setValue: (id, val) => this.setValue(id, val),
+            setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
                 console.warn('changeView not implemented: ', viewDiv, view, hideOptions, showOptions, sync);
                 cb && cb(viewDiv, view);
@@ -170,7 +183,6 @@ class VisEngine extends React.Component {
                     this.onChangeCallbacks.push({ callback, arg, wid });
                 }
             },
-
             unregisterOnChange(callback, arg, wid) {
                 !wid && console.warn('No widget ID for unregisterOnChange callback! Please fix');
 
@@ -185,16 +197,29 @@ class VisEngine extends React.Component {
             },
         };
 
-        this.loadWidgets()
-            .then(() => this.readGroups())
+        window.vis = this.vis;
+
+        this.formatUtils = new VisFormatUtils({ vis: this.vis });
+
+        this.readGroups()
             .then(userGroups => {
                 this.userGroups = userGroups;
                 return this.props.socket.getCurrentUser();
             })
             .then(user => {
                 this.user = user;
-                this.setState({ ready: true });
-            });
+                this.vis.user = user;
+                this.vis.loginRequired = this.props.socket.isSecure;
+                return this.props.socket.getSystemConfig();
+            })
+            .then(systemConfig => {
+                this.vis.dateFormat = systemConfig.common.dateFormat;
+                this.vis.isFloatComma = systemConfig.common.isFloatComma;
+                this.systemLang = systemConfig.common.language || 'en';
+                this.vis.language = systemConfig.common.language || 'en';
+                return this.loadWidgets();
+            })
+            .then(() => this.setState({ ready: true }));
     }
 
     createConnection() {
@@ -283,8 +308,8 @@ class VisEngine extends React.Component {
                 return this.socket.getCurrentUser()
                     .then(user => cb(this.socket.isSecure, user));
             },
-            subscribe: IDs => this.subscribe,
-            unsubscribe: IDs => this.unsubscribe,
+            subscribe: IDs => this.subscribe(IDs),
+            unsubscribe: IDs => this.unsubscribe(IDs),
             authenticate: (user, password, salt) => {
                 this._authRunning = true;
 
@@ -302,7 +327,7 @@ class VisEngine extends React.Component {
                     .catch(error => cb(error || 'Authentication required'));
             },
             setState: (id, val, cb) => {
-                return this.socket.setState(id, val)
+                return this.props.socket.setState(id, val)
                     .then(() => cb && cb())
                     .catch(error => cb && cb(error));
             },
@@ -314,9 +339,9 @@ class VisEngine extends React.Component {
             },
             getUser: () => this.user,
             sendCommand: (instance, command, data, ack) =>
-                this.socket.setState(`${this.conn.namespace}.control.instance`, { val: instance || 'notdefined', ack: true })
-                    .then(() => this.socket.setState(`${this.conn.namespace}.control.data`, { val: data, ack: true }))
-                    .then(() => this.socket.setState(`${this.conn.namespace}.control.command`, { val: command, ack: ack === undefined ? true : ack }))
+                this.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
+                    .then(() => this.socket.setState(this.idControlData, { val: data, ack: true }))
+                    .then(() => this.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack }))
             ,
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
@@ -440,7 +465,7 @@ class VisEngine extends React.Component {
         // creat Can objects
         this.canStates = new this.can.Map({ 'nothing_selected.val': null });
 
-        if (this.state.editMode) {
+        if (false && this.props.editMode) {
             this.canStates.__attr = this.canStates.attr; // save original attr
 
             const that = this;
@@ -490,64 +515,33 @@ class VisEngine extends React.Component {
         }
     }
 
-    _setValue(id, state, isJustCreated) {
-        const oldValue = this.canStates.attr(`${id}.val`);
+    _setValue(id, val) {
+        const oldVal = this.canStates.attr(`${id}.val`);
 
-        // If ID starts from 'local_', do not send changes to the server, we assume that it is a local variable of the client
+        // Send ack=false with new value to all widgets
+        this.onStateChange(id, { val, ack: false });
+
         if (id.startsWith('local_')) {
-            this.canStates.attr(state);
-
-            // Inform other widgets, that does not support canJS
-            for (let i = 0, len = this.onChangeCallbacks.length; i < len; i++) {
-                try {
-                    this.onChangeCallbacks[i].callback(this.onChangeCallbacks[i].arg, id, state);
-                } catch (e) {
-                    this.conn.logError(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
-                }
-            }
-
             // update local variable state -> needed for binding, etc.
-            this.updateState(id, state);
-
             return;
         }
 
-        this.conn.setState(id, state[`${id}.val`], err => {
-            if (err) {
-                // state[id + '.val'] = oldValue;
-                this.showMessage(this._('Cannot execute %s for %s, because of insufficient permissions', 'setState', id), this._('Insufficient permissions'), 'alert', 600);
-            }
-
-            const val = this.canStates.attr(`${id}.val`);
-
-            if (this.canStates.attr(id) || val !== undefined || val !== null) {
-                this.canStates.attr(state);
-
-                // If error set value back, but we need generate the edge
-                if (err) {
-                    if (isJustCreated) {
-                        this.canStates.removeAttr(`${id}.val`);
-                        this.canStates.removeAttr(`${id}.q`);
-                        this.canStates.removeAttr(`${id}.from`);
-                        this.canStates.removeAttr(`${id}.ts`);
-                        this.canStates.removeAttr(`${id}.lc`);
-                        this.canStates.removeAttr(`${id}.ack`);
-                    } else {
-                        state[`${id}.val`] = oldValue;
-                        this.canStates.attr(state);
-                    }
+        // save actual value to restore it in case of error
+        this.props.socket.setState(id, { val, ack: false })
+            .catch(error => {
+                console.error(`Cannot set ${id} with "${val}: ${error}`);
+                if (oldVal === undefined) {
+                    this.canStates.removeAttr(`${id}.val`);
+                    this.canStates.removeAttr(`${id}.q`);
+                    this.canStates.removeAttr(`${id}.from`);
+                    this.canStates.removeAttr(`${id}.ts`);
+                    this.canStates.removeAttr(`${id}.lc`);
+                    this.canStates.removeAttr(`${id}.ack`);
+                } else {
+                    // If error set value back, but we need generate the edge
+                    this.canStates.attr(`${id}.val`, oldVal);
                 }
-
-                // Inform other widgets, that does not support canJS
-                this.onChangeCallbacks.forEach(item => {
-                    try {
-                        item.callback(item.arg, id, state);
-                    } catch (e) {
-                        this.props.socket.log(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
-                    }
-                });
-            }
-        });
+            });
     }
 
     setValue = (id, val) => {
@@ -555,30 +549,11 @@ class VisEngine extends React.Component {
             return console.log(`ID is null for val=${val}`);
         }
 
-        const d = new Date();
-        const t = `${d.getFullYear()}-${(`0${d.getMonth() + 1}`).slice(-2)}-${(`0${d.getDate()}`).slice(-2)} ${(`0${d.getHours()}`).slice(-2)}:${(`0${d.getMinutes()}`).slice(-2)}:${(`0${d.getSeconds()}`).slice(-2)}`;
-        const o = {};
-        let created = false;
-        if (this.canStates.attr(`${id}.val`) !== val) {
-            o[`${id}.lc`] = t;
-        } else {
-            o[`${id}.lc`] = this.canStates.attr(`${id}.lc`);
-        }
-        o[`${id}.val`] = val;
-        o[`${id}.ts`] = t;
-        o[`${id}.ack`] = false;
-
-        const _val = this.canStates.attr(`${id}.val`);
-        // Create this value
-        if (_val === undefined || _val === null) {
-            created = true;
-            this.canStates.attr(o);
-        }
-
         // if no de-bounce running
         if (!this.statesDebounce[id]) {
             // send control command
-            this._setValue(id, o, created);
+            this._setValue(id, val);
+
             // Start timeout
             this.statesDebounce[id] = {
                 timeout: setTimeout(() => {
@@ -594,12 +569,13 @@ class VisEngine extends React.Component {
             };
         } else {
             // If some de-bounce running, change last value
-            this.statesDebounce[id].state = o;
+            this.statesDebounce[id].state = val;
         }
     }
 
+    // Following code is only required if legacy vis is used
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillReceiveProps(nextProps) {
+    /*UNSAFE_componentWillReceiveProps(nextProps) {
         const views = JSON.stringify(nextProps.views);
         if (views !== this.jsonViews) {
             this.jsonViews = views;
@@ -610,7 +586,7 @@ class VisEngine extends React.Component {
             this.vis.setEditMode(nextProps.editMode);
             this.setState({ editMode: nextProps.editMode });
         }
-    }
+    }*/
 
     static setInnerHTML(elm, html) {
         elm.innerHTML = html;
@@ -639,213 +615,6 @@ class VisEngine extends React.Component {
         return Promise.all(loadPromises);
     }
 
-    static getSpecialValues(name, view, wid, widget) {
-        switch (name) {
-            case 'username.val':
-                return this.user;
-            case 'login.val':
-                return this.loginRequired;
-            case 'instance.val':
-                return this.instance;
-            case 'language.val':
-                return this.language;
-            case 'wid.val':
-                return wid;
-            case 'wname.val':
-                return widget && (widget.data.name || wid);
-            case 'view.val':
-                return view;
-            default:
-                return undefined;
-        }
-    }
-
-    extractBinding(format) {
-        if (!format) {
-            return null;
-        }
-        if (!this.props.editMode && this.bindingsCache[format]) {
-            return JSON.parse(JSON.stringify(this.bindingsCache[format]));
-        }
-
-        const result = extractBinding(format);
-
-        // cache bindings
-        if (result && !this.props.editMode) {
-            this.bindingsCache[format] = JSON.parse(JSON.stringify(result));
-        }
-
-        return result;
-    }
-
-    formatBinding(format, view, wid, widget, doNotIgnoreEditMode) {
-        const oids = this.extractBinding(format, doNotIgnoreEditMode);
-        for (let t = 0; t < oids.length; t++) {
-            let value;
-            if (oids[t].visOid) {
-                value = VisEngine.getSpecialValues(oids[t].visOid, view, wid, widget);
-                if (value === undefined || value === null) {
-                    value = this.canStates.attr(oids[t].visOid);
-                }
-            }
-            if (oids[t].operations) {
-                for (let k = 0; k < oids[t].operations.length; k++) {
-                    switch (oids[t].operations[k].op) {
-                        case 'eval':
-                            let string = '';// '(function() {';
-                            for (let a = 0; a < oids[t].operations[k].arg.length; a++) {
-                                if (!oids[t].operations[k].arg[a].name) {
-                                    continue;
-                                }
-                                value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widget);
-                                if (value === undefined || value === null) {
-                                    value = this.canStates.attr(oids[t].operations[k].arg[a].visOid);
-                                }
-                                try {
-                                    value = JSON.parse(value);
-                                    // if array or object, we format it correctly, else it should be a string
-                                    if (typeof value === 'object') {
-                                        string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
-                                    } else {
-                                        string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
-                                    }
-                                } catch (e) {
-                                    string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
-                                }
-                            }
-                            const { formula } = oids[t].operations[k];
-                            if (formula && formula.indexOf('widget.') !== -1) {
-                                string += `const widget = ${JSON.stringify(widget)};`;
-                            }
-                            string += `return ${oids[t].operations[k].formula};`;
-
-                            if (string.indexOf('\\"') >= 0) {
-                                string = string.replace(/\\"/g, '"');
-                            }
-
-                            // string += '}())';
-                            try {
-                                value = new Function(string)();
-                            } catch (e) {
-                                console.error(`Error in eval[value]: ${format}`);
-                                console.error(`Error in eval[script]: ${string}`);
-                                console.error(`Error in eval[error]: ${e}`);
-                                value = 0;
-                            }
-                            break;
-                        case '*':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) * oids[t].operations[k].arg;
-                            }
-                            break;
-                        case '/':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) / oids[t].operations[k].arg;
-                            }
-                            break;
-                        case '+':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) + oids[t].operations[k].arg;
-                            }
-                            break;
-                        case '-':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) - oids[t].operations[k].arg;
-                            }
-                            break;
-                        case '%':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                value = parseFloat(value) % oids[t].operations[k].arg;
-                            }
-                            break;
-                        case 'round':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                                value = Math.round(parseFloat(value));
-                            } else {
-                                value = parseFloat(value).toFixed(oids[t].operations[k].arg);
-                            }
-                            break;
-                        case 'pow':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                                value = Math.pow(parseFloat(value), 2);
-                            } else {
-                                value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
-                            }
-                            break;
-                        case 'sqrt':
-                            value = Math.sqrt(parseFloat(value));
-                            break;
-                        case 'hex':
-                            value = Math.round(parseFloat(value)).toString(16);
-                            break;
-                        case 'hex2':
-                            value = Math.round(parseFloat(value)).toString(16);
-                            if (value.length < 2) {
-                                value = `0${value}`;
-                            }
-                            break;
-                        case 'HEX':
-                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                            break;
-                        case 'HEX2':
-                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                            if (value.length < 2) {
-                                value = `0${value}`;
-                            }
-                            break;
-                        case 'value':
-                            value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
-                            break;
-                        case 'array':
-                            value = oids[t].operations[k].arg[~~value];
-                            break;
-                        case 'date':
-                            value = this.formatDate(value, oids[t].operations[k].arg);
-                            break;
-                        case 'momentDate':
-                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                                const params = oids[t].operations[k].arg.split(',');
-
-                                if (params.length === 1) {
-                                    value = this.formatMomentDate(value, params[0]);
-                                } else if (params.length === 2) {
-                                    value = this.formatMomentDate(value, params[0], params[1]);
-                                } else {
-                                    value = 'error';
-                                }
-                            }
-                            break;
-                        case 'min':
-                            value = parseFloat(value);
-                            value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                            break;
-                        case 'max':
-                            value = parseFloat(value);
-                            value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                            break;
-                        case 'random':
-                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                                value = Math.random();
-                            } else {
-                                value = Math.random() * oids[t].operations[k].arg;
-                            }
-                            break;
-                        case 'floor':
-                            value = Math.floor(parseFloat(value));
-                            break;
-                        case 'ceil':
-                            value = Math.ceil(parseFloat(value));
-                            break;
-                    } // switch
-                }
-            } // if for
-            format = format.replace(oids[t].token, value);
-        }// for
-
-        format = format.replace(/{{/g, '{').replace(/}}/g, '}');
-        return format;
-    }
-
     loadWidgets() {
         return fetch('widgets.html')
             .then(data => data.text())
@@ -863,19 +632,39 @@ class VisEngine extends React.Component {
                 console.error(`Cannot load widgets: ${error}`));
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    /*componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.divRef.current) {
             this.vis.main(this.divRef.current);
+        }
+    }*/
+
+    updateWidget(view, wid, type, item, stateId, state) {
+        if (this.widgetChangeHandlers[wid]) {
+            this.widgetChangeHandlers[wid](type, item, stateId, state);
+        }
+    }
+
+    registerChangeHandler = (wid, cb) => {
+        if (this.props.editMode && this.widgetChangeHandlers[wid]) {
+            console.error('Someone installs handler without to remove it!');
+        }
+        this.widgetChangeHandlers[wid] = cb;
+    }
+
+    unregisterChangeHandler = (wid, cb) => {
+        if (this.widgetChangeHandlers[wid] === cb) {
+            delete this.widgetChangeHandlers[wid];
         }
     }
 
     onStateChange = (id, state) => {
-        console.log(`onStateChange: ${id} = ${JSON.stringify(state)}`);
+        // console.log(`[${new Date().toISOString()}] STATE_CHANGE: ${id}`);
+
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
 
-        if (id === `${this.conn.namespace}.control.command`) {
+        if (id === this.idControlCommand) {
             if (state.ack) {
                 return;
             } else
@@ -895,150 +684,70 @@ class VisEngine extends React.Component {
             if (state.val && state.val.instance) {
                 if (this.onCommand(state.val.instance, state.val.command, state.val.data)) {
                     // clear state
-                    this.conn.setState(id, { val: '', ack: true });
+                    this.props.socket.setState(id, { val: '', ack: true })
+                        .catch(error => console.error(`Cannot reset ${id}: ${error}`));
                 }
             } else if (this.onCommand(this._cmdInstance, state.val, this._cmdData)) {
                 // clear state
-                this.conn.setState(id, { val: '', ack: true });
+                this.props.socket.setState(id, { val: '', ack: true })
+                    .catch(error => console.error(`Cannot reset ${id}: ${error}`));
             }
 
             return;
-        } else if (id === `${this.conn.namespace}.control.data`) {
+        } else if (id === this.idControlData) {
             this._cmdData = state.val;
             return;
-        } else if (id === `${this.conn.namespace}.control.instance`) {
+        } else if (id === this.idControlInstance) {
             this._cmdInstance = state.val;
             return;
         }
 
-        if (!id.startsWith('local_')) {
-            // not needed for local variables
-            if (this.props.editMode) {
-                const o = {};
-                // Check new model
-                o[`${id}.val`] = state.val;
-                o[`${id}.ts`] = state.ts;
-                o[`${id}.ack`] = state.ack;
-                o[`${id}.lc`] = state.lc;
+        // Do not update locals
+        // not needed for local variables
+        const o = {};
+        // Check new model
+        o[`${id}.val`] = state.val;
 
-                if (state.q !== undefined && state.q !== null) {
-                    o[`${id}.q`] = state.q;
-                }
-
-                try {
-                    this.canStates.attr(o);
-                } catch (e) {
-                    this.conn.logError(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
-                }
-                /*this.canStates.attr(`${id}.val`, state.val);
-                this.canStates.attr(`${id}.ts`, state.ts);
-                this.canStates.attr(`${id}.ack`, state.ack);
-                this.canStates.attr(`${id}.lc`, state.lc);
-                if (state.q !== undefined && state.q !== null) {
-                    this.canStates.attr(`${id}.q`, state.q);
-                }*/
-            } else {
-                const o = {};
-                // Check new model
-                o[`${id}.val`] = state.val;
-                o[`${id}.ts`] = state.ts;
-                o[`${id}.ack`] = state.ack;
-                o[`${id}.lc`] = state.lc;
-
-                if (state.q !== undefined && state.q !== null) {
-                    o[`${id}.q`] = state.q;
-                }
-
-                try {
-                    this.canStates.attr(o);
-                } catch (e) {
-                    this.conn.logError(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`);
-                }
-            }
+        if (state.ts !== undefined) {
+            o[`${id}.ts`] = state.ts;
+        }
+        if (state.ack !== undefined) {
+            o[`${id}.ack`] = state.ack;
+        }
+        if (state.lc !== undefined) {
+            o[`${id}.lc`] = state.lc;
+        }
+        if (state.q !== undefined && state.q !== null) {
+            o[`${id}.q`] = state.q;
         }
 
-        if (!this.props.editMode && this.linkContext.visibility[id]) {
-            this.linkContext.visibility[id].forEach(visItem => {
-                const mmWidget = document.getElementById(visItem.widget);
-                if (!mmWidget) {
-                    return;
-                }
-                if (this.isWidgetHidden(visItem.view, visItem.widget, state.val) ||
-                    this.isWidgetFilteredOut(visItem.view, visItem.widget)
-                ) {
-                    mmWidget._storedDisplay = mmWidget.style.display;
-                    mmWidget.style.display = 'none';
-
-                    if (mmWidget
-                        && mmWidget._customHandlers
-                        && mmWidget._customHandlers.onHide
-                    ) {
-                        mmWidget._customHandlers.onHide(mmWidget, id);
-                    }
-                } else {
-                    mmWidget.style.display = mmWidget._storedDisplay ||'block';
-                    mmWidget._storedDisplay = '';
-
-                    if (mmWidget &&
-                        mmWidget._customHandlers &&
-                        mmWidget._customHandlers.onShow
-                    ) {
-                        mmWidget._customHandlers.onShow(mmWidget, id);
-                    }
-                }
-            });
+        try {
+            this.canStates.attr(o);
+        } catch (e) {
+            this.props.socket.log(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
         }
+
+        // process visibility
+        this.linkContext.visibility[id]?.forEach(item => {
+            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_VISIBILITY: ' + id);
+            this.updateWidget(item.view, item.widget, 'visibility', item);
+        });
 
         // process signals
-        if (this.linkContext.signals[id]) {
-            this.linkContext.signals[id].forEach(signal => {
-                const mWidget = document.getElementById(signal.widget);
-
-                if (!mWidget) {
-                    return;
-                }
-
-                if (this.isSignalVisible(signal.view, signal.widget, signal.index, state.val)) {
-                    // TODO
-                    this.jQuery(mWidget).find(`.vis-signal[data-index="${signal.index}"]`).show();
-                } else {
-                    // TODO
-                    this.jQuery(mWidget).find(`.vis-signal[data-index="${signal.index}"]`).hide();
-                }
-            });
-        }
+        this.linkContext.signals[id]?.forEach(item => {
+            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_SIGNAL: ' + id);
+            this.updateWidget(item.view, item.widget, 'signal', item, id);
+        });
 
         // Process last update
-        if (this.linkContext.lastChanges[id]) {
-            this.linkContext.lastChanges[id].forEach(update => {
-                const uWidget = document.getElementById(update.widget);
-                if (uWidget) {
-                    const lcDiv = uWidget.querySelector('.vis-last-change');
-                    const isInterval = lcDiv.dataset.interval;
-                    lcDiv.innerHTML = this.binds.basic.formatDate(lcDiv.dataset.type === 'last-change' ? state.lc : state.ts, lcDiv.dataset.format, isInterval === 'true' || isInterval === true);
-                }
-            });
-        }
+        this.linkContext.lastChanges[id]?.forEach(item => {
+            // console.log('[' + new Date().toISOString() + '](' + item.widget + ') UPDATE_LAST_CHANGE: ' + id);
+            this.updateWidget(item.view, item.widget, 'lastChange', item, id);
+        });
 
         // Bindings on every element
-        if (this.linkContext.bindings[id]) {
-            this.linkContext.bindings[id].forEach(binding => {
-                const bid = binding.widget;
-                const widget = this.props.views[binding.view].widgets[bid];
-                const value = this.formatBinding(binding.format, binding.view, bid, widget);
-
-                widget[binding.type][binding.attr] = value;
-
-                if (this.allWidgets[bid] && binding.type === 'data') {
-                    this.allWidgets[bid].attr(`${binding.attr}`, value);
-                }
-
-                // TODO
-                // this.subscribeOidAtRuntime(value);
-                // this.visibilityOidBinding(binding, value);
-                // this.reRenderWidget(binding.view, binding.view, bid);
-            });
-        }
+        this.linkContext.bindings[id]?.forEach(item =>
+            this.updateWidget(item.view, item.widget, 'binding', item, id));
 
         // Inform other widgets, that do not support canJS
         this.onChangeCallbacks.forEach(item => {
@@ -1050,6 +759,14 @@ class VisEngine extends React.Component {
         });
     }
 
+    componentWillUnmount() {
+        // unsubscribe all
+        Object.keys(this.subscribes).forEach(id =>
+            this.props.socket.unsubscribeState(id, this.onStateChange));
+
+        this.subscribes = {};
+    }
+
     subscribe = IDs => {
         if (!Array.isArray(IDs)) {
             IDs = [IDs];
@@ -1059,8 +776,11 @@ class VisEngine extends React.Component {
                 this.subscribes[id]++;
             } else {
                 this.subscribes[id] = 1;
-                this.props.socket.subscribeState(id, this.onStateChange);
+                console.log(`[${new Date().toISOString()}] +SUBSCRIBE: ${id}`);
                 this.createCanState(id);
+                if (!id.startsWith('local_')) {
+                    this.props.socket.subscribeState(id, this.onStateChange);
+                }
             }
         });
     }
@@ -1068,46 +788,24 @@ class VisEngine extends React.Component {
     createCanState(id) {
         const _val = `${id}.val`;
 
-        const now = Date.now();
-
-        const bindings = this.linkContext.bindings[id];
-        const obj = {};
-        let created;
-
         if (this.canStates[_val] === undefined || this.canStates[_val] === null) {
-            created = true;
-            if (this.state.editMode) {
-                this.canStates[_val] = 'null';
-                this.canStates[`${id}.ts`] = now;
-                this.canStates[`${id}.ack`] = false;
-                this.canStates[`${id}.lc`] = now;
+            const now = Date.now();
+            const o = {};
+            // set all together
+            if (id.startsWith('local_')) {
+                o[_val] = getUrlParameter(id);
             } else {
-                // set all together
-                obj[_val] = 'null';
-                obj[`${id}.ts`] = now;
-                obj[`${id}.ack`] = false;
-                obj[`${id}.lc`] = now;
+                o[_val] = 'null';
+                o[`${id}.ts`] = now;
+                o[`${id}.ack`] = false;
+                o[`${id}.lc`] = now;
+                o[`${id}.q`] = 0;
             }
-        }
 
-        // Check if some bindings installed for this widget
-        if (bindings && (created || id === 'username' || id === 'login')) {
-            bindings.forEach(binding => {
-                const widget = this.props.views[binding.view].widgets[binding.widget];
-                if (binding.type === 'data' && this.allWidgets[binding.widget]) {
-                    this.allWidgets[binding.widget].attr(binding.attr, this.formatBinding(binding.format, binding.view, binding.widget, widget));
-                } else if (!this.props.editMode) {
-                    widget[binding.type][binding.attr] =
-                        this.formatBinding(binding.format, binding.view, binding.widget, widget);
-                }
-            });
-        }
-
-        if (created) {
             try {
-                this.canStates.attr(obj);
+                this.canStates.attr(o);
             } catch (e) {
-                this.socket.log(`Error: can't create states objects (${e})`, 'error');
+                this.props.socket.log(`Error: can't create states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
             }
         }
     }
@@ -1121,7 +819,11 @@ class VisEngine extends React.Component {
             if (this.subscribes[id]) {
                 this.subscribes[id]--;
                 if (!this.subscribes[id]) {
-                    this.props.socket.unsubscribeState(id, this.onStateChange);
+                    console.log(`[${new Date().toISOString()}] -UNSUBSCRIBE: ${id}`);
+
+                    if (!id.startsWith('local_')) {
+                        this.props.socket.unsubscribeState(id, this.onStateChange);
+                    }
                     delete this.subscribes[id];
                 }
             }
@@ -1133,13 +835,13 @@ class VisEngine extends React.Component {
             return null;
         }
 
+        this.vis.editMode = this.props.editMode;
+
         // return <div id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
         return <VisView
             view={this.props.activeView}
             views={this.props.views}
             editMode={this.props.editMode}
-            subscribe={this.subscribe}
-            unsubscribe={this.unsubscribe}
             can={this.can}
             canStates={this.canStates}
             user={this.user}
@@ -1151,17 +853,22 @@ class VisEngine extends React.Component {
             viewsActiveFilter={this.viewsActiveFilter}
             setValue={this.setValue}
             linkContext={this.linkContext}
+            formatUtils={this.formatUtils}
         />;
     }
 }
 
 VisEngine.propTypes = {
-    onLoaded: PropTypes.func,
     socket: PropTypes.object.isRequired,
-    views: PropTypes.object,
+    views: PropTypes.object.isRequired,
     activeView: PropTypes.string,
+    lang: PropTypes.string.isRequired,
+    instance: PropTypes.number.isRequired,
+    adapterName: PropTypes.string,
     editMode: PropTypes.bool,
-    lang: PropTypes.string,
+    onLoaded: PropTypes.func,
+    selectedWidgets: PropTypes.array,
+    setSelectedWidgets: PropTypes.func,
 };
 
 export default VisEngine;
