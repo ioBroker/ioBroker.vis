@@ -36,7 +36,7 @@ function getWidgetGroup(views, view, widget) {
     }
 
     for (const w in widgets) {
-        if (!widgets.hasOwnProperty(w)) {
+        if (!Object.prototype.hasOwnProperty.call(widgets, w)) {
             continue;
         }
         const members = widgets[w].data.members;
@@ -148,7 +148,7 @@ function extractBinding(format) {
                         }
                     }
                 } else {
-                    const parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);
+                    const parse = parts[u].match(/([\w\s/+*-]+)(\(.+\))?/);
                     if (parse && parse[1]) {
                         parse[1] = parse[1].trim();
                         // operators requires parameter
@@ -191,7 +191,7 @@ function extractBinding(format) {
                             param = param.substring(1, param.length - 1);
                             param = param.split(',');
                             if (Array.isArray(param)) {
-                                operations.push ({ op: parse[1], arg: param }); //xxx
+                                operations.push({ op: parse[1], arg: param }); // xxx
                             }
                         } else
                         // value formatting
@@ -254,7 +254,7 @@ function extractBinding(format) {
 // }
 function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     // Check all attributes
-    let widget = views[view].widgets[wid];
+    const widget = views[view].widgets[wid];
 
     // fix error in naming
     if (widget.groupped) {
@@ -541,6 +541,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     linkContext.lastChanges[lcsid].push({ view, widget: wid });
                 }
             } else
+            // eslint-disable-next-line no-cond-assign
             if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
                 const _id = `groupAttr${m[1]}`;
                 if (data[_id]) {
@@ -557,11 +558,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // build bindings for styles
     if (style) {
-        for (const cssAttr in style) {
-            if (!style.hasOwnProperty(cssAttr) || !cssAttr) {
-                continue;
-            }
-            if (typeof style[cssAttr] === 'string') {
+        Object.keys(style).forEach(cssAttr => {
+            if (cssAttr && typeof style[cssAttr] === 'string') {
                 const objIDs = extractBinding(style[cssAttr]);
                 if (objIDs) {
                     for (let tt = 0; tt < objIDs.length; tt++) {
@@ -601,7 +599,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     }
                 }
             }
-        }
+        });
     }
 }
 
@@ -675,7 +673,7 @@ function getUrlParameter(attr) {
         const sParameterName = sURLVariables[i].split('=');
 
         if (sParameterName[0] === attr) {
-            return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+            return typeof sParameterName[1] === 'undefined' ? true : decodeURIComponent(sParameterName[1]);
         }
     }
 

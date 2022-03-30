@@ -1,6 +1,6 @@
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import FileBrowser from '@iobroker/adapter-react-v5/Components/FileBrowser';
+import FileBrowser from './FileBrowser';
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import {
     Autocomplete,
@@ -83,6 +83,7 @@ const WidgetField = props => {
             />
             <IODialog title="Select file" open={idDialog} onClose={() => setIdDialog(false)}>
                 <FileBrowser
+                    ready
                     selected={value}
                     onSelect={selected => {
                         change(selected);

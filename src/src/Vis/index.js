@@ -31,9 +31,10 @@ class VisEngine extends React.Component {
         };
         this.jsonViews = JSON.stringify(props.views);
 
-        //this.divRef = React.createRef();
+        // this.divRef = React.createRef();
 
-        /*const visConfig = {
+        /*
+        const visConfig = {
             widgetSets: [
                 {
                     name: 'bars',
@@ -71,7 +72,8 @@ class VisEngine extends React.Component {
             lang: props.lang || 'en',
             socket: props.socket,
             _: window._,
-        });*/
+        });
+        */
 
         this.can = window.can;
 
@@ -175,19 +177,14 @@ class VisEngine extends React.Component {
             registerOnChange: (callback, arg, wid) => {
                 !wid && console.warn('No widget ID for registerOnChange callback! Please fix');
 
-                if (!this.onChangeCallbacks.find(item =>
-                    item.callback === callback &&
-                    item.arg === arg &&
-                    (!wid || item.wid === wid))
-                ) {
+                if (!this.onChangeCallbacks.find(item => item.callback === callback && item.arg === arg && (!wid || item.wid === wid))) {
                     this.onChangeCallbacks.push({ callback, arg, wid });
                 }
             },
             unregisterOnChange(callback, arg, wid) {
                 !wid && console.warn('No widget ID for unregisterOnChange callback! Please fix');
 
-                const index = this.onChangeCallbacks.findIndex(item =>
-                    item.callback === callback &&
+                const index = this.onChangeCallbacks.findIndex(item => item.callback === callback &&
                     (arg === undefined || arg === null || item.arg === arg) &&
                     (!wid || item.wid === wid));
 
@@ -251,7 +248,8 @@ class VisEngine extends React.Component {
                     .then(groups => {
                         const result = {};
                         if (groupName) {
-                            groups = groups.filter(group => group._id.startsWith('system.group.' + groupName + '.') || group._id === 'system.group.' + groupName);
+                            const gr = `system.group.${groupName}`;
+                            groups = groups.filter(group => group._id.startsWith(`${gr}.`) || group._id === gr);
                         }
 
                         groups.forEach(group => result[group._id] = group);
@@ -301,13 +299,10 @@ class VisEngine extends React.Component {
                         Object.assign(objects, devices);
                         cb(null, objects);
                     })
-                    .catch(error =>
-                        cb(error));
+                    .catch(error => cb(error));
             },
-            getLoggedUser: cb => {
-                return this.socket.getCurrentUser()
-                    .then(user => cb(this.socket.isSecure, user));
-            },
+            getLoggedUser: cb => this.socket.getCurrentUser()
+                .then(user => cb(this.socket.isSecure, user)),
             subscribe: IDs => this.subscribe(IDs),
             unsubscribe: IDs => this.unsubscribe(IDs),
             authenticate: (user, password, salt) => {
@@ -321,16 +316,12 @@ class VisEngine extends React.Component {
                     };
                 }
             },
-            getStates: (IDs, cb) => {
-                return this.socket.getForeignStates(IDs)
-                    .then(data => cb(null, data))
-                    .catch(error => cb(error || 'Authentication required'));
-            },
-            setState: (id, val, cb) => {
-                return this.props.socket.setState(id, val)
-                    .then(() => cb && cb())
-                    .catch(error => cb && cb(error));
-            },
+            getStates: (IDs, cb) => this.socket.getForeignStates(IDs)
+                .then(data => cb(null, data))
+                .catch(error => cb(error || 'Authentication required')),
+            setState: (id, val, cb) => this.props.socket.setState(id, val)
+                .then(() => cb && cb())
+                .catch(error => cb && cb(error)),
             setReloadTimeout: () => {
 
             },
@@ -338,11 +329,9 @@ class VisEngine extends React.Component {
 
             },
             getUser: () => this.user,
-            sendCommand: (instance, command, data, ack) =>
-                this.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
-                    .then(() => this.socket.setState(this.idControlData, { val: data, ack: true }))
-                    .then(() => this.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack }))
-            ,
+            sendCommand: (instance, command, data, ack) => this.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
+                .then(() => this.socket.setState(this.idControlData, { val: data, ack: true }))
+                .then(() => this.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
@@ -381,9 +370,7 @@ class VisEngine extends React.Component {
                         cb(error);
                     });
             },
-            getHttp: (url, callback) =>
-                this.socket.getRawSocket().emit('httpGet', url, data =>
-                    callback && callback(data)),
+            getHttp: (url, callback) => this.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
         };
     }
 
@@ -453,7 +440,8 @@ class VisEngine extends React.Component {
             .then(groups => {
                 const result = {};
                 if (groupName) {
-                    groups = groups.filter(group => group._id.startsWith('system.group.' + groupName + '.') || group._id === 'system.group.' + groupName);
+                    const gg = `system.group.${groupName}`;
+                    groups = groups.filter(group => group._id.startsWith(`${gg}.`) || group._id === gg);
                 }
 
                 groups.forEach(group => result[group._id] = group);
@@ -465,54 +453,56 @@ class VisEngine extends React.Component {
         // creat Can objects
         this.canStates = new this.can.Map({ 'nothing_selected.val': null });
 
+        /*
         if (false && this.props.editMode) {
-            this.canStates.__attr = this.canStates.attr; // save original attr
+           this.canStates.__attr = this.canStates.attr; // save original attr
 
-            const that = this;
-            this.canStates.attr = function (attr, val) {
-                if (val === undefined) {
-                    if (typeof attr === 'string') {
-                        // read
-                        return this.__attr(attr);
-                    } else {
-                        // write
-                        return this.__attr(attr);
-                    }
-                } else {
-                    return this.__attr(attr, val);
-                }
+           const that = this;
+           this.canStates.attr = function (attr, val) {
+               if (val === undefined) {
+                   if (typeof attr === 'string') {
+                       // read
+                       return this.__attr(attr);
+                   } else {
+                       // write
+                       return this.__attr(attr);
+                   }
+               } else {
+                   return this.__attr(attr, val);
+               }
 
+               const type = typeof attr;
+               if (type !== 'string' && type !== 'number') {
+                   // allow only dev1, dev2, ... to be bound
+                   if (Object.keys(attr).find(o => o && o.match(/^dev\d+(.val|.ack|.tc|.lc)+/))) {
+                       return this.__attr(attr, val);
+                   }
+               } else if (arguments.length === 1 && attr) {
+                   if (attr.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+                       this.can.__reading(this, attr);
+                       return this._get(attr);
+                   }
+                   return that.canStates[attr];
+               } else {
+                   console.log('This is ERROR!');
+                   this._set(attr, val);
+                   return this;
+               }
+           };
 
-                /*const type = typeof attr;
-                if (type !== 'string' && type !== 'number') {
-                    // allow only dev1, dev2, ... to be bound
-                    if (Object.keys(attr).find(o => o && o.match(/^dev\d+(.val|.ack|.tc|.lc)+/))) {
-                        return this.__attr(attr, val);
-                    }
-                } else if (arguments.length === 1 && attr) {
-                    if (attr.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
-                        this.can.__reading(this, attr);
-                        return this._get(attr);
-                    }
-                    return that.canStates[attr];
-                } else {
-                    console.log('This is ERROR!');
-                    this._set(attr, val);
-                    return this;
-                }*/
-            };
+           // binding
+           this.canStates.___bind = this.canStates.bind; // save original bind
+           this.canStates.bind = function (id, callback) {
+               return this.___bind(id, callback);
+               // allow only dev1, dev2, ... to be bound
+               //if (id && id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
+               //    return this.___bind(id, callback);
+               //}
+               // console.log('ERROR: binding in edit mode is not allowed on ' + id);
+           };
 
-            // binding
-            this.canStates.___bind = this.canStates.bind; // save original bind
-            this.canStates.bind = function (id, callback) {
-                return this.___bind(id, callback);
-                // allow only dev1, dev2, ... to be bound
-                //if (id && id.match(/^dev\d+(.val|.ack|.tc|.lc)+/)) {
-                //    return this.___bind(id, callback);
-                //}
-                // console.log('ERROR: binding in edit mode is not allowed on ' + id);
-            };
         }
+        */
     }
 
     _setValue(id, val) {
@@ -546,7 +536,8 @@ class VisEngine extends React.Component {
 
     setValue = (id, val) => {
         if (!id) {
-            return console.log(`ID is null for val=${val}`);
+            console.log(`ID is null for val=${val}`);
+            return;
         }
 
         // if no de-bounce running
@@ -575,7 +566,8 @@ class VisEngine extends React.Component {
 
     // Following code is only required if legacy vis is used
     // eslint-disable-next-line camelcase
-    /*UNSAFE_componentWillReceiveProps(nextProps) {
+    /*
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const views = JSON.stringify(nextProps.views);
         if (views !== this.jsonViews) {
             this.jsonViews = views;
@@ -586,7 +578,8 @@ class VisEngine extends React.Component {
             this.vis.setEditMode(nextProps.editMode);
             this.setState({ editMode: nextProps.editMode });
         }
-    }*/
+    }
+    */
 
     static setInnerHTML(elm, html) {
         elm.innerHTML = html;
@@ -628,15 +621,16 @@ class VisEngine extends React.Component {
                         this.props.onLoaded && this.props.onLoaded();
                     });
             })
-            .catch(error =>
-                console.error(`Cannot load widgets: ${error}`));
+            .catch(error => console.error(`Cannot load widgets: ${error}`));
     }
 
-    /*componentDidUpdate(prevProps, prevState, snapshot) {
+    /*
+    componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.divRef.current) {
             this.vis.main(this.divRef.current);
         }
-    }*/
+    }
+    */
 
     updateWidget(view, wid, type, item, stateId, state) {
         if (this.widgetChangeHandlers[wid]) {
@@ -659,7 +653,6 @@ class VisEngine extends React.Component {
 
     onStateChange = (id, state) => {
         // console.log(`[${new Date().toISOString()}] STATE_CHANGE: ${id}`);
-
         if (!id || state === null || typeof state !== 'object') {
             return;
         }
@@ -667,7 +660,8 @@ class VisEngine extends React.Component {
         if (id === this.idControlCommand) {
             if (state.ack) {
                 return;
-            } else
+            }
+
             if (state.val &&
                 typeof state.val === 'string' &&
                 state.val[0] === '{' &&
@@ -694,10 +688,14 @@ class VisEngine extends React.Component {
             }
 
             return;
-        } else if (id === this.idControlData) {
+        }
+
+        if (id === this.idControlData) {
             this._cmdData = state.val;
             return;
-        } else if (id === this.idControlInstance) {
+        }
+
+        if (id === this.idControlInstance) {
             this._cmdInstance = state.val;
             return;
         }
@@ -746,8 +744,7 @@ class VisEngine extends React.Component {
         });
 
         // Bindings on every element
-        this.linkContext.bindings[id]?.forEach(item =>
-            this.updateWidget(item.view, item.widget, 'binding', item, id));
+        this.linkContext.bindings[id]?.forEach(item => this.updateWidget(item.view, item.widget, 'binding', item, id));
 
         // Inform other widgets, that do not support canJS
         this.onChangeCallbacks.forEach(item => {

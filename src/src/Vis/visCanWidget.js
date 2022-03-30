@@ -219,12 +219,7 @@ class VisCanWidget extends React.Component {
 
         return !!userGroups.find(groupId => {
             const group = this.props.userGroups[`system.group.${groupId}`];
-
-            if (group?.common?.members?.length && group.common.members.includes(`system.user.${user}`)) {
-                return true;
-            } else {
-                return false;
-            }
+            return group?.common?.members?.length && group.common.members.includes(`system.user.${user}`);
         });
     }
 
@@ -271,45 +266,45 @@ class VisCanWidget extends React.Component {
 
             // Take care: return true if widget is hidden!
             switch (condition) {
-            case '==':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value !== val;
-            case '!=':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value === val;
-            case '>=':
-                return val < value;
-            case '<=':
-                return val > value;
-            case '>':
-                return val <= value;
-            case '<':
-                return val >= value;
-            case 'consist':
-                value = value.toString();
-                val = val.toString();
-                return !val.toString().includes(value);
-            case 'not consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().includes(value);
-            case 'exist':
-                return val === 'null';
-            case 'not exist':
-                return val !== 'null';
-            default:
-                console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
-                return false;
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '>=':
+                    return val < value;
+                case '<=':
+                    return val > value;
+                case '>':
+                    return val <= value;
+                case '<':
+                    return val >= value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return !val.toString().includes(value);
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().includes(value);
+                case 'exist':
+                    return val === 'null';
+                case 'not exist':
+                    return val !== 'null';
+                default:
+                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
+                    return false;
             }
         } else {
             return condition === 'not exist';
@@ -371,6 +366,7 @@ class VisCanWidget extends React.Component {
                                         $indicator = this.$('#gestureIndicator');
 
                                         const that = this;
+                                        // eslint-disable-next-line func-names
                                         $indicator.on('gestureUpdate', function (event, evData) {
                                             const $el = that.$(this);
                                             if (evData.val === null) {
@@ -416,39 +412,39 @@ class VisCanWidget extends React.Component {
                             let indicatorY = 0;
 
                             switch (gesture) {
-                            case 'swiping':
-                                swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
-                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                indicatorX = data.touch.x;
-                                indicatorY = data.touch.y;
-                                break;
+                                case 'swiping':
+                                    swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
+                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                    indicatorX = data.touch.x;
+                                    indicatorY = data.touch.y;
+                                    break;
 
-                            case 'rotating':
-                                swipeDelta = data.touch.delta;
-                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                    indicatorX = data.touch.touches[1].x;
-                                    indicatorY = data.touch.touches[1].y;
-                                } else {
-                                    indicatorX = data.touch.touches[0].x;
-                                    indicatorY = data.touch.touches[0].y;
-                                }
-                                break;
+                                case 'rotating':
+                                    swipeDelta = data.touch.delta;
+                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                        indicatorX = data.touch.touches[1].x;
+                                        indicatorY = data.touch.touches[1].y;
+                                    } else {
+                                        indicatorX = data.touch.touches[0].x;
+                                        indicatorY = data.touch.touches[0].y;
+                                    }
+                                    break;
 
-                            case 'pinching':
-                                swipeDelta = data.touch.delta;
-                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                    indicatorX = data.touch.touches[1].x;
-                                    indicatorY = data.touch.touches[1].y;
-                                } else {
-                                    indicatorX = data.touch.touches[0].x;
-                                    indicatorY = data.touch.touches[0].y;
-                                }
-                                break;
+                                case 'pinching':
+                                    swipeDelta = data.touch.delta;
+                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                        indicatorX = data.touch.touches[1].x;
+                                        indicatorY = data.touch.touches[1].y;
+                                    } else {
+                                        indicatorX = data.touch.touches[0].x;
+                                        indicatorY = data.touch.touches[0].y;
+                                    }
+                                    break;
 
-                            default:
-                                break;
+                                default:
+                                    break;
                             }
 
                             newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
@@ -516,45 +512,45 @@ class VisCanWidget extends React.Component {
             }
 
             switch (condition) {
-            case '==':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value === val;
-            case '!=':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value !== val;
-            case '>=':
-                return val >= value;
-            case '<=':
-                return val <= value;
-            case '>':
-                return val > value;
-            case '<':
-                return val < value;
-            case 'consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().includes(value);
-            case 'not consist':
-                value = value.toString();
-                val = val.toString();
-                return !val.toString().includes(value);
-            case 'exist':
-                return value !== 'null';
-            case 'not exist':
-                return value === 'null';
-            default:
-                console.log(`[${this.props.id}] Unknown signals condition: ${condition}`);
-                return false;
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '>=':
+                    return val >= value;
+                case '<=':
+                    return val <= value;
+                case '>':
+                    return val > value;
+                case '<':
+                    return val < value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().includes(value);
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return !val.toString().includes(value);
+                case 'exist':
+                    return value !== 'null';
+                case 'not exist':
+                    return value === 'null';
+                default:
+                    console.log(`[${this.props.id}] Unknown signals condition: ${condition}`);
+                    return false;
             }
         } else {
             return false;
@@ -562,7 +558,7 @@ class VisCanWidget extends React.Component {
     }
 
     static parseStyle(style, isRxStyle) {
-       const result = {};
+        const result = {};
         // style is a string
         // "height: 10; width: 20"
         (style || '').split(';').forEach(part => {
@@ -638,7 +634,7 @@ class VisCanWidget extends React.Component {
             src = src.substring(5);
         }
         divIcon.src = src;
-        divIcon.style.width = (widgetData[`signals-icon-size-${index}`] || 32) + 'px';
+        divIcon.style.width = `${widgetData[`signals-icon-size-${index}`] || 32}px`;
         divIcon.style.height = 'auto';
         VisCanWidget.applyStyle(divIcon, widgetData[`signals-icon-style-${index}`]);
         divSignal.appendChild(divIcon);
@@ -830,7 +826,7 @@ class VisCanWidget extends React.Component {
 
     renderWidget(update) {
         let parentDiv = this.props.refParent;
-        if (parentDiv.hasOwnProperty('current')) {
+        if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
             parentDiv = parentDiv.current;
         }
 
@@ -879,7 +875,8 @@ class VisCanWidget extends React.Component {
 
             this.applyBindings(true);
         } catch (e) {
-            return console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
+            console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
+            return;
         }
 
         try {
@@ -907,7 +904,7 @@ class VisCanWidget extends React.Component {
                 return;
             }
 
-            this.widDiv = parentDiv.querySelector('#' + wid);
+            this.widDiv = parentDiv.querySelector(`#${wid}`);
 
             if (this.widDiv) {
                 if (widgetStyle && !widgetData._no_style) {
@@ -927,7 +924,7 @@ class VisCanWidget extends React.Component {
                 }
 
                 if (widgetData && widgetData.class) {
-                    this.widDiv.className += ' ' + widgetData.class;
+                    this.widDiv.className += ` ${widgetData.class}`;
                 }
 
                 // add template classes to div
@@ -977,8 +974,8 @@ class VisCanWidget extends React.Component {
                 }
 
                 if (this.refService.current) {
-                    this.refService.current.style.width = this.widDiv.offsetWidth + 'px';
-                    this.refService.current.style.height = this.widDiv.offsetHeight + 'px';
+                    this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
+                    this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
                 }
                 this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize);
             } else {
@@ -993,7 +990,7 @@ class VisCanWidget extends React.Component {
         }
     }
 
-    onClick(e) {
+    static onClick(e) {
         // do nothing, just block the handler of view
         e.stopPropagation();
     }
@@ -1029,10 +1026,10 @@ class VisCanWidget extends React.Component {
                 left: this.refService.current.offsetLeft,
             };
         } else if (this.movement) {
-            const left = (this.movement.left + x)  + 'px';
-            const top = (this.movement.top + y)  + 'px';
+            const left = `${this.movement.left + x}px`;
+            const top = `${this.movement.top + y}px`;
 
-            this.refService.current.style.left = left
+            this.refService.current.style.left = left;
             this.widDiv.style.left = left;
 
             this.refService.current.style.top = top;
@@ -1046,7 +1043,7 @@ class VisCanWidget extends React.Component {
                 style: {
                     left: this.movement.left + x,
                     top: this.movement.top + y,
-                }
+                },
             }]);
 
             this.movement = null;
@@ -1058,27 +1055,26 @@ class VisCanWidget extends React.Component {
         const groupWidgets = widget?.data?.members;
         let rxGroupWidgets = null;
         if (groupWidgets?.length && this.state.mounted && this.widDiv) {
-            rxGroupWidgets = groupWidgets.map(wid =>
-                <VisCanWidget
-                    key={wid}
-                    id={wid}
-                    views={this.props.views}
-                    view={this.props.view}
-                    can={this.props.can}
-                    canStates={this.props.canStates}
-                    userGroups={this.props.userGroups}
-                    user={this.props.user}
-                    allWidgets={this.props.allWidgets}
-                    refParent={this.widDiv}
-                    editMode={this.props.editMode}
-                    jQuery={this.props.jQuery}
-                    socket={this.props.socket}
-                    viewsActiveFilter={this.props.viewsActiveFilter}
-                    setValue={this.props.setValue}
-                    $$={this.props.$$}
-                    linkContext={this.props.linkContext}
-                    formatUtils={this.props.formatUtils}
-                />);
+            rxGroupWidgets = groupWidgets.map(wid => <VisCanWidget
+                key={wid}
+                id={wid}
+                views={this.props.views}
+                view={this.props.view}
+                can={this.props.can}
+                canStates={this.props.canStates}
+                userGroups={this.props.userGroups}
+                user={this.props.user}
+                allWidgets={this.props.allWidgets}
+                refParent={this.widDiv}
+                editMode={this.props.editMode}
+                jQuery={this.props.jQuery}
+                socket={this.props.socket}
+                viewsActiveFilter={this.props.viewsActiveFilter}
+                setValue={this.props.setValue}
+                $$={this.props.$$}
+                linkContext={this.props.linkContext}
+                formatUtils={this.props.formatUtils}
+            />);
         }
 
         const style = {};
@@ -1103,7 +1099,7 @@ class VisCanWidget extends React.Component {
                 style.bottom = widget.style.bottom;
             }
 
-            style.zIndex = 20000;
+            style.zIndex = 1200; // 1300 is the react dialog
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
@@ -1124,9 +1120,11 @@ class VisCanWidget extends React.Component {
             id={`rx_${this.props.id}`}
             ref={this.refService}
             style={style}
-            onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onClick(e) : undefined}
+            onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && VisCanWidget.onClick(e) : undefined}
             onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
-        >{ rxGroupWidgets }</div>;
+        >
+            { rxGroupWidgets }
+        </div>;
     }
 }
 

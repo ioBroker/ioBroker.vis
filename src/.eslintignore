@@ -1,1 +1,2 @@
-src/Vis/
+src/Vis/lib/*
+src/Vis/vis.js

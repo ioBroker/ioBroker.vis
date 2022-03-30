@@ -30,7 +30,16 @@ class VisView extends React.Component {
     }
 
     registerRef = (id, widDiv, refService, onMove, onResize) => {
-        this.widgetsRefs[id] = {widDiv, refService, onMove, onResize};
+        if (onMove) {
+            this.widgetsRefs[id] = {
+                widDiv,
+                refService,
+                onMove,
+                onResize,
+            };
+        } else {
+            delete this.widgetsRefs[id];
+        }
     };
 
     mouseDown = this.props.runtime ? null : e => {
@@ -43,7 +52,7 @@ class VisView extends React.Component {
             moved: false,
             x: 0,
             y: 0,
-        }
+        };
 
         console.log('Mouse down');
 
