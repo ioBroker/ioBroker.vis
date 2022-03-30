@@ -65,6 +65,9 @@ const Attributes = props => {
 Attributes.propTypes = {
     classes: PropTypes.object,
     openedViews: PropTypes.array,
+    adapterName: PropTypes.string.isRequired,
+    instance: PropTypes.string.isRequired,
+    projectName: PropTypes.string.isRequired,
 };
 
 export default withStyles(style)(Attributes);

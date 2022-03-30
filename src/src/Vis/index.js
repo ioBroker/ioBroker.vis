@@ -1,3 +1,18 @@
+/**
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -847,6 +862,9 @@ class VisEngine extends React.Component {
             allWidgets={this.allWidgets}
             jQuery={window.jQuery}
             $$={window.$$}
+            adapterName={this.props.adapterName}
+            instance={this.props.instance}
+            projectName={this.props.projectName}
             socket={this.props.socket}
             viewsActiveFilter={this.viewsActiveFilter}
             setValue={this.setValue}
@@ -855,6 +873,7 @@ class VisEngine extends React.Component {
             selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
             setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
             onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
+            showWidgetNames={this.props.showWidgetNames}
         />;
     }
 }
@@ -864,14 +883,17 @@ VisEngine.propTypes = {
     views: PropTypes.object.isRequired,
     activeView: PropTypes.string,
     lang: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    adapterName: PropTypes.string,
     editMode: PropTypes.bool,
     onLoaded: PropTypes.func,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,
     runtime: PropTypes.bool,
     onWidgetsChanged: PropTypes.func,
+    showWidgetNames: PropTypes.bool,
+
+    adapterName: PropTypes.string.isRequired,
+    instance: PropTypes.number.isRequired,
+    projectName: PropTypes.string.isRequired,
 };
 
 export default VisEngine;

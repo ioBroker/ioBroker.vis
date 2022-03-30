@@ -1,10 +1,14 @@
-import i18n from '@iobroker/adapter-react-v5/i18n';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { withStyles } from '@mui/styles';
+
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import i18n from '@iobroker/adapter-react-v5/i18n';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+
 import WidgetField from './WidgetField';
 
 const getWidgetTypes = () => Array.from(document.querySelectorAll('script[type="text/ejs"]'))
@@ -331,7 +335,7 @@ const Widget = props => {
             >
                 <AccordionSummary
                     classes={{
-                        root: clsx(props.classes.clearPadding, accordionOpen[key]
+                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[key]
                             ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                         content: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
@@ -368,6 +372,9 @@ Widget.propTypes = {
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
     project: PropTypes.object,
+    adapterName: PropTypes.string.isRequired,
+    instance: PropTypes.string.isRequired,
+    projectName: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles)(Widget);

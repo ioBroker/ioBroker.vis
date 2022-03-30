@@ -283,8 +283,8 @@ class App extends GenericApp {
         }
     }
 
-    setSelectedWidgets = selectedWidgets => {
-        this.setState({ selectedWidgets });
+    setSelectedWidgets = (selectedWidgets, cb) => {
+        this.setState({ selectedWidgets }, () => cb && cb());
         window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
     }
 
@@ -441,6 +441,7 @@ class App extends GenericApp {
                                             setSelectedWidgets={this.setSelectedWidgets}
                                             onLoaded={() => this.setState({ widgetsLoaded: true })}
                                             onWidgetsChanged={this.onWidgetsChanged}
+                                            projectName={this.state.projectName}
                                         />
                                     </div>
                                 </div>
@@ -458,6 +459,8 @@ class App extends GenericApp {
                                     widgetsLoaded={this.state.widgetsLoaded}
                                     socket={this.socket}
                                     themeName={this.state.themeName}
+                                    adapterName={this.adapterName}
+                                    instance={this.instance}
                                 />
                             </div>
                         </ReactSplit>
