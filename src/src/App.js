@@ -84,6 +84,7 @@ class App extends GenericApp {
             selectedWidgets: [],
             showCode: window.localStorage.getItem('showCode') || false,
             editMode: true,
+            widgetsLoaded: false,
             ...this.state,
         });
 
@@ -138,7 +139,6 @@ class App extends GenericApp {
             project,
             openedViews,
             projectName,
-            selectedWidgets: [],
         });
         this.changeView(selectedView);
 
@@ -179,7 +179,12 @@ class App extends GenericApp {
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
     changeView = view => {
-        this.setState({ selectedView: view, selectedWidgets: [] });
+        this.setState({
+            selectedView: view,
+            selectedWidgets: JSON.parse(window.localStorage.getItem(
+                `${this.state.projectName}.${view}.widgets`,
+            )) || [],
+        });
         window.localStorage.setItem('selectedView', view);
         window.location.hash = view;
     }
@@ -263,7 +268,10 @@ class App extends GenericApp {
         }
     }
 
-    setSelectedWidgets = selectedWidgets => this.setState({ selectedWidgets })
+    setSelectedWidgets = selectedWidgets => {
+        this.setState({ selectedWidgets });
+        window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
+    }
 
     toggleCode = () => {
         const oldShowCode = this.state.showCode;
@@ -383,19 +391,20 @@ class App extends GenericApp {
                                         ? <pre>
                                             {JSON.stringify(this.state.project, null, 2)}
                                         </pre> : null}
-                                        <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
-                                            <VisEngine
-                                                activeView={this.state.selectedView || ''}
-                                                editMode={this.state.editMode}
-                                                socket={this.socket}
-                                                lang={this.socket.systemLang}
-                                                views={this.state.project}
-                                                adapterName={this.adapterName}
-                                                instance={this.instance}
-                                                selectedWidgets={this.state.selectedWidgets}
-                                                setSelectedWidgets={this.setSelectedWidgets}
-                                            />
-                                        </div>
+                                    <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
+                                        <VisEngine
+                                            activeView={this.state.selectedView || ''}
+                                            editMode={this.state.editMode}
+                                            socket={this.socket}
+                                            lang={this.socket.systemLang}
+                                            views={this.state.project}
+                                            adapterName={this.adapterName}
+                                            instance={this.instance}
+                                            selectedWidgets={this.state.selectedWidgets}
+                                            setSelectedWidgets={this.setSelectedWidgets}
+                                            onLoaded={() => this.setState({widgetsLoaded: true})}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className={this.props.classes.block}>
@@ -408,6 +417,7 @@ class App extends GenericApp {
                                     openedViews={this.state.openedViews}
                                     projectName={this.state.projectName}
                                     selectedWidgets={this.state.selectedWidgets}
+                                    widgetsLoaded={this.state.widgetsLoaded}
                                     socket={this.socket}
                                     themeName={this.state.themeName}
                                 />

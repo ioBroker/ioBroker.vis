@@ -156,10 +156,16 @@ const getFieldsAfter = () => [
 ];
 
 const Widget = props => {
-    if (props.selectedWidgets && props.selectedWidgets[0]) {
+    if (props.widgetsLoaded && props.selectedWidgets && props.selectedWidgets[0]) {
         const widget = props.project[props.selectedView].widgets[props.selectedWidgets[0]];
+        if (!widget) {
+            return null;
+        }
         console.log(getWidgetTypes());
         const widgetType = getWidgetTypes().find(type => type.name === widget.tpl);
+        if (!widgetType) {
+            return null;
+        }
 
         let fields = [...getFieldsBefore(), {
             name: 'common',
