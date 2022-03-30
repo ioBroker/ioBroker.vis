@@ -5,19 +5,20 @@ import { getUsedObjectIDsInWidget, replaceGroupAttr } from './visUtils';
 const FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
-
 class VisCanWidget extends React.Component {
     constructor(props) {
         super(props);
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        // const widget = this.props.views[this.props.view].widgets[this.props.id];
 
         this.editMode = this.props.editMode;
 
+        this.refService = React.createRef();
+
         this.state = {
-            data: JSON.stringify(widget.data),
-            style: JSON.stringify(widget.style),
-            groupid: widget.groupid,
+            // data: JSON.stringify(widget.data),
+            // style: JSON.stringify(widget.style),
+            // groupid: widget.groupid,
             mounted: false,
         };
 
@@ -45,7 +46,9 @@ class VisCanWidget extends React.Component {
         });
 
         // free mem
-        Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
+        Object.keys(linkContext).forEach(attr => {
+            linkContext[attr] = null;
+        });
 
         this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
     }
@@ -62,7 +65,7 @@ class VisCanWidget extends React.Component {
     }
 
     static removeFromArray(items, IDs, view, widget) {
-        Object.keys(items).forEach(id => {
+        items && Object.keys(items).forEach(id => {
             if (!IDs || IDs.includes(id)) {
                 for (let i = items[id].length - 1; i >= 0; i--) {
                     const item = items[id][i];
@@ -75,25 +78,34 @@ class VisCanWidget extends React.Component {
     }
 
     componentWillUnmount() {
-        this.props.linkContext.unsubscribe(this.IDs);
-        this.props.linkContext.unregisterChangeHandler(this.props.id, this.changeHandler);
+        this.props.registerRef && this.props.registerRef(this.props.id);
+
         this.bindings = {};
 
-        // remove all bindings from prop.linkContexts
-        VisCanWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
-        VisCanWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
-        VisCanWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
-        VisCanWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+        if (this.props.linkContext) {
+            if (this.props.linkContext && this.props.linkContext.unsubscribe) {
+                this.props.linkContext.unsubscribe(this.IDs);
+                this.props.linkContext.unregisterChangeHandler(this.props.id, this.changeHandler);
+            }
+
+            // remove all bindings from prop.linkContexts
+            VisCanWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
+            VisCanWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
+            VisCanWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
+            VisCanWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+        }
 
         this.destroy(this.props.id, this.widDiv);
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
+        /*
         const views = JSON.stringify(nextProps.views);
-        /*if (views !== this.jsonViews) {
+        if (views !== this.jsonViews) {
             //this.jsonViews = views;
             //this.vis.updateViews(JSON.parse(JSON.stringify(nextProps.views)));
-        }*/
+        }
+        */
 
         if (nextProps.editMode !== this.editMode) {
             this.editMode = nextProps.editMode;
@@ -108,7 +120,7 @@ class VisCanWidget extends React.Component {
             delete this.props.allWidgets[this.props.id];
         }
 
-        // do not destory groups by update
+        // do not destroy groups by update
         if (this.widDiv && (!update || !this.props.id.startsWith('g'))) {
             const $wid = this.props.jQuery(this.widDiv);
             const destroy = $wid.data('destroy');
@@ -207,8 +219,11 @@ class VisCanWidget extends React.Component {
 
         return !!userGroups.find(groupId => {
             const group = this.props.userGroups[`system.group.${groupId}`];
+
             if (group?.common?.members?.length && group.common.members.includes(`system.user.${user}`)) {
                 return true;
+            } else {
+                return false;
             }
         });
     }
@@ -256,45 +271,45 @@ class VisCanWidget extends React.Component {
 
             // Take care: return true if widget is hidden!
             switch (condition) {
-                case '==':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value !== val;
-                case '!=':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value === val;
-                case '>=':
-                    return val < value;
-                case '<=':
-                    return val > value;
-                case '>':
-                    return val <= value;
-                case '<':
-                    return val >= value;
-                case 'consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return !val.toString().includes(value);
-                case 'not consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return val.toString().includes(value);
-                case 'exist':
-                    return val === 'null';
-                case 'not exist':
-                    return val !== 'null';
-                default:
-                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
-                    return false;
+            case '==':
+                value = value.toString();
+                val = val.toString();
+                if (val === '1') val = 'true';
+                if (value === '1') value = 'true';
+                if (val === '0') val = 'false';
+                if (value === '0') value = 'false';
+                return value !== val;
+            case '!=':
+                value = value.toString();
+                val = val.toString();
+                if (val === '1') val = 'true';
+                if (value === '1') value = 'true';
+                if (val === '0') val = 'false';
+                if (value === '0') value = 'false';
+                return value === val;
+            case '>=':
+                return val < value;
+            case '<=':
+                return val > value;
+            case '>':
+                return val <= value;
+            case '<':
+                return val >= value;
+            case 'consist':
+                value = value.toString();
+                val = val.toString();
+                return !val.toString().includes(value);
+            case 'not consist':
+                value = value.toString();
+                val = val.toString();
+                return val.toString().includes(value);
+            case 'exist':
+                return val === 'null';
+            case 'not exist':
+                return val !== 'null';
+            default:
+                console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
+                return false;
             }
         } else {
             return condition === 'not exist';
@@ -322,8 +337,7 @@ class VisCanWidget extends React.Component {
                 let valState = this.props.canStates.attr(`${oid}.val`);
                 let $indicator;
                 if (valState !== undefined && valState !== null) {
-                    $wid.on('touchmove', evt =>
-                        evt.preventDefault());
+                    $wid.on('touchmove', evt => evt.preventDefault());
 
                     $wid.css({
                         '-webkit-user-select': 'none',
@@ -402,39 +416,39 @@ class VisCanWidget extends React.Component {
                             let indicatorY = 0;
 
                             switch (gesture) {
-                                case 'swiping':
-                                    swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    indicatorX = data.touch.x;
-                                    indicatorY = data.touch.y;
-                                    break;
+                            case 'swiping':
+                                swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
+                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                indicatorX = data.touch.x;
+                                indicatorY = data.touch.y;
+                                break;
 
-                                case 'rotating':
-                                    swipeDelta = data.touch.delta;
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                        indicatorX = data.touch.touches[1].x;
-                                        indicatorY = data.touch.touches[1].y;
-                                    } else {
-                                        indicatorX = data.touch.touches[0].x;
-                                        indicatorY = data.touch.touches[0].y;
-                                    }
-                                    break;
+                            case 'rotating':
+                                swipeDelta = data.touch.delta;
+                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                    indicatorX = data.touch.touches[1].x;
+                                    indicatorY = data.touch.touches[1].y;
+                                } else {
+                                    indicatorX = data.touch.touches[0].x;
+                                    indicatorY = data.touch.touches[0].y;
+                                }
+                                break;
 
-                                case 'pinching':
-                                    swipeDelta = data.touch.delta;
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                        indicatorX = data.touch.touches[1].x;
-                                        indicatorY = data.touch.touches[1].y;
-                                    } else {
-                                        indicatorX = data.touch.touches[0].x;
-                                        indicatorY = data.touch.touches[0].y;
-                                    }
-                                    break;
+                            case 'pinching':
+                                swipeDelta = data.touch.delta;
+                                swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                    indicatorX = data.touch.touches[1].x;
+                                    indicatorY = data.touch.touches[1].y;
+                                } else {
+                                    indicatorX = data.touch.touches[0].x;
+                                    indicatorY = data.touch.touches[0].y;
+                                }
+                                break;
 
-                                default:
-                                    break;
+                            default:
+                                break;
                             }
 
                             newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
@@ -502,72 +516,84 @@ class VisCanWidget extends React.Component {
             }
 
             switch (condition) {
-                case '==':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value === val;
-                case '!=':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value !== val;
-                case '>=':
-                    return val >= value;
-                case '<=':
-                    return val <= value;
-                case '>':
-                    return val > value;
-                case '<':
-                    return val < value;
-                case 'consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return val.toString().includes(value);
-                case 'not consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return !val.toString().includes(value);
-                case 'exist':
-                    return value !== 'null';
-                case 'not exist':
-                    return value === 'null';
-                default:
-                    console.log(`[${this.props.id}] Unknown signals condition: ${condition}`);
-                    return false;
+            case '==':
+                value = value.toString();
+                val = val.toString();
+                if (val === '1') val = 'true';
+                if (value === '1') value = 'true';
+                if (val === '0') val = 'false';
+                if (value === '0') value = 'false';
+                return value === val;
+            case '!=':
+                value = value.toString();
+                val = val.toString();
+                if (val === '1') val = 'true';
+                if (value === '1') value = 'true';
+                if (val === '0') val = 'false';
+                if (value === '0') value = 'false';
+                return value !== val;
+            case '>=':
+                return val >= value;
+            case '<=':
+                return val <= value;
+            case '>':
+                return val > value;
+            case '<':
+                return val < value;
+            case 'consist':
+                value = value.toString();
+                val = val.toString();
+                return val.toString().includes(value);
+            case 'not consist':
+                value = value.toString();
+                val = val.toString();
+                return !val.toString().includes(value);
+            case 'exist':
+                return value !== 'null';
+            case 'not exist':
+                return value === 'null';
+            default:
+                console.log(`[${this.props.id}] Unknown signals condition: ${condition}`);
+                return false;
             }
         } else {
             return false;
         }
     }
 
+    static parseStyle(style, isRxStyle) {
+       const result = {};
+        // style is a string
+        // "height: 10; width: 20"
+        (style || '').split(';').forEach(part => {
+            part = part.trim();
+            if (part) {
+                let [attr, value] = part.split(':');
+                attr = attr.trim();
+                if (attr && value) {
+                    value = value.trim();
+                    if (!isRxStyle && (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height')) {
+                        if (value !== '0' && value.match(/^[-+]?\d+$/)) {
+                            value = `${value}px`;
+                        }
+                    }
+                    if (value) {
+                        result[attr] = value;
+                    }
+                }
+            }
+        });
+
+        return result;
+    }
+
     static applyStyle(el, style) {
         if (typeof style === 'string') {
             // style is a string
             // "height: 10; width: 20"
-            (style || '').split(';').forEach(part => {
-                part = part.trim();
-                if (part) {
-                    let [attr, value] = part.split(':');
-                    attr = attr.trim();
-                    if (attr && value) {
-                        value = value.trim();
-                        if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                            if (value !== '0' && value.toString().match(/^[-+]?\d+$/)) {
-                                value = `${value}px`;
-                            }
-                        }
-                        if (value) {
-                            el.style[attr] = value;
-                        }
-                    }
-                }
+            style = VisCanWidget.parseStyle(style);
+            Object.keys(style).forEach(attr => {
+                el.style[attr] = style[attr];
             });
         } else if (style) {
             // style is an object
@@ -946,11 +972,17 @@ class VisCanWidget extends React.Component {
 
                 // this.$(document).trigger('wid_added', id);
 
-                if (userGroups && this.widDiv) {
-                    if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
-                        this.widDiv.className += ' vis-user-disabled';
-                    }
+                if (userGroups && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
+                    this.widDiv.className += ' vis-user-disabled';
                 }
+
+                if (this.refService.current) {
+                    this.refService.current.style.width = this.widDiv.offsetWidth + 'px';
+                    this.refService.current.style.height = this.widDiv.offsetHeight + 'px';
+                }
+                this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize);
+            } else {
+                this.props.registerRef(this.props.id, null, this.refService, this.onMove, this.onResize);
             }
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
@@ -958,6 +990,66 @@ class VisCanWidget extends React.Component {
             for (let l = 0; l < lines.length; l++) {
                 this.props.socket.log.error(`${l} - ${lines[l]}`);
             }
+        }
+    }
+
+    onClick(e) {
+        // do nothing, just block the handler of view
+        e.stopPropagation();
+    }
+
+    onMouseDown(e) {
+        e.stopPropagation();
+        if (!this.props.selectedWidgets.includes(this.props.id)) {
+            if (e.shiftKey || e.ctrlKey) {
+                // add or remove
+                const pos = this.props.selectedWidgets.indexOf(this.props.id);
+                if (pos === -1) {
+                    const selectedWidgets = [...this.props.selectedWidgets, this.props.id];
+                    this.props.setSelectedWidgets(selectedWidgets);
+                } else {
+                    const selectedWidgets = [...this.props.selectedWidgets];
+                    selectedWidgets.splice(pos, 1);
+                    this.props.setSelectedWidgets(selectedWidgets);
+                }
+            } else {
+                // set select
+                this.props.setSelectedWidgets([this.props.id]);
+            }
+        } else {
+            this.props.mouseDownOnView(e);
+        }
+    }
+
+    onMove = (x, y, save) => {
+        if (x === undefined) {
+            // initiate movement
+            this.movement = {
+                top: this.refService.current.offsetTop,
+                left: this.refService.current.offsetLeft,
+            };
+        } else if (this.movement) {
+            const left = (this.movement.left + x)  + 'px';
+            const top = (this.movement.top + y)  + 'px';
+
+            this.refService.current.style.left = left
+            this.widDiv.style.left = left;
+
+            this.refService.current.style.top = top;
+            this.widDiv.style.top = top;
+        }
+
+        if (save) {
+            this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                wid: this.props.id,
+                view: this.props.view,
+                style: {
+                    left: this.movement.left + x,
+                    top: this.movement.top + y,
+                }
+            }]);
+
+            this.movement = null;
         }
     }
 
@@ -989,7 +1081,52 @@ class VisCanWidget extends React.Component {
                 />);
         }
 
-        return <div id={`rx_${this.props.id}`} style={{ display: 'none' }}>{ rxGroupWidgets }</div>;
+        const style = {};
+
+        if (this.editMode) {
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
+                style.top = widget.style.top;
+            }
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'left')) {
+                style.left = widget.style.left;
+            }
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'width')) {
+                style.width = widget.style.width;
+            }
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'height')) {
+                style.height = widget.style.height;
+            }
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'right')) {
+                style.right = widget.style.right;
+            }
+            if (Object.prototype.hasOwnProperty.call(widget.style, 'bottom')) {
+                style.bottom = widget.style.bottom;
+            }
+
+            style.zIndex = 20000;
+            style.position = this.props.isRelative ? 'relative' : 'absolute';
+            style.userSelect = 'none';
+
+            if (this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id)) {
+                style.pointerEvents = 'inherit';
+                style.opacity = 0.5;
+                style.backgroundColor = 'green';
+            } else {
+                // style.pointerEvents = 'none';
+                // style.userSelect = 'none';
+                style.opacity = 0; // block interactions
+            }
+        } else {
+            style.display = 'none';
+        }
+
+        return <div
+            id={`rx_${this.props.id}`}
+            ref={this.refService}
+            style={style}
+            onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onClick(e) : undefined}
+            onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
+        >{ rxGroupWidgets }</div>;
     }
 }
 
@@ -1000,6 +1137,7 @@ VisCanWidget.propTypes = {
     can: PropTypes.object.isRequired,
     canStates: PropTypes.object.isRequired,
     editMode: PropTypes.bool.isRequired,
+    runtime: PropTypes.bool,
     userGroups: PropTypes.object.isRequired,
     user: PropTypes.string.isRequired,
     allWidgets: PropTypes.object.isRequired,
@@ -1012,6 +1150,11 @@ VisCanWidget.propTypes = {
     refParent: PropTypes.object.isRequired,
     linkContext: PropTypes.object.isRequired,
     formatUtils: PropTypes.object,
+    selectedWidgets: PropTypes.array,
+    setSelectedWidgets: PropTypes.func,
+    mouseDownOnView: PropTypes.func,
+    registerRef: PropTypes.func,
+    onWidgetsChanged: PropTypes.func,
 };
 
 export default VisCanWidget;

@@ -854,6 +854,9 @@ class VisEngine extends React.Component {
             setValue={this.setValue}
             linkContext={this.linkContext}
             formatUtils={this.formatUtils}
+            selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
+            setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
+            onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
         />;
     }
 }
@@ -869,6 +872,8 @@ VisEngine.propTypes = {
     onLoaded: PropTypes.func,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,
+    runtime: PropTypes.bool,
+    onWidgetsChanged: PropTypes.func,
 };
 
 export default VisEngine;
