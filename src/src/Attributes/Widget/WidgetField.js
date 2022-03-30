@@ -1,6 +1,5 @@
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import FileBrowser from './FileBrowser';
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import {
     Autocomplete,
@@ -8,6 +7,7 @@ import {
 } from '@mui/material';
 import clsx from 'clsx';
 import { useState } from 'react';
+import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
 

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import withStyles from '@mui/styles/withStyles';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';

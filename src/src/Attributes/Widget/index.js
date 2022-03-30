@@ -181,7 +181,33 @@ const getFieldsAfter = () => [
             { name: 'margin-bottom' }],
     },
     { name: 'gestures', fields: [] },
-    { name: 'notification', fields: [] },
+    {
+        name: 'notification',
+        fields: [...([0, 1, 2].flatMap(i => [
+            { name: `signals-oid-${i}`, type: 'id' },
+            {
+                name: `signals-cond-${i}`, type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '==',
+            },
+            { name: `signals-val-${i}`, default: true },
+            { name: `signals-icon-${i}`, type: 'image', default: '/vis/signals/lowbattery.png' },
+            {
+                name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
+            },
+            { name: `signals-icon-style-${i}` },
+            { name: `signals-text-${i}` },
+            { name: `signals-text-style-${i}` },
+            { name: `signals-text-class-${i}` },
+            { name: `signals-blink-${i}`, type: 'checkbox', default: false },
+            {
+                name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+            },
+            {
+                name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+            },
+            { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
+
+        ]))],
+    },
     {
         name: 'show_last',
         fields: [
