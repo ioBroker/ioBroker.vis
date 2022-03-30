@@ -15,7 +15,7 @@ const IODialog = props => <Dialog
     <DialogTitle>{I18n.t(props.title)}</DialogTitle>
     <DialogContent onKeyUp={e => {
         if (props.action) {
-            if (!props.actionDisabled) {
+            if (!props.actionDisabled && !props.keyboardDisabled) {
                 if (e.keyCode === 13) {
                     props.action();
                     if (!props.actionNoClose) {
@@ -68,6 +68,7 @@ IODialog.propTypes = {
     closeTitle: PropTypes.string,
     closeDisabled: PropTypes.bool,
     dialogActions: PropTypes.any,
+    keyboardDisabled: PropTypes.bool,
     onClose: PropTypes.func,
     open: PropTypes.bool,
     title: PropTypes.string,

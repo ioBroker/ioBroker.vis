@@ -3,11 +3,13 @@ import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import FileBrowser from '@iobroker/adapter-react-v5/Components/FileBrowser';
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import {
+    Autocomplete,
     Button, Checkbox, Dialog, Input, MenuItem, Select, Slider, TextField,
 } from '@mui/material';
 import clsx from 'clsx';
 import { useState } from 'react';
 import IODialog from '../../Components/IODialog';
+import TextDialog from './TextDialog';
 
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
@@ -207,11 +209,23 @@ const WidgetField = props => {
         </Select>;
     }
     if (field.type === 'auto') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
+        return <Autocomplete
+            freeSolo
+            options={field.options || []}
+            inputValue={value || ''}
+            value={value || ''}
+            onInputChange={(e, inputValue) => change(inputValue)}
+            onChange={(e, inputValue) => change(inputValue)}
+            classes={{
+                input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+            }}
+            renderInput={params => (
+                <TextField
+                    variant="standard"
+                    {...params}
+                />
+            )}
+        />;
     }
     if (field.type === 'style') {
         return <>
@@ -227,18 +241,16 @@ const WidgetField = props => {
             {value}
         </>;
     }
-    if (field.type === 'text') {
+    if (field.type === 'text' || field.type === 'html') {
         return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
-    }
-    if (field.type === 'html') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
+            <Button onClick={() => setIdDialog(true)}>Edit</Button>
+            <TextDialog
+                open={idDialog}
+                value={value}
+                onChange={newValue => change(newValue)}
+                onClose={() => setIdDialog(false)}
+                type={field.type}
+            />
         </>;
     }
     if (field.type === 'widget') {
