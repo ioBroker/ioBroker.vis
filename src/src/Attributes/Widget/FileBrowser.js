@@ -523,14 +523,15 @@ class FileBrowser extends Component {
 
         if (!_resolve) {
             return new Promise(resolve => this.browseFolders(foldersList, _newFolders, resolve));
-        } else
+        }
+
         if (!foldersList || !foldersList.length) {
             return _resolve(_newFolders);
-        } else {
-            return this.browseFolder(foldersList.shift(), _newFolders)
-                .then(()  => setTimeout(() => this.browseFolders(foldersList, _newFolders, _resolve), 0))
-                .catch(() => setTimeout(() => this.browseFolders(foldersList, _newFolders, _resolve), 0));
         }
+
+        return this.browseFolder(foldersList.shift(), _newFolders)
+            .then(()  => setTimeout(() => this.browseFolders(foldersList, _newFolders, _resolve), 0))
+            .catch(() => setTimeout(() => this.browseFolders(foldersList, _newFolders, _resolve), 0));
     }
 
     readDirSerial(adapter, relPath) {

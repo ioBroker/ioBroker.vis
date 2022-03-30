@@ -1,3 +1,18 @@
+/**
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
 /* Reset all fonts settings */
 body, html {
     font-style: normal;
@@ -29,6 +44,44 @@ body, html {
     min-height: 100%;
     min-width: 100%;
 }
+
+.vis-editmode-helper {
+    background-image: /* tint image */
+            linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),
+                /* checkered effect */
+            linear-gradient(to right, black 50%, white 50%),
+            linear-gradient(to bottom, black 50%, white 50%);
+    background-blend-mode: normal, difference, normal;
+    background-size: 1em 1em;
+}
+
+.vis-editmode-selected.vis-editmode-helper {
+    background-image: /* tint image */
+            linear-gradient(to right, rgb(9, 140, 4, 0.75), rgb(9, 140, 4, 0.75)),
+                /* checkered effect */
+            linear-gradient(to right, #000 50%, #FFF 50%),
+            linear-gradient(to bottom, #000 50%, #FFF 50%);
+}
+
+.vis-editmode-widget-name {
+    font-size: 10px;
+    background: #002e4f;
+    border-radius: 3px 3px 0 0;
+    position: absolute;
+    top: -13px;
+    left: 0;
+    padding: 1px 3px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.vis-editmode-select-rect {
+    border: 1px dashed white;
+    background-color: #F00;
+    opacity: 0.1;
+}
+
+/* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWERE */
+
 .vis-no-user-select {
     -webkit-touch-callout: none;
     -ms-touch-select: none;
@@ -140,6 +193,7 @@ body, html {
     opacity: 0.1 !important;
     background: red !important;
 }
+
 .noTitle .ui-dialog-titlebar {
     display: none;
     margin-top: 30px;
@@ -318,16 +372,6 @@ div#vis_editor {
 
 #css_table {
     width: 220px;
-}
-
-.editmode-helper {
-    background-image: /* tint image */
-            linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),
-                /* checkered effect */
-            linear-gradient(to right, black 50%, white 50%),
-            linear-gradient(to bottom, black 50%, white 50%);
-    background-blend-mode: normal, difference, normal;
-    background-size: 2em 2em;
 }
 
 .vis-wait-screen {

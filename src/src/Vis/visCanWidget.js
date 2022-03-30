@@ -1,6 +1,22 @@
+/**
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getUsedObjectIDsInWidget, replaceGroupAttr } from './visUtils';
+import { Z_INDEXES } from './visView';
 
 const FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
@@ -866,22 +882,32 @@ class VisCanWidget extends React.Component {
             }
         }
 
+        let widgetData;
+        let widgetStyle;
         try {
+            widgetData = new this.props.can.Map({ wid, ...widget.data });
+            widgetStyle = JSON.parse(JSON.stringify(widget.style));
             // try to apply bindings to every attribute
             this.props.allWidgets[wid] = {
-                style: JSON.parse(JSON.stringify(widget.style)),
-                data: new this.props.can.Map({ wid, ...widget.data }),
+                style: widgetStyle,
+                data: widgetData,
             };
 
             this.applyBindings(true);
+            // replace all _PRJ_NAME with vis.0/name
+            Object.keys(widgetData).forEach(attr => {
+                if ((attr.startsWith('src') || attr.endsWith('src')) && widgetData[attr].startsWith('_PRJ_NAME')) {
+                    // "_PRJ_NAME".length = 9
+                    // extra do not use widgetData.attr(attr, value) as we do not want to trigger observable
+                    widgetData[attr] = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetData[attr].substring(9)}`;
+                }
+            });
         } catch (e) {
             console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
             return;
         }
 
         try {
-            const widgetData = this.props.allWidgets[wid].data;
-            const widgetStyle = this.props.allWidgets[wid].style;
 
             // Append html element to view
             if (widget.tpl) {
@@ -977,9 +1003,9 @@ class VisCanWidget extends React.Component {
                     this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
                     this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
                 }
-                this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize);
+                this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect);
             } else {
-                this.props.registerRef(this.props.id, null, this.refService, this.onMove, this.onResize);
+                this.props.registerRef(this.props.id, null, this.refService, this.onMove, this.onResize, this.onTempSelect);
             }
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
@@ -1034,19 +1060,46 @@ class VisCanWidget extends React.Component {
 
             this.refService.current.style.top = top;
             this.widDiv.style.top = top;
+
+            if (this.widDiv._customHandlers && this.widDiv._customHandlers.onMove) {
+                this.widDiv._customHandlers.onMove(this.widDiv, this.props.id);
+            }
+
+            if (save) {
+                this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                    wid: this.props.id,
+                    view: this.props.view,
+                    style: {
+                        left: this.movement.left + x,
+                        top: this.movement.top + y,
+                    },
+                }]);
+
+                this.movement = null;
+            }
         }
+    }
 
-        if (save) {
-            this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
-                wid: this.props.id,
-                view: this.props.view,
-                style: {
-                    left: this.movement.left + x,
-                    top: this.movement.top + y,
-                },
-            }]);
-
-            this.movement = null;
+    onTempSelect = selected => {
+        if (selected === null || selected === undefined)  {
+            if (this.props.selectedWidgets.includes(this.props.id)) {
+                this.refService.current.style.backgroundColor = 'green';
+                if (!this.refService.current.className.includes('vis-editmode-selected')) {
+                    this.refService.current.className = 'vis-editmode-selected' + this.refService.current.className;
+                }
+            } else {
+                this.refService.current.style.backgroundColor = '';
+                this.refService.current.className = this.refService.current.className.replace('vis-editmode-selected', '');
+            }
+        } else {
+            this.refService.current.style.backgroundColor = selected ? 'green' : '';
+            if (selected) {
+                if (!this.refService.current.className.includes('vis-editmode-selected')) {
+                    this.refService.current.className = 'vis-editmode-selected' + this.refService.current.className;
+                }
+            } else {
+                this.refService.current.className = this.refService.current.className.replace('vis-editmode-selected', '');
+            }
         }
     }
 
@@ -1074,11 +1127,14 @@ class VisCanWidget extends React.Component {
                 $$={this.props.$$}
                 linkContext={this.props.linkContext}
                 formatUtils={this.props.formatUtils}
+                adapterName={this.props.adapterName}
+                instance={this.props.instance}
+                projectName={this.props.projectName}
             />);
         }
 
         const style = {};
-        let classNames = this.props.selectedWidgets?.includes(this.props.id) ? 'editmode-selected ' : '';
+        let classNames = this.props.selectedWidgets?.includes(this.props.id) ? 'vis-editmode-selected' : '';
 
         if (this.editMode) {
             if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
@@ -1100,22 +1156,19 @@ class VisCanWidget extends React.Component {
                 style.bottom = widget.style.bottom;
             }
 
-            style.zIndex = 1200; // 1300 is the react dialog
+            style.zIndex = Z_INDEXES.VIEW_SELECT_RECTANGLE; // 1300 is the React dialog
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
+            style.opacity = 0.3;
+
             if (this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id)) {
-                style.pointerEvents = 'inherit';
-                style.opacity = 0.5;
                 style.backgroundColor = 'green';
-            } else {
-                // style.pointerEvents = 'none';
-                // style.userSelect = 'none';
-                style.opacity = 0; // block interactions
             }
 
             if (widget.tpl.toLowerCase().includes('image')) {
-                classNames += 'editmode-helper';
+                classNames += ' vis-editmode-helper';
+                style.opacity = style.opacity || 0.3;
             }
         } else {
             style.display = 'none';
@@ -1129,6 +1182,9 @@ class VisCanWidget extends React.Component {
             onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && VisCanWidget.onClick(e) : undefined}
             onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
         >
+            { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
+                <div className="vis-editmode-widget-name">{ this.props.id }</div>
+                : null }
             { rxGroupWidgets }
         </div>;
     }
@@ -1159,6 +1215,11 @@ VisCanWidget.propTypes = {
     mouseDownOnView: PropTypes.func,
     registerRef: PropTypes.func,
     onWidgetsChanged: PropTypes.func,
+    showWidgetNames: PropTypes.bool,
+
+    adapterName: PropTypes.string.isRequired,
+    instance: PropTypes.number.isRequired,
+    projectName: PropTypes.string.isRequired,
 };
 
 export default VisCanWidget;

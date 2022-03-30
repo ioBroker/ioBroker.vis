@@ -1,3 +1,18 @@
+/**
+ *  ioBroker.vis
+ *  https://github.com/ioBroker/ioBroker.vis
+ *
+ *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Creative Common Attribution-NonCommercial (CC BY-NC)
+ *
+ *  http://creativecommons.org/licenses/by-nc/4.0/
+ *
+ * Short content:
+ * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.
+ * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
+ * (Free for non-commercial use).
+ */
+
 import * as moment from 'moment';
 import { extractBinding } from './visUtils';
 

@@ -1,12 +1,15 @@
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+
+import {
+    Autocomplete,
+    Button, Checkbox, Input, MenuItem, Select, Slider, TextField,
+} from '@mui/material';
+
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import i18n from '@iobroker/adapter-react-v5/i18n';
-import {
-    Autocomplete,
-    Button, Checkbox, Dialog, Input, MenuItem, Select, Slider, TextField,
-} from '@mui/material';
-import clsx from 'clsx';
-import { useState } from 'react';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
@@ -14,8 +17,13 @@ import TextDialog from './TextDialog';
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
 
-    const { field } = props;
-    const { widget } = props;
+    const {
+        field,
+        widget,
+        adapterName,
+        instance,
+        projectName,
+    } = props;
 
     const change = changeValue => {
         const project = JSON.parse(JSON.stringify(props.project));
@@ -35,7 +43,7 @@ const WidgetField = props => {
                 fullWidth
                 InputProps={{
                     classes: {
-                        input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
                     endAdornment: <Button onClick={() => setIdDialog(true)}>...</Button>,
                 }}
@@ -61,7 +69,7 @@ const WidgetField = props => {
         return <Checkbox
             checked={!!value}
             classes={{
-                root: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             size="small"
             onChange={e => change(e.target.checked)}
@@ -74,21 +82,37 @@ const WidgetField = props => {
                 fullWidth
                 InputProps={{
                     classes: {
-                        input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
                     endAdornment: <Button onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 value={value}
                 onChange={e => change(e.target.value)}
             />
-            <IODialog title="Select file" open={idDialog} onClose={() => setIdDialog(false)}>
+            <IODialog
+                title={i18n.t('Select file')}
+                open={idDialog}
+                onClose={() => setIdDialog(false)}
+            >
                 <FileBrowser
                     ready
+                    allowUpload
+                    allowDownload
+                    allowCreateFolder
+                    allowDelete
+                    allowView
+                    showToolbar
                     selected={value}
-                    onSelect={selected => {
+                    onSelect={(selected, isDoubleClick) => {
+                        const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
+                        if (selected.startsWith(projectPrefix)) {
+                            selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                        }
                         change(selected);
-                        setIdDialog(false);
+                        isDoubleClick && setIdDialog(false);
                     }}
+                    actionTitle={i18n.t('Select')}
+                    actionDisabled={!value}
                     t={i18n.t}
                     lang={i18n.lang}
                     socket={props.socket}
@@ -97,14 +121,14 @@ const WidgetField = props => {
         </>;
     }
     if (field.type === 'dimension') {
-        const parts = (value || '').match(/^(-?[0-9]+)(.*)$/) || ['', ''];
+        const parts = (value || '').toString().match(/^(-?[0-9]+)(.*)$/) || ['', ''];
 
         return <TextField
             variant="standard"
             fullWidth
             InputProps={{
                 classes: {
-                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 },
                 endAdornment: <Button onClick={() => change(parts[1] + (parts[2] === 'px' ? '%' : 'px'))}>{parts[2]}</Button>,
             }}
@@ -150,7 +174,7 @@ const WidgetField = props => {
                 size="small"
                 onChange={e => change(e.target.value)}
                 classes={{
-                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 }}
                 inputProps={{
                     step: field.step,
@@ -212,7 +236,7 @@ const WidgetField = props => {
             defaultValue={field.default}
             classes={{
                 root: props.classes.clearPadding,
-                select: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => change(e.target.value)}
             fullWidth
@@ -234,7 +258,7 @@ const WidgetField = props => {
             onInputChange={(e, inputValue) => change(inputValue)}
             onChange={(e, inputValue) => change(inputValue)}
             classes={{
-                input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
             }}
             renderInput={params => (
                 <TextField
@@ -290,7 +314,7 @@ const WidgetField = props => {
             fullWidth
             InputProps={{
                 classes: {
-                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 },
             }}
             value={value}
@@ -303,6 +327,14 @@ const WidgetField = props => {
         {'/'}
         {value}
     </>;
+};
+
+WidgetField.propTypes = {
+    adapterName: PropTypes.string.isRequired,
+    instance: PropTypes.string.isRequired,
+    projectName: PropTypes.string.isRequired,
+    field: PropTypes.object.isRequired,
+    widget: PropTypes.object.isRequired,
 };
 
 export default WidgetField;

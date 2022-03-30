@@ -13,6 +13,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
+
 import {
     getUsedObjectIDs,
     extractBinding,
