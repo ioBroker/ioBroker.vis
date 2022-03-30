@@ -18,12 +18,12 @@ import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 
 // 1300 is the React dialog
-export const Z_INDEXES = {
-    VIEW_SELECT_RECTANGLE: 1201,
-    WIDGET_SERVICE_DIV: 1200,
-};
-
 class VisView extends React.Component {
+    static Z_INDEXES = {
+        VIEW_SELECT_RECTANGLE: 1201,
+        WIDGET_SERVICE_DIV: 1200,
+    };
+
     constructor(props) {
         super(props);
 
@@ -134,7 +134,7 @@ class VisView extends React.Component {
             // create selectDiv
             this.selectDiv = window.document.createElement('div');
             this.selectDiv.style.position = 'absolute';
-            this.selectDiv.style.zIndex = Z_INDEXES.VIEW_SELECT_RECTANGLE;
+            this.selectDiv.style.zIndex = VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE;
             this.selectDiv.className = 'vis-editmode-select-rect';
             this.refView.current.appendChild(this.selectDiv);
         }
@@ -188,9 +188,7 @@ class VisView extends React.Component {
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : e => {
-        e.stopPropagation();
-
+    onMouseWidgetDown = this.props.runtime ? null : () => {
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -290,6 +288,7 @@ class VisView extends React.Component {
                         adapterName={this.props.adapterName}
                         instance={this.props.instance}
                         projectName={this.props.projectName}
+                        VisView={VisView}
                     />;
 
                     if (isRelative) {
@@ -346,7 +345,6 @@ class VisView extends React.Component {
             className={className}
             ref={this.refView}
             id={`visview_${this.props.view}`}
-            //onClick={!this.props.runtime ? e => this.props.editMode && this.onClick(e) : undefined}
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >

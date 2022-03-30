@@ -16,7 +16,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { getUsedObjectIDsInWidget, replaceGroupAttr } from './visUtils';
-import { Z_INDEXES } from './visView';
 
 const FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
@@ -30,6 +29,8 @@ class VisCanWidget extends React.Component {
         this.editMode = this.props.editMode;
 
         this.refService = React.createRef();
+
+        this.resize = false;
 
         this.state = {
             // data: JSON.stringify(widget.data),
@@ -908,7 +909,6 @@ class VisCanWidget extends React.Component {
         }
 
         try {
-
             // Append html element to view
             if (widget.tpl) {
                 if (!this.widDiv || !update || !widget?.data?.members.length) {
@@ -1045,7 +1045,84 @@ class VisCanWidget extends React.Component {
     }
 
     onMove = (x, y, save) => {
-        if (x === undefined) {
+        if (this.resize) {
+            if (x === undefined) {
+                // start of resizing
+                const rect = this.widDiv.getBoundingClientRect();
+
+                this.movement = {
+                    top: this.refService.current.offsetTop,
+                    left: this.refService.current.offsetLeft,
+                    width: rect.width,
+                    height: rect.height,
+                };
+                const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
+                resizers.forEach(item => item.style.opacity = 0.5);
+            } else if (this.resize === 'top') {
+                this.refService.current.style.top = `${this.movement.top + y}px`;
+                this.widDiv.style.top = `${this.movement.top + y}px`;
+                this.refService.current.style.height = `${this.movement.height - y}px`;
+                this.widDiv.style.height = `${this.movement.height - y}px`;
+            } else if (this.resize === 'bottom') {
+                this.refService.current.style.height = `${this.movement.height + y}px`;
+                this.widDiv.style.height = `${this.movement.height + y}px`;
+            } else if (this.resize === 'left') {
+                this.refService.current.style.left = `${this.movement.left + x}px`;
+                this.widDiv.style.left = `${this.movement.left + x}px`;
+                this.refService.current.style.width = `${this.movement.width - x}px`;
+                this.widDiv.style.width = `${this.movement.width - x}px`;
+            } else if (this.resize === 'right') {
+                this.refService.current.style.width = `${this.movement.width + x}px`;
+                this.widDiv.style.width = `${this.movement.width + x}px`;
+            } else if (this.resize === 'top-left') {
+                this.refService.current.style.top = `${this.movement.top + y}px`;
+                this.widDiv.style.top = `${this.movement.top + y}px`;
+                this.refService.current.style.left = `${this.movement.left + x}px`;
+                this.widDiv.style.left = `${this.movement.left + x}px`;
+                this.refService.current.style.height = `${this.movement.height - y}px`;
+                this.widDiv.style.height = `${this.movement.height - y}px`;
+                this.refService.current.style.width = `${this.movement.width - x}px`;
+                this.widDiv.style.width = `${this.movement.width - x}px`;
+            } else if (this.resize === 'top-right') {
+                this.refService.current.style.top = `${this.movement.top + y}px`;
+                this.widDiv.style.top = `${this.movement.top + y}px`;
+                this.refService.current.style.height = `${this.movement.height - y}px`;
+                this.widDiv.style.height = `${this.movement.height - y}px`;
+                this.refService.current.style.width = `${this.movement.width + x}px`;
+                this.widDiv.style.width = `${this.movement.width + x}px`;
+            } else if (this.resize === 'bottom-left') {
+                this.refService.current.style.left = `${this.movement.left + x}px`;
+                this.widDiv.style.left = `${this.movement.left + x}px`;
+                this.refService.current.style.height = `${this.movement.height + y}px`;
+                this.widDiv.style.height = `${this.movement.height + y}px`;
+                this.refService.current.style.width = `${this.movement.width - x}px`;
+                this.widDiv.style.width = `${this.movement.width - x}px`;
+            } else if (this.resize === 'bottom-right') {
+                this.refService.current.style.height = `${this.movement.height + y}px`;
+                this.widDiv.style.height = `${this.movement.height + y}px`;
+                this.refService.current.style.width = `${this.movement.width + x}px`;
+                this.widDiv.style.width = `${this.movement.width + x}px`;
+            }
+
+            // end of movement
+            if (save) {
+                const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
+                resizers.forEach(item => item.style.opacity = 1);
+                this.resize = false;
+                this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                    wid: this.props.id,
+                    view: this.props.view,
+                    style: {
+                        top: this.refService.current.style.top,
+                        left: this.refService.current.style.left,
+                        width: this.refService.current.style.width,
+                        height: this.refService.current.style.height,
+                    },
+                }]);
+
+                this.movement = null;
+            }
+        } else if (x === undefined) {
             // initiate movement
             this.movement = {
                 top: this.refService.current.offsetTop,
@@ -1103,6 +1180,145 @@ class VisCanWidget extends React.Component {
         }
     }
 
+    onResizeStart(e, type) {
+        e.stopPropagation();
+        this.resize = type;
+        this.props.mouseDownOnView();
+    }
+
+    getResizeHandlers() {
+        return [
+            // top
+            <div
+                key="top"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    top: -5,
+                    height: 7,
+                    left: 4,
+                    right: 4,
+                    cursor: 'ns-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'top')}
+            />,
+            // bottom
+            <div
+                key="bottom"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    bottom: -5,
+                    height: 7,
+                    left: 4,
+                    right: 4,
+                    cursor: 'ns-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'bottom')}
+            />,
+            // left
+            <div
+                key="left"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    top: 4,
+                    bottom: 4,
+                    left: -5,
+                    width: 7,
+                    cursor: 'ew-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'left')}
+            />,
+            // right
+            <div
+                key="right"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    top: 4,
+                    bottom: 4,
+                    right: -5,
+                    width: 7,
+                    cursor: 'ew-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'right')}
+            />,
+            // top left
+            <div
+                key="top-left"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    top: -5,
+                    height: 9,
+                    left: -5,
+                    width: 9,
+                    cursor: 'nwse-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'top-left')}
+            />,
+            // top right
+            <div
+                key="top-right"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    top: -5,
+                    height: 9,
+                    right: -5,
+                    width: 9,
+                    cursor: 'nesw-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'top-right')}
+            />,
+            // bottom left
+            <div
+                key="bottom-left"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    bottom: -5,
+                    height: 9,
+                    left: -5,
+                    width: 9,
+                    cursor: 'nesw-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'bottom-left')}
+            />,
+            // bottom right
+            <div
+                key="bottom-right"
+                className="vis-editmode-resizer"
+                style={{
+                    position: 'absolute',
+                    bottom: -5,
+                    height: 9,
+                    right: -5,
+                    width: 9,
+                    cursor: 'nwse-resize',
+                    zIndex: 1,
+                    background: 'blue',
+                }}
+                onMouseDown={e => this.onResizeStart(e, 'bottom-right')}
+            />,
+        ];
+    }
+
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         const groupWidgets = widget?.data?.members;
@@ -1130,13 +1346,17 @@ class VisCanWidget extends React.Component {
                 adapterName={this.props.adapterName}
                 instance={this.props.instance}
                 projectName={this.props.projectName}
+                VisView={this.props.VisView}
+                editGroup={false}
             />);
         }
 
         const style = {};
-        let classNames = this.props.selectedWidgets?.includes(this.props.id) ? 'vis-editmode-selected' : '';
+        const selected = this.props.selectedWidgets?.includes(this.props.id);
+        const selectedOne = selected && this.props.selectedWidgets.length === 1;
+        let classNames = selected ? 'vis-editmode-selected' : '';
 
-        if (this.editMode) {
+        if (this.editMode && !widget.groupid) {
             if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
                 style.top = widget.style.top;
             }
@@ -1156,13 +1376,15 @@ class VisCanWidget extends React.Component {
                 style.bottom = widget.style.bottom;
             }
 
-            style.zIndex = Z_INDEXES.VIEW_SELECT_RECTANGLE; // 1300 is the React dialog
+            style.zIndex = this.props.VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE; // 1300 is the React dialog
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
             style.opacity = 0.3;
 
-            if (this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id)) {
+            style.cursor = selected ? 'move' : 'pointer';
+
+            if (selected) {
                 style.backgroundColor = 'green';
             }
 
@@ -1185,6 +1407,8 @@ class VisCanWidget extends React.Component {
             { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
                 <div className="vis-editmode-widget-name">{ this.props.id }</div>
                 : null }
+            { selectedOne ? this.getResizeHandlers() : null }
+
             { rxGroupWidgets }
         </div>;
     }
@@ -1216,6 +1440,8 @@ VisCanWidget.propTypes = {
     registerRef: PropTypes.func,
     onWidgetsChanged: PropTypes.func,
     showWidgetNames: PropTypes.bool,
+    editGroup: PropTypes.bool,
+    VisView: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
