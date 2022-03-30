@@ -19,7 +19,9 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     const ms = inputStr.match(/(groupAttr\d+)+?/g);
     if (ms) {
         match = true;
-        ms.forEach(m => newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]));
+        ms.forEach(m => {
+            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+        });
 
         console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
     }
@@ -73,7 +75,7 @@ function extractBinding(format) {
             let test2 = visOid.substring(visOid.length - 3);
 
             if (visOid && test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
-                visOid = visOid + '.val';
+                visOid += '.val';
             }
 
             const isSeconds = test2 === '.ts' || test2 === '.lc';
@@ -87,7 +89,7 @@ function extractBinding(format) {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
             let operations = null;
-            const isEval = visOid.match(/^[\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            const isEval = visOid.match(/^[\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0); // (visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
 
             if (isEval) {
                 const xx = visOid.split(':', 2);
@@ -108,7 +110,7 @@ function extractBinding(format) {
             for (let u = 1; u < parts.length; u++) {
                 // eval construction
                 if (isEval) {
-                    if (parts[u].trim().match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
+                    if (parts[u].trim().match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) { // parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
                         let _systemOid = parts[u].trim();
                         let _visOid = _systemOid;
 
@@ -131,8 +133,8 @@ function extractBinding(format) {
                         const y1 = _systemOid.split(':', 2);
 
                         operations[0].arg.push({
-                            name:      x1[0],
-                            visOid:    x1[1],
+                            name: x1[0],
+                            visOid: x1[1],
                             systemOid: y1[1],
                         });
                     } else {
@@ -362,7 +364,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
             return;
         }
         /* TODO DO do not forget remove it after a while. Required for import from DashUI */
-        /*if (attr === 'state_id') {
+        /*
+        if (attr === 'state_id') {
             data.state_oid = data[attr];
             delete data[attr];
             attr = 'state_oid';
@@ -416,7 +419,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
             data.woeid = data[attr];
             delete data[attr];
             attr = 'woeid';
-        }*/
+        }
+        */
 
         if (typeof data[attr] === 'string') {
             let m;
@@ -484,7 +488,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                 // Visibility binding
                 if (attr === 'visibility-oid' && data['visibility-oid']) {
                     let vid = data['visibility-oid'];
-                    /*if (widget.grouped) {
+
+                    if (widget.grouped) {
                         const vGroup = getWidgetGroup(views, view, wid);
                         if (vGroup) {
                             const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
@@ -492,7 +497,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                                 vid = result1.newString;
                             }
                         }
-                    }*/
+                    }
 
                     linkContext.visibility[vid] = linkContext.visibility[vid] || [];
                     linkContext.visibility[vid].push({ view, widget: wid });
@@ -501,7 +506,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                 // Signal binding
                 if (attr.startsWith('signals-oid-') && data[attr]) {
                     let sid = data[attr];
-                    /*if (widget.grouped) {
+                    if (widget.grouped) {
                         const group = getWidgetGroup(views, view, wid);
                         if (group) {
                             const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
@@ -509,7 +514,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                                 sid = result2.newString;
                             }
                         }
-                    }*/
+                    }
 
                     linkContext.signals[sid] = linkContext.signals[sid] || [];
 
@@ -521,7 +526,8 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                 }
                 if (attr === 'lc-oid') {
                     let lcsid = data[attr];
-                    /*if (widget.grouped) {
+
+                    if (widget.grouped) {
                         const gGroup = getWidgetGroup(views, view, wid);
                         if (gGroup) {
                             const result3 = replaceGroupAttr(lcsid, views[view].widgets[gGroup].data);
@@ -529,7 +535,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                                 lcsid = result3.newString;
                             }
                         }
-                    }*/
+                    }
 
                     linkContext.lastChanges[lcsid] = linkContext.lastChanges[lcsid] || [];
                     linkContext.lastChanges[lcsid].push({ view, widget: wid });

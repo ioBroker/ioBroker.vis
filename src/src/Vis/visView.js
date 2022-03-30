@@ -12,11 +12,75 @@ class VisView extends React.Component {
 
         this.refView = React.createRef();
         this.refRelativeView = React.createRef();
+        this.widgetsRefs = {};
     }
 
     componentDidMount() {
         this.setState({ mounted: true });
     }
+
+    componentWillUnmount() {
+        this.widgetsRefs = {};
+    }
+
+    onClick(e) {
+        e.stopPropagation();
+        // deselect all widgets as clicked on none of them
+        this.props.setSelectedWidgets([]);
+    }
+
+    registerRef = (id, widDiv, refService, onMove, onResize) => {
+        this.widgetsRefs[id] = {widDiv, refService, onMove, onResize};
+    };
+
+    mouseDown = this.props.runtime ? null : e => {
+        e.stopPropagation();
+
+        this.refView.current.addEventListener('mousemove', this.onMouseMove);
+        window.document.body.addEventListener('mouseup', this.onMouseUp);
+
+        this.movement = {
+            moved: false,
+            x: 0,
+            y: 0,
+        }
+
+        console.log('Mouse down');
+
+        this.props.selectedWidgets.forEach(wid => {
+            if (this.widgetsRefs[wid]?.onMove) {
+                this.widgetsRefs[wid]?.onMove(); // indicate start of movement
+            }
+        });
+    }
+
+    onMouseUp = !this.props.runtime ? e => {
+        e.stopPropagation();
+        console.log('Mouse up');
+        this.refView.current.removeEventListener('mousemove', this.onMouseMove);
+        window.document.body.removeEventListener('mouseup', this.onMouseUp);
+
+        if (this.movement.moved) {
+            this.props.selectedWidgets.forEach(wid => {
+                if (this.widgetsRefs[wid]?.onMove) {
+                    this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true); // indicate end of movement
+                }
+            });
+        }
+    } : null;
+
+    onMouseMove = !this.props.runtime ? e => {
+        console.log(`Mouse move: ${e.movementX}, ${e.movementY} ${e.button}`);
+        this.movement.moved = true;
+        this.movement.x += e.movementX;
+        this.movement.y += e.movementY;
+
+        this.props.selectedWidgets.forEach(wid => {
+            if (this.widgetsRefs[wid]?.onMove) {
+                this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false);
+            }
+        });
+    } : null;
 
     render() {
         const rxAbsoluteWidgets = [];
@@ -61,6 +125,12 @@ class VisView extends React.Component {
                         refParent={isRelative ? this.refRelativeView : this.refView}
                         linkContext={this.props.linkContext}
                         formatUtils={this.props.formatUtils}
+                        selectedWidgets={this.props.selectedWidgets}
+                        setSelectedWidgets={this.props.setSelectedWidgets}
+                        runtime={this.props.runtime}
+                        mouseDownOnView={this.mouseDown}
+                        registerRef={this.props.runtime ? null : this.registerRef}
+                        onWidgetsChanged={this.props.onWidgetsChanged}
                     />;
 
                     if (isRelative) {
@@ -97,7 +167,17 @@ class VisView extends React.Component {
             }
         }
 
-        return <div ref={this.refView} id={`visview_${this.props.view}`}>
+        const style = {
+            width: '100%',
+            height: '100%',
+        };
+
+        return <div
+            ref={this.refView}
+            id={`visview_${this.props.view}`}
+            onClick={!this.props.runtime ? e => this.props.editMode && this.onClick(e) : undefined}
+            style={style}
+        >
             {rxRelativeWidgets.length ?
                 <div ref={this.refRelativeView} style={relativeStyle}>
                     { rxRelativeWidgets }
@@ -124,6 +204,10 @@ VisView.propTypes = {
     $$: PropTypes.func, // Gestures library
     linkContext: PropTypes.object,
     formatUtils: PropTypes.object,
+    selectedWidgets: PropTypes.array,
+    setSelectedWidgets: PropTypes.func,
+    runtime: PropTypes.bool,
+    onWidgetsChanged: PropTypes.func,
 };
 
 export default VisView;

@@ -16,7 +16,7 @@ import AddIcon from '@mui/icons-material/Add';
 import CodeIcon from '@mui/icons-material/Code';
 import CodeOffIcon from '@mui/icons-material/CodeOff';
 import PlayIcon from '@mui/icons-material/PlayArrow';
-import EditIcon from '@mui/icons-material/Edit';
+import StopIcon from '@mui/icons-material/Stop';
 
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
@@ -53,6 +53,21 @@ const styles = theme => ({
     viewTab: theme.classes.viewTab,
 });
 
+// temporary disable i18n warnings
+I18n.t = (word, ...args) => {
+    const translation = I18n.translations[I18n.lang];
+    if (translation) {
+        const w = translation[word];
+        if (w) {
+            word = w;
+        }
+    }
+    for (const arg of args) {
+        word = word.replace('%s', arg);
+    }
+    return word;
+};
+
 class App extends GenericApp {
     constructor(props) {
         const extendedProps = { ...props };
@@ -82,7 +97,7 @@ class App extends GenericApp {
             projectsDialog: false,
             createFirstProjectDialog: false,
             selectedWidgets: [],
-            showCode: window.localStorage.getItem('showCode') || false,
+            showCode: window.localStorage.getItem('showCode') === 'true',
             editMode: true,
             widgetsLoaded: false,
             ...this.state,
@@ -276,7 +291,21 @@ class App extends GenericApp {
     toggleCode = () => {
         const oldShowCode = this.state.showCode;
         this.setState({ showCode: !oldShowCode });
-        window.localStorage.setItem('showCode', JSON.stringify(oldShowCode));
+        window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
+    }
+
+    onWidgetsChanged = data => {
+        this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
+        data.forEach(item => Object.assign(this.tempProject[item.view].widgets[item.wid].style, item.style));
+
+        this.changeTimer && clearTimeout(this.changeTimer);
+
+        // collect changes from all widgets
+        this.changeTimer = setTimeout(() => {
+            this.changeTimer = null;
+            this.changeProject(this.tempProject);
+            this.tempProject = null;
+        }, 200);
     }
 
     render() {
@@ -344,7 +373,7 @@ class App extends GenericApp {
                                     </Tooltip>
                                     {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')}>
                                         <IconButton onClick={() => this.setState({ editMode: !this.state.editMode })} size="small">
-                                            {this.state.editMode ? <EditIcon /> : <PlayIcon />}
+                                            {this.state.editMode ? <PlayIcon style={{ color: 'green' }} /> : <StopIcon style={{ color: 'red' }} /> }
                                         </IconButton>
                                     </Tooltip> : null}
                                     <Tooltip title={I18n.t('Show view')}>
@@ -391,7 +420,15 @@ class App extends GenericApp {
                                         ? <pre>
                                             {JSON.stringify(this.state.project, null, 2)}
                                         </pre> : null}
-                                    <div id="vis-react-container" style={{ position: 'relative', display: this.state.showCode ? 'none' : 'block' }}>
+                                    <div
+                                        id="vis-react-container"
+                                        style={{
+                                            position: 'relative',
+                                            display: this.state.showCode ? 'none' : 'block',
+                                            width: '100%',
+                                            height: '100%',
+                                        }}
+                                    >
                                         <VisEngine
                                             activeView={this.state.selectedView || ''}
                                             editMode={this.state.editMode}
@@ -403,6 +440,7 @@ class App extends GenericApp {
                                             selectedWidgets={this.state.selectedWidgets}
                                             setSelectedWidgets={this.setSelectedWidgets}
                                             onLoaded={() => this.setState({ widgetsLoaded: true })}
+                                            onWidgetsChanged={this.onWidgetsChanged}
                                         />
                                     </div>
                                 </div>

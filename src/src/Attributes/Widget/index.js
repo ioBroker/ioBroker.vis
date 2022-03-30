@@ -237,7 +237,7 @@ const Widget = props => {
         if (!widget) {
             return null;
         }
-        console.log(getWidgetTypes());
+        // console.log(getWidgetTypes());
         const widgetType = getWidgetTypes().find(type => type.name === widget.tpl);
         if (!widgetType) {
             return null;
