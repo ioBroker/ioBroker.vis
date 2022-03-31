@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.13",
+        "version": "1.4.14",
         "news": {
+            "1.4.14": {
+                "en": "Corrected GUI bug",
+                "de": "GUI-Fehler behoben",
+                "ru": "Исправлена ошибка графического интерфейса",
+                "pt": "Bug de GUI corrigido",
+                "nl": "Fout in GUI gecorrigeerd",
+                "fr": "Bogue d'interface graphique corrigé",
+                "it": "Bug della GUI corretto",
+                "es": "Error de GUI corregido",
+                "pl": "Poprawiony błąd GUI",
+                "zh-cn": "更正了图形用户界面错误"
+            },
             "1.4.13": {
                 "en": "The group attributes will be replaced recursively",
                 "de": "Die Gruppenattribute werden rekursiv ersetzt",
@@ -74,18 +86,6 @@
                 "es": "Se agregó la verificación de licencia incluso sin Internet.",
                 "pl": "Dodano sprawdzanie licencji nawet bez internetu",
                 "zh-cn": "即使没有互联网也添加了许可证检查"
-            },
-            "1.4.5": {
-                "en": "Added frame-src spec to content-security-policy header fixing frame related content blocking issues (e.g. using KioskPro iOS app).\nShowed the extended error messages by license check\nPatch visibility oid binding",
-                "de": "Frame-src-Spezifikation zum Content-Security-Policy-Header hinzugefügt, um Probleme beim Blockieren von Frame-bezogenen Inhalten zu beheben (z. B. bei Verwendung der KioskPro iOS-App).\nZeigte die erweiterten Fehlermeldungen bei der Lizenzprüfung an\nPatch-Sichtbarkeit ohne Bindung",
-                "ru": "Добавлена спецификация frame-src в заголовок content-security-policy, исправляющая проблемы блокировки содержимого, связанные с кадрами (например, с помощью приложения KioskPro для iOS).\nПоказал расширенные сообщения об ошибках при проверке лицензии\nОбвязка oid видимости исправлений",
-                "pt": "Adicionada especificação frame-src ao cabeçalho da política de segurança de conteúdo, corrigindo problemas de bloqueio de conteúdo relacionados a frame (por exemplo, usando o aplicativo KioskPro iOS).\nMostrou as mensagens de erro estendidas por verificação de licença\nVisibilidade do remendo oid vinculativo",
-                "nl": "Frame-src-specificatie toegevoegd aan content-security-policy header om frame-gerelateerde contentblokkeringsproblemen op te lossen (bijv. bij gebruik van de KioskPro iOS-app).\nToonde de uitgebreide foutmeldingen door licentiecontrole\nPatch zichtbaarheid oid binding",
-                "fr": "Ajout de la spécification frame-src à l'en-tête content-security-policy fixant les problèmes de blocage de contenu liés au cadre (par exemple, en utilisant l'application KioskPro iOS).\nAffichage des messages d'erreur étendus par vérification de licence\nLiaison oid de visibilité des correctifs",
-                "it": "Aggiunte le specifiche frame-src all'intestazione content-security-policy che risolve i problemi di blocco dei contenuti relativi ai frame (ad esempio utilizzando l'app KioskPro iOS).\nHa mostrato i messaggi di errore estesi dal controllo della licenza\nRilegatura oid visibilità patch",
-                "es": "Se agregó la especificación frame-src al encabezado content-security-policy que corrige problemas de bloqueo de contenido relacionados con el marco (por ejemplo, usando la aplicación KioskPro para iOS).\nMostró los mensajes de error extendidos por verificación de licencia\nParche visibilidad oid vinculante",
-                "pl": "Dodano specyfikację frame-src do nagłówka content-security-policy naprawiającego problemy z blokowaniem treści związane z ramkami (np. przy użyciu aplikacji KioskPro na iOS).\nPokazano rozszerzone komunikaty o błędach przy sprawdzaniu licencji\nWiązanie poprawki widoczności oid",
-                "zh-cn": "向 content-security-policy 标头添加了 frame-src 规范，修复了与框架相关的内容阻塞问题（例如，使用 KioskPro iOS 应用程序）。\n通过许可证检查显示扩展错误消息\n补丁可见性 oid 绑定"
             }
         },
         "title": "Visualisation",

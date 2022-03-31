@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.4.14 (2022-03-31)
 * (bluefox) Corrected GUI bug
 
 ### 1.4.13 (2022-03-22)
