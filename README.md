@@ -207,6 +207,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) Corrected GUI bug
+
 ### 1.4.13 (2022-03-22)
 * (pascal-hari) The group attributes will be replaced recursively
 

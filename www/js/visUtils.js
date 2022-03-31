@@ -30,14 +30,21 @@ function replaceGroupAttr(inputStr, groupAttrList) {
 
 function getWidgetGroup(views, view, widget) {
     var widgets = views[view].widgets;
-    var members;
+    var groupID = widgets[widget].groupid;
+    if (groupID) {
+        return groupID;
+    }
+
     for (var w in widgets) {
-        if (!widgets.hasOwnProperty(w)) continue;
-        members = views[view].widgets[w].data.members;
+        if (!widgets.hasOwnProperty(w) || !widgets[w].data) {
+            continue;
+        }
+        var members = widgets[w].data.members;
         if (members && members.indexOf(widget) !== -1) {
             return w;
         }
     }
+
     return null;
 }
 
