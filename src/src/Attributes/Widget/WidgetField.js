@@ -331,7 +331,7 @@ const WidgetField = props => {
 
 WidgetField.propTypes = {
     adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.string.isRequired,
+    instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
     field: PropTypes.object.isRequired,
     widget: PropTypes.object.isRequired,

@@ -97,6 +97,7 @@ class VisEngine extends React.Component {
         this.allWidgets = {};
         this.wakeUpCallbacks = [];
         this.widgetChangeHandlers = {};
+        this.refViews = []; // List of views (refs)
         this.fontNames = [
             'Verdana, Geneva, sans-serif',
             'Georgia, "Times New Roman", Times, serif',
@@ -129,6 +130,9 @@ class VisEngine extends React.Component {
             registerChangeHandler: this.registerChangeHandler,
             subscribe: this.subscribe,
             unsubscribe: this.unsubscribe,
+            getViewRef: this.getViewRef,
+            registerViewRef: this.registerViewRef,
+            unregisterViewRef: this.unregisterViewRef,
         };
 
         this.createConnection();
@@ -136,6 +140,7 @@ class VisEngine extends React.Component {
 
         this.vis = {
             states: this.canStates,
+            activeWidgets: [],
             navChangeCallbacks: [],
             editMode: !!this.props.editMode,
             binds: {},
@@ -150,6 +155,10 @@ class VisEngine extends React.Component {
             viewsActiveFilter: this.viewsActiveFilter,
             onChangeCallbacks: this.onChangeCallbacks,
             conn: this.conn,
+            updateContainers: () => {
+                const refViews = this.refViews;
+                Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
+            },
             renderView: (viewDiv, view, hidden, cb) => {
                 console.warn('renderView not implemented: ', viewDiv, view, hidden);
                 cb && cb(viewDiv, view);
@@ -389,6 +398,26 @@ class VisEngine extends React.Component {
             getHttp: (url, callback) => this.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
         };
     }
+
+    registerViewRef = (view, ref, onCommand) => {
+        if (this.refViews[view] && this.refViews[view].ref === ref) {
+            console.error(`Someone tries to register same ref for view ${view}`);
+        } else {
+            this.refViews[view] && console.error(`Someone tries to register new ref for view ${view}`);
+            this.refViews[view] = { ref, onCommand };
+        }
+    }
+
+    unregisterViewRef = (view, ref) => {
+        if (this.refViews[view] && this.refViews[view].ref === ref) {
+            delete this.refViews[view];
+        } else if (this.refViews[view]) {
+            this.refViews[view] && console.error(`Someone tries to unregister new ref for view ${view}`);
+            delete this.refViews[view];
+        }
+    }
+
+    getViewRef = view => this.refViews[view]?.ref;
 
     findNearestResolution(resultRequiredOrX, height) {
         let w;
@@ -850,31 +879,39 @@ class VisEngine extends React.Component {
 
         this.vis.editMode = this.props.editMode;
 
-        // return <div id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
-        return <VisView
-            view={this.props.activeView}
-            views={this.props.views}
-            editMode={this.props.editMode}
-            can={this.can}
-            canStates={this.canStates}
-            user={this.user}
-            userGroups={this.userGroups}
-            allWidgets={this.allWidgets}
-            jQuery={window.jQuery}
-            $$={window.$$}
-            adapterName={this.props.adapterName}
-            instance={this.props.instance}
-            projectName={this.props.projectName}
-            socket={this.props.socket}
-            viewsActiveFilter={this.viewsActiveFilter}
-            setValue={this.setValue}
-            linkContext={this.linkContext}
-            formatUtils={this.formatUtils}
-            selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
-            setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
-            onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
-            showWidgetNames={this.props.showWidgetNames}
-        />;
+        return Object.keys(this.props.views).map(view => {
+            if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
+                // return <div id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
+                return <VisView
+                    key={view}
+                    view={view}
+                    activeView={this.props.activeView}
+                    views={this.props.views}
+                    editMode={this.props.editMode}
+                    can={this.can}
+                    canStates={this.canStates}
+                    user={this.user}
+                    userGroups={this.userGroups}
+                    allWidgets={this.allWidgets}
+                    jQuery={window.jQuery}
+                    $$={window.$$}
+                    adapterName={this.props.adapterName}
+                    instance={this.props.instance}
+                    projectName={this.props.projectName}
+                    socket={this.props.socket}
+                    viewsActiveFilter={this.viewsActiveFilter}
+                    setValue={this.setValue}
+                    linkContext={this.linkContext}
+                    formatUtils={this.formatUtils}
+                    selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
+                    setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
+                    onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
+                    showWidgetNames={this.props.showWidgetNames}
+                />;
+            }
+
+            return null;
+        });
     }
 }
 
