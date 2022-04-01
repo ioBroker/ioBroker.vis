@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import {
     Autocomplete,
-    Button, Checkbox, Input, MenuItem, Select, Slider, TextField,
+    Button, Checkbox, Divider, Input, ListItemText, MenuItem, Select, Slider, TextField,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -13,6 +13,61 @@ import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
+
+function collectClasses() {
+    const result = [];
+    const sSheetList = document.styleSheets;
+    for (let sSheet = 0; sSheet < sSheetList.length; sSheet++) {
+        if (!document.styleSheets[sSheet]) continue;
+        try {
+            const ruleList = document.styleSheets[sSheet].cssRules;
+            if (ruleList) {
+                for (let rule = 0; rule < ruleList.length; rule++) {
+                    if (!ruleList[rule].selectorText) continue;
+                    const _styles = ruleList[rule].selectorText.split(',');
+                    for (let s = 0; s < _styles.length; s++) {
+                        const substyles = _styles[s].trim().split(' ');
+                        const _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
+
+                        if (!_style || _style[0] !== '.' || _style.indexOf(':') !== -1) continue;
+
+                        let name = _style;
+                        name = name.replace(',', '');
+                        name = name.replace(/^\./, '');
+
+                        const val  = name;
+                        name = name.replace(/^hq-background-/, '');
+                        name = name.replace(/^hq-/, '');
+                        name = name.replace(/^ui-/, '');
+                        name = name.replace(/[-_]/g, ' ');
+
+                        if (name.length > 0) {
+                            name = name[0].toUpperCase() + name.substring(1);
+                            let fff = document.styleSheets[sSheet].href;
+
+                            if (fff && fff.indexOf('/') !== -1) {
+                                fff = fff.substring(fff.lastIndexOf('/') + 1);
+                            }
+
+                            if (!result[val]) {
+                                if (substyles.length > 1) {
+                                    result[val] = {
+                                        name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', ''),
+                                    };
+                                } else {
+                                    result[val] = { name, file: fff, attrs: ruleList[rule].style };
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+    return result;
+}
 
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
@@ -36,7 +91,7 @@ const WidgetField = props => {
 
     const value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
 
-    if (field.type === 'id') {
+    if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         return <>
             <TextField
                 variant="standard"
@@ -56,13 +111,6 @@ const WidgetField = props => {
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
             /> : null}
-        </>;
-    }
-    if (field.type === 'hid') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
         </>;
     }
     if (field.type === 'checkbox') {
@@ -143,13 +191,6 @@ const WidgetField = props => {
             onChange={color => change(color)}
             openAbove
         />;
-    }
-    if (field.type === 'views') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
     }
     if (field.type === 'eff_opt') {
         return <>
@@ -245,14 +286,79 @@ const WidgetField = props => {
                 value={selectItem}
                 key={selectItem}
             >
-                {field.type === 'select' ? i18n.t(selectItem) : selectItem}
+                {
+                    selectItem === ''
+                        ? <i>{i18n.t('none')}</i>
+                        : (field.type === 'select' ? i18n.t(selectItem) : selectItem)
+                }
             </MenuItem>)}
         </Select>;
     }
-    if (field.type === 'auto') {
+    if (field.type === 'select-views') {
+        const options = Object.keys(props.project)
+            .filter(view => !view.startsWith('__') && view !== props.selectedView);
+        return <Select
+            variant="standard"
+            value={value || []}
+            multiple
+            renderValue={selected => selected.join(', ')}
+            classes={{
+                root: props.classes.clearPadding,
+                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            }}
+            onChange={e => change(e.target.value)}
+            fullWidth
+        >
+            {options.map(selectItem => <MenuItem
+                value={selectItem}
+                key={selectItem}
+            >
+                <Checkbox checked={(value || []).includes(selectItem)} />
+                <ListItemText primary={i18n.t(selectItem)} />
+            </MenuItem>)}
+        </Select>;
+    }
+    if (field.type === 'groups') {
+        const options = props.groups.map(group => ({
+            name: typeof group.common.name === 'string' ? group.common.name : group.common.name[i18n.getLanguage()],
+            /* eslint no-underscore-dangle: 0 */
+            value: group._id.split('.')[2],
+        }));
+        return <Select
+            variant="standard"
+            value={value || []}
+            multiple
+            renderValue={selected => selected.join(', ')}
+            classes={{
+                root: props.classes.clearPadding,
+                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            }}
+            onChange={e => change(e.target.value)}
+            fullWidth
+        >
+            {options.map(selectItem => <MenuItem
+                value={selectItem.value}
+                key={selectItem.value}
+            >
+                <Checkbox checked={(value || []).includes(selectItem.value)} />
+                <ListItemText primary={i18n.t(selectItem.name)} />
+            </MenuItem>)}
+        </Select>;
+    }
+    if (field.type === 'auto' || field.type === 'class' || field.type === 'views')  {
+        let options = field.options;
+        if (field.type === 'class') {
+            options = collectClasses().filter(cssClass => cssClass.match(/^vis-style-/));
+        }
+        if (field.type === 'views') {
+            options = Object.keys(props.project)
+                .filter(view => !view.startsWith('__'));
+        }
+
         return <Autocomplete
             freeSolo
-            options={field.options || []}
+            fullWidth
+            options={options || []}
             inputValue={value || ''}
             value={value || ''}
             onInputChange={(e, inputValue) => change(inputValue)}
@@ -292,20 +398,6 @@ const WidgetField = props => {
                 onClose={() => setIdDialog(false)}
                 type={field.type}
             />
-        </>;
-    }
-    if (field.type === 'widget') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
-    }
-    if (field.type === 'history') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
         </>;
     }
     if (!field.type || field.type === 'number' || field.type === 'password') {

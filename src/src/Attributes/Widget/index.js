@@ -2,7 +2,9 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { withStyles } from '@mui/styles';
 
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import {
+    Accordion, AccordionDetails, AccordionSummary, Divider,
+} from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
@@ -102,7 +104,7 @@ const getFieldsBefore = () => [
     },
 ];
 
-const getFieldsAfter = () => [
+const getFieldsAfter = widgets => [
     {
         name: 'css_common',
         isStyle: true,
@@ -184,7 +186,33 @@ const getFieldsAfter = () => [
             { name: 'margin-right' },
             { name: 'margin-bottom' }],
     },
-    { name: 'gestures', fields: [] },
+    {
+        name: 'gestures',
+        fields: [
+            {
+                name: 'gestures-indicator',
+                type: 'auto',
+                options: Object.keys(widgets).filter(widget => widgets[widget].tpl === 'tplValueGesture'),
+            },
+            { name: 'gestures-offsetX', default: 0, type: 'number' },
+            { name: 'gestures-offsetY', default: 0, type: 'number' },
+            { type: 'delimeter' },
+            ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
+                { name: `gestures-${gesture}-oid`,        type: 'id' },
+                { name: `gestures-${gesture}-value`,      default: '' },
+                { name: `gestures-${gesture}-minimum`,    type: 'number' },
+                { name: `gestures-${gesture}-maximum`,    type: 'number' },
+                { name: `gestures-${gesture}-delta`,      type: 'number' },
+                { type: 'delimeter' },
+            ])),
+            ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
+                { name: `gestures-${gesture}-oid`,    type: 'id' },
+                { name: `gestures-${gesture}-value`,  default: '' },
+                { name: `gestures-${gesture}-limit`,  type: 'number' },
+                { type: 'delimeter' },
+            ])),
+        ],
+    },
     {
         name: 'notification',
         fields: [...([0, 1, 2].flatMap(i => [
@@ -273,34 +301,40 @@ const Widget = props => {
             return null;
         }
 
-        let fields = [...getFieldsBefore(), {
+        let fields = [{
             name: 'common',
             fields: [],
         }];
 
         let currentGroup = fields[fields.length - 1];
+        let indexedGroups = {};
+        let groupName = '';
         widgetType.params.split(';').forEach(fieldString => {
             if (!fieldString) {
                 return;
             }
             if (fieldString.split('/')[0].startsWith('group.')) {
-                const groupName = fieldString.split('/')[0].split('.')[1];
-                currentGroup = fields.find(group => group.name === groupName);
-                if (!currentGroup) {
-                    fields.push(
-                        {
-                            name: groupName,
-                            fields: [],
-                        },
-                    );
-                    currentGroup = fields[fields.length - 1];
+                groupName = fieldString.split('/')[0].split('.')[1];
+                indexedGroups = {};
+                if (fieldString.split('/')[1] !== 'byindex') {
+                    currentGroup = fields.find(group => group.name === groupName);
+                    if (!currentGroup) {
+                        fields.push(
+                            {
+                                name: groupName,
+                                fields: [],
+                            },
+                        );
+                        currentGroup = fields[fields.length - 1];
+                    }
                 }
             } else {
                 const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:\/\.a-zA-Z0-9]+)?/);
 
+                const repeats = match[2];
+
                 const field = {
                     name: match[1],
-                    repeats: match[2],
                     default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined,
                     type: match[4] ? match[4].substring(1) : undefined,
                 };
@@ -325,11 +359,39 @@ const Widget = props => {
                     }
                 }
 
-                currentGroup.fields.push(field);
+                if (repeats) {
+                    const repeatsMatch = repeats.match(/\(([0-9a-z]+)-([0-9a-z]+)\)/i);
+                    const name = field.name;
+                    if (repeatsMatch) {
+                        if (!repeatsMatch[1].match(/^[0-9]$/)) {
+                            repeatsMatch[1] = parseInt(widget.data[repeatsMatch[1]]);
+                        }
+                        if (!repeatsMatch[2].match(/^[0-9]$/)) {
+                            repeatsMatch[2] = parseInt(widget.data[repeatsMatch[2]]);
+                        }
+                        for (let i = repeatsMatch[1]; i <= repeatsMatch[2]; i++) {
+                            if (!indexedGroups[i]) {
+                                currentGroup = {
+                                    name: `${groupName}-${i}`,
+                                    fields: [],
+                                };
+                                indexedGroups[i] = currentGroup;
+                                fields.push(currentGroup);
+                            }
+
+                            field.name = `${name}${i}`;
+                            indexedGroups[i].fields.push({ ...field });
+                        }
+                    }
+                } else {
+                    currentGroup.fields.push(field);
+                }
             }
         });
 
-        fields = [...fields, ...getFieldsAfter()];
+        const fieldsManual = [...fields];
+
+        fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets)];
 
         const [accordionOpen, setAccordionOpen] = useState(
             window.localStorage.getItem('attributesWidget')
@@ -341,7 +403,7 @@ const Widget = props => {
             <div>Widget</div>
             <pre>
                 {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fields, null, 2)}
+                {JSON.stringify(fieldsManual, null, 2)}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
@@ -376,10 +438,16 @@ const Widget = props => {
                         <tbody>
                             {
                                 group.fields.map((field, key2) => <tr key={key2}>
-                                    <td className={props.classes.fieldTitle}>{i18n.t(field.name)}</td>
-                                    <td className={props.classes.fieldContent}>
-                                        <WidgetField field={field} widget={widget} isStyle={group.isStyle} {...props} />
-                                    </td>
+                                    {field.type === 'delimeter' ?
+                                        <td colSpan="2">
+                                            <Divider style={{ borderBottomWidth: 'thick' }} />
+                                        </td>
+                                        : <>
+                                            <td className={props.classes.fieldTitle}>{i18n.t(field.name)}</td>
+                                            <td className={props.classes.fieldContent}>
+                                                <WidgetField field={field} widget={widget} isStyle={group.isStyle} {...props} />
+                                            </td>
+                                        </>}
                                 </tr>)
                             }
                         </tbody>
