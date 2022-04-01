@@ -66,7 +66,7 @@ Attributes.propTypes = {
     classes: PropTypes.object,
     openedViews: PropTypes.array,
     adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.string.isRequired,
+    instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
 };
 

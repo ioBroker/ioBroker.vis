@@ -16,14 +16,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
+import { addClass } from './visUtils';
+// import VisBaseWidget from './visBaseWidget';
 
 // 1300 is the React dialog
-export const Z_INDEXES = {
-    VIEW_SELECT_RECTANGLE: 1201,
-    WIDGET_SERVICE_DIV: 1200,
-};
-
 class VisView extends React.Component {
+    static Z_INDEXES = {
+        VIEW_SELECT_RECTANGLE: 1201,
+        WIDGET_SERVICE_DIV: 1200,
+    };
+
     constructor(props) {
         super(props);
 
@@ -39,10 +41,19 @@ class VisView extends React.Component {
     }
 
     componentDidMount() {
+        this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+
         this.setState({ mounted: true });
     }
 
     componentWillUnmount() {
+        this.props.linkContext.unregisterViewRef(this.props.view, this.refView);
+
+        if (this.refView.current._originalParent) {
+            this.refView.current._originalParent.appendChild(this.refView.current);
+            this.refView.current._originalParent = null;
+        }
+
         if (this.selectDiv) {
             this.selectDiv.remove();
             this.selectDiv = null;
@@ -50,13 +61,15 @@ class VisView extends React.Component {
         this.widgetsRefs = {};
     }
 
-    /*onClick(e) {
-        e.stopPropagation();
-        // deselect all widgets as clicked on none of them
-        this.props.setSelectedWidgets([]);
-    }*/
+    onCommand = command => {
+        if (command === 'updateContainers') {
+            // send to all widgets the command
+            Object.keys(this.widgetsRefs).forEach(wid =>
+                this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand(command));
+        }
+    }
 
-    registerRef = (id, widDiv, refService, onMove, onResize, onTempSelect) => {
+    registerRef = (id, widDiv, refService, onMove, onResize, onTempSelect, onCommand) => {
         if (onMove) {
             this.widgetsRefs[id] = {
                 widDiv,
@@ -64,6 +77,7 @@ class VisView extends React.Component {
                 onMove,
                 onResize,
                 onTempSelect,
+                onCommand,
             };
         } else {
             delete this.widgetsRefs[id];
@@ -94,8 +108,9 @@ class VisView extends React.Component {
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
-            if (this.widgetsRefs[id].widDiv) {
-                const wRect = this.widgetsRefs[id].widDiv.getBoundingClientRect();
+            const widDiv = this.widgetsRefs[id].widDiv || this.widgetsRefs[id].refService.current;
+            if (widDiv) {
+                const wRect = widDiv.getBoundingClientRect();
                 if (simpleMode) {
                     // top left corner
                     if (wRect.top >= rect.top && wRect.top <= rect.bottom && wRect.left >= rect.left && wRect.left <= rect.right) {
@@ -134,12 +149,11 @@ class VisView extends React.Component {
             // create selectDiv
             this.selectDiv = window.document.createElement('div');
             this.selectDiv.style.position = 'absolute';
-            this.selectDiv.style.zIndex = Z_INDEXES.VIEW_SELECT_RECTANGLE;
+            this.selectDiv.style.zIndex = VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE;
             this.selectDiv.className = 'vis-editmode-select-rect';
             this.refView.current.appendChild(this.selectDiv);
         }
 
-        // console.log(`Mouse move: ${e.movementX}, ${e.movementY} ${e.button}`);
         this.movement.moved = true;
         this.movement.w += e.movementX;
         this.movement.h += e.movementY;
@@ -172,7 +186,6 @@ class VisView extends React.Component {
 
     onMouseViewUp = !this.props.runtime ? e => {
         e && e.stopPropagation();
-        console.log('VIEW Mouse up');
         window.document.removeEventListener('mousemove', this.onMouseViewMove);
         window.document.removeEventListener('mouseup', this.onMouseViewUp);
         if (this.selectDiv) {
@@ -188,9 +201,7 @@ class VisView extends React.Component {
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : e => {
-        e.stopPropagation();
-
+    onMouseWidgetDown = this.props.runtime ? null : () => {
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -200,8 +211,6 @@ class VisView extends React.Component {
             y: 0,
         };
 
-        console.log('WIDGET Mouse down');
-
         this.props.selectedWidgets.forEach(wid => {
             if (this.widgetsRefs[wid]?.onMove) {
                 this.widgetsRefs[wid]?.onMove(); // indicate start of movement
@@ -210,7 +219,6 @@ class VisView extends React.Component {
     }
 
     onMouseWidgetMove = !this.props.runtime ? e => {
-        // console.log(`Mouse move: ${e.movementX}, ${e.movementY} ${e.button}`);
         this.movement.moved = true;
         this.movement.x += e.movementX;
         this.movement.y += e.movementY;
@@ -224,7 +232,6 @@ class VisView extends React.Component {
 
     onMouseWidgetUp = !this.props.runtime ? e => {
         e && e.stopPropagation();
-        console.log('WIDGET Mouse up');
         this.refView.current.removeEventListener('mousemove', this.onMouseWidgetMove);
         window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -290,6 +297,7 @@ class VisView extends React.Component {
                         adapterName={this.props.adapterName}
                         instance={this.props.instance}
                         projectName={this.props.projectName}
+                        VisView={VisView}
                     />;
 
                     if (isRelative) {
@@ -332,7 +340,7 @@ class VisView extends React.Component {
 
             settings.style && Object.keys(settings.style).forEach(attr => {
                 if (attr === 'background_class') {
-                    className += ` ${settings.style.background_class}`;
+                    className = addClass(className, settings.style.background_class);
                 } else {
                     const value = settings.style[attr];
                     // convert background-color => backgroundColor
@@ -342,11 +350,18 @@ class VisView extends React.Component {
             });
         }
 
+        if (this.props.view !== this.props.activeView) {
+            style.display = 'none';
+        }
+
+        if (this.props.container) {
+            style.overflow = 'hidden';
+        }
+
         return <div
             className={className}
             ref={this.refView}
             id={`visview_${this.props.view}`}
-            //onClick={!this.props.runtime ? e => this.props.editMode && this.onClick(e) : undefined}
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
@@ -363,6 +378,7 @@ class VisView extends React.Component {
 VisView.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
+    activeView: PropTypes.string.isRequired,
     can: PropTypes.object.isRequired,
     canStates: PropTypes.object.isRequired,
     editMode: PropTypes.bool,
@@ -381,6 +397,7 @@ VisView.propTypes = {
     runtime: PropTypes.bool,
     onWidgetsChanged: PropTypes.func,
     showWidgetNames: PropTypes.bool,
+    container: PropTypes.bool,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

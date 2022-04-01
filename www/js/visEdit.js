@@ -1128,7 +1128,7 @@ vis = $.extend(true, vis, {
                 // string has form data:;base64,TEXT==
             $name.data('file', evt.target.result.split(',')[1]);
 
-                $('.vis-import-text-drop-plus').hide();
+            $('.vis-import-text-drop-plus').hide();
             // try to extract project name from 2016-05-09-project.zip
             var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
             if (m && !$project.val()) $project.val(m[1]);

@@ -680,6 +680,31 @@ function getUrlParameter(attr) {
     return '';
 }
 
+function addClass(actualClass, toAdd) {
+    if (actualClass) {
+        const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
+        if (!parts.includes(toAdd)) {
+            parts.push(toAdd);
+        }
+        return parts.join(' ');
+    }
+
+    return toAdd;
+}
+
+function removeClass(actualClass, toAdd) {
+    if (actualClass) {
+        const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
+        const pos = parts.indexOf(toAdd);
+        if (pos !== -1) {
+            parts.splice(pos, 1);
+        }
+        return parts.join(' ');
+    }
+
+    return '';
+}
+
 module.exports = {
     getUsedObjectIDs,
     extractBinding,
@@ -687,4 +712,6 @@ module.exports = {
     replaceGroupAttr,
     getUsedObjectIDsInWidget,
     getUrlParameter,
+    addClass,
+    removeClass,
 };
