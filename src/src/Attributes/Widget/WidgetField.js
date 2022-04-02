@@ -82,10 +82,12 @@ const WidgetField = props => {
 
     const change = changeValue => {
         const project = JSON.parse(JSON.stringify(props.project));
-        const data = props.isStyle
-            ? project[props.selectedView].widgets[props.selectedWidgets[0]].style
-            : project[props.selectedView].widgets[props.selectedWidgets[0]].data;
-        data[field.name] = changeValue;
+        props.selectedWidgets.forEach(selectedWidget => {
+            const data = props.isStyle
+                ? project[props.selectedView].widgets[selectedWidget].style
+                : project[props.selectedView].widgets[selectedWidget].data;
+            data[field.name] = changeValue;
+        });
         props.changeProject(project);
     };
 
