@@ -238,7 +238,7 @@ const getFieldsAfter = widgets => [
                 name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
             },
             { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-
+            { type: 'delimeter' },
         ]))],
     },
     {
@@ -385,12 +385,12 @@ const Widget = props => {
                         const options = field.type.split(',');
                         [field.type, field.filter] = options;
                     }
-                    if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,'))) {
+                    if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
                         const options = field.type.split(',');
                         [field.type] = options;
                         field.options = options.slice(1);
                     }
-                    if (field.type && field.type.startsWith('slider,')) {
+                    if (field.type && (field.type.startsWith('slider,') || field.type.startsWith('number,'))) {
                         const options = field.type.split(',');
                         field.type = options[0];
                         field.min = parseInt(options[1]);

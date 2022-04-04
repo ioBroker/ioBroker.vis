@@ -530,6 +530,11 @@ const WidgetField = props => {
             value={value}
             onChange={e => change(e.target.value)}
             type={field.type ? field.type : 'text'}
+            inputProps={{
+                min: field.min,
+                max: field.max,
+                step: field.step,
+            }}
         />;
     }
     return <>
