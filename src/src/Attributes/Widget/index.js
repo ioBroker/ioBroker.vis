@@ -309,7 +309,6 @@ const Widget = props => {
             if (!widget) {
                 return;
             }
-            // console.log(getWidgetTypes());
             widgetType = getWidgetTypes().find(type => type.name === widget.tpl);
             if (!widgetType) {
                 return;
@@ -318,6 +317,7 @@ const Widget = props => {
             let currentGroup = fields[fields.length - 1];
             let indexedGroups = {};
             let groupName = 'common';
+            let isIndexedGroup = false;
             widgetType.params.split(';').forEach(fieldString => {
                 if (!fieldString) {
                     return;
@@ -343,6 +343,9 @@ const Widget = props => {
                             commonGroups[groupName] = 0;
                         }
                         commonGroups[groupName]++;
+                        isIndexedGroup = false;
+                    } else {
+                        isIndexedGroup = true;
                     }
                 } else {
                     const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:\/\.a-zA-Z0-9]+)?/);
@@ -361,6 +364,17 @@ const Widget = props => {
 
                     if (field.name === 'oid' || field.name.match(/^oid-/)) {
                         field.type = field.type || 'id';
+                    } else if (field.name === 'color') {
+                        field.name = 'color';
+                    } else if (field.name.match(/nav_view$/)) {
+                        field.name = 'views';
+                    } else
+                    if (field.name === 'sound') {
+                        field.name = 'sound';
+                    } else if (field.name.indexOf('_effect') !== -1) {
+                        field.name = 'effect';
+                    } else if (field.name.indexOf('_eff_opt') !== -1) {
+                        field.name = 'effect-options';
                     }
 
                     if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,'))) {
@@ -378,6 +392,17 @@ const Widget = props => {
                             field.step = (field.max - field.min / 100);
                         }
                     }
+                    if (field.type && field.type.startsWith('style,')) {
+                        const options = field.type.split(',');
+                        field.type = options[0];
+                        field.filterFile = options[1];
+                        field.filterName = options[2];
+                        field.filterAttrs = options[3];
+                        field.removeName = options[4];
+                        if (!field.step) {
+                            field.step = (field.max - field.min / 100);
+                        }
+                    }
 
                     if (repeats) {
                         const repeatsMatch = repeats.match(/\(([0-9a-z]+)-([0-9a-z]+)\)/i);
@@ -390,31 +415,40 @@ const Widget = props => {
                                 repeatsMatch[2] = parseInt(widget.data[repeatsMatch[2]]);
                             }
                             for (let i = repeatsMatch[1]; i <= repeatsMatch[2]; i++) {
-                                if (widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
-                                    return;
-                                }
-                                if (widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
-                                    return;
-                                }
-                                if (!indexedGroups[i]) {
-                                    currentGroup = {
-                                        name: `${groupName}-${i}`,
-                                        fields: [],
-                                    };
-                                    indexedGroups[i] = currentGroup;
-                                    fields.push(currentGroup);
-                                }
-                                if (!commonGroups[`${groupName}-${i}`]) {
-                                    commonGroups[`${groupName}-${i}`] = 0;
-                                }
-                                commonGroups[`${groupName}-${i}`]++;
+                                if (isIndexedGroup) {
+                                    if (widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
+                                        return;
+                                    }
+                                    if (widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
+                                        return;
+                                    }
+                                    if (!indexedGroups[i]) {
+                                        currentGroup = {
+                                            name: `${groupName}-${i}`,
+                                            fields: [],
+                                        };
+                                        indexedGroups[i] = currentGroup;
+                                        fields.push(currentGroup);
+                                    }
+                                    if (!commonGroups[`${groupName}-${i}`]) {
+                                        commonGroups[`${groupName}-${i}`] = 0;
+                                    }
+                                    commonGroups[`${groupName}-${i}`]++;
 
-                                field.name = `${name}${i}`;
-                                indexedGroups[i].fields.push({ ...field });
-                                if (!commonFields[`${groupName}-${i}.${field.name}`]) {
-                                    commonFields[`${groupName}-${i}.${field.name}`] = 0;
+                                    field.name = `${name}${i}`;
+                                    indexedGroups[i].fields.push({ ...field });
+                                    if (!commonFields[`${groupName}-${i}.${field.name}`]) {
+                                        commonFields[`${groupName}-${i}.${field.name}`] = 0;
+                                    }
+                                    commonFields[`${groupName}-${i}.${field.name}`]++;
+                                } else {
+                                    field.name = `${name}${i}`;
+                                    currentGroup.fields.push({ ...field });
+                                    if (!commonFields[`${groupName}.${field.name}`]) {
+                                        commonFields[`${groupName}.${field.name}`] = 0;
+                                    }
+                                    commonFields[`${groupName}.${field.name}`]++;
                                 }
-                                commonFields[`${groupName}-${i}.${field.name}`]++;
                             }
                         }
                     } else {
@@ -430,10 +464,8 @@ const Widget = props => {
             selectedWidgetsFields.push(fields);
         });
 
-        console.log(commonGroups);
-        console.log(commonFields);
-
         let fields;
+        const commonValues = {};
         if (props.selectedWidgets.length > 1) {
             fields = selectedWidgetsFields[0].filter(group => {
                 if (commonGroups[group.name] < props.selectedWidgets.length) {
@@ -442,6 +474,28 @@ const Widget = props => {
                 group.fields = group.fields.filter(field =>
                     commonFields[`${group.name}.${field.name}`] === props.selectedWidgets.length);
                 return true;
+            });
+
+            props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
+                const currentWidget = props.project[props.selectedView].widgets[selectedWidget];
+                if (!currentWidget) {
+                    return;
+                }
+                if (widgetIndex === 0) {
+                    commonValues.data = { ...currentWidget.data };
+                    commonValues.style = { ...currentWidget.style };
+                } else {
+                    Object.keys(commonValues.data).forEach(field => {
+                        if (commonValues.data[field] !== currentWidget.data[field]) {
+                            commonValues.data[field] = null;
+                        }
+                    });
+                    Object.keys(commonValues.style).forEach(field => {
+                        if (commonValues.style[field] !== currentWidget.style[field]) {
+                            commonValues.style[field] = null;
+                        }
+                    });
+                }
             });
         } else {
             fields = selectedWidgetsFields[0];
@@ -452,16 +506,16 @@ const Widget = props => {
         fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets)];
 
         const [accordionOpen, setAccordionOpen] = useState(
-            window.localStorage.getItem('attributesWidget')
+            window.localStorage.getItem('attributesWidget') && window.localStorage.getItem('attributesWidget')[0] === '{'
                 ? JSON.parse(window.localStorage.getItem('attributesWidget'))
-                : fields.map(() => true),
+                : {},
         );
 
         return <div>
-            <div>Widget</div>
+            <h4>{props.selectedWidgets.join(', ')}</h4>
             <pre>
-                {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fieldsManual, null, 2)}
+                {/* {JSON.stringify(widgetType, null, 2)}
+                // {JSON.stringify(fieldsManual, null, 2)} */}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
@@ -469,19 +523,19 @@ const Widget = props => {
                     expanded: props.classes.clearPadding,
                 }}
                 square
-                key={key}
+                key={group.name}
                 elevation={0}
-                expanded={accordionOpen[key]}
+                expanded={!!accordionOpen[group.name]}
                 onChange={(e, expanded) => {
                     const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                    newAccordionOpen[key] = expanded;
+                    newAccordionOpen[group.name] = expanded;
                     window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
                     setAccordionOpen(newAccordionOpen);
                 }}
             >
                 <AccordionSummary
                     classes={{
-                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[key]
+                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
                             ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                         content: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
@@ -492,7 +546,7 @@ const Widget = props => {
                     {group.name}
                 </AccordionSummary>
                 <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                    <table>
+                    <table style={{ width: '100%' }}>
                         <tbody>
                             {
                                 group.fields.map((field, key2) => <tr key={key2}>
@@ -503,7 +557,12 @@ const Widget = props => {
                                         : <>
                                             <td className={props.classes.fieldTitle}>{i18n.t(field.name)}</td>
                                             <td className={props.classes.fieldContent}>
-                                                <WidgetField field={field} widget={widget} isStyle={group.isStyle} {...props} />
+                                                <WidgetField
+                                                    field={field}
+                                                    widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                    isStyle={group.isStyle}
+                                                    {...props}
+                                                />
                                             </td>
                                         </>}
                                 </tr>)
@@ -513,7 +572,7 @@ const Widget = props => {
                 </AccordionDetails>
             </Accordion>)}
             <pre>
-                {JSON.stringify(widget, null, 2)}
+                {/* {JSON.stringify(widget, null, 2)} */}
             </pre>
         </div>;
     }

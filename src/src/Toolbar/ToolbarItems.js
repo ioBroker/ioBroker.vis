@@ -90,12 +90,18 @@ const getItem = (item, key, props, full) => {
                 style={{ width: item.width }}
                 multiple
                 value={item.value ? item.value : value}
+                renderValue={selected => selected.map(
+                    selectedItem => item.items.find(
+                        foundItem => foundItem.value === selectedItem,
+                    ).name,
+                ).join(', ')}
                 onChange={item.onChange ? item.onChange : e => change(e.target.value)}
             >
                 {item.items.map(selectItem => <MenuItem
                     value={selectItem.value}
                     key={selectItem.value}
                 >
+                    <Checkbox checked={(item.value ? item.value : value).includes(selectItem.value)} />
                     {I18n.t(selectItem.name)}
                 </MenuItem>)}
             </Select>

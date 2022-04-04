@@ -38,7 +38,7 @@ const Widgets = props => {
             name: `${widget} (${props.project[props.selectedView].widgets[widget].tpl})`,
             value: widget,
         })),
-        width: 120,
+        width: 240,
         value: props.selectedWidgets,
         onChange: e => props.setSelectedWidgets(e.target.value),
     },

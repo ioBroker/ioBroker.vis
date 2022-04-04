@@ -69,6 +69,73 @@ function collectClasses() {
     return result;
 }
 
+function getStylesOptions(options) {
+    // Fill the list of styles
+    const _internalList = collectClasses();
+
+    options.filterName  = options.filterName  || '';
+    options.filterAttrs = options.filterAttrs || '';
+    options.filterFile  = options.filterFile  || '';
+
+    let styles = {};
+
+    if (options.styles) {
+        styles = { ...options.styles };
+    } else if (options.filterFile || options.filterName) {
+        // IF filter defined
+        const filters = (options.filterName)  ? options.filterName.split(' ')  : null;
+        const attrs   = (options.filterAttrs) ? options.filterAttrs.split(' ') : null;
+        const files   = (options.filterFile)  ? options.filterFile.split(' ')  : [''];
+
+        for (const style in _internalList) {
+            if (!_internalList.hasOwnProperty(style)) continue;
+            for (let f = 0; f < files.length; f++) {
+                if (!options.filterFile ||
+                        (_internalList[style].file && _internalList[style].file.indexOf(files[f]) !== -1)) {
+                    let isFound = !filters;
+                    if (!isFound) {
+                        for (let k = 0; k < filters.length; k++) {
+                            if (style.indexOf(filters[k]) !== -1) {
+                                isFound = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (isFound) {
+                        isFound = !attrs;
+                        if (!isFound) {
+                            for (let u = 0; u < attrs.length; u++) {
+                                const t = _internalList[style].attrs[attrs[u]];
+                                if (t || t === 0) {
+                                    isFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (isFound) {
+                        let n = _internalList[style].name;
+                        if (options.removeName) {
+                            n = n.replace(options.removeName, '');
+                            n = n[0].toUpperCase() + n.substring(1).toLowerCase();
+                        }
+                        styles[style] = {
+                            name:        n,
+                            file:        _internalList[style].file,
+                            parentClass: _internalList[style].parentClass,
+                        };
+                    }
+                }
+            }
+        }
+    } else {
+        styles = { ...styles, ..._internalList };
+    }
+
+    return styles;
+}
+
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
 
@@ -102,7 +169,7 @@ const WidgetField = props => {
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
-                    endAdornment: <Button onClick={() => setIdDialog(true)}>...</Button>,
+                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 value={value}
                 onChange={e => change(e.target.value)}
@@ -134,7 +201,7 @@ const WidgetField = props => {
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
-                    endAdornment: <Button onClick={() => setIdDialog(true)}>...</Button>,
+                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 value={value}
                 onChange={e => change(e.target.value)}
@@ -180,7 +247,7 @@ const WidgetField = props => {
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 },
-                endAdornment: <Button onClick={() => change(parts[1] + (parts[2] === 'px' ? '%' : 'px'))}>{parts[2]}</Button>,
+                endAdornment: <Button size="small" onClick={() => change(parts[1] + (parts[2] === 'px' ? '%' : 'px'))}>{parts[2]}</Button>,
             }}
             value={parts[1]}
             onChange={e => change(e.target.value === '' ? '' : (e.target.value + (parts[2] ? parts[2] : 'px')))}
@@ -377,11 +444,39 @@ const WidgetField = props => {
         />;
     }
     if (field.type === 'style') {
-        return <>
-            {field.type}
-            {'/'}
-            {value}
-        </>;
+        const stylesOptions = getStylesOptions({
+            filterFile:  field.filterFile,
+            filterName:  field.filterName,
+            filterAttrs: field.filterAttrs,
+            removeName:  field.removeName,
+        });
+        return <Select
+            variant="standard"
+            value={value}
+            defaultValue={field.default}
+            classes={{
+                root: props.classes.clearPadding,
+                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            }}
+            onChange={e => change(e.target.value)}
+            renderValue={selectValue => <div className={props.classes.backgroundClass}>
+                <span className={stylesOptions[selectValue].parentClass}>
+                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`}></span>
+                </span>
+                {i18n.t(stylesOptions[selectValue].name)}
+            </div>}
+            fullWidth
+        >
+            {Object.keys(stylesOptions).map(styleName => <MenuItem
+                value={styleName}
+                key={styleName}
+            >
+                <span className={stylesOptions[styleName].parentClass}>
+                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`}></span>
+                </span>
+                {i18n.t(stylesOptions[styleName].name)}
+            </MenuItem>)}
+        </Select>;
     }
     if (field.type === 'custom') {
         return <>
@@ -392,7 +487,21 @@ const WidgetField = props => {
     }
     if (field.type === 'text' || field.type === 'html') {
         return <>
-            <Button onClick={() => setIdDialog(true)}>Edit</Button>
+            <TextField
+                size="small"
+                variant="standard"
+                value={value}
+                multiline
+                fullWidth
+                InputProps={{
+                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>Edit</Button>,
+                    classes: {
+                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    },
+                }}
+                rows={2}
+                disabled
+            />
             <TextDialog
                 open={idDialog}
                 value={value}

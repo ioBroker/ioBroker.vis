@@ -380,7 +380,7 @@ const View = props => {
                 {group.name}
             </AccordionSummary>
             <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                <table>
+                <table style={{ width: '100%' }}>
                     <tbody>
                         {
                             group.fields.map((field, key2) => {
