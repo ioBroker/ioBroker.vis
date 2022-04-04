@@ -16,6 +16,7 @@ import WidgetField from './WidgetField';
 const getWidgetTypes = () => Array.from(document.querySelectorAll('script[type="text/ejs"]'))
     .map(script => ({
         name: script.attributes.id.value,
+        set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
         params: Object.values(script.attributes)
             .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
             .map(attribute => attribute.value)
@@ -302,6 +303,7 @@ const Widget = props => {
         props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
             const fields = [{
                 name: 'common',
+                singleName: 'common',
                 fields: [],
             }];
 
@@ -334,6 +336,7 @@ const Widget = props => {
                             fields.push(
                                 {
                                     name: groupName,
+                                    singleName: groupName,
                                     fields: [],
                                 },
                             );
@@ -365,16 +368,16 @@ const Widget = props => {
                     if (field.name === 'oid' || field.name.match(/^oid-/)) {
                         field.type = field.type || 'id';
                     } else if (field.name === 'color') {
-                        field.name = 'color';
+                        field.type = 'color';
                     } else if (field.name.match(/nav_view$/)) {
-                        field.name = 'views';
+                        field.type = 'views';
                     } else
                     if (field.name === 'sound') {
-                        field.name = 'sound';
+                        field.type = 'sound';
                     } else if (field.name.indexOf('_effect') !== -1) {
-                        field.name = 'effect';
+                        field.type = 'effect';
                     } else if (field.name.indexOf('_eff_opt') !== -1) {
-                        field.name = 'effect-options';
+                        field.type = 'effect-options';
                     }
 
                     if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,'))) {
@@ -403,7 +406,8 @@ const Widget = props => {
                             field.step = (field.max - field.min / 100);
                         }
                     }
-
+                    field.singleName = field.name;
+                    field.set = widgetType.set;
                     if (repeats) {
                         const repeatsMatch = repeats.match(/\(([0-9a-z]+)-([0-9a-z]+)\)/i);
                         const name = field.name;
@@ -425,6 +429,8 @@ const Widget = props => {
                                     if (!indexedGroups[i]) {
                                         currentGroup = {
                                             name: `${groupName}-${i}`,
+                                            singleName: groupName,
+                                            index: i,
                                             fields: [],
                                         };
                                         indexedGroups[i] = currentGroup;
@@ -443,6 +449,7 @@ const Widget = props => {
                                     commonFields[`${groupName}-${i}.${field.name}`]++;
                                 } else {
                                     field.name = `${name}${i}`;
+                                    field.index = i;
                                     currentGroup.fields.push({ ...field });
                                     if (!commonFields[`${groupName}.${field.name}`]) {
                                         commonFields[`${groupName}.${field.name}`] = 0;
@@ -501,6 +508,10 @@ const Widget = props => {
             fields = selectedWidgetsFields[0];
         }
 
+        if (!selectedWidgetsFields.length) {
+            return null;
+        }
+
         const fieldsManual = [...fields];
 
         fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets)];
@@ -543,7 +554,7 @@ const Widget = props => {
                     }}
                     expandIcon={<ExpandMoreIcon />}
                 >
-                    {group.name}
+                    {window._(group.singleName || group.name) + (group.index !== undefined ? ` [${group.index}]` : '')}
                 </AccordionSummary>
                 <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                     <table style={{ width: '100%' }}>
@@ -555,7 +566,9 @@ const Widget = props => {
                                             <Divider style={{ borderBottomWidth: 'thick' }} />
                                         </td>
                                         : <>
-                                            <td className={props.classes.fieldTitle}>{i18n.t(field.name)}</td>
+                                            <td className={props.classes.fieldTitle}>
+                                                {window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')}
+                                            </td>
                                             <td className={props.classes.fieldContent}>
                                                 <WidgetField
                                                     field={field}

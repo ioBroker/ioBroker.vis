@@ -154,6 +154,12 @@ const WidgetField = props => {
                 ? project[props.selectedView].widgets[selectedWidget].style
                 : project[props.selectedView].widgets[selectedWidget].data;
             data[field.name] = changeValue;
+            if (field.onChangeFunc) {
+                window.vis.binds[field.onChangeFunc](
+                    selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
+                    props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                );
+            }
         });
         props.changeProject(project);
     };
