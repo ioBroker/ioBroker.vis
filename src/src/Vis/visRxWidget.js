@@ -15,16 +15,140 @@
 
 import PropTypes from 'prop-types';
 import VisBaseWidget from './visBaseWidget';
+import { getUsedObjectIDsInWidget } from './visUtils';
 
 class VisRxWidget extends VisBaseWidget {
     constructor(props) {
         super(props, true);
+
+        this.state = {
+            ...this.state,
+            rxData: this.state.data,
+            rxStyle: this.state.style,
+            values: {},
+            visible: true,
+        };
+
+        this.linkContext = {
+            IDs: [],
+            bindings: {},
+            visibility: {},
+            lastChanges: {},
+            signals: {},
+        };
+
+        getUsedObjectIDsInWidget(props.views, props.view, props.id, this.linkContext);
+
+        this.onStateChangedBind = this.onStateChanged.bind(this);
+    }
+
+    onStateChanged(id, state) {
+        const newState = {
+            values: JSON.parse(JSON.stringify(this.state.values)),
+            rxData: { ...this.state.data },
+            rxStyle: { ...this.state.style },
+            applyBindings: false,
+        };
+
+        id && state && Object.keys(state).forEach(attr => newState.values[`${id}.${attr}`] = state[attr]);
+
+        Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, newState));
+
+        newState.visible = this.checkVisibility(id, newState);
+
+        this.setState(newState);
+    }
+
+    applyBinding(stateId, newState) {
+        this.linkContext.bindings[stateId] && this.linkContext.bindings[stateId].forEach(item => {
+            const value = this.props.formatUtils.formatBinding(
+                item.format,
+                item.view,
+                this.props.id,
+                this.props.views[item.view].widgets[this.props.id],
+                newState.rxData,
+                newState.values,
+            );
+
+            if (item.type === 'data') {
+                newState.rxData[item.attr] = value;
+            } else {
+                newState.rxStyle[item.attr] = value;
+            }
+        });
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+        this.linkContext.IDs.forEach(oid => this.props.socket.subscribeState(oid, this.onStateChangedBind));
+    }
+
+    componentWillUnmount() {
+        this.linkContext.IDs.forEach(oid => this.props.socket.unsubscribeState(oid, this.onStateChangedBind));
+        super.componentWillUnmount();
+    }
+
+    checkVisibility(stateId, newState) {
+        if (!this.editMode) {
+            if (!this.isWidgetFilteredOut(newState.rxData)) {
+                if (this.linkContext.visibility[stateId]) {
+                    return this.isWidgetHidden(newState.rxData, newState.values);
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    renderWidgetBody(props) {
+        props.id = this.props.id;
+
+        Object.keys(this.state.rxStyle).forEach(attr => {
+            const value = this.state.rxStyle[attr];
+            attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
+            props.style[attr] = value;
+        });
+
+        props.className = `vis-widget ${this.state.rxData.class || ''}`;
+    }
+
+    onPropertiesUpdated() {
+        const oldIDs = this.linkContext.IDs;
+        this.linkContext = {
+            IDs: [],
+            bindings: {},
+            visibility: {},
+            lastChanges: {},
+            signals: {},
+        };
+        // extract bindings anew as data or style were changes
+        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, this.linkContext);
+
+        // subscribe on some new IDs and remove old IDs
+        const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
+        unsubscribe.forEach(id => this.props.socket.unsubscribeState(id, this.onStateChangedBind));
+
+        const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
+        subscribe.forEach(id => this.props.socket.subscribeState(id, this.onStateChangedBind));
+
+        this.onStateChanged();
     }
 
     render() {
-        const rx = super.render();
+        if (!this.state.visible) {
+            return null;
+        }
 
-        return rx;
+        if (this.state.applyBindings && !this.bindingsTimer) {
+            this.bindingsTimer = setTimeout(() => {
+                this.bindingsTimer = null;
+                this.onPropertiesUpdated();
+            }, 10);
+        }
+
+        return super.render();
     }
 }
 

@@ -252,7 +252,9 @@ class VisFormatUtils {
         return result;
     }
 
-    formatBinding(format, view, wid, widget, widgetData) {
+    formatBinding(format, view, wid, widget, widgetData, values) {
+        values = values || this.vis.states;
+
         const oids = this.extractBinding(format);
 
         for (let t = 0; t < oids.length; t++) {
@@ -260,7 +262,7 @@ class VisFormatUtils {
             if (oids[t].visOid) {
                 value = this.getSpecialValues(oids[t].visOid, view, wid, widgetData);
                 if (value === undefined || value === null) {
-                    value = this.vis.states.attr(oids[t].visOid);
+                    value = values[oids[t].visOid];
                 }
             }
             if (oids[t].operations) {
@@ -274,7 +276,7 @@ class VisFormatUtils {
                                 }
                                 value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widgetData);
                                 if (value === undefined || value === null) {
-                                    value = this.vis.states.attr(oids[t].operations[k].arg[a].visOid);
+                                    value = values[oids[t].operations[k].arg[a].visOid];
                                 }
                                 try {
                                     value = JSON.parse(value);
@@ -296,7 +298,7 @@ class VisFormatUtils {
                             }
                             string += `return ${oids[t].operations[k].formula};`;
 
-                            if (string.indexOf('\\"') >= 0) {
+                            if (string.includes('\\"')) {
                                 string = string.replace(/\\"/g, '"');
                             }
 

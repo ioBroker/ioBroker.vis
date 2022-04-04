@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import {
     replaceGroupAttr,
     addClass,
-    removeClass, getUsedObjectIDsInWidget,
+    getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
 
@@ -34,6 +34,12 @@ class VisCanWidget extends VisBaseWidget {
             ...this.state,
         };
 
+        this.setupSubscriptions();
+
+        this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
+    }
+
+    setupSubscriptions() {
         this.bindings = {};
 
         const linkContext = {
@@ -56,14 +62,12 @@ class VisCanWidget extends VisBaseWidget {
 
         // free mem
         Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
-
-        this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
     }
 
     componentDidMount() {
         super.componentDidMount();
 
-        this.props.linkContext.subscribe(this.IDs, this.props.id, this.onStateChangeBound);
+        this.props.linkContext.subscribe(this.IDs);
 
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
@@ -85,7 +89,7 @@ class VisCanWidget extends VisBaseWidget {
 
         if (this.props.linkContext) {
             if (this.props.linkContext.unsubscribe) {
-                this.props.linkContext.unsubscribe(this.IDs, this.props.id, this.onStateChangeBound);
+                this.props.linkContext.unsubscribe(this.IDs);
             }
 
             // remove all bindings from prop.linkContexts
@@ -98,9 +102,37 @@ class VisCanWidget extends VisBaseWidget {
         this.destroy();
     }
 
-    static getDerivedStateFromProps() {
-        // do nothing and use UNSAFE_componentWillReceiveProps
-        return null;
+    /*
+    static getDerivedStateFromProps(props, state) {
+        const widget = props.views[props.view].widgets[props.id];
+        if (JSON.stringify(widget.style) !== JSON.stringify(state.style)) {
+            const newStyle = widget.style;
+            let changed = false;
+            Object.keys(newStyle).forEach(attr => {
+                if (attr === 'top' || attr === 'width' || attr === 'height' || attr === 'width') {
+                    if (state.style[attr] !== newStyle[attr]) {
+                        changed = true;
+                        console.log(`${attr} from ${state.style[attr]} to ${newStyle[attr]}`);
+                    }
+                }
+            });
+            if (!newStyle._no_style) {
+                // fix position
+                VisBaseWidget.applyStyle(this.widDiv, newStyle);
+            }
+            if (this.updateOnStyle && changed) {
+                console.log('ReRender!');
+                this.renderWidget(true, null, newStyle);
+            }
+
+            this.setState({ style: JSON.stringify(newStyle) });
+        }
+
+        if (state.isRx && props.editMode !== state.editMode) {
+            return { editMode: props.editMode };
+        }
+
+        return null; // No change to state
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -127,13 +159,13 @@ class VisCanWidget extends VisBaseWidget {
             this.setState({ style: JSON.stringify(newStyle) });
         }
 
-        if (nextProps.editMode !== this.editMode) {
-            this.editMode = nextProps.editMode;
-            // rerender Widget
-            this.renderWidget(true);
+        if (nextProps.editMode !== this.state.editMode) {
+            this.setState({ editMode: nextProps.editMode }, () =>
+                // rerender Widget
+                this.renderWidget(true));
         }
     }
-
+*/
     static applyStyle(el, style) {
         if (typeof style === 'string') {
             // style is a string
@@ -279,8 +311,9 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     updateVisibility() {
-        if (this.widDiv && !this.editMode) {
-            if (this.isWidgetHidden() || this.isWidgetFilteredOut()) {
+        if (this.widDiv && !this.state.editMode) {
+            const widgetData = this.props.allWidgets[this.props.id].data;
+            if (this.isWidgetHidden(widgetData, this.props.canStates) || this.isWidgetFilteredOut(widgetData)) {
                 this.widDiv._storedDisplay = this.widDiv.style.display;
                 this.widDiv.style.display = 'none';
 
@@ -301,94 +334,6 @@ class VisCanWidget extends VisBaseWidget {
                     this.widDiv._customHandlers.onShow(this.widDiv, this.props.id);
                 }
             }
-        }
-    }
-
-    isWidgetFilteredOut() {
-        const widgetData = this.props.allWidgets[this.props.id].data;
-        const v = this.props.viewsActiveFilter[this.props.view];
-
-        return widgetData?.filterkey && v?.length > 0 && !v.includes(widgetData.filterkey);
-    }
-
-    isWidgetHidden() {
-        const widgetData = this.props.allWidgets[this.props.id].data;
-
-        const oid = widgetData['visibility-oid'];
-        const condition = widgetData['visibility-cond'];
-
-        if (oid) {
-            let val = this.props.canStates.attr(`${oid}.val`);
-
-            if (val === undefined || val === null) {
-                return condition === 'not exist';
-            }
-
-            let value = widgetData['visibility-val'];
-
-            if (!condition || value === undefined || value === null) {
-                return condition === 'not exist';
-            }
-
-            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
-                return false;
-            }
-
-            const t = typeof val;
-            if (t === 'boolean' || val === 'false' || val === 'true') {
-                value = value === 'true' || value === true || value === 1 || value === '1';
-            } else
-            if (t === 'number') {
-                value = parseFloat(value);
-            } else
-            if (t === 'object') {
-                val = JSON.stringify(val);
-            }
-
-            // Take care: return true if widget is hidden!
-            switch (condition) {
-                case '==':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value !== val;
-                case '!=':
-                    value = value.toString();
-                    val = val.toString();
-                    if (val === '1') val = 'true';
-                    if (value === '1') value = 'true';
-                    if (val === '0') val = 'false';
-                    if (value === '0') value = 'false';
-                    return value === val;
-                case '>=':
-                    return val < value;
-                case '<=':
-                    return val > value;
-                case '>':
-                    return val <= value;
-                case '<':
-                    return val >= value;
-                case 'consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return !val.toString().includes(value);
-                case 'not consist':
-                    value = value.toString();
-                    val = val.toString();
-                    return val.toString().includes(value);
-                case 'exist':
-                    return val === 'null';
-                case 'not exist':
-                    return val !== 'null';
-                default:
-                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
-                    return false;
-            }
-        } else {
-            return condition === 'not exist';
         }
     }
 
@@ -557,7 +502,7 @@ class VisCanWidget extends VisBaseWidget {
     isSignalVisible(index, widgetData) {
         widgetData = widgetData || this.props.allWidgets[this.props.id].data;
 
-        if (this.editMode) {
+        if (this.state.editMode) {
             return !widgetData[`signals-hide-edit-${index}`];
         }
 
@@ -798,7 +743,7 @@ class VisCanWidget extends VisBaseWidget {
                 }
 
                 // on runtime load oid, check if oid need subscribe
-                if (!this.editMode) {
+                if (!this.state.editMode) {
                     if (this.IDs.includes(oid)) {
                         this.updateVisibility();
                     } else {
@@ -815,11 +760,11 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    applyBindings(doNotAllyStyles) {
-        Object.keys(this.bindings).forEach(id => this.applyBinding(id, doNotAllyStyles));
+    applyBindings(doNotApplyStyles) {
+        Object.keys(this.bindings).forEach(id => this.applyBinding(id, doNotApplyStyles));
     }
 
-    applyBinding(stateId, doNotAllyStyles) {
+    applyBinding(stateId, doNotApplyStyles) {
         this.bindings[stateId].forEach(item => {
             const widgetContext = this.props.allWidgets[this.props.id];
 
@@ -840,7 +785,7 @@ class VisCanWidget extends VisBaseWidget {
                 } else if (item.type === 'style') {
                     widgetContext.style[item.attr] = value;
                     // update style
-                    !doNotAllyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
+                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
                 }
             }
             // TODO
@@ -881,15 +826,38 @@ class VisCanWidget extends VisBaseWidget {
 
         this.destroy(update);
 
+        const oldIDs = this.IDs;
+
+        // remove all bindings from prop.linkContexts
+        VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
+        VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
+        VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
+        VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+
+        this.setupSubscriptions();
+
+        // subscribe on some new IDs and remove old IDs
+        const unsubscribe = oldIDs.filter(id => !this.IDs.includes(id));
+        if (unsubscribe.length) {
+            this.props.linkContext.unsubscribe(unsubscribe);
+        }
+
+        const subscribe = this.IDs.filter(id => !oldIDs.includes(id));
+        if (subscribe.length) {
+            this.props.linkContext.subscribe(subscribe);
+        }
+
         // Add to the global array of widgets
         let userGroups = widget.data['visibility-groups'];
-        if (!this.editMode && userGroups?.length) {
+        if (!this.state.editMode && userGroups?.length) {
             if (widget.data['visibility-groups-action'] === 'hide') {
                 if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
                     return;
                 }
                 userGroups = null; // mark as processed
             }
+        } else {
+            userGroups = null;
         }
 
         let widgetData;
@@ -904,6 +872,7 @@ class VisCanWidget extends VisBaseWidget {
             };
 
             this.applyBindings(true);
+
             // replace all _PRJ_NAME with vis.0/name
             Object.keys(widgetData).forEach(attr => {
                 if ((attr.startsWith('src') || attr.endsWith('src')) && widgetData[attr].startsWith('_PRJ_NAME')) {
@@ -969,7 +938,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.updateOnStyle = tplEl.dataset.visUpdateStyle === 'true';
                 this.widDiv.className = addClass(this.widDiv.className, `vis-tpl-${visSet}-${visName.replace(/\s/g, '-')}`);
 
-                if (!this.editMode) {
+                if (!this.state.editMode) {
                     this.updateVisibility();
 
                     // Processing of gestures
@@ -989,12 +958,12 @@ class VisCanWidget extends VisBaseWidget {
                     this.addLastChange(widgetData);
                 }
 
-                if (!this.editMode && widgetData['echart-oid']) {
+                if (!this.state.editMode && widgetData['echart-oid']) {
                     this.addChart(widgetData);
                 }
 
                 // If edit mode, bind on click event to open this widget in edit dialog
-                if (this.editMode) {
+                if (this.state.editMode) {
                     // this.bindWidgetClick(viewDiv, view, id);
 
                     // @SJ cannot select menu and dialogs if it is enabled
@@ -1027,9 +996,12 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    renderWidgetBody() {
-        if (!this.editMode && this.widDiv && this.props.userGroups && !this.isUserMemberOfGroup(this.props.user, this.props.userGroups)) {
-            this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
+    renderWidgetBody(props) {
+        if (this.state.applyBindings && !this.bindingsTimer) {
+            this.bindingsTimer = setTimeout(() => {
+                this.bindingsTimer = null;
+                this.renderWidget(true);
+            }, 10);
         }
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
@@ -1108,8 +1080,8 @@ class VisCanWidget extends VisBaseWidget {
             />;
         }) : null;
 
-        if (legacyViewContainers?.length) {
-            // style.overflow = 'hidden';
+        if (!this.state.editMode) {
+            props.style.display = 'none';
         }
 
         return <>
@@ -1161,7 +1133,7 @@ class VisCanWidget extends VisBaseWidget {
         const selectedOne = selected && this.props.selectedWidgets.length === 1;
         let classNames = selected ? 'vis-editmode-selected' : '';
 
-        if (this.editMode && !widget.groupid) {
+        if (this.state.editMode && !widget.groupid) {
             if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
                 style.top = widget.style.top;
             }
@@ -1252,7 +1224,7 @@ class VisCanWidget extends VisBaseWidget {
             id={`rx_${this.props.id}`}
             ref={this.refService}
             style={style}
-            onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
+            onMouseDown={!this.props.runtime ? e => this.state.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
         >
             { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
                 <div className="vis-editmode-widget-name">{ this.props.id }</div>

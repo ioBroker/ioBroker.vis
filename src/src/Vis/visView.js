@@ -129,6 +129,8 @@ class VisView extends React.Component {
             moved: false,
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
+            startX: e.pageX,
+            startY: e.pageY,
             w: 0,
             h: 0,
             selectedWidgetsWithRectangle: [],
@@ -139,6 +141,9 @@ class VisView extends React.Component {
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
+            if (this.props.views[this.props.view].widgets[id].groupid) {
+                return null;
+            }
             const widDiv = this.widgetsRefs[id].widDiv || this.widgetsRefs[id].refService.current;
             if (widDiv) {
                 const wRect = widDiv.getBoundingClientRect();
@@ -176,7 +181,7 @@ class VisView extends React.Component {
     }
 
     onMouseViewMove = !this.props.runtime ? e => {
-        if (!this.selectDiv) {
+        if (!this.selectDiv && this.refView.current) {
             // create selectDiv
             this.selectDiv = window.document.createElement('div');
             this.selectDiv.style.position = 'absolute';
@@ -186,22 +191,24 @@ class VisView extends React.Component {
         }
 
         this.movement.moved = true;
-        this.movement.w += e.movementX;
-        this.movement.h += e.movementY;
+        this.movement.w = e.pageX - this.movement.startX;
+        this.movement.h = e.pageY - this.movement.startY;
 
-        if (this.movement.w >= 0) {
-            this.selectDiv.style.left = `${this.movement.x}px`;
-            this.selectDiv.style.width = `${this.movement.w}px`;
-        } else {
-            this.selectDiv.style.left = `${this.movement.x + this.movement.w}px`;
-            this.selectDiv.style.width = `${-this.movement.w}px`;
-        }
-        if (this.movement.h >= 0) {
-            this.selectDiv.style.top = `${this.movement.y}px`;
-            this.selectDiv.style.height = `${this.movement.h}px`;
-        } else {
-            this.selectDiv.style.top = `${this.movement.y + this.movement.h}px`;
-            this.selectDiv.style.height = `${-this.movement.h}px`;
+        if (this.selectDiv) {
+            if (this.movement.w >= 0) {
+                this.selectDiv.style.left = `${this.movement.x}px`;
+                this.selectDiv.style.width = `${this.movement.w}px`;
+            } else {
+                this.selectDiv.style.left = `${this.movement.x + this.movement.w}px`;
+                this.selectDiv.style.width = `${-this.movement.w}px`;
+            }
+            if (this.movement.h >= 0) {
+                this.selectDiv.style.top = `${this.movement.y}px`;
+                this.selectDiv.style.height = `${this.movement.h}px`;
+            } else {
+                this.selectDiv.style.top = `${this.movement.y + this.movement.h}px`;
+                this.selectDiv.style.height = `${-this.movement.h}px`;
+            }
         }
 
         // get selected widgets
@@ -232,12 +239,14 @@ class VisView extends React.Component {
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : () => {
+    onMouseWidgetDown = this.props.runtime ? null : e => {
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
         this.movement = {
             moved: false,
+            startX: e.pageX,
+            startY: e.pageY,
             x: 0,
             y: 0,
         };
@@ -251,8 +260,8 @@ class VisView extends React.Component {
 
     onMouseWidgetMove = !this.props.runtime ? e => {
         this.movement.moved = true;
-        this.movement.x += e.movementX;
-        this.movement.y += e.movementY;
+        this.movement.x = e.pageX - this.movement.startX;
+        this.movement.y = e.pageY - this.movement.startY;
 
         this.props.selectedWidgets.forEach(wid => {
             const widgetsRefs = this.widgetsRefs;
