@@ -65,7 +65,7 @@ class VisBaseWidget extends React.Component {
             };
         }
 
-        if (state.isRx && props.editMode !== state.editMode) {
+        if (props.editMode !== state.editMode) {
             return { editMode: props.editMode };
         }
 

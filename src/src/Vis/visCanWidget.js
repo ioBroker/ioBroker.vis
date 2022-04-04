@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import {
     replaceGroupAttr,
     addClass,
-    removeClass, getUsedObjectIDsInWidget,
+    getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
 
@@ -856,6 +856,8 @@ class VisCanWidget extends VisBaseWidget {
                 }
                 userGroups = null; // mark as processed
             }
+        } else {
+            userGroups = null;
         }
 
         let widgetData;
@@ -994,19 +996,12 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    renderWidgetBody() {
+    renderWidgetBody(props) {
         if (this.state.applyBindings && !this.bindingsTimer) {
             this.bindingsTimer = setTimeout(() => {
                 this.bindingsTimer = null;
                 this.renderWidget(true);
-                // extract bindings anew as data or style were changes
-                getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, this.linkContext);
-                this.onStateChanged();
             }, 10);
-        }
-
-        if (!this.state.editMode && this.widDiv && this.props.userGroups && !this.isUserMemberOfGroup(this.props.user, this.props.userGroups)) {
-            this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
         }
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
@@ -1085,8 +1080,8 @@ class VisCanWidget extends VisBaseWidget {
             />;
         }) : null;
 
-        if (legacyViewContainers?.length) {
-            // style.overflow = 'hidden';
+        if (!this.state.editMode) {
+            props.style.display = 'none';
         }
 
         return <>
