@@ -7,11 +7,15 @@ import {
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import LockIcon from '@mui/icons-material/Lock';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import WidgetField from './WidgetField';
+
+const ICONS = { 'group.general': <FilterAltIcon fontSize="small" />, locked: <LockIcon fontSize="small" /> };
 
 const getWidgetTypes = () => Array.from(document.querySelectorAll('script[type="text/ejs"]'))
     .map(script => ({
@@ -559,6 +563,7 @@ const Widget = props => {
                     }}
                     expandIcon={<ExpandMoreIcon />}
                 >
+                    {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
                     {window._(group.singleName || group.name) + (group.index !== undefined ? ` [${group.index}]` : '')}
                 </AccordionSummary>
                 <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
@@ -572,6 +577,7 @@ const Widget = props => {
                                         </td>
                                         : <>
                                             <td className={props.classes.fieldTitle}>
+                                                {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
                                                 {window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')}
                                             </td>
                                             <td className={props.classes.fieldContent}>
