@@ -29,15 +29,23 @@ class BasicValueString extends VisRxWidget {
     }
 
     componentDidMount() {
+        super.componentDidMount();
         // subscribe on OID
         const widget = this.props.views[this.props.view].widgets[this.props.id];
-        const oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
-        if (oid) {
-            
-        }
+        this.oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
+        this.oid && this.props.socket.subscribeState(this.oid, this.onStateChanged);
     }
 
-    renderWidget() {
+    componentWillUnmount() {
+        this.oid && this.props.socket.unsubscribeState(this.oid, this.onStateChanged);
+        super.componentWillUnmount();
+    }
+
+    onStateChanged = (id, state) => {
+        this.setState({ [`${id}.val`]: state ? state.val : '' });
+    }
+
+    renderWidgetBody() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
 
         const oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
@@ -46,25 +54,27 @@ class BasicValueString extends VisRxWidget {
         if (this.props.editMode && widget.data.test_html) {
             body = widget.data.test_html;
         } else if (widget.data.oid) {
-            if (widget.data.oid?.includes('"')) {
+            if (widget.data.oid.includes('"')) {
                 body = widget.data.oid.substring(1, widget.data.oid.length - 1);
+            } else if (this.oid) {
+                body = this.state[`${this.oid}.val`];
             } else {
-                body = vis.states.attr(`${widget.data.oid}.val`);
+                body = '';
             }
         } else {
             body = '';
         }
 
         const style = {
+            ...widget.style,
             top: 0,
             left: 0,
-            width: 50,
-            height: 20,
-            ...this.widget.style,
+            right: 0,
+            bottom: 0,
         };
 
         return <div
-            className={`vis-widget ${widget.class}`}
+            className={`vis-widget ${widget.class || ''}`}
             style={style}
             id={this.props.id}
         >

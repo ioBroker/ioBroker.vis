@@ -18,6 +18,11 @@ import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
 // import VisBaseWidget from './visBaseWidget';
+import BasicValueString from './Widgets/Basic/BasicValueString';
+
+const WIDGETS = [
+    BasicValueString,
+];
 
 // 1300 is the React dialog
 class VisView extends React.Component {
@@ -26,8 +31,12 @@ class VisView extends React.Component {
         WIDGET_SERVICE_DIV: 1200,
     };
 
+    static widgets = null;
+
     constructor(props) {
         super(props);
+
+        VisView.collectInformation();
 
         this.state = {
             mounted: false,
@@ -38,6 +47,28 @@ class VisView extends React.Component {
         this.widgetsRefs = {};
         this.selectDiv = null;
         this.movement = null;
+    }
+
+    static collectInformation() {
+        if (!VisView.widgets) {
+            VisView.widgets = {};
+            WIDGETS.forEach(Widget => {
+                if (!Widget.getWidgetInfo) {
+                    console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
+                } else {
+                    const info = Widget.getWidgetInfo();
+                    if (!info.visSet) {
+                        console.error(`No visSet in info for "${Widget.constructor.name}"`);
+                    }
+
+                    if (!info.id) {
+                        console.error(`No id in info for "${Widget.constructor.name}"`);
+                    } else {
+                        VisView.widgets[info.id] = Widget;
+                    }
+                }
+            });
+        }
     }
 
     componentDidMount() {
@@ -224,8 +255,9 @@ class VisView extends React.Component {
         this.movement.y += e.movementY;
 
         this.props.selectedWidgets.forEach(wid => {
-            if (this.widgetsRefs[wid]?.onMove) {
-                this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false);
+            const widgetsRefs = this.widgetsRefs;
+            if (widgetsRefs[wid]?.onMove) {
+                widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false);
             }
         });
     } : null;
@@ -267,38 +299,46 @@ class VisView extends React.Component {
                         widget.style.position === 'sticky'
                     );
 
-                    const rxWidget = <VisCanWidget
-                        key={id}
-                        id={id}
-                        view={this.props.view}
-                        views={this.props.views}
-                        can={this.props.can}
-                        canStates={this.props.canStates}
-                        userGroups={this.props.userGroups}
-                        editMode={this.props.editMode}
-                        user={this.props.user}
-                        allWidgets={this.props.allWidgets}
-                        jQuery={this.props.jQuery}
-                        socket={this.props.socket}
-                        isRelative={isRelative}
-                        viewsActiveFilter={this.props.viewsActiveFilter}
-                        setValue={this.props.setValue}
-                        $$={this.props.$$}
-                        refParent={isRelative ? this.refRelativeView : this.refView}
-                        linkContext={this.props.linkContext}
-                        formatUtils={this.props.formatUtils}
-                        selectedWidgets={this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets}
-                        setSelectedWidgets={this.props.setSelectedWidgets}
-                        runtime={this.props.runtime}
-                        mouseDownOnView={this.onMouseWidgetDown}
-                        registerRef={this.props.runtime ? null : this.registerRef}
-                        onWidgetsChanged={this.props.onWidgetsChanged}
-                        showWidgetNames={this.props.showWidgetNames}
-                        adapterName={this.props.adapterName}
-                        instance={this.props.instance}
-                        projectName={this.props.projectName}
-                        VisView={VisView}
-                    />;
+                    let Widget = VisView.widgets[widget.tpl];
+
+                    const props = {
+                        key: id,
+                        id,
+                        view: this.props.view,
+                        views: this.props.views,
+                        userGroups: this.props.userGroups,
+                        editMode: this.props.editMode,
+                        user: this.props.user,
+                        allWidgets: this.props.allWidgets,
+                        socket: this.props.socket,
+                        isRelative,
+                        viewsActiveFilter: this.props.viewsActiveFilter,
+                        setValue: this.props.setValue,
+                        refParent: isRelative ? this.refRelativeView : this.refView,
+                        linkContext: this.props.linkContext,
+                        formatUtils: this.props.formatUtils,
+                        selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
+                        setSelectedWidgets: this.props.setSelectedWidgets,
+                        runtime: this.props.runtime,
+                        mouseDownOnView: this.onMouseWidgetDown,
+                        registerRef: this.props.runtime ? null : this.registerRef,
+                        onWidgetsChanged: this.props.onWidgetsChanged,
+                        showWidgetNames: this.props.showWidgetNames,
+                        adapterName: this.props.adapterName,
+                        instance: this.props.instance,
+                        projectName: this.props.projectName,
+                        VisView,
+                    };
+
+                    if (!Widget) {
+                        props.can = this.props.can;
+                        props.canStates = this.props.canStates;
+                        props.jQuery = this.props.jQuery;
+                        props.$$ = this.props.$$;
+                        Widget = VisCanWidget;
+                    }
+
+                    const rxWidget = <Widget {...props} />;
 
                     if (isRelative) {
                         rxRelativeWidgets.push(rxWidget);

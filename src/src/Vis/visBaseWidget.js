@@ -17,7 +17,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    getUsedObjectIDsInWidget,
     addClass,
     removeClass,
 } from './visUtils';
@@ -25,7 +24,7 @@ import {
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
-    constructor(props) {
+    constructor(props, isRx) {
         super(props);
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
@@ -33,52 +32,50 @@ class VisBaseWidget extends React.Component {
         this.refService = React.createRef();
         this.resize = false;
         this.widDiv = null;
+        this.isRx = isRx;
 
         this.state = {
             data: JSON.parse(JSON.stringify(widget.data)),
-            style: JSON.parse(JSON.stringify(widget.style)),
+            style: this.copyStyle(widget.style),
         };
+    }
 
-        this.bindings = {};
+    copyStyle(style) {
+        let newStyle;
+        if (this.isRx) {
+            newStyle = {};
+            Object.keys(style).forEach(attr => {
+                const val = style[attr];
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                newStyle[attr] = val;
+            });
+        } else {
+            newStyle = JSON.parse(JSON.stringify(style));
+        }
 
-        const linkContext = {
-            IDs: [],
-            bindings: this.bindings,
-            visibility: this.props.linkContext.visibility,
-            lastChanges: this.props.linkContext.lastChanges,
-            signals: this.props.linkContext.signals,
-        };
-
-        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, linkContext);
-
-        this.IDs = linkContext.IDs;
-
-        // merge bindings
-        Object.keys(this.bindings).forEach(id => {
-            this.props.linkContext.bindings[id] = this.props.linkContext.bindings[id] || [];
-            this.bindings[id].forEach(item => this.props.linkContext.bindings[id].push(item));
-        });
-
-        // free mem
-        Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
+        return newStyle;
     }
 
     componentDidMount() {
-        this.onStateChangeBound = this.onStateChange.bind(this);
-        // subscribe on all IDs
-        this.props.linkContext.subscribe(this.IDs, this.props.id, this.onStateChangeBound);
+        // register service ref by view for resize and move
         this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommand);
     }
 
-    // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    onStateChange(id, state) {
-        // ignore
+    componentWillUnmount() {
+        // delete service ref from view
+        this.props.registerRef && this.props.registerRef(this.props.id);
     }
 
-    // eslint-disable-next-line no-unused-vars,class-methods-use-this
-    changeHandler(type, item, stateId) {
-        // ignore
-        // called when signal, visibility or lastChange or bindings changed
+    static getDerivedStateFromProps(props, state) {
+        const widget = props.views[props.view].widgets[props.id];
+
+        if (JSON.stringify(widget.style) !== JSON.stringify(state.style)) {
+            return {
+                style: JSON.parse(JSON.stringify(widget.style)),
+            };
+        }
+
+        return null; // No change to state
     }
 
     static removeFromArray(items, IDs, view, widget) {
@@ -94,24 +91,6 @@ class VisBaseWidget extends React.Component {
         });
     }
 
-    componentWillUnmount() {
-        this.props.registerRef && this.props.registerRef(this.props.id);
-
-        this.bindings = {};
-
-        if (this.props.linkContext) {
-            if (this.props.linkContext && this.props.linkContext.unsubscribe) {
-                this.props.linkContext.unsubscribe(this.IDs, this.props.id, this.onStateChangeBound);
-            }
-
-            // remove all bindings from prop.linkContexts
-            VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
-        }
-    }
-
     static parseStyle(style, isRxStyle) {
         const result = {};
         // style is a string
@@ -124,11 +103,23 @@ class VisBaseWidget extends React.Component {
                 if (attr && value) {
                     value = value.trim();
                     if (!isRxStyle && (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height')) {
-                        if (value !== '0' && value.match(/^[-+]?\d+$/)) {
-                            value = `${value}px`;
+                        if (!isRxStyle) {
+                            if (value !== '0' && value.match(/^[-+]?\d+$/)) {
+                                value = `${value}px`;
+                            }
+                        } else {
+                            const f = parseFloat(value);
+                            if (value === f.toString()) {
+                                value = f;
+                            }
                         }
                     }
+
                     if (value) {
+                        if (isRxStyle) {
+                            attr = attr.replace(/(-\w)/, text => text[1].toUpperCase());
+                        }
+
                         result[attr] = value;
                     }
                 }
@@ -136,75 +127,6 @@ class VisBaseWidget extends React.Component {
         });
 
         return result;
-    }
-
-    static applyStyle(el, style) {
-        if (typeof style === 'string') {
-            // style is a string
-            // "height: 10; width: 20"
-            style = VisBaseWidget.parseStyle(style);
-            Object.keys(style).forEach(attr => {
-                el.style[attr] = style[attr];
-            });
-        } else if (style) {
-            // style is an object
-            // {
-            //      height: 10,
-            // }
-            Object.keys(style).forEach(attr => {
-                if (attr && style[attr] !== undefined && style[attr] !== null) {
-                    let value = style[attr];
-                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
-                            value = `${value}px`;
-                        }
-                    }
-                    if (value) {
-                        el.style[attr] = value;
-                    }
-                }
-            });
-        }
-    }
-
-    applyBindings(doNotAllyStyles) {
-        Object.keys(this.bindings).forEach(id => this.applyBinding(id, doNotAllyStyles));
-    }
-
-    applyBinding(stateId, doNotAllyStyles) {
-        this.bindings[stateId].forEach(item => {
-            const widgetContext = this.props.allWidgets[this.props.id];
-
-            const value = this.props.formatUtils.formatBinding(
-                item.format,
-                item.view,
-                this.props.id,
-                this.props.views[item.view].widgets[this.props.id],
-                widgetContext.data,
-            );
-
-            // console.log(`[${new Date().toISOString()}](${item.widget}) BINDINGS: ${stateId}`);
-
-            if (widgetContext) {
-                if (item.type === 'data') {
-                    // trigger observable
-                    widgetContext.data.attr(item.attr, value);
-                } else if (item.type === 'style') {
-                    widgetContext.style[item.attr] = value;
-                    // update style
-                    !doNotAllyStyles && VisBaseWidget.applyStyle(this.widDiv, widgetContext.style);
-                }
-            }
-            // TODO
-            // this.subscribeOidAtRuntime(value);
-            // this.visibilityOidBinding(binding, value);
-            // this.reRenderWidget(binding.view, binding.view, bid);
-        });
-    }
-
-    static onClick(e) {
-        // do nothing, just block the handler of view
-        e.stopPropagation();
     }
 
     onMouseDown(e) {
@@ -243,7 +165,7 @@ class VisBaseWidget extends React.Component {
                     height: rect.height,
                 };
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = 0.5);
+                resizers.forEach(item => item.style.opacity = 0.2);
             } else if (this.resize === 'top') {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
@@ -305,7 +227,7 @@ class VisBaseWidget extends React.Component {
             // end of movement
             if (save) {
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = 1);
+                resizers.forEach(item => item.style.opacity = 0.3);
                 this.resize = false;
                 this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
                     wid: this.props.id,
@@ -389,6 +311,15 @@ class VisBaseWidget extends React.Component {
     }
 
     getResizeHandlers() {
+        const thickness = 0.4;
+        const shift = 0.15;
+        const square = 0.4;
+
+        const squareShift = `${shift - square}em`;
+        const squareWidthHeight = `${square}em`;
+        const shiftEm = `${shift}em`;
+        const thicknessEm = `${thickness}em`;
+        const offsetEm = `${shift - thickness}em`;
         return [
             // top
             <div
@@ -396,13 +327,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    top: -5,
-                    height: 7,
-                    left: 4,
-                    right: 4,
+                    top: offsetEm,
+                    height: thicknessEm,
+                    left: shiftEm,
+                    right: shiftEm,
                     cursor: 'ns-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top')}
             />,
@@ -412,13 +344,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    bottom: -5,
-                    height: 7,
-                    left: 4,
-                    right: 4,
+                    bottom: offsetEm,
+                    height: thicknessEm,
+                    left:  shiftEm,
+                    right:  shiftEm,
                     cursor: 'ns-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom')}
             />,
@@ -428,13 +361,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    top: 4,
-                    bottom: 4,
-                    left: -5,
-                    width: 7,
+                    top: shiftEm,
+                    bottom: shiftEm,
+                    left: offsetEm,
+                    width: thicknessEm,
                     cursor: 'ew-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'left')}
             />,
@@ -444,13 +378,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    top: 4,
-                    bottom: 4,
-                    right: -5,
-                    width: 7,
+                    top: shiftEm,
+                    bottom: shiftEm,
+                    right: offsetEm,
+                    width: thicknessEm,
                     cursor: 'ew-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'right')}
             />,
@@ -460,13 +395,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    top: -5,
-                    height: 9,
-                    left: -5,
-                    width: 9,
+                    top: squareShift,
+                    height: squareWidthHeight,
+                    left: squareShift,
+                    width: squareWidthHeight,
                     cursor: 'nwse-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top-left')}
             />,
@@ -476,13 +412,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    top: -5,
-                    height: 9,
-                    right: -5,
-                    width: 9,
+                    top: squareShift,
+                    height: squareWidthHeight,
+                    right: squareShift,
+                    width: squareWidthHeight,
                     cursor: 'nesw-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top-right')}
             />,
@@ -492,13 +429,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    bottom: -5,
-                    height: 9,
-                    left: -5,
-                    width: 9,
+                    bottom: squareShift,
+                    height: squareWidthHeight,
+                    left: squareShift,
+                    width: squareWidthHeight,
                     cursor: 'nesw-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom-left')}
             />,
@@ -508,13 +446,14 @@ class VisBaseWidget extends React.Component {
                 className="vis-editmode-resizer"
                 style={{
                     position: 'absolute',
-                    bottom: -5,
-                    height: 9,
-                    right: -5,
-                    width: 9,
+                    bottom: squareShift,
+                    height: squareWidthHeight,
+                    right: squareShift,
+                    width: squareWidthHeight,
                     cursor: 'nwse-resize',
-                    zIndex: 1,
+                    zIndex: 1203,
                     background: 'blue',
+                    opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom-right')}
             />,
@@ -554,10 +493,6 @@ class VisBaseWidget extends React.Component {
         const selectedOne = selected && this.props.selectedWidgets.length === 1;
         let classNames = selected ? 'vis-editmode-selected' : '';
 
-        if (!this.editMode && this.props.userGroups && !this.isUserMemberOfGroup(this.props.user, this.props.userGroups)) {
-            this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
-        }
-
         if (this.editMode && !widget.groupid) {
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
                 style.top = this.state.style.top;
@@ -582,33 +517,26 @@ class VisBaseWidget extends React.Component {
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
-            style.opacity = 0.3;
-
             style.cursor = selected ? 'move' : 'pointer';
 
-            if (selected) {
-                style.backgroundColor = 'green';
-            }
-
             if (widget.tpl.toLowerCase().includes('image')) {
-                classNames += ' vis-editmode-helper';
+                classNames = addClass(classNames, 'vis-editmode-helper');
                 style.opacity = style.opacity || 0.3;
             }
         }
 
-        // style.display = 'none';
-        style.overflow = 'hidden';
-
         const rxWidget = this.renderWidgetBody(classNames, style);
+        classNames = addClass(classNames, 'vis-editmode-overlay');
 
         return <div
-            className={classNames}
             id={`rx_${this.props.id}`}
             ref={this.refService}
             style={style}
-            // onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && VisBaseWidget.onClick(e) : undefined}
-            onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
         >
+            <div
+                className={classNames}
+                onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
+            />
             { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
                 <div className="vis-editmode-widget-name">{ this.props.id }</div>
                 : null }

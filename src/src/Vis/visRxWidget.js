@@ -13,12 +13,12 @@
  * (Free for non-commercial use).
  */
 
-import React from 'react';
 import PropTypes from 'prop-types';
+import VisBaseWidget from './visBaseWidget';
 
-class VisRxWidget extends React.Component {
+class VisRxWidget extends VisBaseWidget {
     constructor(props) {
-        super(props);
+        super(props, true);
     }
 
     render() {
@@ -29,36 +29,66 @@ class VisRxWidget extends React.Component {
 }
 
 VisRxWidget.propTypes = {
+    // eslint-disable-next-line react/no-unused-prop-types
     id: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     views: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     view: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     can: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     canStates: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     editMode: PropTypes.bool.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     runtime: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
     userGroups: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     user: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     allWidgets: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     jQuery: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     socket: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     isRelative: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
     viewsActiveFilter: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     setValue: PropTypes.func.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     $$: PropTypes.func, // Gestures library
+    // eslint-disable-next-line react/no-unused-prop-types
     refParent: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     linkContext: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     formatUtils: PropTypes.object,
+    // eslint-disable-next-line react/no-unused-prop-types
     selectedWidgets: PropTypes.array,
+    // eslint-disable-next-line react/no-unused-prop-types
     setSelectedWidgets: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     mouseDownOnView: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     registerRef: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     onWidgetsChanged: PropTypes.func,
+    // eslint-disable-next-line react/no-unused-prop-types
     showWidgetNames: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
     VisView: PropTypes.any,
 
+    // eslint-disable-next-line react/no-unused-prop-types
     adapterName: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     instance: PropTypes.number.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     projectName: PropTypes.string.isRequired,
 };
 

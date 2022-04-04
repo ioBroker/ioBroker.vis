@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import {
     replaceGroupAttr,
     addClass,
-    removeClass,
+    removeClass, getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
 
@@ -33,10 +33,37 @@ class VisCanWidget extends VisBaseWidget {
             legacyViewContainers: [],
             ...this.state,
         };
+
+        this.bindings = {};
+
+        const linkContext = {
+            IDs: [],
+            bindings: this.bindings,
+            visibility: this.props.linkContext.visibility,
+            lastChanges: this.props.linkContext.lastChanges,
+            signals: this.props.linkContext.signals,
+        };
+
+        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, linkContext);
+
+        this.IDs = linkContext.IDs;
+
+        // merge bindings
+        Object.keys(this.bindings).forEach(id => {
+            this.props.linkContext.bindings[id] = this.props.linkContext.bindings[id] || [];
+            this.bindings[id].forEach(item => this.props.linkContext.bindings[id].push(item));
+        });
+
+        // free mem
+        Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
+
+        this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
     }
 
     componentDidMount() {
         super.componentDidMount();
+
+        this.props.linkContext.subscribe(this.IDs, this.props.id, this.onStateChangeBound);
 
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
@@ -54,7 +81,26 @@ class VisCanWidget extends VisBaseWidget {
             }
         }
 
+        this.bindings = {};
+
+        if (this.props.linkContext) {
+            if (this.props.linkContext.unsubscribe) {
+                this.props.linkContext.unsubscribe(this.IDs, this.props.id, this.onStateChangeBound);
+            }
+
+            // remove all bindings from prop.linkContexts
+            VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+        }
+
         this.destroy();
+    }
+
+    static getDerivedStateFromProps() {
+        // do nothing and use UNSAFE_componentWillReceiveProps
+        return null;
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -77,6 +123,7 @@ class VisCanWidget extends VisBaseWidget {
                 console.log('ReRender!');
                 this.renderWidget(true, null, newStyle);
             }
+
             this.setState({ style: JSON.stringify(newStyle) });
         }
 
@@ -84,6 +131,33 @@ class VisCanWidget extends VisBaseWidget {
             this.editMode = nextProps.editMode;
             // rerender Widget
             this.renderWidget(true);
+        }
+    }
+
+    static applyStyle(el, style) {
+        if (typeof style === 'string') {
+            // style is a string
+            // "height: 10; width: 20"
+            style = VisBaseWidget.parseStyle(style);
+            Object.keys(style).forEach(attr => el.style[attr] = style[attr]);
+        } else if (style) {
+            // style is an object
+            // {
+            //      height: 10,
+            // }
+            Object.keys(style).forEach(attr => {
+                if (attr && style[attr] !== undefined && style[attr] !== null) {
+                    let value = style[attr];
+                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
+                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
+                            value = `${value}px`;
+                        }
+                    }
+                    if (value) {
+                        el.style[attr] = value;
+                    }
+                }
+            });
         }
     }
 
@@ -228,20 +302,6 @@ class VisCanWidget extends VisBaseWidget {
                 }
             }
         }
-    }
-
-    isUserMemberOfGroup(user, userGroups) {
-        if (!userGroups) {
-            return true;
-        }
-        if (!Array.isArray(userGroups)) {
-            userGroups = [userGroups];
-        }
-
-        return !!userGroups.find(groupId => {
-            const group = this.props.userGroups[`system.group.${groupId}`];
-            return group?.common?.members?.length && group.common.members.includes(`system.user.${user}`);
-        });
     }
 
     isWidgetFilteredOut() {
@@ -575,61 +635,6 @@ class VisCanWidget extends VisBaseWidget {
             }
         } else {
             return false;
-        }
-    }
-
-    static parseStyle(style, isRxStyle) {
-        const result = {};
-        // style is a string
-        // "height: 10; width: 20"
-        (style || '').split(';').forEach(part => {
-            part = part.trim();
-            if (part) {
-                let [attr, value] = part.split(':');
-                attr = attr.trim();
-                if (attr && value) {
-                    value = value.trim();
-                    if (!isRxStyle && (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height')) {
-                        if (value !== '0' && value.match(/^[-+]?\d+$/)) {
-                            value = `${value}px`;
-                        }
-                    }
-                    if (value) {
-                        result[attr] = value;
-                    }
-                }
-            }
-        });
-
-        return result;
-    }
-
-    static applyStyle(el, style) {
-        if (typeof style === 'string') {
-            // style is a string
-            // "height: 10; width: 20"
-            style = VisCanWidget.parseStyle(style);
-            Object.keys(style).forEach(attr => {
-                el.style[attr] = style[attr];
-            });
-        } else if (style) {
-            // style is an object
-            // {
-            //      height: 10,
-            // }
-            Object.keys(style).forEach(attr => {
-                if (attr && style[attr] !== undefined && style[attr] !== null) {
-                    let value = style[attr];
-                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
-                            value = `${value}px`;
-                        }
-                    }
-                    if (value) {
-                        el.style[attr] = value;
-                    }
-                }
-            });
         }
     }
 
@@ -1022,311 +1027,98 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    static onClick(e) {
-        // do nothing, just block the handler of view
-        e.stopPropagation();
-    }
-
-    onMouseDown(e) {
-        e.stopPropagation();
-        if (!this.props.selectedWidgets.includes(this.props.id)) {
-            if (e.shiftKey || e.ctrlKey) {
-                // add or remove
-                const pos = this.props.selectedWidgets.indexOf(this.props.id);
-                if (pos === -1) {
-                    const selectedWidgets = [...this.props.selectedWidgets, this.props.id];
-                    this.props.setSelectedWidgets(selectedWidgets);
-                } else {
-                    const selectedWidgets = [...this.props.selectedWidgets];
-                    selectedWidgets.splice(pos, 1);
-                    this.props.setSelectedWidgets(selectedWidgets);
-                }
-            } else {
-                // set select
-                this.props.setSelectedWidgets([this.props.id]);
-            }
-        } else {
-            this.props.mouseDownOnView(e);
+    renderWidgetBody() {
+        if (!this.editMode && this.widDiv && this.props.userGroups && !this.isUserMemberOfGroup(this.props.user, this.props.userGroups)) {
+            this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
         }
-    }
 
-    onMove = (x, y, save) => {
-        if (this.resize) {
-            if (x === undefined) {
-                // start of resizing
-                const rect = this.widDiv.getBoundingClientRect();
-
-                this.movement = {
-                    top: this.refService.current.offsetTop,
-                    left: this.refService.current.offsetLeft,
-                    width: rect.width,
-                    height: rect.height,
-                };
-                const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = 0.5);
-            } else if (this.resize === 'top') {
-                this.refService.current.style.top = `${this.movement.top + y}px`;
-                this.widDiv.style.top = `${this.movement.top + y}px`;
-                this.refService.current.style.height = `${this.movement.height - y}px`;
-                this.widDiv.style.height = `${this.movement.height - y}px`;
-            } else if (this.resize === 'bottom') {
-                this.refService.current.style.height = `${this.movement.height + y}px`;
-                this.widDiv.style.height = `${this.movement.height + y}px`;
-            } else if (this.resize === 'left') {
-                this.refService.current.style.left = `${this.movement.left + x}px`;
-                this.widDiv.style.left = `${this.movement.left + x}px`;
-                this.refService.current.style.width = `${this.movement.width - x}px`;
-                this.widDiv.style.width = `${this.movement.width - x}px`;
-            } else if (this.resize === 'right') {
-                this.refService.current.style.width = `${this.movement.width + x}px`;
-                this.widDiv.style.width = `${this.movement.width + x}px`;
-            } else if (this.resize === 'top-left') {
-                this.refService.current.style.top = `${this.movement.top + y}px`;
-                this.widDiv.style.top = `${this.movement.top + y}px`;
-                this.refService.current.style.left = `${this.movement.left + x}px`;
-                this.widDiv.style.left = `${this.movement.left + x}px`;
-                this.refService.current.style.height = `${this.movement.height - y}px`;
-                this.widDiv.style.height = `${this.movement.height - y}px`;
-                this.refService.current.style.width = `${this.movement.width - x}px`;
-                this.widDiv.style.width = `${this.movement.width - x}px`;
-            } else if (this.resize === 'top-right') {
-                this.refService.current.style.top = `${this.movement.top + y}px`;
-                this.widDiv.style.top = `${this.movement.top + y}px`;
-                this.refService.current.style.height = `${this.movement.height - y}px`;
-                this.widDiv.style.height = `${this.movement.height - y}px`;
-                this.refService.current.style.width = `${this.movement.width + x}px`;
-                this.widDiv.style.width = `${this.movement.width + x}px`;
-            } else if (this.resize === 'bottom-left') {
-                this.refService.current.style.left = `${this.movement.left + x}px`;
-                this.widDiv.style.left = `${this.movement.left + x}px`;
-                this.refService.current.style.height = `${this.movement.height + y}px`;
-                this.widDiv.style.height = `${this.movement.height + y}px`;
-                this.refService.current.style.width = `${this.movement.width - x}px`;
-                this.widDiv.style.width = `${this.movement.width - x}px`;
-            } else if (this.resize === 'bottom-right') {
-                this.refService.current.style.height = `${this.movement.height + y}px`;
-                this.widDiv.style.height = `${this.movement.height + y}px`;
-                this.refService.current.style.width = `${this.movement.width + x}px`;
-                this.widDiv.style.width = `${this.movement.width + x}px`;
-            }
-
-            // end of movement
-            if (save) {
-                const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = 1);
-                this.resize = false;
-                this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
-                    wid: this.props.id,
-                    view: this.props.view,
-                    style: {
-                        top: this.refService.current.style.top,
-                        left: this.refService.current.style.left,
-                        width: this.refService.current.style.width,
-                        height: this.refService.current.style.height,
-                    },
-                }]);
-
-                this.movement = null;
-            }
-        } else if (x === undefined) {
-            // initiate movement
-            this.movement = {
-                top: this.refService.current.offsetTop,
-                left: this.refService.current.offsetLeft,
-            };
-        } else if (this.movement) {
-            const left = `${this.movement.left + x}px`;
-            const top = `${this.movement.top + y}px`;
-
-            this.refService.current.style.left = left;
-            this.widDiv.style.left = left;
-
-            this.refService.current.style.top = top;
-            this.widDiv.style.top = top;
-
-            if (this.widDiv._customHandlers && this.widDiv._customHandlers.onMove) {
-                this.widDiv._customHandlers.onMove(this.widDiv, this.props.id);
-            }
-
-            if (save) {
-                this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
-                    wid: this.props.id,
-                    view: this.props.view,
-                    style: {
-                        left: this.movement.left + x,
-                        top: this.movement.top + y,
-                    },
-                }]);
-
-                this.movement = null;
-            }
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const groupWidgets = widget?.data?.members;
+        let rxGroupWidgets = null;
+        if (groupWidgets?.length && this.state.mounted && this.widDiv) {
+            rxGroupWidgets = groupWidgets.map(wid => <VisCanWidget
+                key={wid}
+                id={wid}
+                views={this.props.views}
+                view={this.props.view}
+                can={this.props.can}
+                canStates={this.props.canStates}
+                userGroups={this.props.userGroups}
+                user={this.props.user}
+                registerRef={this.props.registerRef}
+                allWidgets={this.props.allWidgets}
+                refParent={this.widDiv}
+                editMode={this.props.editMode}
+                jQuery={this.props.jQuery}
+                socket={this.props.socket}
+                viewsActiveFilter={this.props.viewsActiveFilter}
+                setValue={this.props.setValue}
+                $$={this.props.$$}
+                linkContext={this.props.linkContext}
+                formatUtils={this.props.formatUtils}
+                adapterName={this.props.adapterName}
+                instance={this.props.instance}
+                projectName={this.props.projectName}
+                VisView={this.props.VisView}
+                editGroup={false}
+            />);
         }
-    }
 
-    onTempSelect = selected => {
-        if (selected === null || selected === undefined)  {
-            // restore original state
-            if (this.props.selectedWidgets.includes(this.props.id)) {
-                this.refService.current.style.backgroundColor = 'green';
-                if (!this.refService.current.className.includes('vis-editmode-selected')) {
-                    this.refService.current.className = addClass('vis-editmode-selected', this.refService.current.className);
-                }
-            } else {
-                this.refService.current.style.backgroundColor = '';
-                this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-selected');
+        const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
+            const VisView = this.props.VisView;
+            this.refViews[view] = this.refViews[view] || React.createRef();
+            const otherRef = this.props.linkContext.getViewRef(view);
+            if (otherRef && otherRef !== this.refViews[view]) {
+                console.log('View is not rendered as used somewhere else!');
+                return null;
+                /*
+                <div ref={this.refViews[view]} key={view + Math.random() * 10000}>
+                    View is not rendered as used somewhere else!
+                </div>;
+                */
             }
-        } else {
-            this.refService.current.style.backgroundColor = selected ? 'green' : '';
 
-            if (selected) {
-                if (!this.refService.current.className.includes('vis-editmode-selected')) {
-                    this.refService.current.className = addClass('vis-editmode-selected', this.refService.current.className);
-                }
-            } else {
-                this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-selected');
-            }
+            return <VisView
+                ref={this.refViews[view]}
+                key={view}
+                view={view}
+                activeView={view}
+                views={this.props.views}
+                editMode={false}
+                can={this.props.can}
+                canStates={this.props.canStates}
+                user={this.props.user}
+                userGroups={this.props.userGroups}
+                allWidgets={this.props.allWidgets}
+                jQuery={this.props.jQuery}
+                $$={this.props.$$}
+                registerRef={this.props.registerRef}
+                adapterName={this.props.adapterName}
+                instance={this.props.instance}
+                projectName={this.props.projectName}
+                socket={this.props.socket}
+                viewsActiveFilter={this.props.viewsActiveFilter}
+                setValue={this.props.setValue}
+                linkContext={this.props.linkContext}
+                formatUtils={this.props.formatUtils}
+                selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
+                setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
+                onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
+                showWidgetNames={this.props.showWidgetNames}
+            />;
+        }) : null;
+
+        if (legacyViewContainers?.length) {
+            // style.overflow = 'hidden';
         }
-    }
 
-    onResizeStart(e, type) {
-        e.stopPropagation();
-        this.resize = type;
-        this.props.mouseDownOnView();
-    }
+        return <>
+            { legacyViewContainers }
 
-    getResizeHandlers() {
-        return [
-            // top
-            <div
-                key="top"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: -5,
-                    height: 7,
-                    left: 4,
-                    right: 4,
-                    cursor: 'ns-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top')}
-            />,
-            // bottom
-            <div
-                key="bottom"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: -5,
-                    height: 7,
-                    left: 4,
-                    right: 4,
-                    cursor: 'ns-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom')}
-            />,
-            // left
-            <div
-                key="left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: 4,
-                    bottom: 4,
-                    left: -5,
-                    width: 7,
-                    cursor: 'ew-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'left')}
-            />,
-            // right
-            <div
-                key="right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: 4,
-                    bottom: 4,
-                    right: -5,
-                    width: 7,
-                    cursor: 'ew-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'right')}
-            />,
-            // top left
-            <div
-                key="top-left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: -5,
-                    height: 9,
-                    left: -5,
-                    width: 9,
-                    cursor: 'nwse-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top-left')}
-            />,
-            // top right
-            <div
-                key="top-right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: -5,
-                    height: 9,
-                    right: -5,
-                    width: 9,
-                    cursor: 'nesw-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top-right')}
-            />,
-            // bottom left
-            <div
-                key="bottom-left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: -5,
-                    height: 9,
-                    left: -5,
-                    width: 9,
-                    cursor: 'nesw-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom-left')}
-            />,
-            // bottom right
-            <div
-                key="bottom-right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: -5,
-                    height: 9,
-                    right: -5,
-                    width: 9,
-                    cursor: 'nwse-resize',
-                    zIndex: 1,
-                    background: 'blue',
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom-right')}
-            />,
-        ];
+            { rxGroupWidgets }
+        </>;
     }
-
+    /*
     render() {
         if (this.props.editGroup) {
             console.log('EDIT group is not implemented!');
@@ -1416,11 +1208,9 @@ class VisCanWidget extends VisBaseWidget {
             if (otherRef && otherRef !== this.refViews[view]) {
                 console.log('View is not rendered as used somewhere else!');
                 return null;
-                /*
-                <div ref={this.refViews[view]} key={view + Math.random() * 10000}>
-                    View is not rendered as used somewhere else!
-                </div>;
-                */
+                // <div ref={this.refViews[view]} key={view + Math.random() * 10000}>
+                //    View is not rendered as used somewhere else!
+                // </div>;
             }
 
             return <VisView
@@ -1462,18 +1252,16 @@ class VisCanWidget extends VisBaseWidget {
             id={`rx_${this.props.id}`}
             ref={this.refService}
             style={style}
-            onClick={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && VisCanWidget.onClick(e) : undefined}
             onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
         >
             { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
                 <div className="vis-editmode-widget-name">{ this.props.id }</div>
                 : null }
             { selectedOne ? this.getResizeHandlers() : null }
-            { legacyViewContainers }
 
-            { rxGroupWidgets }
         </div>;
     }
+     */
 }
 
 VisCanWidget.propTypes = {

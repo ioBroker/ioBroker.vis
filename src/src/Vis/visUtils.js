@@ -31,7 +31,7 @@ function replaceGroupAttr(inputStr, groupAttrList) {
 
 function getWidgetGroup(views, view, widget) {
     const widgets = views[view].widgets;
-    if (widgets[widget].groupid) {
+    if (widgets[widget]?.groupid) {
         return views[view].widgets[widget].groupid;
     }
 
@@ -39,7 +39,7 @@ function getWidgetGroup(views, view, widget) {
         if (!Object.prototype.hasOwnProperty.call(widgets, w)) {
             continue;
         }
-        const members = widgets[w].data.members;
+        const members = widgets[w].data?.members;
         if (members?.includes(widget)) {
             return w;
         }

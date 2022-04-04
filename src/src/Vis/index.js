@@ -223,7 +223,8 @@ class VisEngine extends React.Component {
 
         this.formatUtils = new VisFormatUtils({ vis: this.vis });
 
-        this.readGroups()
+        this.loadEditWords()
+            .then(() => this.readGroups())
             .then(userGroups => {
                 this.userGroups = userGroups;
                 return this.props.socket.getCurrentUser();
@@ -651,6 +652,19 @@ class VisEngine extends React.Component {
             });
 
         return Promise.all(loadPromises);
+    }
+
+    loadEditWords() {
+        if (!this.props.runtime) {
+            return new Promise(resolve => {
+                const newScript = document.createElement('script');
+                newScript.setAttribute('src', 'lib/js/visEditWords.js');
+                newScript.onload = resolve;
+                window.document.head.appendChild(newScript);
+            });
+        }
+
+        return Promise.resolve();
     }
 
     loadWidgets() {

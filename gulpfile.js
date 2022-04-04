@@ -477,7 +477,7 @@ gulp.task('updateReadme', done => {
         const readmeStart = readme.substring(0, pos + '## Changelog\n'.length);
         const readmeEnd   = readme.substring(pos + '## Changelog\n'.length);
 
-        if (readme.indexOf(version) === -1) {
+        if (!readme.includes(version)) {
             const timestamp = new Date();
             const date = timestamp.getFullYear() + '-' +
                 ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
@@ -488,7 +488,7 @@ gulp.task('updateReadme', done => {
                 news += '* ' + iopackage.common.news[pkg.version].en;
             }
 
-            fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
+            fs.writeFileSync('README.md', `${readmeStart}### ${version} (${date})\n${news ? news + '\n\n' : '\n'}${readmeEnd}`);
         }
     }
     done();

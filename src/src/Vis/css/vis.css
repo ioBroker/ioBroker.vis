@@ -67,6 +67,17 @@ body, html {
     background-size: 1em 1em;
 }
 
+.vis-editmode-overlay {
+    width: 100%;
+    height: 100%;
+    z-index: 1202;
+    opacity: 0.3;
+    position: absolute;
+}
+.vis-editmode-selected.vis-editmode-overlay {
+    background-color: green;
+}
+
 .vis-editmode-selected.vis-editmode-helper {
     background-image: /* tint image */
             linear-gradient(to right, rgb(9, 140, 4, 0.75), rgb(9, 140, 4, 0.75)),
