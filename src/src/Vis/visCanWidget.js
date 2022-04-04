@@ -974,7 +974,7 @@ class VisCanWidget extends VisBaseWidget {
 
                 // this.$(document).trigger('wid_added', id);
 
-                if (userGroups && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
+                if (userGroups && widget.data['visibility-groups-action'] === 'disabled' && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
                     this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
                 }
 

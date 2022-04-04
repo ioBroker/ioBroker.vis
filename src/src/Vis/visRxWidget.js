@@ -15,7 +15,7 @@
 
 import PropTypes from 'prop-types';
 import VisBaseWidget from './visBaseWidget';
-import { getUsedObjectIDsInWidget } from './visUtils';
+import {addClass, getUsedObjectIDsInWidget} from './visUtils';
 
 class VisRxWidget extends VisBaseWidget {
     constructor(props) {
@@ -27,6 +27,7 @@ class VisRxWidget extends VisBaseWidget {
             rxStyle: this.state.style,
             values: {},
             visible: true,
+            disabled: false,
         };
 
         this.linkContext = {
@@ -55,6 +56,17 @@ class VisRxWidget extends VisBaseWidget {
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, newState));
 
         newState.visible = this.checkVisibility(id, newState);
+        const userGroups = newState.rxData['visibility-groups'];
+        newState.disabled = false;
+
+        if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
+            if (newState.rxData['visibility-groups-action'] === 'disabled') {
+                newState.disabled = true;
+            } else {
+                // newState.rxData['visibility-groups-action'] === 'hide'
+                newState.visible = false;
+            }
+        }
 
         this.setState(newState);
     }
@@ -105,13 +117,17 @@ class VisRxWidget extends VisBaseWidget {
     renderWidgetBody(props) {
         props.id = this.props.id;
 
+        props.className = `vis-widget ${this.state.rxData.class || ''}`;
+
+        if (!this.state.editMode && this.state.disabled) {
+            props.className = addClass(props.className, 'vis-user-disabled');
+        }
+
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
             attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
             props.style[attr] = value;
         });
-
-        props.className = `vis-widget ${this.state.rxData.class || ''}`;
     }
 
     onPropertiesUpdated() {

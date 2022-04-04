@@ -66,7 +66,7 @@ class VisBaseWidget extends React.Component {
         }
 
         if (props.editMode !== state.editMode) {
-            return { editMode: props.editMode };
+            return { editMode: props.editMode, applyBindings: true };
         }
 
         return null; // No change to state
@@ -612,9 +612,9 @@ class VisBaseWidget extends React.Component {
             style.overflow = 'visible';
         }
 
-        const overlay = widget.groupid ? null : <div
+        const overlay = this.props.runtime || !this.state.editMode || widget.groupid ? null : <div
             className={classNames}
-            onMouseDown={!this.props.runtime ? e => this.state.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
+            onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
         />;
 
         return <div

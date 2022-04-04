@@ -400,9 +400,9 @@ const WidgetField = props => {
     }
     if (field.type === 'groups') {
         const options = props.groups.map(group => ({
-            name: typeof group.common.name === 'string' ? group.common.name : group.common.name[i18n.getLanguage()],
+            name: typeof group.common.name === 'string' ? group.common.name : group.common.name[i18n.getLanguage()] || group.common.name.en,
             /* eslint no-underscore-dangle: 0 */
-            value: group._id.split('.')[2],
+            value: group._id.replace(/^system\.group\./, ''),
         }));
         return <Select
             variant="standard"
@@ -558,6 +558,7 @@ const WidgetField = props => {
             }}
         />;
     }
+
     return <>
         {field.type}
         {'/'}

@@ -31,16 +31,22 @@ class BasicValueString extends VisRxWidget {
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        // set default width and height
+        if (props.style.width === undefined) {
+            props.style.width = 50;
+        }
+        if (props.style.height === undefined) {
+            props.style.height = 20;
+        }
 
-        const oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
+        const oid = this.state.rxData.oid && this.state.rxData.oid.includes('"') ? '' : this.state.rxData.oid || '';
 
         let body;
-        if (this.props.editMode && widget.data.test_html) {
-            body = widget.data.test_html;
-        } else if (widget.data.oid) {
-            if (widget.data.oid.includes('"')) {
-                body = widget.data.oid.substring(1, widget.data.oid.length - 1);
+        if (this.props.editMode && this.state.rxData.test_html) {
+            body = this.state.rxData.test_html;
+        } else if (this.state.rxData.oid) {
+            if (this.state.rxData.oid.includes('"')) {
+                body = this.state.rxData.oid.substring(1, this.state.rxData.oid.length - 1);
             } else if (oid) {
                 body = this.state.values[`${oid}.val`];
             } else {
@@ -52,9 +58,9 @@ class BasicValueString extends VisRxWidget {
 
         return <div className="vis-widget-body">
             <div data-oid={oid}>
-                { widget.data.html_prepend || '' }
+                { this.state.rxData.html_prepend || '' }
                 { body }
-                { widget.data.html_append || '' }
+                { this.state.rxData.html_append || '' }
             </div>
         </div>;
     }

@@ -17,11 +17,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
-// import VisBaseWidget from './visBaseWidget';
 import BasicValueString from './Widgets/Basic/BasicValueString';
+import BasicViewInWidget from './Widgets/Basic/BasicViewInWidget';
 
 const WIDGETS = [
     BasicValueString,
+    BasicViewInWidget,
 ];
 
 // 1300 is the React dialog
@@ -308,7 +309,7 @@ class VisView extends React.Component {
                         widget.style.position === 'sticky'
                     );
 
-                    let Widget = VisView.widgets[widget.tpl];
+                    const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
 
                     const props = {
                         key: id,
@@ -339,13 +340,11 @@ class VisView extends React.Component {
                         VisView,
                     };
 
-                    if (!Widget) {
-                        props.can = this.props.can;
-                        props.canStates = this.props.canStates;
-                        props.jQuery = this.props.jQuery;
-                        props.$$ = this.props.$$;
-                        Widget = VisCanWidget;
-                    }
+                    // we must add it because of view in widget
+                    props.can = this.props.can;
+                    props.canStates = this.props.canStates;
+                    props.jQuery = this.props.jQuery;
+                    props.$$ = this.props.$$;
 
                     const rxWidget = <Widget {...props} />;
 
