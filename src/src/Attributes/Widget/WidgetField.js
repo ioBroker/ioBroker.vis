@@ -155,7 +155,7 @@ const WidgetField = props => {
                 : project[props.selectedView].widgets[selectedWidget].data;
             data[field.name] = changeValue;
             if (field.onChangeFunc) {
-                window.vis.binds[field.onChangeFunc](
+                window.vis.binds[widget.widgetSet][field.onChangeFunc](
                     selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
                     props.isStyle ? widget.style[field.name] : widget.data[field.name],
                 );
@@ -185,6 +185,7 @@ const WidgetField = props => {
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
+                customFilter={field.filter}
             /> : null}
         </>;
     }

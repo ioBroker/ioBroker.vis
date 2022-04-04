@@ -358,7 +358,8 @@ const Widget = props => {
                     const field = {
                         name: match[1],
                         default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined,
-                        type: match[4] ? match[4].substring(1) : undefined,
+                        type: match[4] ? match[4].substring(1).split('/')[0] : undefined,
+                        onChangeFunc: match[4] ? match[4].substring(1).split('/')[1] : undefined,
                     };
 
                     if (widgetIndex > 0 && !repeats && !commonFields[`${groupName}.${field.name}`]) {
@@ -380,6 +381,10 @@ const Widget = props => {
                         field.type = 'effect-options';
                     }
 
+                    if (field.type && (field.type.startsWith('id,'))) {
+                        const options = field.type.split(',');
+                        [field.type, field.filter] = options;
+                    }
                     if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,'))) {
                         const options = field.type.split(',');
                         [field.type] = options;
@@ -525,8 +530,8 @@ const Widget = props => {
         return <div>
             <h4>{props.selectedWidgets.join(', ')}</h4>
             <pre>
-                {/* {JSON.stringify(widgetType, null, 2)}
-                // {JSON.stringify(fieldsManual, null, 2)} */}
+                {JSON.stringify(widgetType, null, 2)}
+                {JSON.stringify(fieldsManual, null, 2)}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
