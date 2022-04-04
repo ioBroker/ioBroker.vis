@@ -530,8 +530,8 @@ const Widget = props => {
         return <div>
             <h4>{props.selectedWidgets.join(', ')}</h4>
             <pre>
-                {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fieldsManual, null, 2)}
+                {/* {JSON.stringify(widgetType, null, 2)}
+                {JSON.stringify(fieldsManual, null, 2)} */}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
@@ -590,7 +590,7 @@ const Widget = props => {
                 </AccordionDetails>
             </Accordion>)}
             <pre>
-                {/* {JSON.stringify(widget, null, 2)} */}
+                {JSON.stringify(widget, null, 2)}
             </pre>
         </div>;
     }

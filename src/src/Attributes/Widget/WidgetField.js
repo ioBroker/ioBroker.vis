@@ -164,7 +164,10 @@ const WidgetField = props => {
         props.changeProject(project);
     };
 
-    const value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    let value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    if (value === undefined) {
+        value = '';
+    }
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         return <>
