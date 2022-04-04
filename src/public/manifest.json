@@ -1,6 +1,6 @@
 {
-  "short_name": "Scheduler",
-  "name": "ioBroker.Scheduler",
+  "short_name": "vis",
+  "name": "ioBroker.vis",
   "icons": [
     {
       "src": "favicon.ico",
