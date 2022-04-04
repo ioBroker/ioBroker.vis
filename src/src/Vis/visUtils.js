@@ -71,8 +71,8 @@ function extractBinding(format) {
             let systemOid = parts[0].trim();
             let visOid = systemOid;
 
-            let test1 = visOid.substring(visOid.length - 4);
-            let test2 = visOid.substring(visOid.length - 3);
+            let test1 = visOid.substring(visOid.length - 4).trim();
+            let test2 = visOid.substring(visOid.length - 3).trim();
 
             if (visOid && test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
                 visOid += '.val';
@@ -94,8 +94,8 @@ function extractBinding(format) {
             if (isEval) {
                 const xx = visOid.split(':', 2);
                 const yy = systemOid.split(':', 2);
-                visOid = xx[1];
-                systemOid = yy[1];
+                visOid = xx[1].trim();
+                systemOid = yy[1].trim();
                 operations = operations || [];
                 operations.push({
                     op: 'eval',
@@ -133,9 +133,9 @@ function extractBinding(format) {
                         const y1 = _systemOid.split(':', 2);
 
                         operations[0].arg.push({
-                            name: x1[0],
-                            visOid: x1[1],
-                            systemOid: y1[1],
+                            name: x1[0].trim(),
+                            visOid: x1[1].trim(),
+                            systemOid: y1[1].trim(),
                         });
                     } else {
                         parts[u] = parts[u].replace(/::/g, ':');
@@ -425,46 +425,48 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         if (typeof data[attr] === 'string') {
             let m;
             // Process bindings in data attributes
-            const oids = extractBinding(data[attr]);
+            const OIDs = extractBinding(data[attr]);
 
-            if (oids) {
-                for (let t = 0; t < oids.length; t++) {
-                    const ssid = oids[t].systemOid;
-                    if (ssid) {
+            if (OIDs) {
+                OIDs.forEach(item => {
+                    const systemOid = item.systemOid;
+                    if (systemOid) {
                         // Save id for subscribe
-                        !linkContext.IDs.includes(ssid) && linkContext.IDs.push(ssid);
+                        !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
 
-                        if (linkContext.byViews && !linkContext.byViews[view].includes(ssid)) {
-                            linkContext.byViews[view].push(ssid);
+                        if (linkContext.byViews && !linkContext.byViews[view].includes(systemOid)) {
+                            linkContext.byViews[view].push(systemOid);
                         }
 
-                        linkContext.bindings[ssid] = linkContext.bindings[ssid] || [];
-                        oids[t].type = 'data';
-                        oids[t].attr = attr;
-                        oids[t].view = view;
-                        oids[t].widget = wid;
+                        linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
+                        item.type = 'data';
+                        item.attr = attr;
+                        item.view = view;
+                        item.widget = wid;
 
-                        linkContext.bindings[ssid].push(oids[t]);
+                        linkContext.bindings[systemOid].push(item);
                     }
 
-                    if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                        for (let ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
-                            const systemOid = oids[t].operations[0].arg[ww].systemOid;
-                            if (!systemOid) {
+                    if (item.operations && Array.isArray(item.operations[0].arg)) {
+                        for (let ww = 0; ww < item.operations[0].arg.length; ww++) {
+                            const _systemOid = item.operations[0].arg[ww].systemOid;
+                            if (!_systemOid) {
                                 continue;
                             }
 
-                            !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
+                            !linkContext.IDs.includes(_systemOid) && linkContext.IDs.push(_systemOid);
 
-                            if (linkContext.byViews && linkContext.byViews[view].includes(systemOid)) {
-                                linkContext.byViews[view].push(systemOid);
+                            if (linkContext.byViews && linkContext.byViews[view].includes(_systemOid)) {
+                                linkContext.byViews[view].push(_systemOid);
                             }
 
-                            linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
-                            linkContext.bindings[systemOid].push(oids[t]);
+                            linkContext.bindings[_systemOid] = linkContext.bindings[_systemOid] || [];
+                            if (!linkContext.bindings[_systemOid].includes(item)) {
+                                linkContext.bindings[_systemOid].push(item);
+                            }
                         }
                     }
-                }
+                });
             } else
             if (attr !== 'oidTrueValue' &&
                 attr !== 'oidFalseValue' &&
@@ -476,7 +478,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     ) && data[attr]
                 )
             ) {
-                if (data[attr] && data[attr] !== 'nothing_selected') {
+                if (data[attr] && data[attr] !== 'nothing_selected' && !data[attr].startsWith('"')) {
                     if (!linkContext.IDs.includes(data[attr])) {
                         linkContext.IDs.push(data[attr]);
                     }
@@ -525,20 +527,20 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     });
                 }
                 if (attr === 'lc-oid') {
-                    let lcsid = data[attr];
+                    let lcSid = data[attr];
 
                     if (widget.grouped) {
                         const gGroup = getWidgetGroup(views, view, wid);
                         if (gGroup) {
-                            const result3 = replaceGroupAttr(lcsid, views[view].widgets[gGroup].data);
+                            const result3 = replaceGroupAttr(lcSid, views[view].widgets[gGroup].data);
                             if (result3.doesMatch) {
-                                lcsid = result3.newString;
+                                lcSid = result3.newString;
                             }
                         }
                     }
 
-                    linkContext.lastChanges[lcsid] = linkContext.lastChanges[lcsid] || [];
-                    linkContext.lastChanges[lcsid].push({ view, widget: wid });
+                    linkContext.lastChanges[lcSid] = linkContext.lastChanges[lcSid] || [];
+                    linkContext.lastChanges[lcSid].push({ view, widget: wid });
                 }
             } else
             // eslint-disable-next-line no-cond-assign
@@ -560,43 +562,45 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     if (style) {
         Object.keys(style).forEach(cssAttr => {
             if (cssAttr && typeof style[cssAttr] === 'string') {
-                const objIDs = extractBinding(style[cssAttr]);
-                if (objIDs) {
-                    for (let tt = 0; tt < objIDs.length; tt++) {
-                        const sidd = objIDs[tt].systemOid;
-                        if (sidd) {
-                            !linkContext.IDs.includes(sidd) && linkContext.IDs.push(sidd);
-                            if (linkContext.byViews && linkContext.byViews[view].includes(sidd)) {
-                                linkContext.byViews[view].push(sidd);
+                const OIDs = extractBinding(style[cssAttr]);
+                if (OIDs) {
+                    OIDs.forEach(item => {
+                        const systemOid = item.systemOid;
+                        if (systemOid) {
+                            !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
+                            if (linkContext.byViews && linkContext.byViews[view].includes(systemOid)) {
+                                linkContext.byViews[view].push(systemOid);
                             }
 
-                            linkContext.bindings[sidd] = linkContext.bindings[sidd] || [];
+                            linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
 
-                            objIDs[tt].type = 'style';
-                            objIDs[tt].attr = cssAttr;
-                            objIDs[tt].view = view;
-                            objIDs[tt].widget = wid;
+                            item.type = 'style';
+                            item.attr = cssAttr;
+                            item.view = view;
+                            item.widget = wid;
 
-                            linkContext.bindings[sidd].push(objIDs[tt]);
+                            linkContext.bindings[systemOid].push(item);
                         }
 
-                        if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
-                            for (let w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
-                                const systemOid = objIDs[tt].operations[0].arg[w].systemOid;
-                                if (!systemOid) {
+                        if (item.operations && Array.isArray(item.operations[0].arg)) {
+                            for (let w = 0; w < item.operations[0].arg.length; w++) {
+                                const _systemOid = item.operations[0].arg[w].systemOid;
+                                if (!_systemOid) {
                                     continue;
                                 }
 
-                                !linkContext.IDs.includes(systemOid) && linkContext.IDs.push(systemOid);
+                                !linkContext.IDs.includes(_systemOid) && linkContext.IDs.push(_systemOid);
 
-                                if (linkContext.byViews && !linkContext.byViews[view].includes(systemOid)) {
-                                    linkContext.byViews[view].push(systemOid);
+                                if (linkContext.byViews && !linkContext.byViews[view].includes(_systemOid)) {
+                                    linkContext.byViews[view].push(_systemOid);
                                 }
-                                linkContext.bindings[systemOid] = linkContext.bindings[systemOid] || [];
-                                linkContext.bindings[systemOid].push(objIDs[tt]);
+                                linkContext.bindings[_systemOid] = linkContext.bindings[_systemOid] || [];
+                                if (!linkContext.bindings[_systemOid].includes) {
+                                    linkContext.bindings[_systemOid].push(item);
+                                }
                             }
                         }
-                    }
+                    });
                 }
             }
         });

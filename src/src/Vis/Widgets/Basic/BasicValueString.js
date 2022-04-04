@@ -28,24 +28,9 @@ class BasicValueString extends VisRxWidget {
         };
     }
 
-    componentDidMount() {
-        super.componentDidMount();
-        // subscribe on OID
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
-        this.oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
-        this.oid && this.props.socket.subscribeState(this.oid, this.onStateChanged);
-    }
+    renderWidgetBody(props) {
+        super.renderWidgetBody(props);
 
-    componentWillUnmount() {
-        this.oid && this.props.socket.unsubscribeState(this.oid, this.onStateChanged);
-        super.componentWillUnmount();
-    }
-
-    onStateChanged = (id, state) => {
-        this.setState({ [`${id}.val`]: state ? state.val : '' });
-    }
-
-    renderWidgetBody() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
 
         const oid = widget.data.oid && widget.data.oid.includes('"') ? '' : widget.data.oid || '';
@@ -56,8 +41,8 @@ class BasicValueString extends VisRxWidget {
         } else if (widget.data.oid) {
             if (widget.data.oid.includes('"')) {
                 body = widget.data.oid.substring(1, widget.data.oid.length - 1);
-            } else if (this.oid) {
-                body = this.state[`${this.oid}.val`];
+            } else if (oid) {
+                body = this.state.values[`${oid}.val`];
             } else {
                 body = '';
             }
@@ -65,25 +50,11 @@ class BasicValueString extends VisRxWidget {
             body = '';
         }
 
-        const style = {
-            ...widget.style,
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-        };
-
-        return <div
-            className={`vis-widget ${widget.class || ''}`}
-            style={style}
-            id={this.props.id}
-        >
-            <div className="vis-widget-body">
-                <div data-oid={oid}>
-                    { widget.data.html_prepend || '' }
-                    { body }
-                    { widget.data.html_append || '' }
-                </div>
+        return <div className="vis-widget-body">
+            <div data-oid={oid}>
+                { widget.data.html_prepend || '' }
+                { body }
+                { widget.data.html_append || '' }
             </div>
         </div>;
     }
@@ -94,31 +65,6 @@ BasicValueString.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    runtime: PropTypes.bool,
-    userGroups: PropTypes.object.isRequired,
-    user: PropTypes.string.isRequired,
-    allWidgets: PropTypes.object.isRequired,
-    jQuery: PropTypes.func.isRequired,
-    socket: PropTypes.object.isRequired,
-    isRelative: PropTypes.bool,
-    viewsActiveFilter: PropTypes.object.isRequired,
-    setValue: PropTypes.func.isRequired,
-    $$: PropTypes.func, // Gestures library
-    refParent: PropTypes.object.isRequired,
-    linkContext: PropTypes.object.isRequired,
-    formatUtils: PropTypes.object,
-    selectedWidgets: PropTypes.array,
-    setSelectedWidgets: PropTypes.func,
-    mouseDownOnView: PropTypes.func,
-    registerRef: PropTypes.func,
-    onWidgetsChanged: PropTypes.func,
-    showWidgetNames: PropTypes.bool,
-    editGroup: PropTypes.bool,
-    VisView: PropTypes.any,
-
-    adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
 };
 
 export default BasicValueString;

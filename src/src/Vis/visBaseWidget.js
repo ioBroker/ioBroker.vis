@@ -28,32 +28,18 @@ class VisBaseWidget extends React.Component {
         super(props);
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
-        this.editMode = this.props.editMode;
         this.refService = React.createRef();
+        this.refName = React.createRef();
         this.resize = false;
         this.widDiv = null;
-        this.isRx = isRx;
 
         this.state = {
+            isRx,
             data: JSON.parse(JSON.stringify(widget.data)),
-            style: this.copyStyle(widget.style),
+            style: JSON.parse(JSON.stringify(widget.style)),
+            applyBindings: false,
+            editMode: this.props.editMode,
         };
-    }
-
-    copyStyle(style) {
-        let newStyle;
-        if (this.isRx) {
-            newStyle = {};
-            Object.keys(style).forEach(attr => {
-                const val = style[attr];
-                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
-                newStyle[attr] = val;
-            });
-        } else {
-            newStyle = JSON.parse(JSON.stringify(style));
-        }
-
-        return newStyle;
     }
 
     componentDidMount() {
@@ -69,10 +55,18 @@ class VisBaseWidget extends React.Component {
     static getDerivedStateFromProps(props, state) {
         const widget = props.views[props.view].widgets[props.id];
 
-        if (JSON.stringify(widget.style) !== JSON.stringify(state.style)) {
+        if (JSON.stringify(widget.style) !== JSON.stringify(state.style) ||
+            JSON.stringify(widget.data) !== JSON.stringify(state.data)
+        ) {
             return {
                 style: JSON.parse(JSON.stringify(widget.style)),
+                data: JSON.parse(JSON.stringify(widget.data)),
+                applyBindings: true,
             };
+        }
+
+        if (state.isRx && props.editMode !== state.editMode) {
+            return { editMode: props.editMode };
         }
 
         return null; // No change to state
@@ -280,26 +274,27 @@ class VisBaseWidget extends React.Component {
     }
 
     onTempSelect = selected => {
+        const ref = this.refService.current?.querySelector('.vis-editmode-overlay');
+        if (!ref) {
+            return;
+        }
         if (selected === null || selected === undefined)  {
             // restore original state
             if (this.props.selectedWidgets.includes(this.props.id)) {
-                this.refService.current.style.backgroundColor = 'green';
-                if (!this.refService.current.className.includes('vis-editmode-selected')) {
-                    this.refService.current.className = addClass('vis-editmode-selected', this.refService.current.className);
+                if (!ref.className.includes('vis-editmode-selected')) {
+                    ref.className = addClass('vis-editmode-selected', ref.className);
                 }
             } else {
-                this.refService.current.style.backgroundColor = '';
-                this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-selected');
+                ref.style.backgroundColor = '';
+                ref.className = removeClass(ref.className, 'vis-editmode-selected');
             }
         } else {
-            this.refService.current.style.backgroundColor = selected ? 'green' : '';
-
             if (selected) {
-                if (!this.refService.current.className.includes('vis-editmode-selected')) {
-                    this.refService.current.className = addClass('vis-editmode-selected', this.refService.current.className);
+                if (!ref.className.includes('vis-editmode-selected')) {
+                    ref.className = addClass('vis-editmode-selected', ref.className);
                 }
             } else {
-                this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-selected');
+                ref.className = removeClass(ref.className, 'vis-editmode-selected');
             }
         }
     }
@@ -307,7 +302,7 @@ class VisBaseWidget extends React.Component {
     onResizeStart(e, type) {
         e.stopPropagation();
         this.resize = type;
-        this.props.mouseDownOnView();
+        this.props.mouseDownOnView(e);
     }
 
     getResizeHandlers() {
@@ -474,26 +469,103 @@ class VisBaseWidget extends React.Component {
         });
     }
 
-    isWidgetFilteredOut() {
-        const widgetData = this.props.allWidgets[this.props.id].data;
+    isWidgetFilteredOut(widgetData) {
         const v = this.props.viewsActiveFilter[this.props.view];
-
         return widgetData?.filterkey && v?.length > 0 && !v.includes(widgetData.filterkey);
+    }
+
+    isWidgetHidden(widgetData, states) {
+        const oid = widgetData['visibility-oid'];
+        const condition = widgetData['visibility-cond'];
+
+        if (oid) {
+            let val = states[`${oid}.val`];
+
+            if (val === undefined || val === null) {
+                return condition === 'not exist';
+            }
+
+            let value = widgetData['visibility-val'];
+
+            if (!condition || value === undefined || value === null) {
+                return condition === 'not exist';
+            }
+
+            if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                return false;
+            }
+
+            const t = typeof val;
+            if (t === 'boolean' || val === 'false' || val === 'true') {
+                value = value === 'true' || value === true || value === 1 || value === '1';
+            } else
+            if (t === 'number') {
+                value = parseFloat(value);
+            } else
+            if (t === 'object') {
+                val = JSON.stringify(val);
+            }
+
+            // Take care: return true if widget is hidden!
+            switch (condition) {
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '>=':
+                    return val < value;
+                case '<=':
+                    return val > value;
+                case '>':
+                    return val <= value;
+                case '<':
+                    return val >= value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return !val.toString().includes(value);
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().includes(value);
+                case 'exist':
+                    return val === 'null';
+                case 'not exist':
+                    return val !== 'null';
+                default:
+                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
+                    return false;
+            }
+        } else {
+            return condition === 'not exist';
+        }
     }
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(classNames, style) {
-        return <div><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
+        return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         const style = {};
-        const selected = this.props.selectedWidgets?.includes(this.props.id);
+        const selected = this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         const selectedOne = selected && this.props.selectedWidgets.length === 1;
         let classNames = selected ? 'vis-editmode-selected' : '';
 
-        if (this.editMode && !widget.groupid) {
+        if (this.state.editMode && !widget.groupid) {
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
                 style.top = this.state.style.top;
             }
@@ -525,21 +597,34 @@ class VisBaseWidget extends React.Component {
             }
         }
 
-        const rxWidget = this.renderWidgetBody(classNames, style);
+        const props = {
+            className: '',
+            style,
+            id: `rx_${this.props.id}`,
+        };
+
+        const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
+        let widgetName = null;
+        if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
+            widgetName = <div ref={this.refName} className="vis-editmode-widget-name">{ this.props.id }</div>;
+            style.overflow = 'visible';
+        }
+
+        const overlay = widget.groupid ? null : <div
+            className={classNames}
+            onMouseDown={!this.props.runtime ? e => this.state.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
+        />;
+
         return <div
-            id={`rx_${this.props.id}`}
+            id={props.id}
+            className={props.className}
             ref={this.refService}
-            style={style}
+            style={props.style}
         >
-            <div
-                className={classNames}
-                onMouseDown={!this.props.runtime ? e => this.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
-            />
-            { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
-                <div className="vis-editmode-widget-name">{ this.props.id }</div>
-                : null }
+            { widgetName }
+            { overlay }
             { selectedOne ? this.getResizeHandlers() : null }
             { rxWidget }
         </div>;
