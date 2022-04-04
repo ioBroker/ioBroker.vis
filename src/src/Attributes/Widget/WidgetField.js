@@ -8,6 +8,7 @@ import {
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
+import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import FileBrowser from './FileBrowser';
@@ -407,7 +408,19 @@ const WidgetField = props => {
             variant="standard"
             value={value || []}
             multiple
-            renderValue={selected => selected.join(', ')}
+            renderValue={selected => <div style={{ display: 'flex' }}>
+                {props.groups
+                    .filter(group => selected.includes(group._id.split('.')[2]))
+                    .map(group =>
+                        <span style={{ padding: '4px 4px' }}>
+                            <TextWithIcon
+                                value={group._id}
+                                t={i18n.t}
+                                lang={i18n.getLanguage()}
+                                list={[group]}
+                            />
+                        </span>)}
+            </div>}
             classes={{
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
@@ -415,12 +428,17 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             fullWidth
         >
-            {options.map(selectItem => <MenuItem
-                value={selectItem.value}
-                key={selectItem.value}
+            {props.groups.map(group => <MenuItem
+                value={group._id.split('.')[2]}
+                key={group._id.split('.')[2]}
             >
-                <Checkbox checked={(value || []).includes(selectItem.value)} />
-                <ListItemText primary={i18n.t(selectItem.name)} />
+                <Checkbox checked={(value || []).includes(group._id.split('.')[2])} />
+                <TextWithIcon
+                    value={group._id}
+                    t={i18n.t}
+                    lang={i18n.getLanguage()}
+                    list={[group]}
+                />
             </MenuItem>)}
         </Select>;
     }
