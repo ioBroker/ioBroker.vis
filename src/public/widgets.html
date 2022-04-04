@@ -1,7 +1,64 @@
-<script type="text/javascript">
-    console.log('Test')
+<!-- --------------bars.html--- START -->
+<!--
+    ioBroker.vis bars Widget-Set
+
+    version: "0.1.4"
+
+    Copyright 2013-2016 bluefox<dogafox@gmail.com>
+-->
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
+<link rel="stylesheet" type="text/css" href="widgets/bars/css/barButtons.css" />
+<script type="text/javascript" src="widgets/bars/js/bars.js"></script>
+<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
+
+<script id="tplBarFilter" 
+		type="text/ejs"
+		class="vis-tpl"
+		data-vis-type="filter"
+		data-vis-set="bars"
+		data-vis-name="Filter bar"
+		data-vis-prev='<img src="widgets/bars/img/Prev_bars_filter.png"></img>'
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-red]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bOnlyOneSelected/checkbox;bValue/filters;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
+		data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters;"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    >
+        <div class="vis-widget-body" style="overflow: visible"></div>
+        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarFilter"); %>
+    </div>
 </script>
-<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->
+
+<script id="tplBarNavigator" 
+		type="text/ejs"
+		class="vis-tpl"
+		data-vis-type="navigation"
+		data-vis-set="bars"
+		data-vis-prev='<img src="widgets/bars/img/Prev_bars_view.png"></img>'
+		data-vis-name="Views bar"
+		data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-blue]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;alwaysOpened/checkbox;"
+		data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
+		data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
+		data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
+		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views;"
+		data-vis-init="initOptions">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
+	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    >
+        <div class="vis-widget-body" style="overflow: visible"></div>
+        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarNavigator"); %>
+    </div>
+</script>
+
+<!-- --------------bars.html--- END -->
 <!-- --------------basic.html--- START -->
 <link rel="stylesheet" type="text/css" href="widgets/basic/css/table.css" />
 <script type="text/javascript" src="widgets/basic/js/table.js"></script>
@@ -411,7 +468,7 @@
                         if (val === 'true'  || val === true)  val = 1;
                         if (val === 'false' || val === false) val = 0;
                         var src = srcArr[val];
-                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        $this.attr('src', src + (src.match(/\?/) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
             }
@@ -450,7 +507,7 @@
                         if (val === 'false' || val === false) val = 0;
 
                         var src = srcArr[val];
-                        if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + ((new Date()).getTime()));
+                        if (src) $this.attr('src', src + ((src.indexOf('?') !== -1) ? '&' : '?') + '_vis_refts=' + Date.now());
                     }, refreshInterval);
                 }
             }
@@ -626,8 +683,8 @@
                             vis.binds.basic.pressed = null;
                         }
                     }).data('destroy', function (id, $widget) {
-                    $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
-                });
+                        $widget && $widget.off('mousedown').off('touchstart').off('touchend').off('mouseup');
+                    });
             }
         },
         navigation: function (el, options) {
@@ -671,7 +728,7 @@
 
                 // remember all ids, that bound
                 $this.data('bound', [oid + '.val'])
-                    // remember bind handler
+                // remember bind handler
                     .data('bindHandler', onChange);
 
                 if (!vis.editMode) {
@@ -1142,22 +1199,23 @@
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('iframe');
+                var wid = $this.attr('id');
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push(function (view) {
+                    vis.navChangeCallbacks.push({cb: function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
                         }
-                    });
+                    }, id: wid});
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
                             if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                                $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
                             }
                         }
                     }, refreshInterval);
@@ -1165,8 +1223,8 @@
                 if (refreshOnWakeUp) {
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
-                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
-                    });
+                        $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now()));
+                    }, wid);
                 }
             }
         },
@@ -1206,22 +1264,23 @@
 
             if (!vis.editMode && src) {
                 var $this = $(el).parent().find('img');
+                var wid = $this.attr('id');
                 refreshInterval = parseInt(refreshInterval, 10) || 0;
 
                 if (refreshOnViewChange) {
                     widgetView = widgetView || vis.activeView;
-                    vis.navChangeCallbacks.push(function (view) {
+                    vis.navChangeCallbacks.push({cb: function (view) {
                         if (view === widgetView) {
-                            $this.attr('src', src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime())));
+                            $this.attr('src', src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now()));
                         }
-                    });
+                    }, id: wid});
                 }
                 if (refreshInterval > 0) {
                     setInterval(function () {
                         if ($this.is(':visible')) {
                             var p = $this.parents(':hidden');
                             if (!p.length || p[0].tagName === 'BODY' || p[0].id === 'materialdesign-vuetify-container') {
-                                $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                                $this[0].src = src + (refreshWithNoQuery ? '' : (src.indexOf('?') !== -1 ? '&' : '?') + '_refts=' + Date.now());
                             }
                         }
                     }, refreshInterval);
@@ -1231,9 +1290,9 @@
                     vis.onWakeUp(function () {
                         // TODO this does not work. :(
                         //console.log("wakeup refresh!");
-                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + ((new Date()).getTime()));
+                        $this[0].src = src + (refreshWithNoQuery ? '' : ((src.indexOf('?') !== -1) ? '&' : '?') + '_refts=' + Date.now());
                         //console.log($this.attr('src'));
-                    });
+                    }, wid);
                 }
             }
         },
@@ -1319,7 +1378,7 @@
                 vis.states.bind(oid + '.val', onChange);
                 // remember all ids, that bound
                 $wid.data('bound', [oid + '.val'])
-                    // remember bind handler
+                // remember bind handler
                     .data('bindHandler', onChange);
             }
             var $svg = $wid.find('svg');
@@ -1390,7 +1449,7 @@
         formatFloat: function (data, val) {
             if (vis.editMode && data.attr('test_html') !== undefined && data.attr('test_html') !== '') {
                 val = parseFloat(data.attr('test_html'));
-            } else if(val === undefined || val === null){
+            } else if (val === undefined || val === null) {
                 val = parseFloat(vis.states.attr(data.oid + '.val'));
             }else {
                 val = parseFloat(val);
@@ -1399,7 +1458,7 @@
             if (data.digits !== undefined && data.digits !== '') val = val.toFixed(parseFloat(data.digits, 10));
 
             if (data.attr('is_tdp')) {
-                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? ".," : ",.");
+                val = this.formatValue(val, data.digits ? parseInt(data.digits) : 2, data.attr('is_comma') ? '.,' : ',.');
             } else if (data.attr('is_comma')) {
                 val = '' + val;
                 val = val.replace('.', ',');
@@ -1527,7 +1586,7 @@
             if (isMomentJs && typeof moment !== 'undefined') {
                 return moment(new Date(timestamp)).fromNow();
             }
-            var diff = new Date().getTime() - timestamp;
+            var diff = Date.now() - timestamp;
             diff = Math.round(diff / 1000);
             var text;
             if (diff <= 60) {
@@ -1652,7 +1711,7 @@
             if (!dateObj) return '';
             var text = typeof dateObj;
             if (text === 'string') {
-                dateObj = new Date(dateObj);
+		dateObj = new Date(dateObj);
             }
             if (text !== 'object') {
                 var i = parseInt(dateObj, 10);
@@ -1766,8 +1825,8 @@
             return format;
         },
         detectScreen: function (wid) {
-            if (vis.navChangeCallbacks.indexOf(vis.binds.basic.detectScreen) === -1) {
-                vis.navChangeCallbacks.push(vis.binds.basic.detectScreen);
+            if (!vis.navChangeCallbacks.find(item => typeof item === 'object' && item.cb === vis.binds.basic.detectScreen)) {
+                vis.navChangeCallbacks.push({ cb: vis.binds.basic.detectScreen, id: wid });
             }
 
             function onResize () {
@@ -2376,7 +2435,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_iFrame.png"></img>'
         data-vis-name="iFrame"
         data-vis-attrs="src;refreshInterval[0]/slider,0,180000,100;noSandbox/checkbox;refreshOnWakeUp/checkbox;refreshOnViewChange/checkbox;refreshWithNoQuery/checkbox;scrollX/checkbox;scrollY/checkbox;seamless[true]/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <% if (vis.editMode) { %>
             <div class="editmode-helper" />
@@ -2449,7 +2508,7 @@
         data-vis-type="stateful"
         data-vis-name="iFrame 8"
         data-vis-attrs="oid;refreshInterval[0]/slider,0,180000,100;count[1]/number;group.frames;src_(0-count);noSandbox/checkbox">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
         <% if (vis.editMode) { %>
             <div class="editmode-helper"/>
         <% } %>
@@ -2518,7 +2577,7 @@
 
 <!-- TODO
 <script type="text/ejs" id="tplStatefulIFrame8Persistent" class="vis-tpl" data-vis-set="basic" data-vis-name="stateful - iFrame 8 (persistent)" data-vis-attrs="oid;refreshInterval;src_(0-1)">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 600px; height: 320px;" id="<%= this.data.attr('wid') %>">
             <% if (vis.editMode) { %>
                 <div class="editmode-helper" />
             <% } %>
@@ -2595,7 +2654,7 @@
         data-vis-attrs="filters;group.effects;hide_effect/effect;hide_duration/slider,0,10000,100;show_effect/effect;show_duration/slider,0,10000,100;"
         data-vis-attrs0="autoFocus/checkbox;"
 >
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left:0; width: 200px; height: 40px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.basic.filterDropdown(el, data.attr('filters'), data.attr('hide_effect'), data.attr('hide_duration'), data.attr('show_effect'), data.attr('show_duration')) %>>
         <div class="vis-widget-body">
             <select id="" name="" <%= this.data.attr('autoFocus') === true || this.data.attr('autoFocus') === 'true' ? 'autofocus' : '' %> >
                 <option value=""><%= _('all') %></option>
@@ -2629,7 +2688,7 @@
         data-vis-name="String"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueString.png"></img>'
         data-vis-attrs="oid;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? '' : this.data.attr('oid')) : this.data.attr('oid') %>">
                 <%== this.data.attr("html_prepend") %><%= (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : this.data.attr('oid') ? ((this.data.attr('oid').indexOf('"') !== -1) ? this.data.oid.substring(1, this.data.oid.length - 1) : (vis.states.attr(this.data.oid + '.val'))) : (vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
@@ -2646,7 +2705,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueStringRaw.png"></img>'
         data-vis-name="String (unescaped)"
         data-vis-attrs="oid;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : (typeof app !== 'undefined' ? app.replaceFilePathSrc(vis.states.attr(this.data.oid + '.val')) : vis.states.attr(this.data.oid + '.val')) %><%== this.data.attr('html_append') %>
@@ -2663,7 +2722,7 @@
         data-vis-type="val"
         data-vis-name="String img src"
         data-vis-attrs="oid;html_prepend;html_append;refreshInterval[0]/slider,0,180000,100">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left:0px; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left:0; width:60px; height: 40px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %>
@@ -2683,7 +2742,7 @@
         data-vis-name="TimesValue"
         data-vis-prev='<img src="widgets/basic/img/Prev_TimeValue.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.val'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2700,7 +2759,7 @@
         data-vis-name="Timestamp Value"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.val'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2717,7 +2776,7 @@
         data-vis-name="Timestamp"
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueTimestamp.png"></img>'
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top: 0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.ts'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2734,7 +2793,7 @@
         data-vis-prev='<img src="widgets/basic/img/Prev_ValueLastchange.png"></img>'
         data-vis-name="Last change Timestamp"
         data-vis-attrs="oid;show_interval/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY.MM.DD,DD.MM.YYYY,YYYY/MM/DD hh:mm:ss,YYYY/MM/DD,hh:mm:ss;html_prepend;html_append;test_html">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0; left: 0; width: 50px; height: 20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (vis.editMode && this.data.attr('test_html')) ? this.data.attr('test_html') : vis.binds.basic.formatDate(vis.states.attr(this.data.oid + '.lc'), this.data.attr('format_date'), this.data.attr('show_interval')) %><%== this.data.attr('html_append') %>
@@ -2751,7 +2810,7 @@
         data-vis-type="val"
         data-vis-name="ValueList Text"
         data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%= (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
@@ -2768,7 +2827,7 @@
         data-vis-type="val"
         data-vis-name="ValueList HTML"
         data-vis-attrs="oid;html_prepend;html_append;valuelist/text;test_list/nselect,,0,1,2,3,4,5,6,7,8,9,10,11,12">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px;left:0px;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="top:0;left:0;width:60px;height:20px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
             <div data-oid="<%= this.data.attr('oid') %>">
                 <%== this.data.attr('html_prepend') %><%== (function (that){var list = (that.data.valuelist ? that.data.valuelist.split(';') : []); var val = list[(vis.editMode && (that.data.attr('test_list') || that.data.attr('test_list') == '0')) ? parseInt(that.data.attr('test_list')) : parseInt(vis.states.attr(that.data.oid + '.val'), 10)]; if (val) val = val.replace('§§', ';'); return val;})(this) %><%== this.data.attr('html_append') %>
@@ -3075,7 +3134,7 @@
         data-vis-attrs="oid;min[0];max[100];orientation[horizontal]/select,horizontal,vertical/onOrientation;color[blue]/color;border;shadow;reverse/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 240px; height: 20px; border: 1px solid #888" id="<%= this.data.attr('wid') %>">
         <div data-oid="<%= this.data.attr('oid') %>" class="vis-widget-body"
-        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0px; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
+        style="<%= (this.data.attr('orientation') === 'vertical') ? ('height: ' + vis.binds.basic.getCalc(this.data) + ';' + ((this.data.border) ? ' width:  calc(100% - ' + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + (this.data.reverse === 'true' || this.data.reverse === true ? 'left: 0; position: absolute; bottom: 0%;' : '')) : (((this.data.border) ? " height: calc(100% - " + vis.binds.basic.extractWidth(this.data.border, 2) + ');' : '') + 'width: ' + vis.binds.basic.getCalc(this.data) + ';' + (this.data.reverse === 'true' || this.data.reverse === true ? 'float: right; ' : '')) %>background-color:<%= this.data.color %>; border: <%= this.data.border %>; box-shadow: <%= this.data.shadow %>"></div>
     </div>
 </script>
 
@@ -4004,7 +4063,6 @@
                     }
                 }
 
-
                 if (vis.editMode && !json.length) {
                     json.push({
                         ts: new Date().toLocaleTimeString(),
@@ -4133,233 +4191,233 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 
 -->
 <style>
-    /* following text generated automatically -- START STYLE--*/
-    @font-face {
-        font-family: Alegreya-Black;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Black.ttf);
-    }
-    @font-face {
-        font-family: Alegreya-BlackItalic;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-BlackItalic.ttf);
-    }
-    @font-face {
-        font-family: Alegreya-Bold;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Bold.ttf);
-    }
-    @font-face {
-        font-family: Alegreya-BoldItalic;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-BoldItalic.ttf);
-    }
-    @font-face {
-        font-family: Alegreya-Italic;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Italic.ttf);
-    }
-    @font-face {
-        font-family: Alegreya-Regular;
-        src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Regular.ttf);
-    }
-    @font-face {
-        font-family: Anton;
-        src: url(widgets/google-fonts/fonts/Anton/Anton.ttf);
-    }
-    @font-face {
-        font-family: Arimo-Bold;
-        src: url(widgets/google-fonts/fonts/Arimo/Arimo-Bold.ttf);
-    }
-    @font-face {
-        font-family: Arimo-BoldItalic;
-        src: url(widgets/google-fonts/fonts/Arimo/Arimo-BoldItalic.ttf);
-    }
-    @font-face {
-        font-family: Arimo-Italic;
-        src: url(widgets/google-fonts/fonts/Arimo/Arimo-Italic.ttf);
-    }
-    @font-face {
-        font-family: Arimo-Regular;
-        src: url(widgets/google-fonts/fonts/Arimo/Arimo-Regular.ttf);
-    }
-    @font-face {
-        font-family: BadScript-Regular;
-        src: url(widgets/google-fonts/fonts/Bad_Script/BadScript-Regular.ttf);
-    }
-    @font-face {
-        font-family: Bangers;
-        src: url(widgets/google-fonts/fonts/Bangers/Bangers.ttf);
-    }
-    @font-face {
-        font-family: Candal;
-        src: url(widgets/google-fonts/fonts/Candal/Candal.ttf);
-    }
-    @font-face {
-        font-family: Comfortaa-Bold;
-        src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Bold.ttf);
-    }
-    @font-face {
-        font-family: Comfortaa-Light;
-        src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Light.ttf);
-    }
-    @font-face {
-        font-family: Comfortaa-Regular;
-        src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Regular.ttf);
-    }
-    @font-face {
-        font-family: DancingScript-Bold;
-        src: url(widgets/google-fonts/fonts/Dancing_Script/DancingScript-Bold.ttf);
-    }
-    @font-face {
-        font-family: DancingScript-Regular;
-        src: url(widgets/google-fonts/fonts/Dancing_Script/DancingScript-Regular.ttf);
-    }
-    @font-face {
-        font-family: IndieFlower;
-        src: url(widgets/google-fonts/fonts/Indie_Flower/IndieFlower.ttf);
-    }
-    @font-face {
-        font-family: Jura-DemiBold;
-        src: url(widgets/google-fonts/fonts/Jura/Jura-DemiBold.ttf);
-    }
-    @font-face {
-        font-family: Jura-Light;
-        src: url(widgets/google-fonts/fonts/Jura/Jura-Light.ttf);
-    }
-    @font-face {
-        font-family: Jura-Medium;
-        src: url(widgets/google-fonts/fonts/Jura/Jura-Medium.ttf);
-    }
-    @font-face {
-        font-family: Jura-Regular;
-        src: url(widgets/google-fonts/fonts/Jura/Jura-Regular.ttf);
-    }
-    @font-face {
-        font-family: Lobster-Regular;
-        src: url(widgets/google-fonts/fonts/Lobster/Lobster-Regular.ttf);
-    }
-    @font-face {
-        font-family: MarckScript-Regular;
-        src: url(widgets/google-fonts/fonts/Marck_Script/MarckScript-Regular.ttf);
-    }
-    @font-face {
-        font-family: Neucha;
-        src: url(widgets/google-fonts/fonts/Neucha/Neucha.ttf);
-    }
-    @font-face {
-        font-family: OpenSans-CondBold;
-        src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondBold.ttf);
-    }
-    @font-face {
-        font-family: OpenSans-CondLight;
-        src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondLight.ttf);
-    }
-    @font-face {
-        font-family: OpenSans-CondLightItalic;
-        src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondLightItalic.ttf);
-    }
-    @font-face {
-        font-family: Pacifico;
-        src: url(widgets/google-fonts/fonts/Pacifico/Pacifico.ttf);
-    }
-    @font-face {
-        font-family: Play-Bold;
-        src: url(widgets/google-fonts/fonts/Play/Play-Bold.ttf);
-    }
-    @font-face {
-        font-family: Play-Regular;
-        src: url(widgets/google-fonts/fonts/Play/Play-Regular.ttf);
-    }
-    @font-face {
-        font-family: PoiretOne-Regular;
-        src: url(widgets/google-fonts/fonts/Poiret_One/PoiretOne-Regular.ttf);
-    }
-    @font-face {
-        font-family: PressStart2P-Regular;
-        src: url(widgets/google-fonts/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-Bold;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Bold.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-BoldItalic;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-BoldItalic.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-Italic;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Italic.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-Light;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Light.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-LightItalic;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-LightItalic.ttf);
-    }
-    @font-face {
-        font-family: RobotoCondensed-Regular;
-        src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Regular.ttf);
-    }
-    @font-face {
-        font-family: RubikMonoOne-Regular;
-        src: url(widgets/google-fonts/fonts/Rubik_Mono_One/RubikMonoOne-Regular.ttf);
-    }
-    @font-face {
-        font-family: RubikOne-Regular;
-        src: url(widgets/google-fonts/fonts/Rubik_One/RubikOne-Regular.ttf);
-    }
-    @font-face {
-        font-family: RuslanDisplay;
-        src: url(widgets/google-fonts/fonts/Ruslan_Display/RuslanDisplay.ttf);
-    }
-    @font-face {
-        font-family: RussoOne-Regular;
-        src: url(widgets/google-fonts/fonts/Russo_One/RussoOne-Regular.ttf);
-    }
-    @font-face {
-        font-family: ShadowsIntoLight;
-        src: url(widgets/google-fonts/fonts/Shadows_Into_Light/ShadowsIntoLight.ttf);
-    }
-    @font-face {
-        font-family: SigmarOne;
-        src: url(widgets/google-fonts/fonts/Sigmar_One/SigmarOne.ttf);
-    }
-    @font-face {
-        font-family: StalinistOne-Regular;
-        src: url(widgets/google-fonts/fonts/Stalinist_One/StalinistOne-Regular.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-Bold;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Bold.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-BoldItalic;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-BoldItalic.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-Italic;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Italic.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-Light;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Light.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-LightItalic;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-LightItalic.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-Medium;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Medium.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-MediumItalic;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-MediumItalic.ttf);
-    }
-    @font-face {
-        font-family: Ubuntu-Regular;
-        src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Regular.ttf);
-    }
+/* following text generated automatically -- START STYLE--*/
+@font-face {
+	font-family: Alegreya-Black;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Black.ttf);
+}
+@font-face {
+	font-family: Alegreya-BlackItalic;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-BlackItalic.ttf);
+}
+@font-face {
+	font-family: Alegreya-Bold;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Bold.ttf);
+}
+@font-face {
+	font-family: Alegreya-BoldItalic;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-BoldItalic.ttf);
+}
+@font-face {
+	font-family: Alegreya-Italic;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Italic.ttf);
+}
+@font-face {
+	font-family: Alegreya-Regular;
+	src: url(widgets/google-fonts/fonts/Alegreya/Alegreya-Regular.ttf);
+}
+@font-face {
+	font-family: Anton;
+	src: url(widgets/google-fonts/fonts/Anton/Anton.ttf);
+}
+@font-face {
+	font-family: Arimo-Bold;
+	src: url(widgets/google-fonts/fonts/Arimo/Arimo-Bold.ttf);
+}
+@font-face {
+	font-family: Arimo-BoldItalic;
+	src: url(widgets/google-fonts/fonts/Arimo/Arimo-BoldItalic.ttf);
+}
+@font-face {
+	font-family: Arimo-Italic;
+	src: url(widgets/google-fonts/fonts/Arimo/Arimo-Italic.ttf);
+}
+@font-face {
+	font-family: Arimo-Regular;
+	src: url(widgets/google-fonts/fonts/Arimo/Arimo-Regular.ttf);
+}
+@font-face {
+	font-family: BadScript-Regular;
+	src: url(widgets/google-fonts/fonts/Bad_Script/BadScript-Regular.ttf);
+}
+@font-face {
+	font-family: Bangers;
+	src: url(widgets/google-fonts/fonts/Bangers/Bangers.ttf);
+}
+@font-face {
+	font-family: Candal;
+	src: url(widgets/google-fonts/fonts/Candal/Candal.ttf);
+}
+@font-face {
+	font-family: Comfortaa-Bold;
+	src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Bold.ttf);
+}
+@font-face {
+	font-family: Comfortaa-Light;
+	src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Light.ttf);
+}
+@font-face {
+	font-family: Comfortaa-Regular;
+	src: url(widgets/google-fonts/fonts/Comfortaa/Comfortaa-Regular.ttf);
+}
+@font-face {
+	font-family: DancingScript-Bold;
+	src: url(widgets/google-fonts/fonts/Dancing_Script/DancingScript-Bold.ttf);
+}
+@font-face {
+	font-family: DancingScript-Regular;
+	src: url(widgets/google-fonts/fonts/Dancing_Script/DancingScript-Regular.ttf);
+}
+@font-face {
+	font-family: IndieFlower;
+	src: url(widgets/google-fonts/fonts/Indie_Flower/IndieFlower.ttf);
+}
+@font-face {
+	font-family: Jura-DemiBold;
+	src: url(widgets/google-fonts/fonts/Jura/Jura-DemiBold.ttf);
+}
+@font-face {
+	font-family: Jura-Light;
+	src: url(widgets/google-fonts/fonts/Jura/Jura-Light.ttf);
+}
+@font-face {
+	font-family: Jura-Medium;
+	src: url(widgets/google-fonts/fonts/Jura/Jura-Medium.ttf);
+}
+@font-face {
+	font-family: Jura-Regular;
+	src: url(widgets/google-fonts/fonts/Jura/Jura-Regular.ttf);
+}
+@font-face {
+	font-family: Lobster-Regular;
+	src: url(widgets/google-fonts/fonts/Lobster/Lobster-Regular.ttf);
+}
+@font-face {
+	font-family: MarckScript-Regular;
+	src: url(widgets/google-fonts/fonts/Marck_Script/MarckScript-Regular.ttf);
+}
+@font-face {
+	font-family: Neucha;
+	src: url(widgets/google-fonts/fonts/Neucha/Neucha.ttf);
+}
+@font-face {
+	font-family: OpenSans-CondBold;
+	src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondBold.ttf);
+}
+@font-face {
+	font-family: OpenSans-CondLight;
+	src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondLight.ttf);
+}
+@font-face {
+	font-family: OpenSans-CondLightItalic;
+	src: url(widgets/google-fonts/fonts/Open_Sans_Condensed/OpenSans-CondLightItalic.ttf);
+}
+@font-face {
+	font-family: Pacifico;
+	src: url(widgets/google-fonts/fonts/Pacifico/Pacifico.ttf);
+}
+@font-face {
+	font-family: Play-Bold;
+	src: url(widgets/google-fonts/fonts/Play/Play-Bold.ttf);
+}
+@font-face {
+	font-family: Play-Regular;
+	src: url(widgets/google-fonts/fonts/Play/Play-Regular.ttf);
+}
+@font-face {
+	font-family: PoiretOne-Regular;
+	src: url(widgets/google-fonts/fonts/Poiret_One/PoiretOne-Regular.ttf);
+}
+@font-face {
+	font-family: PressStart2P-Regular;
+	src: url(widgets/google-fonts/fonts/Press_Start_2P/PressStart2P-Regular.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-Bold;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Bold.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-BoldItalic;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-BoldItalic.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-Italic;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Italic.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-Light;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Light.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-LightItalic;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-LightItalic.ttf);
+}
+@font-face {
+	font-family: RobotoCondensed-Regular;
+	src: url(widgets/google-fonts/fonts/Roboto_Condensed/RobotoCondensed-Regular.ttf);
+}
+@font-face {
+	font-family: RubikMonoOne-Regular;
+	src: url(widgets/google-fonts/fonts/Rubik_Mono_One/RubikMonoOne-Regular.ttf);
+}
+@font-face {
+	font-family: RubikOne-Regular;
+	src: url(widgets/google-fonts/fonts/Rubik_One/RubikOne-Regular.ttf);
+}
+@font-face {
+	font-family: RuslanDisplay;
+	src: url(widgets/google-fonts/fonts/Ruslan_Display/RuslanDisplay.ttf);
+}
+@font-face {
+	font-family: RussoOne-Regular;
+	src: url(widgets/google-fonts/fonts/Russo_One/RussoOne-Regular.ttf);
+}
+@font-face {
+	font-family: ShadowsIntoLight;
+	src: url(widgets/google-fonts/fonts/Shadows_Into_Light/ShadowsIntoLight.ttf);
+}
+@font-face {
+	font-family: SigmarOne;
+	src: url(widgets/google-fonts/fonts/Sigmar_One/SigmarOne.ttf);
+}
+@font-face {
+	font-family: StalinistOne-Regular;
+	src: url(widgets/google-fonts/fonts/Stalinist_One/StalinistOne-Regular.ttf);
+}
+@font-face {
+	font-family: Ubuntu-Bold;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Bold.ttf);
+}
+@font-face {
+	font-family: Ubuntu-BoldItalic;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-BoldItalic.ttf);
+}
+@font-face {
+	font-family: Ubuntu-Italic;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Italic.ttf);
+}
+@font-face {
+	font-family: Ubuntu-Light;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Light.ttf);
+}
+@font-face {
+	font-family: Ubuntu-LightItalic;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-LightItalic.ttf);
+}
+@font-face {
+	font-family: Ubuntu-Medium;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Medium.ttf);
+}
+@font-face {
+	font-family: Ubuntu-MediumItalic;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-MediumItalic.ttf);
+}
+@font-face {
+	font-family: Ubuntu-Regular;
+	src: url(widgets/google-fonts/fonts/Ubuntu/Ubuntu-Regular.ttf);
+}
 
-    /* following text generated automatically -- END STYLE--*/
+/* following text generated automatically -- END STYLE--*/
 </style>
 
 
@@ -4367,67 +4425,67 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
     "use strict";
     if (vis.editMode) {
         var fonts =
-                /* following text generated automatically -- START LIST--*/
-                [
-                    "Alegreya-Black",
-                    "Alegreya-BlackItalic",
-                    "Alegreya-Bold",
-                    "Alegreya-BoldItalic",
-                    "Alegreya-Italic",
-                    "Alegreya-Regular",
-                    "Anton",
-                    "Arimo-Bold",
-                    "Arimo-BoldItalic",
-                    "Arimo-Italic",
-                    "Arimo-Regular",
-                    "BadScript-Regular",
-                    "Bangers",
-                    "Candal",
-                    "Comfortaa-Bold",
-                    "Comfortaa-Light",
-                    "Comfortaa-Regular",
-                    "DancingScript-Bold",
-                    "DancingScript-Regular",
-                    "IndieFlower",
-                    "Jura-DemiBold",
-                    "Jura-Light",
-                    "Jura-Medium",
-                    "Jura-Regular",
-                    "Lobster-Regular",
-                    "MarckScript-Regular",
-                    "Neucha",
-                    "OpenSans-CondBold",
-                    "OpenSans-CondLight",
-                    "OpenSans-CondLightItalic",
-                    "Pacifico",
-                    "Play-Bold",
-                    "Play-Regular",
-                    "PoiretOne-Regular",
-                    "PressStart2P-Regular",
-                    "RobotoCondensed-Bold",
-                    "RobotoCondensed-BoldItalic",
-                    "RobotoCondensed-Italic",
-                    "RobotoCondensed-Light",
-                    "RobotoCondensed-LightItalic",
-                    "RobotoCondensed-Regular",
-                    "RubikMonoOne-Regular",
-                    "RubikOne-Regular",
-                    "RuslanDisplay",
-                    "RussoOne-Regular",
-                    "ShadowsIntoLight",
-                    "SigmarOne",
-                    "StalinistOne-Regular",
-                    "Ubuntu-Bold",
-                    "Ubuntu-BoldItalic",
-                    "Ubuntu-Italic",
-                    "Ubuntu-Light",
-                    "Ubuntu-LightItalic",
-                    "Ubuntu-Medium",
-                    "Ubuntu-MediumItalic",
-                    "Ubuntu-Regular"
-                ]
-            /* following text generated automatically -- END LIST--*/
-        ;
+/* following text generated automatically -- START LIST--*/
+[
+    "Alegreya-Black",
+    "Alegreya-BlackItalic",
+    "Alegreya-Bold",
+    "Alegreya-BoldItalic",
+    "Alegreya-Italic",
+    "Alegreya-Regular",
+    "Anton",
+    "Arimo-Bold",
+    "Arimo-BoldItalic",
+    "Arimo-Italic",
+    "Arimo-Regular",
+    "BadScript-Regular",
+    "Bangers",
+    "Candal",
+    "Comfortaa-Bold",
+    "Comfortaa-Light",
+    "Comfortaa-Regular",
+    "DancingScript-Bold",
+    "DancingScript-Regular",
+    "IndieFlower",
+    "Jura-DemiBold",
+    "Jura-Light",
+    "Jura-Medium",
+    "Jura-Regular",
+    "Lobster-Regular",
+    "MarckScript-Regular",
+    "Neucha",
+    "OpenSans-CondBold",
+    "OpenSans-CondLight",
+    "OpenSans-CondLightItalic",
+    "Pacifico",
+    "Play-Bold",
+    "Play-Regular",
+    "PoiretOne-Regular",
+    "PressStart2P-Regular",
+    "RobotoCondensed-Bold",
+    "RobotoCondensed-BoldItalic",
+    "RobotoCondensed-Italic",
+    "RobotoCondensed-Light",
+    "RobotoCondensed-LightItalic",
+    "RobotoCondensed-Regular",
+    "RubikMonoOne-Regular",
+    "RubikOne-Regular",
+    "RuslanDisplay",
+    "RussoOne-Regular",
+    "ShadowsIntoLight",
+    "SigmarOne",
+    "StalinistOne-Regular",
+    "Ubuntu-Bold",
+    "Ubuntu-BoldItalic",
+    "Ubuntu-Italic",
+    "Ubuntu-Light",
+    "Ubuntu-LightItalic",
+    "Ubuntu-Medium",
+    "Ubuntu-MediumItalic",
+    "Ubuntu-Regular"
+]
+/* following text generated automatically -- END LIST--*/
+                ;
         // wait till visEditInspect loaded
         setTimeout(function () {
             for (var f = 0; f < fonts.length; f++) {
@@ -4448,6 +4506,352 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 </script>
 
 <!-- --------------google-fonts.html--- END -->
+<!-- --------------hqwidgets.html--- START -->
+<!--
+    ioBroker.vis high quality Widget-Set
+
+    version: "1.1.9"
+
+    Copyright 6'2014-2021 bluefox <dogafox@gmail.com>
+
+-->
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/hqwidgets.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/hqwidgetsButtons.css"/>
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/checkbox.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/glossy.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-car.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-default.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-digital.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-minimal.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-plaza.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-slot-machine.css" />
+<link rel="stylesheet" type="text/css" href="widgets/hqwidgets/css/odometer-theme-train-station.css" />
+
+<script type="text/javascript" src="widgets/hqwidgets/js/jquery.knob.js"></script>
+<script type="text/javascript" src="widgets/hqwidgets/js/odometer.min.js"></script>
+<script type="text/javascript" src="widgets/hqwidgets/js/hqwidgets.js"></script>
+
+<style>
+        .odometer-leading .odometer-inside .odometer-digit:first-child,
+        /*, .odometer-leading .odometer-inside .odometer-formatting-mark:nth-child(2),*/
+        .odometer-leading .odometer-inside .odometer-digit:last-child {
+            display: none
+        }
+</style>
+
+<script id="tplHqButton"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="On/Off"
+        data-vis-update-style="true"
+        data-vis-type="ctrl,bool,button,state"
+        data-vis-prev='<div id="prev_tplHqButton" style="position: relative; text-align: initial;padding: 10px !important"><div class="vis-widget_prev vis-hq-button-base" style="overflow: visible; width: 64px; height: 64px; border-radius: 64px; left: 543px; top: 37px; position: absolute;"><div class="vis-hq-main vis-hq-button-base-on" style="z-index: 1; border-radius: 64px;"><div class="vis-hq-middle"><table class="vis-hq-table hq-no-space" style="position: absolute; left: 4px; top: 2px;"><tbody><tr class="hq-no-space"><td class="hq-no-space"><div class="vis-hq-icon" style="text-align: center;"><img class="vis-hq-icon-img" style="height: 56px; width: auto;" src="img/bulb_off.png"></div></td></tr></tbody></table></div></div></div></div>'
+        data-vis-attrs="oid[nothing_selected]/id/changedButtonId;oid-working;oid-battery;oid-signal;readOnly/checkbox;"
+        data-vis-attrs0="group.value;min[false];max[true];pushButton/checkbox;"
+        data-vis-attrs1="group.center;caption;captionOn;iconName[img~bulb_off.png]/image;iconOn/image;btIconWidth[56]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[15]/slider,0,100,1;topOffset[55]/slider,0,100,1;"
+        data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoRight;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs3="group.styles;styleNormal/style,hqwidgetsButtons glossy,-button,background;styleActive/style,hqwidgetsButtons glossy,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox;"
+        data-vis-attrs4="group.ccontrol;urlTrue;urlFalse;oidTrue/id;oidFalse/id;oidTrueValue;oidFalseValue;"
+        data-vis-filter="HM-LC-Sw1-Pl,HM-LC-Sw1-FM,HM-Dis-TD-T,HM-LC-Sw2-FM,HM-LC-Sw1PBU-FM,HM-LC-Sw1-SM,HM-LC-Sw1-FM,HM-LC-Sw2-FM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw4-DR,HM-LC-Sw4-WM,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-OU-CFM-Pl,HMW-LC-Sw2-DR,HM-LC-Sw1-PB-FM,HM-LC-Sw2-PB-FM,HMW-IO-12-Sw14-DR,HMW-IO-12-Sw7-DR,HM-ES-PMSw1-Pl">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
+         vis.binds.hqwidgets.button.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+
+<script id="tplHqDimmer"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="Dimmer"
+        data-vis-type="ctrl,dimmer,button"
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_hqwidgetsDimmer.png"></img>'
+        data-vis-update-style="true"
+        data-vis-attrs="oid[nothing_selected]/id/changedButtonId;oid-working;oid-battery;oid-signal;"
+        data-vis-attrs0="group.value;unit[%];min[0];max[100];digits[0]/number;step[1];is_comma[true]/checkbox;"
+        data-vis-attrs1="group.center;caption;iconName[img~bulb_off.png]/image;iconOn/image;btIconWidth[56]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[15]/slider,0,100,1;topOffset[55]/slider,0,100,1;circleWidth[50]/slider,1,200,1;showValue[true]/checkbox;alwaysShow/checkbox;"
+        data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs3="group.styles;styleNormal/style,hqwidgetsButtons glossy,-button,background;styleActive/style,hqwidgetsButtons glossy,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox"
+        data-vis-filter="light.dimmer">
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
+        vis.binds.hqwidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
+    %></div>
+</script>
+
+<script id="tplHqInTemp"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="Inner temperature"
+        data-vis-type="ctrl,temperature"
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_hqwidgetsInTemp.png"></img>'
+        data-vis-update-style="true"
+        data-vis-attrs="oid[nothing_selected]/id,level.temperature/changedTempId;oid-humidity/id,value.humidity;oid-actual/id,value.temperature/changedTemperatureId;oid-drive/id,value.valve;valveBinary/checkbox;valve1/checkbox;oid-battery/id,indicator.battery;"
+        data-vis-attrs0="group.value;unit[°C];min[6];max[30];digits[0]/number;step[1];is_comma[true]/checkbox;"
+        data-vis-attrs1="group.center;caption;iconName[img~Heating.png]/image;btIconWidth[45]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[25]/slider,0,100,1;topOffset[55]/slider,0,100,1;circleWidth[50]/slider,1,100,1;showValue[true]/checkbox;alwaysShow/checkbox;midTextColor/color;"
+        data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs3="group.styles;styleNormal[hq-button-base-intemp]/style,hqwidgetsButtons,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox;"
+        data-vis-attrs4="group.chart;url;dialog_title;dialog_width;dialog_height;dialog_effect/effect;dialog_timeout/number,0,3600000,100;dialog_modal/checkbox;dialog_open/checkbox"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
+        this.data.temperature = true;
+        vis.binds.hqwidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
+    %></div>
+</script>
+
+<script id="tplHqOutTemp"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="Outdoor temperature"
+        data-vis-type="value,temperature"
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_hqwidgetsOutTemp.png"></img>'
+        data-vis-update-style="true"
+        data-vis-attrs="oid-actual/id,value.temperature/changedTempId;oid-humidity/id,value.humidity;oid-battery/id,indicator.battery;"
+        data-vis-attrs0="group.value;unit[°C];min[6];max[30];digits[0]/number;step[1];is_comma[true]/checkbox;"
+        data-vis-attrs1="group.center;caption;iconName[img~Heating.png]/image;btIconWidth[45]/slider,0,400,1;offsetAuto[true]/checkbox;leftOffset[25]/slider,0,100,1;topOffset[55]/slider,0,100,1;circleWidth[50]/slider,1,100,1;showValue[true]/checkbox;alwaysShow/checkbox;midTextColor/color;"
+        data-vis-attrs2="group.leftRight;hoursLastAction/nselect,,1,2,3,6,12,24,1024;timeAsInterval[true]/checkbox;format_date/auto,YYYY.MM.DD hh:mm:ss,DD.MM.YYYY hh:mm:ss,YYYY/MM/DD hh:mm:ss,hh:mm:ss,hh:mm;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs3="group.styles;styleNormal[hq-button-base-outtemp]/style,hqwidgetsButtons,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox;"
+        data-vis-attrs4="group.chart;url;dialog_title;dialog_width;dialog_height;dialog_effect/effect;dialog_timeout/number,0,3600000,100;dialog_modal/checkbox;dialog_open/checkbox"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px; border-radius: 64px" id="<%= this.data.attr('wid') %>"><%
+        this.data.temperature = true;
+        vis.binds.hqwidgets.button.init(this.data.wid, this.view, this.data, this.style, 'number');
+    %></div>
+</script>
+
+<script id="tplHqShutter"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-type="ctrl;window;shutter"
+        data-vis-name="Window and Shutter"
+        data-vis-prev='<div id="prev_tplHqShutter" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev hq-blind-base vis-hq-button-base" style="overflow: visible; width: 110px; height: 90px; left: 109px; top: 74px; position: absolute; padding: 3px 4px 2px;"><table class="hq-blind hq-no-space" style="width: 100%; height: 100%"><tbody><tr><td><div class="hq-blind-blind1" style="border-width: 3px;border-color: #a9a7a8;"><div class="hq-blind-blind2" style="border-width: 3px; "><div class="hq-blind-blind3"><table class="hq-no-space" style="width: 100%; height: 100%; position: absolute"><tbody><tr class="hq-no-space hq-blind-position" style="height: 20%"><td class="hq-no-space hq-blind-blind"></td></tr><tr class="hq-no-space"><td class="hq-no-space"></td></tr></tbody></table><div class="hq-blind-blind4" style="border-width: 3px;border-color: #a5aaad;"><div class="hq-blind-handle hq-blind-handle-bg" style="border-width: 1px;top: 50%; width: 3px; height: 15%;left: calc(100% - 5px);"></div></div></div></div></div></td><td><div class="hq-blind-blind1" style="border-width: 3px;border-color: #a9a7a8;"><div class="hq-blind-blind2" style="border-width: 3px; "><div class="hq-blind-blind3"><table class="hq-no-space" style="width: 100%; height: 100%; position: absolute"><tbody><tr class="hq-no-space hq-blind-position" style="height: 20%"><td class="hq-no-space hq-blind-blind"></td></tr><tr class="hq-no-space"><td class="hq-no-space"></td></tr></tbody></table><div class="hq-blind-blind4 hq-blind-blind4-opened-left" style="border-width: 3px;border-color: #a5aaad;"><div class="hq-blind-handle hq-blind-handle-bg" style="border-width: 1px;top: 50%; width: 3px; height: 15%;-moz-transform-origin: 3px 3px;-ms-transform-origin: 3px 3px;-o-transform-origin: 3px 3px;-webkit-transform-origin: 3px 3px;transform-origin: 3px 3px;-moz-transform: rotate(-90deg);-ms-transform: rotate(-90deg);-o-transform: rotate(-90deg);-webkit-transform: rotate(-90deg);transform: rotate(-90deg);"></div></div></div></div></div></td></tr></tbody></table></div></div>'
+        data-vis-attrs="oid/id,level.blind/changedWindowId;oid-working/id,indicator.working;min[0];max[100];border_width/slider,0,10,1;slide_count[1]/nselect,1,2,3,4,5,6;invert/checkbox;hide_timeout[2000];noAnimate/checkbox;popupHorizontalPos[center]/select,top,center,bottom;popupVerticalPos[center]/select,left,center,right;"
+        data-vis-attrs0="group.leftRight;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;show_value/checkbox;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs1="group.slides/byindex;slide_type(1-slide_count)/select,,left,right,top,bottom;oid-slide-sensor(1-slide_count)/id/changedSensorId;oid-slide-sensor-lowbat(1-slide_count)/id,indicator.battery;oid-slide-handle(1-slide_count)/id/changedSensorId;oid-slide-handle-lowbat(1-slide_count)/id,indicator.battery;"
+        >
+    <div class="vis-widget hq-blind-base <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px" id="<%= this.data.attr('wid') %>"><%
+        vis.binds.hqwidgets.window.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+
+<script id="tplHqDoor"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-type="state;door"
+        data-vis-name="Door"
+        data-vis-prev='<div id="prev_tplHqDoor" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev hq-blind-base vis-hq-button-base" style="overflow: visible; width: 47px; height: 93px; padding: 3px 4px 2px;"><table class="vis-hq-main vis-hq-door vis-hq-no-space" style="border: 2px #8E8D8D solid;"><tbody><tr class="vis-hq-no-space"><td class="vis-hq-no-space vis-hq-door-empty-right"></td><td class="vis-hq-no-space vis-hq-door-sheet" style="width: 100%;"><div class="vis-hq-door-handle" style="left: 75%;"></div></td><td class="vis-hq-no-space vis-hq-door-empty-left" style="width: 0px; background: rgb(81, 81, 81);"></td></tr></tbody></table></div></div></div>'
+        data-vis-attrs="oid/id,state/changedButtonId;oid-battery/id,indicator.battery;border_width/slider,0,10,1;invert/checkbox;door_type/select,,left,right;noAnimate/checkbox;"
+        data-vis-attrs0="group.leftRight;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;"
+        >
+    <div class="vis-widget hq-blind-base <%== this.data.attr('class') %>" style="overflow:visible; width: 50px; height: 100px" id="<%= this.data.attr('wid') %>"><%
+        vis.binds.hqwidgets.door.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+
+<script id="tplHqLock"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<div id="prev_tplHqLock" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-hq-lock-base vis-hq-button-base hq-button-no-background" style="overflow: visible; width: 30px; height: 30px;" ><img src="widgets/hqwidgets/img/lockUnlocked.png" class="vis-hq-lock1" style="width: 100%; height:100%;"></div></div>'
+        data-vis-set="hqwidgets"
+        data-vis-type="control;lock"
+        data-vis-name="Lock"
+        data-vis-attrs="oid/id,state/changedLockId;oid-open/id;oid-battery/id,indicator.battery;noAnimate/checkbox;"
+        data-vis-attrs0="group.image;closedIcon[widgets~hqwidgets~img~lockLocked.png]/image;openedIcon[widgets~hqwidgets~img~lockUnlocked.png]/image;"
+        data-vis-attrs1="group.popup;popupRadius[75]/slider,50,150,1;buttonRadius[50]/slider,0,150,1;closeIcon[widgets~hqwidgets~img~lockLocked.png]/image;closeValue;closeStyle/style,hqwidgetsButtons glossy,-button,background;"
+        data-vis-attrs2="openIcon[widgets~hqwidgets~img~lockUnlocked.png]/image;openValue;openStyle/style,hqwidgetsButtons glossy,-button,background;"
+        data-vis-attrs3="openDoorIcon[widgets~hqwidgets~img~openDoor.png]/image;openDoorValue;openDoorStyle/style,hqwidgetsButtons glossy,-button,background;showTimeout[5000]/slider,0,30000,100;"
+        data-vis-attrs4="group.leftRight;descriptionLeftDisabled/checkbox;descriptionLeft;infoLeftFontSize[12]/slider,6,50,1;infoFontRightSize[12]/slider,6,50,1;infoColor/color;infoBackground/color;infoLeftPaddingLeft[15]/slider,0,100,1;infoLeftPaddingRight[50]/slider,0,100,1;infoRightPaddingLeft/slider,0,100,1;infoRightPaddingRight[15]/slider,0,100,1;"
+        data-vis-attrs5="group.styles;styleNormal[hq-button-no-background]/style,hqwidgetsButtons glossy,-button,background;styleActive[hq-button-no-background]/style,hqwidgetsButtons glossy,-button,background;usejQueryStyle/checkbox;changeEffect/nselect,,waves,wobble,tada,swing,shake,rubberBand,pulse,flash,bounce;waveColor/color;testActive/checkbox;"
+        >
+    <div class="vis-widget vis-hq-lock-base <%== this.data.attr('class') %>" style="overflow:visible; width: 30px; height: 30px" id="<%= this.data.attr('wid') %>"><%
+        vis.binds.hqwidgets.lock.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+
+
+<!--script type="text/ejs" id="tplHqText" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Text" data-vis-render-visible="true" data-vis-attrs="hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqText", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqInfo" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Info" data-vis-render-visible="true" data-vis-attrs="hm_id;hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqInfo", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqImage" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Image" data-vis-render-visible="true" data-vis-attrs="hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqImage", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqCam" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="IpCamera" data-vis-render-visible="true" data-vis-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-OU-CFM-Pl,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR;.STATE,.OPEN,HM-Sec-Key-S,HM-LC-Sw4-WM,HM-LC-Sw1-Pl,HM-LC-SW1-FM,HM-LC-Sw2-FM,HM-LC-Sw1-SM,HM-LC-Sw4-PCB,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw1-BA-PCB">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCam", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqGong" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Gong" data-vis-render-visible="true" data-vis-attrs="hm_id;hqoptions" data-hqwidgets-filter="HM-OU-CFM-Pl,HM-Sec-SFA-SM,HM-OU-CF-Pl,HM-Sec-SC,HM-SCI-3-FM,HMW-Sen-SC-12-DR,HMW-IO-12-Sw14-DR;.STATE,.OPEN,HM-Sec-Key-S,HM-LC-Sw4-WM,HM-LC-Sw1-Pl,HM-LC-SW1-FM,HM-LC-Sw2-FM,HM-LC-Sw1-SM,HM-LC-Sw4-PCB,HM-LC-Sw4-SM,HM-LC-Sw1-BA-PCB">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGong", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqGauge" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Gauge" data-vis-render-visible="true" data-vis-attrs="hm_id;hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		}
+		else {
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqGauge", this.view);
+		}
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqMotion" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Motion Detector" data-vis-render-visible="true" data-vis-attrs="hm_id;hqoptions" data-hqwidgets-filter=".STATE,.MOTION;">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		}
+		else {
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqMotion", this.view);
+		}
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqLowbat" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Battery Indicator" data-vis-render-visible="true" data-vis-attrs="hqoptions" data-hqwidgets-filter=".LOWBAT">
+    <%
+    if (this && this.data && this.data.attr) {
+        if (this.data.attr('hqoptions')){
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+        }
+        else {
+            vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqLowbat", this.view);
+        }
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqIp" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Ping device" data-vis-render-visible="true" data-vis-attrs="hqoptions" data-hqwidgets-filter="PING">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqIp", this.view);
+		}
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqCharts" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Charts" data-vis-render-visible="true" data-vis-attrs="hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqCharts", this.view);
+		}
+    }
+    %>
+</script>
+<script type="text/ejs" id="tplHqEventlist" class="vis-tpl" data-vis-set="hqwidgets" data-vis-name="Eventlist" data-vis-render-visible="true" data-vis-attrs="hqoptions">
+    <%
+    if (this && this.data && this.data.attr) {
+		if (this.data.attr('hqoptions')){
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, this.data.attr('hqoptions'), undefined, this.view);
+		} else {
+			vis.binds.hqWidgetsExt.hqButtonExt (this.data.wid, undefined, "tplHqEventlist", this.view);
+		}
+    }
+    %>
+</script-->
+
+<script id="tplHqCheckbox"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="Checkbox"
+        data-vis-type="ctrl,checkbox"
+        data-vis-prev='<div id="prev_tplHqCheckbox" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="overflow: visible; width: 108px; height: 35px"><div class="checkbox-small-orange-wrap"><div class="checkbox-small-orange-button"><input type="checkbox" style="display: none;"></div></div></div></div>'
+        data-vis-update-style="true"
+        data-vis-attrs="oid[nothing_selected]/id;val_false[false];val_true[true];staticValue;"
+        data-vis-attrs0="checkboxSize[big]/select,big,small;checkboxColor[grey]/select,orange,blue,green,grey;checkboxColorOn[orange]/select,orange,blue,green,grey;readOnly/checkbox"
+    >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 216px; height: 68px" id="<%= this.data.attr('wid') %>"  data-vis-resizable='{"disabled":true, "handles":"e"}'><%
+            vis.binds.hqwidgets.checkbox.init(this.data.wid, this.view, this.data, this.style);
+    %></div>
+</script>
+
+<script id="tplHqCircle"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="CircleKnob"
+        data-vis-update-style="true"
+        data-vis-type="ctrl,number,dimmer,knob"
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_hqwidgetsCircleKnob.png"></img>'
+        data-vis-attrs="oid[nothing_selected]/id/changedButtonId;oid-working;oid-battery;oid-signal;"
+        data-vis-attrs0="group.value;unit;min[0];max[100];digits[0]/number;step[1];is_comma[true]/checkbox;readOnly/checkbox;"
+        data-vis-attrs1="group.center;caption;hideNumber/checkbox;"
+        data-vis-attrs2="group.arc;angleOffset/slider,0,360,1;angleArc/slider,0,360,1;displayPrevious[true]/checkbox;"
+        data-vis-attrs3="group.style;cursor/slider,1,350,1;thickness/slider,0.05,1,0.05;color/color;bgcolor/color;linecap/checkbox;anticlockwise/checkbox"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="overflow:visible; width: 64px; height: 64px" id="<%= this.data.attr('wid') %>"><%
+        vis.binds.hqwidgets.circle.init(this.data.wid, this.view, this.data);
+        %><input type="text" style="display: none"/></div>
+</script>
+<script id="tplHqOdometer"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-set="hqwidgets"
+        data-vis-name="Odometer"
+        data-vis-beta="true"
+        data-vis-update-style="true"
+        data-vis-type="val,number"
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_hqOdometer.png"></img>'
+        data-vis-attrs="oid;style[car]/nselect,car,default,digital,minimal,plaza,slot-machine,train-station;group.extended;format[(ddd),dd];factor[1];leadingZeros[true]/checkbox"
+        >
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 125px; height: 42px; font-size: 24px" id="<%= this.data.attr('wid') %>"></div>
+    <% vis.binds.hqwidgets.odometer(this.view, this.data) %>
+</script>
+
+<!-- --------------hqwidgets.html--- END -->
 <!-- --------------jqplot.html--- START -->
 <link rel="stylesheet" type="text/css" href="widgets/jqplot/css/jquery.jqplot.min.css" />
 
@@ -4616,7 +5020,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         data-vis-type="number"
         data-vis-name="MeterGauge"
         data-vis-attrs="oid;title;min/number;max/number;label;background/color;padding/slider,0,50,1;group.ticks;ticks;showTickLabels[true]/checkbox;tickPadding/slider,0,50,1;group.intervals;intervals;intervalColors;intervalInnerRadius/slider,0,550,1;intervalOuterRadius/slider,0,550,1;group.shadow;shadowOffset/slider,0,50,1;shadowAlpha/slider,0,1,0.05;shadowDepth/slider,0,50,1;group.ring;ringColor/color;ringWidth/slider,0,150,1;group.needle;needleThickness/slider,0,50,1;needlePad/slider,0,150,1;hubRadius/slider,0,150,1"
->
+        >
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:460px; height:280px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.jqplot.gauge(el, data) %>>
         <div class="vis-widget-body" style="width: 100%; height: 100%">
             <div class="jqplot-gauge" id="_<%= this.data.attr('wid') %>" data-oid="<%= this.data.attr('oid') %>" style="width: 100%; height: 100%"/>
@@ -5019,8 +5423,8 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                         var $this = this;
                         vis.renderView(cview, cview, false, function (_view) {
                             $('#visview_' + _view)
-                                .appendTo($this)
-                                .show();
+                                    .appendTo($this)
+                                    .show();
                         });
                     });
 
@@ -5214,14 +5618,14 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             }, options);
 
             $this.addClass('ui-widget ui-button ui-corner-all ui-state-default')
-                .css({
-                    font:       'inherit',
-                    //'color' :   'inherit',
-                    'text-align': 'left',
-                    outline:    'none',
-                    cursor:     'text',
-                    height:     '95%'
-                });
+                    .css({
+                        font:       'inherit',
+                        //'color' :   'inherit',
+                        'text-align': 'left',
+                        outline:    'none',
+                        cursor:     'text',
+                        height:     '95%'
+                    });
 
             if (!vis.editMode) $this.datepicker(datepickerOptions);
 
@@ -5276,14 +5680,14 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                 pickerTimeFormat: timeFormat
             }, options);
             $this.addClass('ui-state-default')
-                .css({
-                    font:       'inherit',
-                    //color:    'inherit',
-                    'text-align': 'left',
-                    outline:    'none',
-                    cursor:     'text',
-                    height:     '95%'
-                });
+                    .css({
+                        font:       'inherit',
+                        //color:    'inherit',
+                        'text-align': 'left',
+                        outline:    'none',
+                        cursor:     'text',
+                        height:     '95%'
+                    });
             // Store options
             $this[0].__options = options;
 
@@ -5350,16 +5754,16 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             if (!noJsStyle) $this.prev().button();
 
             $this.prev().addClass('ui-state-default')
-                .css({
-                    font:            'inherit',
-                    'padding-left':  5,
-                    'padding-right': 5,
-                    //'color' :   'inherit',
-                    'text-align':   'left',
-                    outline:        'none',
-                    cursor:         'text',
-                    height:         '95%'
-                });
+                    .css({
+                        font:            'inherit',
+                        'padding-left':  5,
+                        'padding-right': 5,
+                        //'color' :   'inherit',
+                        'text-align':   'left',
+                        outline:        'none',
+                        cursor:         'text',
+                        height:         '95%'
+                    });
 
             function onChange(e, newVal) {
                 if (!asString && digits && digits !== '') {
@@ -5467,37 +5871,37 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                 value:  parseFloat(vis.states.attr(oid + '.val')),
                 slide:  function (e, ui) {
                     if (options.submitmethod !== 'stop') {
-                        // Slider -> Observable
-                        if (oid2) {
-                            if (options.inverted) {
-                                ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-                                ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-                            }
-
-                            oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
-                            vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                        } else if (oid) {
-                            if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-                            vis.setValue(oid, ui.value); //.toFixed(6));
+                      // Slider -> Observable
+                      if (oid2) {
+                        if (options.inverted) {
+                          ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                          ui.values[1] = (settings.max - ui.values[1]) + settings.min;
                         }
+
+                        oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                        vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                      } else if (oid) {
+                        if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                        vis.setValue(oid, ui.value); //.toFixed(6));
+                      }
                     }
 
                 },
                 stop: function (e, ui) {
-                    if (options.submitmethod === 'stop') {
-                        if (oid2) {
-                            if (options.inverted) {
-                                ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-                                ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-                            }
+                  if (options.submitmethod === 'stop') {
+                    if (oid2) {
+                      if (options.inverted) {
+                        ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                        ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                      }
 
-                            oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
-                            vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                        } else if (oid) {
-                            if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
-                            vis.setValue(oid, ui.value); //.toFixed(6));
-                        }
+                      oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                      vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                    } else if (oid) {
+                      if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                      vis.setValue(oid, ui.value); //.toFixed(6));
                     }
+                  }
                 }
             }, options);
 
@@ -5814,7 +6218,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             }
             if (oid) {
                 vis.states.bind(oid, onChange);
-                // remember all ids, that bound
+                    // remember all ids, that bound
                 $this.parent()
                     .data('bound', [oid])
                     // remember bind handler
@@ -5910,15 +6314,15 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                     if (data._data.Password === $inputPass.val()) {
                         $('#NavPwDialog').remove();
                         vis.changeView(data.attr('nav_view'), data.attr('nav_view'), {
-                                effect: data.attr('hide_effect'),
-                                options: {},
-                                duration: data.attr('hide_duration')
-                            }, {
-                                effect: data.attr('show_effect'),
-                                options: {},
-                                duration: data.attr('show_duration')
-                            },
-                            data.attr('sync'));
+                                    effect: data.attr('hide_effect'),
+                                    options: {},
+                                    duration: data.attr('hide_duration')
+                                }, {
+                                    effect: data.attr('show_effect'),
+                                    options: {},
+                                    duration: data.attr('show_duration')
+                                },
+                                data.attr('sync'));
                     } else {
                         $inputPass.val('');
                         var bg = $inputPass.data('bg');
@@ -6689,7 +7093,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             "group_badge":      {"en": "Badge",             "de": "Abzeichen",              "ru": "Бирка"},
             "group_bg-and-text": {"en": "Background and label", "de": "Hintergrund und Titel", "ru": "Фон и надпись"},
             "group_dialog":     {"en": "Dialog",            "de": "Dialog",                 "ru": "Диалог"},
-            "group_brand":      {"en": "Brand",             "de": "Brand",                  "ru": "Brand"},
+	        "group_brand":      {"en": "Brand",             "de": "Brand",                  "ru": "Brand"},
             "transform":        {"en": "Transform",         "de": "Druckeffekt",            "ru": "Эффект нажатия"},
             "hover":            {"en": "Hover effect",      "de": "Hover-Effekt",           "ru": "Реакция на курсор"},
             "oid-working":      {"en": "Working state ID",  "de": "In Arbeit Zustand ID",   "ru": "'В работе' ID"},
@@ -7171,10 +7575,10 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                         }
                         html += '</div>';
                         html += '<table style="margin-top: 12px; margin-left: 12px; font-size:14px;display:inline-block;">' +
-                            (set_oid   ? ('<tr><td>' + (options.label_set   || ('Set temperature')) + ':</td><td><span class="metro-dialog-string" data-oid="' + set_oid   + '">' + val_set_id   + '</span>°C</td></tr>') : '') +
-                            (temp_oid  ? ('<tr><td>' + (options.label_temp  || _('Actual temp.'))   + ':</td><td><span class="metro-dialog-string" data-oid="' + temp_oid  + '">' + val_temp_id  + '</span>°C</td></tr>') : '') +
-                            (drive_oid ? ('<tr><td>' + (options.label_drive || _('Valve position')) + ':</td><td><span class="metro-dialog-string" data-oid="' + drive_oid + '">' + val_drive_id + '</span>%</td></tr>')  : '') +
-                            '</table>';
+                                (set_oid   ? ('<tr><td>' + (options.label_set   || ('Set temperature')) + ':</td><td><span class="metro-dialog-string" data-oid="' + set_oid   + '">' + val_set_id   + '</span>°C</td></tr>') : '') +
+                                (temp_oid  ? ('<tr><td>' + (options.label_temp  || _('Actual temp.'))   + ':</td><td><span class="metro-dialog-string" data-oid="' + temp_oid  + '">' + val_temp_id  + '</span>°C</td></tr>') : '') +
+                                (drive_oid ? ('<tr><td>' + (options.label_drive || _('Valve position')) + ':</td><td><span class="metro-dialog-string" data-oid="' + drive_oid + '">' + val_drive_id + '</span>%</td></tr>')  : '') +
+                                '</table>';
 
                         content.html(html);
                         sliderOptions.min = sliderOptions.min === undefined ? 6  : parseFloat(sliderOptions.min);
@@ -7262,7 +7666,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                 if (!vis.views[view].widgets[widgetID].data.windowopen_oid) {
                     var result = vis.findByName(value, 'WINDOW_STATE');
                     if (result) {
-                        changed.push('windowopen_oid');
+                       changed.push('windowopen_oid');
                         vis.views[view].widgets[widgetID].data.windowopen_oid = result;
                         vis.widgets[widgetID].data.windowopen_oid = result;
                     }
@@ -7281,7 +7685,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         }
     };
 
-    console.log('Metro version: "' + vis.binds.metro.version + '"');
+	console.log('Metro version: "' + vis.binds.metro.version + '"');
 </script>
 
 <script id="tplMetroSlider"
@@ -8428,7 +8832,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         data-vis-attrs="oid;oid-working;min;max;step[1];digits/number;hover[true]/checkbox;transform[true]/checkbox;label;"
         data-vis-attrs0="bg_class[bg-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs1="brand_bg_class[ribbed-steel]/style,metro-,bg- ribbed-;"
-        data-vis-attrs2="brand_bg_class_false[ribbed-steel]/style,metro-,bg- ribbed-;"
+	data-vis-attrs2="brand_bg_class_false[ribbed-steel]/style,metro-,bg- ribbed-;"
         data-vis-attrs3="brand_bg_class_true[ribbed-indigo]/style,metro-,bg- ribbed-;"
         data-vis-attrs4="group.slider;sliderColor/color;sliderCompleteColor/color;sliderMarkerColor/color;"
         data-vis-attrs5="group.dialog;dialog_flat/checkbox;dialog_shadow/checkbox;dialog_draggable[true]/checkbox;dialog_modal/checkbox;autoclose/slider,0,30000,100;"
@@ -8561,7 +8965,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             "Swipe Navigation":     {"en": "Swipe Navigation",  "de": "Swipe Navigation",   "ru": "Swipe навигация"}
         });
     }
-
+    
     vis.binds.swipe = {
         loadedSwipe: false,
         loadedRound: false,
@@ -8611,13 +9015,13 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                 }, 100);
                 return;
             }
-
+            
             if (vis.editMode) {
                 $div.show()
                     .find('.translate-it')
-                    .each(function () {
-                        $(this).html(_($(this).text()));
-                    });
+                        .each(function () {
+                            $(this).html(_($(this).text()));
+                        });
             }
 
             var $view = $('#visview_' + view);
@@ -8726,7 +9130,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         carousel: function (wid, view, data, style) {
             var $div = $('#' + wid);
             var childView = data.contains_view;
-
+            
             // if nothing found => wait
             if (!$div.length) {
                 setTimeout(function () {
@@ -8752,7 +9156,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 
 <script id="tplSwipe"
         type="text/ejs"
-        class="vis-tpl"
+        class="vis-tpl" 
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Swipe.png"></img>'
         data-vis-name="swipe Navigation"
@@ -8771,9 +9175,9 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 </script>
 
 
-<script id="tplCarousel"
+<script id="tplCarousel" 
         type="text/ejs"
-        class="vis-tpl"
+        class="vis-tpl" 
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Carousel.png"></img>'
         data-vis-name="Carousel"
@@ -8861,13 +9265,13 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
     };
 </script>
 
-<script type="text/ejs"
-        id="tplSTab"
+<script type="text/ejs" 
+        id="tplSTab" 
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplSTab" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 76px; left: 23px; width: 138px; height: 121px; position: absolute;" > <div class="vis-widget-prev-body"> <span style="width:100%;height:100%" class="ui-slider-tabs"> <!-- Unordered list representing the tabs --> <div class="ui-slider-tabs-list-wrapper"><div class="ui-slider-tabs-list-container" style="margin: 0px 35px;"><ul class="ui-slider-tabs-list" style="margin-left: 0px; width: 166px;"> <li class="selected" style="height: 32px;"><a href="#w00016_st1" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st2" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st3" style="height: 32px;">Tab</a></li></ul><a href="#" class="ui-slider-left-arrow edge" style="width: 35px; height: 32px;"><div></div></a><a href="#" class="ui-slider-right-arrow" style="width: 35px; height: 32px;"><div></div></a></div></div><div class="ui-slider-tabs-content-container" style="height: 86px;"><div style="padding-left: 0px; height: 100%; display: block; left: 0px; width: 126px;" class="ui-slider-tab-content selected"> <div class="editmode-helper"></div> <div data-vis-contains="hallo" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div></div></span> </div> </div>'
         data-vis-set="tabs"
         data-vis-update-style="true"
-        data-vis-name="SliderTabs"
+        data-vis-name="SliderTabs" 
         data-vis-attrs="height[100]/slider,20,1000,1;show_tabs[1]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -8877,65 +9281,3 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 </script>
 
 <!-- --------------tabs.html--- END -->
-
-<!--
-    ioBroker.vis bars Widget-Set
-
-    version: "0.1.4"
-
-    Copyright 2013-2016 bluefox<dogafox@gmail.com>
--->
-<link rel="stylesheet" type="text/css" href="widgets/bars/css/bars.css" />
-<link rel="stylesheet" type="text/css" href="widgets/bars/css/sidebar.css" />
-<link rel="stylesheet" type="text/css" href="widgets/bars/css/barButtons.css" />
-<script type="text/javascript" src="widgets/bars/js/bars.js"></script>
-<script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
-
-<script id="tplBarFilter"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-type="filter"
-        data-vis-set="bars"
-        data-vis-name="Filter bar"
-        data-vis-prev='<img src="widgets/bars/img/Prev_bars_filter.png"></img>'
-        data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-red]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;bOnlyOneSelected/checkbox;bValue/filters;alwaysOpened/checkbox;"
-        data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
-        data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
-        data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
-        data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters;"
-        data-vis-init="initOptions">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
-	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    >
-        <div class="vis-widget-body" style="overflow: visible"></div>
-        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarFilter"); %>
-    </div>
-</script>
-
-<script id="tplBarNavigator"
-        type="text/ejs"
-        class="vis-tpl"
-        data-vis-type="navigation"
-        data-vis-set="bars"
-        data-vis-prev='<img src="widgets/bars/img/Prev_bars_view.png"></img>'
-        data-vis-name="Views bar"
-        data-vis-attrs="bCount[1]/number,1,100,1;bTheme[sidebar-blue]/style,,sidebar-,background-color;bPosition[floatHorizontal]/select,floatHorizontal,floatVertical,dockTop,dockBottom,dockLeft,dockRight;alwaysOpened/checkbox;"
-        data-vis-attrs0="group.button_options;bSpace[5]/slider,0,100,1;bRadius[5]/slider,0,100,1;bOffset[0]/slider,0,100,1;bTextAlign[center]/select,center,left,right;bImageAlign[center]/select,center,left,right;bLayout[fixed]/select,auto,fixed;imagePaddingLeft[10]/slider,0,100,1;imagePaddingTop[2]/slider,0,100,1;"
-        data-vis-attrs1="group.style;bStyleNormal/style,barButtons,-button,background;bStyleActive/style,barButtons,-button,background;"
-        data-vis-attrs2="group.effects;bShowEffect[show]/effect;bShowEffectMs[100]/number;bHideEffect[show]/effect;bHideEffectMs[100]/number;"
-        data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views;"
-        data-vis-init="initOptions">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
-	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    >
-        <div class="vis-widget-body" style="overflow: visible"></div>
-        <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarNavigator"); %>
-    </div>
-</script>
-
-
-<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->
