@@ -169,6 +169,8 @@ const getViewOptions = (project, options = [], parentId = null, level = 0) => {
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
 
+    const [objectCache, setObjectCache] = useState(null);
+
     const {
         field,
         widget,
@@ -208,6 +210,13 @@ const WidgetField = props => {
     }
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
+        if (value && (!objectCache || value !== objectCache._id)) {
+            props.socket.getObject(value).then(objectData => setObjectCache(objectData)).catch(() => setObjectCache(null));
+        }
+        if (objectCache && !value) {
+            setObjectCache(null);
+        }
+
         return <>
             <TextField
                 variant="standard"
@@ -221,6 +230,9 @@ const WidgetField = props => {
                 value={value}
                 onChange={e => change(e.target.value)}
             />
+            <div style={{ fontStyle: 'italic' }}>
+                {objectCache ? objectCache.common.name : null}
+            </div>
             {idDialog ? <SelectID
                 selected={value}
                 onOk={selected => change(selected)}
