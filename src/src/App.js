@@ -91,7 +91,14 @@ class App extends GenericApp {
 
     componentDidMount() {
         super.componentDidMount();
+        let runtime = false;
+
+        if (window.location.search.includes('runtime') || window.location.pathname.endsWith('edit.html')) {
+            runtime = true;
+        }
+
         this.setState({
+            runtime,
             projectName: 'main',
             viewsManage: false,
             projectsDialog: false,
@@ -202,7 +209,9 @@ class App extends GenericApp {
             )) || [],
         });
         window.localStorage.setItem('selectedView', view);
-        window.location.hash = view;
+        if (window.location.hash !== '#view') {
+            window.location.hash = view;
+        }
     }
 
     changeProject = project => {
@@ -315,6 +324,10 @@ class App extends GenericApp {
         }, 200);
     }
 
+    onFontsUpdate = fonts => {
+        console.log(`New fonts: ${fonts.join(', ')}`);
+    };
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -322,6 +335,27 @@ class App extends GenericApp {
                     <Loader theme={this.state.themeType} />
                 </ThemeProvider>
             </StyledEngineProvider>;
+        }
+
+        const visEngine = <VisEngine
+            activeView={this.state.selectedView || ''}
+            editMode={!this.state.runtime && this.state.editMode}
+            runtime={this.state.runtime}
+            socket={this.socket}
+            lang={this.socket.systemLang}
+            views={this.state.visProject}
+            adapterName={this.adapterName}
+            instance={this.instance}
+            selectedWidgets={this.state.selectedWidgets}
+            setSelectedWidgets={this.setSelectedWidgets}
+            onLoaded={() => this.setState({ widgetsLoaded: true })}
+            onWidgetsChanged={this.onWidgetsChanged}
+            projectName={this.state.projectName}
+            onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
+        />;
+
+        if (this.state.runtime) {
+            return visEngine;
         }
 
         return <StyledEngineProvider injectFirst>
@@ -436,20 +470,7 @@ class App extends GenericApp {
                                             height: '100%',
                                         }}
                                     >
-                                        <VisEngine
-                                            activeView={this.state.selectedView || ''}
-                                            editMode={this.state.editMode}
-                                            socket={this.socket}
-                                            lang={this.socket.systemLang}
-                                            views={this.state.visProject}
-                                            adapterName={this.adapterName}
-                                            instance={this.instance}
-                                            selectedWidgets={this.state.selectedWidgets}
-                                            setSelectedWidgets={this.setSelectedWidgets}
-                                            onLoaded={() => this.setState({ widgetsLoaded: true })}
-                                            onWidgetsChanged={this.onWidgetsChanged}
-                                            projectName={this.state.projectName}
-                                        />
+                                        { visEngine }
                                     </div>
                                 </div>
                             </div>

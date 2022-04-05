@@ -900,15 +900,6 @@ class VisCanWidget extends VisBaseWidget {
             };
 
             this.applyBindings(true);
-
-            // replace all _PRJ_NAME with vis.0/name
-            Object.keys(widgetData).forEach(attr => {
-                if ((attr.startsWith('src') || attr.endsWith('src')) && widgetData[attr].startsWith('_PRJ_NAME')) {
-                    // "_PRJ_NAME".length = 9
-                    // extra do not use widgetData.attr(attr, value) as we do not want to trigger observable
-                    widgetData[attr] = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetData[attr].substring(9)}`;
-                }
-            });
         } catch (e) {
             console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
             return;

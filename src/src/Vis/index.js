@@ -174,7 +174,7 @@ class VisEngine extends React.Component {
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
-                console.warn('changeView not implemented: ', viewDiv, view, hideOptions, showOptions, sync);
+                window.location.hash = `#${encodeURIComponent(view)}`;
                 cb && cb(viewDiv, view);
             },
             onWakeUp: (cb, wid) => {
@@ -197,6 +197,13 @@ class VisEngine extends React.Component {
             addFont: fontName => {
                 if (!this.fontNames.includes(fontName)) {
                     this.fontNames.push(fontName);
+                    if (this.props.onFontsUpdate) {
+                        this.fontTimer && clearTimeout(this.fontTimer);
+                        this.fontTimer = setTimeout(() => {
+                            this.fontTimer = null;
+                            this.props.onFontsUpdate(this.fontNames);
+                        });
+                    }
                 }
             },
             registerOnChange: (callback, arg, wid) => {
@@ -913,6 +920,7 @@ class VisEngine extends React.Component {
         }
 
         this.vis.editMode = this.props.editMode;
+        this.vis.activeView = this.props.activeView;
 
         return Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
@@ -961,6 +969,7 @@ VisEngine.propTypes = {
     setSelectedWidgets: PropTypes.func,
     runtime: PropTypes.bool,
     onWidgetsChanged: PropTypes.func,
+    onFontsUpdate: PropTypes.func,
     showWidgetNames: PropTypes.bool,
 
     adapterName: PropTypes.string.isRequired,
