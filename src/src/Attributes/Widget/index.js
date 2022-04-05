@@ -11,6 +11,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import ColorizeIcon from '@mui/icons-material/Colorize';
 
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
@@ -51,6 +52,9 @@ const styles = theme => ({
         width: 140,
         fontSize: '80%',
     },
+    colorize: {
+        display: 'none',
+    },
     fieldContent: {
         '&&&&&&': {
             fontSize: '80%',
@@ -58,6 +62,12 @@ const styles = theme => ({
         '& svg': {
             fontSize: '1rem',
         },
+        '&:hover $colorize': {
+            display: 'initial',
+        },
+    },
+    fieldInput: {
+        width: '100%',
     },
     fieldContentColor: {
         '&&&&&& label': {
@@ -111,7 +121,7 @@ const getFieldsBefore = () => [
     },
 ];
 
-const getFieldsAfter = widgets => [
+const getFieldsAfter = (widgets, fonts) => [
     {
         name: 'css_common',
         isStyle: true,
@@ -137,18 +147,7 @@ const getFieldsAfter = widgets => [
             {
                 name: 'font-family',
                 type: 'auto',
-                options: ['Verdana, Geneva, sans-serif',
-                    'Georgia, "Times New Roman", Times, serif',
-                    '"Courier New", Courier, monospace',
-                    'Arial, Helvetica, sans-serif',
-                    'Tahoma, Geneva, sans-serif',
-                    '"Trebuchet MS", Arial, Helvetica, sans-serif',
-                    '"Arial Black", Gadget, sans-serif',
-                    '"Times New Roman", Times, serif',
-                    '"Palatino Linotype", "Book Antiqua", Palatino, serif',
-                    '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
-                    '"MS Serif", "New York", serif',
-                    '"Comic Sans MS", cursive'],
+                options: fonts,
             },
             { name: 'font-style', type: 'nselect', options: ['', 'normal', 'italic', 'oblique', 'initial', 'inherit'] },
             { name: 'font-variant', type: 'nselect', options: ['', 'normal', 'small-caps', 'initial', 'inherit'] },
@@ -525,7 +524,7 @@ const Widget = props => {
 
         const fieldsManual = [...fields];
 
-        fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets)];
+        fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets, props.fonts)];
 
         fields.forEach(group => {
             const found = props.selectedWidgets.find(selectedWidget => {
@@ -659,12 +658,23 @@ const Widget = props => {
                                                 {window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')}
                                             </td>
                                             <td className={props.classes.fieldContent}>
-                                                <WidgetField
-                                                    field={field}
-                                                    widget={props.selectedWidgets.length > 1 ? commonValues : widget}
-                                                    isStyle={group.isStyle}
-                                                    {...props}
-                                                />
+                                                <div style={{
+                                                    display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
+                                                }}
+                                                >
+                                                    <div className={props.classes.fieldInput}>
+                                                        <WidgetField
+                                                            field={field}
+                                                            widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                            isStyle={group.isStyle}
+                                                            {...props}
+                                                        />
+                                                    </div>
+                                                    {group.isStyle ?
+                                                        <IconButton className={props.classes.colorize} onClick={() => props.cssClone(field)}>
+                                                            <ColorizeIcon fontSize="small" />
+                                                        </IconButton> : null}
+                                                </div>
                                             </td>
                                         </>}
                                 </tr>)

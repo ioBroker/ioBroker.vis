@@ -370,20 +370,7 @@ const WidgetField = props => {
         let { options } = field;
 
         if (field.type === 'fontname') {
-            options = [
-                'Verdana, Geneva, sans-serif',
-                'Georgia, "Times New Roman", Times, serif',
-                '"Courier New", Courier, monospace',
-                'Arial, Helvetica, sans-serif',
-                'Tahoma, Geneva, sans-serif',
-                '"Trebuchet MS", Arial, Helvetica, sans-serif',
-                '"Arial Black", Gadget, sans-serif',
-                '"Times New Roman", Times, serif',
-                '"Palatino Linotype", "Book Antiqua", Palatino, serif',
-                '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
-                '"MS Serif", "New York", serif',
-                '"Comic Sans MS", cursive',
-            ];
+            options = props.fonts;
         }
 
         if (field.type === 'effect') {

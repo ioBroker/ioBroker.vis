@@ -107,6 +107,7 @@ class App extends GenericApp {
             showCode: window.localStorage.getItem('showCode') === 'true',
             editMode: true,
             widgetsLoaded: false,
+            fonts: [],
             ...this.state,
         });
 
@@ -325,8 +326,12 @@ class App extends GenericApp {
     }
 
     onFontsUpdate = fonts => {
-        console.log(`New fonts: ${fonts.join(', ')}`);
+        this.setState({ fonts });
     };
+
+    cssClone = field => {
+        console.log(field);
+    }
 
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
@@ -487,8 +492,10 @@ class App extends GenericApp {
                                     widgetsLoaded={this.state.widgetsLoaded}
                                     socket={this.socket}
                                     themeName={this.state.themeName}
+                                    fonts={this.state.fonts}
                                     adapterName={this.adapterName}
                                     instance={this.instance}
+                                    cssClone={this.cssClone}
                                 />
                             </div>
                         </ReactSplit>
