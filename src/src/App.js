@@ -331,23 +331,30 @@ class App extends GenericApp {
         this.setState({ fonts });
     };
 
-    cssClone = (field, cb) => {
-        console.log(field);
-        if (this.visEngineHandlers[this.props.selectedView] && this.visEngineHandlers[this.props.selectedView].onStealStyle) {
-            this.visEngineHandlers[this.props.selectedView].onStealStyle(field, cb);
+    cssClone = (attr, cb) => {
+        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onStealStyle) {
+            this.visEngineHandlers[this.state.selectedView].onStealStyle(attr, cb);
         } else {
-            cb && cb(field, null); // cancel selection
+            cb && cb(attr, null); // cancel selection
         }
     }
 
     onPxToPercent = (wids, attr, cb) => {
-
+        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
+            this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
+        } else {
+            cb && cb(wids, attr, null); // cancel selection
+        }
     }
 
     onPercentToPx = (wids, attr, cb) => {
-        
+        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
+            this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
+        } else {
+            cb && cb(wids, attr, null); // cancel selection
+        }
     }
-    
+
     registerCallback = (name, view, cb) => {
         console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
 

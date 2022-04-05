@@ -221,24 +221,27 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    onCommand = command => {
-        if (command === 'updateContainers') {
-            // try to find 'vis-view-container' in it
-            const containers = this.widDiv.querySelectorAll('.vis-view-container');
-            if (containers.length) {
-                const legacyViewContainers = [];
-                for (let v = 0; v < containers.length; v++) {
-                    const view = (containers[v].dataset.visContains || '').trim();
-                    if (view) {
-                        legacyViewContainers.push(view);
-                        containers[v].className = addClass(containers[v].className, 'vis-editmode-helper');
+    // this method may be not in form onCommand = command => {}
+    onCommand(command) {
+        if (!super.onCommand(command)) {
+            if (command === 'updateContainers') {
+                // try to find 'vis-view-container' in it
+                const containers = this.widDiv.querySelectorAll('.vis-view-container');
+                if (containers.length) {
+                    const legacyViewContainers = [];
+                    for (let v = 0; v < containers.length; v++) {
+                        const view = (containers[v].dataset.visContains || '').trim();
+                        if (view) {
+                            legacyViewContainers.push(view);
+                            containers[v].className = addClass(containers[v].className, 'vis-editmode-helper');
+                        }
                     }
-                }
 
-                legacyViewContainers.sort();
+                    legacyViewContainers.sort();
 
-                if (JSON.stringify(legacyViewContainers) !== JSON.stringify(this.state.legacyViewContainers)) {
-                    this.setState({ legacyViewContainers });
+                    if (JSON.stringify(legacyViewContainers) !== JSON.stringify(this.state.legacyViewContainers)) {
+                        this.setState({ legacyViewContainers });
+                    }
                 }
             }
         }
@@ -1005,7 +1008,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.onCommand('updateContainers');
             }
 
-            this.props.registerRef(this.props.id, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommand);
+            this.props.registerRef(this.props.id, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
             this.props.socket.log.error(`can't render ${widget.tpl} ${wid} on "${this.props.view}": `);

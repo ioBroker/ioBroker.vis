@@ -45,6 +45,10 @@ body, html {
     min-width: 100%;
 }
 
+.vis-editmode-steal-style:hover {
+    box-shadow: 0 0 5px 5px #002aad;
+}
+
 .vis-editmode-helper {
     background-image: /* tint image */
             linear-gradient(to right, rgba(192, 192, 192, 0.75), rgba(192, 192, 192, 0.75)),

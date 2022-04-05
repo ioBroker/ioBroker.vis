@@ -673,11 +673,13 @@ const Widget = props => {
                                                     {group.isStyle ?
                                                         <IconButton
                                                             className={props.classes.colorize}
-                                                            onClick={() => props.cssClone(field, newValue => {
-                                                                const project = JSON.parse(JSON.stringify(props.project));
-                                                                props.selectedWidgets.forEach(selectedWidget => {
-                                                                    project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue;
-                                                                });
+                                                            onClick={() => props.cssClone(field.name, newValue => {
+                                                                console.log(`New value ${newValue}`);
+                                                                if (newValue !== null && newValue !== undefined) {
+                                                                    const project = JSON.parse(JSON.stringify(props.project));
+                                                                    props.selectedWidgets.forEach(selectedWidget =>
+                                                                        project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                }
                                                             })}
                                                         >
                                                             <ColorizeIcon fontSize="small" />

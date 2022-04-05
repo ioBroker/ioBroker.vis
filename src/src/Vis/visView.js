@@ -120,14 +120,32 @@ class VisView extends React.Component {
         }
     };
 
+    onStealStyle = (attr, cb) => {
+        // next click will be processed as steal
+        this.nextClickIsSteal = {
+            attr,
+            cb,
+            cursors: {},
+        };
+        Object.keys(this.widgetsRefs).forEach(wid =>
+            this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand('startStealMode'));
+    }
+
+    cancelStealMode(result) {
+        if (this.nextClickIsSteal) {
+            this.nextClickIsSteal.cb(result);
+            Object.keys(this.widgetsRefs).forEach(wid =>
+                this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand('cancelStealMode'));
+            this.nextClickIsSteal = null;
+        }
+    }
+
     onMouseViewDown = this.props.runtime ? null : e => {
         e.stopPropagation();
 
         if (this.nextClickIsSteal) {
             // click canceled
-            this.nextClickIsStealCallback(this.nextClickIsSteal, null);
-            this.nextClickIsStealCallback = null;
-            this.nextClickIsSteal = null;
+            this.cancelStealMode(null);
             return;
         }
 
@@ -252,12 +270,15 @@ class VisView extends React.Component {
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : e => {
+    onMouseWidgetDown = this.props.runtime ? null : (e, wid) => {
         if (this.nextClickIsSteal) {
             // send to App.js the stolen attribute
-            this.nextClickIsStealCallback(this.nextClickIsSteal, e.target.style[this.nextClickIsSteal]);
-            this.nextClickIsStealCallback = null;
-            this.nextClickIsSteal = null;
+            if (this.widgetsRefs[wid]) {
+                const ref = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService?.current;
+                this.cancelStealMode(ref ? ref.style[this.nextClickIsSteal.attr] : null);
+            } else {
+                this.cancelStealMode(null);
+            }
             return;
         }
 
@@ -306,20 +327,83 @@ class VisView extends React.Component {
         }
     } : null;
 
-    onStealStyle(attr, cb) {
-        // next click will be processed as steal
-        this.nextClickIsSteal = attr;
-        this.nextClickIsStealCallback = cb;
+    editWidgetsRect(widget) {
+        const viewLeft = this.refView.current.offsetLeft;
+        const viewTop = this.refView.current.offsetTop;
+
+        // find common coordinates
+        const ref = this.widgetsRefs[widget].widDiv || this.widgetsRefs[widget].refService?.current;
+
+        if (!ref) {
+            return null;
+        }
+        let top  = ref.clientTop - viewTop;
+        let left = ref.clientLeft - viewLeft;
+        // May be bug?
+        if (!left && !top) {
+            const style = this.props.views[this.props.view].widgets[widget].style;
+            left = parseInt(style?.left || '0', 10) + parseInt(ref.offsetLeft, 10);
+            top  = parseInt(style?.top  || '0', 10) + parseInt(ref.offsetTop, 10);
+            left = left || 0;
+            top  = top || 0;
+        }
+
+        return {
+            top,
+            left,
+            width:  ref.clientWidth,
+            height: ref.clientHeight,
+        };
     }
 
-    onPxToPercent(view, wid, attr, cb) {
-        // todo
-        cb && cb(view, wid, attr, null);
+    onPxToPercent = (wids, attr, cb) => {
+        const pRect = {};
+        pRect.left   = this.refView.current.clientLeft;
+        pRect.top    = this.refView.current.clientTop;
+        pRect.height = this.refView.current.clientTop;
+        pRect.width  = this.refView.current.clientWidth;
+
+        const result = wids.map(wid => {
+            const wRect = this.editWidgetsRect(wid);
+            if (!wRect) {
+                return null;
+            }
+            /*
+            if (isShift) {
+                wRect.top  -= pRect.top;
+                wRect.left -= pRect.left;
+            }
+            */
+            wRect.top    = (wRect.top  * 100) / pRect.height;
+            wRect.left   = (wRect.left * 100) / pRect.width;
+            wRect.width  = (wRect.width  / pRect.width)  * 100;
+            wRect.height = (wRect.height / pRect.height) * 100;
+            wRect.top    = `${Math.round(wRect.top * 100) / 100}%`;
+            wRect.left   = `${Math.round(wRect.left * 100) / 100}%`;
+            wRect.width  = `${Math.round(wRect.width * 100) / 100}%`;
+            wRect.height = `${Math.round(wRect.height * 100) / 100}%`;
+
+            return wRect[attr];
+        });
+
+        cb && cb(wids, attr, result);
     }
 
-    onPercentToPx(view, wid, attr, cb) {
-        // todo
-        cb && cb(view, wid, attr, null);
+    onPercentToPx = (wids, attr, cb) => {
+        const result = wids.map(wid => {
+            const wRect = this.editWidgetsRect(wid);
+            if (!wRect) {
+                return null;
+            }
+
+            wRect.top    = `${Math.round(wRect.top)}px`;
+            wRect.left   = `${Math.round(wRect.left)}px`;
+            wRect.width  = `${Math.round(wRect.width)}px`;
+            wRect.height = `${Math.round(wRect.height)}px`;
+            return wRect[attr];
+        });
+
+        cb && cb(wids, attr, result);
     }
 
     registerEditorHandlers(unregister) {

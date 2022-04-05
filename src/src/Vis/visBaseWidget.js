@@ -43,16 +43,41 @@ class VisBaseWidget extends React.Component {
             resizable: true,
             resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
         };
+
+        this.onCommandBound = this.onCommand.bind(this);
     }
 
     componentDidMount() {
         // register service ref by view for resize and move
-        this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommand);
+        this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
     }
 
     componentWillUnmount() {
         // delete service ref from view
         this.props.registerRef && this.props.registerRef(this.props.id);
+    }
+
+    // this method may be not in form onCommand = command => {}
+    onCommand(command) {
+        if (command === 'startStealMode') {
+            this.stealCursor = this.refService.current.style.cursor || 'nocursor';
+            this.refService.current.style.cursor = 'crosshair';
+            this.refService.current.className = addClass(this.refService.current.className, 'vis-editmode-steal-style');
+            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
+            resizers.forEach(item => item.style.display = 'none');
+            return true;
+        }
+        if (command === 'cancelStealMode') {
+            if (this.stealCursor !== 'nocursor') {
+                this.refService.current.style.cursor = this.stealCursor;
+            }
+            this.stealCursor = null;
+            this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-steal-style');
+            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
+            resizers.forEach(item => item.style.display = '');
+            return true;
+        }
+        return false;
     }
 
     static getDerivedStateFromProps(props, state) {
@@ -152,6 +177,10 @@ class VisBaseWidget extends React.Component {
 
     onMouseDown(e) {
         e.stopPropagation();
+        if (this.stealCursor) {
+            this.props.mouseDownOnView(e, this.props.id);
+            return;
+        }
         if (!this.props.selectedWidgets.includes(this.props.id)) {
             if (e.shiftKey || e.ctrlKey) {
                 // add or remove
