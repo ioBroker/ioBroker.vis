@@ -324,6 +324,10 @@ class App extends GenericApp {
         }, 200);
     }
 
+    onFontsUpdate = fonts => {
+        console.log(`New fonts: ${fonts.join(', ')}`);
+    };
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -347,6 +351,7 @@ class App extends GenericApp {
             onLoaded={() => this.setState({ widgetsLoaded: true })}
             onWidgetsChanged={this.onWidgetsChanged}
             projectName={this.state.projectName}
+            onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
         />;
 
         if (this.state.runtime) {

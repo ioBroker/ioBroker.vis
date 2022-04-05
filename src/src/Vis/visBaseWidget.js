@@ -61,9 +61,27 @@ class VisBaseWidget extends React.Component {
         if (JSON.stringify(widget.style) !== JSON.stringify(state.style) ||
             JSON.stringify(widget.data) !== JSON.stringify(state.data)
         ) {
+            const data = JSON.parse(JSON.stringify(widget.data));
+            const style = JSON.parse(JSON.stringify(widget.style));
+
+            // replace all _PRJ_NAME with vis.0/name
+            Object.keys(data).forEach(attr => {
+                if (attr && data[attr] && (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && data[attr].startsWith('_PRJ_NAME')) {
+                    // "_PRJ_NAME".length = 9
+                    data[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
+                }
+            });
+
+            Object.keys(style).forEach(attr => {
+                if (attr === 'background-image' && style[attr] && style[attr].startsWith('_PRJ_NAME')) {
+                    // "_PRJ_NAME".length = 9
+                    style[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;
+                }
+            });
+
             return {
-                style: JSON.parse(JSON.stringify(widget.style)),
-                data: JSON.parse(JSON.stringify(widget.data)),
+                style,
+                data,
                 applyBindings: true,
             };
         }

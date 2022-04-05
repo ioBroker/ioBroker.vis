@@ -4,13 +4,14 @@
 - Add widget from palette
 - Close all groups / open all groups
 
-### Engine
-- showMessage method in this.vis
-- onWakeUp method in this.vis
-- changeView method in this.vis
-- changeFilter method in this.vis
-- detectBounce method in this.vis
-- addFont
+### Runtime
+#### Engine
+- showMessage method in vis
+- onWakeUp method in vis
+- changeView method in vis
+- changeFilter method in vis
+- detectBounce method in vis
+- addFont method in vis
 
 ### View
 - Delete widget
@@ -28,6 +29,13 @@
 - Lock/Unlock widget
 - Context menu
 - Bring to front / Send back
+
+### Widget
+- Gestures
+- Last change
+- By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
+
+## groups edit
 
 ### Toolbar
 - 3 Levels of visibility:
@@ -57,8 +65,6 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - Side menu with views
 
 ### Wizard for new widget set
-
-### Runtime
 
 
 ## Documentation CAN
