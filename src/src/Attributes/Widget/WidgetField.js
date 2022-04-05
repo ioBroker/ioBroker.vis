@@ -329,7 +329,7 @@ const WidgetField = props => {
             <Input
                 value={value}
                 size="small"
-                onChange={e => change(e.target.value)}
+                onChange={e => change(parseInt(e.target.value))}
                 classes={{
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 }}
