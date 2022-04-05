@@ -199,7 +199,7 @@ const WidgetField = props => {
     };
 
     let value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
-    if (value === undefined) {
+    if (value === undefined || value === null) {
         if (field.default) {
             value = field.default;
         } else {

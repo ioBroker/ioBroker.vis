@@ -88,6 +88,7 @@ const styles = theme => ({
 const getFieldsBefore = () => [
     {
         name: 'general',
+        oldName: 'fixed',
         fields: [
             { name: 'name' },
             { name: 'comment' },
@@ -130,6 +131,7 @@ const getFieldsAfter = widgets => [
     },
     {
         name: 'css_font',
+        oldName: 'css_font_text',
         isStyle: true,
         fields: [{ name: 'color', type: 'color' },
             { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
@@ -181,6 +183,7 @@ const getFieldsAfter = widgets => [
     },
     {
         name: 'css_padding',
+        oldName: 'css_shadow_padding',
         isStyle: true,
         fields: [{ name: 'padding' },
             { name: 'padding-left' },
@@ -222,6 +225,7 @@ const getFieldsAfter = widgets => [
     },
     {
         name: 'notification',
+        oldName: 'signals',
         fields: [...([0, 1, 2].flatMap(i => [
             { name: `signals-oid-${i}`, type: 'id' },
             {
@@ -249,6 +253,7 @@ const getFieldsAfter = widgets => [
     },
     {
         name: 'show_last',
+        oldName: 'last_change',
         fields: [
             { name: 'lc-oid', type: 'id' },
             {
@@ -627,6 +632,11 @@ const Widget = props => {
                                                 project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
                                             }
                                         });
+                                        if (group.hasValues) {
+                                            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.oldName || group.oldName}`];
+                                        } else {
+                                            project[props.selectedView].widgets[selectedWidget].data[`g_${group.oldName || group.name}`] = true;
+                                        }
                                     });
                                     props.changeProject(project);
                                     e.stopPropagation();
