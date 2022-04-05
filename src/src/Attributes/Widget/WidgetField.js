@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 
 import {
     Autocomplete,
-    Button, Checkbox, Divider, Input, ListItemText, MenuItem, Select, Slider, TextField,
+    Box,
+    Button, Checkbox, Divider, Input, ListItemText, ListSubheader, MenuItem, Select, Slider, TextField,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -11,6 +12,10 @@ import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import FileIcon from '@mui/icons-material/InsertDriveFile';
+
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
@@ -136,6 +141,30 @@ function getStylesOptions(options) {
 
     return styles;
 }
+
+const getViewOptions = (project, options = [], parentId = null, level = 0) => {
+    project.___settings.folders
+        .filter(folder => (folder.parentId || null) === parentId)
+        .forEach(folder => {
+            options.push({
+                type: 'folder',
+                folder,
+                level: level + 1,
+            });
+            getViewOptions(project, options, folder.id, level + 1);
+        });
+    Object.keys(project)
+        .filter(view => (project[view].parentId || null) === parentId &&
+                !view.startsWith('__'))
+        .forEach(view => {
+            options.push({
+                type: 'view',
+                view,
+                level: level + 1,
+            });
+        });
+    return options;
+};
 
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
@@ -375,8 +404,7 @@ const WidgetField = props => {
         </Select>;
     }
     if (field.type === 'select-views') {
-        const options = Object.keys(props.project)
-            .filter(view => !view.startsWith('__') && view !== props.selectedView);
+        const options = getViewOptions(props.project).filter(option => option.type === 'folder' || option.view !== props.selectedView);
         return <Select
             variant="standard"
             value={value || []}
@@ -389,21 +417,25 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             fullWidth
         >
-            {options.map(selectItem => <MenuItem
-                value={selectItem}
-                key={selectItem}
-            >
-                <Checkbox checked={(value || []).includes(selectItem)} />
-                <ListItemText primary={i18n.t(selectItem)} />
-            </MenuItem>)}
+            {options.map((option, key) =>
+                (option.type === 'view' ?
+                    <MenuItem
+                        value={option.view}
+                        key={key}
+                        style={{ paddingLeft: option.level * 16 }}
+                    >
+                        <FileIcon />
+                        <Checkbox checked={(value || []).includes(option.view)} />
+                        <ListItemText primary={i18n.t(option.view)} />
+                    </MenuItem>
+                    :
+                    <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }}>
+                        <FolderOpenIcon />
+                        {option.folder.name}
+                    </ListSubheader>))}
         </Select>;
     }
     if (field.type === 'groups') {
-        const options = props.groups.map(group => ({
-            name: typeof group.common.name === 'string' ? group.common.name : group.common.name[i18n.getLanguage()],
-            /* eslint no-underscore-dangle: 0 */
-            value: group._id.split('.')[2],
-        }));
         return <Select
             variant="standard"
             value={value || []}
@@ -442,7 +474,7 @@ const WidgetField = props => {
             </MenuItem>)}
         </Select>;
     }
-    if (field.type === 'auto' || field.type === 'class' || field.type === 'views')  {
+    if (field.type === 'auto' || field.type === 'class')  {
         let options = field.options;
         if (field.type === 'class') {
             options = collectClasses().filter(cssClass => cssClass.match(/^vis-style-/));
@@ -467,6 +499,62 @@ const WidgetField = props => {
                 <TextField
                     variant="standard"
                     {...params}
+                />
+            )}
+        />;
+    }
+    if (field.type === 'views')  {
+        const options = getViewOptions(props.project);
+
+        return <Autocomplete
+            freeSolo
+            fullWidth
+            options={options || []}
+            inputValue={value || ''}
+            value={value || ''}
+            onInputChange={(e, inputValue) => {
+                if (typeof inputValue !== 'string') {
+                    inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
+                }
+                change(inputValue);
+            }}
+            onChange={(e, inputValue) => {
+                if (typeof inputValue !== 'string') {
+                    inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
+                }
+                change(inputValue);
+            }}
+            classes={{
+                input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
+            }}
+            getOptionLabel={option => {
+                if (typeof option === 'string') {
+                    return option;
+                }
+                return option.type === 'view' ? option.view : option.folder.name;
+            }}
+            getOptionDisabled={option => option.type === 'folder'}
+            renderOption={(optionProps, option) => (option.type === 'view' ?
+                <Box
+                    component="li"
+                    style={{ paddingLeft: option.level * 16 }}
+                    {...optionProps}
+                >
+                    <FileIcon />
+                    {i18n.t(option.view)}
+                </Box>
+                :
+                <Box component="li" style={{ paddingLeft: option.level * 16 }} {...optionProps}>
+                    <FolderOpenIcon />
+                    {option.folder.name}
+                </Box>)}
+            renderInput={params => (
+                <TextField
+                    variant="standard"
+                    {...params}
+                    inputProps={{
+                        ...params.inputProps,
+                    }}
                 />
             )}
         />;
