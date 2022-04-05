@@ -319,7 +319,18 @@ const WidgetField = props => {
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 },
-                endAdornment: <Button size="small" onClick={() => change(parts[1] + (parts[2] === 'px' ? '%' : 'px'))}>{parts[2]}</Button>,
+                endAdornment: <Button
+                    size="small"
+                    onClick={() => {
+                        if (parts[2] === 'px') {
+                            props.onPxToPercent(props.selectedWidgets, field.name, newValue => change(`${newValue}%`));
+                        } else {
+                            props.onPercentToPx(props.selectedWidgets, field.name, newValue => change(`${newValue}%`));
+                        }
+                    }}
+                >
+                    {parts[2]}
+                </Button>,
             }}
             value={parts[1]}
             onChange={e => change(e.target.value === '' ? '' : (e.target.value + (parts[2] ? parts[2] : 'px')))}

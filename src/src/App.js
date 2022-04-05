@@ -333,6 +333,14 @@ class App extends GenericApp {
         console.log(field);
     }
 
+    onPxToPercent = (wids, attr, cb) => {
+
+    }
+
+    onPercentToPx = (wids, attr, cb) => {
+        
+    }
+    
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -496,6 +504,8 @@ class App extends GenericApp {
                                     adapterName={this.adapterName}
                                     instance={this.instance}
                                     cssClone={this.cssClone}
+                                    onPxToPercent={this.onPxToPercent}
+                                    onPercentToPx={this.onPercentToPx}
                                 />
                             </div>
                         </ReactSplit>
