@@ -17,7 +17,7 @@ import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import WidgetField from './WidgetField';
 
-const ICONS = { 'group.general': <FilterAltIcon fontSize="small" />, locked: <LockIcon fontSize="small" /> };
+const ICONS = { 'group.fixed': <FilterAltIcon fontSize="small" />, locked: <LockIcon fontSize="small" /> };
 
 const getWidgetTypes = () => Array.from(document.querySelectorAll('script[type="text/ejs"]'))
     .map(script => ({
