@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary, Divider,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LockIcon from '@mui/icons-material/Lock';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
@@ -525,6 +527,23 @@ const Widget = props => {
 
         fields = [...getFieldsBefore(), ...fields, ...getFieldsAfter(props.project[props.selectedView].widgets)];
 
+        fields.forEach(group => {
+            const found = props.selectedWidgets.find(selectedWidget => {
+                const fieldFound = group.fields.find(field => {
+                    const fieldValue = props.project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                    if (fieldValue === undefined) {
+                        return false;
+                    }
+                    if (field.default && fieldValue === field.default) {
+                        return false;
+                    }
+                    return true;
+                });
+                return fieldFound !== undefined;
+            });
+            group.hasValues = found !== undefined;
+        });
+
         const [accordionOpen, setAccordionOpen] = useState(
             window.localStorage.getItem('attributesWidget') && window.localStorage.getItem('attributesWidget')[0] === '{'
                 ? JSON.parse(window.localStorage.getItem('attributesWidget'))
@@ -532,7 +551,31 @@ const Widget = props => {
         );
 
         return <div>
-            <h4>{props.selectedWidgets.join(', ')}</h4>
+            <h4>
+                {props.selectedWidgets.join(', ')}
+                <Tooltip title={i18n.t('Expand all')}>
+                    <IconButton onClick={() => {
+                        const newAccordionOpen = {};
+                        fields.forEach(group => newAccordionOpen[group.name] = true);
+                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
+                    >
+                        <UnfoldMoreIcon />
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title={i18n.t('Collapse all')}>
+                    <IconButton onClick={() => {
+                        const newAccordionOpen = {};
+                        fields.forEach(group => newAccordionOpen[group.name] = false);
+                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
+                    >
+                        <UnfoldLessIcon />
+                    </IconButton>
+                </Tooltip>
+            </h4>
             <pre>
                 {/* {JSON.stringify(widgetType, null, 2)}
                 {JSON.stringify(fieldsManual, null, 2)} */}
@@ -545,7 +588,7 @@ const Widget = props => {
                 square
                 key={group.name}
                 elevation={0}
-                expanded={!!accordionOpen[group.name]}
+                expanded={!!(accordionOpen[group.name] && group.hasValues)}
                 onChange={(e, expanded) => {
                     const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
                     newAccordionOpen[group.name] = expanded;
@@ -561,10 +604,40 @@ const Widget = props => {
                         expanded: props.classes.clearPadding,
                         expandIcon: props.classes.clearPadding,
                     }}
-                    expandIcon={<ExpandMoreIcon />}
+                    expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
                 >
-                    {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                    {window._(group.singleName || group.name) + (group.index !== undefined ? ` [${group.index}]` : '')}
+                    <div style={{
+                        display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
+                    }}
+                    >
+                        <div>
+                            {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
+                            {window._(group.singleName || group.name) + (group.index !== undefined ? ` [${group.index}]` : '')}
+                        </div>
+                        <div>
+                            <Checkbox
+                                checked={group.hasValues}
+                                onClick={e => {
+                                    const project = JSON.parse(JSON.stringify(props.project));
+                                    props.selectedWidgets.forEach(selectedWidget => {
+                                        group.fields.forEach(field => {
+                                            if (group.hasValues) {
+                                                delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                                            } else {
+                                                project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
+                                            }
+                                        });
+                                    });
+                                    props.changeProject(project);
+                                    e.stopPropagation();
+                                }}
+                                size="small"
+                                classes={{
+                                    root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                }}
+                            />
+                        </div>
+                    </div>
                 </AccordionSummary>
                 <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                     <table style={{ width: '100%' }}>
