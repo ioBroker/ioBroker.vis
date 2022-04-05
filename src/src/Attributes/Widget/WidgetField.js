@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -179,28 +179,40 @@ const WidgetField = props => {
         projectName,
     } = props;
 
+    const [cachedValue, setCachedValue] = useState('');
+
+    const cacheTimer = useRef(null);
+
     const change = changeValue => {
-        const project = JSON.parse(JSON.stringify(props.project));
-        props.selectedWidgets.forEach(selectedWidget => {
-            const data = props.isStyle
-                ? project[props.selectedView].widgets[selectedWidget].style
-                : project[props.selectedView].widgets[selectedWidget].data;
-            if (field.default && data[field.name] === field.default) {
-                delete data[field.name];
-            } else {
-                data[field.name] = changeValue;
-            }
-            if (field.onChangeFunc) {
-                window.vis.binds[widget.widgetSet][field.onChangeFunc](
-                    selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
-                    props.isStyle ? widget.style[field.name] : widget.data[field.name],
-                );
-            }
-        });
-        props.changeProject(project);
+        setCachedValue(changeValue);
+        cacheTimer.current && clearTimeout(cacheTimer.current);
+        cacheTimer.current = setTimeout(() => {
+            const project = JSON.parse(JSON.stringify(props.project));
+            props.selectedWidgets.forEach(selectedWidget => {
+                const data = props.isStyle
+                    ? project[props.selectedView].widgets[selectedWidget].style
+                    : project[props.selectedView].widgets[selectedWidget].data;
+                if (field.default && data[field.name] === field.default) {
+                    delete data[field.name];
+                } else {
+                    data[field.name] = changeValue;
+                }
+                if (field.onChangeFunc) {
+                    window.vis.binds[widget.widgetSet][field.onChangeFunc](
+                        selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
+                        props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                    );
+                }
+            });
+            props.changeProject(project);
+        }, 300);
     };
 
-    let value = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    const propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    useEffect(() => {
+        setCachedValue(propValue);
+    }, [propValue]);
+    let value = cachedValue;
     if (value === undefined || value === null) {
         if (field.default) {
             value = field.default;
