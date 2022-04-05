@@ -17,6 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import './css/vis.css';
+
 import $ from 'jquery';
 import 'jquery-ui/themes/base/core.css';
 import 'jquery-ui/themes/base/theme.css';
@@ -26,6 +27,7 @@ import 'jquery-ui/ui/widgets/datepicker';
 import 'jquery-ui/ui/widgets/selectable';
 import 'jquery-ui/ui/widgets/progressbar';
 import 'jquery-ui/ui/widgets/dialog';
+// import './lib/jquery-ui-1.11.4.full.min.js';
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
@@ -38,14 +40,18 @@ class VisEngine extends React.Component {
     constructor(props) {
         super(props);
         window.jQuery = $;
-        window.$ = $; // jQuery library
+        window.$ = window.jQuery; // jQuery library
         window.$$ = $$; // Gestures library
         window.systemLang = this.props.lang || window.systemLang || 'en';
 
+        this.views = props.views;
         this.state = {
             ready: false,
+            views: JSON.parse(JSON.stringify(props.views)),
+            viewsDelayed: null,
         };
-        this.jsonViews = JSON.stringify(props.views);
+
+        // this.jsonViews = JSON.stringify(props.views);
 
         // this.divRef = React.createRef();
 
@@ -135,11 +141,67 @@ class VisEngine extends React.Component {
             unregisterViewRef: this.unregisterViewRef,
         };
 
-        this.createConnection();
-        this.initCanObjects();
+        this.conn = this.createConnection();
+        this.canStates = this.initCanObjects();
+        this.vis = this.createLegacyVisObject();
 
-        this.vis = {
+        window.vis = this.vis;
+
+        this.formatUtils = new VisFormatUtils({ vis: this.vis });
+
+        this.loadLegacyObjects()
+            .then(() => this.loadEditWords())
+            .then(() => this.readGroups())
+            .then(userGroups => {
+                this.userGroups = userGroups;
+                return this.props.socket.getCurrentUser();
+            })
+            .then(user => {
+                this.user = user;
+                this.vis.user = user;
+                this.vis.loginRequired = this.props.socket.isSecure;
+                return this.props.socket.getSystemConfig();
+            })
+            .then(systemConfig => {
+                this.vis.dateFormat = systemConfig.common.dateFormat;
+                this.vis.isFloatComma = systemConfig.common.isFloatComma;
+                this.systemLang = systemConfig.common.language || 'en';
+                this.vis.language = systemConfig.common.language || 'en';
+                return this.loadWidgets();
+            })
+            .then(() => this.setState({ ready: true }));
+    }
+
+    static getDerivedStateFromProps(props, state) {
+        const newViewsJson = JSON.stringify(props.views);
+        if (newViewsJson !== JSON.stringify(state.views)) {
+            if (props.runtime) {
+                return {
+                    views: JSON.parse(newViewsJson),
+                };
+            }
+
+            return {
+                viewsDelayed: JSON.parse(newViewsJson),
+            };
+        }
+
+        return null;
+    }
+
+    loadLegacyObjects() {
+        if (this.props.runtime) {
+            return Promise.resolve();
+        }
+
+        return this.conn.getObjects()
+            .then(objects => this.vis.objects = objects);
+    }
+
+    createLegacyVisObject() {
+        return {
             states: this.canStates,
+            objects: {},
             activeWidgets: [],
             navChangeCallbacks: [],
             editMode: !!this.props.editMode,
@@ -218,40 +280,15 @@ class VisEngine extends React.Component {
                 }
             },
         };
-
-        window.vis = this.vis;
-
-        this.formatUtils = new VisFormatUtils({ vis: this.vis });
-
-        this.loadEditWords()
-            .then(() => this.readGroups())
-            .then(userGroups => {
-                this.userGroups = userGroups;
-                return this.props.socket.getCurrentUser();
-            })
-            .then(user => {
-                this.user = user;
-                this.vis.user = user;
-                this.vis.loginRequired = this.props.socket.isSecure;
-                return this.props.socket.getSystemConfig();
-            })
-            .then(systemConfig => {
-                this.vis.dateFormat = systemConfig.common.dateFormat;
-                this.vis.isFloatComma = systemConfig.common.isFloatComma;
-                this.systemLang = systemConfig.common.language || 'en';
-                this.vis.language = systemConfig.common.language || 'en';
-                return this.loadWidgets();
-            })
-            .then(() => this.setState({ ready: true }));
     }
 
     createConnection() {
         // props.socket
-        this.conn = {
+        return {
             namespace: 'vis.0',
             logError: errorText => {
                 console.error(`Error: ${errorText}`);
-                this.socket.log(errorText, 'error');
+                this.props.socket.log(errorText, 'error');
             },
             getGroups: (groupName, useCache, cb) => {
                 if (typeof groupName === 'function') {
@@ -270,7 +307,7 @@ class VisEngine extends React.Component {
                 }
                 groupName = groupName || '';
 
-                return this.socket.getGroups(!useCache)
+                return this.props.socket.getGroups(!useCache)
                     .then(groups => {
                         const result = {};
                         if (groupName) {
@@ -289,7 +326,7 @@ class VisEngine extends React.Component {
                     useCache = false;
                 }
 
-                return this.socket.getSystemConfig(!useCache)
+                return this.props.socket.getSystemConfig(!useCache)
                     .then(systemConfig => cb(null, systemConfig.common))
                     .catch(error => cb(error));
             },
@@ -298,37 +335,83 @@ class VisEngine extends React.Component {
                     cb = useCache;
                     useCache = false;
                 }
-                let objects = null;
+                let objects = {};
 
-                return this.socket.getObjects(!useCache)
-                    .then(_objects => {
-                        objects = _objects;
-                        return this.socket.getEnums(!useCache);
-                    })
+                return new Promise((resolve, reject) => this.props.socket.getRawSocket().emit('getObjects', (err, res) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+
+                    if (res && res.rows) {
+                        for (let i = 0; i < res.rows.length; i++) {
+                            objects[res.rows[i].id] = res.rows[i].value;
+                        }
+                    } else {
+                        objects = res;
+                        resolve(objects);
+                    }
+                }))
+                    .then(() => this.props.socket.getEnums(!useCache))
                     .then(enums => {
                         Object.assign(objects, enums);
-                        return this.socket.getAdapterInstances(!useCache);
+                        return new Promise((resolve, reject) =>
+                            this.props.socket.getRawSocket().emit(
+                                'getObjectView',
+                                'system',
+                                'instance',
+                                {
+                                    startkey: 'system.adapter.',
+                                    endkey: 'system.adapter.\u9999',
+                                }, (err, res) => {
+                                    if (err) {
+                                        reject(err);
+                                    } else {
+                                        for (let i = 0; i < res.rows.length; i++) {
+                                            objects[res.rows[i].id] = res.rows[i].value;
+                                        }
+
+                                        const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
+                                        // find out default file mode
+                                        if (objects[instance]?.native?.defaultFileMode) {
+                                            this.defaultMode = objects[instance].native.defaultFileMode;
+                                        }
+                                        resolve();
+                                    }
+                                },
+                            ));
                     })
-                    .then(instances => {
-                        instances.forEach(instance => objects[instance._id] = instance);
-                        return this.socket.getObjectView('', '\u9999', 'chart');
-                    })
+                    .then(() => this.props.socket.getObjectView('', '\u9999', 'chart')
+                        .catch(() => null))
                     .then(charts => {
-                        Object.assign(objects, charts);
-                        return this.socket.getObjectView('', '\u9999', 'channel');
+                        charts && Object.assign(objects, charts);
+                        return this.props.socket.getObjectView('', '\u9999', 'channel');
                     })
                     .then(channels => {
                         Object.assign(objects, channels);
-                        return this.socket.getObjectView('', '\u9999', 'device');
+                        return this.props.socket.getObjectView('', '\u9999', 'device');
                     })
                     .then(devices => {
                         Object.assign(objects, devices);
-                        cb(null, objects);
+                        if (cb) {
+                            cb(null, objects);
+                            return null;
+                        }
+
+                        return objects;
                     })
-                    .catch(error => cb(error));
+                    .catch(error => {
+                        console.error(`Cannot load objects: ${error}`);
+                        if (cb) {
+                            cb(error);
+                            return null;
+                        }
+
+                        return Promise.reject(error);
+                    });
             },
-            getLoggedUser: cb => this.socket.getCurrentUser()
-                .then(user => cb(this.socket.isSecure, user)),
+            getLoggedUser: cb => this.props.socket.getCurrentUser()
+                .then(user => cb(this.props.socket.isSecure, user)),
             subscribe: IDs => this.subscribe(IDs),
             unsubscribe: IDs => this.unsubscribe(IDs),
             authenticate: (user, password, salt) => {
@@ -342,7 +425,7 @@ class VisEngine extends React.Component {
                     };
                 }
             },
-            getStates: (IDs, cb) => this.socket.getForeignStates(IDs)
+            getStates: (IDs, cb) => this.props.socket.getForeignStates(IDs)
                 .then(data => cb(null, data))
                 .catch(error => cb(error || 'Authentication required')),
             setState: (id, val, cb) => this.props.socket.setState(id, val)
@@ -355,9 +438,9 @@ class VisEngine extends React.Component {
 
             },
             getUser: () => this.user,
-            sendCommand: (instance, command, data, ack) => this.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
-                .then(() => this.socket.setState(this.idControlData, { val: data, ack: true }))
-                .then(() => this.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
+            sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
+                .then(() => this.props.socket.setState(this.idControlData, { val: data, ack: true }))
+                .then(() => this.props.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
@@ -367,7 +450,7 @@ class VisEngine extends React.Component {
                     filename = p.join('/');
                 }
 
-                return this.socket.readFile(adapter, filename)
+                return this.props.socket.readFile(adapter, filename)
                     .then(data => setTimeout(() => cb(null, data.data, filename, data.type), 0))
                     .catch(error => cb(error));
             },
@@ -380,7 +463,7 @@ class VisEngine extends React.Component {
                     cb('timeout');
                 }, options.timeout);
 
-                this.socket.getHistory(id, options)
+                this.props.socket.getHistory(id, options)
                     .then(result => {
                         if (timeout) {
                             clearTimeout(timeout);
@@ -396,7 +479,7 @@ class VisEngine extends React.Component {
                         cb(error);
                     });
             },
-            getHttp: (url, callback) => this.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
+            getHttp: (url, callback) => this.props.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
         };
     }
 
@@ -497,7 +580,7 @@ class VisEngine extends React.Component {
 
     initCanObjects() {
         // creat Can objects
-        this.canStates = new this.can.Map({ 'nothing_selected.val': null });
+        return new this.can.Map({ 'nothing_selected.val': null });
 
         /*
         if (false && this.props.editMode) {
@@ -890,6 +973,14 @@ class VisEngine extends React.Component {
         if (!this.state.ready) {
             return null;
         }
+        if (this.state.viewsDelayed) {
+            this.updateTimer && clearTimeout(this.updateTimer);
+            this.updateTimer = setTimeout(() => {
+                this.updateTimer = null;
+                console.log('Update views');
+                this.setState({ views: this.state.viewsDelayed, viewsDelayed: null });
+            }, 300);
+        }
 
         this.vis.editMode = this.props.editMode;
 
@@ -900,7 +991,7 @@ class VisEngine extends React.Component {
                     key={view}
                     view={view}
                     activeView={this.props.activeView}
-                    views={this.props.views}
+                    views={this.state.views}
                     editMode={this.props.editMode}
                     can={this.can}
                     canStates={this.canStates}

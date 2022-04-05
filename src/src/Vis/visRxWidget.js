@@ -21,8 +21,12 @@ class VisRxWidget extends VisBaseWidget {
     constructor(props) {
         super(props, true);
 
+        const options = this.getWidgetInfo();
+
         this.state = {
             ...this.state,
+            resizable: options.resizable === undefined ? true : options.resizable,
+            resizeHandles: options.resizeHandles === undefined ? this.state.resizeHandles : options.resizeHandles,
             rxData: this.state.data,
             rxStyle: this.state.style,
             values: {},

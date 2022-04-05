@@ -1108,7 +1108,7 @@ vis.binds.hqwidgets = {
                         left: ($main.width()  - $middle.width())  / 2,
                         top:  ($main.height() - $middle.height()) / 2
                     });
-                    $img.load(function () {
+                    $img[0] && ($img[0].onload = function () {
                         var $middle = $div.find('.vis-hq-table');
                         $middle.css({
                             left: ($main.width()  - $middle.width())  / 2,
