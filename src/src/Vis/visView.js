@@ -121,6 +121,10 @@ class VisView extends React.Component {
     };
 
     onStealStyle = (attr, cb) => {
+        if (!attr) {
+            this.cancelStealMode(null);
+            return;
+        }
         // next click will be processed as steal
         this.nextClickIsSteal = {
             attr,
