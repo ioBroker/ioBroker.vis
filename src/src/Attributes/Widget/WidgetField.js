@@ -231,7 +231,7 @@ const WidgetField = props => {
                 onChange={e => change(e.target.value)}
             />
             <div style={{ fontStyle: 'italic' }}>
-                {objectCache ? objectCache.common.name : null}
+                {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[i18n.lang] : objectCache.common.name) : null}
             </div>
             {idDialog ? <SelectID
                 selected={value}

@@ -425,7 +425,7 @@ const Widget = props => {
                     field.singleName = field.name;
                     field.set = widgetType.set;
                     if (repeats) {
-                        const repeatsMatch = repeats.match(/\(([0-9a-z]+)-([0-9a-z]+)\)/i);
+                        const repeatsMatch = repeats.match(/\(([0-9a-z_]+)-([0-9a-z_]+)\)/i);
                         const name = field.name;
                         if (repeatsMatch) {
                             if (!repeatsMatch[1].match(/^[0-9]$/)) {
@@ -582,8 +582,8 @@ const Widget = props => {
                 </Tooltip>
             </h4>
             <pre>
-                {/* {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fieldsManual, null, 2)} */}
+                {JSON.stringify(widgetType, null, 2)}
+                {JSON.stringify(fieldsManual, null, 2)}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
@@ -617,7 +617,7 @@ const Widget = props => {
                     >
                         <div>
                             {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                            {window._(group.singleName || group.name) + (group.index !== undefined ? ` [${group.index}]` : '')}
+                            {window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : '')}
                         </div>
                         <div>
                             <Checkbox
