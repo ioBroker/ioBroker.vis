@@ -152,7 +152,6 @@ class App extends GenericApp {
         }
         this.setState({
             project,
-            visProject: project,
             openedViews,
             projectName,
         });
@@ -216,12 +215,6 @@ class App extends GenericApp {
             this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
             this.setState({ needSave: false });
         }, 1000);
-
-        this.visTimer && clearTimeout(this.visTimer);
-        this.visTimer = setTimeout(() => {
-            this.visTimer = null;
-            this.setState({ visProject: project });
-        }, 300);
     }
 
     addProject = async projectName => {
@@ -441,7 +434,7 @@ class App extends GenericApp {
                                             editMode={this.state.editMode}
                                             socket={this.socket}
                                             lang={this.socket.systemLang}
-                                            views={this.state.visProject}
+                                            views={this.state.project}
                                             adapterName={this.adapterName}
                                             instance={this.instance}
                                             selectedWidgets={this.state.selectedWidgets}
