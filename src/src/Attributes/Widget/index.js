@@ -87,8 +87,7 @@ const styles = theme => ({
 
 const getFieldsBefore = () => [
     {
-        name: 'general',
-        oldName: 'fixed',
+        name: 'fixed',
         fields: [
             { name: 'name' },
             { name: 'comment' },
@@ -130,8 +129,7 @@ const getFieldsAfter = widgets => [
             { name: 'transform' }],
     },
     {
-        name: 'css_font',
-        oldName: 'css_font_text',
+        name: 'css_font_text',
         isStyle: true,
         fields: [{ name: 'color', type: 'color' },
             { name: 'text-align', type: 'nselect', options: ['', 'left', 'right', 'center', 'justify', 'initial', 'inherit'] },
@@ -182,8 +180,7 @@ const getFieldsAfter = widgets => [
             { name: 'border-radius' }],
     },
     {
-        name: 'css_padding',
-        oldName: 'css_shadow_padding',
+        name: 'css_shadow_padding',
         isStyle: true,
         fields: [{ name: 'padding' },
             { name: 'padding-left' },
@@ -224,8 +221,7 @@ const getFieldsAfter = widgets => [
         ],
     },
     {
-        name: 'notification',
-        oldName: 'signals',
+        name: 'signals',
         fields: [...([0, 1, 2].flatMap(i => [
             { name: `signals-oid-${i}`, type: 'id' },
             {
@@ -252,8 +248,7 @@ const getFieldsAfter = widgets => [
         ]))],
     },
     {
-        name: 'show_last',
-        oldName: 'last_change',
+        name: 'last_change',
         fields: [
             { name: 'lc-oid', type: 'id' },
             {
@@ -633,9 +628,9 @@ const Widget = props => {
                                             }
                                         });
                                         if (group.hasValues) {
-                                            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.oldName || group.oldName}`];
+                                            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
                                         } else {
-                                            project[props.selectedView].widgets[selectedWidget].data[`g_${group.oldName || group.name}`] = true;
+                                            project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
                                         }
                                     });
                                     props.changeProject(project);
