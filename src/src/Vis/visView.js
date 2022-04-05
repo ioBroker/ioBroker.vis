@@ -77,7 +77,8 @@ class VisView extends React.Component {
     componentDidMount() {
         this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
-        this.setState({ mounted: true });
+        this.setState({ mounted: true }, () =>
+            this.registerEditorHandlers());
     }
 
     componentWillUnmount() {
@@ -93,6 +94,7 @@ class VisView extends React.Component {
             this.selectDiv = null;
         }
         this.widgetsRefs = {};
+        this.registerEditorHandlers(true);
     }
 
     onCommand = command => {
@@ -120,6 +122,14 @@ class VisView extends React.Component {
 
     onMouseViewDown = this.props.runtime ? null : e => {
         e.stopPropagation();
+
+        if (this.nextClickIsSteal) {
+            // click canceled
+            this.nextClickIsStealCallback(this.nextClickIsSteal, null);
+            this.nextClickIsStealCallback = null;
+            this.nextClickIsSteal = null;
+            return;
+        }
 
         this.props.setSelectedWidgets([]);
 
@@ -243,6 +253,14 @@ class VisView extends React.Component {
     } : null;
 
     onMouseWidgetDown = this.props.runtime ? null : e => {
+        if (this.nextClickIsSteal) {
+            // send to App.js the stolen attribute
+            this.nextClickIsStealCallback(this.nextClickIsSteal, e.target.style[this.nextClickIsSteal]);
+            this.nextClickIsStealCallback = null;
+            this.nextClickIsSteal = null;
+            return;
+        }
+
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -287,6 +305,44 @@ class VisView extends React.Component {
             });
         }
     } : null;
+
+    onStealStyle(attr, cb) {
+        // next click will be processed as steal
+        this.nextClickIsSteal = attr;
+        this.nextClickIsStealCallback = cb;
+    }
+
+    onPxToPercent(view, wid, attr, cb) {
+        // todo
+        cb && cb(view, wid, attr, null);
+    }
+
+    onPercentToPx(view, wid, attr, cb) {
+        // todo
+        cb && cb(view, wid, attr, null);
+    }
+
+    registerEditorHandlers(unregister) {
+        if (this.props.registerEditorCallback) {
+            if (!unregister && this.props.activeView === this.props.view) {
+                if (!this.regsiterDone) {
+                    this.regsiterDone = true;
+                    this.props.registerEditorCallback('onStealStyle', this.props.view, this.onStealStyle);
+                    this.props.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
+                    this.props.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
+                }
+            } else {
+                this.regsiterDone = false;
+                this.props.registerEditorCallback('onStealStyle', this.props.view);
+                this.props.registerEditorCallback('onPxToPercent', this.props.view);
+                this.props.registerEditorCallback('onPercentToPx', this.props.view);
+            }
+        }
+    }
+
+    componentDidUpdate() {
+        this.registerEditorHandlers();
+    }
 
     render() {
         const rxAbsoluteWidgets = [];
@@ -448,6 +504,7 @@ VisView.propTypes = {
     onWidgetsChanged: PropTypes.func,
     showWidgetNames: PropTypes.bool,
     container: PropTypes.bool,
+    registerEditorCallback: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

@@ -12,6 +12,7 @@
 - changeFilter method in vis
 - detectBounce method in vis
 - addFont method in vis
+- relative position
 
 ### View
 - Delete widget
