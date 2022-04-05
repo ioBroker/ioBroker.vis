@@ -582,8 +582,8 @@ const Widget = props => {
                 </Tooltip>
             </h4>
             <pre>
-                {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fieldsManual, null, 2)}
+                {/* {JSON.stringify(widgetType, null, 2)}
+                {JSON.stringify(fieldsManual, null, 2)} */}
             </pre>
             {fields.map((group, key) => <Accordion
                 classes={{
