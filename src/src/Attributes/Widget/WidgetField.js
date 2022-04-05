@@ -183,7 +183,11 @@ const WidgetField = props => {
             const data = props.isStyle
                 ? project[props.selectedView].widgets[selectedWidget].style
                 : project[props.selectedView].widgets[selectedWidget].data;
-            data[field.name] = changeValue;
+            if (field.default && data[field.name] === field.default) {
+                delete data[field.name];
+            } else {
+                data[field.name] = changeValue;
+            }
             if (field.onChangeFunc) {
                 window.vis.binds[widget.widgetSet][field.onChangeFunc](
                     selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
