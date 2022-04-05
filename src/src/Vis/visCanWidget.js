@@ -75,27 +75,28 @@ class VisCanWidget extends VisBaseWidget {
             const newState = { mounted: true };
 
             // try to read resize handlers
-            let resizableOptions = this.widDiv.dataset.visResizable;
-            if (resizableOptions) {
-                try {
-                    resizableOptions = JSON.parse(resizableOptions);
-                } catch (error) {
-                    console.error(`Cannot parse resizable options by ${this.props.id}: ${resizableOptions}`);
-                    resizableOptions = null;
-                }
+            if (this.widDiv && this.widDiv.dataset) {
+                let resizableOptions = this.widDiv.dataset.visResizable;
                 if (resizableOptions) {
-                    if (resizableOptions.disabled !== undefined) {
-                        newState.resizable = !resizableOptions.disabled;
+                    try {
+                        resizableOptions = JSON.parse(resizableOptions);
+                    } catch (error) {
+                        console.error(`Cannot parse resizable options by ${this.props.id}: ${resizableOptions}`);
+                        resizableOptions = null;
                     }
-                    if (resizableOptions.handles !== undefined) {
-                        newState.resizeHandles = resizableOptions.handles.split(',').map(h => h.trim());
+                    if (resizableOptions) {
+                        if (resizableOptions.disabled !== undefined) {
+                            newState.resizable = !resizableOptions.disabled;
+                        }
+                        if (resizableOptions.handles !== undefined) {
+                            newState.resizeHandles = resizableOptions.handles.split(',').map(h => h.trim());
+                        }
                     }
-                }
-                const widgetStyle = this.props.allWidgets[this.props.id].style;
-                if (!newState.resizable && (!widgetStyle.width || !widgetStyle.height)) {
-                    newState.virtualHeight = this.widDiv.clientHeight;
-                    newState.virtualWidth = this.widDiv.clientWidth;
-                    console.log('Set virtualWidth ' + newState.virtualWidth);
+                    const widgetStyle = this.props.allWidgets[this.props.id].style;
+                    if (!newState.resizable && (!widgetStyle.width || !widgetStyle.height)) {
+                        newState.virtualHeight = this.widDiv.clientHeight;
+                        newState.virtualWidth = this.widDiv.clientWidth;
+                    }
                 }
             }
 
