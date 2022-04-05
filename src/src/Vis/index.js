@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import './css/vis.css';
-
+/*
 import $ from 'jquery';
 import 'jquery-ui/themes/base/core.css';
 import 'jquery-ui/themes/base/theme.css';
@@ -27,11 +27,11 @@ import 'jquery-ui/ui/widgets/datepicker';
 import 'jquery-ui/ui/widgets/selectable';
 import 'jquery-ui/ui/widgets/progressbar';
 import 'jquery-ui/ui/widgets/dialog';
-// import './lib/jquery-ui-1.11.4.full.min.js';
+import 'jquery-ui/ui/widgets/slider';
+*/
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
-// import Vis from './vis';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter } from './visUtils';
@@ -39,63 +39,18 @@ import { getUrlParameter } from './visUtils';
 class VisEngine extends React.Component {
     constructor(props) {
         super(props);
-        window.jQuery = $;
+        window.jQuery = window.$;
         window.$ = window.jQuery; // jQuery library
         window.$$ = $$; // Gestures library
         window.systemLang = this.props.lang || window.systemLang || 'en';
 
-        this.views = props.views;
         this.state = {
             ready: false,
-            views: JSON.parse(JSON.stringify(props.views)),
-            viewsDelayed: null,
         };
 
         // this.jsonViews = JSON.stringify(props.views);
 
         // this.divRef = React.createRef();
-
-        /*
-        const visConfig = {
-            widgetSets: [
-                {
-                    name: 'bars',
-                    depends: [],
-                },
-                'basic',
-                'dwd',
-                'echarts',
-                'eventlist',
-                { name: 'google-fonts', always: true },
-                'jqplot',
-                {
-                    name: 'jqui',
-                    depends: [
-                        'basic',
-                    ],
-                },
-                {
-                    name: 'metro',
-                    depends: [
-                        'jqui-mfd',
-                        'basic',
-                    ],
-                },
-                'swipe',
-                'tabs',
-            ],
-        };
-
-        this.vis = new Vis({
-            $: window.jQuery,
-            can: window.can,
-            views: props.views,
-            visConfig,
-            lang: props.lang || 'en',
-            socket: props.socket,
-            _: window._,
-        });
-        */
 
         this.can = window.can;
 
@@ -170,23 +125,6 @@ class VisEngine extends React.Component {
                 return this.loadWidgets();
             })
             .then(() => this.setState({ ready: true }));
-    }
-
-    static getDerivedStateFromProps(props, state) {
-        const newViewsJson = JSON.stringify(props.views);
-        if (newViewsJson !== JSON.stringify(state.views)) {
-            if (props.runtime) {
-                return {
-                    views: JSON.parse(newViewsJson),
-                };
-            }
-
-            return {
-                viewsDelayed: JSON.parse(newViewsJson),
-            };
-        }
-
-        return null;
     }
 
     loadLegacyObjects() {
@@ -973,14 +911,6 @@ class VisEngine extends React.Component {
         if (!this.state.ready) {
             return null;
         }
-        if (this.state.viewsDelayed) {
-            this.updateTimer && clearTimeout(this.updateTimer);
-            this.updateTimer = setTimeout(() => {
-                this.updateTimer = null;
-                console.log('Update views');
-                this.setState({ views: this.state.viewsDelayed, viewsDelayed: null });
-            }, 300);
-        }
 
         this.vis.editMode = this.props.editMode;
 
@@ -991,7 +921,7 @@ class VisEngine extends React.Component {
                     key={view}
                     view={view}
                     activeView={this.props.activeView}
-                    views={this.state.views}
+                    views={this.props.views}
                     editMode={this.props.editMode}
                     can={this.can}
                     canStates={this.canStates}
