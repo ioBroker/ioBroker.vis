@@ -321,11 +321,10 @@ const WidgetField = props => {
             <Slider
                 size="small"
                 onChange={(e, newValue) => change(newValue)}
-                value={value}
+                value={typeof value === 'number' ? value : 0}
                 min={field.min}
                 max={field.max}
                 step={field.step}
-                valueLabelDisplay
             />
             <Input
                 value={value}
@@ -451,8 +450,8 @@ const WidgetField = props => {
             renderValue={selected => <div style={{ display: 'flex' }}>
                 {props.groups
                     .filter(group => selected.includes(group._id.split('.')[2]))
-                    .map(group =>
-                        <span style={{ padding: '4px 4px' }}>
+                    .map((group, key) =>
+                        <span key={key} style={{ padding: '4px 4px' }}>
                             <TextWithIcon
                                 value={group._id}
                                 t={i18n.t}
@@ -521,13 +520,13 @@ const WidgetField = props => {
             inputValue={value || ''}
             value={value || ''}
             onInputChange={(e, inputValue) => {
-                if (typeof inputValue !== 'string') {
+                if (typeof inputValue === 'object' && inputValue !== null) {
                     inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
                 }
                 change(inputValue);
             }}
             onChange={(e, inputValue) => {
-                if (typeof inputValue !== 'string') {
+                if (typeof inputValue === 'object' && inputValue !== null) {
                     inputValue = inputValue.type === 'view' ? inputValue.view : inputValue.folder.name;
                 }
                 change(inputValue);
@@ -547,12 +546,18 @@ const WidgetField = props => {
                     component="li"
                     style={{ paddingLeft: option.level * 16 }}
                     {...optionProps}
+                    key={`view${option.view}`}
                 >
                     <FileIcon />
                     {i18n.t(option.view)}
                 </Box>
                 :
-                <Box component="li" style={{ paddingLeft: option.level * 16 }} {...optionProps}>
+                <Box
+                    component="li"
+                    style={{ paddingLeft: option.level * 16 }}
+                    {...optionProps}
+                    key={`folder${option.folder.id}`}
+                >
                     <FolderOpenIcon />
                     {option.folder.name}
                 </Box>)}
