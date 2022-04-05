@@ -331,8 +331,13 @@ class App extends GenericApp {
         this.setState({ fonts });
     };
 
-    cssClone = field => {
+    cssClone = (field, cb) => {
         console.log(field);
+        if (this.visEngineHandlers[this.props.selectedView] && this.visEngineHandlers[this.props.selectedView].onStealStyle) {
+            this.visEngineHandlers[this.props.selectedView].onStealStyle(field, cb);
+        } else {
+            cb && cb(field, null); // cancel selection
+        }
     }
 
     registerCallback = (name, view, cb) => {
