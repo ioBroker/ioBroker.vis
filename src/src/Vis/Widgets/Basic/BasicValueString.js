@@ -28,6 +28,11 @@ class BasicValueString extends VisRxWidget {
         };
     }
 
+    // eslint-disable-next-line class-methods-use-this
+    getWidgetInfo() {
+        return BasicValueString.getWidgetInfo();
+    }
+
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
 

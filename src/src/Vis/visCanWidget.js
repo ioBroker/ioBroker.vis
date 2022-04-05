@@ -72,7 +72,34 @@ class VisCanWidget extends VisBaseWidget {
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
             this.renderWidget();
-            this.setState({ mounted: true });
+            const newState = { mounted: true };
+
+            // try to read resize handlers
+            let resizableOptions = this.widDiv.dataset.visResizable;
+            if (resizableOptions) {
+                try {
+                    resizableOptions = JSON.parse(resizableOptions);
+                } catch (error) {
+                    console.error(`Cannot parse resizable options by ${this.props.id}: ${resizableOptions}`);
+                    resizableOptions = null;
+                }
+                if (resizableOptions) {
+                    if (resizableOptions.disabled !== undefined) {
+                        newState.resizable = !resizableOptions.disabled;
+                    }
+                    if (resizableOptions.handles !== undefined) {
+                        newState.resizeHandles = resizableOptions.handles.split(',').map(h => h.trim());
+                    }
+                }
+                const widgetStyle = this.props.allWidgets[this.props.id].style;
+                if (!newState.resizable && (!widgetStyle.width || !widgetStyle.height)) {
+                    newState.virtualHeight = this.widDiv.clientHeight;
+                    newState.virtualWidth = this.widDiv.clientWidth;
+                    console.log('Set virtualWidth ' + newState.virtualWidth);
+                }
+            }
+
+            this.setState(newState);
         }
     }
 

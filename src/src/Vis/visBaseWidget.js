@@ -36,9 +36,12 @@ class VisBaseWidget extends React.Component {
         this.state = {
             data: JSON.parse(JSON.stringify(widget.data)),
             style: JSON.parse(JSON.stringify(widget.style)),
+            // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
             editMode: this.props.editMode,
             selected: this.props.editMode && this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id),
+            resizable: true,
+            resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
         };
     }
 
@@ -71,7 +74,7 @@ class VisBaseWidget extends React.Component {
 
         const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
 
-        if (props.selected !== state.selected) {
+        if (selected !== state.selected) {
             return { selected };
         }
 
@@ -294,14 +297,12 @@ class VisBaseWidget extends React.Component {
                 ref.style.backgroundColor = '';
                 ref.className = removeClass(ref.className, 'vis-editmode-selected');
             }
-        } else {
-            if (selected) {
-                if (!ref.className.includes('vis-editmode-selected')) {
-                    ref.className = addClass('vis-editmode-selected', ref.className);
-                }
-            } else {
-                ref.className = removeClass(ref.className, 'vis-editmode-selected');
+        } else if (selected) {
+            if (!ref.className.includes('vis-editmode-selected')) {
+                ref.className = addClass('vis-editmode-selected', ref.className);
             }
+        } else {
+            ref.className = removeClass(ref.className, 'vis-editmode-selected');
         }
     }
 
@@ -312,6 +313,9 @@ class VisBaseWidget extends React.Component {
     }
 
     getResizeHandlers() {
+        if (!this.state.resizable) {
+            return null;
+        }
         const thickness = 0.4;
         const shift = 0.15;
         const square = 0.4;
@@ -323,7 +327,7 @@ class VisBaseWidget extends React.Component {
         const offsetEm = `${shift - thickness}em`;
         return [
             // top
-            <div
+            this.state.resizeHandles.includes('n') ? <div
                 key="top"
                 className="vis-editmode-resizer"
                 style={{
@@ -338,9 +342,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top')}
-            />,
+            /> : null,
             // bottom
-            <div
+            this.state.resizeHandles.includes('s') ? <div
                 key="bottom"
                 className="vis-editmode-resizer"
                 style={{
@@ -355,9 +359,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom')}
-            />,
+            /> : null,
             // left
-            <div
+            this.state.resizeHandles.includes('w') ? <div
                 key="left"
                 className="vis-editmode-resizer"
                 style={{
@@ -372,9 +376,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'left')}
-            />,
+            /> : null,
             // right
-            <div
+            this.state.resizeHandles.includes('e') ? <div
                 key="right"
                 className="vis-editmode-resizer"
                 style={{
@@ -389,9 +393,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'right')}
-            />,
+            /> : null,
             // top left
-            <div
+            this.state.resizeHandles.includes('nw') ? <div
                 key="top-left"
                 className="vis-editmode-resizer"
                 style={{
@@ -406,9 +410,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top-left')}
-            />,
+            /> : null,
             // top right
-            <div
+            this.state.resizeHandles.includes('ne') ? <div
                 key="top-right"
                 className="vis-editmode-resizer"
                 style={{
@@ -423,9 +427,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'top-right')}
-            />,
+            /> : null,
             // bottom left
-            <div
+            this.state.resizeHandles.includes('sw') ? <div
                 key="bottom-left"
                 className="vis-editmode-resizer"
                 style={{
@@ -440,9 +444,9 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom-left')}
-            />,
+            /> : null,
             // bottom right
-            <div
+            this.state.resizeHandles.includes('se') ? <div
                 key="bottom-right"
                 className="vis-editmode-resizer"
                 style={{
@@ -457,7 +461,7 @@ class VisBaseWidget extends React.Component {
                     opacity: 0.3,
                 }}
                 onMouseDown={e => this.onResizeStart(e, 'bottom-right')}
-            />,
+            /> : null,
         ];
     }
 
@@ -564,10 +568,34 @@ class VisBaseWidget extends React.Component {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
+    /*
     shouldComponentUpdate(nextProps, nextState) {
-        return true;
-    }
+        if (nextProps.applyBindings) {
+            return true;
+        }
+        const widget = nextProps.views[nextProps.view].widgets[nextProps.id];
+        if (JSON.stringify(widget.style) !== JSON.stringify(nextState.style)) {
+            return true;
+        }
+        if (JSON.stringify(widget.data) !== JSON.stringify(nextState.data)) {
+            return true;
+        }
 
+        if (nextProps.selected !== nextState.selected) {
+            return true;
+        }
+
+        if (nextProps.resizable !== nextState.resizable) {
+            return true;
+        }
+
+        if (nextProps.resizeHandles.join(' ') !== nextState.resizeHandles.join(' ')) {
+            return true;
+        }
+
+        return false;
+    }
+*/
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         const style = {};
@@ -649,11 +677,15 @@ VisBaseWidget.propTypes = {
     runtime: PropTypes.bool,
     registerRef: PropTypes.func.isRequired,
     userGroups: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     user: PropTypes.string.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     allWidgets: PropTypes.object.isRequired,
     isRelative: PropTypes.bool,
     viewsActiveFilter: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     linkContext: PropTypes.object.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
     formatUtils: PropTypes.object,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,

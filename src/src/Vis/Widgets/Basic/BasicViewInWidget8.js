@@ -28,6 +28,11 @@ class BasicViewInWidget8 extends VisRxWidget {
         };
     }
 
+    // eslint-disable-next-line class-methods-use-this
+    getWidgetInfo() {
+        return BasicViewInWidget8.getWidgetInfo();
+    }
+
     renderWidgetBody(props) {
         super.renderWidgetBody(props);
         // set default width and height
