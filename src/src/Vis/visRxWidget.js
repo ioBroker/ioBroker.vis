@@ -15,7 +15,7 @@
 
 import PropTypes from 'prop-types';
 import VisBaseWidget from './visBaseWidget';
-import {addClass, getUsedObjectIDsInWidget} from './visUtils';
+import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
 class VisRxWidget extends VisBaseWidget {
     constructor(props) {

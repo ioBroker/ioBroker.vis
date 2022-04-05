@@ -19,10 +19,12 @@ import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
 import BasicValueString from './Widgets/Basic/BasicValueString';
 import BasicViewInWidget from './Widgets/Basic/BasicViewInWidget';
+import BasicViewInWidget8 from './Widgets/Basic/BasicViewInWidget8';
 
 const WIDGETS = [
     BasicValueString,
     BasicViewInWidget,
+    BasicViewInWidget8,
 ];
 
 // 1300 is the React dialog

@@ -24,7 +24,7 @@ import {
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
-    constructor(props, isRx) {
+    constructor(props) {
         super(props);
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
@@ -34,11 +34,11 @@ class VisBaseWidget extends React.Component {
         this.widDiv = null;
 
         this.state = {
-            isRx,
             data: JSON.parse(JSON.stringify(widget.data)),
             style: JSON.parse(JSON.stringify(widget.style)),
             applyBindings: false,
             editMode: this.props.editMode,
+            selected: this.props.editMode && this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id),
         };
     }
 
@@ -67,6 +67,12 @@ class VisBaseWidget extends React.Component {
 
         if (props.editMode !== state.editMode) {
             return { editMode: props.editMode, applyBindings: true };
+        }
+
+        const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
+
+        if (props.selected !== state.selected) {
+            return { selected };
         }
 
         return null; // No change to state
@@ -556,6 +562,10 @@ class VisBaseWidget extends React.Component {
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(classNames, style) {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        return true;
     }
 
     render() {
