@@ -4,7 +4,7 @@ import {
 } from '@mui/material';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import clsx from 'clsx';
 import { withStyles } from '@mui/styles';
@@ -12,6 +12,7 @@ import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
+import usePrevious from '../Utils/usePrevious';
 
 const style = theme => ({
     blockHeader: theme.classes.blockHeader,
@@ -28,6 +29,17 @@ const Attributes = props => {
     const [selected, setSelected] = useState(window.localStorage.getItem('Attributes')
         ? window.localStorage.getItem('Attributes')
         : 'View');
+
+    const prevSelectedWidgets = usePrevious(props.selectedWidgets);
+
+    useEffect(() => {
+        if (selected === 'Widget' && !props.selectedWidgets.length) {
+            setSelected('View');
+        }
+        if (prevSelectedWidgets && !prevSelectedWidgets.length && props.selectedWidgets.length) {
+            setSelected('Widget');
+        }
+    }, [props.selectedWidgets]);
 
     if (!props.openedViews.length) {
         return null;
@@ -49,6 +61,7 @@ const Attributes = props => {
                 ['View', 'Widget', 'CSS', 'Scripts'].map(tab => <Tab
                     label={I18n.t(tab)}
                     value={tab}
+                    disabled={tab === 'Widget' && !props.selectedWidgets.length}
                     key={tab}
                     className={props.classes.viewTab}
                     onClick={() => {
