@@ -425,6 +425,7 @@ const WidgetField = props => {
             {options.map(selectItem => <MenuItem
                 value={selectItem}
                 key={selectItem}
+                style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
             >
                 {
                     selectItem === ''
@@ -526,6 +527,10 @@ const WidgetField = props => {
             classes={{
                 input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
             }}
+            renderOption={
+                (optionProps, option) => (field.name === 'font-family'
+                    ? <div style={{ fontFamily: option }} {...optionProps}>{option}</div> : option)
+            }
             renderInput={params => (
                 <TextField
                     variant="standard"
