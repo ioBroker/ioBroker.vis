@@ -672,6 +672,7 @@ const Widget = props => {
                                                     </div>
                                                     {group.isStyle ?
                                                         <IconButton
+                                                            size="small"
                                                             className={props.classes.colorize}
                                                             onClick={() => props.cssClone(field.name, newValue => {
                                                                 console.log(`New value ${newValue}`);
@@ -679,6 +680,7 @@ const Widget = props => {
                                                                     const project = JSON.parse(JSON.stringify(props.project));
                                                                     props.selectedWidgets.forEach(selectedWidget =>
                                                                         project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                    props.changeProject(project);
                                                                 }
                                                             })}
                                                         >
