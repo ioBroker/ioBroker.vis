@@ -414,7 +414,7 @@ const WidgetField = props => {
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
-            onChange={e => change(e.target.value)}
+            onChange={e => change(e.target.value.filter(selectValue => selectValue !== null))}
             fullWidth
         >
             {options.map((option, key) =>
@@ -646,6 +646,7 @@ const WidgetField = props => {
             }}
         />;
     }
+
     return <>
         {field.type}
         {'/'}
