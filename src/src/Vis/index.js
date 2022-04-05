@@ -174,8 +174,10 @@ class VisEngine extends React.Component {
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
-                console.warn('changeView not implemented: ', viewDiv, view, hideOptions, showOptions, sync);
-                cb && cb(viewDiv, view);
+                // console.warn('changeView not implemented: ', viewDiv, view, hideOptions, showOptions, sync);
+                window.location.hash = '#' + encodeURIComponent(view);
+                /* this.setState({ activeView: view }, () =>
+                    cb && cb(viewDiv, view));*/
             },
             onWakeUp: (cb, wid) => {
                 if (!wid) {
@@ -913,6 +915,7 @@ class VisEngine extends React.Component {
         }
 
         this.vis.editMode = this.props.editMode;
+        this.vis.activeView = this.props.activeView;
 
         return Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
