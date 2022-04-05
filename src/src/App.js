@@ -87,6 +87,8 @@ class App extends GenericApp {
         extendedProps.sentryDSN = window.sentryDSN;
 
         super(props, extendedProps);
+
+        this.visEngineHandlers = {};
     }
 
     componentDidMount() {
@@ -333,6 +335,20 @@ class App extends GenericApp {
         console.log(field);
     }
 
+    registerCallback = (name, view, cb) => {
+        console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
+
+        if (cb) {
+            this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
+            this.visEngineHandlers[view][name] = cb;
+        } else {
+            delete this.visEngineHandlers[view][name];
+            if (!Object.keys(this.visEngineHandlers[view]).length) {
+                delete this.visEngineHandlers[view];
+            }
+        }
+    };
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -357,6 +373,7 @@ class App extends GenericApp {
             onWidgetsChanged={this.onWidgetsChanged}
             projectName={this.state.projectName}
             onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
+            registerEditorCallback={this.state.runtime ? null : this.registerCallback}
         />;
 
         if (this.state.runtime) {

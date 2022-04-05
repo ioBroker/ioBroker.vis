@@ -950,6 +950,7 @@ class VisEngine extends React.Component {
                     setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                     showWidgetNames={this.props.showWidgetNames}
+                    registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
                 />;
             }
 
@@ -971,6 +972,7 @@ VisEngine.propTypes = {
     onWidgetsChanged: PropTypes.func,
     onFontsUpdate: PropTypes.func,
     showWidgetNames: PropTypes.bool,
+    registerEditorCallback: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
