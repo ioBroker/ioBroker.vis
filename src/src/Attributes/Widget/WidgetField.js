@@ -84,9 +84,9 @@ function collectClasses() {
     return result;
 }
 
-function getStylesOptions(options, collectClassesValue) {
+function getStylesOptions(options) {
     // Fill the list of styles
-    const _internalList = collectClassesValue;
+    const _internalList = window.collectClassesValue;
 
     options.filterName  = options.filterName  || '';
     options.filterAttrs = options.filterAttrs || '';
@@ -245,7 +245,9 @@ const WidgetField = props => {
         }
     }
 
-    const collectClassesValue = useMemo(collectClasses, []);
+    if (!window.collectClassesValue) {
+        window.collectClassesValue = collectClasses();
+    }
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
@@ -558,7 +560,7 @@ const WidgetField = props => {
     if (field.type === 'auto' || field.type === 'class')  {
         let options = field.options;
         if (field.type === 'class') {
-            options = collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
+            options = window.collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
         }
         if (field.type === 'views') {
             options = Object.keys(props.project)
@@ -658,7 +660,7 @@ const WidgetField = props => {
             filterName:  field.filterName,
             filterAttrs: field.filterAttrs,
             removeName:  field.removeName,
-        }, collectClassesValue);
+        });
         return <Select
             variant="standard"
             value={value}

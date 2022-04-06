@@ -794,13 +794,14 @@ const Widget = props => {
                                             <td className={props.classes.fieldContent}>
                                                 <div className={props.classes.fieldContentDiv}>
                                                     <div className={props.classes.fieldInput}>
-                                                        <WidgetField
-                                                            field={field}
-                                                            widget={props.selectedWidgets.length > 1 ? commonValues : widget}
-                                                            isStyle={group.isStyle}
-                                                            isDifferent={isDifferent[field.name]}
-                                                            {...props}
-                                                        />
+                                                        {accordionOpen[group.name] && group.hasValues ?
+                                                            <WidgetField
+                                                                field={field}
+                                                                widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                                isStyle={group.isStyle}
+                                                                isDifferent={isDifferent[field.name]}
+                                                                {...props}
+                                                            /> : null}
                                                     </div>
                                                 </div>
                                             </td>
