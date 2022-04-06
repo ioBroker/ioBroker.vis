@@ -361,6 +361,45 @@ const Widget = props => {
                 if (!widget) {
                     return;
                 }
+
+                if (widgetType === '_tplGroup') {
+                    fields.push({
+                        name: 'attributes',
+                        singleName: 'attributes',
+                        fields: [{
+                            name: 'count',
+                            type: 'slider',
+                            min: 1,
+                            max: 19,
+                            step: 1,
+                            default: 1,
+                        }],
+                    });
+                    for (let i = 1; i <= widget.count; i++) {
+                        fields[0].fields.push({
+                            name: `groupAttr${i}`,
+                            title: widget[`attrName${i}`],
+                            type: widget[`attrType${i}`],
+                        });
+                        fields[1].fields.push({
+                            name: `attrName${i}`,
+                            singleName: 'attrName',
+                            index: i,
+                        });
+                    }
+                    for (let i = 1; i <= widget.count; i++) {
+                        fields[1].fields.push({
+                            name: `attrType${i}`,
+                            singleName: 'attrType',
+                            index: i,
+                            type: 'select',
+                            options: ['', 'checkbox', 'image', 'color', 'views', 'html', 'widget', 'history'],
+                        });
+                    }
+                    selectedWidgetsFields.push(fields);
+                    return;
+                }
+
                 widgetType = widgetTypes.find(type => type.name === widget.tpl);
                 if (!widgetType) {
                     return;
