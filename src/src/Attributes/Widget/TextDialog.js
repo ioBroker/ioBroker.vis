@@ -52,4 +52,5 @@ TextDialog.propTypes = {
     type: PropTypes.string,
     value: PropTypes.string,
 };
+
 export default TextDialog;

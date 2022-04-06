@@ -401,7 +401,7 @@ const Widget = props => {
                             isIndexedGroup = true;
                         }
                     } else {
-                        const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:\/\.a-zA-Z0-9]+)?/);
+                        const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
 
                         const repeats = match[2];
 
@@ -531,7 +531,7 @@ const Widget = props => {
             };
         }, [props.selectedWidgets, props.project, props.selectedView]);
         const {
-            widget, widgetType, commonFields, commonGroups, selectedWidgetsFields,
+            widget, commonFields, commonGroups, selectedWidgetsFields,
         } = fieldsData;
 
         let fields;
