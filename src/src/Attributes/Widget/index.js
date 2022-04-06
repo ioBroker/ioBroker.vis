@@ -51,9 +51,25 @@ const styles = theme => ({
     fieldTitle: {
         width: 140,
         fontSize: '80%',
+        position: 'relative',
     },
     colorize: {
         display: 'none',
+        position: 'absolute',
+        right: 0,
+        cursor: 'pointer',
+        opacity: 0.3,
+        '&:hover': {
+            opacity: 1,
+        },
+        '&:active': {
+            transform: 'scale(0.8)',
+        },
+    },
+    fieldRow: {
+        '&:hover $colorize': {
+            display: 'initial',
+        },
     },
     fieldContent: {
         '&&&&&&': {
@@ -61,9 +77,6 @@ const styles = theme => ({
         },
         '& svg': {
             fontSize: '1rem',
-        },
-        '&:hover $colorize': {
-            display: 'initial',
         },
     },
     fieldInput: {
@@ -202,20 +215,20 @@ const getFieldsAfter = (widgets, fonts) => [
             },
             { name: 'gestures-offsetX', default: 0, type: 'number' },
             { name: 'gestures-offsetY', default: 0, type: 'number' },
-            { type: 'delimeter' },
+            { type: 'delimiter' },
             ...(['swiping', 'rotating', 'pinching'].flatMap(gesture => [
                 { name: `gestures-${gesture}-oid`,        type: 'id' },
                 { name: `gestures-${gesture}-value`,      default: '' },
                 { name: `gestures-${gesture}-minimum`,    type: 'number' },
                 { name: `gestures-${gesture}-maximum`,    type: 'number' },
                 { name: `gestures-${gesture}-delta`,      type: 'number' },
-                { type: 'delimeter' },
+                { type: 'delimiter' },
             ])),
             ...(['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut'].flatMap(gesture => [
                 { name: `gestures-${gesture}-oid`,    type: 'id' },
                 { name: `gestures-${gesture}-value`,  default: '' },
                 { name: `gestures-${gesture}-limit`,  type: 'number' },
-                { type: 'delimeter' },
+                { type: 'delimiter' },
             ])),
         ],
     },
@@ -243,7 +256,7 @@ const getFieldsAfter = (widgets, fonts) => [
                 name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
             },
             { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-            { type: 'delimeter' },
+            { type: 'delimiter' },
         ]))],
     },
     {
@@ -647,21 +660,31 @@ const Widget = props => {
                     <table style={{ width: '100%' }}>
                         <tbody>
                             {
-                                group.fields.map((field, key2) => <tr key={key2}>
-                                    {field.type === 'delimeter' ?
+                                group.fields.map((field, key2) => <tr key={key2} className={props.classes.fieldRow}>
+                                    {field.type === 'delimiter' ?
                                         <td colSpan="2">
                                             <Divider style={{ borderBottomWidth: 'thick' }} />
                                         </td>
                                         : <>
                                             <td className={props.classes.fieldTitle}>
-                                                {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
-                                                {window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')}
+                                                { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
+                                                { window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '') }
+                                                { group.isStyle ?
+                                                    <ColorizeIcon
+                                                        fontSize="small"
+                                                        className={props.classes.colorize}
+                                                        onClick={() => props.cssClone(field.name, newValue => {
+                                                            if (newValue !== null && newValue !== undefined) {
+                                                                const project = JSON.parse(JSON.stringify(props.project));
+                                                                props.selectedWidgets.forEach(selectedWidget =>
+                                                                    project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                props.changeProject(project);
+                                                            }
+                                                        })}
+                                                    /> : null }
                                             </td>
                                             <td className={props.classes.fieldContent}>
-                                                <div style={{
-                                                    display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
-                                                }}
-                                                >
+                                                <div className={props.classes.fieldContentDiv}>
                                                     <div className={props.classes.fieldInput}>
                                                         <WidgetField
                                                             field={field}
@@ -670,22 +693,6 @@ const Widget = props => {
                                                             {...props}
                                                         />
                                                     </div>
-                                                    {group.isStyle ?
-                                                        <IconButton
-                                                            size="small"
-                                                            className={props.classes.colorize}
-                                                            onClick={() => props.cssClone(field.name, newValue => {
-                                                                console.log(`New value ${newValue}`);
-                                                                if (newValue !== null && newValue !== undefined) {
-                                                                    const project = JSON.parse(JSON.stringify(props.project));
-                                                                    props.selectedWidgets.forEach(selectedWidget =>
-                                                                        project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
-                                                                    props.changeProject(project);
-                                                                }
-                                                            })}
-                                                        >
-                                                            <ColorizeIcon fontSize="small" />
-                                                        </IconButton> : null}
                                                 </div>
                                             </td>
                                         </>}

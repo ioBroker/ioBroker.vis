@@ -30,6 +30,7 @@
 - Lock/Unlock widget
 - Context menu
 - Bring to front / Send back
+- Undo!!
 
 ### Widget
 - Gestures

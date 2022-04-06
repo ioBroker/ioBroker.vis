@@ -55,6 +55,12 @@ const styles = theme => ({
             fontSize: '1rem',
         },
     },
+    fieldContentDiv: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+    },
     fieldContentColor: {
         '&&&&&& label': {
             display: 'none',

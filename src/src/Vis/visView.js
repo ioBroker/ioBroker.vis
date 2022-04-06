@@ -120,6 +120,13 @@ class VisView extends React.Component {
         }
     };
 
+    onMouseWindowDown = e => {
+        if (!this.refView.current.contains(e.target)) {
+            // Clicked outside the box
+            this.cancelStealMode(null);
+        }
+    }
+
     onStealStyle = (attr, cb) => {
         if (!attr) {
             this.cancelStealMode(null);
@@ -133,10 +140,13 @@ class VisView extends React.Component {
         };
         Object.keys(this.widgetsRefs).forEach(wid =>
             this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand('startStealMode'));
+
+        window.document.addEventListener('mousedown', this.onMouseWindowDown);
     }
 
     cancelStealMode(result) {
         if (this.nextClickIsSteal) {
+            window.document.removeEventListener('mousedown', this.onMouseWindowDown);
             this.nextClickIsSteal.cb(result);
             Object.keys(this.widgetsRefs).forEach(wid =>
                 this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand('cancelStealMode'));
