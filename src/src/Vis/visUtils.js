@@ -342,20 +342,26 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
     // if widget is in the group => replace groupAttrX values
     if (widget.grouped) {
-        const parentWidgetData = views[view].widgets[widget.groupid].data;
-        const aCount = parseInt(parentWidgetData.attrCount, 10);
+        widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
 
-        if (aCount && data) {
-            data = JSON.parse(JSON.stringify(data));
+        const parentWidgetData = views[view].widgets[widget.groupid]?.data;
+        if (parentWidgetData) {
+            const aCount = parseInt(parentWidgetData.attrCount, 10);
 
-            Object.keys(data).forEach(attr => {
-                if (typeof data[attr] === 'string') {
-                    const result = replaceGroupAttr(data[attr], parentWidgetData);
-                    if (result.doesMatch) {
-                        data[attr] = result.newString || '';
+            if (aCount && data) {
+                data = JSON.parse(JSON.stringify(data));
+
+                Object.keys(data).forEach(attr => {
+                    if (typeof data[attr] === 'string') {
+                        const result = replaceGroupAttr(data[attr], parentWidgetData);
+                        if (result.doesMatch) {
+                            data[attr] = result.newString || '';
+                        }
                     }
-                }
-            });
+                });
+            }
+        } else {
+            console.error(`Invalid group id "${widget.groupid}" in widget "${wid}"`);
         }
     }
 

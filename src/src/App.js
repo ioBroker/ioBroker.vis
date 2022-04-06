@@ -156,16 +156,37 @@ class App extends GenericApp {
         } else {
             openedViews = [selectedView];
         }
+
+        const len = openedViews.length;
+
+        for (let i = len - 1; i >= 0; i--) {
+            if (!project[openedViews[i]]) {
+                openedViews.splice(i, 1);
+            }
+        }
+
+        if (len && !openedViews.length) {
+            const view = Object.keys(project).find(_view => _view !== '___settings');
+            if (view) {
+                openedViews[0] = view;
+            }
+        }
+
+        // check that selectedView and openedViews exist
+        if (!project[selectedView]) {
+            selectedView = openedViews[0] || '';
+        } else
         if (openedViews && !openedViews.includes(selectedView)) {
-            // eslint-disable-next-line prefer-destructuring
             selectedView = openedViews[0];
         }
+
         this.setState({
             project,
             visProject: project,
             openedViews,
             projectName,
         });
+
         this.changeView(selectedView);
 
         const groups = await this.socket.getGroups();
@@ -204,16 +225,27 @@ class App extends GenericApp {
 
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
-    changeView = view => {
+    changeView = selectedView => {
+        const selectedWidgets = JSON.parse(window.localStorage.getItem(
+            `${this.state.projectName}.${selectedView}.widgets`,
+        ) || '[]') || [];
+
+        // Check that all selectedWidgets exist
+        for (let i = selectedWidgets.length - 1; i >= 0; i--) {
+            if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
+                selectedWidgets.splice(i, 1);
+            }
+        }
+
         this.setState({
-            selectedView: view,
-            selectedWidgets: JSON.parse(window.localStorage.getItem(
-                `${this.state.projectName}.${view}.widgets`,
-            )) || [],
+            selectedView,
+            selectedWidgets,
         });
-        window.localStorage.setItem('selectedView', view);
+
+        window.localStorage.setItem('selectedView', selectedView);
+
         if (window.location.hash !== '#view') {
-            window.location.hash = view;
+            window.location.hash = selectedView;
         }
     }
 
