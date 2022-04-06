@@ -362,24 +362,23 @@ const Widget = props => {
                     return;
                 }
 
-                if (widgetType === '_tplGroup') {
+                if (widget.tpl === '_tplGroup') {
                     fields.push({
-                        name: 'attributes',
-                        singleName: 'attributes',
+                        name: 'objects',
+                        singleName: 'objects',
                         fields: [{
-                            name: 'count',
+                            name: 'attrCount',
                             type: 'slider',
                             min: 1,
                             max: 19,
                             step: 1,
-                            default: 1,
                         }],
                     });
-                    for (let i = 1; i <= widget.count; i++) {
+                    for (let i = 1; i <= widget.data.attrCount; i++) {
                         fields[0].fields.push({
                             name: `groupAttr${i}`,
-                            title: widget[`attrName${i}`],
-                            type: widget[`attrType${i}`],
+                            title: widget.data[`attrName${i}`],
+                            type: widget.data[`attrType${i}`],
                         });
                         fields[1].fields.push({
                             name: `attrName${i}`,
@@ -387,7 +386,7 @@ const Widget = props => {
                             index: i,
                         });
                     }
-                    for (let i = 1; i <= widget.count; i++) {
+                    for (let i = 1; i <= widget.data.attrCount; i++) {
                         fields[1].fields.push({
                             name: `attrType${i}`,
                             singleName: 'attrType',
@@ -642,6 +641,7 @@ const Widget = props => {
         const fieldsAfter = useMemo(() => getFieldsAfter(props.project[props.selectedView].widgets, props.fonts),
             [props.project, props.selectedView, props.fonts]);
         const fieldsSignals = useMemo(() => getSignals(signalsCount), [signalsCount]);
+        const customFields = fields;
 
         fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
 
@@ -776,7 +776,7 @@ const Widget = props => {
                                         : <>
                                             <td className={props.classes.fieldTitle}>
                                                 { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                { window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '') }
+                                                { field.title || (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
                                                 { group.isStyle ?
                                                     <ColorizeIcon
                                                         fontSize="small"
@@ -842,6 +842,7 @@ const Widget = props => {
             </Button>
             {showWidgetCode ? <pre>
                 {JSON.stringify(widget, null, 2)}
+                {JSON.stringify(customFields, null, 2)}
             </pre> : null}
         </div>;
     }
