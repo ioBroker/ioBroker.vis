@@ -351,8 +351,8 @@ class VisView extends React.Component {
         if (!ref) {
             return null;
         }
-        let top  = ref.clientTop - viewTop;
-        let left = ref.clientLeft - viewLeft;
+        let top  = ref.offsetTop - viewTop;
+        let left = ref.offsetLeft - viewLeft;
         // May be bug?
         if (!left && !top) {
             const style = this.props.views[this.props.view].widgets[widget].style;
@@ -374,10 +374,10 @@ class VisView extends React.Component {
         const pRect = {};
         pRect.left   = this.refView.current.clientLeft;
         pRect.top    = this.refView.current.clientTop;
-        pRect.height = this.refView.current.clientTop;
+        pRect.height = this.refView.current.clientHeight;
         pRect.width  = this.refView.current.clientWidth;
 
-        const result = wids.map(wid => {
+        const results = wids.map(wid => {
             const wRect = this.editWidgetsRect(wid);
             if (!wRect) {
                 return null;
@@ -400,11 +400,11 @@ class VisView extends React.Component {
             return wRect[attr];
         });
 
-        cb && cb(wids, attr, result);
+        cb && cb(results);
     }
 
     onPercentToPx = (wids, attr, cb) => {
-        const result = wids.map(wid => {
+        const results = wids.map(wid => {
             const wRect = this.editWidgetsRect(wid);
             if (!wRect) {
                 return null;
@@ -417,7 +417,7 @@ class VisView extends React.Component {
             return wRect[attr];
         });
 
-        cb && cb(wids, attr, result);
+        cb && cb(results);
     }
 
     registerEditorHandlers(unregister) {

@@ -184,29 +184,41 @@ const WidgetField = props => {
 
     const cacheTimer = useRef(null);
 
+    const applyValue = newValues => {
+        const project = JSON.parse(JSON.stringify(props.project));
+        props.selectedWidgets.forEach((selectedWidget, i) => {
+            const value = Array.isArray(newValues) ? newValues[i] : newValues;
+
+            const data = props.isStyle
+                ? project[props.selectedView].widgets[selectedWidget].style
+                : project[props.selectedView].widgets[selectedWidget].data;
+
+            if (field.default && data[field.name] === field.default) {
+                delete data[field.name];
+            } else {
+                data[field.name] = value;
+            }
+
+            if (field.onChangeFunc) {
+                window.vis.binds[widget.widgetSet][field.onChangeFunc](
+                    selectedWidget, props.selectedView, value, field.name, props.isStyle,
+                    props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                );
+            }
+        });
+
+        props.changeProject(project);
+    };
+
     const change = changeValue => {
-        setCachedValue(changeValue);
-        cacheTimer.current && clearTimeout(cacheTimer.current);
-        cacheTimer.current = setTimeout(() => {
-            const project = JSON.parse(JSON.stringify(props.project));
-            props.selectedWidgets.forEach(selectedWidget => {
-                const data = props.isStyle
-                    ? project[props.selectedView].widgets[selectedWidget].style
-                    : project[props.selectedView].widgets[selectedWidget].data;
-                if (field.default && data[field.name] === field.default) {
-                    delete data[field.name];
-                } else {
-                    data[field.name] = changeValue;
-                }
-                if (field.onChangeFunc) {
-                    window.vis.binds[widget.widgetSet][field.onChangeFunc](
-                        selectedWidget, props.selectedView, changeValue, field.name, props.isStyle,
-                        props.isStyle ? widget.style[field.name] : widget.data[field.name],
-                    );
-                }
-            });
-            props.changeProject(project);
-        }, 300);
+        if (Array.isArray(changeValue)) {
+            // apply immediately
+            applyValue(changeValue);
+        } else {
+            setCachedValue(changeValue);
+            cacheTimer.current && clearTimeout(cacheTimer.current);
+            cacheTimer.current = setTimeout(() => applyValue(changeValue), 300);
+        }
     };
 
     const propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
@@ -313,7 +325,8 @@ const WidgetField = props => {
         </>;
     }
     if (field.type === 'dimension') {
-        const parts = (value || '').toString().match(/^(-?[0-9]+)(.*)$/) || ['', ''];
+        const [, _value, _unit] = (value || '').toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
+        const unit = _unit || 'px';
 
         return <TextField
             variant="standard"
@@ -325,19 +338,28 @@ const WidgetField = props => {
                 },
                 endAdornment: <Button
                     size="small"
+                    title={i18n.t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
                     onClick={() => {
-                        if (parts[2] === 'px') {
-                            props.onPxToPercent(props.selectedWidgets, field.name, newValue => change(`${newValue}%`));
+                        if (unit !== '%') {
+                            props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues));
                         } else {
-                            props.onPercentToPx(props.selectedWidgets, field.name, newValue => change(`${newValue}%`));
+                            props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues));
                         }
                     }}
                 >
-                    {parts[2]}
+                    {unit}
                 </Button>,
             }}
-            value={parts[1]}
-            onChange={e => change(e.target.value === '' ? '' : (e.target.value + (parts[2] ? parts[2] : 'px')))}
+            value={unit === '%' || unit === 'px' || unit === 'em' || unit === 'rem' || unit === 'vh' || unit === 'vmin' || unit === 'vmax' || unit === 'vw' ? _value : _value + unit}
+            onChange={e => {
+                if (!e.target.value) {
+                    change('');
+                } else {
+                    const [, newValue, _newUnit] = e.target.value.toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
+                    const newUnit = _newUnit || unit;
+                    change(newUnit === 'px' ? newValue : newValue + newUnit);
+                }
+            }}
         />;
     }
     if (field.type === 'color') {
@@ -627,7 +649,7 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             renderValue={selectValue => <div className={props.classes.backgroundClass}>
                 <span className={stylesOptions[selectValue].parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`}></span>
+                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`}/>
                 </span>
                 {i18n.t(stylesOptions[selectValue].name)}
             </div>}
@@ -638,7 +660,7 @@ const WidgetField = props => {
                 key={styleName}
             >
                 <span className={stylesOptions[styleName].parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`}></span>
+                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`}/>
                 </span>
                 {i18n.t(stylesOptions[styleName].name)}
             </MenuItem>)}
