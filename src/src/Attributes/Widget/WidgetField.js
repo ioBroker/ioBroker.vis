@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -75,9 +75,9 @@ function collectClasses() {
     return result;
 }
 
-function getStylesOptions(options) {
+function getStylesOptions(options, collectClassesValue) {
     // Fill the list of styles
-    const _internalList = collectClasses();
+    const _internalList = collectClassesValue;
 
     options.filterName  = options.filterName  || '';
     options.filterAttrs = options.filterAttrs || '';
@@ -235,6 +235,8 @@ const WidgetField = props => {
             value = '';
         }
     }
+
+    const collectClassesValue = useMemo(collectClasses, []);
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
@@ -547,7 +549,7 @@ const WidgetField = props => {
     if (field.type === 'auto' || field.type === 'class')  {
         let options = field.options;
         if (field.type === 'class') {
-            options = collectClasses().filter(cssClass => cssClass.match(/^vis-style-/));
+            options = collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
         }
         if (field.type === 'views') {
             options = Object.keys(props.project)
@@ -647,7 +649,7 @@ const WidgetField = props => {
             filterName:  field.filterName,
             filterAttrs: field.filterAttrs,
             removeName:  field.removeName,
-        });
+        }, collectClassesValue);
         return <Select
             variant="standard"
             value={value}
