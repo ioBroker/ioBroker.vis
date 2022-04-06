@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -314,11 +314,12 @@ const Widget = props => {
         let widget;
         let widgetType;
 
-        const selectedWidgetsFields = [];
-
         const commonFields = {};
         const commonGroups = { common: props.selectedWidgets.length };
 
+        const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
+
+        const selectedWidgetsFields = [];
         props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
             const fields = [{
                 name: 'common',
@@ -330,7 +331,7 @@ const Widget = props => {
             if (!widget) {
                 return;
             }
-            widgetType = getWidgetTypes().find(type => type.name === widget.tpl);
+            widgetType = widgetTypes.find(type => type.name === widget.tpl);
             if (!widgetType) {
                 return;
             }
