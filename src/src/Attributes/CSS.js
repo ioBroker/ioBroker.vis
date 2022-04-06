@@ -46,12 +46,15 @@ const CSS = props => {
         },
     };
 
-    useEffect(async () => {
-        setGlobalCss(await props.socket.readFile('vis', 'css/vis-common-user.css'));
-        setLocalCss(await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`));
-        if (window.localStorage.getItem('CSS.type')) {
-            setType(window.localStorage.getItem('CSS.type'));
-        }
+    useEffect(() => {
+        const load = async () => {
+            setGlobalCss(await props.socket.readFile('vis', 'css/vis-common-user.css'));
+            setLocalCss(await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`));
+            if (window.localStorage.getItem('CSS.type')) {
+                setType(window.localStorage.getItem('CSS.type'));
+            }
+        };
+        load();
     }, []);
 
     const save = (value, saveType) => {
@@ -62,6 +65,11 @@ const CSS = props => {
             props.socket.writeFile64(timers[saveType].directory, timers[saveType].file, value);
         }, 1000));
     };
+
+    let value = type === 'global' ? globalCss : localCss;
+    if (typeof value === 'object') {
+        value = value.data;
+    }
 
     return <div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -101,7 +109,7 @@ const CSS = props => {
         <AceEditor
             mode="css"
             theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-            value={type === 'global' ? globalCss : localCss}
+            value={value}
             onChange={newValue => save(newValue, type)}
             width="100%"
             setOptions={{

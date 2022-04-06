@@ -71,7 +71,9 @@ const Attributes = props => {
                 />)
             }
         </Tabs>
-        <TabContent {...props} classes={{}} />
+        <div style={{ height: 'calc(100% - 82px', overflowY: 'auto'  }}>
+            <TabContent {...props} classes={{}} />
+        </div>
     </>;
 };
 
