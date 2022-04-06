@@ -668,10 +668,10 @@ const WidgetField = props => {
             }}
             onChange={e => change(e.target.value)}
             renderValue={selectValue => <div className={props.classes.backgroundClass}>
-                <span className={stylesOptions[selectValue].parentClass}>
+                <span className={stylesOptions[selectValue]?.parentClass}>
                     <span className={`${props.classes.backgroundClassSquare} ${selectValue}`} />
                 </span>
-                {t(stylesOptions[selectValue].name)}
+                {t(stylesOptions[selectValue]?.name)}
             </div>}
             fullWidth
         >
