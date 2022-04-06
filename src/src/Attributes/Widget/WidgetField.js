@@ -166,6 +166,17 @@ const getViewOptions = (project, options = [], parentId = null, level = 0) => {
     return options;
 };
 
+// Optimize translation
+const wordsCache = {};
+
+const t = (word, ...args) => {
+    const hash = `${word}_${args.join(',')}`;
+    if (!wordsCache[hash]) {
+        wordsCache[hash] = i18n.t(word, ...args);
+    }
+    return wordsCache[hash];
+};
+
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
 
@@ -246,7 +257,7 @@ const WidgetField = props => {
             <TextField
                 variant="standard"
                 fullWidth
-                placeholder={isDifferent ? i18n.t('Different values') : null}
+                placeholder={isDifferent ? t('different') : null}
                 InputProps={{
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -268,6 +279,7 @@ const WidgetField = props => {
             /> : null}
         </>;
     }
+
     if (field.type === 'checkbox') {
         return <Checkbox
             checked={!!value}
@@ -283,7 +295,7 @@ const WidgetField = props => {
             <TextField
                 variant="standard"
                 fullWidth
-                placeholder={isDifferent ? i18n.t('Different values') : null}
+                placeholder={isDifferent ? t('different') : null}
                 InputProps={{
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -294,7 +306,7 @@ const WidgetField = props => {
                 onChange={e => change(e.target.value)}
             />
             <IODialog
-                title={i18n.t('Select file')}
+                title={t('Select file')}
                 open={idDialog}
                 onClose={() => setIdDialog(false)}
             >
@@ -315,9 +327,9 @@ const WidgetField = props => {
                         change(selected);
                         isDoubleClick && setIdDialog(false);
                     }}
-                    actionTitle={i18n.t('Select')}
+                    actionTitle={t('Select')}
                     actionDisabled={!value}
-                    t={i18n.t}
+                    t={t}
                     lang={i18n.lang}
                     socket={props.socket}
                 />
@@ -331,14 +343,14 @@ const WidgetField = props => {
         return <TextField
             variant="standard"
             fullWidth
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             InputProps={{
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                 },
-                endAdornment: <Button
+                endAdornment: !isDifferent ? <Button
                     size="small"
-                    title={i18n.t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
+                    title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
                     onClick={() => {
                         if (unit !== '%') {
                             props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues));
@@ -348,7 +360,7 @@ const WidgetField = props => {
                     }}
                 >
                     {unit}
-                </Button>,
+                </Button> : null,
             }}
             value={unit === '%' || unit === 'px' || unit === 'em' || unit === 'rem' || unit === 'vh' || unit === 'vmin' || unit === 'vmax' || unit === 'vw' ? _value : _value + unit}
             onChange={e => {
@@ -438,7 +450,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
             classes={{
                 root: props.classes.clearPadding,
@@ -454,8 +466,8 @@ const WidgetField = props => {
             >
                 {
                     selectItem === ''
-                        ? <i>{i18n.t('none')}</i>
-                        : (field.type === 'select' ? i18n.t(selectItem) : selectItem)
+                        ? <i>{t('none')}</i>
+                        : (field.type === 'select' ? t(selectItem) : selectItem)
                 }
             </MenuItem>)}
         </Select>;
@@ -465,7 +477,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value || []}
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             multiple
             renderValue={selected => selected.join(', ')}
             classes={{
@@ -484,7 +496,7 @@ const WidgetField = props => {
                     >
                         <FileIcon />
                         <Checkbox checked={(value || []).includes(option.view)} />
-                        <ListItemText primary={i18n.t(option.view)} />
+                        <ListItemText primary={t(option.view)} />
                     </MenuItem>
                     :
                     <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }}>
@@ -497,7 +509,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value || []}
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             multiple
             renderValue={selected => <div style={{ display: 'flex' }}>
                 {props.groups
@@ -506,7 +518,7 @@ const WidgetField = props => {
                         <span key={key} style={{ padding: '4px 4px' }}>
                             <TextWithIcon
                                 value={group._id}
-                                t={i18n.t}
+                                t={t}
                                 lang={i18n.getLanguage()}
                                 list={[group]}
                             />
@@ -526,7 +538,7 @@ const WidgetField = props => {
                 <Checkbox checked={(value || []).includes(group._id.split('.')[2])} />
                 <TextWithIcon
                     value={group._id}
-                    t={i18n.t}
+                    t={t}
                     lang={i18n.getLanguage()}
                     list={[group]}
                 />
@@ -546,7 +558,7 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             options={options || []}
             inputValue={value || ''}
             value={value || ''}
@@ -573,7 +585,7 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             options={options || []}
             inputValue={value || ''}
             value={value || ''}
@@ -607,7 +619,7 @@ const WidgetField = props => {
                     key={`view${option.view}`}
                 >
                     <FileIcon />
-                    {i18n.t(option.view)}
+                    {t(option.view)}
                 </Box>
                 :
                 <Box
@@ -640,7 +652,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
             classes={{
                 root: props.classes.clearPadding,
@@ -649,9 +661,9 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             renderValue={selectValue => <div className={props.classes.backgroundClass}>
                 <span className={stylesOptions[selectValue].parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`}/>
+                    <span className={`${props.classes.backgroundClassSquare} ${selectValue}`} />
                 </span>
-                {i18n.t(stylesOptions[selectValue].name)}
+                {t(stylesOptions[selectValue].name)}
             </div>}
             fullWidth
         >
@@ -660,9 +672,9 @@ const WidgetField = props => {
                 key={styleName}
             >
                 <span className={stylesOptions[styleName].parentClass}>
-                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`}/>
+                    <span className={`${props.classes.backgroundClassSquare} ${styleName}`} />
                 </span>
-                {i18n.t(stylesOptions[styleName].name)}
+                {t(stylesOptions[styleName].name)}
             </MenuItem>)}
         </Select>;
     }
@@ -677,7 +689,7 @@ const WidgetField = props => {
         return <>
             <TextField
                 size="small"
-                placeholder={isDifferent ? i18n.t('Different values') : null}
+                placeholder={isDifferent ? t('different') : null}
                 variant="standard"
                 value={value}
                 multiline
@@ -704,7 +716,7 @@ const WidgetField = props => {
         return <TextField
             variant="standard"
             fullWidth
-            placeholder={isDifferent ? i18n.t('Different values') : null}
+            placeholder={isDifferent ? t('different') : null}
             InputProps={{
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
