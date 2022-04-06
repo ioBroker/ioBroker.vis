@@ -356,7 +356,7 @@ class App extends GenericApp {
     }
 
     registerCallback = (name, view, cb) => {
-        console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
+        // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
 
         if (cb) {
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};

@@ -613,9 +613,10 @@ const Widget = props => {
                     if (fieldValue === undefined) {
                         return false;
                     }
-                    if (field.default && fieldValue === field.default) {
+                    if ((field.default || field.default === 0 || field.default === false || field.default === '') && fieldValue === field.default) {
                         return false;
                     }
+                    // console.log(`Group "${group.name}" is not empty because of ${field.name}: [${JSON.stringify(field.default)}/${typeof field.default}] !== [${JSON.stringify(fieldValue)}/${typeof fieldValue}]`);
                     return true;
                 });
                 return fieldFound !== undefined;
