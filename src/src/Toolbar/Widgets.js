@@ -27,99 +27,101 @@ const Widgets = props => {
         return null;
     }
 
+    const widgets = props.project[props.selectedView].widgets;
+
     const toolbar = {
         name: 'Widgets',
-        items:
-[
-    {
-        type: 'multiselect',
-        name: 'Active widget',
-        items: Object.keys(props.project[props.selectedView].widgets).map(widget => ({
-            name: `${widget} (${props.project[props.selectedView].widgets[widget].tpl})`,
-            value: widget,
-        })),
-        width: 240,
-        value: props.selectedWidgets,
-        onChange: e => props.setSelectedWidgets(e.target.value),
-    },
-    [[
-        { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
-    ], [
-        { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
-    ]],
-    { type: 'divider' },
-    [[
-        {
-            type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
-        },
-        {
-            type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
-        },
-    ], [
-        {
-            type: 'icon-button', Icon: BiPaste, name: 'Paste', size: 'normal',
-        },
-    ]],
-    {
-        type: 'icon-button', Icon: UndoIcon, name: 'Undo',
-    },
+        items: [
+            {
+                type: 'multiselect',
+                name: 'Active widget',
+                items: Object.keys(widgets).filter(widget => !widgets[widget].groupid).map(widget => ({
+                    name: `${widget} (${widgets[widget].tpl})`,
+                    value: widget,
+                })),
+                width: 240,
+                value: props.selectedWidgets,
+                onChange: e => props.setSelectedWidgets(e.target.value),
+            },
+            [[
+                { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
+            ], [
+                { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
+            ]],
+            { type: 'divider' },
+            [[
+                {
+                    type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
+                },
+                {
+                    type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
+                },
+            ], [
+                {
+                    type: 'icon-button', Icon: BiPaste, name: 'Paste', size: 'normal',
+                },
+            ]],
+            {
+                type: 'icon-button', Icon: UndoIcon, name: 'Undo',
+            },
 
-    { type: 'divider' },
-    [
-        [
-            {
-                type: 'icon-button', Icon: MdAlignHorizontalLeft, name: 'Align horizontal/left', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: MdAlignHorizontalRight, name: 'Align horizontal/right', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: MdAlignVerticalTop, name: 'Align vertical/top', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: MdAlignVerticalBottom, name: 'Align vertical/bottom', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: MdAlignHorizontalCenter, name: 'Align horizontal/center', size: 'normal',
-            },
-            { type: 'icon-button', Icon: LockIcon, name: 'Disable interaction' },
-            {
-                type: 'icon-button', Icon: RiBringToFront, name: 'Bring to front', size: 'normal',
-            },
+            { type: 'divider' },
+            [
+                [
+                    {
+                        type: 'icon-button', Icon: MdAlignHorizontalLeft, name: 'Align horizontal/left', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: MdAlignHorizontalRight, name: 'Align horizontal/right', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: MdAlignVerticalTop, name: 'Align vertical/top', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: MdAlignVerticalBottom, name: 'Align vertical/bottom', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: MdAlignHorizontalCenter, name: 'Align horizontal/center', size: 'normal',
+                    },
+                    { type: 'icon-button', Icon: LockIcon, name: 'Disable interaction' },
+                    {
+                        type: 'icon-button', Icon: RiBringToFront, name: 'Bring to front', size: 'normal',
+                    },
+                ],
+                [
+                    {
+                        type: 'icon-button', Icon: MdAlignVerticalCenter, name: 'Align vertical/center', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: CgArrowAlignH, name: 'Align horizontal/equal', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: CgArrowAlignV, name: 'Align vertical/equal', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: AiOutlineColumnWidth, name: 'Align width. Press more time to get the desired width.', size: 'normal',
+                    },
+                    {
+                        type: 'icon-button', Icon: AiOutlineColumnHeight, name: 'Align height. Press more time to get the desired height.', size: 'normal',
+                    },
+                    { type: 'icon-button', Icon: OpenInNewIcon, name: 'Lock dragging' },
+                    {
+                        type: 'icon-button', Icon: RiSendToBack, name: 'Send to back', size: 'normal',
+                    },
+                ],
+            ],
+            { type: 'divider' },
+            [
+                [{
+                    type: 'icon-button', Icon: BiImport, name: 'Import widgets', size: 'normal',
+                }],
+                [{
+                    type: 'icon-button', Icon: BiExport, name: 'Export widgets', size: 'normal',
+                }],
+            ],
         ],
-        [
-            {
-                type: 'icon-button', Icon: MdAlignVerticalCenter, name: 'Align vertical/center', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: CgArrowAlignH, name: 'Align horizontal/equal', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: CgArrowAlignV, name: 'Align vertical/equal', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: AiOutlineColumnWidth, name: 'Align width. Press more time to get the desired width.', size: 'normal',
-            },
-            {
-                type: 'icon-button', Icon: AiOutlineColumnHeight, name: 'Align height. Press more time to get the desired height.', size: 'normal',
-            },
-            { type: 'icon-button', Icon: OpenInNewIcon, name: 'Lock dragging' },
-            {
-                type: 'icon-button', Icon: RiSendToBack, name: 'Send to back', size: 'normal',
-            },
-        ],
-    ],
-    { type: 'divider' },
-    [
-        [{
-            type: 'icon-button', Icon: BiImport, name: 'Import widgets', size: 'normal',
-        }],
-        [{
-            type: 'icon-button', Icon: BiExport, name: 'Export widgets', size: 'normal',
-        }],
-    ],
-],
     };
+
     return <ToolbarItems group={toolbar} {...props} classes={{}} />;
 };
 

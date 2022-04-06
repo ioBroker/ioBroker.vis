@@ -642,7 +642,7 @@ class VisBaseWidget extends React.Component {
 
         return false;
     }
-*/
+    */
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
@@ -656,10 +656,10 @@ class VisBaseWidget extends React.Component {
         let classNames = selected ? 'vis-editmode-selected' : '';
 
         if (this.state.editMode && !widget.groupid) {
-            if (Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
+            if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
                 style.top = this.state.style.top;
             }
-            if (Object.prototype.hasOwnProperty.call(this.state.style, 'left')) {
+            if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'left')) {
                 style.left = this.state.style.left;
             }
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'width')) {
@@ -668,10 +668,10 @@ class VisBaseWidget extends React.Component {
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'height')) {
                 style.height = this.state.style.height;
             }
-            if (Object.prototype.hasOwnProperty.call(this.state.style, 'right')) {
+            if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'right')) {
                 style.right = this.state.style.right;
             }
-            if (Object.prototype.hasOwnProperty.call(this.state.style, 'bottom')) {
+            if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'bottom')) {
                 style.bottom = this.state.style.bottom;
             }
 
@@ -695,6 +695,9 @@ class VisBaseWidget extends React.Component {
 
         const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
+        if (!this.props.isRelative) {
+            classNames = addClass(classNames, 'vis-editmode-overlay-absolute');
+        }
 
         let widgetName = null;
         if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {

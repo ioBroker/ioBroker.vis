@@ -936,17 +936,22 @@ class VisCanWidget extends VisBaseWidget {
             this.widDiv = parentDiv.querySelector(`#${wid}`);
 
             if (this.widDiv) {
-                if (widgetStyle && !widgetData._no_style) {
-                    // fix position
-                    VisCanWidget.applyStyle(this.widDiv, widgetStyle);
-                }
-
                 const isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
                     widgetStyle && (
                         widgetStyle.position === 'relative' ||
                         widgetStyle.position === 'static' ||
                         widgetStyle.position === 'sticky'
                     );
+
+                if (widgetStyle && !widgetData._no_style) {
+                    if (isRelative) {
+                        delete widgetStyle.top;
+                        delete widgetStyle.left;
+                    }
+
+                    // fix position
+                    VisCanWidget.applyStyle(this.widDiv, widgetStyle);
+                }
 
                 if (!isRelative) {
                     this.widDiv.style.position = 'absolute';
