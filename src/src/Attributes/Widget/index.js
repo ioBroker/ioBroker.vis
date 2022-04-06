@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip, Button
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip, Button,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -810,12 +810,17 @@ const Widget = props => {
 };
 
 Widget.propTypes = {
+    adapterName: PropTypes.string.isRequired,
+    changeProject: PropTypes.func,
+    classes: PropTypes.object,
+    cssClone: PropTypes.func,
+    fonts: PropTypes.array,
+    instance: PropTypes.number.isRequired,
+    project: PropTypes.object,
+    projectName: PropTypes.string.isRequired,
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
-    project: PropTypes.object,
-    adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
+    widgetsLoaded: PropTypes.bool,
 };
 
 export default withStyles(styles)(Widget);

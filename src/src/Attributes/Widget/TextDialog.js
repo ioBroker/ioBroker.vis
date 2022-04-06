@@ -43,4 +43,13 @@ const TextDialog = props => {
         </div>
     </IODialog>;
 };
+
+TextDialog.propTypes = {
+    onChange: PropTypes.func,
+    onClose: PropTypes.func,
+    open: PropTypes.bool,
+    themeName: PropTypes.string,
+    type: PropTypes.string,
+    value: PropTypes.string,
+};
 export default TextDialog;

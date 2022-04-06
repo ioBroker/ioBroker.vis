@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+    useEffect, useMemo, useRef, useState,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -750,9 +752,21 @@ const WidgetField = props => {
 
 WidgetField.propTypes = {
     adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
+    changeProject: PropTypes.func,
+    classes: PropTypes.object,
     field: PropTypes.object.isRequired,
+    fonts: PropTypes.array,
+    groups: PropTypes.array,
+    instance: PropTypes.number.isRequired,
+    isDifferent: PropTypes.bool,
+    isStyle: PropTypes.bool,
+    onPercentToPx: PropTypes.func,
+    onPxToPercent: PropTypes.func,
+    project: PropTypes.object,
+    projectName: PropTypes.string.isRequired,
+    selectedView: PropTypes.string,
+    selectedWidgets: PropTypes.array,
+    socket: PropTypes.object,
     widget: PropTypes.object.isRequired,
 };
 
