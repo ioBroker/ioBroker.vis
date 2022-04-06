@@ -66,6 +66,11 @@ body, html {
     opacity: 0.3;
     position: absolute;
 }
+
+.vis-editmode-overlay-absolute {
+    position: absolute;
+}
+
 .vis-editmode-selected.vis-editmode-overlay {
     background-color: green;
 }

@@ -1,12 +1,11 @@
 import {
-    useEffect, useMemo, useRef, useState,
+    useEffect, useRef, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    Autocomplete,
-    Box,
-    Button, Checkbox, Input, ListItemText, ListSubheader, MenuItem, Select, Slider, TextField,
+    Autocomplete, Box, Button, Checkbox, Input, ListItemText,
+    ListSubheader, MenuItem, Select, Slider, TextField,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -85,7 +84,7 @@ function collectClasses() {
 }
 
 function getStylesOptions(options) {
-    // Fill the list of styles
+    // Fill the list with styles
     const _internalList = window.collectClassesValue;
 
     options.filterName  = options.filterName  || '';
@@ -98,9 +97,9 @@ function getStylesOptions(options) {
         styles = { ...options.styles };
     } else if (options.filterFile || options.filterName) {
         // IF filter defined
-        const filters = (options.filterName)  ? options.filterName.split(' ')  : null;
-        const attrs   = (options.filterAttrs) ? options.filterAttrs.split(' ') : null;
-        const files   = (options.filterFile)  ? options.filterFile.split(' ')  : [''];
+        const filters = options.filterName  ? options.filterName.split(' ')  : null;
+        const attrs   = options.filterAttrs ? options.filterAttrs.split(' ') : null;
+        const files   = options.filterFile  ? options.filterFile.split(' ')  : [''];
 
         Object.keys(_internalList).forEach(style =>
             files.forEach(file => {
