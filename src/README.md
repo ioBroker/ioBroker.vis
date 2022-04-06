@@ -31,6 +31,8 @@
 - Context menu
 - Bring to front / Send back
 - Undo!!
+- Ctrl+A / Esc(Deselect all) / ...
+- If dimension is in % so after resize and move it should stay in %
 
 ### Widget
 - Gestures
