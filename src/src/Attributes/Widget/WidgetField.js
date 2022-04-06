@@ -482,6 +482,7 @@ const WidgetField = props => {
             </MenuItem>)}
         </Select>;
     }
+
     if (field.type === 'select-views') {
         const options = getViewOptions(props.project).filter(option => option.type === 'folder' || option.view !== props.selectedView);
         return <Select
@@ -515,6 +516,7 @@ const WidgetField = props => {
                     </ListSubheader>))}
         </Select>;
     }
+
     if (field.type === 'groups') {
         return <Select
             variant="standard"
@@ -555,6 +557,7 @@ const WidgetField = props => {
             </MenuItem>)}
         </Select>;
     }
+
     if (field.type === 'auto' || field.type === 'class')  {
         let options = field.options;
         if (field.type === 'class') {
@@ -589,6 +592,7 @@ const WidgetField = props => {
             )}
         />;
     }
+
     if (field.type === 'views')  {
         const options = getViewOptions(props.project);
 
@@ -652,6 +656,7 @@ const WidgetField = props => {
             )}
         />;
     }
+
     if (field.type === 'style') {
         const stylesOptions = getStylesOptions({
             filterFile:  field.filterFile,
@@ -688,6 +693,7 @@ const WidgetField = props => {
             </MenuItem>)}
         </Select>;
     }
+
     if (field.type === 'custom') {
         return <>
             {field.type}
@@ -695,6 +701,7 @@ const WidgetField = props => {
             {value}
         </>;
     }
+
     if (field.type === 'text' || field.type === 'html') {
         return <>
             <TextField
@@ -705,7 +712,7 @@ const WidgetField = props => {
                 multiline
                 fullWidth
                 InputProps={{
-                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>Edit</Button>,
+                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>{i18n.t('Edit')}</Button>,
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
@@ -722,6 +729,7 @@ const WidgetField = props => {
             />
         </>;
     }
+
     if (!field.type || field.type === 'number' || field.type === 'password') {
         return <TextField
             variant="standard"

@@ -159,6 +159,40 @@ class App extends GenericApp {
 
         const len = openedViews.length;
 
+        // fix project
+        Object.keys(project).forEach(view => {
+            if (project[view].widgets) {
+                Object.keys(project[view].widgets).forEach(wid => {
+                    if (!project[view].widgets[wid]) {
+                        delete project[view].widgets[wid];
+                        return;
+                    }
+                    if (!project[view].widgets[wid].data) {
+                        project[view].widgets[wid].data = {};
+                    }
+                    if (!project[view].widgets[wid].style) {
+                        project[view].widgets[wid].style = {};
+                    }
+
+                    if (project[view].widgets[wid].data.members && !Array.isArray(project[view].widgets[wid].data.members)) {
+                        project[view].widgets[wid].data.members = [];
+                    }
+
+                    if (project[view].widgets[wid].data.members) {
+                        project[view].widgets[wid].data.members.forEach((_wid, i) =>
+                            project[view].widgets[wid].data.members[i] = _wid.replace(/\s/g, '_'));
+                    }
+
+                    if (wid.includes(' ')) {
+                        const newWid = wid.replace(/\s/g, '_');
+                        const widget = project[view].widgets[wid];
+                        delete project[view].widgets[wid];
+                        project[view].widgets[newWid] = widget;
+                    }
+                });
+            }
+        });
+
         for (let i = len - 1; i >= 0; i--) {
             if (!project[openedViews[i]]) {
                 openedViews.splice(i, 1);
