@@ -194,14 +194,16 @@ const getSignals = count => {
     return result;
 };
 
-const getFieldsAfter = (widgets, fonts) => [
+const getFieldsAfter = (widget, widgets, fonts) => [
     {
         name: 'css_common',
         isStyle: true,
         fields: [{ name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
             { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
-            { name: 'left', type: 'dimension' },
-            { name: 'top', type: 'dimension' },
+            ...(['relative', 'sticky'].includes(widget.style.position) ? [] :
+                [{ name: 'left', type: 'dimension' },
+                    { name: 'top', type: 'dimension' },
+                ]),
             { name: 'width', type: 'dimension' },
             { name: 'height', type: 'dimension' },
             { name: 'z-index' },
@@ -641,8 +643,11 @@ const Widget = props => {
         }
 
         const fieldsBefore = useMemo(getFieldsBefore, []);
-        const fieldsAfter = useMemo(() => getFieldsAfter(props.project[props.selectedView].widgets, props.fonts),
-            [props.project, props.selectedView, props.fonts]);
+        const fieldsAfter = useMemo(() => getFieldsAfter(
+            props.selectedWidgets.length === 1 ? widget : commonValues,
+            props.project[props.selectedView].widgets, props.fonts,
+        ),
+        [props.project, props.selectedView, props.fonts]);
         const fieldsSignals = useMemo(() => getSignals(signalsCount), [signalsCount]);
         const customFields = fields;
 
