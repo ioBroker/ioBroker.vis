@@ -496,6 +496,8 @@ const Widget = props => {
 
         let fields;
         const commonValues = {};
+        const isDifferent = {};
+
         if (props.selectedWidgets.length > 1) {
             fields = selectedWidgetsFields[0].filter(group => {
                 if (commonGroups[group.name] < props.selectedWidgets.length) {
@@ -518,11 +520,13 @@ const Widget = props => {
                     Object.keys(commonValues.data).forEach(field => {
                         if (commonValues.data[field] !== currentWidget.data[field]) {
                             commonValues.data[field] = null;
+                            isDifferent[field] = true;
                         }
                     });
                     Object.keys(commonValues.style).forEach(field => {
                         if (commonValues.style[field] !== currentWidget.style[field]) {
                             commonValues.style[field] = null;
+                            isDifferent[field] = true;
                         }
                     });
                 }
@@ -690,6 +694,7 @@ const Widget = props => {
                                                             field={field}
                                                             widget={props.selectedWidgets.length > 1 ? commonValues : widget}
                                                             isStyle={group.isStyle}
+                                                            isDifferent={isDifferent[field.name]}
                                                             {...props}
                                                         />
                                                     </div>

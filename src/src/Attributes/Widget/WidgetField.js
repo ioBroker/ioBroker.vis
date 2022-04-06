@@ -177,6 +177,7 @@ const WidgetField = props => {
         adapterName,
         instance,
         projectName,
+        isDifferent,
     } = props;
 
     const [cachedValue, setCachedValue] = useState('');
@@ -233,6 +234,7 @@ const WidgetField = props => {
             <TextField
                 variant="standard"
                 fullWidth
+                placeholder={isDifferent ? i18n.t('Different values') : null}
                 InputProps={{
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -269,6 +271,7 @@ const WidgetField = props => {
             <TextField
                 variant="standard"
                 fullWidth
+                placeholder={isDifferent ? i18n.t('Different values') : null}
                 InputProps={{
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -315,6 +318,7 @@ const WidgetField = props => {
         return <TextField
             variant="standard"
             fullWidth
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             InputProps={{
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -412,6 +416,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             defaultValue={field.default}
             classes={{
                 root: props.classes.clearPadding,
@@ -438,6 +443,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value || []}
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             multiple
             renderValue={selected => selected.join(', ')}
             classes={{
@@ -469,6 +475,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value || []}
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             multiple
             renderValue={selected => <div style={{ display: 'flex' }}>
                 {props.groups
@@ -517,6 +524,7 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             options={options || []}
             inputValue={value || ''}
             value={value || ''}
@@ -543,6 +551,7 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             options={options || []}
             inputValue={value || ''}
             value={value || ''}
@@ -609,6 +618,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             defaultValue={field.default}
             classes={{
                 root: props.classes.clearPadding,
@@ -645,6 +655,7 @@ const WidgetField = props => {
         return <>
             <TextField
                 size="small"
+                placeholder={isDifferent ? i18n.t('Different values') : null}
                 variant="standard"
                 value={value}
                 multiline
@@ -671,6 +682,7 @@ const WidgetField = props => {
         return <TextField
             variant="standard"
             fullWidth
+            placeholder={isDifferent ? i18n.t('Different values') : null}
             InputProps={{
                 classes: {
                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
