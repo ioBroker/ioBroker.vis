@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import './index.css';
 // import theme from '@iobroker/adapter-react-v5/Theme';
@@ -50,14 +50,16 @@ const appTheme = () => ({
             textAlign: 'right',
             flex: 1,
         },
-    
+
     }
 });
 
 const getTheme = () => createTheme(appTheme(), theme(themeName));
 
 function build() {
-    return ReactDOM.render(
+    const container = document.getElementById('root');
+    const root = createRoot(container);
+    return root.render(
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={getTheme()}>
                 <App
@@ -69,7 +71,6 @@ function build() {
                 />
             </ThemeProvider>
         </StyledEngineProvider>,
-        document.getElementById('root'),
     );
 }
 

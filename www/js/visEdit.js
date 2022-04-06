@@ -4523,6 +4523,10 @@ vis = $.extend(true, vis, {
         if (!noChange) {
             this.undoHistory = [$.extend(true, {}, this.views[view])];
             $('#button_undo').addClass('ui-state-disabled').removeClass('ui-state-hover');
+            // if not array
+            if (!this.views[view].activeWidgets || typeof this.views[view].activeWidgets !== 'object' || !this.views[view].activeWidgets.hasOwnProperty('length')) {
+                this.views[view].activeWidgets = [];
+            }
             this.inspectWidgets(viewDiv, view, viewDiv !== view || !this.views[view] ? [] : (this.views[view].activeWidgets || []));
         }
 
