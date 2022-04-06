@@ -834,6 +834,9 @@ class VisCanWidget extends VisBaseWidget {
 
         const wid = this.props.id;
         let widget = this.props.views[this.props.view].widgets[wid];
+        if (!widget || typeof widget !== 'object') {
+            return;
+        }
 
         // replace groupAttrX in groups
         if (widget?.groupid) {
@@ -878,24 +881,11 @@ class VisCanWidget extends VisBaseWidget {
             this.props.linkContext.subscribe(subscribe);
         }
 
-        // Add to the global array of widgets
-        let userGroups = widget.data['visibility-groups'];
-        if (!this.state.editMode && userGroups?.length) {
-            if (widget.data['visibility-groups-action'] === 'hide') {
-                if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
-                    return;
-                }
-                userGroups = null; // mark as processed
-            }
-        } else {
-            userGroups = null;
-        }
-
         let widgetData;
         let widgetStyle;
         try {
-            widgetData = new this.props.can.Map({ wid, ...widget.data });
-            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style));
+            widgetData = new this.props.can.Map({ wid, ...(widget.data || {}) });
+            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
             // try to apply bindings to every attribute
             this.props.allWidgets[wid] = {
                 style: widgetStyle,
@@ -906,6 +896,19 @@ class VisCanWidget extends VisBaseWidget {
         } catch (e) {
             console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
             return;
+        }
+
+        // Add to the global array of widgets
+        let userGroups = widgetData['visibility-groups'];
+        if (!this.state.editMode && userGroups?.length) {
+            if (widgetData['visibility-groups-action'] === 'hide') {
+                if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
+                    return;
+                }
+                userGroups = null; // mark as processed
+            }
+        } else {
+            userGroups = null;
         }
 
         try {

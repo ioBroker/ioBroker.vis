@@ -34,8 +34,8 @@ class VisBaseWidget extends React.Component {
         this.widDiv = null;
 
         this.state = {
-            data: JSON.parse(JSON.stringify(widget.data)),
-            style: JSON.parse(JSON.stringify(widget.style)),
+            data: JSON.parse(JSON.stringify(widget.data || {})),
+            style: JSON.parse(JSON.stringify(widget.style || {})),
             // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
             editMode: this.props.editMode,
@@ -83,15 +83,15 @@ class VisBaseWidget extends React.Component {
     static getDerivedStateFromProps(props, state) {
         const widget = props.views[props.view].widgets[props.id];
 
-        if (JSON.stringify(widget.style) !== JSON.stringify(state.style) ||
-            JSON.stringify(widget.data) !== JSON.stringify(state.data)
+        if (JSON.stringify(widget.style || {}) !== JSON.stringify(state.style) ||
+            JSON.stringify(widget.data || {}) !== JSON.stringify(state.data)
         ) {
-            const data = JSON.parse(JSON.stringify(widget.data));
-            const style = JSON.parse(JSON.stringify(widget.style));
+            const data = JSON.parse(JSON.stringify(widget.data || {}));
+            const style = JSON.parse(JSON.stringify(widget.style || {}));
 
             // replace all _PRJ_NAME with vis.0/name
             Object.keys(data).forEach(attr => {
-                if (attr && data[attr] && (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && data[attr].startsWith('_PRJ_NAME')) {
+                if (attr && data[attr] && typeof data[attr] === 'string' && (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && data[attr].startsWith('_PRJ_NAME')) {
                     // "_PRJ_NAME".length = 9
                     data[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
                 }
@@ -645,6 +645,11 @@ class VisBaseWidget extends React.Component {
 */
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
+        if (!widget || typeof widget !== 'object') {
+            console.error(`EMPTY Widget: ${this.props.id}`);
+            return null;
+        }
+
         const style = {};
         const selected = this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         const selectedOne = selected && this.props.selectedWidgets.length === 1;
@@ -676,7 +681,7 @@ class VisBaseWidget extends React.Component {
 
             style.cursor = selected ? 'move' : 'pointer';
 
-            if (widget.tpl.toLowerCase().includes('image')) {
+            if (widget.tpl && widget.tpl.toLowerCase().includes('image')) {
                 classNames = addClass(classNames, 'vis-editmode-helper');
                 style.opacity = style.opacity || 0.3;
             }

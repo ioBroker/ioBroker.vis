@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {
     Autocomplete,
     Box,
-    Button, Checkbox, Divider, Input, ListItemText, ListSubheader, MenuItem, Select, Slider, TextField,
+    Button, Checkbox, Input, ListItemText, ListSubheader, MenuItem, Select, Slider, TextField,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -93,30 +93,22 @@ function getStylesOptions(options) {
         const attrs   = (options.filterAttrs) ? options.filterAttrs.split(' ') : null;
         const files   = (options.filterFile)  ? options.filterFile.split(' ')  : [''];
 
-        for (const style in _internalList) {
-            if (!_internalList.hasOwnProperty(style)) continue;
-            for (let f = 0; f < files.length; f++) {
+        Object.keys(_internalList).forEach(style =>
+            files.forEach(file => {
                 if (!options.filterFile ||
-                        (_internalList[style].file && _internalList[style].file.indexOf(files[f]) !== -1)) {
+                        (_internalList[style].file && _internalList[style].file.includes(file))
+                ) {
                     let isFound = !filters;
-                    if (!isFound) {
-                        for (let k = 0; k < filters.length; k++) {
-                            if (style.indexOf(filters[k]) !== -1) {
-                                isFound = true;
-                                break;
-                            }
-                        }
-                    }
+
+                    isFound = isFound || (!!filters.find(filter => style.includes(filter)));
+
                     if (isFound) {
                         isFound = !attrs;
                         if (!isFound) {
-                            for (let u = 0; u < attrs.length; u++) {
-                                const t = _internalList[style].attrs[attrs[u]];
-                                if (t || t === 0) {
-                                    isFound = true;
-                                    break;
-                                }
-                            }
+                            isFound = attrs.find(attr => {
+                                const t = _internalList[style].attrs[attr];
+                                return t || t === 0;
+                            });
                         }
                     }
 
@@ -133,8 +125,7 @@ function getStylesOptions(options) {
                         };
                     }
                 }
-            }
-        }
+            }));
     } else {
         styles = { ...styles, ..._internalList };
     }
@@ -222,7 +213,7 @@ const WidgetField = props => {
     };
 
     const change = changeValue => {
-        if (Array.isArray(changeValue)) {
+        if (Array.isArray(changeValue) || field.immediateChange) {
             // apply immediately
             applyValue(changeValue);
         } else {
@@ -290,6 +281,7 @@ const WidgetField = props => {
             onChange={e => change(e.target.checked)}
         />;
     }
+
     if (field.type === 'image') {
         return <>
             <TextField
@@ -336,6 +328,7 @@ const WidgetField = props => {
             </IODialog>
         </>;
     }
+
     if (field.type === 'dimension') {
         const [, _value, _unit] = (value || '').toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
         const unit = _unit || 'px';
@@ -374,6 +367,7 @@ const WidgetField = props => {
             }}
         />;
     }
+
     if (field.type === 'color') {
         return <ColorPicker
             value={value}
@@ -382,6 +376,7 @@ const WidgetField = props => {
             openAbove
         />;
     }
+
     if (field.type === 'eff_opt') {
         return <>
             {field.type}
@@ -389,9 +384,11 @@ const WidgetField = props => {
             {value}
         </>;
     }
+
     if (field.type === 'slider') {
         return <div style={{ display: 'flex' }}>
             <Slider
+                className={props.classes.fieldContentSlider}
                 size="small"
                 onChange={(e, newValue) => change(newValue)}
                 value={typeof value === 'number' ? value : 0}
@@ -400,6 +397,7 @@ const WidgetField = props => {
                 step={field.step}
             />
             <Input
+                className={props.classes.fieldContentSliderInput}
                 value={value}
                 size="small"
                 onChange={e => change(parseInt(e.target.value))}
@@ -415,6 +413,7 @@ const WidgetField = props => {
             />
         </div>;
     }
+
     if (field.type === 'select' || field.type === 'nselect' || field.type === 'fontname' || field.type === 'effect' || field.type === 'widget') {
         let { options } = field;
 

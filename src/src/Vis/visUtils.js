@@ -359,7 +359,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         }
     }
 
-    Object.keys(data).forEach(attr => {
+    Object.keys(data || {}).forEach(attr => {
         if (!attr) {
             return;
         }

@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip, Button
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,6 +12,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import ColorizeIcon from '@mui/icons-material/Colorize';
+import CodeIcon from '@mui/icons-material/Code';
 
 import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
@@ -91,6 +92,15 @@ const styles = theme => ({
             fontSize: '80%',
         },
     },
+    fieldContentSlider: {
+        display: 'inline',
+        width: 'calc(100% - 50px)',
+        marginRight: 8,
+    },
+    fieldContentSliderInput: {
+        display: 'inline',
+        width: 50,
+    },
     groupSummary: {
         '&&&&&&': {
             marginTop: 20,
@@ -134,6 +144,52 @@ const getFieldsBefore = () => [
             }],
     },
 ];
+
+const getSignals = count => {
+    const result = {
+        name: 'signals',
+        fields: [
+            {
+                name: 'signals-count',
+                type: 'select',
+                options: ['1', '2', '3'],
+                default: '1',
+                immediateChange: true,
+            },
+        ],
+    };
+    for (let i = 0; i < count; i++) {
+        result.fields = result.fields.concat([
+            { name: `signals-oid-${i}`, type: 'id' },
+            {
+                name: `signals-cond-${i}`,
+                type: 'select',
+                options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'],
+                default: '==',
+            },
+            { name: `signals-val-${i}`, default: true },
+            { name: `signals-icon-${i}`, type: 'image', default: '/vis/signals/lowbattery.png' },
+            {
+                name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
+            },
+            { name: `signals-icon-style-${i}` },
+            { name: `signals-text-${i}` },
+            { name: `signals-text-style-${i}` },
+            { name: `signals-text-class-${i}` },
+            { name: `signals-blink-${i}`, type: 'checkbox', default: false },
+            {
+                name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+            },
+            {
+                name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
+            },
+            { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
+            { type: 'delimiter' },
+        ]);
+    }
+
+    return result;
+};
 
 const getFieldsAfter = (widgets, fonts) => [
     {
@@ -234,33 +290,6 @@ const getFieldsAfter = (widgets, fonts) => [
         ],
     },
     {
-        name: 'signals',
-        fields: [...([0, 1, 2].flatMap(i => [
-            { name: `signals-oid-${i}`, type: 'id' },
-            {
-                name: `signals-cond-${i}`, type: 'select', options: ['==', '!=', '<=', '>=', '<', '>', 'consist', 'not consist', 'exist', 'not exist'], default: '==',
-            },
-            { name: `signals-val-${i}`, default: true },
-            { name: `signals-icon-${i}`, type: 'image', default: '/vis/signals/lowbattery.png' },
-            {
-                name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
-            },
-            { name: `signals-icon-style-${i}` },
-            { name: `signals-text-${i}` },
-            { name: `signals-text-style-${i}` },
-            { name: `signals-text-class-${i}` },
-            { name: `signals-blink-${i}`, type: 'checkbox', default: false },
-            {
-                name: `signals-horz-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
-            },
-            {
-                name: `signals-vert-${i}`, type: 'slider', options: { min: -20, max: 120, step: 1 }, default: 0,
-            },
-            { name: `signals-hide-edit-${i}`, type: 'checkbox', default: false },
-            { type: 'delimiter' },
-        ]))],
-    },
-    {
         name: 'last_change',
         fields: [
             { name: 'lc-oid', type: 'id' },
@@ -312,6 +341,7 @@ const getFieldsAfter = (widgets, fonts) => [
 const Widget = props => {
     if (props.widgetsLoaded && props.selectedWidgets && props.selectedWidgets.length) {
         const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
+        const widgets = props.project[props.selectedView].widgets;
 
         const fieldsData = useMemo(() => {
             let widget;
@@ -519,7 +549,7 @@ const Widget = props => {
             });
 
             props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
-                const currentWidget = props.project[props.selectedView].widgets[selectedWidget];
+                const currentWidget = widgets[selectedWidget];
                 if (!currentWidget) {
                     return;
                 }
@@ -549,18 +579,37 @@ const Widget = props => {
             return null;
         }
 
-        const fieldsManual = [...fields];
+        let signalsCount = 3;
+
+        if (props.selectedWidgets.length === 1) {
+            const widgetData = widgets[props.selectedWidgets[0]].data;
+            signalsCount = 0;
+            // detect signals count
+            if (!widgetData['signals-count']) {
+                let i = 0;
+                while (widgetData[`signals-oid-${i}`]) {
+                    i++;
+                }
+                signalsCount = i + 1;
+                if (signalsCount > 1) {
+                    widgetData['signals-count'] = signalsCount;
+                }
+            } else {
+                signalsCount = parseInt(widgetData['signals-count'], 10);
+            }
+        }
 
         const fieldsBefore = useMemo(getFieldsBefore, []);
         const fieldsAfter = useMemo(() => getFieldsAfter(props.project[props.selectedView].widgets, props.fonts),
             [props.project, props.selectedView, props.fonts]);
+        const fieldsSignals = useMemo(() => getSignals(signalsCount), [signalsCount]);
 
-        fields = [...fieldsBefore, ...fields, ...fieldsAfter];
+        fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
 
         fields.forEach(group => {
             const found = props.selectedWidgets.find(selectedWidget => {
                 const fieldFound = group.fields.find(field => {
-                    const fieldValue = props.project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                    const fieldValue = widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
                     if (fieldValue === undefined) {
                         return false;
                     }
@@ -582,21 +631,27 @@ const Widget = props => {
 
         const [clearGroup, setClearGroup] = useState(null);
 
+        const [showWidgetCode, setShowWidgetCode] = useState(window.localStorage.getItem('showWidgetCode') === 'true');
+
+        const allOpened = !fields.find(group => !accordionOpen[group.name]);
+        const allClosed = !fields.find(group => accordionOpen[group.name]);
+
         return <div>
             <h4>
-                {props.selectedWidgets.join(', ')}
-                <Tooltip title={i18n.t('Expand all')}>
-                    <IconButton onClick={() => {
-                        const newAccordionOpen = {};
-                        fields.forEach(group => newAccordionOpen[group.name] = true);
-                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                        setAccordionOpen(newAccordionOpen);
-                    }}
+                {!allOpened ? <Tooltip title={i18n.t('Expand all')}>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            const newAccordionOpen = {};
+                            fields.forEach(group => newAccordionOpen[group.name] = true);
+                            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                            setAccordionOpen(newAccordionOpen);
+                        }}
                     >
                         <UnfoldMoreIcon />
                     </IconButton>
-                </Tooltip>
-                <Tooltip title={i18n.t('Collapse all')}>
+                </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
+                { !allClosed ? <Tooltip size="small" title={i18n.t('Collapse all')}>
                     <IconButton onClick={() => {
                         const newAccordionOpen = {};
                         fields.forEach(group => newAccordionOpen[group.name] = false);
@@ -606,13 +661,10 @@ const Widget = props => {
                     >
                         <UnfoldLessIcon />
                     </IconButton>
-                </Tooltip>
+                </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
+                { props.selectedWidgets.join(', ') }
             </h4>
-            <pre>
-                {/* {JSON.stringify(widgetType, null, 2)}
-                {JSON.stringify(fieldsManual, null, 2)} */}
-            </pre>
-            {fields.map((group, key) => <Accordion
+            {fields.map(group => <Accordion
                 classes={{
                     root: props.classes.clearPadding,
                     expanded: props.classes.clearPadding,
@@ -738,9 +790,19 @@ const Widget = props => {
             >
                 {i18n.t('Fields of group will be cleaned')}
             </IODialog>
-            <pre>
+            <Button
+                style={{ opacity: showWidgetCode ? 1 : 0 }}
+                onClick={() => {
+                    setShowWidgetCode(!showWidgetCode);
+                    window.localStorage.setItem('showWidgetCode', showWidgetCode ? 'false' : 'true');
+                }}
+                startIcon={<CodeIcon />}
+            >
+                { showWidgetCode ? i18n.t('hide code') : i18n.t('show code') }
+            </Button>
+            {showWidgetCode ? <pre>
                 {JSON.stringify(widget, null, 2)}
-            </pre>
+            </pre> : null}
         </div>;
     }
     return null;
