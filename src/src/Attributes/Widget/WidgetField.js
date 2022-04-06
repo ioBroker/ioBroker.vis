@@ -24,18 +24,24 @@ function collectClasses() {
     const result = [];
     const sSheetList = document.styleSheets;
     for (let sSheet = 0; sSheet < sSheetList.length; sSheet++) {
-        if (!document.styleSheets[sSheet]) continue;
+        if (!document.styleSheets[sSheet]) {
+            continue;
+        }
         try {
             const ruleList = document.styleSheets[sSheet].cssRules;
             if (ruleList) {
                 for (let rule = 0; rule < ruleList.length; rule++) {
-                    if (!ruleList[rule].selectorText) continue;
+                    if (!ruleList[rule].selectorText) {
+                        continue;
+                    }
                     const _styles = ruleList[rule].selectorText.split(',');
                     for (let s = 0; s < _styles.length; s++) {
-                        const substyles = _styles[s].trim().split(' ');
-                        const _style = substyles[substyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
+                        const subStyles = _styles[s].trim().split(' ');
+                        const _style = subStyles[subStyles.length - 1].replace('::before', '').replace('::after', '').replace(':before', '').replace(':after', '');
 
-                        if (!_style || _style[0] !== '.' || _style.indexOf(':') !== -1) continue;
+                        if (!_style || _style[0] !== '.' || _style.includes(':')) {
+                            continue;
+                        }
 
                         let name = _style;
                         name = name.replace(',', '');
@@ -51,14 +57,14 @@ function collectClasses() {
                             name = name[0].toUpperCase() + name.substring(1);
                             let fff = document.styleSheets[sSheet].href;
 
-                            if (fff && fff.indexOf('/') !== -1) {
+                            if (fff && fff.includes('/')) {
                                 fff = fff.substring(fff.lastIndexOf('/') + 1);
                             }
 
                             if (!result[val]) {
-                                if (substyles.length > 1) {
+                                if (subStyles.length > 1) {
                                     result[val] = {
-                                        name, file: fff, attrs: ruleList[rule].style, parentClass: substyles[0].replace('.', ''),
+                                        name, file: fff, attrs: ruleList[rule].style, parentClass: subStyles[0].replace('.', ''),
                                     };
                                 } else {
                                     result[val] = { name, file: fff, attrs: ruleList[rule].style };
@@ -72,12 +78,15 @@ function collectClasses() {
             console.error(e);
         }
     }
+
     return result;
 }
 
+let _internalList;
+
 function getStylesOptions(options) {
-    // Fill the list of styles
-    const _internalList = collectClasses();
+    // Fill the list with styles
+    _internalList = _internalList || collectClasses();
 
     options.filterName  = options.filterName  || '';
     options.filterAttrs = options.filterAttrs || '';
