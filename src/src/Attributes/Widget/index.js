@@ -712,147 +712,149 @@ const Widget = props => {
                 </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
                 { props.selectedWidgets.join(', ') }
             </h4>
-            {fields.map(group => <Accordion
-                classes={{
-                    root: props.classes.clearPadding,
-                    expanded: props.classes.clearPadding,
-                }}
-                square
-                key={group.name}
-                elevation={0}
-                expanded={!!(accordionOpen[group.name] && group.hasValues)}
-                onChange={(e, expanded) => {
-                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                    newAccordionOpen[group.name] = expanded;
-                    window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                    setAccordionOpen(newAccordionOpen);
-                }}
-            >
-                <AccordionSummary
+            <div style={{ height: 'calc(100vh - 260px)', overflowY: 'auto'  }}>
+                {fields.map(group => <Accordion
                     classes={{
-                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
-                            ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
-                        content: props.classes.clearPadding,
+                        root: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
-                        expandIcon: props.classes.clearPadding,
                     }}
-                    expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
+                    square
+                    key={group.name}
+                    elevation={0}
+                    expanded={!!(accordionOpen[group.name] && group.hasValues)}
+                    onChange={(e, expanded) => {
+                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                        newAccordionOpen[group.name] = expanded;
+                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
                 >
-                    <div style={{
-                        display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
-                    }}
+                    <AccordionSummary
+                        classes={{
+                            root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
+                                ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
+                            content: props.classes.clearPadding,
+                            expanded: props.classes.clearPadding,
+                            expandIcon: props.classes.clearPadding,
+                        }}
+                        expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
                     >
-                        <div>
-                            {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                            {window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : '')}
-                        </div>
-                        <div>
-                            <Checkbox
-                                checked={group.hasValues}
-                                onClick={e => {
-                                    if (group.hasValues) {
-                                        setClearGroup(group);
-                                    } else {
-                                        const project = JSON.parse(JSON.stringify(props.project));
-                                        props.selectedWidgets.forEach(selectedWidget => {
-                                            group.fields.forEach(field => {
-                                                project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
+                        <div style={{
+                            display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
+                        }}
+                        >
+                            <div>
+                                {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
+                                {window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : '')}
+                            </div>
+                            <div>
+                                <Checkbox
+                                    checked={group.hasValues}
+                                    onClick={e => {
+                                        if (group.hasValues) {
+                                            setClearGroup(group);
+                                        } else {
+                                            const project = JSON.parse(JSON.stringify(props.project));
+                                            props.selectedWidgets.forEach(selectedWidget => {
+                                                group.fields.forEach(field => {
+                                                    project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
+                                                });
+                                                project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
                                             });
-                                            project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
-                                        });
-                                        props.changeProject(project);
-                                    }
-                                    e.stopPropagation();
-                                }}
-                                size="small"
-                                classes={{
-                                    root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
-                                }}
-                            />
+                                            props.changeProject(project);
+                                        }
+                                        e.stopPropagation();
+                                    }}
+                                    size="small"
+                                    classes={{
+                                        root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                    }}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </AccordionSummary>
-                <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                    <table style={{ width: '100%' }}>
-                        <tbody>
-                            {
-                                group.fields.map((field, key2) => <tr key={key2} className={props.classes.fieldRow}>
-                                    {field.type === 'delimiter' ?
-                                        <td colSpan="2">
-                                            <Divider style={{ borderBottomWidth: 'thick' }} />
-                                        </td>
-                                        : <>
-                                            <td className={props.classes.fieldTitle}>
-                                                { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                { field.title || (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
-                                                { group.isStyle ?
-                                                    <ColorizeIcon
-                                                        fontSize="small"
-                                                        className={props.classes.colorize}
-                                                        onClick={() => props.cssClone(field.name, newValue => {
-                                                            if (newValue !== null && newValue !== undefined) {
-                                                                const project = JSON.parse(JSON.stringify(props.project));
-                                                                props.selectedWidgets.forEach(selectedWidget =>
-                                                                    project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
-                                                                props.changeProject(project);
-                                                            }
-                                                        })}
-                                                    /> : null }
+                    </AccordionSummary>
+                    <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+                        <table style={{ width: '100%' }}>
+                            <tbody>
+                                {
+                                    group.fields.map((field, key2) => <tr key={key2} className={props.classes.fieldRow}>
+                                        {field.type === 'delimiter' ?
+                                            <td colSpan="2">
+                                                <Divider style={{ borderBottomWidth: 'thick' }} />
                                             </td>
-                                            <td className={props.classes.fieldContent}>
-                                                <div className={props.classes.fieldContentDiv}>
-                                                    <div className={props.classes.fieldInput}>
-                                                        {accordionOpen[group.name] && group.hasValues ?
-                                                            <WidgetField
-                                                                field={field}
-                                                                widget={props.selectedWidgets.length > 1 ? commonValues : widget}
-                                                                isStyle={group.isStyle}
-                                                                isDifferent={isDifferent[field.name]}
-                                                                {...props}
-                                                            /> : null}
+                                            : <>
+                                                <td className={props.classes.fieldTitle}>
+                                                    { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
+                                                    { field.title || (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                    { group.isStyle ?
+                                                        <ColorizeIcon
+                                                            fontSize="small"
+                                                            className={props.classes.colorize}
+                                                            onClick={() => props.cssClone(field.name, newValue => {
+                                                                if (newValue !== null && newValue !== undefined) {
+                                                                    const project = JSON.parse(JSON.stringify(props.project));
+                                                                    props.selectedWidgets.forEach(selectedWidget =>
+                                                                        project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                    props.changeProject(project);
+                                                                }
+                                                            })}
+                                                        /> : null }
+                                                </td>
+                                                <td className={props.classes.fieldContent}>
+                                                    <div className={props.classes.fieldContentDiv}>
+                                                        <div className={props.classes.fieldInput}>
+                                                            {accordionOpen[group.name] && group.hasValues ?
+                                                                <WidgetField
+                                                                    field={field}
+                                                                    widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                                    isStyle={group.isStyle}
+                                                                    isDifferent={isDifferent[field.name]}
+                                                                    {...props}
+                                                                /> : null}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </>}
-                                </tr>)
-                            }
-                        </tbody>
-                    </table>
-                </AccordionDetails>
-            </Accordion>)}
-            <IODialog
-                title="Are you sure"
-                onClose={() => setClearGroup(null)}
-                open={!!clearGroup}
-                action={() => {
-                    const project = JSON.parse(JSON.stringify(props.project));
-                    const group = clearGroup;
-                    props.selectedWidgets.forEach(selectedWidget => {
-                        group.fields.forEach(field => {
-                            delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                                                </td>
+                                            </>}
+                                    </tr>)
+                                }
+                            </tbody>
+                        </table>
+                    </AccordionDetails>
+                </Accordion>)}
+                <IODialog
+                    title="Are you sure"
+                    onClose={() => setClearGroup(null)}
+                    open={!!clearGroup}
+                    action={() => {
+                        const project = JSON.parse(JSON.stringify(props.project));
+                        const group = clearGroup;
+                        props.selectedWidgets.forEach(selectedWidget => {
+                            group.fields.forEach(field => {
+                                delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                            });
+                            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
                         });
-                        delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
-                    });
-                    props.changeProject(project);
-                }}
-                actionTitle="Clear"
-            >
-                {i18n.t('Fields of group will be cleaned')}
-            </IODialog>
-            <Button
-                style={{ opacity: showWidgetCode ? 1 : 0 }}
-                onClick={() => {
-                    setShowWidgetCode(!showWidgetCode);
-                    window.localStorage.setItem('showWidgetCode', showWidgetCode ? 'false' : 'true');
-                }}
-                startIcon={<CodeIcon />}
-            >
-                { showWidgetCode ? i18n.t('hide code') : i18n.t('show code') }
-            </Button>
-            {showWidgetCode ? <pre>
-                {JSON.stringify(widget, null, 2)}
-                {JSON.stringify(customFields, null, 2)}
-            </pre> : null}
+                        props.changeProject(project);
+                    }}
+                    actionTitle="Clear"
+                >
+                    {i18n.t('Fields of group will be cleaned')}
+                </IODialog>
+                <Button
+                    style={{ opacity: showWidgetCode ? 1 : 0 }}
+                    onClick={() => {
+                        setShowWidgetCode(!showWidgetCode);
+                        window.localStorage.setItem('showWidgetCode', showWidgetCode ? 'false' : 'true');
+                    }}
+                    startIcon={<CodeIcon />}
+                >
+                    { showWidgetCode ? i18n.t('hide code') : i18n.t('show code') }
+                </Button>
+                {showWidgetCode ? <pre>
+                    {JSON.stringify(widget, null, 2)}
+                    {JSON.stringify(customFields, null, 2)}
+                </pre> : null}
+            </div>
         </div>;
     }
     return null;
