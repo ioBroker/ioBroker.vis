@@ -17,6 +17,7 @@ import i18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import WidgetField from './WidgetField';
+import IODialog from '../../Components/IODialog';
 
 const ICONS = { 'group.fixed': <FilterAltIcon fontSize="small" />, locked: <LockIcon fontSize="small" /> };
 
@@ -566,6 +567,8 @@ const Widget = props => {
                 : {},
         );
 
+        const [clearGroup, setClearGroup] = useState(null);
+
         return <div>
             <h4>
                 {props.selectedWidgets.join(', ')}
@@ -634,22 +637,18 @@ const Widget = props => {
                             <Checkbox
                                 checked={group.hasValues}
                                 onClick={e => {
-                                    const project = JSON.parse(JSON.stringify(props.project));
-                                    props.selectedWidgets.forEach(selectedWidget => {
-                                        group.fields.forEach(field => {
-                                            if (group.hasValues) {
-                                                delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
-                                            } else {
+                                    if (group.hasValues) {
+                                        setClearGroup(group);
+                                    } else {
+                                        const project = JSON.parse(JSON.stringify(props.project));
+                                        props.selectedWidgets.forEach(selectedWidget => {
+                                            group.fields.forEach(field => {
                                                 project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
-                                            }
-                                        });
-                                        if (group.hasValues) {
-                                            delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
-                                        } else {
+                                            });
                                             project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
-                                        }
-                                    });
-                                    props.changeProject(project);
+                                        });
+                                        props.changeProject(project);
+                                    }
                                     e.stopPropagation();
                                 }}
                                 size="small"
@@ -707,6 +706,25 @@ const Widget = props => {
                     </table>
                 </AccordionDetails>
             </Accordion>)}
+            <IODialog
+                title="Are you sure"
+                onClose={() => setClearGroup(null)}
+                open={!!clearGroup}
+                action={() => {
+                    const project = JSON.parse(JSON.stringify(props.project));
+                    const group = clearGroup;
+                    props.selectedWidgets.forEach(selectedWidget => {
+                        group.fields.forEach(field => {
+                            delete project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
+                        });
+                        delete project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`];
+                    });
+                    props.changeProject(project);
+                }}
+                actionTitle="Clear"
+            >
+                {i18n.t('Fields of group will be cleaned')}
+            </IODialog>
             <pre>
                 {JSON.stringify(widget, null, 2)}
             </pre>
