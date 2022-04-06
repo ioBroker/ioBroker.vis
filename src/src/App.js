@@ -214,17 +214,17 @@ class App extends GenericApp {
             selectedView = openedViews[0];
         }
 
+        const groups = await this.socket.getGroups();
         this.setState({
             project,
             visProject: project,
             openedViews,
             projectName,
+            groups,
+        }, () => {
+            this.changeView(selectedView);
         });
 
-        this.changeView(selectedView);
-
-        const groups = await this.socket.getGroups();
-        this.setState({ groups });
         window.localStorage.setItem('projectName', projectName);
     }
 
@@ -271,10 +271,18 @@ class App extends GenericApp {
             }
         }
 
-        this.setState({
+        const newState = {
             selectedView,
             selectedWidgets,
-        });
+        };
+
+        if (!this.state.openedViews || !this.state.openedViews.includes(selectedView)) {
+            const openedViews = this.state.openedViews ? [...this.state.openedViews] : [];
+            openedViews.push(selectedView);
+            newState.openedViews = openedViews;
+        }
+
+        this.setState(newState);
 
         window.localStorage.setItem('selectedView', selectedView);
 
