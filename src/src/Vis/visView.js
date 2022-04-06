@@ -287,6 +287,7 @@ class VisView extends React.Component {
     onMouseWidgetDown = this.props.runtime ? null : (e, wid) => {
         if (this.nextClickIsSteal) {
             // send to App.js the stolen attribute
+
             if (this.widgetsRefs[wid]) {
                 const ref = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService?.current;
                 this.cancelStealMode(ref ? ref.style[this.nextClickIsSteal.attr] : null);
@@ -307,9 +308,9 @@ class VisView extends React.Component {
             y: 0,
         };
 
-        this.props.selectedWidgets.forEach(wid => {
-            if (this.widgetsRefs[wid]?.onMove) {
-                this.widgetsRefs[wid]?.onMove(); // indicate start of movement
+        this.props.selectedWidgets.forEach(_wid => {
+            if (this.widgetsRefs[_wid]?.onMove) {
+                this.widgetsRefs[_wid]?.onMove(); // indicate start of movement
             }
         });
     }

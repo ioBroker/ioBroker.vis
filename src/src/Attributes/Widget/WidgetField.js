@@ -735,6 +735,7 @@ const WidgetField = props => {
             value={value}
             onChange={e => change(e.target.value)}
             type={field.type ? field.type : 'text'}
+            // eslint-disable-next-line react/jsx-no-duplicate-props
             inputProps={{
                 min: field.min,
                 max: field.max,
