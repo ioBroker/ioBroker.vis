@@ -377,7 +377,7 @@ class VisBaseWidget extends React.Component {
         const offsetEm = `${shift - thickness}em`;
         return [
             // top
-            this.state.resizeHandles.includes('n') ? <div
+            !this.props.isRelative && this.state.resizeHandles.includes('n') ? <div
                 key="top"
                 className="vis-editmode-resizer"
                 style={{
@@ -411,7 +411,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'bottom')}
             /> : null,
             // left
-            this.state.resizeHandles.includes('w') ? <div
+            !this.props.isRelative && this.state.resizeHandles.includes('w') ? <div
                 key="left"
                 className="vis-editmode-resizer"
                 style={{
@@ -445,7 +445,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'right')}
             /> : null,
             // top left
-            this.state.resizeHandles.includes('nw') ? <div
+            !this.props.isRelative && this.state.resizeHandles.includes('nw') ? <div
                 key="top-left"
                 className="vis-editmode-resizer"
                 style={{
@@ -462,7 +462,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'top-left')}
             /> : null,
             // top right
-            this.state.resizeHandles.includes('ne') ? <div
+            !this.props.isRelative && this.state.resizeHandles.includes('ne') ? <div
                 key="top-right"
                 className="vis-editmode-resizer"
                 style={{
@@ -479,7 +479,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'top-right')}
             /> : null,
             // bottom left
-            this.state.resizeHandles.includes('sw') ? <div
+            !this.props.isRelative && this.state.resizeHandles.includes('sw') ? <div
                 key="bottom-left"
                 className="vis-editmode-resizer"
                 style={{
@@ -618,6 +618,30 @@ class VisBaseWidget extends React.Component {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
+    changeOrder(e, dir) {
+        e.stopPropagation();
+
+        const order = [...this.props.relativeWidgetOrder];
+        const pos = order.indexOf(this.props.id);
+        if (dir > 0) {
+            if (pos === order.length - 1) {
+                return;
+            } else {
+                const nextId = order[pos + 1];
+                order[pos + 1] = this.props.id;
+                order[pos] = nextId;
+            }
+        } else if (!pos) {
+            return;
+        } else {
+            const nextId = order[pos - 1];
+            order[pos - 1] = this.props.id;
+            order[pos] = nextId;
+        }
+
+        this.props.onWidgetsChanged(null, this.props.view, { order });
+    }
+
     /*
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.applyBindings) {
@@ -708,6 +732,15 @@ class VisBaseWidget extends React.Component {
         const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
+        let relativeMoveControls = null;
+        if (this.props.isRelative && selected && this.props.selectedWidgets.length === 1) {
+            const pos = this.props.relativeWidgetOrder.indexOf(this.props.id);
+            relativeMoveControls = [
+                pos ? <div style={{ left: -20 }} className="vis-editmode-overlay-move-button" onMouseDown={e => this.changeOrder(e, -1)}>ᐊ</div> : null,
+                pos <= this.props.relativeWidgetOrder.length - 1 ? <div style={{ right: -20 }} className="vis-editmode-overlay-move-button" onMouseDown={e => this.changeOrder(e, 1)}>ᐅ</div> : null,
+            ];
+        }
+
         let widgetName = null;
         if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
             widgetName = <div ref={this.refName} className="vis-editmode-widget-name">{ this.props.id }</div>;
@@ -726,6 +759,7 @@ class VisBaseWidget extends React.Component {
             style={props.style}
         >
             { widgetName }
+            { relativeMoveControls }
             { overlay }
             { selectedOne ? this.getResizeHandlers() : null }
             { rxWidget }
@@ -758,6 +792,7 @@ VisBaseWidget.propTypes = {
     showWidgetNames: PropTypes.bool,
     VisView: PropTypes.any,
     relativeWidgetOrder: PropTypes.array,
+    maxZIndex: PropTypes.number,
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,

@@ -44,14 +44,14 @@ class BasicGroup extends VisRxWidget {
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (groupWidgets?.length && this.state.mounted) {
-            rxGroupWidgets = groupWidgets.map(id => {
+            rxGroupWidgets = groupWidgets.map((id, i) => {
                 const _widget = this.props.views[this.props.view].widgets[id];
                 if (!_widget) {
                     return null;
                 }
 
                 // use same container for relative and absolute widgets (props.refService)
-                const { rxWidget } = this.props.VisView.getOneWidget(this.props, id, _widget, this.props.registerRef, props.refService, props.refService);
+                const { rxWidget } = this.props.VisView.getOneWidget(this.props, i, id, _widget, this.props.registerRef, props.refService, props.refService);
                 return rxWidget;
             });
         }

@@ -71,12 +71,26 @@ body, html {
     box-shadow: 0 0 15px 4px #ada400;
 }
 
+.vis-editmode-overlay-move-button {
+    position: absolute;
+    top: calc(50% - 8px);
+    font-size: 1.5em;
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 1204;
+}
+
+.vis-editmode-overlay-move-button:hover {
+    transform: scale(2);
+}
+
 .vis-editmode-overlay-absolute {
     position: absolute;
 }
 
 .vis-editmode-selected.vis-editmode-overlay {
     background-color: green;
+    z-index: 1203;
 }
 
 .vis-editmode-selected.vis-editmode-helper {

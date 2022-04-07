@@ -472,7 +472,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder) {
+    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder, maxZIndex) {
         const isRelative = widget.style && (
             widget.style.position === 'relative' ||
             widget.style.position === 'static' ||
@@ -482,7 +482,7 @@ class VisView extends React.Component {
         const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
 
         const _props = {
-            key: id,
+            key: `${index}_${id}`,
             id,
             view: props.view,
             views: props.views,
@@ -509,6 +509,7 @@ class VisView extends React.Component {
             projectName: props.projectName,
             relativeWidgetOrder,
             VisView,
+            maxZIndex,
         };
 
         // we must add it because of view in widget
@@ -530,6 +531,8 @@ class VisView extends React.Component {
             return null;
         }
 
+        let maxZIndex = 0;
+
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (this.state.mounted) {
             const widgets = this.props.views[this.props.view].widgets;
@@ -542,7 +545,11 @@ class VisView extends React.Component {
                         return;
                     }
 
-                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder);
+                    if (widget.style && parseInt(widget.style['z-index'], 10) > maxZIndex) {
+                        maxZIndex = parseInt(widget.style['z-index'], 10);
+                    }
+
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, maxZIndex);
 
                     if (isRelative) {
                         if (!relativeWidgetOrder.includes(id)) {
