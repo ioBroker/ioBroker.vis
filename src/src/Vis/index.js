@@ -127,6 +127,27 @@ class VisEngine extends React.Component {
             .then(() => this.setState({ ready: true }));
     }
 
+    componentDidMount() {
+        window.document.addEventListener('keydown', this.onKeyPress);
+    }
+
+    componentWillUnmount() {
+        // unsubscribe all
+        Object.keys(this.subscribes).forEach(id =>
+            this.props.socket.unsubscribeState(id, this.onStateChange));
+
+        window.document.removeEventListener('keydown', this.onKeyPress);
+
+        this.subscribes = {};
+    }
+
+    onKeyPress = e => {
+        console.log(e.key);
+        if (e.key === 'Delete') {
+
+        }
+    }
+
     loadLegacyObjects() {
         if (this.props.runtime) {
             return Promise.resolve();
@@ -705,7 +726,7 @@ class VisEngine extends React.Component {
                 return VisEngine.setInnerHTML(div, text)
                     .then(() => {
                         console.log('Loaded');
-                        this.props.onLoaded && this.props.onLoaded();
+                        this.props.onLoaded && this.props.onLoaded({});
                     });
             })
             .catch(error => console.error(`Cannot load widgets: ${error}`));
@@ -841,14 +862,6 @@ class VisEngine extends React.Component {
                 this.props.socket.log(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
             }
         });
-    }
-
-    componentWillUnmount() {
-        // unsubscribe all
-        Object.keys(this.subscribes).forEach(id =>
-            this.props.socket.unsubscribeState(id, this.onStateChange));
-
-        this.subscribes = {};
     }
 
     subscribe = IDs => {

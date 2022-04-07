@@ -35,7 +35,7 @@ const Widgets = props => {
             {
                 type: 'multiselect',
                 name: 'Active widget',
-                items: Object.keys(widgets).filter(widget => !widgets[widget].groupid).map(widget => ({
+                items: Object.keys(widgets)/*.filter(widget => !widgets[widget].groupid)*/.map(widget => ({
                     name: `${widget} (${widgets[widget].tpl})`,
                     value: widget,
                 })),

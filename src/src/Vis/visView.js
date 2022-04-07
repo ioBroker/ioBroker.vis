@@ -421,6 +421,10 @@ class VisView extends React.Component {
         cb && cb(results);
     }
 
+    onKeyPress = e => {
+        console.log(e.key);
+    }
+
     registerEditorHandlers(unregister) {
         if (this.props.registerEditorCallback) {
             if (!unregister && this.props.activeView === this.props.view) {
@@ -441,6 +445,37 @@ class VisView extends React.Component {
 
     componentDidUpdate() {
         this.registerEditorHandlers();
+    }
+
+    static renderGitter(step, color) {
+        color = color || '#d0d0d0';
+        step = step || 10;
+        const bigWidth = step * 5;
+        const smallWidth = step;
+
+        const gitterPattern = btoa(`<svg width="${bigWidth}" height="${bigWidth}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="grid" width="${bigWidth}" height="${bigWidth}" patternUnits="userSpaceOnUse">
+            <path d="M 0 ${smallWidth} L ${bigWidth} ${smallWidth} M ${smallWidth} 0 L ${smallWidth} ${bigWidth} M 0 ${2 * smallWidth} L ${bigWidth} ${2 * smallWidth} M ${2 * smallWidth} 0 L ${2 * smallWidth} ${bigWidth} M 0 ${3 * smallWidth} L ${bigWidth} ${3 * smallWidth} M ${3 * smallWidth} 0 L ${3 * smallWidth} ${bigWidth} M 0 ${4 * smallWidth} L ${bigWidth} ${4 * smallWidth} M ${4 * smallWidth} 0 L ${4 * smallWidth} ${bigWidth}" fill="none" stroke="${color}" opacity="0.2" stroke-width="1"/>
+            <path d="M ${bigWidth} 0 L 0 0 0 ${bigWidth}" fill="none" stroke="${color}" stroke-width="1"/>
+        </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid)"/>
+</svg>`);
+        const backgroundImage = `url(data:image/svg+xml;base64,${gitterPattern})`;
+
+        return <div
+            style={{
+                opacity: 0.2,
+                zIndex: 1,
+                userSelect: 'none',
+                pointerEvents: 'none',
+                width: '100%',
+                height: '100%',
+                backgroundImage,
+                backgroundPosition: '-1px -1px',
+            }}
+        />;
     }
 
     render() {
@@ -570,11 +605,10 @@ class VisView extends React.Component {
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
-            {rxRelativeWidgets.length ?
-                <div ref={this.refRelativeView} style={relativeStyle}>
-                    { rxRelativeWidgets }
-                </div>
-                : null}
+            { VisView.renderGitter() }
+            <div ref={this.refRelativeView} style={relativeStyle}>
+                { rxRelativeWidgets }
+            </div>
             { rxAbsoluteWidgets }
         </div>;
     }

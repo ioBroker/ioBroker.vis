@@ -274,7 +274,7 @@ class VisBaseWidget extends React.Component {
                 }
             }
 
-            // end of movement
+            // end of resize
             if (save) {
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
                 resizers.forEach(item => item.style.opacity = 0.3);
@@ -299,6 +299,7 @@ class VisBaseWidget extends React.Component {
                 left: this.refService.current.offsetLeft,
             };
         } else if (this.movement) {
+            // move widget
             const left = `${this.movement.left + x}px`;
             const top = `${this.movement.top + y}px`;
 
@@ -314,6 +315,7 @@ class VisBaseWidget extends React.Component {
                 }
             }
 
+            // End of movement
             if (save) {
                 this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
                     wid: this.props.id,
@@ -695,9 +697,9 @@ class VisBaseWidget extends React.Component {
 
         const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
-        if (!this.props.isRelative) {
+        //if (!this.props.isRelative) {
             classNames = addClass(classNames, 'vis-editmode-overlay-absolute');
-        }
+        //}
 
         let widgetName = null;
         if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
