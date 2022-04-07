@@ -72,6 +72,8 @@ class VisView extends React.Component {
                 }
             });
         }
+
+        return VisView.widgets;
     }
 
     componentDidMount() {
@@ -467,7 +469,7 @@ class VisView extends React.Component {
         return <div
             style={{
                 opacity: 0.2,
-                zIndex: 1,
+                zIndex: -1,
                 userSelect: 'none',
                 pointerEvents: 'none',
                 width: '100%',
