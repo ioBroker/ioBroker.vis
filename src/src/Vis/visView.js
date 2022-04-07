@@ -17,15 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
-import BasicValueString from './Widgets/Basic/BasicValueString';
-import BasicViewInWidget from './Widgets/Basic/BasicViewInWidget';
-import BasicViewInWidget8 from './Widgets/Basic/BasicViewInWidget8';
-
-const WIDGETS = [
-    BasicValueString,
-    BasicViewInWidget,
-    BasicViewInWidget8,
-];
+import WIDGETS from './Widgets';
 
 // 1300 is the React dialog
 class VisView extends React.Component {
@@ -450,7 +442,7 @@ class VisView extends React.Component {
     }
 
     static renderGitter(step, color) {
-        color = color || '#d0d0d0';
+        color = color || '#D0D0D0';
         step = step || 10;
         const bigWidth = step * 5;
         const smallWidth = step;
@@ -480,67 +472,70 @@ class VisView extends React.Component {
         />;
     }
 
+    static getOneWidget(props, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown) {
+        const isRelative = widget.style && (
+            widget.style.position === 'relative' ||
+            widget.style.position === 'static' ||
+            widget.style.position === 'sticky'
+        );
+
+        const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
+
+        const _props = {
+            key: id,
+            id,
+            view: props.view,
+            views: props.views,
+            userGroups: props.userGroups,
+            editMode: props.editMode,
+            user: props.user,
+            allWidgets: props.allWidgets,
+            socket: props.socket,
+            isRelative,
+            viewsActiveFilter: props.viewsActiveFilter,
+            setValue: props.setValue,
+            refParent: isRelative ? refRelativeView : refAbsoluteView,
+            linkContext: props.linkContext,
+            formatUtils: props.formatUtils,
+            selectedWidgets: this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
+            setSelectedWidgets: props.setSelectedWidgets,
+            runtime: props.runtime,
+            mouseDownOnView: onMouseWidgetDown,
+            registerRef: props.runtime ? null : registerRef,
+            onWidgetsChanged: props.onWidgetsChanged,
+            showWidgetNames: props.showWidgetNames,
+            adapterName: props.adapterName,
+            instance: props.instance,
+            projectName: props.projectName,
+            VisView,
+        };
+
+        // we must add it because of view in widget
+        _props.can = props.can;
+        _props.canStates = props.canStates;
+        _props.jQuery = props.jQuery;
+        _props.$$ = props.$$;
+
+        const rxWidget = <Widget {..._props} />;
+
+        return { rxWidget, isRelative };
+    }
+
     render() {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
 
-        if (this.state.mounted && this.props.views) {
+        // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
+        if (this.props.views && this.state.mounted) {
             const widgets = this.props.views[this.props.view]?.widgets;
             if (widgets) {
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
-                    if (!widget) {
+                    if (!widget || widget.grouped) {
                         return;
                     }
 
-                    if (widget.grouped) {
-                        return;
-                    }
-
-                    const isRelative = widget.style && (
-                        widget.style.position === 'relative' ||
-                        widget.style.position === 'static' ||
-                        widget.style.position === 'sticky'
-                    );
-
-                    const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
-
-                    const props = {
-                        key: id,
-                        id,
-                        view: this.props.view,
-                        views: this.props.views,
-                        userGroups: this.props.userGroups,
-                        editMode: this.props.editMode,
-                        user: this.props.user,
-                        allWidgets: this.props.allWidgets,
-                        socket: this.props.socket,
-                        isRelative,
-                        viewsActiveFilter: this.props.viewsActiveFilter,
-                        setValue: this.props.setValue,
-                        refParent: isRelative ? this.refRelativeView : this.refView,
-                        linkContext: this.props.linkContext,
-                        formatUtils: this.props.formatUtils,
-                        selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
-                        setSelectedWidgets: this.props.setSelectedWidgets,
-                        runtime: this.props.runtime,
-                        mouseDownOnView: this.onMouseWidgetDown,
-                        registerRef: this.props.runtime ? null : this.registerRef,
-                        onWidgetsChanged: this.props.onWidgetsChanged,
-                        showWidgetNames: this.props.showWidgetNames,
-                        adapterName: this.props.adapterName,
-                        instance: this.props.instance,
-                        projectName: this.props.projectName,
-                        VisView,
-                    };
-
-                    // we must add it because of view in widget
-                    props.can = this.props.can;
-                    props.canStates = this.props.canStates;
-                    props.jQuery = this.props.jQuery;
-                    props.$$ = this.props.$$;
-
-                    const rxWidget = <Widget {...props} />;
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown);
 
                     if (isRelative) {
                         rxRelativeWidgets.push(rxWidget);
@@ -560,7 +555,7 @@ class VisView extends React.Component {
         if (this.props.views && this.props.views[this.props.view]) {
             const settings = this.props.views[this.props.view].settings;
             // this was only if this.props.editMode
-            if (rxRelativeWidgets.length && settings.sizex) {
+            if (settings.sizex) {
                 let ww = settings.sizex;
                 let hh = settings.sizey;
                 if (parseFloat(ww).toString() === ww.toString()) {
@@ -579,6 +574,8 @@ class VisView extends React.Component {
                 relativeStyle.width = ww;
                 relativeStyle.height = hh;
             }
+
+            relativeStyle.display = settings.style.display || 'flex';
 
             settings.style && Object.keys(settings.style).forEach(attr => {
                 if (attr === 'background_class') {
@@ -607,7 +604,7 @@ class VisView extends React.Component {
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
-            { VisView.renderGitter() }
+            { /* VisView.renderGitter() */ }
             <div ref={this.refRelativeView} style={relativeStyle}>
                 { rxRelativeWidgets }
             </div>

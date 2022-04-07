@@ -693,13 +693,14 @@ class VisBaseWidget extends React.Component {
             className: '',
             style,
             id: `rx_${this.props.id}`,
+            refService: this.refService,
         };
 
         const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
-        //if (!this.props.isRelative) {
-            classNames = addClass(classNames, 'vis-editmode-overlay-absolute');
-        //}
+        // if (!this.props.isRelative) {
+        // classNames = addClass(classNames, 'vis-editmode-overlay-absolute');
+        // }
 
         let widgetName = null;
         if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {

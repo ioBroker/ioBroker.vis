@@ -41,6 +41,7 @@ class VisCanWidget extends VisBaseWidget {
 
     setupSubscriptions() {
         this.bindings = {};
+        this.isCanWidget = true;
 
         const linkContext = {
             IDs: [],
@@ -1034,38 +1035,6 @@ class VisCanWidget extends VisBaseWidget {
             }, 10);
         }
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
-        const groupWidgets = widget?.data?.members;
-        let rxGroupWidgets = null;
-        if (groupWidgets?.length && this.state.mounted && this.widDiv) {
-            rxGroupWidgets = groupWidgets.map(wid => <VisCanWidget
-                key={wid}
-                id={wid}
-                views={this.props.views}
-                view={this.props.view}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                userGroups={this.props.userGroups}
-                user={this.props.user}
-                registerRef={this.props.registerRef}
-                allWidgets={this.props.allWidgets}
-                refParent={this.widDiv}
-                editMode={this.props.editMode}
-                jQuery={this.props.jQuery}
-                socket={this.props.socket}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                setValue={this.props.setValue}
-                $$={this.props.$$}
-                linkContext={this.props.linkContext}
-                formatUtils={this.props.formatUtils}
-                adapterName={this.props.adapterName}
-                instance={this.props.instance}
-                projectName={this.props.projectName}
-                VisView={this.props.VisView}
-                editGroup={false}
-            />);
-        }
-
         const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
             const VisView = this.props.VisView;
             this.refViews[view] = this.refViews[view] || React.createRef();
@@ -1114,11 +1083,7 @@ class VisCanWidget extends VisBaseWidget {
             props.style.display = 'none';
         }
 
-        return <>
-            { legacyViewContainers }
-
-            { rxGroupWidgets }
-        </>;
+        return legacyViewContainers;
     }
     /*
     render() {
