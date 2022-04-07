@@ -66,6 +66,10 @@ body, html {
     opacity: 0.3;
     position: absolute;
 }
+.vis-editmode-overlay-not-selected:hover {
+    background: #ada400A0;
+    box-shadow: 0 0 15px 4px #ada400;
+}
 
 .vis-editmode-overlay-absolute {
     position: absolute;

@@ -472,7 +472,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown) {
+    static getOneWidget(props, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder) {
         const isRelative = widget.style && (
             widget.style.position === 'relative' ||
             widget.style.position === 'static' ||
@@ -507,6 +507,7 @@ class VisView extends React.Component {
             adapterName: props.adapterName,
             instance: props.instance,
             projectName: props.projectName,
+            relativeWidgetOrder,
             VisView,
         };
 
@@ -525,23 +526,39 @@ class VisView extends React.Component {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
 
+        if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
+            return null;
+        }
+
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
-        if (this.props.views && this.state.mounted) {
-            const widgets = this.props.views[this.props.view]?.widgets;
+        if (this.state.mounted) {
+            const widgets = this.props.views[this.props.view].widgets;
             if (widgets) {
+                const relativeWidgetOrder = this.props.views[this.props.view].settings?.order || [];
+
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
                     if (!widget || widget.grouped) {
                         return;
                     }
 
-                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown);
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder);
 
                     if (isRelative) {
-                        rxRelativeWidgets.push(rxWidget);
+                        if (!relativeWidgetOrder.includes(id)) {
+                            relativeWidgetOrder.push(id);
+                        }
+                        rxRelativeWidgets.push({ id, rxWidget });
                     } else {
                         rxAbsoluteWidgets.push(rxWidget);
                     }
+                });
+
+                // sort relative widgets according to order
+                rxRelativeWidgets.sort((a, b) => {
+                    const posA = relativeWidgetOrder.indexOf(a.id);
+                    const posB = relativeWidgetOrder.indexOf(b.id);
+                    return posA - posB;
                 });
             }
         }
@@ -552,42 +569,42 @@ class VisView extends React.Component {
             width: '100%',
             height: '100%',
         };
-        if (this.props.views && this.props.views[this.props.view]) {
-            const settings = this.props.views[this.props.view].settings;
-            // this was only if this.props.editMode
-            if (settings.sizex) {
-                let ww = settings.sizex;
-                let hh = settings.sizey;
-                if (parseFloat(ww).toString() === ww.toString()) {
-                    ww = parseFloat(ww);
-                }
-                if (parseFloat(hh).toString() === hh.toString()) {
-                    hh = parseFloat(hh);
-                }
 
-                if (typeof ww === 'number' || ww.match(/\d$/)) {
-                    ww += 'px';
-                }
-                if (typeof hh === 'number' || hh.match(/\d$/)) {
-                    hh += 'px';
-                }
-                relativeStyle.width = ww;
-                relativeStyle.height = hh;
+        const settings = this.props.views[this.props.view].settings;
+
+        // this was only if this.props.editMode
+        if (settings.sizex) {
+            let ww = settings.sizex;
+            let hh = settings.sizey;
+            if (parseFloat(ww).toString() === ww.toString()) {
+                ww = parseFloat(ww);
+            }
+            if (parseFloat(hh).toString() === hh.toString()) {
+                hh = parseFloat(hh);
             }
 
-            relativeStyle.display = settings.style.display || 'flex';
-
-            settings.style && Object.keys(settings.style).forEach(attr => {
-                if (attr === 'background_class') {
-                    className = addClass(className, settings.style.background_class);
-                } else {
-                    const value = settings.style[attr];
-                    // convert background-color => backgroundColor
-                    attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
-                    style[attr] = value;
-                }
-            });
+            if (typeof ww === 'number' || ww.match(/\d$/)) {
+                ww += 'px';
+            }
+            if (typeof hh === 'number' || hh.match(/\d$/)) {
+                hh += 'px';
+            }
+            relativeStyle.width = ww;
+            relativeStyle.height = hh;
         }
+
+        relativeStyle.display = settings.style.display || 'flex';
+
+        settings.style && Object.keys(settings.style).forEach(attr => {
+            if (attr === 'background_class') {
+                className = addClass(className, settings.style.background_class);
+            } else {
+                const value = settings.style[attr];
+                // convert background-color => backgroundColor
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                style[attr] = value;
+            }
+        });
 
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
@@ -606,7 +623,7 @@ class VisView extends React.Component {
         >
             { /* VisView.renderGitter() */ }
             <div ref={this.refRelativeView} style={relativeStyle}>
-                { rxRelativeWidgets }
+                { rxRelativeWidgets.map(item => item.rxWidget) }
             </div>
             { rxAbsoluteWidgets }
         </div>;

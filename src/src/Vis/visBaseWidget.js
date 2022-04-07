@@ -178,7 +178,7 @@ class VisBaseWidget extends React.Component {
     onMouseDown(e) {
         e.stopPropagation();
         if (this.stealCursor) {
-            this.props.mouseDownOnView(e, this.props.id);
+            this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
             return;
         }
         if (!this.props.selectedWidgets.includes(this.props.id)) {
@@ -197,8 +197,9 @@ class VisBaseWidget extends React.Component {
                 // set select
                 this.props.setSelectedWidgets([this.props.id]);
             }
-        } else {
-            this.props.mouseDownOnView(e);
+        } else if (!this.props.isRelative) {
+            // User can drag only absolute objects
+            this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
         }
     }
 
@@ -358,7 +359,7 @@ class VisBaseWidget extends React.Component {
     onResizeStart(e, type) {
         e.stopPropagation();
         this.resize = type;
-        this.props.mouseDownOnView(e);
+        this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
     }
 
     getResizeHandlers() {
@@ -655,7 +656,7 @@ class VisBaseWidget extends React.Component {
         const style = {};
         const selected = this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         const selectedOne = selected && this.props.selectedWidgets.length === 1;
-        let classNames = selected ? 'vis-editmode-selected' : '';
+        let classNames = selected ? 'vis-editmode-selected' : 'vis-editmode-overlay-not-selected';
 
         if (this.state.editMode && !widget.groupid) {
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
@@ -681,7 +682,15 @@ class VisBaseWidget extends React.Component {
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
-            style.cursor = selected ? 'move' : 'pointer';
+            if (selected) {
+                if (this.props.isRelative) {
+                    style.cursor = 'default';
+                } else {
+                    style.cursor = 'move';
+                }
+            } else {
+                style.cursor = 'pointer';
+            }
 
             if (widget.tpl && widget.tpl.toLowerCase().includes('image')) {
                 classNames = addClass(classNames, 'vis-editmode-helper');
@@ -698,9 +707,6 @@ class VisBaseWidget extends React.Component {
 
         const rxWidget = this.renderWidgetBody(props);
         classNames = addClass(classNames, 'vis-editmode-overlay');
-        // if (!this.props.isRelative) {
-        // classNames = addClass(classNames, 'vis-editmode-overlay-absolute');
-        // }
 
         let widgetName = null;
         if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
@@ -751,6 +757,7 @@ VisBaseWidget.propTypes = {
     onWidgetsChanged: PropTypes.func,
     showWidgetNames: PropTypes.bool,
     VisView: PropTypes.any,
+    relativeWidgetOrder: PropTypes.array,
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,
