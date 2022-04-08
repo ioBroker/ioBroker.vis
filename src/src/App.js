@@ -361,6 +361,14 @@ class App extends GenericApp {
         this.setState({ selectedWidgets: [newKey] });
     }
 
+    deleteWidgets = () => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
+        this.setState({ selectedWidgets: [] });
+        this.changeProject(project);
+    }
+
     undo = () => {
         this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         this.setState({
@@ -620,6 +628,7 @@ class App extends GenericApp {
                         historyCursor={this.state.historyCursor}
                         undo={this.undo}
                         redo={this.redo}
+                        deleteWidgets={this.deleteWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />

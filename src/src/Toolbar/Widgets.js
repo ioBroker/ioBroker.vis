@@ -36,7 +36,7 @@ const Widgets = props => {
             {
                 type: 'multiselect',
                 name: 'Active widget',
-                items: Object.keys(widgets)/*.filter(widget => !widgets[widget].groupid)*/.map(widget => ({
+                items: Object.keys(widgets)/* .filter(widget => !widgets[widget].groupid) */.map(widget => ({
                     name: `${widget} (${widgets[widget].tpl})`,
                     value: widget,
                 })),
@@ -45,7 +45,13 @@ const Widgets = props => {
                 onChange: e => props.setSelectedWidgets(e.target.value),
             },
             [[
-                { type: 'icon-button', Icon: DeleteIcon, name: 'Delete widget' },
+                {
+                    type: 'icon-button',
+                    Icon: DeleteIcon,
+                    name: 'Delete widgets',
+                    disabled: !props.selectedWidgets.length,
+                    onClick: () => props.deleteWidgets(),
+                },
             ], [
                 { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
             ]],
