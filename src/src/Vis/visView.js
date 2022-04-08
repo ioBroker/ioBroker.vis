@@ -78,7 +78,7 @@ class VisView extends React.Component {
     componentWillUnmount() {
         this.props.linkContext.unregisterViewRef(this.props.view, this.refView);
 
-        if (this.refView.current._originalParent) {
+        if (this.refView.current && this.refView.current._originalParent) {
             this.refView.current._originalParent.appendChild(this.refView.current);
             this.refView.current._originalParent = null;
         }
