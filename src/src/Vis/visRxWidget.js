@@ -118,22 +118,6 @@ class VisRxWidget extends VisBaseWidget {
         return true;
     }
 
-    renderWidgetBody(props) {
-        props.id = this.props.id;
-
-        props.className = `vis-widget ${this.state.rxData.class || ''}`;
-
-        if (!this.state.editMode && this.state.disabled) {
-            props.className = addClass(props.className, 'vis-user-disabled');
-        }
-
-        Object.keys(this.state.rxStyle).forEach(attr => {
-            const value = this.state.rxStyle[attr];
-            attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
-            props.style[attr] = value;
-        });
-    }
-
     onPropertiesUpdated() {
         const oldIDs = this.linkContext.IDs;
         this.linkContext = {
@@ -154,6 +138,28 @@ class VisRxWidget extends VisBaseWidget {
         subscribe.forEach(id => this.props.socket.subscribeState(id, this.onStateChangedBind));
 
         this.onStateChanged();
+    }
+
+    renderWidgetBody(props) {
+        props.id = this.props.id;
+
+        props.className = `vis-widget ${this.state.rxData.class || ''}`;
+
+        if (this.props.isRelative) {
+            props.style.position = 'relative';
+        } else {
+            props.style.position = 'absolute';
+        }
+
+        if (!this.state.editMode && this.state.disabled) {
+            props.className = addClass(props.className, 'vis-user-disabled');
+        }
+
+        Object.keys(this.state.rxStyle).forEach(attr => {
+            const value = this.state.rxStyle[attr];
+            attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
+            props.style[attr] = value;
+        });
     }
 
     render() {

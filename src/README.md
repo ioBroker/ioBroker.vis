@@ -1,8 +1,38 @@
 ## Todo
+
 ### Palette
 - Show widgets in palette by group
+- Allow for one widget to show the detailed information with screenshot (i18n): many texts (HTML) and one picture (on none)
 - Add widget from palette
 - Close all groups / open all groups
+- Take in count new react widget types => onLoaded([])
+
+### View
+- Delete widget
+- Copy/paste/cut widget (With preview)
+- Move with keyboard (with shift and without)
+- Show rulers lines by moving of widget (red lines)
+- Show screen resolution
+- Grid and snap to grid
+- Align buttons in toolbar
+- Copy/paste/Cut buttons in toolbar
+- Export/Import widget
+- Rename button near Widget selector to "clone widgets" instead of copy widget
+- Lock/Unlock widget
+- Context menu
+- Bring to front / Send back (Max z-index is 1199)
+- Undo!!/Redo
+- Ctrl+A / Esc(Deselect all) / ...
+- If dimension is in % so after resize and move it should stay in %
+- Ask about not saved file (because of 1 sec delay)
+
+## groups edit
+
+
+### Widget
+- By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
+- [Gestures] (do not implement)
+- Last change ? Denis
 
 ### Runtime
 #### Engine
@@ -12,34 +42,7 @@
 - changeFilter method in vis
 - detectBounce method in vis
 - addFont method in vis
-- relative position
-
-### View
-- Delete widget
-- Copy/paste/cut widget
-- Move with keyboard (with shift and without)
-- Show rulers lines by moving of widget (red lines)
-- Show screen resolution
-- Grid and snap to grid
-- Align buttons in toolbar
-- Copy/paste/Cut buttons in toolbar
-- Export/Import widget
-- Rename button near Widget selector to "clone widgets" instead of copy widget
-- If no widgets selected - switch tab from "Widget" to "View" on the right and make "Widget" Tab disabled
-- By selecting of widget - jump to "widget" tab on the right 
-- Lock/Unlock widget
-- Context menu
-- Bring to front / Send back
-- Undo!!
-- Ctrl+A / Esc(Deselect all) / ...
-- If dimension is in % so after resize and move it should stay in %
-
-### Widget
-- Gestures
-- Last change
-- By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
-
-## groups edit
+- relative position by move
 
 ### Toolbar
 - 3 Levels of visibility:

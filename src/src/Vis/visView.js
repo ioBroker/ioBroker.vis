@@ -17,15 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
-import BasicValueString from './Widgets/Basic/BasicValueString';
-import BasicViewInWidget from './Widgets/Basic/BasicViewInWidget';
-import BasicViewInWidget8 from './Widgets/Basic/BasicViewInWidget8';
-
-const WIDGETS = [
-    BasicValueString,
-    BasicViewInWidget,
-    BasicViewInWidget8,
-];
+import WIDGETS from './Widgets';
 
 // 1300 is the React dialog
 class VisView extends React.Component {
@@ -72,6 +64,8 @@ class VisView extends React.Component {
                 }
             });
         }
+
+        return VisView.widgets;
     }
 
     componentDidMount() {
@@ -421,6 +415,10 @@ class VisView extends React.Component {
         cb && cb(results);
     }
 
+    onKeyPress = e => {
+        console.log(e.key);
+    }
+
     registerEditorHandlers(unregister) {
         if (this.props.registerEditorCallback) {
             if (!unregister && this.props.activeView === this.props.view) {
@@ -443,73 +441,131 @@ class VisView extends React.Component {
         this.registerEditorHandlers();
     }
 
+    static renderGitter(step, color) {
+        color = color || '#D0D0D0';
+        step = step || 10;
+        const bigWidth = step * 5;
+        const smallWidth = step;
+
+        const gitterPattern = btoa(`<svg width="${bigWidth}" height="${bigWidth}" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="grid" width="${bigWidth}" height="${bigWidth}" patternUnits="userSpaceOnUse">
+            <path d="M 0 ${smallWidth} L ${bigWidth} ${smallWidth} M ${smallWidth} 0 L ${smallWidth} ${bigWidth} M 0 ${2 * smallWidth} L ${bigWidth} ${2 * smallWidth} M ${2 * smallWidth} 0 L ${2 * smallWidth} ${bigWidth} M 0 ${3 * smallWidth} L ${bigWidth} ${3 * smallWidth} M ${3 * smallWidth} 0 L ${3 * smallWidth} ${bigWidth} M 0 ${4 * smallWidth} L ${bigWidth} ${4 * smallWidth} M ${4 * smallWidth} 0 L ${4 * smallWidth} ${bigWidth}" fill="none" stroke="${color}" opacity="0.2" stroke-width="1"/>
+            <path d="M ${bigWidth} 0 L 0 0 0 ${bigWidth}" fill="none" stroke="${color}" stroke-width="1"/>
+        </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#grid)"/>
+</svg>`);
+        const backgroundImage = `url(data:image/svg+xml;base64,${gitterPattern})`;
+
+        return <div
+            style={{
+                opacity: 0.2,
+                zIndex: -1,
+                userSelect: 'none',
+                pointerEvents: 'none',
+                width: '100%',
+                height: '100%',
+                backgroundImage,
+                backgroundPosition: '-1px -1px',
+            }}
+        />;
+    }
+
+    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder, maxZIndex) {
+        const isRelative = widget.style && (
+            widget.style.position === 'relative' ||
+            widget.style.position === 'static' ||
+            widget.style.position === 'sticky'
+        );
+
+        const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
+
+        const _props = {
+            key: `${index}_${id}`,
+            id,
+            view: props.view,
+            views: props.views,
+            userGroups: props.userGroups,
+            editMode: props.editMode,
+            user: props.user,
+            allWidgets: props.allWidgets,
+            socket: props.socket,
+            isRelative,
+            viewsActiveFilter: props.viewsActiveFilter,
+            setValue: props.setValue,
+            refParent: isRelative ? refRelativeView : refAbsoluteView,
+            linkContext: props.linkContext,
+            formatUtils: props.formatUtils,
+            selectedWidgets: this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
+            setSelectedWidgets: props.setSelectedWidgets,
+            runtime: props.runtime,
+            mouseDownOnView: onMouseWidgetDown,
+            registerRef: props.runtime ? null : registerRef,
+            onWidgetsChanged: props.onWidgetsChanged,
+            showWidgetNames: props.showWidgetNames,
+            adapterName: props.adapterName,
+            instance: props.instance,
+            projectName: props.projectName,
+            relativeWidgetOrder,
+            VisView,
+            maxZIndex,
+        };
+
+        // we must add it because of view in widget
+        _props.can = props.can;
+        _props.canStates = props.canStates;
+        _props.jQuery = props.jQuery;
+        _props.$$ = props.$$;
+
+        const rxWidget = <Widget {..._props} />;
+
+        return { rxWidget, isRelative };
+    }
+
     render() {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
 
-        if (this.state.mounted && this.props.views) {
-            const widgets = this.props.views[this.props.view]?.widgets;
+        if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
+            return null;
+        }
+
+        let maxZIndex = 0;
+
+        // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
+        if (this.state.mounted) {
+            const widgets = this.props.views[this.props.view].widgets;
             if (widgets) {
+                const relativeWidgetOrder = this.props.views[this.props.view].settings?.order || [];
+
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
-                    if (!widget) {
+                    if (!widget || widget.grouped) {
                         return;
                     }
 
-                    if (widget.grouped) {
-                        return;
+                    if (widget.style && parseInt(widget.style['z-index'], 10) > maxZIndex) {
+                        maxZIndex = parseInt(widget.style['z-index'], 10);
                     }
 
-                    const isRelative = widget.style && (
-                        widget.style.position === 'relative' ||
-                        widget.style.position === 'static' ||
-                        widget.style.position === 'sticky'
-                    );
-
-                    const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
-
-                    const props = {
-                        key: id,
-                        id,
-                        view: this.props.view,
-                        views: this.props.views,
-                        userGroups: this.props.userGroups,
-                        editMode: this.props.editMode,
-                        user: this.props.user,
-                        allWidgets: this.props.allWidgets,
-                        socket: this.props.socket,
-                        isRelative,
-                        viewsActiveFilter: this.props.viewsActiveFilter,
-                        setValue: this.props.setValue,
-                        refParent: isRelative ? this.refRelativeView : this.refView,
-                        linkContext: this.props.linkContext,
-                        formatUtils: this.props.formatUtils,
-                        selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
-                        setSelectedWidgets: this.props.setSelectedWidgets,
-                        runtime: this.props.runtime,
-                        mouseDownOnView: this.onMouseWidgetDown,
-                        registerRef: this.props.runtime ? null : this.registerRef,
-                        onWidgetsChanged: this.props.onWidgetsChanged,
-                        showWidgetNames: this.props.showWidgetNames,
-                        adapterName: this.props.adapterName,
-                        instance: this.props.instance,
-                        projectName: this.props.projectName,
-                        VisView,
-                    };
-
-                    // we must add it because of view in widget
-                    props.can = this.props.can;
-                    props.canStates = this.props.canStates;
-                    props.jQuery = this.props.jQuery;
-                    props.$$ = this.props.$$;
-
-                    const rxWidget = <Widget {...props} />;
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, maxZIndex);
 
                     if (isRelative) {
-                        rxRelativeWidgets.push(rxWidget);
+                        if (!relativeWidgetOrder.includes(id)) {
+                            relativeWidgetOrder.push(id);
+                        }
+                        rxRelativeWidgets.push({ id, rxWidget });
                     } else {
                         rxAbsoluteWidgets.push(rxWidget);
                     }
+                });
+
+                // sort relative widgets according to order
+                rxRelativeWidgets.sort((a, b) => {
+                    const posA = relativeWidgetOrder.indexOf(a.id);
+                    const posB = relativeWidgetOrder.indexOf(b.id);
+                    return posA - posB;
                 });
             }
         }
@@ -520,40 +576,42 @@ class VisView extends React.Component {
             width: '100%',
             height: '100%',
         };
-        if (this.props.views && this.props.views[this.props.view]) {
-            const settings = this.props.views[this.props.view].settings;
-            // this was only if this.props.editMode
-            if (rxRelativeWidgets.length && settings.sizex) {
-                let ww = settings.sizex;
-                let hh = settings.sizey;
-                if (parseFloat(ww).toString() === ww.toString()) {
-                    ww = parseFloat(ww);
-                }
-                if (parseFloat(hh).toString() === hh.toString()) {
-                    hh = parseFloat(hh);
-                }
 
-                if (typeof ww === 'number' || ww.match(/\d$/)) {
-                    ww += 'px';
-                }
-                if (typeof hh === 'number' || hh.match(/\d$/)) {
-                    hh += 'px';
-                }
-                relativeStyle.width = ww;
-                relativeStyle.height = hh;
+        const settings = this.props.views[this.props.view].settings;
+
+        // this was only if this.props.editMode
+        if (settings.sizex) {
+            let ww = settings.sizex;
+            let hh = settings.sizey;
+            if (parseFloat(ww).toString() === ww.toString()) {
+                ww = parseFloat(ww);
+            }
+            if (parseFloat(hh).toString() === hh.toString()) {
+                hh = parseFloat(hh);
             }
 
-            settings.style && Object.keys(settings.style).forEach(attr => {
-                if (attr === 'background_class') {
-                    className = addClass(className, settings.style.background_class);
-                } else {
-                    const value = settings.style[attr];
-                    // convert background-color => backgroundColor
-                    attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
-                    style[attr] = value;
-                }
-            });
+            if (typeof ww === 'number' || ww.match(/\d$/)) {
+                ww += 'px';
+            }
+            if (typeof hh === 'number' || hh.match(/\d$/)) {
+                hh += 'px';
+            }
+            relativeStyle.width = ww;
+            relativeStyle.height = hh;
         }
+
+        relativeStyle.display = settings.style.display || 'flex';
+
+        settings.style && Object.keys(settings.style).forEach(attr => {
+            if (attr === 'background_class') {
+                className = addClass(className, settings.style.background_class);
+            } else {
+                const value = settings.style[attr];
+                // convert background-color => backgroundColor
+                attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
+                style[attr] = value;
+            }
+        });
 
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
@@ -570,11 +628,10 @@ class VisView extends React.Component {
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
-            {rxRelativeWidgets.length ?
-                <div ref={this.refRelativeView} style={relativeStyle}>
-                    { rxRelativeWidgets }
-                </div>
-                : null}
+            { /* VisView.renderGitter() */ }
+            <div ref={this.refRelativeView} style={relativeStyle}>
+                { rxRelativeWidgets.map(item => item.rxWidget) }
+            </div>
             { rxAbsoluteWidgets }
         </div>;
     }

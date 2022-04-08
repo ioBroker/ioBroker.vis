@@ -421,9 +421,22 @@ class App extends GenericApp {
         window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
     }
 
-    onWidgetsChanged = data => {
+    onWidgetsChanged = (data, view, viewSettings) => {
         this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
-        data.forEach(item => Object.assign(this.tempProject[item.view].widgets[item.wid].style, item.style));
+        if (data) {
+            data.forEach(item => Object.assign(this.tempProject[item.view].widgets[item.wid].style, item.style));
+        }
+
+        // settings of view are changed
+        if (view && viewSettings) {
+            Object.keys(viewSettings).forEach(attr => {
+                if (viewSettings[attr] === null) {
+                    delete this.tempProject[view].settings[attr];
+                } else {
+                    this.tempProject[view].settings[attr] = viewSettings[attr];
+                }
+            });
+        }
 
         this.changeTimer && clearTimeout(this.changeTimer);
 

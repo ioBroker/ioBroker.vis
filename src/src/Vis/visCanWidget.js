@@ -41,6 +41,7 @@ class VisCanWidget extends VisBaseWidget {
 
     setupSubscriptions() {
         this.bindings = {};
+        this.isCanWidget = true;
 
         const linkContext = {
             IDs: [],
@@ -863,10 +864,10 @@ class VisCanWidget extends VisBaseWidget {
         const oldIDs = this.IDs;
 
         // remove all bindings from prop.linkContexts
-        VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
-        VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
-        VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
-        VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+        VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, wid);
 
         this.setupSubscriptions();
 
@@ -894,7 +895,7 @@ class VisCanWidget extends VisBaseWidget {
 
             this.applyBindings(true);
         } catch (e) {
-            console.log(`[${this.props.id}] Cannot bind data of widget: ${e}`);
+            console.log(`[${wid}] Cannot bind data of widget: ${e}`);
             return;
         }
 
@@ -926,10 +927,35 @@ class VisCanWidget extends VisBaseWidget {
                         options.val = this.props.canStates.attr(`${widgetData.oid}.val`);
                     }
                     const widgetFragment = this.props.can.view(widget.tpl, options);
-                    parentDiv.appendChild(widgetFragment);
+
+                    if (this.props.isRelative) {
+                        // add widget according to the relativeWidgetOrder
+                        const pos = this.props.relativeWidgetOrder.indexOf(wid);
+                        if (pos === 0) {
+                            parentDiv.prepend(widgetFragment);
+                        } else if (pos === this.props.relativeWidgetOrder.length - 1) {
+                            parentDiv.appendChild(widgetFragment);
+                        } else {
+                            // find any existing prepending widget
+                            let div;
+                            for (let i = pos + 1; i < this.props.relativeWidgetOrder.length; i++) {
+                                div = parentDiv.querySelector(`#${this.props.relativeWidgetOrder[i]}`);
+                                if (div) {
+                                    parentDiv.insertBefore(widgetFragment, div);
+                                    break;
+                                }
+                            }
+                            // no existing prepend widgets found, so place first
+                            if (!div) {
+                                parentDiv.appendChild(widgetFragment);
+                            }
+                        }
+                    } else {
+                        parentDiv.appendChild(widgetFragment);
+                    }
                 }
             } else {
-                console.error(`[${this.props.id}] Widget is invalid. Please delete it.`);
+                console.error(`[${wid}] Widget is invalid. Please delete it.`);
                 return;
             }
 
@@ -953,9 +979,7 @@ class VisCanWidget extends VisBaseWidget {
                     VisCanWidget.applyStyle(this.widDiv, widgetStyle);
                 }
 
-                if (!isRelative) {
-                    this.widDiv.style.position = 'absolute';
-                }
+                this.widDiv.style.position = isRelative ? 'relative' : 'absolute';
 
                 if (widgetData && widgetData.class) {
                     this.widDiv.className = addClass(this.widDiv.className, widgetData.class);
@@ -992,18 +1016,6 @@ class VisCanWidget extends VisBaseWidget {
                     this.addChart(widgetData);
                 }
 
-                // If edit mode, bind on click event to open this widget in edit dialog
-                if (this.state.editMode) {
-                    // this.bindWidgetClick(viewDiv, view, id);
-
-                    // @SJ cannot select menu and dialogs if it is enabled
-                    /* if (this.$('#wid_all_lock_f').hasClass("ui-state-active")) {
-                     this.$('#' + id).addClass("vis-widget-lock")
-                     } */
-                }
-
-                // this.$(document).trigger('wid_added', id);
-
                 if (userGroups && widget.data['visibility-groups-action'] === 'disabled' && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
                     this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
                 }
@@ -1011,12 +1023,17 @@ class VisCanWidget extends VisBaseWidget {
                 if (this.refService.current) {
                     this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
                     this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
+                    // Move helper to actual widget
+                    if (isRelative) {
+                        this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
+                        this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                    }
                 }
 
                 this.onCommand('updateContainers');
             }
 
-            this.props.registerRef(this.props.id, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
+            this.props.registerRef(wid, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
             this.props.socket.log.error(`can't render ${widget.tpl} ${wid} on "${this.props.view}": `);
@@ -1034,38 +1051,10 @@ class VisCanWidget extends VisBaseWidget {
             }, 10);
         }
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
-        const groupWidgets = widget?.data?.members;
-        let rxGroupWidgets = null;
-        if (groupWidgets?.length && this.state.mounted && this.widDiv) {
-            rxGroupWidgets = groupWidgets.map(wid => <VisCanWidget
-                key={wid}
-                id={wid}
-                views={this.props.views}
-                view={this.props.view}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                userGroups={this.props.userGroups}
-                user={this.props.user}
-                registerRef={this.props.registerRef}
-                allWidgets={this.props.allWidgets}
-                refParent={this.widDiv}
-                editMode={this.props.editMode}
-                jQuery={this.props.jQuery}
-                socket={this.props.socket}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                setValue={this.props.setValue}
-                $$={this.props.$$}
-                linkContext={this.props.linkContext}
-                formatUtils={this.props.formatUtils}
-                adapterName={this.props.adapterName}
-                instance={this.props.instance}
-                projectName={this.props.projectName}
-                VisView={this.props.VisView}
-                editGroup={false}
-            />);
-        }
+        // the helper div is always relative
+        props.style.position = 'absolute';
 
+        // this code is used only to represent containers, but sometime all of them should be rewritten in React
         const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
             const VisView = this.props.VisView;
             this.refViews[view] = this.refViews[view] || React.createRef();
@@ -1114,156 +1103,8 @@ class VisCanWidget extends VisBaseWidget {
             props.style.display = 'none';
         }
 
-        return <>
-            { legacyViewContainers }
-
-            { rxGroupWidgets }
-        </>;
+        return legacyViewContainers;
     }
-    /*
-    render() {
-        if (this.props.editGroup) {
-            console.log('EDIT group is not implemented!');
-        }
-
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
-        const groupWidgets = widget?.data?.members;
-        let rxGroupWidgets = null;
-        if (groupWidgets?.length && this.state.mounted && this.widDiv) {
-            rxGroupWidgets = groupWidgets.map(wid => <VisCanWidget
-                key={wid}
-                id={wid}
-                views={this.props.views}
-                view={this.props.view}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                userGroups={this.props.userGroups}
-                user={this.props.user}
-                registerRef={this.props.registerRef}
-                allWidgets={this.props.allWidgets}
-                refParent={this.widDiv}
-                editMode={this.props.editMode}
-                jQuery={this.props.jQuery}
-                socket={this.props.socket}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                setValue={this.props.setValue}
-                $$={this.props.$$}
-                linkContext={this.props.linkContext}
-                formatUtils={this.props.formatUtils}
-                adapterName={this.props.adapterName}
-                instance={this.props.instance}
-                projectName={this.props.projectName}
-                VisView={this.props.VisView}
-                editGroup={false}
-            />);
-        }
-
-        const style = {};
-        const selected = this.props.selectedWidgets?.includes(this.props.id);
-        const selectedOne = selected && this.props.selectedWidgets.length === 1;
-        let classNames = selected ? 'vis-editmode-selected' : '';
-
-        if (this.state.editMode && !widget.groupid) {
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'top')) {
-                style.top = widget.style.top;
-            }
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'left')) {
-                style.left = widget.style.left;
-            }
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'width')) {
-                style.width = widget.style.width;
-            }
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'height')) {
-                style.height = widget.style.height;
-            }
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'right')) {
-                style.right = widget.style.right;
-            }
-            if (Object.prototype.hasOwnProperty.call(widget.style, 'bottom')) {
-                style.bottom = widget.style.bottom;
-            }
-
-            style.zIndex = this.props.VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE; // 1300 is the React dialog
-            style.position = this.props.isRelative ? 'relative' : 'absolute';
-            style.userSelect = 'none';
-
-            style.opacity = 0.3;
-
-            style.cursor = selected ? 'move' : 'pointer';
-
-            if (selected) {
-                style.backgroundColor = 'green';
-            }
-
-            if (widget.tpl.toLowerCase().includes('image')) {
-                classNames += ' vis-editmode-helper';
-                style.opacity = style.opacity || 0.3;
-            }
-        } else {
-            style.display = 'none';
-        }
-
-        const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
-            const VisView = this.props.VisView;
-            this.refViews[view] = this.refViews[view] || React.createRef();
-            const otherRef = this.props.linkContext.getViewRef(view);
-            if (otherRef && otherRef !== this.refViews[view]) {
-                console.log('View is not rendered as used somewhere else!');
-                return null;
-                // <div ref={this.refViews[view]} key={view + Math.random() * 10000}>
-                //    View is not rendered as used somewhere else!
-                // </div>;
-            }
-
-            return <VisView
-                ref={this.refViews[view]}
-                key={view}
-                view={view}
-                activeView={view}
-                views={this.props.views}
-                editMode={false}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                user={this.props.user}
-                userGroups={this.props.userGroups}
-                allWidgets={this.props.allWidgets}
-                jQuery={this.props.jQuery}
-                $$={this.props.$$}
-                registerRef={this.props.registerRef}
-                adapterName={this.props.adapterName}
-                instance={this.props.instance}
-                projectName={this.props.projectName}
-                socket={this.props.socket}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                setValue={this.props.setValue}
-                linkContext={this.props.linkContext}
-                formatUtils={this.props.formatUtils}
-                selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
-                setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
-                onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
-                showWidgetNames={this.props.showWidgetNames}
-            />;
-        }) : null;
-
-        if (legacyViewContainers?.length) {
-            // style.overflow = 'hidden';
-        }
-
-        return <div
-            className={classNames}
-            id={`rx_${this.props.id}`}
-            ref={this.refService}
-            style={style}
-            onMouseDown={!this.props.runtime ? e => this.state.editMode && this.props.setSelectedWidgets && this.onMouseDown(e) : undefined}
-        >
-            { this.props.editMode && !widget.groupid && this.props.showWidgetNames !== false ?
-                <div className="vis-editmode-widget-name">{ this.props.id }</div>
-                : null }
-            { selectedOne ? this.getResizeHandlers() : null }
-
-        </div>;
-    }
-     */
 }
 
 VisCanWidget.propTypes = {
@@ -1294,6 +1135,7 @@ VisCanWidget.propTypes = {
     showWidgetNames: PropTypes.bool,
     editGroup: PropTypes.bool,
     VisView: PropTypes.any,
+    relativeWidgetOrder: PropTypes.array,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

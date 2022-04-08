@@ -25,7 +25,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import { theme, background } from './ViewData';
 
-const styles = theme => ({
+const styles = _theme => ({
     backgroundClass: {
         display: 'flex',
         alignItems: 'center',
@@ -84,7 +84,7 @@ const styles = theme => ({
             padding: '2px',
         },
     },
-    lightedPanel: theme.classes.lightedPanel,
+    lightedPanel: _theme.classes.lightedPanel,
 });
 
 const resolution = [
@@ -139,6 +139,16 @@ const View = props => {
         {
             name: 'CSS Common',
             fields: [
+                {
+                    name: 'display',
+                    field: 'display',
+                    type: 'select',
+                    items: [
+                        { name: 'flex', value: 'flex' },
+                        { name: 'block', value: 'block' },
+                    ],
+                    title: 'For widgets with relative position',
+                },
                 { name: 'Comment', field: 'comment', notStyle: true },
                 { name: 'CSS Class', field: 'class', notStyle: true },
                 { name: 'Initial filter', field: 'filterkey', notStyle: true },
@@ -181,11 +191,11 @@ const View = props => {
                     items: background,
                     field: 'background_class',
                     itemModify: item => <>
-                        <span className={`${props.classes.backgroundClassSquare} ${item.value}`}></span>
+                        <span className={`${props.classes.backgroundClassSquare} ${item.value}`} />
                         {I18n.t(item.name)}
                     </>,
                     renderValue: value => <div className={props.classes.backgroundClass}>
-                        <span className={`${props.classes.backgroundClassSquare} ${value}`}></span>
+                        <span className={`${props.classes.backgroundClassSquare} ${value}`} />
                         {I18n.t(background.find(item => item.value === value).name)}
                     </div>,
                 },
@@ -241,7 +251,6 @@ const View = props => {
                     hide: view.settings.useBackground,
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
-
             ],
         },
         {
@@ -504,7 +513,7 @@ const View = props => {
                                 }
 
                                 return <tr key={key2}>
-                                    <td className={props.classes.fieldTitle}>{I18n.t(field.name)}</td>
+                                    <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>{I18n.t(field.name)}</td>
                                     <td className={props.classes.fieldContent}>{result}</td>
                                 </tr>;
                             })
