@@ -374,6 +374,32 @@ class App extends GenericApp {
         await this.setStateAsync({ selectedWidgets: [newKey] });
     }
 
+    deleteWidgets = async () => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
+        await this.setStateAsync({ selectedWidgets: [] });
+        await this.changeProject(project);
+    }
+
+    cutWidgets = async () => {
+        this.cutCopyWidgets('cut');
+    }
+
+    copyWidgets = async () => {
+        this.cutCopyWidgets('copy');
+    }
+
+    cutCopyWidgets = async  type => {
+        await this.setStateAsync({
+            widgetsClipboard: {
+                type,
+                widgets: this.state.selectedWidgets.map(selectedWidget =>
+                    this.state.project[this.state.selectedView].widgets[selectedWidget]),
+            },
+        });
+    }
+
     undo = async () => {
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({
@@ -635,6 +661,10 @@ class App extends GenericApp {
                         undo={this.undo}
                         redo={this.redo}
                         deleteWidgets={this.deleteWidgets}
+                        widgetsLoaded={this.state.widgetsLoaded}
+                        widgetsClipboard={this.state.widgetsClipboard}
+                        cutWidgets={this.cutWidgets}
+                        copyWidgets={this.copyWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />

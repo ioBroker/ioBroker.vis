@@ -610,10 +610,6 @@ const Widget = props => {
         fields = selectedWidgetsFields[0];
     }
 
-    if (!selectedWidgetsFields.length) {
-        return null;
-    }
-
     let signalsCount = 3;
 
     if (props.selectedWidgets.length === 1) {

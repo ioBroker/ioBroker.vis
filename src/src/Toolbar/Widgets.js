@@ -19,8 +19,12 @@ import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 
 import ToolbarItems from './ToolbarItems';
+import { getWidgetTypes } from '../Utils';
 
 const Widgets = props => {
+    if (!props.widgetsLoaded) {
+        return null;
+    }
     if (!props.openedViews.length) {
         return null;
     }
@@ -36,10 +40,13 @@ const Widgets = props => {
             {
                 type: 'multiselect',
                 name: 'Active widget',
-                items: Object.keys(widgets)/* .filter(widget => !widgets[widget].groupid) */.map(widget => ({
-                    name: `${widget} (${widgets[widget].tpl})`,
-                    value: widget,
-                })),
+                items: Object.keys(widgets)/* .filter(widget => !widgets[widget].groupid) */.map(widget => {
+                    const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === widgets[widget].tpl);
+                    return {
+                        name: `${widget} (${widgetType?.set} - ${widgetType?.title})`,
+                        value: widget,
+                    };
+                }),
                 width: 240,
                 value: props.selectedWidgets,
                 onChange: e => props.setSelectedWidgets(e.target.value),
@@ -58,14 +65,26 @@ const Widgets = props => {
             { type: 'divider' },
             [[
                 {
-                    type: 'icon-button', Icon: BiCut, name: 'Cut', size: 'normal',
+                    type: 'icon-button',
+                    Icon: BiCut,
+                    name: 'Cut',
+                    size: 'normal',
+                    disabled: !props.selectedWidgets.length,
                 },
                 {
-                    type: 'icon-button', Icon: BiCopy, name: 'Copy', size: 'normal',
+                    type: 'icon-button',
+                    Icon: BiCopy,
+                    name: 'Copy',
+                    size: 'normal',
+                    disabled: !props.selectedWidgets.length,
                 },
             ], [
                 {
-                    type: 'icon-button', Icon: BiPaste, name: 'Paste', size: 'normal',
+                    type: 'icon-button',
+                    Icon: BiPaste,
+                    name: 'Paste',
+                    size: 'normal',
+                    disabled: !props.widgetsClipboard.widgets.length,
                 },
             ]],
             {
