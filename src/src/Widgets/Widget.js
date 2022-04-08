@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import { withStyles } from '@mui/styles';
 
+import { useEffect, useRef } from 'react';
+import { useDrag } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import image from '../img/Prev_HTML.png';
 
 const styles = () => ({
@@ -27,12 +30,43 @@ const styles = () => ({
     },
 });
 
-const Widget = props => <div className={props.classes.widget}>
-    <div className={props.classes.widgetTitle}>{window._(props.widgetType.name)}</div>
-    <span className={props.classes.widgetImageContainer}>
-        <img className={props.classes.widgetImage} src={image} alt="" />
-    </span>
-</div>;
+const Widget = props => {
+    const result = <div className={props.classes.widget}>
+        <div className={props.classes.widgetTitle}>{window._(props.widgetType.name)}</div>
+        <span className={props.classes.widgetImageContainer}>
+            <img className={props.classes.widgetImage} src={image} alt="" />
+        </span>
+    </div>;
+
+    const widthRef = useRef();
+    const [, dragRef, preview] = useDrag(
+        {
+            type: 'widget',
+            item: () => ({
+                widgetType: props.widgetType,
+                preview: <div style={{ width: widthRef.current.offsetWidth }}>
+                    {result}
+                </div>,
+            }),
+            end: (item, monitor) => {
+            },
+            collect: monitor => ({
+                isDragging: monitor.isDragging(),
+                handlerId: monitor.getHandlerId(),
+            }),
+        }, [props.widgetType],
+    );
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true });
+    }, [props.widgetType]);
+
+    return <span ref={dragRef}>
+        <span ref={widthRef}>
+            {result}
+        </span>
+    </span>;
+};
 
 Widget.propTypes = {
     classes: PropTypes.object,
