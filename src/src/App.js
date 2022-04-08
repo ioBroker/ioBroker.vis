@@ -146,6 +146,10 @@ class App extends GenericApp {
             fonts: [],
             history: [],
             historyCursor: 0,
+            widgetsClipboard: {
+                type: null,
+                widgets: [],
+            },
             ...this.state,
         });
 
