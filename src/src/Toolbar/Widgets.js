@@ -16,6 +16,7 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import LockIcon from '@mui/icons-material/Lock';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
 
 import ToolbarItems from './ToolbarItems';
 
@@ -62,7 +63,18 @@ const Widgets = props => {
                 },
             ]],
             {
-                type: 'icon-button', Icon: UndoIcon, name: 'Undo',
+                type: 'icon-button',
+                Icon: UndoIcon,
+                name: `Undo (${props.historyCursor + 1} / ${props.history.length}`,
+                onClick: props.undo,
+                disabled: props.historyCursor === 0,
+            },
+            {
+                type: 'icon-button',
+                Icon: RedoIcon,
+                name: 'Redo',
+                onClick: props.redo,
+                disabled: props.historyCursor === props.history.length - 1,
             },
 
             { type: 'divider' },

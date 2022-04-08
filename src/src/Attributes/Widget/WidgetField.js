@@ -11,7 +11,7 @@ import {
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
-import i18n from '@iobroker/adapter-react-v5/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
@@ -171,7 +171,7 @@ const wordsCache = {};
 const t = (word, ...args) => {
     const hash = `${word}_${args.join(',')}`;
     if (!wordsCache[hash]) {
-        wordsCache[hash] = i18n.t(word, ...args);
+        wordsCache[hash] = I18n.t(word, ...args);
     }
     return wordsCache[hash];
 };
@@ -271,7 +271,7 @@ const WidgetField = props => {
                 onChange={e => change(e.target.value)}
             />
             <div style={{ fontStyle: 'italic' }}>
-                {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[i18n.lang] : objectCache.common.name) : null}
+                {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[I18n.lang] : objectCache.common.name) : null}
             </div>
             {idDialog ? <SelectID
                 selected={value}
@@ -334,7 +334,7 @@ const WidgetField = props => {
                     actionTitle={t('Select')}
                     actionDisabled={!value}
                     t={t}
-                    lang={i18n.lang}
+                    lang={I18n.lang}
                     socket={props.socket}
                 />
             </IODialog>
@@ -532,7 +532,7 @@ const WidgetField = props => {
                             <TextWithIcon
                                 value={group._id}
                                 t={t}
-                                lang={i18n.getLanguage()}
+                                lang={I18n.getLanguage()}
                                 list={[group]}
                             />
                         </span>)}
@@ -552,7 +552,7 @@ const WidgetField = props => {
                 <TextWithIcon
                     value={group._id}
                     t={t}
-                    lang={i18n.getLanguage()}
+                    lang={I18n.getLanguage()}
                     list={[group]}
                 />
             </MenuItem>)}
@@ -713,7 +713,7 @@ const WidgetField = props => {
                 multiline
                 fullWidth
                 InputProps={{
-                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>{i18n.t('Edit')}</Button>,
+                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>{I18n.t('Edit')}</Button>,
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },

@@ -28,7 +28,7 @@ const styles = () => ({
 });
 
 const Widget = props => <div className={props.classes.widget}>
-    <div className={props.classes.widgetTitle}>{I18n.t('HTML')}</div>
+    <div className={props.classes.widgetTitle}>{window._(props.widgetType.name)}</div>
     <span className={props.classes.widgetImageContainer}>
         <img className={props.classes.widgetImage} src={image} alt="" />
     </span>

@@ -18,7 +18,7 @@ import withStyles from '@mui/styles/withStyles';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 
-const styles = () => ({
+const styles = theme => ({
     toolbarBlock: {
         display: 'flex',
         flexDirection: 'column',
@@ -26,6 +26,9 @@ const styles = () => ({
         borderRightStyle: 'solid',
         padding: '0px 10px',
         borderWidth: 1,
+    },
+    disabled: {
+        color: theme.palette.action.disabled,
     },
     toolbarItems: {
         display: 'flex', flexDirection: 'row', flex: 1,
@@ -122,7 +125,9 @@ const getItem = (item, key, props, full) => {
         return full
             ? <div key={key} style={{ textAlign: 'center' }}>
                 <ButtonBase
+                    className={item.disabled ? props.classes.disabled : null}
                     onClick={item.onClick}
+                    disabled={item.disabled}
                     style={{
                         flexDirection: 'column',
                         width: 60,
@@ -136,7 +141,7 @@ const getItem = (item, key, props, full) => {
                 </ButtonBase>
             </div>
             : <Tooltip key={key} title={item.name}>
-                <IconButton size="small" key={key} onClick={item.onClick} style={{ height: full ? '100%' : null }}>
+                <IconButton size="small" key={key} disabled={item.disabled} onClick={item.onClick} style={{ height: full ? '100%' : null }}>
                     <item.Icon fontSize={item.size ? item.size : 'small'} />
                 </IconButton>
             </Tooltip>;

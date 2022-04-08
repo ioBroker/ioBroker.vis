@@ -110,6 +110,8 @@ class App extends GenericApp {
             editMode: true,
             widgetsLoaded: false,
             fonts: [],
+            history: [],
+            historyCursor: 0,
             ...this.state,
         });
 
@@ -217,6 +219,8 @@ class App extends GenericApp {
         const groups = await this.socket.getGroups();
         this.setState({
             project,
+            history: [project],
+            historyCursor: 0,
             visProject: project,
             openedViews,
             projectName,
@@ -291,7 +295,37 @@ class App extends GenericApp {
         }
     }
 
-    changeProject = project => {
+    undo = () => {
+        this.changeProject(this.state.history[this.state.historyCursor - 1], true);
+        this.setState({
+            historyCursor: this.state.historyCursor - 1,
+        });
+    }
+
+    redo = () => {
+        this.changeProject(this.state.history[this.state.historyCursor + 1], true);
+        this.setState({
+            historyCursor: this.state.historyCursor + 1,
+        });
+    }
+
+    changeProject = (project, isHistory) => {
+        if (!isHistory) {
+            let history = JSON.parse(JSON.stringify(this.state.history));
+            let historyCursor = this.state.historyCursor;
+            if (historyCursor !== history.length - 1) {
+                history = history.slice(0, historyCursor + 1);
+            }
+            history.push(project);
+            if (history.length > 50) {
+                history.shift();
+            }
+            historyCursor = history.length - 1;
+            this.setState({
+                history,
+                historyCursor,
+            });
+        }
         this.setState({ project, needSave: true });
 
         // save changes after 1 second
@@ -503,6 +537,10 @@ class App extends GenericApp {
                         setProjectsDialog={this.setProjectsDialog}
                         selectedWidgets={this.state.selectedWidgets}
                         setSelectedWidgets={this.setSelectedWidgets}
+                        history={this.state.history}
+                        historyCursor={this.state.historyCursor}
+                        undo={this.undo}
+                        redo={this.redo}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />
@@ -519,7 +557,10 @@ class App extends GenericApp {
                             gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                         >
                             <div className={this.props.classes.block}>
-                                <Widgets classes={{}} />
+                                <Widgets
+                                    classes={{}}
+                                    widgetsLoaded={this.state.widgetsLoaded}
+                                />
                             </div>
                             <div>
                                 <div className={this.props.classes.tabsContainer}>

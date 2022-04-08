@@ -20,6 +20,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { useState } from 'react';
 import clsx from 'clsx';
 import Widget from './Widget';
+import { getWidgetTypes } from '../Utils';
 
 const selectItems = [
     { value: 'all', name: '*' },
@@ -80,16 +81,24 @@ const styles = theme => ({
     },
 });
 
-const widgetsList = [
-    { name: 'Category 1', items: Array(4).fill(null) },
-    { name: 'Category 2', items: Array(4).fill(null) },
-];
-
 const Widgets = props => {
+    if (!props.widgetsLoaded) {
+        return null;
+    }
+    const widgetsList = {};
+
+    const widgetTypes = getWidgetTypes();
+    widgetTypes.forEach(widgetType => {
+        if (!widgetsList[widgetType.set]) {
+            widgetsList[widgetType.set] = {};
+        }
+        widgetsList[widgetType.set][widgetType.name] = widgetType;
+    });
+
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('widgets')
             ? JSON.parse(window.localStorage.getItem('widgets'))
-            : widgetsList.map(() => false),
+            : Object.keys(widgetsList).map(() => false),
     );
 
     const [filter, setFilter] = useState('');
@@ -162,7 +171,7 @@ const Widgets = props => {
         </div>
         <div className={props.classes.widgets}>
             {
-                widgetsList.map((category, categoryKey) => <Accordion
+                Object.keys(widgetsList).map((category, categoryKey) => <Accordion
                     key={categoryKey}
                     elevation={0}
                     expanded={accordionOpen[categoryKey]}
@@ -182,11 +191,12 @@ const Widgets = props => {
                             expandIcon: props.classes.clearPadding,
                         }}
                     >
-                        {category.name}
+                        {category}
                     </AccordionSummary>
                     <AccordionDetails>
                         <div>
-                            {category.items.map((value, widgetKey) => <Widget key={widgetKey} />)}
+                            {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
+                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} />)}
                         </div>
                     </AccordionDetails>
                 </Accordion>)

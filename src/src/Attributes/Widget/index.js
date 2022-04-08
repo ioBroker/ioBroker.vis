@@ -14,26 +14,17 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import CodeIcon from '@mui/icons-material/Code';
 
-import i18n from '@iobroker/adapter-react-v5/i18n';
+import I18n from '@iobroker/adapter-react-v5/i18n';
 import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
+import { getWidgetTypes } from '../../Utils';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
     locked: <LockIcon fontSize="small" />,
 };
-
-const getWidgetTypes = () => Array.from(document.querySelectorAll('script[type="text/ejs"]'))
-    .map(script => ({
-        name: script.attributes.id.value,
-        set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
-        params: Object.values(script.attributes)
-            .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
-            .map(attribute => attribute.value)
-            .join(''),
-    }));
 
 const styles = theme => ({
     backgroundClass: {
@@ -686,7 +677,7 @@ const Widget = props => {
 
         return <div>
             <h4>
-                {!allOpened ? <Tooltip title={i18n.t('Expand all')}>
+                {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -699,7 +690,7 @@ const Widget = props => {
                         <UnfoldMoreIcon />
                     </IconButton>
                 </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-                { !allClosed ? <Tooltip size="small" title={i18n.t('Collapse all')}>
+                { !allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
                     <IconButton onClick={() => {
                         const newAccordionOpen = {};
                         fields.forEach(group => newAccordionOpen[group.name] = false);
@@ -838,7 +829,7 @@ const Widget = props => {
                     }}
                     actionTitle="Clear"
                 >
-                    {i18n.t('Fields of group will be cleaned')}
+                    {I18n.t('Fields of group will be cleaned')}
                 </IODialog>
                 <Button
                     style={{ opacity: showWidgetCode ? 1 : 0 }}
@@ -848,7 +839,7 @@ const Widget = props => {
                     }}
                     startIcon={<CodeIcon />}
                 >
-                    { showWidgetCode ? i18n.t('hide code') : i18n.t('show code') }
+                    { showWidgetCode ? I18n.t('hide code') : I18n.t('show code') }
                 </Button>
                 {showWidgetCode ? <pre>
                     {JSON.stringify(widget, null, 2)}
