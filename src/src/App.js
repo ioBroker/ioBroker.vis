@@ -125,6 +125,12 @@ class App extends GenericApp {
         this.visEngineHandlers = {};
     }
 
+    setStateAsync(newState) {
+        return new Promise(resolve =>
+            this.setState(newState, () =>
+                resolve()));
+    }
+
     componentDidMount() {
         super.componentDidMount();
         let runtime = false;
@@ -172,7 +178,8 @@ class App extends GenericApp {
     }
 
     onHashChange = () => {
-        this.changeView(decodeURIComponent(window.location.hash.slice(1)));
+        this.changeView(decodeURIComponent(window.location.hash.slice(1)))
+            .then(() => {});
     }
 
     loadProject = async projectName => {
@@ -262,7 +269,10 @@ class App extends GenericApp {
         }
 
         const groups = await this.socket.getGroups();
-        this.setState({
+
+        window.localStorage.setItem('projectName', projectName);
+
+        await this.setStateAsync({
             project,
             history: [project],
             historyCursor: 0,
@@ -270,32 +280,31 @@ class App extends GenericApp {
             openedViews,
             projectName,
             groups,
-        }, () => {
-            this.changeView(selectedView);
         });
 
-        window.localStorage.setItem('projectName', projectName);
+        await this.changeView(selectedView);
     }
 
     async onConnectionReady() {
-        this.setState({
-            selectedView: '',
-            splitSizes: window.localStorage.getItem('splitSizes')
-                ? JSON.parse(window.localStorage.getItem('splitSizes'))
-                : [20, 60, 20],
-        });
-
         if (window.localStorage.getItem('projectName')) {
             this.loadProject(window.localStorage.getItem('projectName'));
         } else {
-            this.socket.readDir('vis.0', '').then(projects => this.loadProject(projects[0].file));
+            // take first project
+            this.socket.readDir('vis.0', '')
+                .then(projects => this.loadProject(projects[0].file));
         }
 
         await this.refreshProjects();
 
         const user = await this.socket.getCurrentUser();
         const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
-        this.setState({ currentUser });
+        this.setState({
+            currentUser,
+            selectedView: '',
+            splitSizes: window.localStorage.getItem('splitSizes')
+                ? JSON.parse(window.localStorage.getItem('splitSizes'))
+                : [20, 60, 20],
+        });
     }
 
     refreshProjects = () => this.socket.readDir('vis.0', '')
@@ -308,7 +317,7 @@ class App extends GenericApp {
 
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
-    changeView = selectedView => {
+    changeView = async selectedView => {
         const selectedWidgets = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
@@ -331,19 +340,19 @@ class App extends GenericApp {
             newState.openedViews = openedViews;
         }
 
-        this.setState(newState);
-
         window.localStorage.setItem('selectedView', selectedView);
 
         if (window.location.hash !== '#view') {
             window.location.hash = selectedView;
         }
+
+        await this.setStateAsync(newState);
     }
 
-    addWidget = (widgetType, x, y) => {
+    addWidget = async (widgetType, x, y) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
-        let newKey = 0;
+        let newKey = 1;
         Object.keys(widgets).forEach(name => {
             const matches = name.match(/^w([0-9]+)$/);
             if (matches) {
@@ -361,33 +370,25 @@ class App extends GenericApp {
                 top: `${y}px`,
             },
         };
-        this.changeProject(project);
-        this.setState({ selectedWidgets: [newKey] });
+        await this.changeProject(project);
+        await this.setStateAsync({ selectedWidgets: [newKey] });
     }
 
-    deleteWidgets = () => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = project[this.state.selectedView].widgets;
-        this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
-        this.setState({ selectedWidgets: [] });
-        this.changeProject(project);
-    }
-
-    undo = () => {
-        this.changeProject(this.state.history[this.state.historyCursor - 1], true);
-        this.setState({
+    undo = async () => {
+        await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
+        await this.setStateAsync({
             historyCursor: this.state.historyCursor - 1,
         });
     }
 
-    redo = () => {
-        this.changeProject(this.state.history[this.state.historyCursor + 1], true);
-        this.setState({
+    redo = async () => {
+        await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
+        await this.setStateAsync({
             historyCursor: this.state.historyCursor + 1,
         });
     }
 
-    changeProject = (project, isHistory) => {
+    changeProject = async (project, isHistory) => {
         const newState = { project, needSave: true };
         if (!isHistory) {
             let history = JSON.parse(JSON.stringify(this.state.history));
@@ -403,22 +404,23 @@ class App extends GenericApp {
             newState.history = history;
             newState.historyCursor = historyCursor;
         }
-        this.setState(newState, () => {
-            // save changes after 1 second
-            // eslint-disable-next-line no-unused-expressions
-            this.savingTimer && clearTimeout(this.savingTimer);
-            this.savingTimer = setTimeout(async () => {
-                this.savingTimer = null;
-                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
-                this.setState({ needSave: false });
-            }, 1000);
 
-            this.visTimer && clearTimeout(this.visTimer);
-            this.visTimer = setTimeout(() => {
-                this.visTimer = null;
-                this.setState({ visProject: project });
-            }, 300);
-        });
+        await this.setStateAsync(newState);
+
+        // save changes after 1 second
+        // eslint-disable-next-line no-unused-expressions
+        this.savingTimer && clearTimeout(this.savingTimer);
+        this.savingTimer = setTimeout(async () => {
+            this.savingTimer = null;
+            await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+            this.setState({ needSave: false });
+        }, 1000);
+
+        this.visTimer && clearTimeout(this.visTimer);
+        this.visTimer = setTimeout(() => {
+            this.visTimer = null;
+            this.setState({ visProject: project });
+        }, 300);
     }
 
     addProject = async projectName => {
@@ -480,11 +482,12 @@ class App extends GenericApp {
         if (!isShow && openedViews.includes(view)) {
             openedViews.splice(openedViews.indexOf(view), 1);
         }
-        this.setState({ openedViews });
         window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
-        if (!openedViews.includes(this.state.selectedView)) {
-            this.changeView(openedViews[0]);
-        }
+        this.setState({ openedViews }, async () => {
+            if (!openedViews.includes(this.state.selectedView)) {
+                await this.changeView(openedViews[0]);
+            }
+        });
     }
 
     setSelectedWidgets = (selectedWidgets, cb) => {

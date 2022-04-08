@@ -632,11 +632,10 @@ class VisBaseWidget extends React.Component {
         if (dir > 0) {
             if (pos === order.length - 1) {
                 return;
-            } else {
-                const nextId = order[pos + 1];
-                order[pos + 1] = this.props.id;
-                order[pos] = nextId;
             }
+            const nextId = order[pos + 1];
+            order[pos + 1] = this.props.id;
+            order[pos] = nextId;
         } else if (!pos) {
             return;
         } else {
@@ -767,9 +766,9 @@ VisBaseWidget.propTypes = {
     mouseDownOnView: PropTypes.func,
     onWidgetsChanged: PropTypes.func,
     showWidgetNames: PropTypes.bool,
+    // eslint-disable-next-line react/no-unused-prop-types
     VisView: PropTypes.any,
     relativeWidgetOrder: PropTypes.array,
-    maxZIndex: PropTypes.number,
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,

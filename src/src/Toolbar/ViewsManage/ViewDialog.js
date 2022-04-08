@@ -12,16 +12,16 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import IODialog from '../../Components/IODialog';
 
 const ViewDialog = props => {
-    const deleteView = () => {
+    const deleteView = async () => {
         const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
         delete project[view];
-        props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
-        props.changeProject(project);
-        props.setDialog(null);
+        await props.changeView(Object.keys(project).filter(foundView => !foundView.startsWith('__'))[0]);
+        await props.changeProject(project);
+        props.setDialog(null); // close dialog
     };
 
-    const addView = () => {
+    const addView = async () => {
         const project = JSON.parse(JSON.stringify(props.project));
         const newProject = {
             name: props.dialogName,
@@ -33,27 +33,27 @@ const ViewDialog = props => {
             activeWidgets: {},
         };
         project[props.dialogName] = newProject;
-        props.changeProject(project);
-        props.changeView(props.dialogName);
-        props.setDialog(null);
+        await props.changeProject(project);
+        await props.changeView(props.dialogName);
+        props.setDialog(null); // close dialog
     };
 
-    const renameView = () => {
+    const renameView = async () => {
         const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
         project[props.dialogName] = project[view];
         delete project[view];
-        props.changeProject(project);
-        props.changeView(props.dialogName);
+        await props.changeProject(project);
+        await props.changeView(props.dialogName);
         props.setDialog(null);
     };
 
-    const copyView = () => {
+    const copyView = async () => {
         const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
         project[props.dialogName] = project[view];
-        props.changeProject(project);
-        props.changeView(props.dialogName);
+        await props.changeProject(project);
+        await props.changeView(props.dialogName);
         props.setDialog(null);
     };
 
