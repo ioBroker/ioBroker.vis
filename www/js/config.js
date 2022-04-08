@@ -1,6 +1,19 @@
 var visConfig = {
     "widgetSets": [
+        {
+            "name": "bars",
+            "depends": []
+        },
         "basic",
+        "consumption",
+        "dwd",
+        "echarts",
+        "eventlist",
+        {
+            "name": "google-fonts",
+            "always": true
+        },
+        "hqwidgets",
         "jqplot",
         {
             "name": "jqui",
@@ -8,6 +21,14 @@ var visConfig = {
                 "basic"
             ]
         },
+        {
+            "name": "metro",
+            "depends": [
+                "jqui-mfd",
+                "basic"
+            ]
+        },
+        "spotify-premium",
         "swipe",
         "tabs"
     ]

@@ -126,7 +126,9 @@ class App extends GenericApp {
     }
 
     setStateAsync(newState) {
-        return new Promise(resolve => this.setState(newState, () => resolve()));
+        return new Promise(resolve =>
+            this.setState(newState, () =>
+                resolve()));
     }
 
     componentDidMount() {
@@ -346,7 +348,7 @@ class App extends GenericApp {
     addWidget = async (widgetType, x, y) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
-        let newKey = 0;
+        let newKey = 1;
         Object.keys(widgets).forEach(name => {
             const matches = name.match(/^w([0-9]+)$/);
             if (matches) {
