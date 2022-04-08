@@ -387,7 +387,7 @@ class VisBaseWidget extends React.Component {
                     left: shiftEm,
                     right: shiftEm,
                     cursor: 'ns-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -404,7 +404,7 @@ class VisBaseWidget extends React.Component {
                     left:  shiftEm,
                     right:  shiftEm,
                     cursor: 'ns-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -421,7 +421,7 @@ class VisBaseWidget extends React.Component {
                     left: offsetEm,
                     width: thicknessEm,
                     cursor: 'ew-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -438,7 +438,7 @@ class VisBaseWidget extends React.Component {
                     right: offsetEm,
                     width: thicknessEm,
                     cursor: 'ew-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -455,7 +455,7 @@ class VisBaseWidget extends React.Component {
                     left: squareShift,
                     width: squareWidthHeight,
                     cursor: 'nwse-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -472,7 +472,7 @@ class VisBaseWidget extends React.Component {
                     right: squareShift,
                     width: squareWidthHeight,
                     cursor: 'nesw-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -489,7 +489,7 @@ class VisBaseWidget extends React.Component {
                     left: squareShift,
                     width: squareWidthHeight,
                     cursor: 'nesw-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -506,7 +506,7 @@ class VisBaseWidget extends React.Component {
                     right: squareShift,
                     width: squareWidthHeight,
                     cursor: 'nwse-resize',
-                    zIndex: 1203,
+                    zIndex: 1001,
                     background: 'blue',
                     opacity: 0.3,
                 }}
@@ -702,7 +702,6 @@ class VisBaseWidget extends React.Component {
                 style.bottom = this.state.style.bottom;
             }
 
-            style.zIndex = this.props.VisView.Z_INDEXES.VIEW_SELECT_RECTANGLE; // 1300 is the React dialog
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 

@@ -197,7 +197,7 @@ const getFieldsAfter = (widget, widgets, fonts) => [
                 ]),
             { name: 'width', type: 'dimension' },
             { name: 'height', type: 'dimension' },
-            { name: 'z-index' },
+            { name: 'z-index', type: 'number', min: -200, max: 200 },
             { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
             { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
             { name: 'opacity' },
@@ -264,7 +264,7 @@ const getFieldsAfter = (widget, widgets, fonts) => [
             {
                 name: 'gestures-indicator',
                 type: 'auto',
-                options: Object.keys(widgets).filter(widget => widgets[widget].tpl === 'tplValueGesture'),
+                options: Object.keys(widgets).filter(wid => widgets[wid].tpl === 'tplValueGesture'),
             },
             { name: 'gestures-offsetX', default: 0, type: 'number' },
             { name: 'gestures-offsetY', default: 0, type: 'number' },

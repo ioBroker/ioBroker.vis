@@ -160,6 +160,16 @@ class VisRxWidget extends VisBaseWidget {
             attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
             props.style[attr] = value;
         });
+
+        if (this.props.editMode) {
+            const zIndex = parseInt((this.state.rxStyle['z-index'] || 0), 10);
+            if (this.state.selected) {
+                // move widget to foreground
+                props.style.zIndex = 800 + zIndex;
+            } else {
+                props.style.zIndex = zIndex;
+            }
+        }
     }
 
     render() {

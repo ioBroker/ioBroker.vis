@@ -1051,6 +1051,17 @@ class VisCanWidget extends VisBaseWidget {
             }, 10);
         }
 
+        if (this.widDiv && this.props.editMode) {
+            const zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10);
+            if (this.state.selected) {
+                // move widget to foreground
+                this.widDiv.style.zIndex = 500 + zIndex;
+            } else {
+                this.widDiv.style.zIndex = (parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10)).toString();
+            }
+            props.style.zIndex = 800 + zIndex;
+        }
+
         // the helper div is always relative
         props.style.position = 'absolute';
 

@@ -742,7 +742,26 @@ const WidgetField = props => {
                 },
             }}
             value={value}
-            onChange={e => change(e.target.value)}
+            onChange={e => {
+                if (field.type === 'number') {
+                    const _value = parseFloat(e.target.value);
+                    if (field.min !== undefined) {
+                        if (_value < field.min) {
+                            change(field.min);
+                            return;
+                        }
+                    }
+                    if (field.max !== undefined) {
+                        if (_value > field.max) {
+                            change(field.max);
+                            return;
+                        }
+                    }
+                    change(_value);
+                } else {
+                    change(e.target.value);
+                }
+            }}
             type={field.type ? field.type : 'text'}
             // eslint-disable-next-line react/jsx-no-duplicate-props
             inputProps={{
