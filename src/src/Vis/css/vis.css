@@ -62,7 +62,7 @@ body, html {
 .vis-editmode-overlay {
     width: 100%;
     height: 100%;
-    z-index: 1202;
+    z-index: 1000;
     opacity: 0.3;
     position: absolute;
 }
@@ -90,7 +90,7 @@ body, html {
 
 .vis-editmode-selected.vis-editmode-overlay {
     background-color: green;
-    z-index: 1203;
+    z-index: 1001;
 }
 
 .vis-editmode-selected.vis-editmode-helper {
@@ -119,7 +119,7 @@ body, html {
 }
 
 /* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWERE */
-
+/*
 .vis-no-user-select {
     -webkit-touch-callout: none;
     -ms-touch-select: none;
@@ -244,8 +244,7 @@ button.ui-dialog-titlebar-close {
 }
 
 div.vis-editor-dialog {
-    /*    min-width: 440px !important;
-        max-width: 440px !important;*/
+
 }
 
 div.vis-editor-dialog div div button.ui-dialog-titlebar-close {
@@ -298,13 +297,6 @@ a.ui-dialog-titlebar-restore {
     width: 100%;
     height: 100%;
     z-index: 0;
-    /*	background: -moz-linear-gradient(top,  rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
-        background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0.65)), color-stop(100%,rgba(0,0,0,0)));
-        background: -webkit-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-        background: -o-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-        background: -ms-linear-gradient(top,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-        background: linear-gradient(to bottom,  rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
-        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 ); */
 }
 
 .vis-progressbar {
@@ -456,9 +448,10 @@ div#vis_editor {
     border-bottom-right-radius: 7px;
     border-bottom-left-radius: 7px;
 }
-
+*/
 /*--------------------------------------------- Authentication dialog ------------------------------- */
 /* Mask for background, by default is not display */
+/*
 #login-mask {
     display: none;
     background: #000;
@@ -471,7 +464,6 @@ div#vis_editor {
     z-index: 999;
 }
 
-/* You can customize to your needs  */
 .login-popup {
     display: none;
     background: #333;
@@ -484,16 +476,11 @@ div#vis_editor {
     left: 50%;
     z-index: 99999;
     box-shadow: 0 0 20px #999;
-    /* CSS3 */
     -moz-box-shadow: 0 0 20px #999;
-    /* Firefox */
     -webkit-box-shadow: 0 0 20px #999;
-    /* Safari, Chrome */
     border-radius: 3px 3px 3px 3px;
     -moz-border-radius: 3px;
-    /* Firefox */
     -webkit-border-radius: 3px;
-    /* Safari, Chrome */;
 }
 
 .login-input-field label {
@@ -575,10 +562,10 @@ div#vis_editor {
 .login-button:hover {
     background: #ddd;
 }
-
+*/
 
 /* ---------------- Notifications themes (info, warn)--------------------------- */
-
+/*
 div.jGrowl div.info {
     background-color: #FFF1C2;
     color: navy;
@@ -606,8 +593,9 @@ div.jGrowl div.warn {
     overflow: hidden;
     opacity: 1;
 }
-
+*/
 /* ------------------ connecting -------------------------- */
+/*
 #server-disconnect {
     position: absolute;
     top: 0;
@@ -624,16 +612,13 @@ div.jGrowl div.warn {
     background-color: rgba(25,25,25,0.9);
 }
 #server-disconnect > * {
-    /* center child divs  */
     position: absolute;
     top: 50%;
     left: 50%;
-    /* x-border-box */
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    /* x-unselectable */
     user-select: none;
     -o-user-select: none;
     -ms-user-select: none;
@@ -732,5 +717,5 @@ div.jGrowl div.warn {
         -webkit-transform: rotate(360deg);
     }
 }
-
+*/
 
