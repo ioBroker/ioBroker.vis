@@ -93,10 +93,10 @@ const ViewDrop = props => {
     return <div
         ref={drop}
         style={isOver && CanDrop ? {
-            borderStyle: 'dashed', borderRadius: 4, borderWidth: 1, height: '100%',
-        } : { height: '100%' }}
+            borderStyle: 'dashed', borderRadius: 4, borderWidth: 1, height: '100%', width: '100%',
+        } : { height: '100%', width: '100%' }}
     >
-        <div ref={targetRef}>
+        <div ref={targetRef} style={{ height: '100%', width: '100%' }}>
             {props.children}
         </div>
     </div>;
@@ -376,6 +376,7 @@ class App extends GenericApp {
     }
 
     changeProject = (project, isHistory) => {
+        const newState = { project, needSave: true };
         if (!isHistory) {
             let history = JSON.parse(JSON.stringify(this.state.history));
             let historyCursor = this.state.historyCursor;
@@ -387,27 +388,25 @@ class App extends GenericApp {
                 history.shift();
             }
             historyCursor = history.length - 1;
-            this.setState({
-                history,
-                historyCursor,
-            });
+            newState.history = history;
+            newState.historyCursor = historyCursor;
         }
-        this.setState({ project, needSave: true });
+        this.setState(newState, () => {
+            // save changes after 1 second
+            // eslint-disable-next-line no-unused-expressions
+            this.savingTimer && clearTimeout(this.savingTimer);
+            this.savingTimer = setTimeout(async () => {
+                this.savingTimer = null;
+                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+                this.setState({ needSave: false });
+            }, 1000);
 
-        // save changes after 1 second
-        // eslint-disable-next-line no-unused-expressions
-        this.savingTimer && clearTimeout(this.savingTimer);
-        this.savingTimer = setTimeout(() => {
-            this.savingTimer = null;
-            this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
-            this.setState({ needSave: false });
-        }, 1000);
-
-        this.visTimer && clearTimeout(this.visTimer);
-        this.visTimer = setTimeout(() => {
-            this.visTimer = null;
-            this.setState({ visProject: project });
-        }, 300);
+            this.visTimer && clearTimeout(this.visTimer);
+            this.visTimer = setTimeout(() => {
+                this.visTimer = null;
+                this.setState({ visProject: project });
+            }, 300);
+        });
     }
 
     addProject = async projectName => {

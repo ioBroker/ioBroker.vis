@@ -86,7 +86,13 @@ class VisBaseWidget extends React.Component {
         if (JSON.stringify(widget.style || {}) !== JSON.stringify(state.style) ||
             JSON.stringify(widget.data || {}) !== JSON.stringify(state.data)
         ) {
+            Object.keys(state.style).forEach(attr => {
+                if (state.style[attr] !== widget.style[attr]) {
+                    console.log(`[${Date.now()}] Rerender because of ${attr}: ${state.style[attr]} !== ${widget.style[attr]}`);
+                }
+            });
             const data = JSON.parse(JSON.stringify(widget.data || {}));
+            // detect for CanWidgets if size was changed
             const style = JSON.parse(JSON.stringify(widget.style || {}));
 
             // replace all _PRJ_NAME with vis.0/name
@@ -107,7 +113,7 @@ class VisBaseWidget extends React.Component {
             return {
                 style,
                 data,
-                applyBindings: true,
+                applyBindings: { top: widget.style.top, left: widget.style.left },
             };
         }
 
@@ -642,34 +648,6 @@ class VisBaseWidget extends React.Component {
         this.props.onWidgetsChanged(null, this.props.view, { order });
     }
 
-    /*
-    shouldComponentUpdate(nextProps, nextState) {
-        if (nextProps.applyBindings) {
-            return true;
-        }
-        const widget = nextProps.views[nextProps.view].widgets[nextProps.id];
-        if (JSON.stringify(widget.style) !== JSON.stringify(nextState.style)) {
-            return true;
-        }
-        if (JSON.stringify(widget.data) !== JSON.stringify(nextState.data)) {
-            return true;
-        }
-
-        if (nextProps.selected !== nextState.selected) {
-            return true;
-        }
-
-        if (nextProps.resizable !== nextState.resizable) {
-            return true;
-        }
-
-        if (nextProps.resizeHandles.join(' ') !== nextState.resizeHandles.join(' ')) {
-            return true;
-        }
-
-        return false;
-    }
-    */
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {

@@ -72,6 +72,7 @@ class VisCanWidget extends VisBaseWidget {
 
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
+            console.log('Widget mounted');
             this.renderWidget();
             const newState = { mounted: true };
 
@@ -792,30 +793,34 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
-    applyBindings(doNotApplyStyles) {
-        Object.keys(this.bindings).forEach(id => this.applyBinding(id, doNotApplyStyles));
+    applyBindings(doNotApplyStyles, widgetData, widgetStyle) {
+        Object.keys(this.bindings).forEach(id =>
+            this.applyBinding(id, doNotApplyStyles, widgetData, widgetStyle));
     }
 
-    applyBinding(stateId, doNotApplyStyles) {
+    applyBinding(stateId, doNotApplyStyles, widgetData, widgetStyle) {
         this.bindings[stateId].forEach(item => {
             const widgetContext = this.props.allWidgets[this.props.id];
+            widgetStyle = widgetStyle || widgetContext.style;
 
             const value = this.props.formatUtils.formatBinding(
                 item.format,
                 item.view,
                 this.props.id,
                 this.props.views[item.view].widgets[this.props.id],
-                widgetContext.data,
+                widgetData || widgetContext.data,
             );
-
-            // console.log(`[${new Date().toISOString()}](${item.widget}) BINDINGS: ${stateId}`);
 
             if (widgetContext) {
                 if (item.type === 'data') {
-                    // trigger observable
-                    widgetContext.data.attr(item.attr, value);
+                    if (widgetData) {
+                        widgetData.data[item.attr] = value;
+                    } else {
+                        // trigger observable
+                        widgetContext.data.attr(item.attr, value);
+                    }
                 } else if (item.type === 'style') {
-                    widgetContext.style[item.attr] = value;
+                    widgetStyle[item.attr] = value;
                     // update style
                     !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
                 }
@@ -828,6 +833,7 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     renderWidget(update, newWidgetData, newWidgetStyle) {
+        console.log(`[${Date.now()}] Render widget`);
         let parentDiv = this.props.refParent;
         if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
             parentDiv = parentDiv.current;
@@ -859,6 +865,57 @@ class VisCanWidget extends VisBaseWidget {
             }
         }
 
+        let isRelative;
+
+        // calculate new styles and data
+        let widgetData;
+        let widgetStyle;
+        try {
+            widgetData = { wid, ...(widget.data || {}) };
+            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
+            this.applyBindings(true, widgetData, widgetStyle);
+
+            isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
+                widgetStyle && (
+                    widgetStyle.position === 'relative' ||
+                    widgetStyle.position === 'static' ||
+                    widgetStyle.position === 'sticky'
+                );
+
+            if (isRelative) {
+                delete widgetStyle.top;
+                delete widgetStyle.left;
+            }
+        } catch (e) {
+            console.log(`[${wid}] Cannot bind data of widget: ${e}`);
+            return;
+        }
+
+        const newData = JSON.stringify(widgetData);
+        const newStyle = JSON.stringify(widgetStyle);
+        // detect if update required
+        if (this.widDiv) {
+            if (this.oldEditMode === this.state.oldEditMode) {
+                if (this.oldData === newData) {
+                    if (this.oldStyle === newStyle || widgetData._no_style) {
+                        // ignore changes
+                        console.log('Rerender ignored as no changes');
+                        return;
+                    } else if (!this.updateOnStyle) {
+                        // apply new style changes directly on DOM
+                        // fix position
+                        VisCanWidget.applyStyle(this.widDiv, widgetStyle);
+                        this.widDiv.style.position = isRelative ? 'relative' : 'absolute';
+                        console.log('Rerender ignored as only style applied');
+                        return;
+                    }
+                }
+            }
+        }
+        this.oldEditMode = this.state.oldEditMode;
+        this.oldData = newData;
+        this.oldStyle = newStyle;
+
         this.destroy(update);
 
         const oldIDs = this.IDs;
@@ -882,22 +939,11 @@ class VisCanWidget extends VisBaseWidget {
             this.props.linkContext.subscribe(subscribe);
         }
 
-        let widgetData;
-        let widgetStyle;
-        try {
-            widgetData = new this.props.can.Map({ wid, ...(widget.data || {}) });
-            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
-            // try to apply bindings to every attribute
-            this.props.allWidgets[wid] = {
-                style: widgetStyle,
-                data: widgetData,
-            };
-
-            this.applyBindings(true);
-        } catch (e) {
-            console.log(`[${wid}] Cannot bind data of widget: ${e}`);
-            return;
-        }
+        // try to apply bindings to every attribute
+        this.props.allWidgets[wid] = {
+            style: widgetStyle,
+            data: new this.props.can.Map(widgetData),
+        };
 
         // Add to the global array of widgets
         let userGroups = widgetData['visibility-groups'];
@@ -917,7 +963,7 @@ class VisCanWidget extends VisBaseWidget {
             if (widget.tpl) {
                 if (!this.widDiv || !update || !widget?.data?.members.length) {
                     const options = {
-                        data: widgetData,
+                        data: this.props.allWidgets[wid].data,
                         viewDiv: this.props.view,
                         view: this.props.view,
                         style: widgetStyle,
@@ -928,7 +974,7 @@ class VisCanWidget extends VisBaseWidget {
                     }
                     const widgetFragment = this.props.can.view(widget.tpl, options);
 
-                    if (this.props.isRelative) {
+                    if (isRelative) {
                         // add widget according to the relativeWidgetOrder
                         const pos = this.props.relativeWidgetOrder.indexOf(wid);
                         if (pos === 0) {
@@ -962,19 +1008,7 @@ class VisCanWidget extends VisBaseWidget {
             this.widDiv = parentDiv.querySelector(`#${wid}`);
 
             if (this.widDiv) {
-                const isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
-                    widgetStyle && (
-                        widgetStyle.position === 'relative' ||
-                        widgetStyle.position === 'static' ||
-                        widgetStyle.position === 'sticky'
-                    );
-
                 if (widgetStyle && !widgetData._no_style) {
-                    if (isRelative) {
-                        delete widgetStyle.top;
-                        delete widgetStyle.left;
-                    }
-
                     // fix position
                     VisCanWidget.applyStyle(this.widDiv, widgetStyle);
                 }
@@ -1043,15 +1077,32 @@ class VisCanWidget extends VisBaseWidget {
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        const lastState = JSON.stringify(nextState);
+        // if no widget yet rendered, we can update as frequent as we want
+        if (!this.widDiv) {
+            this.lastState = lastState;
+            return true;
+        }
+
+        if (!this.lastState || lastState !== this.lastState) {
+            this.lastState = lastState;
+            return true;
+        }
+
+        return false;
+    }
+
     renderWidgetBody(props) {
         if (this.state.applyBindings && !this.bindingsTimer) {
             this.bindingsTimer = setTimeout(() => {
                 this.bindingsTimer = null;
+                console.log(`[${Date.now()}] Widget bindings ${JSON.stringify(this.state.applyBindings)}`);
                 this.renderWidget(true);
             }, 10);
         }
 
-        if (this.widDiv && this.props.editMode) {
+        if (this.widDiv && this.state.editMode) {
             const zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10);
             if (this.state.selected) {
                 // move widget to foreground

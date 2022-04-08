@@ -48,8 +48,18 @@ const CSS = props => {
 
     useEffect(() => {
         const load = async () => {
-            setGlobalCss(await props.socket.readFile('vis', 'css/vis-common-user.css'));
-            setLocalCss(await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`));
+            const commonCss = await props.socket.readFile('vis', 'css/vis-common-user.css');
+            if (commonCss.type) {
+                setGlobalCss(commonCss.data);
+            } else {
+                setGlobalCss(commonCss);
+            }
+            const userCss = await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`);
+            if (commonCss.type) {
+                setLocalCss(userCss.data);
+            } else {
+                setLocalCss(userCss);
+            }
             if (window.localStorage.getItem('CSS.type')) {
                 setType(window.localStorage.getItem('CSS.type'));
             }

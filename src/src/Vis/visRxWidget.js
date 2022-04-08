@@ -161,7 +161,7 @@ class VisRxWidget extends VisBaseWidget {
             props.style[attr] = value;
         });
 
-        if (this.props.editMode) {
+        if (this.state.editMode) {
             const zIndex = parseInt((this.state.rxStyle['z-index'] || 0), 10);
             if (this.state.selected) {
                 // move widget to foreground

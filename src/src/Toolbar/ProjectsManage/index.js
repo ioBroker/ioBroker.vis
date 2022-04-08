@@ -66,7 +66,11 @@ const ProjectsManage = props => {
         props.socket.readFile('vis.0', `${projectName}/vis-views.json`).then(project => {
             const zip = new JSZip();
 
-            zip.file(`${projectName}.json`, project);
+            if (project.type) {
+                zip.file(`${projectName}.json`, project.data);
+            } else {
+                zip.file(`${projectName}.json`, project);
+            }
 
             zip.generateAsync({ type: 'blob' }).then(content => {
                 saveAs(content, `${projectName}.zip`);
