@@ -324,7 +324,7 @@ class VisView extends React.Component {
 
     onMouseWidgetUp = !this.props.runtime ? e => {
         e && e.stopPropagation();
-        this.refView.current.removeEventListener('mousemove', this.onMouseWidgetMove);
+        this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
         window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
 
         if (this.movement.moved) {
@@ -472,7 +472,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder, maxZIndex) {
+    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder) {
         const isRelative = widget.style && (
             widget.style.position === 'relative' ||
             widget.style.position === 'static' ||
@@ -509,7 +509,6 @@ class VisView extends React.Component {
             projectName: props.projectName,
             relativeWidgetOrder,
             VisView,
-            maxZIndex,
         };
 
         // we must add it because of view in widget
@@ -531,8 +530,6 @@ class VisView extends React.Component {
             return null;
         }
 
-        let maxZIndex = 0;
-
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (this.state.mounted) {
             const widgets = this.props.views[this.props.view].widgets;
@@ -545,11 +542,7 @@ class VisView extends React.Component {
                         return;
                     }
 
-                    if (widget.style && parseInt(widget.style['z-index'], 10) > maxZIndex) {
-                        maxZIndex = parseInt(widget.style['z-index'], 10);
-                    }
-
-                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, maxZIndex);
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder);
 
                     if (isRelative) {
                         if (!relativeWidgetOrder.includes(id)) {

@@ -12,7 +12,7 @@
 <script type="text/javascript" src="widgets/bars/js/bars.js"></script>
 <script type="text/javascript" src="widgets/bars/js/jquery.sidebar.js"></script>
 
-<script id="tplBarFilter" 
+<script id="tplBarFilter"
 		type="text/ejs"
 		class="vis-tpl"
 		data-vis-type="filter"
@@ -35,7 +35,7 @@
     </div>
 </script>
 
-<script id="tplBarNavigator" 
+<script id="tplBarNavigator"
 		type="text/ejs"
 		class="vis-tpl"
 		data-vis-type="navigation"
@@ -3290,7 +3290,7 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-        data-vis-attrs="group.objects;attrCount[1]/slider,0,20,1;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
+		data-vis-attrs="attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: visible" id="<%= this.data.attr('wid') %>"></div>
 </script>
@@ -6607,7 +6607,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="jqui"
-        data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 100px; height: 28px;"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;">&nbsp;Nav</div></div></div>'
+        data-vis-prev='<div id="prev_tplJquiIconNav" style="position: relative; text-align: initial;padding: 4px "><div data-vis-nav="" class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default jqui-nav-state " style="width: 100px; height: 28px;"> <div class="vis-widget-prev-body"> <img src="widgets/jqui/img/internet-web-browser-2.png" style="vertical-align:middle;height:100%;">&nbsp;Nav</div></div></div>'
         data-vis-name="navigation - Icon"
         data-vis-attrs="src/image;imageHeight/slider,0,200,1;alt;text;nav_view;hide_effect;hide_duration;show_effect;show_duration">
     <div
@@ -6935,7 +6935,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 <script id="tplIconState"
         type="text/ejs"
         class="vis-tpl"
-        data-vis-prev='<div id="prev_tplIconState" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 122.4px; height: 32.4px; position: absolute; left: 237px; top: 201px;" id="19vlr5eto" data-oid="dev1" data-val="value"> <div class="vis-widget-prev-body"> <img src="/vis/widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
+        data-vis-prev='<div id="prev_tplIconState" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-widget ui-button ui-corner-all ui-state-default " style="width: 122.4px; height: 32.4px; position: absolute; left: 237px; top: 201px;" id="19vlr5eto" data-oid="dev1" data-val="value"> <div class="vis-widget-prev-body"> <img src="widgets/jqui/img/internet-web-browser-2.png" style=" vertical-align:middle;height:100%;" alt="">set value </div> </div></div>'
         data-vis-set="jqui"
         data-vis-name="ctrl - Icon State"
         data-vis-attrs="oid;value;text;src/image;imageHeight/slider,0,200,1;alt;invert_icon/checkbox">
@@ -8965,7 +8965,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
             "Swipe Navigation":     {"en": "Swipe Navigation",  "de": "Swipe Navigation",   "ru": "Swipe навигация"}
         });
     }
-    
+
     vis.binds.swipe = {
         loadedSwipe: false,
         loadedRound: false,
@@ -9015,7 +9015,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
                 }, 100);
                 return;
             }
-            
+
             if (vis.editMode) {
                 $div.show()
                     .find('.translate-it')
@@ -9130,7 +9130,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
         carousel: function (wid, view, data, style) {
             var $div = $('#' + wid);
             var childView = data.contains_view;
-            
+
             // if nothing found => wait
             if (!$div.length) {
                 setTimeout(function () {
@@ -9156,7 +9156,7 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 
 <script id="tplSwipe"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Swipe.png"></img>'
         data-vis-name="swipe Navigation"
@@ -9175,9 +9175,9 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 </script>
 
 
-<script id="tplCarousel" 
+<script id="tplCarousel"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Carousel.png"></img>'
         data-vis-name="Carousel"
@@ -9265,13 +9265,13 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
     };
 </script>
 
-<script type="text/ejs" 
-        id="tplSTab" 
+<script type="text/ejs"
+        id="tplSTab"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplSTab" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 76px; left: 23px; width: 138px; height: 121px; position: absolute;" > <div class="vis-widget-prev-body"> <span style="width:100%;height:100%" class="ui-slider-tabs"> <!-- Unordered list representing the tabs --> <div class="ui-slider-tabs-list-wrapper"><div class="ui-slider-tabs-list-container" style="margin: 0px 35px;"><ul class="ui-slider-tabs-list" style="margin-left: 0px; width: 166px;"> <li class="selected" style="height: 32px;"><a href="#w00016_st1" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st2" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st3" style="height: 32px;">Tab</a></li></ul><a href="#" class="ui-slider-left-arrow edge" style="width: 35px; height: 32px;"><div></div></a><a href="#" class="ui-slider-right-arrow" style="width: 35px; height: 32px;"><div></div></a></div></div><div class="ui-slider-tabs-content-container" style="height: 86px;"><div style="padding-left: 0px; height: 100%; display: block; left: 0px; width: 126px;" class="ui-slider-tab-content selected"> <div class="editmode-helper"></div> <div data-vis-contains="hallo" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div></div></span> </div> </div>'
         data-vis-set="tabs"
         data-vis-update-style="true"
-        data-vis-name="SliderTabs" 
+        data-vis-name="SliderTabs"
         data-vis-attrs="height[100]/slider,20,1000,1;show_tabs[1]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">

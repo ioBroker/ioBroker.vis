@@ -337,7 +337,7 @@ const getFieldsAfter = (widget, widgets, fonts) => [
 const Widget = props => {
     if (props.widgetsLoaded && props.selectedWidgets && props.selectedWidgets.length) {
         const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
-        const widgets = props.project[props.selectedView].widgets;
+        const widgets = props.project[props.selectedView]?.widgets;
 
         const fieldsData = useMemo(() => {
             let widget;
@@ -346,14 +346,14 @@ const Widget = props => {
             const commonGroups = { common: props.selectedWidgets.length };
             const selectedWidgetsFields = [];
 
-            props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
+            widgets && props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
                 const fields = [{
                     name: 'common',
                     singleName: 'common',
                     fields: [],
                 }];
 
-                widget = props.project[props.selectedView].widgets[selectedWidget];
+                widget = widgets[selectedWidget];
                 if (!widget) {
                     return;
                 }
@@ -404,6 +404,7 @@ const Widget = props => {
                 let indexedGroups = {};
                 let groupName = 'common';
                 let isIndexedGroup = false;
+
                 widgetType.params.split(';').forEach(fieldString => {
                     if (!fieldString) {
                         return;
@@ -564,6 +565,7 @@ const Widget = props => {
                 widget, widgetType, commonFields, commonGroups, selectedWidgetsFields,
             };
         }, [props.selectedWidgets, props.project, props.selectedView]);
+
         const {
             widget, commonFields, commonGroups, selectedWidgetsFields,
         } = fieldsData;
@@ -644,7 +646,7 @@ const Widget = props => {
 
         fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
 
-        fields.forEach(group => {
+        widgets && fields.forEach(group => {
             const found = props.selectedWidgets.find(selectedWidget => {
                 const fieldFound = group.fields.find(field => {
                     const fieldValue = widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name];
@@ -671,6 +673,10 @@ const Widget = props => {
         const [clearGroup, setClearGroup] = useState(null);
 
         const [showWidgetCode, setShowWidgetCode] = useState(window.localStorage.getItem('showWidgetCode') === 'true');
+
+        if (!widgets) {
+            return null;
+        }
 
         const allOpened = !fields.find(group => !accordionOpen[group.name]);
         const allClosed = !fields.find(group => accordionOpen[group.name]);
