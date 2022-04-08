@@ -73,8 +73,8 @@ const Attributes = props => {
         </Tabs>
         <div style={{ height: 'calc(100% - 82px', overflowY: 'auto'  }}>
             {
-                selected === 'Widget' && (!props.widgetsLoaded || !props.selectedWidgets?.length) ?
-                    <TabContent {...props} classes={{}} /> : null
+                (selected === 'Widget' && !(props.widgetsLoaded && props.selectedWidgets?.length)) ?
+                    null : <TabContent {...props} classes={{}} />
             }
         </div>
     </>;

@@ -3,21 +3,14 @@ import { usePreview } from 'react-dnd-preview';
 export const getWidgetTypes = () => {
     if (!window.visWidgetTypes) {
         window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
-            .map(script => {
-                if (script.attributes['data-vis-prev']) {
-                    console.log(script.attributes['data-vis-prev']);
-                }
-                return {
-                    name: script.attributes.id.value,
-                    set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
-                    // image: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value
-                    // .match(/src="(.*?)"/)[1] : null,
-                    params: Object.values(script.attributes)
-                        .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
-                        .map(attribute => attribute.value)
-                        .join(''),
-                };
-            });
+            .map(script => ({
+                name: script.attributes.id.value,
+                set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
+                params: Object.values(script.attributes)
+                    .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
+                    .map(attribute => attribute.value)
+                    .join(''),
+            }));
     }
 
     return window.visWidgetTypes;
