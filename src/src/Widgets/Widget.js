@@ -14,7 +14,7 @@ const styles = () => ({
         borderWidth: 1,
         borderRadius: 8,
         backgroundColor: 'orange',
-        width: 120,
+        width: 240,
         display: 'inline-flex',
         margin: 4,
         height: 30,
@@ -23,7 +23,8 @@ const styles = () => ({
         textAlign: 'center', flex: 1, alignSelf: 'center', color: 'black',
     },
     widgetImage: {
-        width: 20,
+        // width: 20,
+        zoom: 0.4,
     },
     widgetImageContainer: {
         borderLeftStyle: 'solid', borderLeftWidth: 1, borderLeftColor: 'gray', display: 'flex', padding: 4, alignItems: 'center',
@@ -32,9 +33,14 @@ const styles = () => ({
 
 const Widget = props => {
     const result = <div className={props.classes.widget}>
-        <div className={props.classes.widgetTitle}>{window._(props.widgetType.name)}</div>
+        <div className={props.classes.widgetTitle}>{window._(props.widgetType.title)}</div>
         <span className={props.classes.widgetImageContainer}>
-            <img className={props.classes.widgetImage} src={image} alt="" />
+            <span
+                className={props.classes.widgetImage}
+                dangerouslySetInnerHTML={
+                    { __html: props.widgetType.preview }
+                }
+            />
         </span>
     </div>;
 

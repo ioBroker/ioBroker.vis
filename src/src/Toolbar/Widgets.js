@@ -70,6 +70,7 @@ const Widgets = props => {
                     name: 'Cut',
                     size: 'normal',
                     disabled: !props.selectedWidgets.length,
+                    onClick: () => props.cutWidgets(),
                 },
                 {
                     type: 'icon-button',
@@ -77,6 +78,7 @@ const Widgets = props => {
                     name: 'Copy',
                     size: 'normal',
                     disabled: !props.selectedWidgets.length,
+                    onClick: () => props.copyWidgets(),
                 },
             ], [
                 {
@@ -84,7 +86,8 @@ const Widgets = props => {
                     Icon: BiPaste,
                     name: 'Paste',
                     size: 'normal',
-                    disabled: !props.widgetsClipboard.widgets.length,
+                    disabled: !Object.keys(props.widgetsClipboard.widgets).length,
+                    onClick: () => props.pasteWidgets(),
                 },
             ]],
             {

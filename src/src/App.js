@@ -154,7 +154,7 @@ class App extends GenericApp {
             historyCursor: 0,
             widgetsClipboard: {
                 type: null,
-                widgets: [],
+                widgets: {},
             },
             ...this.state,
         });
@@ -349,9 +349,8 @@ class App extends GenericApp {
         await this.setStateAsync(newState);
     }
 
-    addWidget = async (widgetType, x, y) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = project[this.state.selectedView].widgets;
+    getNewWidgetId = () => {
+        const widgets = this.state.project[this.state.selectedView].widgets;
         let newKey = 1;
         Object.keys(widgets).forEach(name => {
             const matches = name.match(/^w([0-9]+)$/);
@@ -361,7 +360,16 @@ class App extends GenericApp {
                 }
             }
         });
+
         newKey = `w${newKey.toString().padStart(6, 0)}`;
+
+        return newKey;
+    }
+
+    addWidget = async (widgetType, x, y) => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        const newKey = this.getNewWidgetId();
         widgets[newKey] = {
             tpl: widgetType,
             data: {},
@@ -391,16 +399,50 @@ class App extends GenericApp {
     }
 
     cutCopyWidgets = async  type => {
+        const widgets = {};
+        this.state.selectedWidgets.forEach(selectedWidget =>
+            widgets[selectedWidget] = this.state.project[this.state.selectedView].widgets[selectedWidget]);
         await this.setStateAsync({
             widgetsClipboard: {
                 type,
-                widgets: this.state.selectedWidgets.map(selectedWidget =>
-                    this.state.project[this.state.selectedView].widgets[selectedWidget]),
+                view: this.state.selectedView,
+                widgets,
             },
         });
     }
 
+    pasteWidgets = async () => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+
+        const newKeys = [];
+        Object.keys(this.state.widgetsClipboard.widgets).forEach(clipboardWidgetId => {
+            const clipboardWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
+            const newKey = this.getNewWidgetId();
+            widgets[newKey] = clipboardWidget;
+            newKeys.push(newKey);
+            if (this.state.widgetsClipboard.type === 'cut') {
+                if (project[this.state.widgetsClipboard.view]) {
+                    delete project[this.state.widgetsClipboard.view].widgets[clipboardWidgetId];
+                }
+            }
+        });
+        await this.setStateAsync({ selectedWidgets: [] });
+        await this.changeProject(project);
+        await this.setStateAsync({ selectedWidgets: newKeys });
+        if (this.state.widgetsClipboard.type === 'cut') {
+            await this.setStateAsync({
+                widgetsClipboard: {
+                    type: null,
+                    view: null,
+                    widgets: {},
+                },
+            });
+        }
+    }
+
     undo = async () => {
+        await this.setStateAsync({ selectedWidgets: [] });
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({
             historyCursor: this.state.historyCursor - 1,
@@ -408,6 +450,7 @@ class App extends GenericApp {
     }
 
     redo = async () => {
+        await this.setStateAsync({ selectedWidgets: [] });
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
         await this.setStateAsync({
             historyCursor: this.state.historyCursor + 1,
@@ -665,6 +708,7 @@ class App extends GenericApp {
                         widgetsClipboard={this.state.widgetsClipboard}
                         cutWidgets={this.cutWidgets}
                         copyWidgets={this.copyWidgets}
+                        pasteWidgets={this.pasteWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />
