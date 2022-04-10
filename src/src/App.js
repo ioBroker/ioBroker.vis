@@ -247,9 +247,11 @@ class App extends GenericApp {
             }
         });
 
+        let changed = false;
         for (let i = len - 1; i >= 0; i--) {
             if (!project[openedViews[i]]) {
                 openedViews.splice(i, 1);
+                changed = true;
             }
         }
 
@@ -257,15 +259,21 @@ class App extends GenericApp {
             const view = Object.keys(project).find(_view => _view !== '___settings');
             if (view) {
                 openedViews[0] = view;
+                changed = true;
             }
+        }
+        if (changed) {
+            window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
         }
 
         // check that selectedView and openedViews exist
         if (!project[selectedView]) {
             selectedView = openedViews[0] || '';
+            window.localStorage.setItem('selectedView', selectedView);
         } else
         if (openedViews && !openedViews.includes(selectedView)) {
             selectedView = openedViews[0];
+            window.localStorage.setItem('selectedView', selectedView);
         }
 
         const groups = await this.socket.getGroups();
@@ -286,25 +294,26 @@ class App extends GenericApp {
     }
 
     async onConnectionReady() {
-        if (window.localStorage.getItem('projectName')) {
-            this.loadProject(window.localStorage.getItem('projectName'));
-        } else {
-            // take first project
-            this.socket.readDir('vis.0', '')
-                .then(projects => this.loadProject(projects[0].file));
-        }
-
         await this.refreshProjects();
 
         const user = await this.socket.getCurrentUser();
         const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
-        this.setState({
+        await this.setStateAsync({
             currentUser,
             selectedView: '',
             splitSizes: window.localStorage.getItem('splitSizes')
                 ? JSON.parse(window.localStorage.getItem('splitSizes'))
                 : [20, 60, 20],
         });
+
+        if (window.localStorage.getItem('projectName')) {
+            await this.loadProject(window.localStorage.getItem('projectName'));
+        } else if (this.state.projects.includes('main')) {
+            await this.loadProject('main');
+        } else {
+            // take first project
+            await this.loadProject(this.state.projects[0]);
+        }
     }
 
     refreshProjects = () => this.socket.readDir('vis.0', '')
@@ -342,7 +351,7 @@ class App extends GenericApp {
 
         window.localStorage.setItem('selectedView', selectedView);
 
-        if (window.location.hash !== '#view') {
+        if (window.location.hash !== `#${selectedView}`) {
             window.location.hash = selectedView;
         }
 
