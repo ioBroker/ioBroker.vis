@@ -211,7 +211,7 @@ class VisBaseWidget extends React.Component {
                 // set select
                 this.props.setSelectedWidgets([this.props.id]);
             }
-        } else if (this.props.moveAllowed) {
+        } else if (this.props.moveAllowed && this.state.draggable !== false) {
             // User can drag only objects of the same type
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
         }
@@ -251,6 +251,9 @@ class VisBaseWidget extends React.Component {
 
     onMove = (x, y, save, calculateRelativeWidgetPosition) => {
         if (this.resize) {
+            if (this.state.resizable === false) {
+                return;
+            }
             if (x === undefined) {
                 // start of resizing
                 const rect = (this.widDiv || this.refService.current).getBoundingClientRect();
@@ -340,6 +343,10 @@ class VisBaseWidget extends React.Component {
                 this.movement = null;
             }
         } else if (x === undefined) {
+            if (this.state.draggable === false) {
+                return;
+            }
+
             // initiate movement
             this.movement = {
                 top: this.refService.current.offsetTop,
@@ -774,7 +781,7 @@ class VisBaseWidget extends React.Component {
             style.userSelect = 'none';
 
             if (selected) {
-                if (this.props.moveAllowed) {
+                if (this.props.moveAllowed && this.state.draggable !== false) {
                     style.cursor = 'move';
                 } else {
                     style.cursor = 'default';
@@ -800,12 +807,12 @@ class VisBaseWidget extends React.Component {
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;
-        if (this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
+        if (!this.state.hideHelper && this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
             widgetName = <div ref={this.refName} className="vis-editmode-widget-name">{ this.props.id }</div>;
             style.overflow = 'visible';
         }
 
-        const overlay = this.props.runtime || !this.state.editMode || widget.groupid ? null : <div
+        const overlay = this.state.hideHelper || this.props.runtime || !this.state.editMode || widget.groupid ? null : <div
             className={classNames}
             onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
         />;
@@ -817,7 +824,6 @@ class VisBaseWidget extends React.Component {
             style={props.style}
         >
             { widgetName }
-            { /* relativeMoveControls */ }
             { overlay }
             { this.state.selectedOne ? this.getResizeHandlers() : null }
             { rxWidget }
