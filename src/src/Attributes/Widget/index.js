@@ -19,7 +19,7 @@ import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
-import { getWidgetTypes } from '../../Utils';
+import { getWidgetTypes, parseAttributes } from '../../Utils';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -346,19 +346,17 @@ const Widget = props => {
         const selectedWidgetsFields = [];
 
         widgets && props.selectedWidgets.forEach((selectedWidget, widgetIndex) => {
-            const fields = [{
-                name: 'common',
-                singleName: 'common',
-                fields: [],
-            }];
-
             widget = widgets[selectedWidget];
             if (!widget) {
                 return;
             }
 
             if (widget.tpl === '_tplGroup') {
-                fields.push({
+                const groupFields = [{
+                    name: 'common',
+                    singleName: 'common',
+                    fields: [],
+                }, {
                     name: 'objects',
                     singleName: 'objects',
                     fields: [{
@@ -368,21 +366,22 @@ const Widget = props => {
                         max: 19,
                         step: 1,
                     }],
-                });
+                }];
+
                 for (let i = 1; i <= widget.data.attrCount; i++) {
-                    fields[0].fields.push({
+                    groupFields[0].fields.push({
                         name: `groupAttr${i}`,
                         title: widget.data[`attrName${i}`],
                         type: widget.data[`attrType${i}`],
                     });
-                    fields[1].fields.push({
+                    groupFields[1].fields.push({
                         name: `attrName${i}`,
                         singleName: 'attrName',
                         index: i,
                     });
                 }
                 for (let i = 1; i <= widget.data.attrCount; i++) {
-                    fields[1].fields.push({
+                    groupFields[1].fields.push({
                         name: `attrType${i}`,
                         singleName: 'attrType',
                         index: i,
@@ -390,7 +389,7 @@ const Widget = props => {
                         options: ['', 'checkbox', 'image', 'color', 'views', 'html', 'widget', 'history'],
                     });
                 }
-                selectedWidgetsFields.push(fields);
+                selectedWidgetsFields.push(groupFields);
                 return;
             }
 
@@ -399,6 +398,7 @@ const Widget = props => {
                 return;
             }
 
+            /*
             let currentGroup = fields[fields.length - 1];
             let indexedGroups = {};
             let groupName = 'common';
@@ -459,9 +459,9 @@ const Widget = props => {
                     } else
                     if (field.name === 'sound') {
                         field.type = 'sound';
-                    } else if (field.name.indexOf('_effect') !== -1) {
+                    } else if (field.name.includes('_effect')) {
                         field.type = 'effect';
-                    } else if (field.name.indexOf('_eff_opt') !== -1) {
+                    } else if (field.name.includes('_eff_opt')) {
                         field.type = 'effect-options';
                     }
 
@@ -556,6 +556,8 @@ const Widget = props => {
                     }
                 }
             });
+             */
+            const fields = parseAttributes(widgetType.params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
 
             selectedWidgetsFields.push(fields);
         });

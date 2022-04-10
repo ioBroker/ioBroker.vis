@@ -9,6 +9,7 @@ export const getWidgetTypes = () => {
                 preview: script.attributes['data-vis-prev']?.value,
                 set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
                 imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
+                init: script.attributes['data-vis-init']?.value,
                 params: Object.values(script.attributes)
                     .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
                     .map(attribute => attribute.value)
@@ -17,6 +18,174 @@ export const getWidgetTypes = () => {
     }
 
     return window.visWidgetTypes;
+};
+
+export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonFields, widgetSet, widgetData) => {
+    let groupName = 'common';
+    let indexedGroups = {};
+    let isIndexedGroup = false;
+    commonGroups = commonGroups || { common: 1 };
+    commonFields = commonFields || {};
+    const fields = [{
+        name: 'common',
+        singleName: 'common',
+        fields: [],
+    }];
+    let currentGroup = fields[0];
+
+    widgetParams.split(';').forEach(fieldString => {
+        if (!fieldString) {
+            return;
+        }
+        if (fieldString.split('/')[0].startsWith('group.')) {
+            groupName = fieldString.split('/')[0].split('.')[1];
+            if (widgetIndex > 0 && commonGroups && !commonGroups[groupName]) {
+                return;
+            }
+            indexedGroups = {};
+            if (fieldString.split('/')[1] !== 'byindex') {
+                currentGroup = fields.find(group => group.name === groupName);
+                if (!currentGroup) {
+                    fields.push(
+                        {
+                            name: groupName,
+                            singleName: groupName,
+                            fields: [],
+                        },
+                    );
+                    currentGroup = fields[fields.length - 1];
+                }
+                if (!commonGroups[groupName]) {
+                    commonGroups[groupName] = 0;
+                }
+                commonGroups[groupName]++;
+                isIndexedGroup = false;
+            } else {
+                isIndexedGroup = true;
+            }
+        } else {
+            const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
+
+            const repeats = match[2];
+
+            const field = {
+                name: match[1],
+                default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined,
+                type: match[4] ? match[4].substring(1).split('/')[0] : undefined,
+                onChangeFunc: match[4] ? match[4].substring(1).split('/')[1] : undefined,
+            };
+
+            if (widgetIndex > 0 && !repeats && commonFields && !commonFields[`${groupName}.${field.name}`]) {
+                return;
+            }
+
+            if (field.name === 'oid' || field.name.match(/^oid-/)) {
+                field.type = field.type || 'id';
+            } else if (field.name === 'color') {
+                field.type = 'color';
+            } else if (field.name.match(/nav_view$/)) {
+                field.type = 'views';
+            } else
+            if (field.name === 'sound') {
+                field.type = 'sound';
+            } else if (field.name.includes('_effect')) {
+                field.type = 'effect';
+            } else if (field.name.includes('_eff_opt')) {
+                field.type = 'effect-options';
+            }
+
+            if (field.type && (field.type.startsWith('id,'))) {
+                [field.type, field.filter] = field.type.split(','); // options
+            }
+            if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
+                const options = field.type.split(',');
+                [field.type] = options;
+                field.options = options.slice(1);
+            }
+            if (field.type && (field.type.startsWith('slider,') || field.type.startsWith('number,'))) {
+                const options = field.type.split(',');
+                field.type = options[0];
+                field.min = parseInt(options[1]);
+                field.max = parseInt(options[2]);
+                field.step = parseInt(options[3]);
+                if (!field.step) {
+                    field.step = (field.max - field.min / 100);
+                }
+            }
+            if (field.type && field.type.startsWith('style,')) {
+                const options = field.type.split(',');
+                field.type = options[0];
+                field.filterFile = options[1];
+                field.filterName = options[2];
+                field.filterAttrs = options[3];
+                field.removeName = options[4];
+                if (!field.step) {
+                    field.step = (field.max - field.min / 100);
+                }
+            }
+            field.singleName = field.name;
+            field.set = widgetSet;
+            if (repeats) {
+                const repeatsMatch = repeats.match(/\(([0-9a-z_]+)-([0-9a-z_]+)\)/i);
+                const name = field.name;
+                if (repeatsMatch) {
+                    if (!repeatsMatch[1].match(/^[0-9]$/)) {
+                        repeatsMatch[1] = widgetData ? parseInt(widgetData[repeatsMatch[1]]) : 0;
+                    }
+                    if (!repeatsMatch[2].match(/^[0-9]$/)) {
+                        repeatsMatch[2] = widgetData ? parseInt(widgetData[repeatsMatch[2]]) : 0;
+                    }
+                    for (let i = repeatsMatch[1]; i <= repeatsMatch[2]; i++) {
+                        if (isIndexedGroup) {
+                            if (widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
+                                return;
+                            }
+                            if (widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
+                                return;
+                            }
+                            if (!indexedGroups[i]) {
+                                currentGroup = {
+                                    name: `${groupName}-${i}`,
+                                    singleName: groupName,
+                                    index: i,
+                                    fields: [],
+                                };
+                                indexedGroups[i] = currentGroup;
+                                fields.push(currentGroup);
+                            }
+                            if (!commonGroups[`${groupName}-${i}`]) {
+                                commonGroups[`${groupName}-${i}`] = 0;
+                            }
+                            commonGroups[`${groupName}-${i}`]++;
+
+                            field.name = `${name}${i}`;
+                            indexedGroups[i].fields.push({ ...field });
+                            if (!commonFields[`${groupName}-${i}.${field.name}`]) {
+                                commonFields[`${groupName}-${i}.${field.name}`] = 0;
+                            }
+                            commonFields[`${groupName}-${i}.${field.name}`]++;
+                        } else {
+                            field.name = `${name}${i}`;
+                            field.index = i;
+                            currentGroup.fields.push({ ...field });
+                            if (!commonFields[`${groupName}.${field.name}`]) {
+                                commonFields[`${groupName}.${field.name}`] = 0;
+                            }
+                            commonFields[`${groupName}.${field.name}`]++;
+                        }
+                    }
+                }
+            } else {
+                currentGroup.fields.push(field);
+                if (!commonFields[`${groupName}.${field.name}`]) {
+                    commonFields[`${groupName}.${field.name}`] = 0;
+                }
+                commonFields[`${groupName}.${field.name}`]++;
+            }
+        }
+    });
+
+    return fields;
 };
 
 export const DndPreview = () => {

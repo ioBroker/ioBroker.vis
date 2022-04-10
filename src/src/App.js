@@ -29,7 +29,7 @@ import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/index';
-import { DndPreview, isTouchDevice } from './Utils';
+import { DndPreview, getWidgetTypes, isTouchDevice, parseAttributes } from './Utils';
 
 const styles = theme => ({
     block: {
@@ -326,6 +326,22 @@ class App extends GenericApp {
 
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
+    loadSelectedWidgets(selectedView) {
+        selectedView = selectedView || this.state.selectedView;
+        const selectedWidgets = JSON.parse(window.localStorage.getItem(
+            `${this.state.projectName}.${selectedView}.widgets`,
+        ) || '[]') || [];
+
+        // Check that all selectedWidgets exist
+        for (let i = selectedWidgets.length - 1; i >= 0; i--) {
+            if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
+                selectedWidgets.splice(i, 1);
+            }
+        }
+
+        return selectedWidgets;
+    }
+
     changeView = async selectedView => {
         const selectedWidgets = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
@@ -387,6 +403,34 @@ class App extends GenericApp {
                 top: `${y}px`,
             },
         };
+
+        // check if we have any fields contain "oid" in it and pre-fill it with "nothing_selected" value
+        const widgetTypes = getWidgetTypes();
+        const tplWidget = widgetTypes.find(item => item.name === widgetType);
+
+        // extract groups
+        const fields = parseAttributes(tplWidget.params);
+
+        fields.forEach(field => {
+            if (field.fields) {
+                field.fields.forEach(_field => {
+                    if (_field.name.includes('oid')) {
+                        widgets[newKey].data[_field.name] = 'nothing_selected';
+                    }
+                });
+            } else
+            if (field.name.includes('oid')) {
+                widgets[newKey].data[field.name] = 'nothing_selected';
+            }
+        });
+
+        // Custom init of widgets
+        if (tplWidget.init) {
+            if (window.vis && window.vis.binds[tplWidget.set] && window.vis.binds[tplWidget.set][tplWidget.init]) {
+                window.vis.binds[tplWidget.set][tplWidget.init](widgetType, widgets[newKey].data);
+            }
+        }
+
         await this.changeProject(project);
         await this.setStateAsync({ selectedWidgets: [newKey] });
     }

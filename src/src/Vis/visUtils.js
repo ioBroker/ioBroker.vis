@@ -702,10 +702,10 @@ function addClass(actualClass, toAdd) {
     return toAdd;
 }
 
-function removeClass(actualClass, toAdd) {
+function removeClass(actualClass, toRemove) {
     if (actualClass) {
         const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
-        const pos = parts.indexOf(toAdd);
+        const pos = parts.indexOf(toRemove);
         if (pos !== -1) {
             parts.splice(pos, 1);
         }

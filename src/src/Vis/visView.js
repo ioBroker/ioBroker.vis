@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
-import { addClass } from './visUtils';
+import {addClass, removeClass} from './visUtils';
 import WIDGETS from './Widgets';
 
 // 1300 is the React dialog
@@ -219,6 +219,102 @@ class VisView extends React.Component {
         return widgets;
     }
 
+    calculateRelativeWidgetPosition = (widgetId, left, top, shadowDiv, widgetsOrder) => {
+        left = parseFloat(left);
+        top = parseFloat(top);
+
+        const viewRect = this.refRelativeView.current.getBoundingClientRect();
+        const sRect = shadowDiv.getBoundingClientRect();
+        const rect = {
+            top: sRect.top - viewRect.top,
+            left: sRect.left - viewRect.left,
+            bottom: sRect.bottom - viewRect.top,
+            right: sRect.right - viewRect.left,
+        };
+
+        if (left <= 0) {
+            const pos = widgetsOrder.indexOf(widgetId);
+            if (pos) {
+                console.log('Place first');
+                widgetsOrder.splice(pos, 1);
+                widgetsOrder.unshift(widgetId);
+                this.refRelativeView.current.prepend(shadowDiv);
+            }
+
+            return;
+        }
+
+        // if point is in widget rect
+        if (top >= rect.top && top <= rect.bottom && left >= rect.left && left <= rect.right) {
+            // nothing changed
+            return;
+        }
+
+        let afterWid = widgetsOrder.find(wid => {
+            if (wid === widgetId || !this.widgetsRefs[wid]) {
+                return false;
+            }
+            const widDiv = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService.current;
+            if (widDiv) {
+                const wRect = widDiv.getBoundingClientRect();
+                const _rect = {
+                    top: wRect.top - viewRect.top,
+                    left: wRect.left - viewRect.left,
+                    bottom: wRect.bottom - viewRect.top,
+                    right: wRect.right - viewRect.left,
+                };
+
+                // if point is in rect
+                if (top >= _rect.top && top <= _rect.bottom && left >= _rect.left && left <= _rect.right) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        // Try to find position only by X axis
+        afterWid = afterWid || widgetsOrder.find(wid => {
+            if (wid === widgetId || !this.widgetsRefs[wid]) {
+                return false;
+            }
+            const widDiv = this.widgetsRefs[wid].widDiv || this.widgetsRefs[wid].refService.current;
+            if (widDiv) {
+                const wRect = widDiv.getBoundingClientRect();
+                const _rect = {
+                    top: wRect.top - viewRect.top,
+                    left: wRect.left - viewRect.left,
+                    bottom: wRect.bottom - viewRect.top,
+                    right: wRect.right - viewRect.left,
+                };
+                // if point is in rect
+                if (left >= _rect.left && left <= _rect.right) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        if (afterWid) {
+            const pos = widgetsOrder.indexOf(widgetId);
+            const newPos = widgetsOrder.indexOf(afterWid);
+            if (pos !== newPos + 1) {
+                widgetsOrder.splice(pos, 1);
+                widgetsOrder.splice(newPos, 0, widgetId);
+
+                const afterDiv = this.widgetsRefs[afterWid].widDiv || this.widgetsRefs[afterWid].refService.current;
+                if (afterDiv.nextSibling) {
+                    console.log(`Place after ${afterWid}`);
+                    this.refRelativeView.current.insertBefore(shadowDiv, afterDiv.nextSibling);
+                } else {
+                    console.log('Place last');
+                    this.refRelativeView.current.appendChild(shadowDiv);
+                }
+            }
+        }
+    }
+
     onMouseViewMove = !this.props.runtime ? e => {
         if (!this.selectDiv && this.refView.current) {
             // create selectDiv
@@ -307,6 +403,14 @@ class VisView extends React.Component {
                 this.widgetsRefs[_wid]?.onMove(); // indicate start of movement
             }
         });
+        // remove on all widgets the vis-editmode-overlay-not-selected class
+        Object.keys(this.widgetsRefs).forEach(wid => {
+            if (this.props.selectedWidgets.includes(wid)) {
+                this.widgetsRefs[wid].refService.current.className = removeClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-selected');
+            } else {
+                this.widgetsRefs[wid].refService.current.className = removeClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-overlay-not-selected');
+            }
+        });
     }
 
     onMouseWidgetMove = !this.props.runtime ? e => {
@@ -317,7 +421,7 @@ class VisView extends React.Component {
         this.props.selectedWidgets.forEach(wid => {
             const widgetsRefs = this.widgetsRefs;
             if (widgetsRefs[wid]?.onMove) {
-                widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false);
+                widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
             }
         });
     } : null;
@@ -334,6 +438,15 @@ class VisView extends React.Component {
                 }
             });
         }
+
+        // restore on all widgets the vis-editmode-overlay-not-selected class
+        Object.keys(this.widgetsRefs).forEach(wid => {
+            if (this.props.selectedWidgets.includes(wid)) {
+                this.widgetsRefs[wid].refService.current.className = addClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-selected');
+            } else {
+                this.widgetsRefs[wid].refService.current.className = addClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-overlay-not-selected');
+            }
+        });
     } : null;
 
     editWidgetsRect(widget) {
@@ -472,7 +585,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder) {
+    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder, moveAllowed) {
         const isRelative = widget.style && (
             widget.style.position === 'relative' ||
             widget.style.position === 'static' ||
@@ -508,6 +621,7 @@ class VisView extends React.Component {
             instance: props.instance,
             projectName: props.projectName,
             relativeWidgetOrder,
+            moveAllowed,
             VisView,
         };
 
@@ -533,8 +647,41 @@ class VisView extends React.Component {
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (this.state.mounted) {
             const widgets = this.props.views[this.props.view].widgets;
+            let moveAllowed = true;
             if (widgets) {
                 const relativeWidgetOrder = this.props.views[this.props.view].settings?.order || [];
+                const relativeWidgets = [];
+                const absoluteWidgets = [];
+                const unknownWidgets = [];
+
+                if (this.props.editMode && this.props.selectedWidgets?.length) {
+                    this.props.selectedWidgets.forEach(id => {
+                        const widget = this.props.views[this.props.view].widgets[id];
+                        if (!widget || widget.grouped) {
+                            return;
+                        }
+                        if (widget.style) {
+                            if (widget.style.position === 'relative') {
+                                relativeWidgets.push(id);
+                            } else if (!widget.style.position || widget.style.position === 'absolute') {
+                                absoluteWidgets.push(id);
+                            } else {
+                                unknownWidgets.push(id);
+                            }
+                        } else {
+                            absoluteWidgets.push(id);
+                        }
+                    });
+
+                    // sticky widgets cannot be moved
+                    if (unknownWidgets.length) {
+                        moveAllowed = false;
+                    } else
+                    // absolute and relative widgets cannot be moved together
+                    if (relativeWidgets.length && absoluteWidgets.length) {
+                        moveAllowed = false;
+                    }
+                }
 
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
@@ -542,7 +689,7 @@ class VisView extends React.Component {
                         return;
                     }
 
-                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder);
+                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, moveAllowed);
 
                     if (isRelative) {
                         if (!relativeWidgetOrder.includes(id)) {
@@ -550,9 +697,19 @@ class VisView extends React.Component {
                         }
                         rxRelativeWidgets.push({ id, rxWidget });
                     } else {
+                        const pos = relativeWidgetOrder.indexOf(id);
+                        if (pos !== -1) {
+                            relativeWidgetOrder.splice(pos, 1);
+                        }
                         rxAbsoluteWidgets.push(rxWidget);
                     }
                 });
+
+                for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
+                    if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
+                        relativeWidgetOrder.splice(t, 1);
+                    }
+                }
 
                 // sort relative widgets according to order
                 rxRelativeWidgets.sort((a, b) => {

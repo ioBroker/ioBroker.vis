@@ -1,4 +1,4 @@
-var visConfig = {
+var visConfig = {license: false,
     "widgetSets": [
         {
             "name": "bars",
