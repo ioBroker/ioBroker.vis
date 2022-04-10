@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.14",
+        "version": "1.4.15",
         "news": {
+            "1.4.15": {
+                "en": "Better check of the offline license",
+                "de": "Bessere Überprüfung der Offline-Lizenz",
+                "ru": "Улучшенная проверка офлайн-лицензии",
+                "pt": "Melhor verificação da licença offline",
+                "nl": "Betere controle van de offline licentie",
+                "fr": "Meilleure vérification de la licence hors ligne",
+                "it": "Migliore controllo della licenza offline",
+                "es": "Mejor control de la licencia fuera de línea",
+                "pl": "Lepsze sprawdzenie licencji offline",
+                "zh-cn": "更好地检查离线许可证"
+            },
             "1.4.14": {
                 "en": "Corrected GUI bug",
                 "de": "GUI-Fehler behoben",
@@ -74,18 +86,6 @@
                 "es": "SubscribeOidAtRuntime fijo si se llama con ID no válidos\nSoporte agregado del administrador de licencias",
                 "pl": "Naprawiono subscribeOidAtRuntime w przypadku wywołania z nieprawidłowymi identyfikatorami\nDodano obsługę menedżera licencji",
                 "zh-cn": "如果使用无效 ID 调用，则修复了 subscribeOidAtRuntime\n添加了许可证管理器的支持"
-            },
-            "1.4.6": {
-                "en": "Added the license check even without internet",
-                "de": "Lizenzprüfung auch ohne Internet hinzugefügt",
-                "ru": "Добавлена проверка лицензии даже без интернета",
-                "pt": "Adicionada a verificação de licença mesmo sem internet",
-                "nl": "De licentiecontrole toegevoegd, zelfs zonder internet",
-                "fr": "Ajout du contrôle de licence même sans internet",
-                "it": "Aggiunto il controllo della licenza anche senza internet",
-                "es": "Se agregó la verificación de licencia incluso sin Internet.",
-                "pl": "Dodano sprawdzanie licencji nawet bez internetu",
-                "zh-cn": "即使没有互联网也添加了许可证检查"
             }
         },
         "title": "Visualisation",

@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.4.15 (2022-04-10)
 * (bluefox) Better check of the offline license
 
 ### 1.4.14 (2022-03-31)
