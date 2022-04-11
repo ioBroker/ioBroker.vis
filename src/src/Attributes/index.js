@@ -63,7 +63,6 @@ const Attributes = props => {
                     value={tab}
                     disabled={tab === 'Widget' && !props.selectedWidgets.length}
                     key={tab}
-                    saveCssFile={props.saveCssFile}
                     className={props.classes.viewTab}
                     onClick={() => {
                         setSelected(tab);

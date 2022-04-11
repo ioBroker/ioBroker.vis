@@ -226,7 +226,7 @@ const Widgets = props => {
                     <AccordionDetails>
                         <div>
                             {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
-                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} />)}
+                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} widgetSet={category}/>)}
                         </div>
                     </AccordionDetails>
                 </Accordion>)

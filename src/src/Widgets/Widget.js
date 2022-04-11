@@ -17,30 +17,56 @@ const styles = () => ({
         width: 240,
         display: 'inline-flex',
         margin: 4,
-        height: 30,
+        minHeight: 36,
     },
     widgetTitle: {
         textAlign: 'center', flex: 1, alignSelf: 'center', color: 'black',
     },
     widgetImage: {
         // width: 20,
-        zoom: 0.4,
+        zoom: 0.3,
+    },
+    widgetImageWithSrc: {
+        height: 32,
+        width: 'auto',
     },
     widgetImageContainer: {
-        borderLeftStyle: 'solid', borderLeftWidth: 1, borderLeftColor: 'gray', display: 'flex', padding: 4, alignItems: 'center',
+        // borderLeftStyle: 'solid',
+        // borderLeftWidth: 1,
+        // borderLeftColor: 'gray',
+        display: 'flex',
+        padding: 4,
+        alignItems: 'center',
     },
 });
 
 const Widget = props => {
-    const result = <div className={props.classes.widget}>
+    const style = {};
+    if (window.visSets && window.visSets[props.widgetSet]?.color) {
+        style.backgroundColor = window.visSets[props.widgetSet].color;
+    }
+    let img;
+    if (props.widgetType.preview?.startsWith('<img')) {
+        const m = props.widgetType.preview.match(/src="([^"]+)"/) || props.widgetType.preview.match(/src='([^']+)'/);
+        if (m) {
+            img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
+        }
+    }
+
+    if (!img) {
+        img = <span
+            className={props.classes.widgetImage}
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={
+                { __html: props.widgetType.preview }
+            }
+        />;
+    }
+
+    const result = <div className={props.classes.widget} style={style}>
         <div className={props.classes.widgetTitle}>{window._(props.widgetType.title)}</div>
         <span className={props.classes.widgetImageContainer}>
-            <span
-                className={props.classes.widgetImage}
-                dangerouslySetInnerHTML={
-                    { __html: props.widgetType.preview }
-                }
-            />
+            { img }
         </span>
     </div>;
 

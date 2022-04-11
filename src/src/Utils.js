@@ -1,7 +1,7 @@
 import { usePreview } from 'react-dnd-preview';
 
 const DEFAULT_SET_COLORS = {
-    basic: '#a6a7a5',
+    basic: '#f1f1f1',
     bars: '#f6594e',
     dwd: '#cb8928',
     echarts: '#98B1C0',
@@ -9,7 +9,7 @@ const DEFAULT_SET_COLORS = {
     hqwidgets: '#005067',
     jqplot: '#00e753',
     jqui: '#008be0',
-    metro: '#7249e0',
+    metro: '#9f8ad8',
     swipe: '#484848',
     tabs: '#00d509',
 };
