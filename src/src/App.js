@@ -555,30 +555,50 @@ class App extends GenericApp {
         this.state.selectedWidgets.forEach(selectedWidget => {
             selectedWidgets.push(widgets[selectedWidget]);
             coordinates.push({
-                left: parseInt(widgets[selectedWidget].style.left.match(/^([0-9]+)/)[1]),
-                top: parseInt(widgets[selectedWidget].style.top.match(/^([0-9]+)/)[1]),
-                width: parseInt(widgets[selectedWidget].style.width.match(/^([0-9]+)/)[1]),
-                height: parseInt(widgets[selectedWidget].style.height.match(/^([0-9]+)/)[1]),
+                left: parseInt(widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[1]),
+                top: parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]),
+                width: parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]),
+                height: parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]),
             });
         });
         if (type === 'left') {
-            newCoordinates.left = 0;
             coordinates.forEach(coordinate => {
                 if (newCoordinates.left === 0 || coordinate.left < newCoordinates.left) {
                     newCoordinates.left = coordinate.left;
                 }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.left = newCoordinates.left);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = newCoordinates.left);
         } else if (type === 'right') {
-
+            coordinates.forEach(coordinate => {
+                if (newCoordinates.left === 0 || coordinate.left > newCoordinates.left) {
+                    newCoordinates.left = coordinate.left;
+                }
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = newCoordinates.left);
         } else if (type === 'top') {
-
+            coordinates.forEach(coordinate => {
+                if (newCoordinates.top === 0 || coordinate.top < newCoordinates.top) {
+                    newCoordinates.top = coordinate.top;
+                }
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = newCoordinates.top);
         } else if (type === 'bottom') {
-
+            coordinates.forEach(coordinate => {
+                if (newCoordinates.top === 0 || coordinate.top > newCoordinates.top) {
+                    newCoordinates.top = coordinate.top;
+                }
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = newCoordinates.top);
         } else if (type === 'horizontal-center') {
-
+            coordinates.forEach(coordinate => {
+                newCoordinates.left += coordinate.left;
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = newCoordinates.left / selectedWidgets.length);
         } else if (type === 'vertical-center') {
-
+            coordinates.forEach(coordinate => {
+                newCoordinates.top += coordinate.top;
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = newCoordinates.top / selectedWidgets.length);
         } else if (type === 'width') {
 
         } else if (type === 'height') {
@@ -880,6 +900,7 @@ class App extends GenericApp {
                         cutWidgets={this.cutWidgets}
                         copyWidgets={this.copyWidgets}
                         pasteWidgets={this.pasteWidgets}
+                        alignWidgets={this.alignWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
                     />

@@ -114,6 +114,7 @@ const Widgets = props => {
                         name: 'Align horizontal/left',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('left'),
                     },
                     {
                         type: 'icon-button',
@@ -121,6 +122,7 @@ const Widgets = props => {
                         name: 'Align horizontal/right',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('right'),
                     },
                     {
                         type: 'icon-button',
@@ -128,6 +130,7 @@ const Widgets = props => {
                         name: 'Align vertical/top',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('top'),
                     },
                     {
                         type: 'icon-button',
@@ -135,6 +138,7 @@ const Widgets = props => {
                         name: 'Align vertical/bottom',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('bottom'),
                     },
                     {
                         type: 'icon-button',
@@ -142,6 +146,7 @@ const Widgets = props => {
                         name: 'Align horizontal/center',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('horizontal-center'),
                     },
                     {
                         type: 'icon-button',
@@ -164,6 +169,7 @@ const Widgets = props => {
                         name: 'Align vertical/center',
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
+                        onClick: () => props.alignWidgets('vertical-center'),
                     },
                     {
                         type: 'icon-button',
