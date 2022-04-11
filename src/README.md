@@ -37,7 +37,6 @@
 
 ### Runtime
 #### Engine
-- changeFilter method in vis
 - Bindings in View settings
 
 ### Toolbar
@@ -58,6 +57,7 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - ...
 
 ### New widget set - material like
+- Group of relative widgets
 - Lamp
 - Window
 - Jalousie
