@@ -125,7 +125,7 @@ class VisCanWidget extends VisBaseWidget {
 
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
-            console.log('Widget mounted');
+            // console.log('Widget mounted');
             this.renderWidget();
             const newState = { mounted: true };
 
@@ -162,70 +162,6 @@ class VisCanWidget extends VisBaseWidget {
         this.destroy();
     }
 
-    /*
-    static getDerivedStateFromProps(props, state) {
-        const widget = props.views[props.view].widgets[props.id];
-        if (JSON.stringify(widget.style) !== JSON.stringify(state.style)) {
-            const newStyle = widget.style;
-            let changed = false;
-            Object.keys(newStyle).forEach(attr => {
-                if (attr === 'top' || attr === 'width' || attr === 'height' || attr === 'width') {
-                    if (state.style[attr] !== newStyle[attr]) {
-                        changed = true;
-                        console.log(`${attr} from ${state.style[attr]} to ${newStyle[attr]}`);
-                    }
-                }
-            });
-            if (!newStyle._no_style) {
-                // fix position
-                VisBaseWidget.applyStyle(this.widDiv, newStyle);
-            }
-            if (this.updateOnStyle && changed) {
-                console.log('ReRender!');
-                this.renderWidget(true, null, newStyle);
-            }
-
-            this.setState({ style: JSON.stringify(newStyle) });
-        }
-
-        if (state.isRx && props.editMode !== state.editMode) {
-            return { editMode: props.editMode };
-        }
-
-        return null; // No change to state
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (JSON.stringify(nextProps.views[this.props.view].widgets[this.props.id].style) !== JSON.stringify(this.state.style)) {
-            const newStyle = nextProps.views[this.props.view].widgets[this.props.id].style;
-            let changed = false;
-            Object.keys(newStyle).forEach(attr => {
-                if (attr === 'top' || attr === 'width' || attr === 'height' || attr === 'width') {
-                    if (this.state.style[attr] !== newStyle[attr]) {
-                        changed = true;
-                        console.log(`${attr} from ${this.state.style[attr]} to ${newStyle[attr]}`);
-                    }
-                }
-            });
-            if (!newStyle._no_style) {
-                // fix position
-                VisBaseWidget.applyStyle(this.widDiv, newStyle);
-            }
-            if (this.updateOnStyle && changed) {
-                console.log('ReRender!');
-                this.renderWidget(true, null, newStyle);
-            }
-
-            this.setState({ style: JSON.stringify(newStyle) });
-        }
-
-        if (nextProps.editMode !== this.state.editMode) {
-            this.setState({ editMode: nextProps.editMode }, () =>
-                // rerender Widget
-                this.renderWidget(true));
-        }
-    }
-*/
     static applyStyle(el, style) {
         if (typeof style === 'string') {
             // style is a string
@@ -254,8 +190,8 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     // this method may be not in form onCommand = command => {}
-    onCommand(command) {
-        if (!super.onCommand(command)) {
+    onCommand(command, options) {
+        if (!super.onCommand(command, options)) {
             if (command === 'updateContainers') {
                 // try to find 'vis-view-container' in it
                 const containers = this.widDiv.querySelectorAll('.vis-view-container');
@@ -273,6 +209,55 @@ class VisCanWidget extends VisBaseWidget {
 
                     if (JSON.stringify(legacyViewContainers) !== JSON.stringify(this.state.legacyViewContainers)) {
                         this.setState({ legacyViewContainers });
+                    }
+                }
+            } else if (command === 'changeFilter') {
+                if (!this.widDiv) {
+                    return;
+                }
+
+                if (!options || !options.filter.length) {
+                    // just show
+                    if (this.filterDisplay !== undefined) {
+                        this.widDiv.style.display = this.filterDisplay;
+                        if (this.widDiv._customHandlers?.onShow) {
+                            this.widDiv._customHandlers.onShow(this.widDiv, this.props.id);
+                        }
+                    }
+                } else if (options.filter[0] === '$') {
+                    // hide all
+                    if (this.props.allWidgets[this.props.id]?.data.filterkey) {
+                        this.filterDisplay = this.widDiv.style.display;
+                        this.widDiv.style.display = 'none';
+                        if (this.widDiv._customHandlers?.onHide) {
+                            this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
+                        }
+                    }
+                } else {
+                    const wFilters = this.props.allWidgets[this.props.id]?.data.filterkey;
+
+                    if (wFilters) {
+                        // we cannot use "find", as it is "can" observable
+                        let found = false;
+                        for (let w = 0; w < wFilters.length; w++) {
+                            if (options.filter.includes(wFilters[w])) {
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            this.filterDisplay = this.widDiv.style.display;
+                            this.widDiv.style.display = 'none';
+                            if (this.widDiv._customHandlers?.onHide) {
+                                this.widDiv._customHandlers?.onHide(this.widDiv, this.props.id);
+                            }
+                        } else if (this.filterDisplay !== undefined) {
+                            this.widDiv.style.display = this.filterDisplay;
+                            if (this.widDiv._customHandlers?.onShow) {
+                                this.widDiv._customHandlers?.onShow(this.widDiv, this.props.id);
+                            }
+                        }
                     }
                 }
             }
@@ -863,7 +848,7 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     renderWidget(update, newWidgetData, newWidgetStyle) {
-        console.log(`[${Date.now()}] Render widget`);
+        // console.log(`[${Date.now()}] Render widget`);
         let parentDiv = this.props.refParent;
         if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
             parentDiv = parentDiv.current;
@@ -904,6 +889,9 @@ class VisCanWidget extends VisBaseWidget {
             widgetData = { wid, ...(widget.data || {}) };
             widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
             this.applyBindings(true, widgetData, widgetStyle);
+            if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
+                widgetData.filterkey = widgetData.filterkey.split(',').map(f => f.trim()).filter(f => f);
+            }
 
             isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
                 widgetStyle && (
@@ -929,7 +917,7 @@ class VisCanWidget extends VisBaseWidget {
                 if (this.oldData === newData) {
                     if (this.oldStyle === newStyle || widgetData._no_style) {
                         // ignore changes
-                        console.log('Rerender ignored as no changes');
+                        // console.log('Rerender ignored as no changes');
                         return;
                     }
                     if (!this.updateOnStyle) {
@@ -1143,7 +1131,7 @@ class VisCanWidget extends VisBaseWidget {
         if (this.state.applyBindings && !this.bindingsTimer) {
             this.bindingsTimer = setTimeout(() => {
                 this.bindingsTimer = null;
-                console.log(`[${Date.now()}] Widget bindings ${JSON.stringify(this.state.applyBindings)}`);
+                // console.log(`[${Date.now()}] Widget bindings ${JSON.stringify(this.state.applyBindings)}`);
                 this.renderWidget(true);
             }, 10);
         }

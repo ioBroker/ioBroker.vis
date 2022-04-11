@@ -23,17 +23,6 @@ class VisRxWidget extends VisBaseWidget {
 
         const options = this.getWidgetInfo();
 
-        this.state = {
-            ...this.state,
-            resizable: options.resizable === undefined ? true : options.resizable,
-            resizeHandles: options.resizeHandles === undefined ? this.state.resizeHandles : options.resizeHandles,
-            rxData: this.state.data,
-            rxStyle: this.state.style,
-            values: {},
-            visible: true,
-            disabled: false,
-        };
-
         this.linkContext = {
             IDs: [],
             bindings: {},
@@ -45,11 +34,57 @@ class VisRxWidget extends VisBaseWidget {
         getUsedObjectIDsInWidget(props.views, props.view, props.id, this.linkContext);
 
         this.onStateChangedBind = this.onStateChanged.bind(this);
+
+        // apply bindings and modifications
+        const newState = this.onStateChanged(null, null, true);
+
+        this.state = {
+            ...this.state,
+            resizable: options.resizable === undefined ? true : options.resizable,
+            resizeHandles: options.resizeHandles === undefined ? this.state.resizeHandles : options.resizeHandles,
+            rxData: newState.rxData,
+            rxStyle: newState.rxStyle,
+            values: {},
+            visible: true,
+            disabled: false,
+        };
     }
 
-    onStateChanged(id, state) {
+    onCommand(command, options) {
+        if (!super.onCommand(command, options)) {
+            if (command === 'changeFilter') {
+                if (!options || !options.filter.length) {
+                    // just show
+                    if (this.filterDisplay !== undefined) {
+                        this.refService.current.style.display = this.filterDisplay;
+                    }
+                } else if (options.filter[0] === '$') {
+                    // hide all
+                    if (this.state.rxData.filterkey) {
+                        this.filterDisplay = this.refService.current.style.display;
+                        this.refService.current.style.display = 'none';
+                    }
+                } else {
+                    const wFilters = this.state.rxData.filterkey;
+
+                    if (wFilters) {
+                        const found = wFilters.find(f => options.filter.includes(f));
+
+                        if (!found) {
+                            this.filterDisplay = this.refService.current.style.display;
+                            this.refService.current.style.display = 'none';
+                        } else if (this.filterDisplay !== undefined) {
+                            this.refService.current.style.display = this.filterDisplay;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    onStateChanged(id, state, doNotApplyState) {
         const newState = {
-            values: JSON.parse(JSON.stringify(this.state.values)),
+            values: JSON.parse(JSON.stringify(this.state.values || {})),
             rxData: { ...this.state.data },
             rxStyle: { ...this.state.style },
             applyBindings: false,
@@ -63,6 +98,10 @@ class VisRxWidget extends VisBaseWidget {
         const userGroups = newState.rxData['visibility-groups'];
         newState.disabled = false;
 
+        if (newState.rxData.filterkey && typeof newState.rxData.filterkey === 'string') {
+            newState.rxData.filterkey = newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
+        }
+
         if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
             if (newState.rxData['visibility-groups-action'] === 'disabled') {
                 newState.disabled = true;
@@ -72,7 +111,12 @@ class VisRxWidget extends VisBaseWidget {
             }
         }
 
+        if (doNotApplyState) {
+            return newState;
+        }
+
         this.setState(newState);
+        return null;
     }
 
     applyBinding(stateId, newState) {

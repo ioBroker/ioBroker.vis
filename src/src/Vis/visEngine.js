@@ -16,10 +16,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {
+    Button, Dialog, DialogContent, DialogTitle, DialogActions,
+} from '@mui/material';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+import AlertIcon from '@mui/icons-material/Warning';
+
 import './css/vis.css';
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
+
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter } from './visUtils';
@@ -42,6 +52,8 @@ class VisEngine extends React.Component {
 
         this.can = window.can;
         this.scripts = null;
+        this.isTouch = 'ontouchstart' in document.documentElement;
+        this.debounceInterval = 700;
 
         this.subscribes = {};
         this.allWidgets = {};
@@ -116,16 +128,38 @@ class VisEngine extends React.Component {
             .then(() => this.setState({ ready: true }));
     }
 
+    detectWakeUp() {
+        this.oldTime = Date.now();
+        this.wakeUpDetectorInterval = this.wakeUpDetectorInterval || setInterval(() => {
+            const currentTime = Date.now();
+            if (currentTime > this.oldTime + 10000) {
+                this.oldTime = currentTime;
+                this.wakeUpCallbacks.forEach(item => {
+                    if (typeof item.cb === 'function') {
+                        try {
+                            item.cb(item.wid);
+                        } catch (error) {
+                            console.error(`Cannot wakeup ${item.wid}: ${error}`);
+                        }
+                    }
+                });
+            } else {
+                this.oldTime = currentTime;
+            }
+        }, 2500);
+    }
+
     componentDidMount() {
-        window.document.addEventListener('keydown', this.onKeyPress);
+        this.detectWakeUp();
     }
 
     componentWillUnmount() {
+        this.wakeUpDetectorInterval && clearInterval(this.wakeUpDetectorInterval);
+        this.wakeUpDetectorInterval = null;
+
         // unsubscribe all
         Object.keys(this.subscribes).forEach(id =>
             this.props.socket.unsubscribeState(id, this.onStateChange));
-
-        window.document.removeEventListener('keydown', this.onKeyPress);
 
         let userScript = window.document.getElementById('#vis_user_scripts');
         if (userScript) {
@@ -148,13 +182,6 @@ class VisEngine extends React.Component {
         this.subscribes = {};
     }
 
-    onKeyPress = e => {
-        console.log(e.key);
-        if (e.key === 'Delete') {
-
-        }
-    }
-
     loadLegacyObjects() {
         if (this.props.runtime) {
             return Promise.resolve();
@@ -168,6 +195,7 @@ class VisEngine extends React.Component {
         return {
             states: this.canStates,
             objects: {},
+            isTouch: this.isTouch,
             activeWidgets: [],
             navChangeCallbacks: [],
             editMode: !!this.props.editMode,
@@ -197,11 +225,33 @@ class VisEngine extends React.Component {
             destroyUnusedViews: () => {
                 console.warn('destroyUnusedViews not implemented');
             },
-            changeFilter: (view, filter, showEffect, showDuration, hideEffect, hideDuration) => {
-                console.warn('changeFilter not implemented: ', view, filter, showEffect, showDuration, hideEffect, hideDuration);
-            },
+            changeFilter: (view, filter, showEffect, showDuration, hideEffect, hideDuration) =>
+                this.changeFilter(view, filter, showEffect, showDuration, hideEffect, hideDuration),
             detectBounce: (el, isUp) => {
-                console.warn('detectBounce not implemented: ', el, isUp);
+                if (!this.isTouch) {
+                    return false;
+                }
+
+                // Protect against two events
+                const now = Date.now();
+                // console.log('gclick: ' + this.lastChange + ' ' + (now - this.lastChange));
+                if (this.lastChange && now - this.lastChange < this.debounceInterval) {
+                    // console.log('gclick: filtered');
+                    return true;
+                }
+                let tag = el.tagName.toLowerCase();
+                while (tag !== 'div') {
+                    el = el.parentNode;
+                    tag = el.tagName.toLowerCase();
+                }
+                const lastClick = el[`__vis_${isUp ? 'lcu' : 'lc'}`];
+                // console.log('click: ' + lastClick + ' ' + (now - lastClick));
+                if (lastClick && now - lastClick < this.debounceInterval) {
+                    console.log('click: filtered out');
+                    return true;
+                }
+                el[`__vis_${isUp ? 'lcu' : 'lc'}`] = now;
+                return false;
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
@@ -218,9 +268,7 @@ class VisEngine extends React.Component {
             inspectWidgets: (viewDiv, view, addWidget, delWidget, onlyUpdate) => {
                 console.warn('inspectWidgets not implemented: ', viewDiv, view, addWidget, delWidget, onlyUpdate);
             },
-            showMessage: (message, title, icon, width, callback) => {
-                console.warn('showMessage not implemented: ', message, title, icon, width);
-            },
+            showMessage: (message, title, icon, width, callback) => this.showMessage(message, title, icon, width, callback),
             showWidgetHelper: (viewDiv, view, wid, isShow) => {
                 console.warn('showWidgetHelper not implemented: ', viewDiv, view, wid, isShow);
             },
@@ -256,6 +304,92 @@ class VisEngine extends React.Component {
                 }
             },
         };
+    }
+
+    changeFilter(view, filter, showEffect, showDuration, hideEffect, hideDuration) {
+        view = view || this.props.activeView;
+        if (this.refViews[view]?.onCommand) {
+            this.refViews[view]?.onCommand('changeFilter', { filter, showEffect, showDuration, hideEffect, hideDuration });
+        }
+    }
+
+    showMessage(message, title, icon, width, callback) {
+        if (typeof icon === 'number') {
+            callback = width;
+            width = icon;
+            icon = null;
+        }
+        if (typeof title === 'function') {
+            callback = title;
+            title = null;
+        } else if (typeof icon === 'function') {
+            callback = icon;
+            icon = null;
+        } else if (typeof width === 'function') {
+            callback = width;
+            width = null;
+        }
+
+        this.setState({
+            showMessage: {
+                message, title, icon, width, callback,
+            },
+        });
+    }
+
+    renderMessageDialog() {
+        if (!this.state.showMessage) {
+            return null;
+        }
+
+        return <Dialog
+            key="__messageDialog"
+            open
+            onClose={() => {
+                const callback = this.state.showMessage.callback;
+                if (typeof callback === 'function') {
+                    callback(false);
+                }
+                this.setState({ showMessage: null });
+            }}
+            maxWidth="md"
+        >
+            <DialogTitle>{this.state.showMessage.title || I18n.t('Message')}</DialogTitle>
+            <DialogContent>
+                { this.state.showMessage.icon === 'alert' ? <AlertIcon /> : null }
+                { this.state.showMessage.message }
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    onClick={() => {
+                        const callback = this.state.showMessage.callback;
+                        if (typeof callback === 'function') {
+                            callback(true);
+                        }
+                        this.setState({ showMessage: null });
+                    }}
+                    color="primary"
+                    startIcon={<CheckIcon />}
+                >
+                    {I18n.t('Ok')}
+                </Button>
+                { this.state.showMessage.callback ? <Button
+                    variant="contained"
+                    color="grey"
+                    onClick={() => {
+                        const callback = this.state.showMessage.callback;
+                        if (typeof callback === 'function') {
+                            callback(false);
+                        }
+                        this.setState({ showMessage: null });
+                    }}
+                    startIcon={<CloseIcon />}
+                >
+                    {I18n.t('Cancel')}
+                </Button> : null }
+            </DialogActions>
+        </Dialog>;
     }
 
     createConnection() {
@@ -952,14 +1086,24 @@ class VisEngine extends React.Component {
         if (this.props.views) {
             if (!this.props.editMode) {
                 if (this.props.views.___settings) {
-                    if (this.scripts !== (this.props.views.___settings || '')) {
-                        this.scripts = this.props.views.___settings || '';
+                    if (this.scripts !== (this.props.views.___settings.scripts || '')) {
+                        this.scripts = this.props.views.___settings.scripts || '';
                         let userScript = window.document.getElementById('#vis_user_scripts');
                         if (!userScript) {
                             userScript = window.document.createElement('script');
                             userScript.setAttribute('id', '#vis_user_scripts');
-                            userScript.innerHTML = this.scripts;
-                            window.document.head.appendChild(userScript);
+                            const script = `try {
+${this.scripts}
+} catch (error) {
+    console.error('Cannot execute user script: ' + error);
+}`;
+                            userScript.innerHTML = script;
+                            console.log(script);
+                            try {
+                                window.document.head.appendChild(userScript);
+                            } catch (error) {
+                                console.error(`Cannot execute user script: ${error}`);
+                            }
                         } else {
                             userScript.innerHTML = this.scripts;
                         }
@@ -1049,7 +1193,7 @@ class VisEngine extends React.Component {
         this.updateCommonCss();
         this.updateUserCss();
 
-        return Object.keys(this.props.views).map(view => {
+        const views = Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
                 // return <div id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
@@ -1083,6 +1227,10 @@ class VisEngine extends React.Component {
 
             return null;
         });
+
+        views.push(this.renderMessageDialog());
+
+        return views;
     }
 }
 

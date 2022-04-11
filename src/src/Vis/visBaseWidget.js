@@ -74,6 +74,7 @@ class VisBaseWidget extends React.Component {
             resizers.forEach(item => item.style.display = 'none');
             return true;
         }
+
         if (command === 'cancelStealMode') {
             if (this.stealCursor !== 'nocursor') {
                 this.refService.current.style.cursor = this.stealCursor;
@@ -84,6 +85,7 @@ class VisBaseWidget extends React.Component {
             resizers.forEach(item => item.style.display = '');
             return true;
         }
+
         if (command === 'startMove') {
             const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
             if (overlay) {
@@ -95,6 +97,7 @@ class VisBaseWidget extends React.Component {
             }
             return true;
         }
+
         if (command === 'stopMove') {
             const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
             if (overlay) {
@@ -106,6 +109,7 @@ class VisBaseWidget extends React.Component {
             }
             return true;
         }
+
         return false;
     }
 
@@ -657,8 +661,8 @@ class VisBaseWidget extends React.Component {
     }
 
     isWidgetFilteredOut(widgetData) {
-        const v = this.props.viewsActiveFilter[this.props.view];
-        return widgetData?.filterkey && v?.length > 0 && !v.includes(widgetData.filterkey);
+        const vf = this.props.viewsActiveFilter[this.props.view];
+        return widgetData?.filterkey && vf?.length && (vf[0] === '$' || !widgetData.filterkey.find(wf => vf.includes(wf)));
     }
 
     isWidgetHidden(widgetData, states) {

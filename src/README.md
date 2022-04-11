@@ -33,16 +33,11 @@
 - By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
 - [Gestures] (do not implement)
 - Last change ? Denis
+- Signal by Rx
 
 ### Runtime
 #### Engine
-- showMessage method in vis
-- onWakeUp method in vis
-- changeView method in vis
 - changeFilter method in vis
-- detectBounce method in vis
-- addFont method in vis
-- relative position by move
 
 ### Toolbar
 - 3 Levels of visibility:

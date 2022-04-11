@@ -91,11 +91,40 @@ class VisView extends React.Component {
         this.registerEditorHandlers(true);
     }
 
-    onCommand = command => {
+    onCommand = (command, options) => {
         if (command === 'updateContainers') {
             // send to all widgets the command
             Object.keys(this.widgetsRefs).forEach(wid =>
                 this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand(command));
+
+            return;
+        }
+        if (command === 'changeFilter') {
+            this.changeFilter(options);
+            // return;
+        }
+    }
+
+    changeFilter(options) {
+        options = { filter: '', ...options };
+
+        if (typeof options.filter === 'string') {
+            options.filter = options.filter.split(',').map(f => f.trim()).filter(f => f);
+        }
+
+        this.props.viewsActiveFilter[this.props.view] = options.filter;
+
+        // inform every widget about changed filter
+        Object.keys(this.widgetsRefs).forEach(wid =>
+            this.widgetsRefs[wid].onCommand('changeFilter', options));
+
+        // inform bars about changed filter
+        if (window.vis.binds.bars && window.vis.binds.bars.filterChanged) {
+            try {
+                window.vis.binds.bars.filterChanged(this.props.view, options.filter.join(','));
+            } catch (error) {
+                console.error(`Cannot change filter: ${error}`);
+            }
         }
     }
 
@@ -671,6 +700,8 @@ class VisView extends React.Component {
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (this.state.mounted) {
+            // save initial filter
+            this.props.viewsActiveFilter[this.props.view] = (this.props.views[this.props.view].settings.filterkey || '').split(',').map(f => f.trim()).filter(f => f);
             const widgets = this.props.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
