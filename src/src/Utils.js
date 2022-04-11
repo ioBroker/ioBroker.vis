@@ -10,8 +10,9 @@ const DEFAULT_SET_COLORS = {
     jqplot: '#00e753',
     jqui: '#008be0',
     metro: '#9f8ad8',
-    swipe: '#484848',
-    tabs: '#00d509',
+    swipe: '#858585',
+    tabs: '#00d5a3',
+    'spotify-premium': '#00ae03',
 };
 
 export const getWidgetTypes = () => {

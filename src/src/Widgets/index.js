@@ -136,7 +136,7 @@ const Widgets = props => {
                     <UnfoldLessIcon />
                 </IconButton>
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
-            {I18n.t('Add widget')}
+            {I18n.t('Palette')}
         </Typography>
         <div>
             <TextField

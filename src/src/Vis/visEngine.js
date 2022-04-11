@@ -17,18 +17,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import './css/vis.css';
-/*
-import $ from 'jquery';
-import 'jquery-ui/themes/base/core.css';
-import 'jquery-ui/themes/base/theme.css';
-import 'jquery-ui/themes/base/selectable.css';
-import 'jquery-ui/ui/core';
-import 'jquery-ui/ui/widgets/datepicker';
-import 'jquery-ui/ui/widgets/selectable';
-import 'jquery-ui/ui/widgets/progressbar';
-import 'jquery-ui/ui/widgets/dialog';
-import 'jquery-ui/ui/widgets/slider';
-*/
 import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
@@ -707,9 +695,13 @@ class VisEngine extends React.Component {
                 let onLoad = false;
                 Array.from(oldScript.attributes)
                     .forEach(attr => {
-                        newScript.setAttribute(attr.name, attr.value);
-                        if (attr.name === 'src') {
-                            onLoad = true;
+                        try {
+                            newScript.setAttribute(attr.name, attr.value);
+                            if (attr.name === 'src') {
+                                onLoad = true;
+                            }
+                        } catch (error) {
+                            console.log(`WTF?? in ${attr.ownerElement.id}: ${error}`);
                         }
                     });
 
@@ -755,7 +747,10 @@ class VisEngine extends React.Component {
                         this.props.onLoaded && this.props.onLoaded(arrayWidgets);
                     });
             })
-            .catch(error => console.error(`Cannot load widgets: ${error}`));
+            .catch(error => {
+                console.error(`Cannot load widgets: ${error}`);
+                console.error(`Cannot load widgets: ${JSON.stringify(error.stack)}`);
+            });
     }
 
     /*

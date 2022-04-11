@@ -3290,12 +3290,2117 @@
         type="text/ejs"
         class="vis-tpl"
         data-vis-set="basic"
-		data-vis-attrs="attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
+        data-vis-attrs="attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" style="overflow: visible" id="<%= this.data.attr('wid') %>"></div>
 </script>
 
 <!-- --------------basic.html--- END -->
+<!-- --------------consumption.html--- START -->
+<!--
+    ioBroker.consumption
+
+    version: "0.4.18"
+
+    Copyright 2020 bluefox <dogafox@gmail.com>
+-->
+<link rel="stylesheet" type="text/css" href="widgets/consumption/css/styles.css" />
+
+<script type="text/javascript">
+
+    /*var vis = {
+        editMode: false,
+        binds: {},
+        conn: {
+            getStates: function () {}
+        },
+        unregisterOnChange: function () {}
+    };
+    function _(a) {return a; }
+    function $(item) { return item; }*/
+
+    $.extend(true, systemDictionary, {
+        "%s overview": {
+            "en": "%s overview",
+            "de": "%s Übersicht",
+            "ru": "%s обзор",
+            "pt": "Visão geral do %s",
+            "nl": "Overzicht van %s",
+            "fr": "Présentation de %s",
+            "it": "Panoramica di %s",
+            "es": "Resumen de %s",
+            "pl": "Przegląd %s",
+            "zh-cn": "％s概述"
+        },
+        "Actual": {
+            "en": "Actual",
+            "de": "Tatsächlich",
+            "ru": "Этот год",
+            "pt": "Real",
+            "nl": "Eigenlijk",
+            "fr": "Réel",
+            "it": "Effettivo",
+            "es": "Real",
+            "pl": "Rzeczywisty",
+            "zh-cn": "实际"
+        },
+        "All": {
+            "en": "All",
+            "de": "Alle",
+            "ru": "Все",
+            "pt": "Tudo",
+            "nl": "Allemaal",
+            "fr": "Tout",
+            "it": "Tutti",
+            "es": "Todos",
+            "pl": "Wszystko",
+            "zh-cn": "所有"
+        },
+        "Costs for %s": {
+            "en": "Costs for %s",
+            "de": "Kosten für %s",
+            "ru": "Затраты на %s",
+            "pt": "Custos para %s",
+            "nl": "Kosten voor %s",
+            "fr": "Coûts pour %s",
+            "it": "Costi per %s",
+            "es": "Costos para %s",
+            "pl": "Koszty dla %s",
+            "zh-cn": "％s的费用"
+        },
+        "Forecast": {
+            "en": "Forecast",
+            "de": "Prognose",
+            "ru": "Прогноз",
+            "pt": "Previsão",
+            "nl": "Voorspelling",
+            "fr": "Prévoir",
+            "it": "previsione",
+            "es": "Pronóstico",
+            "pl": "Prognoza",
+            "zh-cn": "预测"
+        },
+        "Heat map": {
+            "en": "Heat map",
+            "de": "Wärmekarte",
+            "ru": "Тепловая карта",
+            "pt": "Mapa de calor",
+            "nl": "Heat map",
+            "fr": "Carte de chaleur",
+            "it": "Mappa di calore",
+            "es": "Mapa de calor",
+            "pl": "Mapa ciepła",
+            "zh-cn": "热图"
+        },
+        "Name": {
+            "en": "Name",
+            "de": "Name",
+            "ru": "Имя",
+            "pt": "Nome",
+            "nl": "Naam",
+            "fr": "Nom",
+            "it": "Nome",
+            "es": "Nombre",
+            "pl": "Imię",
+            "zh-cn": "名称"
+        },
+        "Now %s": {
+            "en": "Now %s",
+            "de": "Jetzt %s",
+            "ru": "Сейчас %s",
+            "pt": "Agora %s",
+            "nl": "Nu %s",
+            "fr": "Maintenant %s",
+            "it": "Ora %s",
+            "es": "Ahora %s",
+            "pl": "Teraz %s",
+            "zh-cn": "现在％s"
+        },
+        "Pie chart": {
+            "en": "Pie chart",
+            "de": "Kuchendiagramm",
+            "ru": "Круговая диаграмма",
+            "pt": "Gráfico de pizza",
+            "nl": "Cirkeldiagram",
+            "fr": "Diagramme circulaire",
+            "it": "Grafico a torta",
+            "es": "Gráfico circular",
+            "pl": "Wykres kołowy",
+            "zh-cn": "饼形图"
+        },
+        "Planned": {
+            "en": "Planned",
+            "de": "Geplant",
+            "ru": "Запланированные",
+            "pt": "Planejado",
+            "nl": "Gepland",
+            "fr": "Prévu",
+            "it": "Planned",
+            "es": "Planificado",
+            "pl": "Zaplanowany",
+            "zh-cn": "计划"
+        },
+        "Planning": {
+            "en": "Planning",
+            "de": "Planung",
+            "ru": "Запланировано",
+            "pt": "Planejamento",
+            "nl": "Planning",
+            "fr": "Planification",
+            "it": "Pianificazione",
+            "es": "Planificación",
+            "pl": "Planowanie",
+            "zh-cn": "规划"
+        },
+        "Reference": {
+            "en": "Reference",
+            "de": "Referenz",
+            "ru": "Сравнение",
+            "pt": "Referência",
+            "nl": "Referentie",
+            "fr": "Référence",
+            "it": "Riferimento",
+            "es": "Referencia",
+            "pl": "Odniesienie",
+            "zh-cn": "参考"
+        },
+        "Stack bar": {
+            "en": "Stack bar",
+            "de": "Stapelleiste",
+            "ru": "Stack bar",
+            "pt": "Barra de empilhamento",
+            "nl": "Stapelbalk",
+            "fr": "Barre de pile",
+            "it": "Stack bar",
+            "es": "Barra de pila",
+            "pl": "Pasek stosu",
+            "zh-cn": "堆叠栏"
+        },
+        "Table": {
+            "en": "Table",
+            "de": "Tabelle",
+            "ru": "Таблица",
+            "pt": "Tabela",
+            "nl": "Tafel",
+            "fr": "Table",
+            "it": "tavolo",
+            "es": "Mesa",
+            "pl": "Stół",
+            "zh-cn": "表"
+        },
+        "Total": {
+            "en": "Total",
+            "de": "Gesamt",
+            "ru": "Итого",
+            "pt": "Total",
+            "nl": "Totaal",
+            "fr": "Total",
+            "it": "Totale",
+            "es": "Total",
+            "pl": "Całkowity",
+            "zh-cn": "总"
+        },
+        "from": {
+            "en": "from",
+            "de": "von",
+            "ru": "от",
+            "pt": "de",
+            "nl": "van",
+            "fr": "de",
+            "it": "a partire dal",
+            "es": "desde",
+            "pl": "od",
+            "zh-cn": "从"
+        },
+        "rendering...": {
+            "en": "rendering...",
+            "de": "Rendern...",
+            "ru": "рендеринг...",
+            "pt": "Renderização...",
+            "nl": "renderen...",
+            "fr": "le rendu...",
+            "it": "il rendering ...",
+            "es": "representación...",
+            "pl": "wykonanie...",
+            "zh-cn": "渲染..."
+        },
+        "to": {
+            "en": "to",
+            "de": "bis",
+            "ru": "до",
+            "pt": "para",
+            "nl": "naar",
+            "fr": "à",
+            "it": "per",
+            "es": "a",
+            "pl": "do",
+            "zh-cn": "至"
+        },
+        "Total overview": {
+            "en": "Total overview",
+            "de": "Gesamtübersicht",
+            "ru": "Общий обзор",
+            "pt": "Visão geral total",
+            "nl": "Totaal overzicht",
+            "fr": "Vue d'ensemble",
+            "it": "Panoramica totale",
+            "es": "Resumen total",
+            "pl": "Ogólny przegląd",
+            "zh-cn": "总概述"
+        }
+    });
+
+    if (vis.editMode) {
+        // Add words for basic widgets
+        $.extend(true, systemDictionary, {
+            "consInstance": {
+                "en": "Instance",
+                "de": "Instanz",
+                "ru": "Инстанция",
+                "pt": "Instância",
+                "nl": "Voorbeeld",
+                "fr": "Exemple",
+                "it": "Esempio",
+                "es": "Ejemplo",
+                "pl": "Instancja",
+                "zh-cn": "实例"
+            },
+            "colorTheme": {
+                "en": "Theme",
+                "de": "Thema",
+                "ru": "Тема",
+                "pt": "Tema",
+                "nl": "Thema",
+                "fr": "Thème",
+                "it": "Tema",
+                "es": "Tema",
+                "pl": "Motyw",
+                "zh-cn": "主题"
+            },
+            "startsFrom": {
+                "en": "Data start from",
+                "de": "Daten beginnen ab",
+                "ru": "Данные начинаются с",
+                "pt": "Os dados começam em",
+                "nl": "Gegevens beginnen vanaf",
+                "fr": "Les données commencent à partir de",
+                "it": "I dati iniziano da",
+                "es": "Los datos comienzan desde",
+                "pl": "Dane zaczynają się od",
+                "zh-cn": "数据从"
+            },
+            "startsFrom_tooltip": {
+                "en": "In form 2020-01 or 2020-01-01",
+                "de": "In Form 2020-01 oder 2020-01-01",
+                "ru": "По форме 2020-01 или 2020-01-01",
+                "pt": "No formulário 2020-01 ou 2020-01-01",
+                "nl": "In vorm 2020-01 of 2020-01-01",
+                "fr": "Sous forme 2020-01 ou 2020-01-01",
+                "it": "Nel modulo 2020-01 o 2020-01-01",
+                "es": "En forma 2020-01 o 2020-01-01",
+                "pl": "W formie 2020-01 lub 2020-01-01",
+                "zh-cn": "格式为2020-01或2020-01-01"
+            },
+            "consumption_station": {
+                "en": "Consumption station",
+                "de": "Verbrauchsstation",
+                "ru": "Станция потребления",
+                "pt": "Estação de consumo",
+                "nl": "Verbruiksstation",
+                "fr": "Station de consommation",
+                "it": "Stazione di consumo",
+                "es": "Estación de consumo",
+                "pl": "Stacja zużycia",
+                "zh-cn": "消费站"
+            },
+            "group_consumption_types": {
+                "en": "Hide chart types",
+                "de": "Diagrammtypen ausblenden",
+                "ru": "Скрыть типы диаграмм",
+                "pt": "Ocultar tipos de gráfico",
+                "nl": "Verberg diagramtypen",
+                "fr": "Masquer les types de graphiques",
+                "it": "Nascondi i tipi di grafico",
+                "es": "Ocultar tipos de gráficos",
+                "pl": "Ukryj typy wykresów",
+                "zh-cn": "隐藏图表类型"
+            },
+            "hide_planning": {
+                "en": "Planning",
+                "de": "Planung",
+                "ru": "Планирование",
+                "pt": "Ocultar planejamento",
+                "nl": "Verberg planning",
+                "fr": "Masquer la planification",
+                "it": "Nascondi pianificazione",
+                "es": "Ocultar planificación",
+                "pl": "Ukryj planowanie",
+                "zh-cn": "隐藏计划"
+            },
+            "hide_pie": {
+                "en": "Pie-Chart",
+                "de": "Kuchendiagramm",
+                "ru": "Круговая диаграмма",
+                "pt": "Esconder torta",
+                "nl": "Verberg taart",
+                "fr": "Masquer la tarte",
+                "it": "Nascondi torta",
+                "es": "Ocultar pastel",
+                "pl": "Ukryj ciasto",
+                "zh-cn": "隐藏馅饼"
+            },
+            "hide_stackbar": {
+                "en": "Stack bar",
+                "de": "Stack bar",
+                "ru": "Stack bar",
+                "pt": "Ocultar barra de pilha",
+                "nl": "Verberg stapelbalk",
+                "fr": "Masquer la barre de pile",
+                "it": "Nascondi barra dello stack",
+                "es": "Ocultar barra de pila",
+                "pl": "Ukryj pasek stosu",
+                "zh-cn": "隐藏堆栈栏"
+            },
+            "hide_heatmap": {
+                "en": "Heat map",
+                "de": "Heatmap",
+                "ru": "Тепловая карта",
+                "pt": "Ocultar mapa de calor",
+                "nl": "Hittekaart verbergen",
+                "fr": "Masquer la carte de chaleur",
+                "it": "Nascondi mappa termica",
+                "es": "Ocultar mapa de calor",
+                "pl": "Ukryj mapę cieplną",
+                "zh-cn": "隐藏热图"
+            },
+            "hide_table": {
+                "en": "Table",
+                "de": "Tabelle",
+                "ru": "Таблица",
+                "pt": "Ocultar mesa",
+                "nl": "Tafel verbergen",
+                "fr": "Masquer le tableau",
+                "it": "Nascondi tabella",
+                "es": "Ocultar tabla",
+                "pl": "Ukryj tabelę",
+                "zh-cn": "隐藏表格"
+            },
+            "show_heatmap_range": {
+                "en": "Show heat map range",
+                "de": "Wärmekartenbereich anzeigen",
+                "ru": "Показать диапазон тепловой карты",
+                "pt": "Mostrar alcance do mapa de calor",
+                "nl": "Toon warmtekaartbereik",
+                "fr": "Afficher la plage de la carte thermique",
+                "it": "Mostra l'intervallo della mappa termica",
+                "es": "Mostrar rango de mapa de calor",
+                "pl": "Pokaż zakres mapy cieplnej",
+                "zh-cn": "显示热图范围"
+            },
+            "currency": {
+                "en": "currency",
+                "de": "Währung",
+                "ru": "валюта",
+                "pt": "moeda",
+                "nl": "valuta",
+                "fr": "devise",
+                "it": "moneta",
+                "es": "moneda",
+                "pl": "waluta",
+                "zh-cn": "货币"
+            }
+        });
+    }
+
+    vis.binds.consumption = {
+        version: "0.4.18",
+        showVersion: function () {
+            if (vis.binds.consumption.version) {
+                console.log('Version consumption: ' + vis.binds.consumption.version);
+                vis.binds.consumption.version = null;
+            }
+        },
+        months: {
+            en: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            de: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+            ru: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек']
+        },
+        instancePromise: {},
+
+        padZero: function (num) {
+            if (num.length < 2) {
+                return '0' + num;
+            } else {
+                return num;
+            }
+        },
+        invertColor: function (hex, bw) {
+            // taken from here: https://stackoverflow.com/questions/35969656/how-can-i-generate-the-opposite-color-according-to-current-color
+            if (hex.indexOf('#') === 0) {
+                hex = hex.slice(1);
+            }
+            // convert 3-digit hex to 6-digits.
+            if (hex.length === 3) {
+                hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+            }
+            if (hex.length !== 6) {
+                throw new Error('Invalid HEX color.');
+            }
+            var r = parseInt(hex.slice(0, 2), 16);
+            var g = parseInt(hex.slice(2, 4), 16);
+            var b = parseInt(hex.slice(4, 6), 16);
+
+            if (bw) {
+                // http://stackoverflow.com/a/3943023/112731
+                return (r * 0.299 + g * 0.587 + b * 0.114) > 186
+                    ? '#000000'
+                    : '#FFFFFF';
+            }
+            // invert color components
+            r = (255 - r).toString(16);
+            g = (255 - g).toString(16);
+            b = (255 - b).toString(16);
+            // pad each with zeros and return
+            return '#' + vis.binds.consumption.padZero(r) + vis.binds.consumption.padZero(g) + vis.binds.consumption.padZero(b);
+        },
+        getStations: function (instance, cb) {
+            instance = instance || 0;
+            vis.conn.getStates([
+                'consumption.' + instance + '.instances.common.resources',
+                'consumption.' + instance + '.instances.common.stations'
+            ], function (err, data) {
+                if (err) {
+                    cb(err);
+                } else {
+                    try {
+                        var stations  = JSON.parse(data['consumption.' + instance + '.instances.common.stations'].val  || '[]');
+                        var resources = JSON.parse(data['consumption.' + instance + '.instances.common.resources'].val || '[]');
+                        cb(null, {stations: stations, resources: resources});
+                    } catch (e) {
+                        cb('Cannot parse stations: ' + e);
+                    }
+                }
+            });
+        },
+        renderStations: function ($div, $el, stations) {
+            var text = '<table class="vis-cons-stations-table"><tr class="vis-cons-stations-tr>';
+            text += '<td class="vis-cons-stations-td" data-name="">' + _('All') + '</td></tr>';
+            for (var i = 0; i < stations.length; i++) {
+                text += '<td class="vis-cons-stations-td" data-name="' + stations[i].name + '" data-color="' + stations[i].color + '">';
+                text += stations[i].title;
+                text += '</td>';
+            }
+
+            text += '</tr></table>';
+
+            $el.html(text);
+
+            var $items = $el.find('.vis-cons-stations-td');
+
+            // install handlers
+            $items.on('click', function () {
+                $(this).parent().find('.vis-cons-stations-td').removeClass('vis-cons-stations-selected');
+                $(this).addClass('vis-cons-stations-selected');
+                vis.binds.consumption.setSettings($div, null, $(this).data('name'));
+            });
+
+            // select current resource
+            var settings = $div.data('settings');
+
+            $items.each(function () {
+                if (settings.station === $(this).data('name')) {
+                    $(this).addClass('vis-cons-resources-selected');
+                }
+            });
+        },
+        renderResources: function ($div, $el, resources) {
+            var count = resources.length + 1; // + all
+            var width = Math.round(10000 / count) / 100;
+
+            var text = '<table class="vis-cons-resources-table"><tr class="vis-cons-resources-tr">';
+            if (count > 2) {
+                text += '<td class="vis-cons-resources-td vis-cons-resources-all" data-name="" style="width: ' + width + '%"><span class="vis-cons-types-icon">€</span><span class="vis-cons-types-title">' + _('all') + '</span></td>';
+            }
+
+            var ownClasses = $div.data('data').ownClasses || false;
+
+            for (var r = 0; r < resources.length; r++) {
+                var color = resources[r].color;
+                var style = ownClasses ? '' : 'background: ' + color + '50; color: ' + vis.binds.consumption.invertColor(resources[r].color, true);
+
+                text += '<td class="vis-cons-resources-td vis-cons-resources-td-' + resources[r].name + '" data-name="' + resources[r].name + '" style="width: ' + width + '%; ' + style + '">';
+                if (resources[r].icon && resources[r].icon.length <= 2) {
+                    text += '<span class="vis-cons-types-icon">' + resources[r].icon + '</span>';
+                }
+                text += '<span class="vis-cons-types-title">' + resources[r].title + '</span>';
+                text += '</td>';
+            }
+            text += '</tr></table>';
+            $el.html(text);
+
+            // install handlers
+            var $items = $el.find('.vis-cons-resources-td');
+            $items.on('click', function () {
+                $(this).parent().find('.vis-cons-resources-td').removeClass('vis-cons-resources-selected');
+                $(this).addClass('vis-cons-resources-selected');
+                vis.binds.consumption.setSettings($div, null, null, $(this).data('name'));
+            });
+
+            // select current resource
+            var settings = $div.data('settings');
+
+            if (count === 2 && !settings.resource) {
+                vis.binds.consumption.setSettings($div, null, null, resources[0].name);
+                $items.each(function () {
+                    if ($(this).data('name')) {
+                        $(this).addClass('vis-cons-resources-selected');
+                    }
+                });
+            } else {
+                $items.each(function () {
+                    if (settings.resource === $(this).data('name')) {
+                        $(this).addClass('vis-cons-resources-selected');
+                    }
+                });
+            }
+        },
+        renderTypes: function ($div, $el) {
+            var data =$div.data('data');
+
+            var text = '<table class="vis-cons-types-table">';
+            if (!data.hide_planning || data.hide_planning === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="plan" title="' + _('Planning') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/market-research.svg" alt="analysis"/>' +
+                    '</td></tr>';
+            }
+            if (!data.hide_pie || data.hide_pie === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="donut" title="' + _('Pie chart') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/seo-and-web.svg" alt="donut"/>' +
+                    '</td></tr>';
+            }
+            if (!data.hide_stackbar || data.hide_stackbar === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="stackbar" title="' + _('Stack bar') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/stacked.svg" alt="stackbar"/>' +
+                    '</td></tr>';
+            }
+            if (!data.hide_heatmap || data.hide_heatmap === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="heatmap" title="' + _('Heat map') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/heatmap.svg" alt="heatmap"/>' +
+                    '</td></tr>';
+            }
+            if (!data.hide_table || data.hide_table === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="table" title="' + _('Table') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/spreadsheet.svg" alt="table"/>' +
+                    '</td></tr>';
+            }
+            if (!data.hide_charts || data.hide_charts === 'false') {
+                text += '<tr class="vis-cons-types-tr"><td class="vis-cons-types-td" data-name="charts" title="' + _('Charts') + '">' +
+                    '<img class="vis-cons-types-icon" src="widgets/consumption/img/charts.svg" alt="charts"/>' +
+                    '</td></tr>';
+            }
+            text += '</table>';
+            $el.html(text);
+
+            var $items = $el.find('.vis-cons-types-td');
+            // install handlers
+            $items.on('click', function () {
+                $(this).parent().parent().find('.vis-cons-types-td').removeClass('vis-cons-types-selected');
+                $(this).addClass('vis-cons-types-selected');
+                vis.binds.consumption.setSettings($div, $(this).data('name'));
+            });
+
+            // select current resource
+            var settings = $div.data('settings');
+
+            $items.each(function () {
+                if (settings.type === $(this).data('name')) {
+                    $(this).addClass('vis-cons-types-selected');
+                }
+            });
+        },
+        loadCharts: function (cb) {
+            if (!vis.binds.consumption.loaded) {
+                vis.binds.consumption.loaded = true;
+                $.ajax({
+                    url: 'widgets/consumption/js/echarts.min.js',
+                    dataType: 'script',
+                    success: function () { cb && cb();}
+                });
+            } else {
+                return cb && cb();
+            }
+        },
+        isCurrency: function (symbol) {
+            return symbol === '€' || symbol === '$' || symbol === '₽' || symbol === '£' || symbol === 'Ұ' || symbol === '¥'|| symbol === '元' || symbol === 'CHF';
+        },
+        setSettings: function ($div, type, station, resource, start, end, isEuro, force) {
+            var settings = $div.data('settings');
+            var changed = false;
+            if (type && settings.type !== type) {
+                settings.type = type;
+                changed = true;
+            }
+            if (isEuro !== null && isEuro !== undefined && settings.isEuro !== isEuro) {
+                settings.isEuro = isEuro;
+                changed = true;
+            }
+            if (station !== null && station !== undefined && settings.station !== station) {
+                settings.station = station;
+                changed = true;
+            }
+            if (resource !== null && resource !== undefined && settings.resource !== resource) {
+                settings.resource = resource;
+                changed = true;
+                // Check if new Resource has this unit
+                if (resource && typeof settings.isEuro === 'string') {
+                    settings.isEuro = vis.binds.consumption.isCurrency(settings.isEuro);
+                }
+            }
+
+            if (start && settings.start !== start) {
+                var startsFrom = $div.data('data').startsFrom;
+                if (startsFrom) {
+                    var parts = startsFrom.split('-');
+                    startsFrom = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+                    if (start < startsFrom.getTime()) {
+                        start = startsFrom.getTime();
+                    }
+                }
+
+                settings.start = start;
+                changed = true;
+            }
+            if (end && settings.end !== end) {
+                var startsFrom1 = $div.data('data').startsFrom;
+                if (startsFrom1) {
+                    var parts1 = startsFrom1.split('-');
+                    startsFrom1 = new Date(parseInt(parts1[0], 10), parseInt(parts1[1], 10) - 1, 1);
+                    if (start < startsFrom1.getTime()) {
+                        end = startsFrom1.getTime();
+                    }
+                }
+                settings.end = end;
+                changed = true;
+            }
+
+            if (changed || force) {
+                var instance = $div.data('instance');
+                localStorage.setItem('vis-consumption.' + instance, JSON.stringify(settings));
+                $div.data('settings', settings);
+                vis.conn.setState(instance + '.trigger', JSON.stringify(settings));
+            }
+        },
+        initInstance: function (instId, instance, cb) {
+            if (!vis.binds.consumption.instancePromise[instId]) {
+                vis.binds.consumption.instancePromise[instId] = true;
+                vis.conn.getStates([instId + '.lastTime'], function (err, data) {
+                    if (!data[instId + '.lastTime'] || !data[instId + '.lastTime'].val) {
+                        vis.conn.setState('consumption.' + instance + '.instances.common.addInstance', vis.instance.replace(/\./g, '_'), function () {
+                            setTimeout(function () {
+                                vis.conn.subscribe(instId + '.result', function () {
+                                    cb && cb();
+                                }, 200); // wait till
+                            });
+                        });
+                    } else {
+                        vis.conn.subscribe(instId + '.result', function () { cb && cb(); });
+                    }
+                });
+            } else {
+                cb && cb();
+            }
+        },
+        init: function (el, wid, view, data, style) {
+            var $div = $('#' + wid);
+            if (!$div.length) {
+                return setTimeout(function () {
+                    vis.binds.consumption.init(el, wid, view, data, style);
+                }, 100);
+            }
+
+            var _data = Object.assign({}, data);
+            _data.consInstance = _data.consInstance || 0;
+            _data.startsFrom = _data.startsFrom || '2020-01';
+            var parts = _data.startsFrom.split('-');
+            if ((parts[0] || '').length !== 4) {
+                parts[0] = '2020';
+            }
+            if (!parts[1]) {
+                parts[1] = '01';
+            }
+            _data.startsFrom = parts[0] + '-' + parts[1];
+            _data.currency = _data.currency || '€';
+
+            // generate instance if not exists
+            !vis.instance && vis.generateInstance();
+
+            var inst = 'consumption.' + _data.consInstance + '.instances.' + vis.instance.replace(/\./g, '_');
+            $div.data('instance', inst);
+            $div.data('dateFormat', _data.dateFormat || 'yy-mm-dd');
+            $div.data('data', Object.assign({}, _data));
+            $div.data('currency', _data.currency);
+
+            // load echarts
+            vis.binds.consumption.loadCharts(function () {
+                vis.binds.consumption.initInstance(inst, _data.consInstance, function () {
+                    vis.binds.consumption.getStations(_data.consInstance, function (err, data) {
+                        // init settings
+                        var settings = localStorage.getItem('vis-consumption.' + inst) || '{}';
+                        try {
+                            settings = JSON.parse(settings);
+                        } catch (e) {
+
+                        }
+                        var now = new Date();
+                        settings.end = settings.end || now.getTime();
+
+                        if (!settings.start) {
+                            now.setMonth(0);
+                            now.setDate(1);
+                            now.setHours(0);
+                            now.setMinutes(0);
+                            now.setSeconds(0);
+                            now.setMilliseconds(0);
+                            settings.start = now.getTime();
+                        }
+
+                        settings.type     = settings.type    || 'plan';
+                        settings.station  = _data.consumption_station || settings.station || data.stations[0].name;
+                        var s;
+                        for (s = 0; s < data.stations.length; s++) {
+                            if (settings.station === data.stations[s].name) {
+                                break;
+                            }
+                        }
+                        if (s === data.stations.length) {
+                            settings.station  = data.stations[0].name;
+                        }
+
+                        settings.resource = settings.resource === null || settings.resource === undefined ? data.resources[0].name : settings.resource;
+                        $div.data('settings', settings);
+
+                        var text = '<table class="vis-cons-table"><tbody style="width:100%; height: 100%;">';
+
+                        text += '<tr class="vis-cons-table-first-row">';
+                        text += '<td class="vis-cons-table-empty-cell"></td>'; // empty
+                        text += '<td class="vis-cons-resources"></td>';
+                        text += '</tr>';
+
+                        text += '<tr class="vis-cons-table-second-row">';
+                        text += '<td class="vis-cons-types"></td>';
+                        text += '<td class="vis-cons-toolbar-ans-results">';
+                        text += '<div class="vis-cons-toolbar" style="color: ' + (_data.colorTheme === 'dark' ? 'white' : 'black') + '"><div class="vis-cons-toolbar-euro"></div>' +
+                                '<div class="vis-cons-toolbar-dates"></div></div>' +
+                                '<div class="vis-cons-results"></div></td>';
+                        text += '</tr>';
+                        text += '</tbody></table>';
+                        $div.html(text);
+
+                        var $types = $div.find('.vis-cons-types');
+                        vis.binds.consumption.renderTypes($div, $types);
+
+                        $div.data('resources', data.resources);
+                        $div.data('stations', data.stations);
+
+                        var $resources = $div.find('.vis-cons-resources');
+                        vis.binds.consumption.renderResources($div, $resources, data.resources);
+
+                        vis.binds.consumption.renderResults($div, settings);
+
+                        function onChange(wid, id, newVal) {
+                            if ($div && id === inst + '.result') {
+                                if (typeof newVal === 'string') {
+                                    try {
+                                        newVal = JSON.parse(newVal);
+                                    } catch (e) {
+                                        newVal = {};
+                                    }
+                                }
+                                try {
+                                    vis.binds.consumption.renderResults($div, settings, newVal);
+                                } catch (e) {
+                                    console.error('Cannot update chart: ' + e);
+                                }
+                            } else if (!$div) {
+                                console.log('Try unregister one more time');
+                                vis.unregisterOnChange(onChange, wid);
+                            }
+                        }
+
+                        vis.registerOnChange(onChange, wid);
+
+                        /*vis.states.bind(inst + '.result.val', onChangeBindHandler);
+
+                        // remember all ids, that bound
+                        $div.data('bound', [inst + '.result.val']);
+
+                        // remember bind handler
+                        $div.data('bindHandler', onChangeBindHandler);*/
+
+                        $div.data('destroy', function (widget, $widget) {
+                            vis.binds.consumption.instancePromise[inst] = null;
+                            vis.conn.unsubscribe(inst + '.result');
+                            vis.unregisterOnChange(onChange, wid);
+                            $div = null;
+                        });
+
+                        // request data
+                        vis.binds.consumption.setSettings($div, null, null, null, null, null, null, true);
+                    });
+                });
+            });
+        },
+        destroyChart: function ($div, $report) {
+            $report = $report || $div.find('.vis-cons-results');
+            try {
+                var chart = $report.data('chart');
+                chart && echarts.dispose(chart);
+                $report.data('chart', null);
+            } catch (e) {
+
+            }
+        },
+        renderEuroSwitch: function ($div, $results, $toolbar, settings, unit, showDropDown) {
+            settings = settings || $div.data('settings');
+            var $euro = $toolbar.find('.vis-cons-toolbar-euro');
+
+            // install onclick handler once
+            if (!$euro.data('installed')) {
+                $euro.data('installed', true);
+
+                $euro.on('click', function () {
+                    var ignoreClick = $(this).data('ignoreClick');
+                    if (!ignoreClick) {
+                        $(this).find('.vis-cons-switch-input').prop('checked', !settings.isEuro);
+                        vis.binds.consumption.setSettings($div, null, null, null, null, null, !settings.isEuro);
+                    }
+                });
+            }
+
+            var $switch = $euro.find('.vis-cons-switch-input');
+            var $select = $euro.find('.vis-cons-select-input');
+            if (unit) {
+                $euro.data('ignoreClick', false);
+                $euro.css('padding-top', '15px');
+                if (settings.resource) {
+                    if ($switch.length) {
+                        $switch.prop('checked', settings.isEuro);
+                        $euro.find('.vis-cons-switch-unit').html(unit);
+                    } else {
+                        var text = '<span class="vis-cons-switch-label vis-cons-switch-unit">' + unit + '</span><input type="checkbox" class="vis-cons-switch-input" ' + (settings.isEuro ? 'checked' : '') + '/><label for="switch">Toggle</label><span class="vis-cons-switch-label vis-cons-switch-euro">€</span>';
+                        $euro.html(text);
+                    }
+                } else {
+                    $euro.css('padding-top', '0');
+                    ($switch.length || $select.length) && $euro.html('');
+                }
+            } else if (showDropDown) {
+                $euro.data('ignoreClick', true);
+                // collect all units
+                var resources = $div.data('resources');
+                if (!$select.length) {
+                    var units = [$div.data('currency')];
+                    var theme = $div.data('data').colorTheme;
+                    var textColor = theme === 'dark' ? 'white' : 'black';
+                    var style = 'height: 24px; color: ' + textColor + '; background: #00000000; border: 1px solid lightgray; padding: 3px;';
+                    var select = '<select class="vis-cons-select-input" style="' + style + '"><option value="€">€</option>\n';
+                    for (var r = 0; r < resources.length; r++) {
+                        if (resources[r].unit && units.indexOf(resources[r].unit) === -1) {
+                            units.push(resources[r].unit);
+                            select += '<option style="color: black" value="' + resources[r].unit + '">' + resources[r].unit + '</option>\n';
+                        }
+                    }
+                    select += '</select>';
+                    $euro.html(select);
+                    $select = $euro.find('.vis-cons-select-input');
+                    $select.off('change').on('change', function () {
+                        vis.binds.consumption.setSettings($div, null, null, null, null, null, $(this).val());
+                    });
+                }
+                $select.val(settings.isEuro === true || !settings.isEuro ? $div.data('currency') : settings.isEuro);
+            } else {
+                $euro.data('ignoreClick', true);
+                ($switch.length || $select.length) && $euro.html('');
+                $euro.css('padding-top', '0');
+            }
+        },
+        renderDatePicker: function ($div, $results, $toolbar, settings, visible) {
+            settings = settings || $div.data('settings');
+            var $dates = $toolbar.find('.vis-cons-toolbar-dates');
+            var $inputs = $dates.find('select');
+            var startsFrom = $div.data('data').startsFrom;
+            if (visible) {
+                var dateFormat = $div.data('dateFormat');
+                if ($inputs.length) {
+                    var $from = $dates.find('.vis-cons-toolbar-from');
+                    var $to   = $dates.find('.vis-cons-toolbar-to');
+                    $from.val(settings.start);
+                    $to.val(settings.end);
+                } else {
+                    var theme = $div.data('data').colorTheme;
+                    var textColor = theme === 'dark' ? 'white' : 'black';
+                    var style = 'color: ' + textColor + '; background: #00000000; border: 1px solid lightgray; padding: 3px;';
+                    var parts = startsFrom.split('-');
+
+                    var _startsFrom = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+                    var now = new Date();
+                    now.setMonth(now.getMonth() + 1);
+                    var startOptions = [];
+                    while (_startsFrom < now) {
+                        startOptions.push('<option style="color: black" value="' + _startsFrom.getTime() + '">' + $.datepicker.formatDate(dateFormat, _startsFrom) + '</option>');
+                        _startsFrom.setMonth(_startsFrom.getMonth() + 1);
+                    }
+
+                    var _endsTo = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+                    var endOptions = [];
+                    while (_endsTo < now) {
+                        var d = new Date(_endsTo);
+                        d.setMonth(d.getMonth() + 1);
+                        d.setMilliseconds(d.getMilliseconds() - 1);
+                        endOptions.push('<option style="color: black" value="' + d.getTime() + '">' + $.datepicker.formatDate(dateFormat, d) + '</option>');
+                        _endsTo.setMonth(_endsTo.getMonth() + 1);
+                    }
+
+                    var text = '<span class="vis-cons-toolbar-dates-label">' + _('from') + ':</span> ' +
+                               '<select class="vis-cons-toolbar-from" style="' + style + '">' + startOptions.join('\n') + '</select> ' +
+                               '<span class="vis-cons-toolbar-dates-label">' + _('to') + ':</span> ' +
+                               '<select style="' + style + '" class="vis-cons-toolbar-to">' + endOptions.join('\n') + '</select>';
+                    $dates.html(text);
+                    var $from1 = $dates.find('.vis-cons-toolbar-from');
+                    var $to1   = $dates.find('.vis-cons-toolbar-to');
+
+                    $from1.on('change', function () {
+                        var from = parseInt($(this).val(), 10);
+                        var to = settings.end;
+                        if (to <= from) {
+                            var d = new Date(from);
+                            d.setMonth(d.getMonth() + 1);
+                            d.setMilliseconds(d.getMilliseconds() - 1);
+                            to = d.getTime();
+                        }
+                        vis.binds.consumption.setSettings($div, null, null, null, from, to);
+                    }).val(settings.start);
+                    $to1.on('change', function () {
+                        var to = parseInt($(this).val(), 10);
+                        var from = settings.start;
+                        if (to <= from) {
+                            var d = new Date(to);
+                            d.setMilliseconds(d.getMilliseconds() + 1);
+                            d.setMonth(d.getMonth() - 1);
+                            from = d.getTime();
+                        }
+                        vis.binds.consumption.setSettings($div, null, null, null, from, to);
+                    }).val(settings.end);
+                }
+            } else {
+                if ($inputs.length) {
+                    $dates.html('');
+                }
+            }
+        },
+        renderToolbar: function ($div, $results, $toolbar, euroVisible, dateVisible) {
+            if (euroVisible || dateVisible) {
+                $results.css('height', 'calc(100% - 50px)');
+                $toolbar.show();
+            } else {
+                $results.css('height', '100%');
+                $toolbar.hide();
+            }
+        },
+        renderResults: function ($div, settings, data) {
+            settings = settings || $div.data('settings');
+            var $toolbar = $div.find('.vis-cons-toolbar');
+            var $report  = $div.find('.vis-cons-results');
+            if (!data || !data.series) {
+                return $report.html('<div class="vis-cons-rendering">' + _('rendering...') + '</div>');
+            } else {
+                var $render = $report.find('.vis-cons-rendering');
+                $render && $render.length && $render.remove();
+            }
+
+            switch (settings.type) {
+                case 'donut':
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, true, true);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '', !settings.resource);
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, true);
+                    vis.binds.consumption.renderDonut($div, $report, settings, data);
+                    $div.find('.slider-range-div').remove();
+                    break;
+
+                case 'stackbar':
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, true, false);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '', !settings.resource);
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, false);
+                    vis.binds.consumption.renderStackBar($div, $report, settings, data);
+                    $div.find('.slider-range-div').remove();
+                    break;
+
+                case 'heatmap':
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, true, false);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '', !settings.resource);
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, false);
+                    vis.binds.consumption.renderHeatMap($div, $report, settings, data);
+                    break;
+
+                case 'table':
+                    vis.binds.consumption.destroyChart($div, $report);
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, true, false);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '', !settings.resource);
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, false);
+                    vis.binds.consumption.renderTable($div, $report, settings, data);
+                    $div.find('.slider-range-div').remove();
+                    break;
+
+                case 'charts':
+                    vis.binds.consumption.destroyChart($div, $report);
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, true, false);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '', !settings.resource);
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, false);
+                    vis.binds.consumption.renderCharts($div, $report, settings, data);
+                    $div.find('.slider-range-div').remove();
+                    break;
+
+                case 'plan':
+                default:
+                    vis.binds.consumption.destroyChart($div, $report);
+                    vis.binds.consumption.renderToolbar($div, $report, $toolbar, !!settings.resource ? data.unitOriginal : '', false);
+                    vis.binds.consumption.renderEuroSwitch($div, $report, $toolbar, settings, settings.resource ? data.unitOriginal : '');
+                    vis.binds.consumption.renderDatePicker($div, $report, $toolbar, settings, false);
+                    vis.binds.consumption.renderPlan($div, $report, settings, data);
+                    $div.find('.slider-range-div').remove();
+                    break;
+            }
+        },
+        renderDonut: function ($div, $report, settings, data) {
+            var unit = data.unit;
+            var option = {
+                tooltip: {
+                    show: true,
+                    trigger: 'item',
+                    formatter: '{b}<br/>{c} ' + unit + ' ({d}%)'
+                },
+                series: data.series
+            };
+
+            var showIndexes;
+            // var theme = $div.data('data').colorTheme;
+            if (option.series[0].data.length >= 10) {
+                var _showIndexes = [];
+                for (var k = 0; k < option.series[0].data.length; k++) {
+                    _showIndexes.push({val: option.series[0].data[k].value, i: k});
+                }
+                _showIndexes.sort(function (a, b) {return a.val > b.val ? -1 : (a.val < b.val ? 1 : 0)});
+                _showIndexes.splice(10, _showIndexes.length - 10);
+                showIndexes = [];
+                for (var u = 0; u < _showIndexes.length; u++) {
+                    showIndexes.push(_showIndexes[u].val);
+                }
+            }
+
+            for (var i = 0; i < option.series.length; i++) {
+                var serie = option.series[i];
+                serie.type = 'pie';
+                if (i === 0) {
+                    if (option.series.length === 1) {
+                        serie.radius = '65%';
+                    } else {
+                        serie.radius = ['40%', '65%'];
+                    }
+                    // only outer ring has labels
+                    if (option.series[i].data.length < 10) {
+                        serie.label = {
+                            show: true,
+                            formatter: ' {b|{b}}\n{hr|}\n  {c} ' + unit + ' {per|{d}%}  ',
+                            backgroundColor: '#eee',
+                            borderColor: '#aaa',
+                            borderWidth: 1,
+                            borderRadius: 2,
+                            padding: [0, 7],
+                            rich: {
+                                b: {
+                                    color: '#999',
+                                    align: 'center',
+                                    fontSize: 14,
+                                    lineHeight: 20
+                                },
+                                hr: {
+                                    borderColor: '#aaa',
+                                    width: '100%',
+                                    borderWidth: 0.5,
+                                    height: 0
+                                },
+                                per: {
+                                    color: '#eee',
+                                    backgroundColor: '#334455',
+                                    padding: [2, 4],
+                                    borderRadius: 2,
+                                    lineHeight: 22
+                                }
+                            }
+                        };
+                    } else {
+                        serie.label = {
+                            show: true,
+                            formatter: function (param) {
+                                return param.name + ': ' + param.percent + '% (' + param.value + unit + ')'
+                            },
+                            fontSize: 10,
+                            color: '#000',
+                            backgroundColor: '#eee',
+                            borderColor: '#aaa',
+                            borderWidth: 1,
+                            borderRadius: 2,
+                            padding: [0, 7],
+                            rich: {
+                                b: {
+                                    color: '#999',
+                                    align: 'center',
+                                    fontSize: 14,
+                                    lineHeight: 20
+                                },
+                                hr: {
+                                    borderColor: '#aaa',
+                                    width: '100%',
+                                    borderWidth: 0.5,
+                                    height: 0
+                                },
+                                per: {
+                                    color: '#eee',
+                                    backgroundColor: '#334455',
+                                    padding: [2, 4],
+                                    borderRadius: 2,
+                                    lineHeight: 22
+                                }
+                            }
+                        };
+                    }
+                } else {
+                    // inner ring
+                    serie.radius = [0, '35%'];
+                    serie.label = {position: 'inner'};
+                }
+            }
+
+            var chart = $report.data('chart');
+
+            if (!chart || $report.data('type') !== 'donut' + data.series.length) {
+                vis.binds.consumption.destroyChart($div, $report);
+                $report.text(''); // remove old stuff
+                chart = echarts.init($report[0]/*, null, {renderer: 'svg'}*/);
+                $report.data('type', 'donut' + data.series.length);
+                $report.data('chart', chart);
+            }
+
+            // console.log(JSON.stringify(option, null, 2));
+
+            chart.setOption(option);
+        },
+        renderPlan: function ($div, $report, settings, data) {
+            var theme = $div.data('data').colorTheme;
+            var textColor = theme === 'dark' ? 'white' : 'black';
+
+            var text = '<table class="vis-cons-plan-table" style="color: ' + textColor + '">';
+            text += '<tr class="vis-cons-plan-tr-first"><td class="vis-cons-plan-td-main"></td><td class="vis-cons-plan-main-td-widget"><div class="vis-cons-plan-main-td-widget-div"></div></td></tr>';
+            if (!settings.resource) {
+                text += '<tr class="vis-cons-plan-tr-second"><td colspan="2" class="vis-cons-plan-td-additional"></td></tr>';
+            }
+            text += '</table>';
+            $report.html(text);
+
+            vis.binds.consumption.renderPlanMain($div, $report.find('.vis-cons-plan-td-main'), settings, data);
+            var resources = $div.data('resources');
+
+            var name = (settings.resource || 'all').toLowerCase();
+            var resourceTitle = '';
+            if (settings.resource) {
+                for (var r = 0; r < resources.length; r++) {
+                    if (resources[r].name === settings.resource) {
+                        resourceTitle = resources[r].title;
+                        break;
+                    }
+                }
+            }
+
+            var options = {
+                reference: data.series[name].reference, // last year consumption
+                actual:    data.series[name].actual,    // actual consumption
+                planned:   data.series[name].planned,   // planned this year
+                forecast:  data.series[name].forecast,  // forecast this year
+                unit:      data.unit,
+                height:    180,
+                textColor: textColor,
+
+                title: resourceTitle ? _('%s overview', resourceTitle) : _('Total overview')
+            };
+
+            vis.binds.consumption.forecastBar.init($report.find('.vis-cons-plan-main-td-widget-div'), options);
+
+            if (!settings.resource) {
+                var $additional = $report.find('.vis-cons-plan-td-additional');
+                var divs = [];
+                for (var rr = 0; rr < resources.length; rr++) {
+                    divs.push('<div class="vis-cons-plan-div-additional-widget"><div class="vis-cons-plan-main-additional-widget-div" data-resource="' + resources[rr].name + '"></div></div>');
+                }
+
+                $additional.html(divs.join('\n'));
+
+                for (var i = 0; i < resources.length; i++) {
+                    var res = resources[i];
+                    var $wDiv = $additional.find('.vis-cons-plan-main-additional-widget-div[data-resource="' + res.name + '"]');
+                    var resourceTitle1 = resources[i].title;
+
+                    var name1 = res.name.toLowerCase();
+
+                    var options1 = {
+                        reference: data.series[name1].reference, // last year consumption
+                        actual:    data.series[name1].actual,    // actual consumption
+                        planned:   data.series[name1].planned,   // planned this year
+                        forecast:  data.series[name1].forecast,  // forecast this year
+                        unit:      data.unit,
+                        height:    100,
+                        textColor: textColor,
+                        onClick:   (function (n) { return function () {
+                            vis.binds.consumption.setSettings($div, null, null, n);
+                        }})(name1),
+
+                        title: resourceTitle1
+                    };
+
+                    vis.binds.consumption.forecastBar.init($wDiv, options1);
+                }
+            }
+        },
+        renderStackBar: function ($div, $report, settings, data) {
+            var unit = data.unit;
+            var theme = $div.data('data').colorTheme;
+            var color = theme === 'dark' ? '#CCC' : '#333';
+
+            function formatter(year, month) {
+                var sum = null;
+                for (var s = 0; s < data.series.length; s++) {
+                    if (data.series[s].stack === year && data.series[s].data[month] !== null && data.series[s].data[month] !== undefined) {
+                        sum = sum || 0;
+                        sum += data.series[s].data[month];
+                    }
+                }
+
+                return vis.binds.consumption.format(sum, unit, true);
+            }
+
+            // find last items of every stack
+            var last = {};
+            for (var s = 0; s < data.series.length; s++) {
+                last[data.series[s].stack] = data.series[s];
+                data.series[s].type = 'bar';
+            }
+
+            // and place text on the top
+            for (var stack in last) {
+                last[stack].label = {
+                    formatter: (function (stack) {
+                        return function (opt) { return formatter(stack, opt.dataIndex); }
+                    })(stack),
+                    show: true,
+                    color: color,
+                    fontSize: 10,
+                    rotate: 45,
+                    offset: [5, -10],
+                    position: 'top'
+                }
+            }
+
+            // add year to name
+            if (data.series.length <= 10) {
+                for (var ss = 0; ss < data.series.length; ss++) {
+                    data.series[ss].name = data.series[ss].year + ' ' + data.series[ss].name;
+                }
+            }
+
+            var option = {
+                tooltip: {
+                    show: true,
+                    trigger: 'axis',
+                    formatter: function (params) {
+                        var len = params.length / 2;
+                        var map = [];
+                        for (var i = 0; i < params.length; i++) {
+                            map.push({text: '<div style="opacity: ' + (i < len ? 0.5 : 1) + '"><span style="display: inline-block; margin-right: 5px;border-radius: 10px;width: 9px;height: 9px; background-color: ${params[i].color}; opacity: ' + params[i].opacity + '"></span>' + params[i].seriesName + ': ' + vis.binds.consumption.format(params[i].value, unit) + '</div>', val: params[i].value});
+                        }
+                        if (params.length > 10) {
+                            map.splice(0, len);
+                            map.sort(function (a, b) {return a.val > b.val ? -1 : (a.val < b.val ? 1 : 0)});
+                            map.splice(10, map.length - 10);
+                            map.push({text: '<div>...</div>'});
+                        }
+
+                        var text = '';
+                        for (var j = 0; j < map.length; j++) {
+                            text += map[j].text;
+                        }
+
+                        return '<div style="text-align: left"><strong style="padding-left: 15px">' + params[0].name + '</strong></br>' + text + '</div>';
+                    },
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                grid: {
+                    left: '0%',
+                    right: '0%',
+                    bottom: data.legend ? '50px' : '0%',
+                    top: '30px',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    data: vis.binds.consumption.months[vis.language] || vis.binds.consumption.months.en,
+                    axisLabel: {
+                        color: color
+                    },
+                    axisTick: {
+                        alignWithLabel: true,
+                        lineStyle: {
+                            color: color
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: color
+                        }
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    name: data.unit,
+                    axisLabel: {
+                        color: color
+                    },
+                    axisTick: {
+                        lineStyle: {
+                            color: color
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: color
+                        }
+                    }
+                },
+                series: data.series
+            };
+
+            if (data.legend && data.series.length < 10) {
+                option.legend = {
+                    data: data.legend,
+                    //type: 'scroll',
+                    bottom: 0,
+                    selectedMode: false,
+                    textStyle: {
+                        color: color
+                    }
+                }
+            }
+
+            var chart;
+
+            vis.binds.consumption.destroyChart($div, $report);
+            $report.text(''); // remove old stuff
+            chart = echarts.init($report[0], null, {renderer: 'svg'});
+            $report.data('type', 'stackbar');
+            $report.data('chart', chart);
+            chart.setOption(option);
+        },
+
+        format: function (m, unit, noHtml) {
+            if (m === undefined || m === null) {
+                return '';
+            }
+
+            if (vis.binds.consumption.isCurrency(unit)) {
+                if (noHtml) {
+                    if (m < 1000) {
+                        return m.toFixed(1).toString().replace('.', ',') + ' ' + unit;
+                    } else {
+                        return Math.round(m) + ' ' + unit;
+                    }
+                } else {
+                    return '<span class="vis-cons-table-value">' + m.toFixed(1).replace('.', ',') + '<span class="vis-cons-table-unit"> ' + unit + '</span>';
+                }
+            } else {
+                var val = m < 1000 ? (Math.round(m * 10) / 10).toString().replace('.', ',') : Math.round(m);
+                if (noHtml) {
+                    return val + ' ' + (unit || '');
+                } else {
+                    return '<span class="vis-cons-table-value">' + val + '<span class="vis-cons-table-unit"> ' + (unit || '') + '</span>';
+                }
+            }
+        },
+        renderTable: function ($div, $report, settings, data) {
+            // combine
+            //          Jan Feb Mar                       Total
+            // -----------------------
+            // E1 2020
+            // E1 2019
+            // ----------------------
+            // E2 2020
+            // E2 2019
+            // ----------------------
+            // Total 2020                                  xxx
+            // Total 2019                                  yyy
+            var theme = $div.data('data').colorTheme;
+            var textColor = theme === 'dark' ? 'white' : 'black';
+            var lines = [];
+            lines.push('<tr class="vis-cons-table-tr-header"><th>' + _('Name') + '</th><th></th><th>' + (vis.binds.consumption.months[vis.language] || vis.binds.consumption.months.en).join('</th><th>') + '</th><th>' + _('Total') + ' </th></tr>\n');
+            var ids = {};
+
+            var prevYear;
+            var actualYear;
+            for (var s = 0; s < data.series.length; s++) {
+                ids[data.series[s]._id] = ids[data.series[s]._id] || {};
+
+                if (data.series[s].stack === 'prev') {
+                    prevYear = prevYear || data.series[s].year;
+                    ids[data.series[s]._id].prev = data.series[s];
+                } else {
+                    actualYear = actualYear || data.series[s].year;
+                    ids[data.series[s]._id].actual = data.series[s];
+                }
+            }
+            actualYear = actualYear || new Date().getFullYear();
+            prevYear   = prevYear || (actualYear - 1);
+
+            var unit = data.unit;
+
+            var items = Object.keys(ids).sort();
+            var stats = {actual: [], prev:  []};
+
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var line1 = '<tr class="vis-cons-table-tr-actual">';
+                item = ids[item];
+                if (!item.actual) {
+                    line1 += '<td rowspan="2" class="vis-cons-table-td-name">' + (item.prev ? item.prev.name : '--') + '</td>';
+                    line1 += '<td>' + actualYear + '</td>';
+                    for (var m = 0; m < 12; m++) {
+                        line1 += '<td>--</td>';
+                    }
+                    line1 += '<td>--</td>';
+                } else {
+                    line1 += '<td rowspan="2" class="vis-cons-table-td-name">' + item.actual.name + '</td>';
+                    line1 += '<td>' + actualYear + '</td>';
+                    item.actual.data = item.actual.data || [];
+                    var sum1 = 0;
+                    for (var mm = 0; mm < 12; mm++) {
+                        line1 += '<td>' + (item.actual.data[mm] === null || item.actual.data[mm] === undefined ? '--' : vis.binds.consumption.format(item.actual.data[mm], unit)) + '</td>';
+                        sum1 += parseFloat(item.actual.data[mm] || 0);
+
+                        stats.actual[mm] = stats.actual[mm] || {c: 0, s: 0};
+
+                        if (item.actual.data[mm] !== null || item.actual.data[mm] !== undefined) {
+                            stats.actual[mm].c++;
+                            stats.actual[mm].s += parseFloat(item.actual.data[mm] || 0);
+                        }
+                    }
+                    line1 += '<td class="vis-cons-table-td-total">' + vis.binds.consumption.format(sum1, unit) + '</td>';
+                }
+                line1 += '</tr>';
+                lines.push(line1);
+
+
+                line1 = '<tr class="vis-cons-table-tr-prev">';
+                if (!item.prev) {
+                    //line += '<td>--</td>';
+                    line1 += '<td>' + prevYear + '</td>';
+                    for (var mmm = 0; mmm < 12; mmm++) {
+                        line1 += '<td>--</td>';
+                    }
+                    line1 += '<td>--</td>';
+                } else {
+                    //line += '<td>' + item.prev.name + '</td>';
+                    line1 += '<td>' + prevYear + '</td>';
+                    item.prev.data = item.prev.data || [];
+                    var sum = 0;
+                    for (var m = 0; m < 12; m++) {
+                        line1 += '<td>' + (item.prev.data[m] === null || item.prev.data[m] === undefined ? '--' : vis.binds.consumption.format(item.prev.data[m], unit)) + '</td>';
+                        sum += parseFloat(item.prev.data[m] || 0);
+
+                        stats.prev[m] = stats.prev[m] || {c: 0, s: 0};
+
+                        if (item.prev.data[m] !== null || item.prev.data[m] !== undefined) {
+                            stats.prev[m].c++;
+                            stats.prev[m].s += parseFloat(item.prev.data[m] || 0);
+                        }
+                    }
+                    line1 += '<td class="vis-cons-table-td-total">' + vis.binds.consumption.format(sum, unit) + '</td>';
+                }
+                line1 += '</tr>\n';
+                lines.push(line1);
+            }
+
+            // total of all lines for actual
+            var line = '<tr class="vis-cons-table-tr-actual vis-cons-table-tr-total">';
+            if (!stats.actual.length) {
+                line += '<td rowspan="2" class="vis-cons-table-td-name">' + _('All') + '</td>';
+                line += '<td>' + actualYear + '</td>';
+                for (var m = 0; m < 12; m++) {
+                    line += '<td>--</td>';
+                }
+                line += '<td>--</td>';
+            } else {
+                line += '<td rowspan="2" class="vis-cons-table-td-name">' + _('All') + '</td>';
+                line += '<td>' + actualYear + '</td>';
+                var sum2 = 0;
+                for (var m1 = 0; m1 < 12; m1++) {
+                    line += '<td>' + (!stats.actual[m1].c ? '--' : vis.binds.consumption.format(stats.actual[m1].s, unit)) + '</td>';
+                    sum2 += stats.actual[m1].s || 0;
+                }
+                line += '<td class="vis-cons-table-td-total">' + vis.binds.consumption.format(sum2, unit) + '</td>';
+            }
+            line += '</tr>\n';
+            lines.push(line);
+
+            // total of all lines for prev
+            line = '<tr class="vis-cons-table-tr-prev vis-cons-table-tr-total">';
+            if (!stats.prev.length) {
+                //line += '<td>--</td>';
+                line += '<td>' + prevYear + '</td>';
+                for (var m4 = 0; m4 < 12; m4++) {
+                    line += '<td>--</td>';
+                }
+                line += '<td>--</td>';
+            } else {
+                //line += '<td>' + _('Previous') + '</td>';
+                line += '<td>' + prevYear + '</td>';
+                var sum3 = 0;
+                for (var m3 = 0; m3 < 12; m3++) {
+                    line += '<td>' + (!stats.prev[m3].c ? '--' : vis.binds.consumption.format(stats.prev[m3].s, unit)) + '</td>';
+                    sum3 += stats.prev[m3].s || 0;
+                }
+                line += '<td class="vis-cons-table-td-total">' + vis.binds.consumption.format(sum3, unit) + '</td>';
+            }
+            line += '</tr>\n';
+            line += '<tr class="vis-cons-table-tr-spacer"><td colspan="15"></td></tr>';
+            lines.push(line);
+
+            //$report.html('<table class="vis-cons-table" style="height: ' + (settings.resource ? 'calc(100% - 50px)' : '100%') + '; color: ' + textColor + '">' + lines.join('\n') + '</table>\n');
+            $report.html('<table class="vis-cons-table" style="height: calc(100% - 50px); color: ' + textColor + '">' + lines.join('\n') + '</table>\n');
+        },
+        isLeapYear: function (date) {
+            var year = typeof date !== 'object' ? date : date.getFullYear();
+            if (year & 3) {
+                return false;
+            } else {
+                return (year % 100 || !(year % 400));
+            }
+        },
+        // Get Day of Year
+        getMonth: function (day, year) {
+            var dayCount = [31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+            if (vis.binds.consumption.isLeapYear(year || new Date())) {
+                dayCount = [31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335];
+            }
+            var month = 0;
+
+            for (;month < dayCount.length; month++) {
+                if (day < dayCount[month]) {
+                    break;
+                }
+            }
+            return {month: month, date: month ? day - dayCount[month - 1] : day};
+        },
+        renderHeatMap: function ($div, $report, settings, data) {
+            var months = vis.binds.consumption.months[vis.language] || vis.binds.consumption.months.en;
+            var theme = $div.data('data').colorTheme;
+            var showHeatmapRange = $div.data('data').show_heatmap_range;
+            showHeatmapRange = showHeatmapRange === true || showHeatmapRange === 'true';
+
+            var maxDays = vis.binds.consumption.isLeapYear(new Date()) ? 366 : 365;
+            var xData = [];
+            for (var dd = 0; dd < maxDays; dd++) {
+                xData[dd] = dd;
+            }
+
+            var yData = [];
+            for (var d = 0; d < 24; d++) {
+                yData[d] = d;
+            }
+
+            var values = data.series;
+
+            var allData = [];
+            var min = null;
+            var max = null;
+            for (var day = 0; day < values.length; day++) {
+                if (!values[day]) {
+                    continue;
+                }
+                for (var hour = 0; hour < values[day].length; hour++) {
+                    var val = values[day][hour];
+                    if (val !== null && val !== undefined) {
+                        if (max === null || val > max) {
+                            max = val;
+                        }
+                        if (min === null || val < min) {
+                            min = val;
+                        }
+                        allData.push([day, hour, val]);
+                    }
+                }
+            }
+            var originalMin = min;
+            var originalMax = max;
+
+            var _diff = max - min;
+            var limit = 0.03;
+            min += _diff * limit; // remove lower 3%
+            max -= _diff * limit; // remove upper 3%
+            var _min = null;
+            var _max = null;
+            var minCount = 0;
+            var maxCount = 0;
+            for (var a = 0; a < allData.length; a++) {
+                if (allData[a][2] <= min) {
+                    minCount++;
+                }
+                if (allData[a][2] >= max) {
+                    maxCount++;
+                }
+                if (allData[a][2] > min && (_min === null || allData[a][2] < _min)) {
+                    _min = allData[a][2];
+                }
+                if (allData[a][2] < max && (_max === null || allData[a][2] > _max)) {
+                    _max = allData[a][2];
+                }
+            }
+            minCount = minCount / values.length;
+            maxCount = maxCount / values.length;
+            if (minCount < 0.01) {
+                min = _min;
+            }
+            if (maxCount < 0.01) {
+                max = _max;
+            }
+            max = _max;
+            /*var limit = 0.1;
+            var count = 0;
+            for (var a = 0; a < allData.length; a++) {
+                if (allData[a][2]) {
+                    var ii = Math.round((allData[a][2] - min) / _diff * (stats.length - 1));
+                    if (ii < 0) {
+                        ii = 0;
+                    } else if (ii > stats.length - 1) {
+                        ii = stats.length - 1;
+                    }
+                    stats[ii]++;
+                    count++;
+                }
+            }
+
+            for (var i = 0; i < stats.length; i++) {
+                stats[i] /= count;
+            }
+            var v = 0;
+            while (stats[v] < limit && v < stats.length - 2) {
+                v++;
+            }
+
+            if (v) {
+                min += _diff * v * (1 / (stats.length - 1));
+            }
+
+            var m = stats.length - 1;
+            while (stats[m] < limit && m > v) {
+                m--;
+            }
+            if (m !== stats.length - 1) {
+                if (m === v) {
+                    m++;
+                }
+                max -= _diff * (stats.length - 1 - m) * (1 / (stats.length - 1));
+            }*/
+            var colors = ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026'];
+            var size = colors.length;
+            var diff = max - min;
+            var width = $div.width();
+            var unit = !settings.resource || settings.isEuro ? $div.data('currency') : data.unit;
+            var color = theme === 'dark' ? '#CCC' : '#333';
+
+            var instance = $div.data('instance');
+            var curMin;
+            var curMax;
+
+            if (showHeatmapRange) {
+                curMin = parseFloat(localStorage.getItem(instance + '_' + settings.resource + '_' + unit + '_min') || min);
+                curMax = parseFloat(localStorage.getItem(instance + '_' + settings.resource + '_' + unit + '_max') || max);
+                if (curMax > originalMax) {
+                    curMax = originalMax;
+                }
+                if (curMin < originalMin) {
+                    curMin = originalMin;
+                }
+            } else {
+                curMin = _min;
+                curMax = _max;
+            }
+
+            var option = {
+                tooltip: {
+                    show: true,
+                    formatter: function (data) {
+                        var m = vis.binds.consumption.getMonth(data.data[0]);
+                        return months[m.month] + '.' + (m.date + 1) + ' ' + data.data[1] + ':00 - ' + vis.binds.consumption.format(data.data[2], unit);
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    data: xData,
+                    axisLabel: {
+                        show: true,
+                        color: color,
+                        align: 'left',
+                        interval: function (data, value) {
+                            var m = vis.binds.consumption.getMonth(data);
+                            if (m.date === 0) {
+                                return m.month.toString();
+                            } else {
+                                return false;
+                            }
+                        },
+                        formatter: function (data) {
+                            var m = vis.binds.consumption.getMonth(parseInt(data, 10));
+                            return months[m.month];
+                        }
+                    },
+                    axisTick: {
+                        lineStyle: {
+                            color: color
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: color
+                        }
+                    }
+                },
+                grid: {
+                    right: 0,
+                    top: 0,
+                    bottom: 65,
+                    left: 25
+                },
+                yAxis: {
+                    type: 'category',
+                    data: yData,
+                    axisLabel: {
+                        alignWithLabel: true,
+                        color: color
+                    },
+                    axisTick: {
+                        lineStyle: {
+                            color: color
+                        }
+                    },
+                    axisLine: {
+                        lineStyle: {
+                            color: color
+                        }
+                    }
+                },
+                visualMap: {
+                    type: 'continuous',
+                    min: curMin,
+                    max: curMax,
+                    calculable: true,
+                    realtime: false,
+                    orient: 'horizontal',
+                    inRange: {color: colors},
+                    precision: 1,
+                    left: 50,
+                    textStyle: {
+                        color: color
+                    },
+                    itemHeight: Math.max(140, width - 280),
+                    formatter: function (value) { return vis.binds.consumption.format(value, unit, true); }
+                },
+                series: [{
+                    type: 'heatmap',
+                    data: allData,
+                    emphasis: {
+                        itemStyle: {
+                            borderColor: '#333',
+                            borderWidth: 1
+                        }
+                    },
+                    itemStyle1: {
+                        color: function (data) {
+                            var val = (data.data[2] - curMin) / diff;
+                            var i = Math.round(val * 10);
+                            if (i > size - 1) {
+                                i = size - 1;
+                            }
+                            if (i < 0) {
+                                i = 0;
+                            }
+
+                            return colors[i];
+                        }
+                    },
+                    progressive: 1000,
+                    animation: false
+                }]
+            };
+            var chart = $report.data('chart');
+
+            if (!chart || $report.data('type') !== 'heatmap_' + !!settings.resource) {
+                vis.binds.consumption.destroyChart($div, $report);
+                chart = echarts.init($report[0]);
+                $report.data('type', 'heatmap_' + !!settings.resource);
+                $report.data('chart', chart);
+            }
+
+            var $showHeatMapRange = $div.find('.slider-range');
+
+            if (showHeatmapRange) {
+                // var $toolbar = $div.find('.vis-cons-toolbar');
+                // $div.find('.vis-cons-results').css('height', $toolbar.css('display') !== 'none' ? 'calc(100% - 100px)' : 'calc(100% - 50px)');
+                if (!$showHeatMapRange.length) {
+                    $('<div style="width: 100%; color: ' + (theme === 'dark' ? '#CCC' : '#333') + '; font-size: 14px" class="slider-range-div">' +
+                        '<div class="slider-range-min" style="width: 100px; display: inline-block; text-align: right; padding-right: 15px">' + originalMin + '</div>' +
+                        '<div class="slider-range" style="width: calc(100% - 210px); display: inline-block"></div>' +
+                        '<div class="slider-range-max" style="width: 75px; display: inline-block; text-align: left; padding-left: 15px">' + originalMax + '</div>' +
+                      '</div>').insertAfter($report);
+
+                    $showHeatMapRange = $div.find('.slider-range');
+
+                    $showHeatMapRange.slider({
+                        range:  true,
+                        min:    originalMin,
+                        max:    originalMax,
+                        values: [curMin, curMax],
+                        step:   Math.round((originalMax - originalMin) * 100) / 10000,
+                        slide: function (event, ui) {
+                            var settings = $div.data('settings');
+                            var unit = !settings.resource || settings.isEuro ? $div.data('currency') : data.unit;
+
+                            $div._rangeTimer && clearTimeout($div._rangeTimer);
+                            localStorage.setItem(instance + '_' + settings.resource + '_' + unit + '_min', ui.values[0]);
+                            localStorage.setItem(instance + '_' + settings.resource + '_' + unit + '_max', ui.values[1]);
+
+                            $div.find('.slider-range-min').text((Math.round(parseFloat(ui.values[0]) * 100) / 100).toString().replace('.', '.') + (unit ? ' ' : unit));
+                            $div.find('.slider-range-max').text((Math.round(parseFloat(ui.values[1]) * 100) / 100).toString().replace('.', '.') + (unit ? ' ' : unit));
+
+                            $div._rangeTimer = setTimeout(function () {
+                                $div._rangeTimer = null;
+                                var settings = $div.data('settings');
+                                vis.binds.consumption.renderHeatMap($div, $report, settings, data);
+                            }, 300);
+                        }
+                    });
+                } else if (!$div._rangeTimer) {
+                    $showHeatMapRange.slider('option', 'min', originalMin);
+                    $showHeatMapRange.slider('option', 'max', originalMax);
+                    $showHeatMapRange.slider('option', 'values', [parseFloat(curMin), parseFloat(curMax)]);
+                    $showHeatMapRange.slider('option', 'step', Math.round((originalMax - originalMin) * 100) / 10000);
+                }
+
+                $div.find('.slider-range-min').text((Math.round(parseFloat(curMin) * 100) / 100).toString().replace('.', '.') + (unit ? ' ' : unit));
+                $div.find('.slider-range-max').text((Math.round(parseFloat(curMax) * 100) / 100).toString().replace('.', '.') + (unit ? ' ' : unit));
+            } else {
+                var $showHeatMapRangeDiv = $div.find('.slider-range-div');
+                //$div.find('.vis-cons-results').css('height', $toolbar.css('display') !== 'none' ? 'calc(100% - 50px)' : '100%');
+                $showHeatMapRangeDiv.length && $showHeatMapRangeDiv.remove();
+            }
+
+            chart.setOption(option);
+        },
+
+        forecastBar: {
+            getValue: function (oid) {
+                var val = 0;
+                if (oid || oid === '0') {
+                    if (parseFloat(oid) !== oid) {
+                        val = vis.states.attr(oid + '.val');
+                    } else {
+                        val = parseFloat(oid);
+                    }
+                    return val;
+                } else {
+                    return null;
+                }
+            },
+            draw: function ($div, options) {
+                var val1     = vis.binds.consumption.forecastBar.getValue(options.reference);
+                var val2     = vis.binds.consumption.forecastBar.getValue(options.actual);
+                var valLeft  = vis.binds.consumption.forecastBar.getValue(options.forecast);
+                var valRight = vis.binds.consumption.forecastBar.getValue(options.planned);
+
+                var max = val1 > val2 ? val1 : val2;
+                max = max > valLeft  ? max : valLeft;
+                max = max > valRight ? max : valRight;
+
+                var val1Height     = Math.round(val1     / max * 100);
+                var val2Height     = Math.round(val2     / max * 100);
+                var valLeftHeight  = Math.round(valLeft  / max * 100);
+                var valRightHeight = Math.round(valRight / max * 100);
+
+                var color;
+                if (val2 < valLeft && (!valRight || (val2 < valRight && valLeft < valRight))) {
+                    color = options['color-border'];
+                } else {
+                    color = options['color-border-error'] || options['color-border'];
+                }
+
+                var backColor   = 'repeating-linear-gradient(135deg, ' + color + ', ' + color + ' 2px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 12px)';
+                var $val1 = $div.find('.value-1').css({height: val1Height + '%', 'border-color': color}).attr('title', vis.binds.consumption.format(val1, options.unit, true));
+                var $val2 = $div.find('.value-2').css({height: val2Height + '%', 'border-color': color}).attr('title', vis.binds.consumption.format(val2, options.unit, true));
+                $div.find('.value-2-inner').css('background', backColor);
+                $div.find('.label-value-1').css('top', 'calc(' + (100 - val1Height)  + '% - 5px)').attr('title', vis.binds.consumption.format(val1, options.unit, true));
+                $div.find('.label-value-2').css('top', 'calc(' + (100 - val2Height)  + '% - 5px)').attr('title', vis.binds.consumption.format(val2, options.unit, true));
+
+                                    $div.find('.line-left')    .css('top', (100 - valLeftHeight)  + '%');
+                var $lineRight =  $div.find('.line-right')   .css('top', (100 - valRightHeight) + '%');
+
+                                    $div.find('.label-left')   .css('top', 'calc(' + (100 - valLeftHeight)  + '% - 8px)').attr('title', vis.binds.consumption.format(valLeft, options.unit, true));
+                var $labelRight = $div.find('.label-right')  .css('top', 'calc(' + (100 - valRightHeight) + '% - 8px)').attr('title', vis.binds.consumption.format(valRight, options.unit, true));
+
+                                    $div.find('.arrow-left')   .css('top', 'calc(' + (100 - valLeftHeight)  + '% - 17px)');
+                var $arrowRight = $div.find('.arrow-right')  .css('top', 'calc(' + (100 - valRightHeight) + '% - 17px)');
+
+                if (!valRightHeight) {
+                    $lineRight.hide();
+                    $labelRight.hide();
+                    $arrowRight.hide();
+                } else {
+                    $lineRight.show();
+                    $labelRight.show();
+                    $arrowRight.show();
+                }
+
+                if (val1 > val2) {
+                    $val1.css({'z-index': 0, 'border-radius': '8px 8px 0 0'});
+                    $val2.css({'z-index': 1, 'border-radius': ''});
+                } else {
+                    $val1.css({'z-index': 1, 'border-radius': ''});
+                    $val2.css({'z-index': 0, 'border-radius': '8px 8px 0 0'});
+                }
+            },
+            init: function ($div, options) {
+                var year = new Date().getFullYear();
+
+                var _options = Object.assign({
+                    reference: 200, // last year consumption
+                    actual:    100, // actual consumption
+                    planned:   350, // planned this year
+                    forecast:  400, // forecast this year
+                    width:     100,
+                    height:    200,
+                    textColor: 'black',
+
+                    'color-border': 'green',
+                    'color-border-error': 'red',
+                    title: '',
+                    textForecast: _('Forecast'),
+                    textPlanned: _('Planned'),
+                    textActual: _('Now %s', year),
+                    textPrev: year - 1,
+                    unit: $div.data('currency')
+                }, options);
+
+                var text = '<div style="overflow: visible; width: ' + _options.width + 'px; height: ' + _options.height + 'px; color: ' + _options.textColor + '">\n' +
+                    '\t\t<div class="forecast-bar" style="max-width: 100px;" >\n' +
+                    '\t\t\t<div   class="value-1" style=""><span>' + _options.textPrev + '</span></div>\n' +
+                    '\t\t\t<div   class="value-2" style=""><div class="value-2-inner"><span>' + _options.textActual + '</span></div></div>\n' +
+                    '\t\t\t<div   class="label-value-1 forecast-texts"></div>\n' +
+                    '\t\t\t<div   class="label-value-2 forecast-texts"></div>\n' +
+                    '\n' +
+                    '\t\t\t<span  class="check-visibility arrow-left">\n' +
+                    '\t\t\t    <svg viewBox="0 0 20 20" style="fill: #DDDDDD; width: 35px; height: auto"><path d="M15,10l-9,5V5L15,10z"/></svg>\n' +
+                    '\t\t\t</span>\n' +
+                    '\t\t\t<span  class="check-visibility arrow-right">\n' +
+                    '\t\t\t    <svg viewBox="0 0 20 20" style="fill: #DDDDDD;width: 35px; height: auto"><path d="M14,5v10l-9-5L14,5z"/></svg>\n' +
+                    '\t\t\t</span>\n' +
+                    '\t\t\t<div   class="check-visibility line-left"></div>\n' +
+                    '\t\t\t<div   class="check-visibility line-right"></div>\n' +
+                    '\t\t\t<div   class="check-visibility label-left  forecast-texts">' + _options.textForecast + '</div>\n' +
+                    '\t\t\t<div   class="check-visibility label-right forecast-texts">' + _options.textPlanned + '</div>\n' +
+                    '\n' +
+                    '\t\t\t<div   class="forecast-title forecast-texts"><div class="forecast-title-inner">' + _options.title + '</div></div>\n' +
+                    '\t\t</div>\n' +
+                    '\t</div>';
+                $div.html(text);
+
+                _options.onClick && $div.find('.forecast-texts').css('cursor', 'pointer').on('click', _options.onClick);
+
+                vis.binds.consumption.forecastBar.draw($div, _options);
+            }
+        },
+
+        renderPlanMain: function ($div, $td, settings, data) {
+            var name = (settings.resource || 'all').toLowerCase();
+            var stations = $div.data('stations');
+            var theme = $div.data('data').colorTheme;
+            var textColor = theme === 'dark' ? 'white' : 'black';
+
+            var stationName;
+            if (settings.station) {
+                for (var i = 0; i < stations.length; i++) {
+                    if (stations[i].name === settings.station) {
+                        stationName = stations[i].title;
+                        break;
+                    }
+                }
+            }
+            var isBad = data.series[name].planned && data.series[name].forecast > data.series[name].planned;
+            var text = '<div class="vis-cons-plan-main-div-widget" style="color: ' + textColor + '">\n';
+            text += '<div class="vis-cons-plan-main-div-widget-title">'     + _('Costs for %s', stationName) + '</div>\n';
+            text += '<div class="vis-cons-plan-main-div-widget-actual">'    + _('Actual') + ': ' +  vis.binds.consumption.format(data.series[name].actual, data.unit) + '</div>\n';
+            text += '<div class="vis-cons-plan-main-div-widget-reference">' + _('Reference') + ': ' + (data.series[name].reference ? vis.binds.consumption.format(data.series[name].reference, data.unit) : '--') + '</div>\n';
+            text += '<img class="vis-cons-plan-main-div-widget-icon vis-cons-plan-main-div-widget-icon-' + (isBad ? 'bad' : 'good') + '" src="widgets/consumption/img/' + (isBad ? 'smileBad.svg' : 'smile.svg') + '"/>\n';
+            text += '<div class="vis-cons-plan-main-div-widget-forecast">'  + _('Forecast') + ': ' +  vis.binds.consumption.format(data.series[name].forecast, data.unit) + '</div>\n';
+            text += '<div class="vis-cons-plan-main-div-widget-planned">'   + _('Planned') + ': ' +  vis.binds.consumption.format(data.series[name].planned, data.unit) + '</div>\n';
+            text += '</div>';
+
+            $td.html(text);
+        },
+
+        renderCharts: function ($div, $report, settings, data) {
+            var $iframe = $report.find('.charts-iframe');
+            if (!$iframe.length) {
+                var text = '<iframe class="charts-iframe" border="0" src="" style="width: 100%; height: 100%"/>';
+                $report.innerHTML(text);
+                $iframe = $report.find('.charts-iframe');
+            }
+            var src;
+            if (settings.resource) {
+                src = '../echarts/index.html#preset=echarts.0._consumption_.' + settings.station + '.' + settings.resource + '&noBG=true';
+            } else {
+                src = '../echarts/index.html#preset=echarts.0._consumption_.' + settings.station + '.all&noBG=true';
+            }
+
+            $iframe.attr('src', src);
+        }
+    };
+
+    vis.binds.consumption.showVersion();
+
+</script>
+
+<script id="tplConsumption"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-prev='<img src="widgets/consumption/img/Prev_tplConsumption.png"></img>'
+        data-vis-set="consumption"
+        data-vis-type="ctrl"
+        data-vis-name="Charts"
+        data-vis-attrs="consInstance[0]/number,0,5;colorTheme[light]/nselect,light,dark;ownClasses[false]/checkbox;"
+        data-vis-attrs0="startsFrom[2020-01-01];dateFormat[yy-mm-dd];consumption_station;currency;"
+        data-vis-attrs1="group.consumption_types;hide_planning/checkbox;hide_pie/checkbox;hide_stackbar/checkbox;hide_heatmap/checkbox;hide_table/checkbox;hide_charts/checkbox;show_heatmap_range/checkbox;"
+>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 600px; height: 450px;" id="<%= this.data.attr('wid') %>">
+        <div class="vis-widget-body" style="display: inline-block" <%= (el) -> vis.binds.consumption.init(el, this.data.wid, this.view, this.data, this.style) %> ></div>
+    </div>
+</script>
+<!-- --------------consumption.html--- END -->
 <!-- --------------dwd.html--- START -->
 <!--
     ioBroker.vis dwd Widget-Set
@@ -8910,6 +11015,327 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 
 
 <!-- --------------metro.html--- END -->
+<!-- --------------spotify-premium.html--- START -->
+<!--
+    ioBroker.spotify-premium Widget-Set
+
+    version: "1.0.0"
+
+    Copyright 12.2018-2021 twonky4<twonky4@gmx.de>
+-->
+
+<script type="text/javascript">
+"use strict";
+
+// add translations for edit mode
+if (vis.editMode) {
+	 $.extend(true, systemDictionary, {
+ 		"oidplay": { "en": "Trigger Play Id", "de": "Auslösespiel-ID", "ru": "Идентификатор запуска воспроизведения", "pt": "ID do jogo do acionador", "nl": "Trigger Play-ID", "fr": "Identifiant de lecture du déclencheur", "it": "Attiva l'ID del gioco", "es": "Trigger Play Id", "pl": "Trigger Play Id"},
+ 		"oidpause": {"en": "Trigger Pause Id", "de": "Auslöser-Pause-ID", "ru": "Идентификатор паузы запуска", "pt": "ID de pausa do acionador", "nl": "Trigger-pauze-ID", "fr": "Id de pause de déclenchement", "it": "Trigger Pause Id", "es": "Id. De pausa del disparador", "pl": "Trigger Pause Id"},
+ 		"oidstate": {"en": "Status Id", "de": "Status-ID", "ru": "Идентификатор статуса", "pt": "ID do estado", "nl": "Status-ID", "fr": "ID de statut", "it": "ID stato", "es": "ID de estado", "pl": "ID statusu"},
+ 		"colorplay": {"en": "play icon color", "de": "Farbe Play Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"},
+ 		"colorpause": {"en": "pause icon color", "de": "Farbe Pause Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"},
+ 		"oidon": { "en": "Trigger On Id", "de": "Auslösespiel-ID", "ru": "Идентификатор запуска воспроизведения", "pt": "ID do jogo do acionador", "nl": "Trigger Play-ID", "fr": "Identifiant de lecture du déclencheur", "it": "Attiva l'ID del gioco", "es": "Trigger Play Id", "pl": "Trigger Play Id"},
+ 		"oidoff": {"en": "Trigger Off Id", "de": "Auslöser-Pause-ID", "ru": "Идентификатор паузы запуска", "pt": "ID de pausa do acionador", "nl": "Trigger-pauze-ID", "fr": "Id de pause de déclenchement", "it": "Trigger Pause Id", "es": "Id. De pausa del disparador", "pl": "Trigger Pause Id"},
+ 		"oidall": {"en": "Trigger All Id", "de": "Auslöser-Pause-ID", "ru": "Идентификатор паузы запуска", "pt": "ID de pausa do acionador", "nl": "Trigger-pauze-ID", "fr": "Id de pause de déclenchement", "it": "Trigger Pause Id", "es": "Id. De pausa del disparador", "pl": "Trigger Pause Id"},
+ 		"oidone": {"en": "Trigger One Id", "de": "Auslöser-Pause-ID", "ru": "Идентификатор паузы запуска", "pt": "ID de pausa do acionador", "nl": "Trigger-pauze-ID", "fr": "Id de pause de déclenchement", "it": "Trigger Pause Id", "es": "Id. De pausa del disparador", "pl": "Trigger Pause Id"},
+ 		"coloron": {"en": "shuffle on icon color", "de": "Farbe Shuffle An Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"},
+ 		"coloroff": {"en": "off icon color", "de": "Farbe Aus Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"},
+ 		"colorall": {"en": "all icon color", "de": "Farbe Alle Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"},
+ 		"colorone": {"en": "one icon color", "de": "Farbe Eins Icon", "ru": "цвет", "pt": "cor", "nl": "kleur", "fr": "Couleur", "it": "colore", "es": "color", "pl": "kolor"}
+	 });
+}
+
+vis.binds.spotify = {
+	 getPlayImage: function (data) {
+	 	var src;
+
+	 	// display next state
+	 	if(vis.states[data.oidstate + '.val']) {
+	 		src = 'pause_' + data.colorpause;
+	 	} else {
+	 		src = 'play_' + data.colorplay;
+	 	}
+
+	 	return 'widgets/spotify-premium/img/' + src + '.png';
+	 },
+	 triggerPlayButton: function (el) {
+	     var $this = $(el);
+	     var state = $this.data('oidstate');
+	     var play = $this.data('oidplay');
+	     var pause = $this.data('oidpause');
+	     var colorplay = $this.data('colorplay');
+	     var colorpause = $this.data('colorpause');
+
+	     if (state && play && pause && !vis.editMode) {
+            function onChange(e, newVal) {
+                $this.find('img').prop('src', vis.binds.spotify.getPlayImage({oidstate: state, colorplay: colorplay, colorpause: colorpause}));
+            }
+	    	vis.states.bind(state + '.val', onChange);
+
+			var moved = false;
+	        $this.on('click touchend', function () {
+	             // Protect against two events
+	             if (vis.detectBounce(this) || moved) return;
+
+	             var val = vis.states[state + '.val'];
+	             if(val) {
+	             	vis.setValue(pause, true);
+	             } else {
+	             	vis.setValue(play, true);
+	             }
+	        }).on('touchmove', function () {
+				moved = true;
+			}).on('touchstart', function () {
+				moved = false;
+			}).data('destroy', function (id, $widget) {
+				$widget.off('click touchend').off('touchmove').off('touchstart');
+	        });
+	     }
+	 },
+	 getShuffleImage: function (data) {
+	 	var src = 'shuffle_';
+
+	 	// display current state
+	 	if(vis.states[data.oidstate + '.val'] == 'on') {
+	 		src += data.coloron;
+	 	} else {
+	 		src += data.coloroff;
+	 	}
+
+	 	return 'widgets/spotify-premium/img/' + src + '.png';
+	 },
+	 triggerShuffleButton: function (el) {
+	     var $this = $(el);
+	     var state = $this.data('oidstate');
+	     var on = $this.data('oidon');
+	     var off = $this.data('oidoff');
+	     var coloron = $this.data('coloron');
+	     var coloroff = $this.data('coloroff');
+
+	     if (state && on && off && !vis.editMode) {
+            function onChange(e, newVal) {
+                $this.find('img').prop('src', vis.binds.spotify.getShuffleImage({oidstate: state, coloroff: coloroff, coloron: coloron}));
+            }
+	    	vis.states.bind(state + '.val', onChange);
+
+			var moved = false;
+	        $this.on('click touchend', function () {
+	             // Protect against two events
+	             if (vis.detectBounce(this) || moved) return;
+
+	             var val = vis.states[state + '.val'];
+	             if(val == 'on') {
+	             	vis.setValue(off, true);
+	             } else {
+	             	vis.setValue(on, true);
+	             }
+	        }).on('touchmove', function () {
+				moved = true;
+			}).on('touchstart', function () {
+				moved = false;
+			}).data('destroy', function (id, $widget) {
+				$widget.off('click touchend').off('touchmove').off('touchstart');
+	        });
+	     }
+	 },
+	 getRepeatImage: function (data) {
+	 	var src = 'repeat_';
+
+	 	// display current state
+	 	if(vis.states[data.oidstate + '.val'] == 'track') {
+	 		src += 'one_';
+	 		src += data.colorone;
+	 	} else if(vis.states[data.oidstate + '.val'] == 'context') {
+	 		src += data.colorall;
+	 	} else {
+	 		src += data.coloroff;
+	 	}
+
+	 	return 'widgets/spotify-premium/img/' + src + '.png';
+	 },
+	 triggerRepeatButton: function (el) {
+	     var $this = $(el);
+	     var state = $this.data('oidstate');
+	     var one = $this.data('oidone');
+	     var all = $this.data('oidall');
+	     var off = $this.data('oidoff');
+	     var colorone = $this.data('colorone');
+	     var colorall = $this.data('colorall');
+	     var coloroff = $this.data('coloroff');
+
+	     if (state && one && all && off && !vis.editMode) {
+            function onChange(e, newVal) {
+                $this.find('img').prop('src', vis.binds.spotify.getRepeatImage({oidstate: state, coloroff: coloroff, colorone: colorone, colorall: colorall}));
+            }
+	    	vis.states.bind(state + '.val', onChange);
+
+			var moved = false;
+	        $this.on('click touchend', function () {
+	             // Protect against two events
+	             if (vis.detectBounce(this) || moved) return;
+
+	             // off -> context -> track
+	             var val = vis.states[state + '.val'];
+	             if(val == 'context') {
+	             	vis.setValue(one, true);
+	             } else if(val == 'track') {
+	             	vis.setValue(off, true);
+	             } else {
+	             	vis.setValue(all, true);
+	             }
+	        }).on('touchmove', function () {
+				moved = true;
+			}).on('touchstart', function () {
+				moved = false;
+			}).data('destroy', function (id, $widget) {
+				$widget.off('click touchend').off('touchmove').off('touchstart');
+	        });
+	     }
+	 },
+	 getSkipImage: function (data, str) {
+	 	return 'widgets/spotify-premium/img/skip_' + str + '_' + data.colorbox + '.png';
+	 },
+	 triggerSkipButton: function (el) {
+	     var $this = $(el);
+	     var oid = $this.data('oid');
+
+	     if (oid && !vis.editMode) {
+			var moved = false;
+	        $this.on('click touchend', function () {
+	             // Protect against two events
+	             if (vis.detectBounce(this) || moved) return;
+
+             	vis.setValue(oid, true);
+	        }).on('touchmove', function () {
+				moved = true;
+			}).on('touchstart', function () {
+				moved = false;
+			}).data('destroy', function (id, $widget) {
+				$widget.off('click touchend').off('touchmove').off('touchstart');
+	        });
+	     }
+	 }
+};
+</script>
+
+<script id="tplSpotifyPlayButton"
+        type="text/ejs"
+        class="vis-tpl"
+  		data-vis-prev='<div id="prev_tplSpotifyPlayButton" style="position: relative; text-align: initial;padding: 4px; height: 72px"><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled"false "handles":"e"}"> <div class="vis-widget-prev-body"> <img data-oidplay="" data-oidpause="" data-oidstate="" data-colorplay="" data-colorpause="" style="width:auto; height:72px" src="widgets/spotify-premium/img/play_black.png" role="button"/> </div> </div>'
+        data-vis-set="spotify-premium"
+        data-vis-type="ctrl"
+        data-vis-name="Play Toggle"
+        data-vis-attrs="oidplay[spotify-premium.0.player.play]/id;oidpause[spotify-premium.0.player.pause]/id;oidstate[spotify-premium.0.player.isPlaying]/id;colorplay[black]/select,black,white,green;colorpause[black]/select,black,white,green">
+    <div
+		class="vis-widget <%== this.data.attr('class') %>"
+		id="<%= this.data.attr('wid') %>"
+		data-oidplay="<%= this.data.attr('oidplay') %>"
+		data-oidpause="<%= this.data.attr('oidpause') %>"
+		data-oidstate="<%= this.data.attr('oidstate') %>"
+		data-colorplay="<%= this.data.attr('colorplay') %>"
+		data-colorpause="<%= this.data.attr('colorpause') %>"
+		<%= (el) -> vis.binds.spotify.triggerPlayButton(el) %>
+	>
+        <div class="vis-widget-body">
+            <img style="width:100%; height:auto" src="<%= vis.binds.spotify.getPlayImage(data) %>" />
+        </div>
+    </div>
+</script>
+
+<script id="tplSpotifyShuffleButton"
+        type="text/ejs"
+        class="vis-tpl"
+  		data-vis-prev='<div id="prev_tplSpotifyShuffleButton" style="position: relative; text-align: initial;padding: 4px; height: 72px"><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled"false "handles":"e"}"> <div class="vis-widget-prev-body"> <img data-oidon="" data-oidoff="" data-oidstate="" data-coloron="" data-coloroff="" style="width:auto; height:72px" src="widgets/spotify-premium/img/shuffle_black.png" role="button"/> </div> </div>'
+        data-vis-set="spotify-premium"
+        data-vis-type="ctrl"
+        data-vis-name="Shuffle Toggle"
+        data-vis-attrs="oidon[spotify-premium.0.player.shuffleOn]/id;oidoff[spotify-premium.0.player.shuffleOff]/id;oidstate[spotify-premium.0.player.shuffle]/id;coloroff[black]/nselect,black,white,green;coloron[green]/nselect,black,white,green">
+    <div
+		class="vis-widget <%== this.data.attr('class') %>"
+		id="<%= this.data.attr('wid') %>"
+		data-oidon="<%= this.data.attr('oidon') %>"
+		data-oidoff="<%= this.data.attr('oidoff') %>"
+		data-oidstate="<%= this.data.attr('oidstate') %>"
+		data-coloron="<%= this.data.attr('coloron') %>"
+		data-coloroff="<%= this.data.attr('coloroff') %>"
+		<%= (el) -> vis.binds.spotify.triggerShuffleButton(el) %>
+	>
+        <div class="vis-widget-body">
+            <img style="width:100%; height:auto" src="<%= vis.binds.spotify.getShuffleImage(data) %>" />
+        </div>
+    </div>
+</script>
+
+<script id="tplSpotifyRepeatButton"
+        type="text/ejs"
+        class="vis-tpl"
+  		data-vis-prev='<div id="prev_tplSpotifyRepeatButton" style="position: relative; text-align: initial;padding: 4px; height: 72px"><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled"false "handles":"e"}"> <div class="vis-widget-prev-body"> <img data-oidall="" data-oidoff="" data-oidone="" data-oidstate="" data-colorall="" data-coloroff="" data-colorone="" data-colorall="" style="width:auto; height:72px" src="widgets/spotify-premium/img/repeat_black.png" role="button"/> </div> </div>'
+        data-vis-set="spotify-premium"
+        data-vis-type="ctrl"
+        data-vis-name="Repeat Toggle"
+        data-vis-attrs="oidall[spotify-premium.0.player.repeatContext]/id;oidoff[spotify-premium.0.player.repeatOff]/id;oidone[spotify-premium.0.player.repeatTrack]/id;oidstate[spotify-premium.0.player.repeat]/id;coloroff[black]/nselect,black,white,green;colorall[green]/nselect,black,white,green;colorone[green]/nselect,black,white,green">
+    <div
+		class="vis-widget <%== this.data.attr('class') %>"
+		id="<%= this.data.attr('wid') %>"
+		data-oidall="<%= this.data.attr('oidall') %>"
+		data-oidoff="<%= this.data.attr('oidoff') %>"
+		data-oidone="<%= this.data.attr('oidone') %>"
+		data-oidstate="<%= this.data.attr('oidstate') %>"
+		data-colorall="<%= this.data.attr('colorall') %>"
+		data-coloroff="<%= this.data.attr('coloroff') %>"
+		data-colorone="<%= this.data.attr('colorone') %>"
+		<%= (el) -> vis.binds.spotify.triggerRepeatButton(el) %>
+	>
+        <div class="vis-widget-body">
+            <img style="width:100%; height:auto" src="<%= vis.binds.spotify.getRepeatImage(data) %>" />
+        </div>
+    </div>
+</script>
+
+<script id="tplSpotifyPreviousButton"
+        type="text/ejs"
+        class="vis-tpl"
+  		data-vis-prev='<div id="prev_tplSpotifyPreviousButton" style="position: relative; text-align: initial;padding: 4px; height: 72px"><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled"false "handles":"e"}"> <div class="vis-widget-prev-body"> <img data-oid="" data-colorbox="" style="width:auto; height:72px" src="widgets/spotify-premium/img/skip_prev_black.png" role="button"/> </div> </div>'
+        data-vis-set="spotify-premium"
+        data-vis-type="ctrl"
+        data-vis-name="Previous Track Button"
+        data-vis-attrs="oid[spotify-premium.0.player.skipMinus]/id;colorbox[black]/nselect,black,white,green">
+    <div
+		class="vis-widget <%== this.data.attr('class') %>"
+		id="<%= this.data.attr('wid') %>"
+		data-oid="<%= this.data.attr('oid') %>"
+		data-colorbox="<%= this.data.attr('colorbox') %>"
+		<%= (el) -> vis.binds.spotify.triggerSkipButton(el) %>
+	>
+        <div class="vis-widget-body">
+            <img style="width:100%; height:auto" src="<%= vis.binds.spotify.getSkipImage(data, 'prev') %>" />
+        </div>
+    </div>
+</script>
+
+<script id="tplSpotifyNextButton"
+        type="text/ejs"
+        class="vis-tpl"
+  		data-vis-prev='<div id="prev_tplSpotifyNextButton" style="position: relative; text-align: initial;padding: 4px; height: 72px"><div class="vis-widget_prev ui-selectee ui-draggable-handle" data-vis-resizable="{"disabled"false "handles":"e"}"> <div class="vis-widget-prev-body"> <img data-oid="" data-colorbox="" style="width:auto; height:72px" src="widgets/spotify-premium/img/skip_next_black.png" role="button"/> </div> </div>'
+        data-vis-set="spotify-premium"
+        data-vis-type="ctrl"
+        data-vis-name="Previous Track Button"
+        data-vis-attrs="oid[spotify-premium.0.player.skipPlus]/id;colorbox[black]/nselect,black,white,green">
+    <div
+		class="vis-widget <%== this.data.attr('class') %>"
+		id="<%= this.data.attr('wid') %>"
+		data-oid="<%= this.data.attr('oid') %>"
+		data-colorbox="<%= this.data.attr('colorbox') %>"
+		<%= (el) -> vis.binds.spotify.triggerSkipButton(el) %>
+	>
+        <div class="vis-widget-body">
+            <img style="width:100%; height:auto" src="<%= vis.binds.spotify.getSkipImage(data, 'next') %>" />
+        </div>
+    </div>
+</script>
+
+<!-- --------------spotify-premium.html--- END -->
 <!-- --------------swipe.html--- START -->
 <style>
     .roundabout-holder {
@@ -9281,3 +11707,1127 @@ Copyright 2015-2021 bluefox<dogafox@gmail.com>
 </script>
 
 <!-- --------------tabs.html--- END -->
+<!-- --------------vis-material-advanced.html--- START -->
+<!--
+    ioBroker.vis vis-material-advanced Widget-Set
+
+    version: "0.8.1"
+
+    Copyright 2020 EdgarM73 edgar.miller@gmail.com
+-->
+<!-- here you can include so many css as you want -->
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/style.css" />
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/vma.css" />
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/material.css" />
+<!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap" rel="stylesheet"> -->
+<!-- here you can include so many js-files as you want -->
+
+<!-- here you can include so many js-files as you want -->
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/list.js"></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/base.js"></script>
+<!-- <script type="text/javascript"    src="widgets/vis-material-advanced/js/ListDiv/listDiv.js"></script> -->
+<!-- <script type="text/javascript"    src="widgets/vis-material-advanced/js/ListRegenRadar/listRegenRadar.js"></script> -->
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/ListDoor/listDoor.js"></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/ListWindow/listWindow.js"></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListTemp/listTemp.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListHumidity/listHumidity.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListPressure/listPressure.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListTempHumid/listTempHumid.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListOccupancy/listOccupancy.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLight/listLight.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLightDim/listLightDim.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLightKelvin/listLightKelvin.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListWindowShutter/listWindowShutter.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListVolume/listVolume.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListThermostat/listThermostat.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListBoolean/listBoolean.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListPresence/listPresence.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListNumber/listNumber.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListText/listText.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListValve/listValve.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListGarage/listGarage.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/TempIcon/TempIcon.js></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/vis-material-advanced.js"></script>
+
+
+<!-- the full description  of format in data-vis-attrs can be found here:
+    https://github.com/ioBroker/ioBroker.vis/blob/master/www/js/visEditInspect.js#L39
+
+    ----------------------------------------------------------
+    Mandatory XML attributes:
+        id="tplVis-material-advancedWIDGETNAME"
+        type="text/ejs"
+        class="vis-tpl"
+
+        "type" and "class" are always the same. "id" is unique and must start with "tplSETNAME" and ends with widget name. Use camel-case for it.
+
+    ----------------------------------------------------------
+    data-vis-attrs - divided with semicolon the list of attributes, like attr1/id;attr2/color
+        Full format of one attribute is: attr_name(start-end)[default_value]/type,idFilter/onChangeFunc
+            attr_name - the name of the attribute, e.g. "myID"
+            start-end - creates automatically attributes from attr_namestart to attr_nameend, like "myID(1-3)" creates myID1, myID2, myID3
+            default_value - by creation of widget this attribute will be filled with this value, e.g. "myID[#001122]/color"
+            type - some predefined types have edit helpers, else it will be shown as text field
+
+                Type format:
+                      id - Object ID Dialog
+                      checkbox
+                      image - image
+                      number,min,max,step - non-float number. min,max,step are optional
+                      color - color picker
+                      views - Name of the view
+                      effect - jquery UI show/hide effects
+                      eff_opt - additional option to effect slide (up, down, left, right)
+                      fontName - Font name
+                      slider,min,max,step - Default step is ((max - min) / 100)
+                      select,value1,value2,... - dropdown select
+                      nselect,value1,value2,... - same as select, but without translation of items
+                      style,fileFilter,nameFilter,attrFilter
+                      custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
+                      group.name - define new or old group. All following attributes belongs to new group till new group.xyz
+                      group.name/byindex - like group, but all following attributes will be grouped by ID. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
+                      text - dialog box with html editor
+                      html - dialog box with html editor
+
+                If type is "id", you can define filer for "Select ID Dialog", like "myID/id,level.temperature".
+                Additionally you can define callback(onChangeFunc), which will be called if this attribute was changed by user for different purposes: validate entry, fill other attributes, ...
+
+        You can define additional data-vis-attrs line: data-vis-attrs0, data-vis-attrs1. Anyway data-vis-attrs must be there. You may not skip numbers.
+        E.g. in "data-vis-attrs="A;" data-vis-attrs1="B" attribute B will be not parsed.
+
+    --------------------------------------------------------
+    data-vis-type
+        Help information for user. Used for search.
+        You can define more than one type divided by comma.
+        There are following common types, but you can use your own specific types:
+            ctrl   - widget that can write some Object IDs
+            val    - widget that shows some information from Object IDs
+            static - widget do not read information from Object IDs or URL
+            button - button widget
+            dimmer - dimmer widget
+            weather - weather widget
+            ...
+
+    --------------------------------------------------------
+    data-vis-set
+        Name of the widget set. Must be equal to the name of this HTML file
+
+    --------------------------------------------------------
+    data-vis-prev
+        Html code used as preview of this widget. If widget is complex you can just use image as preview:
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_tplVis-material-advancedShowInstance.png"></img>'
+        Of course the image must exist.
+
+    --------------------------------------------------------
+    data-vis-name
+        Readable name of widget shown in vis editor.
+
+    --------------------------------------------------------
+    data-vis-beta="true"
+        Shows "BETA" symbol in vis editor by preview
+
+    --------------------------------------------------------
+    data-vis-update-style="true"
+        Call redraw of widget if some of the CSS styles in editor for this widget was changed
+
+    You can read about Magic tags here: http://canjs.com/guides/EJS.html
+    Following magic tags are exist:
+        <% %> - execute javascript
+        <%= %> - place escaped result to HTML document
+        <%== %> - place unescaped result to HTML document
+
+    You can do "if" conditions and "for" cycles.
+
+-->
+<!--
+
+<script
+    id="tplMaListDiv"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListDiv" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_door.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="opacityColor[white]/color;"
+    data-vis-attrs6="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs7="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[widgets/vis-material-advanced/img/fts_door.png]/image;"
+    data-vis-attrs10="cardIconOpen[widgets/vis-material-advanced/img/fts_door_open.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListDiv"    >
+    <div class="vis-widget mdw-list vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>"
+         data-oid="<%= this.data.oid %>">
+        <div class="vis-widget-body vma_inner_container_div" >
+            <%   let init = genListDiv(this.data);  %>
+            <%==  init.widget   %>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListDiv(this.data.wid, this.view, this.data);  %>
+</script> -->
+
+<!-- <script
+    id="tplMaListRegenRadarDWD"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-RegenRadarDWD" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_door.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="opacityColor[white]/color;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style= "true"
+    data-vis-name="ListRegenRadarDWD"     >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListRegenRadar(this.data);           %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListRegenRadarDWD(this.data.wid, this.view, this.data);   %>
+</script> -->
+
+
+<script
+    id="tplMaListDoor"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListDoor2" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_door.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;iWiki/custom,'https://github.com/iobroker-community-adapters/ioBroker.vis-material-advanced/wiki/Properties',wiki;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs7="group.icons;"
+    data-vis-attrs8="cardIconClosed[/icons-mfd-svg/fts_door.svg]/image;"
+    data-vis-attrs9="cardIconOpen[/icons-mfd-svg/fts_door_open.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style= "true"
+    data-vis-name="ListDoor" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListDoor(this.data);    %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListWindow"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindow" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_window_2w.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_window_2w.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_window_2w_open.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListWindow"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindow(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListWindow3"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindow3" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_window_2w.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;colorTilted[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_window_2w.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_window_2w_open.svg]/image;cardIconTilted[/icons-mfd-svg/fts_window_2w_tilt.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListWindow3"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindow(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenCloseTilted(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+<script
+    id="tplMaListTemp"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListTemp" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/temp_temperature.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[18]/number;above[24]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/temp_temperature.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListTemp" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListTemperature(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaTempIcon"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedTempIcon" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temp_verlauf_100.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="colorizeByValue/checkbox;min/number;max/number;IcontypeSVG[]/checkbox;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/temp_verlauf_100.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="TempIcon"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %> icon-widget" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genTemperatureIcon(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdTempIcon(this.data.wid, this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaListHumid"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListHumid" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/weather_humidity_rel.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.humidity;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[40]/number;above[60]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/weather_humidity_rel.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListHumid"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListHumidity(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'humid'); %>
+</script>
+
+
+<script
+    id="tplMaListPressure"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListPressure" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/weather_barometric_pressure.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[18]/number;above[24]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/weather_barometric_pressure.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListPressure"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListPressure(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListTempHumid"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListTempHumid" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temperature.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,value.temperature;oid2/id,value.humidity;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="group.icons;"
+    data-vis-attrs8="cardIcon[widgets/vis-material-advanced/img/temperature.png]/image;"
+    data-vis-attrs9="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs10="group.border;"
+    data-vis-attrs11="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs12="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs13="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-name="ListTemperatureHumid"   >
+    <div  id="<%= this.data.attr('wid') %>"  class="vis-widget vma_outer_div  <%==this.data.attr( 'class') %> ">
+        <%   let init = genListTempHumid(this.data);  %>
+        <%== init.widget %>
+    </div>
+<% vis.binds['vis-material-advanced'].tplMdListTempHumid(this.data.wid,  this.view, this.data,'temp','humid');  %>
+</script>
+
+<script
+    id="tplMaListPresence"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListPresence" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/female_white.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;presenceColor[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="iconPresent[widgets/vis-material-advanced/img/female_white_star.png]/image;"
+    data-vis-attrs10="iconNotPresent[widgets/vis-material-advanced/img/female_white.png]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListPresence"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListPresence(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListPresence(this.data.wid, this.view, this.data,'humid'); %>
+</script>
+
+<script
+    id="tplMaListOccupancy"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListOccupancy" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/message_presence_active.svg " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;motionColor[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="iconMotion[/icons-mfd-svg/message_presence_active.svg]/image;"
+    data-vis-attrs10="iconNoMotion[/icons-mfd-svg/message_presence_inactive.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListOccupancy"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListOccupancy(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOccupancy(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListLight"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLight" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/light_light_dim_100.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;lightOnColor[yellow]/color;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIconOn[/icons-mfd-svg/light_light_dim_100.svg]/image;"
+    data-vis-attrs11="cardIconOff[/icons-mfd-svg/light_light_dim_00.svg]/image;"
+    data-vis-attrs12="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs13="group.border;"
+    data-vis-attrs14="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListLight"         >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>"  >
+        <%   let init = genListLight(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLight(this.data.wid, this.view, this.data,'pressure');  %>
+</script>
+
+
+<script
+    id="tplMaListLightDim"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLightDim" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/light_control.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;low[20]/number;high[70]/number;"
+    data-vis-attrs8="lightLowColor[white]/color;lightMediumColor[yellow]/color;lightHighColor[red]/color;"
+    data-vis-attrs9="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;readOnly/checkbox;"
+    data-vis-attrs10="group.icons;"
+    data-vis-attrs11="cardIconOn[/icons-mfd-svg/light_light_dim_100.svg]/image;"
+    data-vis-attrs12="cardIconOff[/icons-mfd-svg/light_light_dim_00.svg]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,dimmer"
+    data-vis-update-style="true"
+    data-vis-name="ListLightDim"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListLightDim(this.data);     %>
+        <%== init.widget    %>
+        <div  class="vma_value_container ">
+            <div class="vma_value vma-slider"
+                style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                <% if(!this.data.readOnly) { %>
+                    <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                        data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                        data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: 0,max:100,step:5,inverted:false}) %> />
+                    </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                <% } %>
+            </div>
+        </div>
+        <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLightDim(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListLightKelvin"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLightKelvin" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_kelvin_warmweiss.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="min[2700]/number;max[6500]/number;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon-warmwhite[widgets/vis-material-advanced/img/fts_kelvin_warmweiss.png]/image;"
+    data-vis-attrs11="cardIcon-medium[widgets/vis-material-advanced/img/fts_kelvin_mittel.png]/image;"
+    data-vis-attrs12="cardIcon-coldwhite[widgets/vis-material-advanced/img/fts_kelvin_kaltweiss.png]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs16="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs17="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,dimmer,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListLightKelvin"       >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListLightKelvin(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('TextColor') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min),max:parseFloat(data.max),step:100,inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLightKelvin(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+
+<script
+    id="tplMaListThermostat"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListThermostat" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/sani_heating_temp.svg " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,level.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;min[14]/number;max[30]/number;"
+    data-vis-attrs7="readOnly/checkbox;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/sani_heating_temp.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-name="ListThermostat">
+    <div  id="<%= this.data.attr('wid') %>"  class="vis-widget vma_outer_div  <%=this.data.attr( 'class') %> ">
+        <%   let init = genListThermostat(this.data);  %>
+        <%== init.widget %>
+        <div  class="vma_value_container ">
+            <div class="vma_value vma-slider"
+                style="color:    <%= this.data.attr('TextColor') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                <% if(!this.data.readOnly) { %>
+                    <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                        data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                        data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min),max:parseFloat(data.max),step:0.5,inverted:false}) %> />
+                    </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                <% } %>
+            </div>
+        </div>
+        <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+    </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListThermostat(this.data.wid,  this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaListWindowShutter"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindowShutter" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_shutter_manual.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="inverted[checked]/checkbox;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs10="group.border;"
+    data-vis-attrs11="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs12="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs13="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListWindowShutter"      >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindowShutter(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:100,step:1,inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListWindowShutter(this.data.wid, this.view, this.data); %>
+</script>
+
+
+
+<script
+    id="tplMaListVolume"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListVolume" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/audio_volume_low.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="Min[0]/number;Max[100]/number;step[5]/select,1,5,10;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon-high[/icons-mfd-svg/audio_volume_high.svg]/image;"
+    data-vis-attrs11="cardIcon-medium[/icons-mfd-svg/audio_volume_mid.svg]/image;"
+    data-vis-attrs12="cardIcon-low[/icons-mfd-svg/audio_volume_mute.svg]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs16="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs17="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListVolume"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListVolume(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: this.data.attr('Min'),max:this.data.attr('Max'),step:parseInt(this.data.attr('step')),inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVolume(this.data.wid, this.view, this.data); %>
+</script>
+
+
+<script
+    id="tplMaListBoolean"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListBoolean" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/checked.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="true[Wahr]/text;false[Falsch]/text;"
+    data-vis-attrs8="colorizeByValue/checkbox;color-true/color;color-false/color;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIconTrue[/icons-mfd-svg/status_light_low.svg]/image;"
+    data-vis-attrs11="cardIconFalse[/icons-mfd-svg/status_light_off.svg]/image;"
+    data-vis-attrs12="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs13="group.border;"
+    data-vis-attrs14="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,button"
+    data-vis-update-style="true"
+    data-vis-name="ListBoolean" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListBoolean(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListBoolean(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+
+<script
+    id="tplMaListNumber"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNumber" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/123.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;unit[]/select,,percent,Celsius,Fahrenheit,ppm,kmh,mph,mm,m,mb,GB,Wh,V,Hz,mA;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="low/number;high/number;"
+    data-vis-attrs8="colorizeByValue/checkbox;color-low/color;color-high/color;"
+    data-vis-attrs9="group.border;"
+    data-vis-attrs10="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs11="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs12="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListNumber"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+            <%   let init = genListNumber(this.data);      %>
+            <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListNumber(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+<script
+    id="tplMaListText"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListText" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/abc.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;searchString/text;stringFoundColor/color;"
+    data-vis-attrs8="group.border;"
+    data-vis-attrs9="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs10="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs11="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListText"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListText(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListText(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListValve"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListValve" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/sani_valve_50.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;"
+    data-vis-attrs8="below[18]/number;above[24]/number;color-medium[darkyellow]/color;color-high[red]/color;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon[/icons-mfd-svg/sani_valve_50.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListValve" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListValve(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListValve(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+<script
+    id="tplMaListGarage"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListGarage" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_garage_door_100.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_garage_door_100.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_garage.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,switch"
+    data-vis-update-style="true"
+    data-vis-name="ListGarage"    >
+    <div class="vis-widget mdw-list vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListGarage(this.data);  %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<!--
+<script
+    id="tplMaListNew"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNew" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/garage.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id;title[not working yet]/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="borderRadius[10]/number;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIconClosed[widgets/vis-material-advanced/img/garage_closed.png]/image;"
+    data-vis-attrs5="cardIconOpen[widgets/vis-material-advanced/img/garage.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-beta="true"
+    data-vis-name="ListNew">
+<div id="<%= this.data.attr('wid') %>" class=" vma_outer_div  <%==this.data.attr( 'class') %> ">
+    <div class="vma_inner_container_div" >
+        <div class="vma_picture">
+            <img class="vma_icon"        src="<%= this.data.attr('cardIcon') %>">
+        </div>
+        <div class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+            <div  class="vma_title">
+                <%= this.data.attr('title') %>
+            </div>
+            <div  class="vma_subtitle" style=" color: <%= this.data.attr('Text-color') %>;">
+                <%= this.data.attr('subtitle') %>
+            </div>
+        </div>
+        <div  class="vma_value_container">
+            <div class="vma_value"
+                style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+            </div>
+        </div>
+        <div class="vma_overlay"  ></div>
+    </div>
+</div>
+<% vis.binds['vis-material-advanced'].tplMdListNew(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListNewDuo"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNewDuo" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temperature.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,value.temperature;oid2/id,value.humidity;title[to be tested]/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="borderRadius[10]/number,1,20,1;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/temperature.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-beta="true"
+    data-vis-name="ListNewDuo"  >
+    <div  id="<%= this.data.attr('wid') %>" class=" vma_outer_div  <%==this.data.attr( 'class') %> ">
+        <div  class="vma_inner_container_div" >
+            <div  class="vma_picture">
+                <img class="vma_icon" src="<%= this.data.attr('cardIcon') %>">
+            </div>
+            <div  class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+                <div class="vma_title">
+                    <%= this.data.attr('title') %>
+                </div>
+                <div class="vma_subtitle" style=" color: <%= this.data.attr('Text-color') %>;">
+                    <%= this.data.attr('subtitle') %>
+                </div>
+            </div>
+            <div class="vma_value_container">
+                <div class="vma_value2_1"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                </div>
+                <div class="vma_value2_2"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                </div>
+            </div>
+            <div class="vma_overlay"  ></div>
+        </div>
+    </div>
+<% vis.binds['vis-material-advanced'].tplMdListNewDuo(this.data.wid, this.view, this.data);  %>
+</script>
+-->
+
+<!--
+<script
+    id="tplMaListRadio"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListRadio" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/radio.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;value;title/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;colorizeByValue/checkbox;lightOnColor[yellow]/color;"
+    data-vis-attrs2="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;readOnly/checkbox;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/radio.png]/id;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListRadio">
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" style="background-color: <%= this.data.attr('widgetBackground') %>; " >
+        <div class="vis-widget-body vma_inner_container_div"  >
+            <div class="vma_picture">
+                <img class="vma_icon" src="{<%= this.data.attr('cardIcon') %>}">
+            </div>
+            <div class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+                <div  class="vma_title" >
+                    <%= this.data.attr('title') %>
+                </div>
+                <div  class="vma_subtitle" style=" color:  <%= this.data.attr('Text-color') %>;" >
+                    <%= this.data.attr('subtitle') %>
+                </div>
+            </div>
+            <div  class="vma_value_container ">
+                <div class="vma_value  "
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+
+                        <label class="vma-switch">
+                                <input type="checkbox" checked="" name="<%=this.data.attr( 'wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox"  data-oid="<%= this.data.attr('oid') %>">
+                                 <span class="vma-slider-switch round"></span>
+                        </label>
+
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body"></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListRadio(this.data.wid, this.view, this.data,'pressure');  %>
+</script>
+-->
+<!-- --------------vis-material-advanced.html--- END -->

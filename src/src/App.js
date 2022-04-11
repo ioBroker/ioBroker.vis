@@ -30,7 +30,7 @@ import Attributes from './Attributes';
 import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
-import VisEngine from './Vis/index';
+import VisEngine from './Vis/visEngine';
 import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
