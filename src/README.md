@@ -4,7 +4,6 @@
 - Show widgets in palette by group
 - Allow for one widget to show the detailed information with screenshot (i18n): many texts (HTML) and one picture (on none)
 - Add widget from palette
-- Support of data-vis-init function 
 - Close all groups / open all groups
 - Take in count new react widget types => onLoaded([])
 
@@ -61,7 +60,6 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - Basic
 - bars
 - ...
-- jQui - load correspond theme
 
 ### New widget set - material like
 - Lamp
@@ -71,6 +69,7 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - Slider
 - ...
 - Side menu with views
+- Add widgets from material adapter
 
 ### Wizard for new widget set
 
