@@ -983,7 +983,7 @@ class App extends GenericApp {
                                         changeProject={this.changeProject}
                                         openedViews={this.state.openedViews}
                                         projectName={this.state.projectName}
-                                        selectedWidgets={this.state.selectedWidgets}
+                                        selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                                         widgetsLoaded={this.state.widgetsLoaded}
                                         socket={this.socket}
                                         themeName={this.state.themeName}
@@ -994,6 +994,7 @@ class App extends GenericApp {
                                         onPxToPercent={this.onPxToPercent}
                                         onPercentToPx={this.onPercentToPx}
                                         saveCssFile={this.saveCssFile}
+                                        editMode={this.state.editMode}
                                     />
                                 </div>
                             </ReactSplit>

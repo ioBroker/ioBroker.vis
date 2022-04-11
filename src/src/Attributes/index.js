@@ -87,6 +87,7 @@ Attributes.propTypes = {
     instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
     saveCssFile: PropTypes.func.isRequired,
+    editMode: PropTypes.bool,
 };
 
 export default withStyles(style)(Attributes);
