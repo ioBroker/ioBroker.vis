@@ -544,6 +544,53 @@ class App extends GenericApp {
         }
     }
 
+    alignWidgets = type => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        const coordinates = [];
+        const newCoordinates = {
+            left: 0, top: 0, width: 0, height: 0,
+        };
+        const selectedWidgets = [];
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            selectedWidgets.push(widgets[selectedWidget]);
+            coordinates.push({
+                left: parseInt(widgets[selectedWidget].style.left.match(/^([0-9]+)/)[1]),
+                top: parseInt(widgets[selectedWidget].style.top.match(/^([0-9]+)/)[1]),
+                width: parseInt(widgets[selectedWidget].style.width.match(/^([0-9]+)/)[1]),
+                height: parseInt(widgets[selectedWidget].style.height.match(/^([0-9]+)/)[1]),
+            });
+        });
+        if (type === 'left') {
+            newCoordinates.left = 0;
+            coordinates.forEach(coordinate => {
+                if (newCoordinates.left === 0 || coordinate.left < newCoordinates.left) {
+                    newCoordinates.left = coordinate.left;
+                }
+            });
+            selectedWidgets.forEach(selectedWidget => selectedWidget.left = newCoordinates.left);
+        } else if (type === 'right') {
+
+        } else if (type === 'top') {
+
+        } else if (type === 'bottom') {
+
+        } else if (type === 'horizontal-center') {
+
+        } else if (type === 'vertical-center') {
+
+        } else if (type === 'width') {
+
+        } else if (type === 'height') {
+
+        } else if (type === 'horizontal-equal') {
+
+        } else if (type === 'vertical-equal') {
+
+        }
+        this.changeProject(project);
+    }
+
     undo = async () => {
         await this.setStateAsync({ selectedWidgets: [] });
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
