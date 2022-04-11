@@ -226,7 +226,7 @@ class VisCanWidget extends VisBaseWidget {
                     }
                 } else if (options.filter[0] === '$') {
                     // hide all
-                    if (this.props.allWidgets[this.props.id]?.data.filterkey) {
+                    if (this.props.allWidgets[this.props.id]?.data?.filterkey) {
                         this.filterDisplay = this.widDiv.style.display;
                         this.widDiv.style.display = 'none';
                         if (this.widDiv._customHandlers?.onHide) {
@@ -260,6 +260,8 @@ class VisCanWidget extends VisBaseWidget {
                         }
                     }
                 }
+            } else if (command === 'collectFilters') {
+                return this.props.allWidgets[this.props.id]?.data?.filterkey;
             }
         }
     }
@@ -1145,6 +1147,12 @@ class VisCanWidget extends VisBaseWidget {
                 this.widDiv.style.zIndex = (parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10)).toString();
             }
             props.style.zIndex = 800 + zIndex;
+
+            // restore visibility
+            if (this.filterDisplay !== undefined) {
+                this.widDiv.style.display = this.filterDisplay;
+                delete this.filterDisplay;
+            }
         }
 
         // the helper div is always relative

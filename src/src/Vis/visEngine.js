@@ -219,8 +219,15 @@ class VisEngine extends React.Component {
                 console.warn('renderView not implemented: ', viewDiv, view, hidden);
                 cb && cb(viewDiv, view);
             },
-            updateFilter: () => {
-                console.warn('updateFilter not implemented');
+            updateFilter: view => {
+                view = view || this.props.activeView;
+                if (this.refViews[view]) {
+                    // collect all possible filter of widgets
+                    if (this.refViews[view]?.onCommand) {
+                        return this.refViews[view]?.onCommand('collectFilters');
+                    }
+                }
+                return [];
             },
             destroyUnusedViews: () => {
                 console.warn('destroyUnusedViews not implemented');
@@ -1188,6 +1195,7 @@ ${this.scripts}
 
         this.vis.editMode = this.props.editMode;
         this.vis.activeView = this.props.activeView;
+        this.vis.views = this.props.views;
 
         this.updateCustomScripts();
         this.updateCommonCss();
