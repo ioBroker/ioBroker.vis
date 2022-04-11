@@ -184,6 +184,9 @@ class VisEngine extends React.Component {
                 console.warn('renderView not implemented: ', viewDiv, view, hidden);
                 cb && cb(viewDiv, view);
             },
+            updateFilter: () => {
+                console.warn('updateFilter not implemented');
+            },
             destroyUnusedViews: () => {
                 console.warn('destroyUnusedViews not implemented');
             },

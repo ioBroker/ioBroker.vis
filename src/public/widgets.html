@@ -26,9 +26,9 @@
 		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/filters;"
 		data-vis-init="initOptions">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
-	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-hide-helper=<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? '{"disabled":true}': '' %>'
 	    >
         <div class="vis-widget-body" style="overflow: visible"></div>
         <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarFilter"); %>
@@ -49,9 +49,9 @@
 		data-vis-attrs3="group.buttons/byindex;buttonsImage(1-bCount)/image;buttonsText(1-bCount);buttonsOption(1-bCount)/views;"
 		data-vis-init="initOptions">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 200px; height: 130px;overflow:visible" id="<%= this.data.attr('wid') %>"
-	    data-vis-hide-helper=<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? 'true' : 'false' %>
-	    data-vis-resizable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
-	    data-vis-draggable='<%== (this.data.attr('position')=='dockTop' || this.data.attr('position')=='dockBottom' || this.data.attr('position')=='dockRight' || this.data.attr('position')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-hide-helper=<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? 'true' : 'false' %>
+	    data-vis-resizable='<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? '{"disabled":true}': '' %>'
+	    data-vis-draggable='<%== (this.data.attr('bPosition')=='dockTop' || this.data.attr('bPosition')=='dockBottom' || this.data.attr('bPosition')=='dockRight' || this.data.attr('bPosition')=='dockRight') ? '{"disabled":true}': '' %>'
 	    >
         <div class="vis-widget-body" style="overflow: visible"></div>
         <% vis.binds.bars.init(this.data.wid, this.data, this.view, "tplBarNavigator"); %>

@@ -392,12 +392,24 @@ function checkLicense(license, uuid, originalError) {
             code.push('\\u00' + license.type.charCodeAt(i).toString(16));
         }
 
-        if (code.join('') !== '\u0063\u006f\u006d\u006d\u0065\u0072\u0063\u0069\u0061\u006c') {
-            return false;
-        } else {
+        if (license.uuid && uuid !== license.uuid) {
+            adapter.log.error(`License is for other device with UUID "${license.uuid}". This device has UUID "${uuid}"`);
+            return true;
+        }
+
+        const t = '\u0063\u006f\u006d\u006d\u0065\u0072\u0063\u0069\u0061\u006c';
+        if (t.length !== code.length) {
             originalError && adapter.log.error('Cannot check license: ' + originalError);
             return true;
         }
+        for (let s = 0; s < code.length; s++) {
+            if (code[s] !== '\\u00' + t.charCodeAt(s).toString(16)) {
+                originalError && adapter.log.error('Cannot check license: ' + originalError);
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
