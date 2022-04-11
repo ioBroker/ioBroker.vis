@@ -11,6 +11,8 @@ import {
     Tab, Tabs, Tooltip,
 } from '@mui/material';
 
+import html2canvas from 'html2canvas';
+
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import CodeIcon from '@mui/icons-material/Code';
@@ -156,6 +158,7 @@ class App extends GenericApp {
                 type: null,
                 widgets: {},
             },
+            clipboardImages: [],
             ...this.state,
         });
 
@@ -318,14 +321,14 @@ class App extends GenericApp {
     setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
 
     changeView = async selectedView => {
-        const selectedWidgets = JSON.parse(window.localStorage.getItem(
+        let selectedWidgets = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
 
         // Check that all selectedWidgets exist
         for (let i = selectedWidgets.length - 1; i >= 0; i--) {
             if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
-                selectedWidgets.splice(i, 1);
+                selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
 
@@ -409,6 +412,30 @@ class App extends GenericApp {
                 widgets,
             },
         });
+        const clipboardImages = [];
+        let canvas;
+        try {
+            canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[0])));
+        } catch (e) {
+
+        }
+        if (canvas) {
+            const newCanvas = window.document.createElement('canvas');
+            newCanvas.height = 200;
+            newCanvas.width = Math.ceil(canvas.width / canvas.height * newCanvas.height);
+            if (newCanvas.width > 200) {
+                newCanvas.width = 200;
+                newCanvas.height = Math.ceil(canvas.height / canvas.width * newCanvas.width);
+            }
+            const ctx = newCanvas.getContext('2d');
+            ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+            clipboardImages.push(newCanvas.toDataURL(0));
+            await this.setStateAsync({
+                clipboardImages,
+            });
+            setTimeout(() => this.setState({ clipboardImages: [] }), 1000);
+        }
     }
 
     pasteWidgets = async () => {
@@ -648,6 +675,13 @@ class App extends GenericApp {
             </StyledEngineProvider>;
         }
 
+        for (const i in this.state.selectedWidgets) {
+            if (!this.state.project[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
+                this.setSelectedWidgets([]);
+                return null;
+            }
+        }
+
         const visEngine = <VisEngine
             activeView={this.state.selectedView || ''}
             editMode={!this.state.runtime && this.state.editMode}
@@ -672,6 +706,7 @@ class App extends GenericApp {
 
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
+                {this.state.clipboardImages.map(clipboardImage => <img width="200" src={clipboardImage} alt="" />)}
                 <div className={this.props.classes.app}>
                     <Toolbar
                         classes={{}}
