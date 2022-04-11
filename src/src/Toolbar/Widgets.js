@@ -60,7 +60,7 @@ const Widgets = props => {
                     onClick: () => props.deleteWidgets(),
                 },
             ], [
-                { type: 'icon-button', Icon: FileCopyIcon, name: 'Copy widget' },
+                { type: 'icon-button', Icon: FileCopyIcon, name: 'Clone widget' },
             ]],
             { type: 'divider' },
             [[

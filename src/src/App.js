@@ -31,7 +31,9 @@ import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/index';
-import { DndPreview, getWidgetTypes, isTouchDevice, parseAttributes } from './Utils';
+import {
+    DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
+} from './Utils';
 
 const styles = theme => ({
     block: {
@@ -163,6 +165,7 @@ class App extends GenericApp {
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
+        window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', e => {
             if (this.state.needSave) {
                 e.returnValue = I18n.t('Are you sure? Some data didn\'t save.');
@@ -172,12 +175,28 @@ class App extends GenericApp {
         });
     }
 
+    onKeyDown = e => {
+        console.log(e.key);
+        if (document.activeElement.tagName === 'BODY') {
+            if (e.ctrlKey && e.key === 'z' && this.state.historyCursor !== 0) {
+                this.undo();
+            }
+            if (e.ctrlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
+                this.redo();
+            }
+            if (e.key === 'Delete') {
+                this.deleteWidgets();
+            }
+        }
+    }
+
     componentWillUnmount() {
         // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = null;
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
+        window.removeEventListener('keydown', this.onKeyDown, false);
     }
 
     onHashChange = () => {

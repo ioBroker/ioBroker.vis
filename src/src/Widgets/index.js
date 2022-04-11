@@ -10,12 +10,15 @@ import {
     MenuItem,
     Select,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ClearIcon from '@mui/icons-material/Clear';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -104,8 +107,35 @@ const Widgets = props => {
     const [filter, setFilter] = useState('');
     const [type, setType] = useState('');
 
+    const allOpened = !Object.keys(widgetsList).find(group => !accordionOpen[group]);
+    const allClosed = !Object.keys(widgetsList).find(group => accordionOpen[group]);
+
     return <>
         <Typography variant="h6" gutterBottom className={clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
+            {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        const newAccordionOpen = {};
+                        Object.keys(widgetsList).forEach(group => newAccordionOpen[group] = true);
+                        window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
+                >
+                    <UnfoldMoreIcon />
+                </IconButton>
+            </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
+            { !allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
+                <IconButton onClick={() => {
+                    const newAccordionOpen = {};
+                    Object.keys(widgetsList).forEach(group => newAccordionOpen[group] = false);
+                    window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                    setAccordionOpen(newAccordionOpen);
+                }}
+                >
+                    <UnfoldLessIcon />
+                </IconButton>
+            </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
             {I18n.t('Add widget')}
         </Typography>
         <div>
@@ -174,10 +204,10 @@ const Widgets = props => {
                 Object.keys(widgetsList).map((category, categoryKey) => <Accordion
                     key={categoryKey}
                     elevation={0}
-                    expanded={accordionOpen[categoryKey]}
+                    expanded={accordionOpen[category]}
                     onChange={(e, expanded) => {
                         const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                        newAccordionOpen[categoryKey] = expanded;
+                        newAccordionOpen[category] = expanded;
                         window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
                         setAccordionOpen(newAccordionOpen);
                     }}
@@ -185,7 +215,7 @@ const Widgets = props => {
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         classes={{
-                            root: clsx(props.classes.clearPadding, accordionOpen[categoryKey]
+                            root: clsx(props.classes.clearPadding, accordionOpen[category]
                                 ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                             content: props.classes.clearPadding,
                             expandIcon: props.classes.clearPadding,
