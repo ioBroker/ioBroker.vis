@@ -586,10 +586,9 @@ const WidgetField = props => {
             classes={{
                 input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
             }}
-            renderOption={
-                (optionProps, option) => (field.name === 'font-family'
-                    ? <div style={{ fontFamily: option }} {...optionProps}>{option}</div> : option)
-            }
+            renderOption={field.name === 'font-family' ?
+                (optionProps, option) => (
+                    <div style={{ fontFamily: option }} {...optionProps}>{option}</div>) : null}
             renderInput={params => (
                 <TextField
                     variant="standard"
