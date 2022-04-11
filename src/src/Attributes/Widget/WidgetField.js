@@ -559,14 +559,19 @@ const WidgetField = props => {
         </Select>;
     }
 
-    if (field.type === 'auto' || field.type === 'class')  {
+    if (field.type === 'auto' || field.type === 'class' || field.type === 'filters')  {
         let options = field.options;
         if (field.type === 'class') {
             options = window.collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
-        }
+        } else
         if (field.type === 'views') {
             options = Object.keys(props.project)
                 .filter(view => !view.startsWith('__'));
+        } else
+        if (field.type === 'filters') {
+            options = window.vis ? window.vis.updateFilter() : [];
+            options.unshift('');
+            console.log(JSON.stringify(options));
         }
 
         return <Autocomplete

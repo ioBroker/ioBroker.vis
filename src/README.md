@@ -38,6 +38,7 @@
 ### Runtime
 #### Engine
 - changeFilter method in vis
+- Bindings in View settings
 
 ### Toolbar
 - 3 Levels of visibility:

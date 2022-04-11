@@ -52,11 +52,16 @@ class VisRxWidget extends VisBaseWidget {
 
     onCommand(command, options) {
         if (!super.onCommand(command, options)) {
+            if (command === 'collectFilters') {
+                return this.state.rxData?.filterkey;
+            }
+
             if (command === 'changeFilter') {
                 if (!options || !options.filter.length) {
                     // just show
                     if (this.filterDisplay !== undefined) {
                         this.refService.current.style.display = this.filterDisplay;
+                        delete this.filterDisplay;
                     }
                 } else if (options.filter[0] === '$') {
                     // hide all
@@ -75,11 +80,14 @@ class VisRxWidget extends VisBaseWidget {
                             this.refService.current.style.display = 'none';
                         } else if (this.filterDisplay !== undefined) {
                             this.refService.current.style.display = this.filterDisplay;
+                            delete this.filterDisplay;
                         }
                     }
                 }
             }
         }
+
+        return null;
     }
 
     onStateChanged(id, state, doNotApplyState) {
@@ -231,6 +239,12 @@ class VisRxWidget extends VisBaseWidget {
                 this.bindingsTimer = null;
                 this.onPropertiesUpdated();
             }, 10);
+        }
+
+        // restore visibility in editMode
+        if (this.state.editMode && this.filterDisplay !== undefined && this.refService.current) {
+            this.refService.current.style.display = this.filterDisplay;
+            delete this.filterDisplay;
         }
 
         return super.render();

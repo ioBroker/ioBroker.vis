@@ -19,8 +19,8 @@ import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
 import WIDGETS from './Widgets';
 
-// 1300 is the React dialog
 class VisView extends React.Component {
+    // 1300 z-index is the React dialog
     static Z_INDEXES = {
         VIEW_SELECT_RECTANGLE: 1201,
         WIDGET_SERVICE_DIV: 1200,
@@ -97,11 +97,34 @@ class VisView extends React.Component {
             Object.keys(this.widgetsRefs).forEach(wid =>
                 this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand(command));
 
-            return;
+            return null;
         }
         if (command === 'changeFilter') {
             this.changeFilter(options);
-            // return;
+            return null;
+        }
+
+        if (command === 'collectFilters') {
+            const widgets = this.props.views[this.props.view].widgets;
+            const filterList = [];
+
+            Object.keys(widgets).forEach(wid => {
+                let filterValues;
+                if (this.widgetsRefs[wid]?.onCommand) {
+                    // take bound information
+                    filterValues = this.widgetsRefs[wid]?.onCommand('collectFilters');
+                } else {
+                    filterValues = widgets[wid]?.data?.filterkey;
+                    if (filterValues && typeof filterValues === 'string') {
+                        filterValues = filterValues.split(',').map(f => f.trim()).filter(f => f);
+                    }
+                }
+                if (filterValues) {
+                    filterValues.forEach(f => !filterList.includes(f) && filterList.push(f));
+                }
+            });
+
+            return filterList;
         }
     }
 
