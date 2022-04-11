@@ -151,7 +151,9 @@ const View = props => {
                 },
                 { name: 'Comment', field: 'comment', notStyle: true },
                 { name: 'CSS Class', field: 'class', notStyle: true },
-                { name: 'Initial filter', field: 'filterkey', notStyle: true },
+                {
+                    name: 'Initial filter', field: 'filterkey', notStyle: true, type: 'filter',
+                },
                 {
                     name: 'Only for groups',
                     field: 'group',
@@ -420,10 +422,18 @@ const View = props => {
 
                                 let result = null;
 
-                                if (field.type === 'autocomplete') {
+                                if (field.type === 'autocomplete' || field.type === 'filter') {
+                                    let options;
+                                    if (field.type === 'filter') {
+                                        options = window.vis ? window.vis.updateFilter() : [];
+                                        options.unshift('');
+                                    } else {
+                                        options = field.items;
+                                    }
+
                                     result = <Autocomplete
                                         freeSolo
-                                        options={field.items}
+                                        options={options}
                                         inputValue={value}
                                         value={value}
                                         onInputChange={(e, inputValue) => change(inputValue)}

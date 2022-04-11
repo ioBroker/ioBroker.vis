@@ -842,7 +842,7 @@ class VisEngine extends React.Component {
                                 onLoad = true;
                             }
                         } catch (error) {
-                            console.log(`WTF?? in ${attr.ownerElement.id}: ${error}`);
+                            console.error(`WTF?? in ${attr.ownerElement.id}: ${error}`);
                         }
                     });
 
@@ -880,7 +880,7 @@ class VisEngine extends React.Component {
 
                 return VisEngine.setInnerHTML(div, text)
                     .then(() => {
-                        console.log('Loaded');
+                        // console.log('Loaded');
 
                         // Send react widgets to App only in edit mode
                         const arrayWidgets = [];
@@ -940,7 +940,7 @@ class VisEngine extends React.Component {
                 try {
                     state.val = JSON.parse(state.val);
                 } catch (e) {
-                    console.log(`Command seems to be an object, but cannot parse it: ${state.val}`);
+                    console.warn(`Command seems to be an object, but cannot parse it: ${state.val}`);
                 }
             }
 
@@ -1098,14 +1098,12 @@ class VisEngine extends React.Component {
                         let userScript = window.document.getElementById('#vis_user_scripts');
                         if (!userScript) {
                             userScript = window.document.createElement('script');
-                            userScript.setAttribute('id', '#vis_user_scripts');
-                            const script = `try {
+                            userScript.setAttribute('id', 'vis_user_scripts');
+                            userScript.innerHTML = `try {
 ${this.scripts}
 } catch (error) {
     console.error('Cannot execute user script: ' + error);
 }`;
-                            userScript.innerHTML = script;
-                            console.log(script);
                             try {
                                 window.document.head.appendChild(userScript);
                             } catch (error) {

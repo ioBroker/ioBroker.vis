@@ -571,7 +571,6 @@ const WidgetField = props => {
         if (field.type === 'filters') {
             options = window.vis ? window.vis.updateFilter() : [];
             options.unshift('');
-            console.log(JSON.stringify(options));
         }
 
         return <Autocomplete
