@@ -239,7 +239,9 @@ const getFieldsAfter = (widget, widgets, fonts) => [
     {
         name: 'css_border',
         isStyle: true,
-        fields: [{ name: 'border-width' },
+        fields: [
+            { name: 'box-sizing', type: 'nselect', options: ['', 'border-box', 'content-box']  },
+            { name: 'border-width' },
             { name: 'border-style' },
             { name: 'border-color', type: 'color' },
             { name: 'border-radius' }],

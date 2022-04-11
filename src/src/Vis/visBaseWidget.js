@@ -84,6 +84,28 @@ class VisBaseWidget extends React.Component {
             resizers.forEach(item => item.style.display = '');
             return true;
         }
+        if (command === 'startMove') {
+            const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
+            if (overlay) {
+                if (this.state.selected) {
+                    overlay.className = removeClass(overlay.className, 'vis-editmode-selected');
+                } else {
+                    overlay.className = removeClass(overlay.className, 'vis-editmode-overlay-not-selected');
+                }
+            }
+            return true;
+        }
+        if (command === 'stopMove') {
+            const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
+            if (overlay) {
+                if (this.state.selected) {
+                    overlay.className = addClass(overlay.className, 'vis-editmode-selected');
+                } else {
+                    overlay.className = addClass(overlay.className, 'vis-editmode-overlay-not-selected');
+                }
+            }
+            return true;
+        }
         return false;
     }
 

@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
-import {addClass, removeClass} from './visUtils';
+import { addClass } from './visUtils';
 import WIDGETS from './Widgets';
 
 // 1300 is the React dialog
@@ -400,15 +400,14 @@ class VisView extends React.Component {
 
         this.props.selectedWidgets.forEach(_wid => {
             if (this.widgetsRefs[_wid]?.onMove) {
-                this.widgetsRefs[_wid]?.onMove(); // indicate start of movement
+                this.widgetsRefs[_wid].onMove(); // indicate start of movement
             }
         });
-        // remove on all widgets the vis-editmode-overlay-not-selected class
-        Object.keys(this.widgetsRefs).forEach(wid => {
-            if (this.props.selectedWidgets.includes(wid)) {
-                this.widgetsRefs[wid].refService.current.className = removeClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-selected');
-            } else {
-                this.widgetsRefs[wid].refService.current.className = removeClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-overlay-not-selected');
+
+        // Indicate about movement start
+        Object.keys(this.widgetsRefs).forEach(_wid => {
+            if (this.widgetsRefs[_wid]?.onCommand) {
+                this.widgetsRefs[_wid].onCommand('startMove');
             }
         });
     }
@@ -421,7 +420,7 @@ class VisView extends React.Component {
         this.props.selectedWidgets.forEach(wid => {
             const widgetsRefs = this.widgetsRefs;
             if (widgetsRefs[wid]?.onMove) {
-                widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
+                widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
             }
         });
     } : null;
@@ -439,12 +438,10 @@ class VisView extends React.Component {
             });
         }
 
-        // restore on all widgets the vis-editmode-overlay-not-selected class
-        Object.keys(this.widgetsRefs).forEach(wid => {
-            if (this.props.selectedWidgets.includes(wid)) {
-                this.widgetsRefs[wid].refService.current.className = addClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-selected');
-            } else {
-                this.widgetsRefs[wid].refService.current.className = addClass(this.widgetsRefs[wid].refService.current.className, 'vis-editmode-overlay-not-selected');
+        // Indicate about movement start
+        Object.keys(this.widgetsRefs).forEach(_wid => {
+            if (this.widgetsRefs[_wid]?.onCommand) {
+                this.widgetsRefs[_wid].onCommand('stopMove');
             }
         });
     } : null;
@@ -636,6 +633,34 @@ class VisView extends React.Component {
         return { rxWidget, isRelative };
     }
 
+    loadJqueryTheme(jQueryTheme) {
+        if (this.loadedjQueryTheme) {
+            // unload old
+            let style = this.refView.current.querySelector(`#${this.props.view}_style`);
+            if (style) {
+                style.remove();
+                style = null;
+            }
+        }
+        this.loadedjQueryTheme = jQueryTheme;
+
+        return fetch(`../../lib/css/themes/jquery-ui/${this.loadedjQueryTheme}/jquery-ui.min.css`)
+            .then(resp => resp.text())
+            .then(data => {
+                const _view = `visview_${this.props.view}`;
+                data = data.replace('.ui-helper-hidden', `#${_view} .ui-helper-hidden`);
+                data = data.replace(/(}.)/g, `}#${_view} .`);
+                data = data.replace(/,\./g, `,#${_view} .`);
+                data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${this.loadedjQueryTheme}/images`);
+
+                const style = window.document.createElement('style');
+                style.innerHTML = data;
+                style.setAttribute('id', `${this.props.view}_style`);
+                this.refView.current.prepend(style);
+            })
+            .catch(error => console.warn(`Cannot load jQueryUI theme "${this.loadedjQueryTheme}": ${error}`));
+    }
+
     render() {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
@@ -728,6 +753,13 @@ class VisView extends React.Component {
         };
 
         const settings = this.props.views[this.props.view].settings;
+
+        const jQueryTheme = settings?.theme || 'redmond';
+
+        if (this.refView.current && this.loadedjQueryTheme !== jQueryTheme) {
+            this.loadJqueryTheme(jQueryTheme)
+                .then(() => {});
+        }
 
         // this was only if this.props.editMode
         if (settings.sizex) {

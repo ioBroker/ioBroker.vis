@@ -146,7 +146,7 @@ class VisRxWidget extends VisBaseWidget {
         props.className = `vis-widget ${this.state.rxData.class || ''}`;
 
         if (this.props.isRelative) {
-            props.style.position = 'relative';
+            props.style.position = this.state.rxStyle.position || 'relative';
         } else {
             props.style.position = 'absolute';
         }
@@ -160,6 +160,11 @@ class VisRxWidget extends VisBaseWidget {
             attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
             props.style[attr] = value;
         });
+
+        // by default, it is border-box
+        if (!this.state.rxStyle['box-sizing']) {
+            props.style.boxSizing = 'border-box';
+        }
 
         if (this.state.editMode) {
             const zIndex = parseInt((this.state.rxStyle['z-index'] || 0), 10);

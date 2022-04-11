@@ -1,20 +1,47 @@
 import { usePreview } from 'react-dnd-preview';
 
+const DEFAULT_SET_COLORS = {
+    basic: '#a6a7a5',
+    bars: '#f6594e',
+    dwd: '#cb8928',
+    echarts: '#98B1C0',
+    eventlist: '#c52699',
+    hqwidgets: '#005067',
+    jqplot: '#00e753',
+    jqui: '#008be0',
+    metro: '#7249e0',
+    swipe: '#484848',
+    tabs: '#00d509',
+};
+
 export const getWidgetTypes = () => {
     if (!window.visWidgetTypes) {
+        window.visSets = {};
+
         window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
-            .map(script => ({
-                name: script.attributes.id.value,
-                title: script.attributes['data-vis-name']?.value,
-                preview: script.attributes['data-vis-prev']?.value,
-                set: script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : null,
-                imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
-                init: script.attributes['data-vis-init']?.value,
-                params: Object.values(script.attributes)
-                    .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
-                    .map(attribute => attribute.value)
-                    .join(''),
-            }));
+            .map(script => {
+                const widgetSet = script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : 'basic';
+                const color = script.attributes['data-vis-color']?.value;
+                window.visSets[widgetSet] = window.visSets[widgetSet] || {};
+                if (color) {
+                    window.visSets[widgetSet].color = color;
+                } else if (!window.visSets[widgetSet].color && DEFAULT_SET_COLORS[widgetSet]) {
+                    window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
+                }
+
+                return {
+                    name: script.attributes.id.value,
+                    title: script.attributes['data-vis-name']?.value,
+                    preview: script.attributes['data-vis-prev']?.value,
+                    set: widgetSet,
+                    imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
+                    init: script.attributes['data-vis-init']?.value,
+                    params: Object.values(script.attributes)
+                        .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
+                        .map(attribute => attribute.value)
+                        .join(''),
+                };
+            });
     }
 
     return window.visWidgetTypes;

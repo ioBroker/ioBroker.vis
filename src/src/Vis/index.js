@@ -53,6 +53,7 @@ class VisEngine extends React.Component {
         // this.divRef = React.createRef();
 
         this.can = window.can;
+        this.scripts = null;
 
         this.subscribes = {};
         this.allWidgets = {};
@@ -137,6 +138,24 @@ class VisEngine extends React.Component {
             this.props.socket.unsubscribeState(id, this.onStateChange));
 
         window.document.removeEventListener('keydown', this.onKeyPress);
+
+        let userScript = window.document.getElementById('#vis_user_scripts');
+        if (userScript) {
+            userScript.remove();
+            userScript = null;
+        }
+
+        let userCommonCss = window.document.getElementById('#vis_common_user');
+        if (userCommonCss) {
+            userCommonCss.remove();
+            userCommonCss = null;
+        }
+
+        let userUserCss = window.document.getElementById('#vis_user');
+        if (userUserCss) {
+            userUserCss.remove();
+            userUserCss = null;
+        }
 
         this.subscribes = {};
     }
@@ -934,6 +953,95 @@ class VisEngine extends React.Component {
         });
     }
 
+    updateCustomScripts() {
+        if (this.props.views) {
+            if (!this.props.editMode) {
+                if (this.props.views.___settings) {
+                    if (this.scripts !== (this.props.views.___settings || '')) {
+                        this.scripts = this.props.views.___settings || '';
+                        let userScript = window.document.getElementById('#vis_user_scripts');
+                        if (!userScript) {
+                            userScript = window.document.createElement('script');
+                            userScript.setAttribute('id', '#vis_user_scripts');
+                            userScript.innerHTML = this.scripts;
+                            window.document.head.appendChild(userScript);
+                        } else {
+                            userScript.innerHTML = this.scripts;
+                        }
+                    }
+                }
+            } else if (this.scripts) {
+            // unload scripts in edit mode
+                this.scripts = null;
+                let userScript = window.document.getElementById('#vis_user_scripts');
+                if (userScript) {
+                    userScript.remove();
+                    userScript = null;
+                }
+            }
+        }
+    }
+
+    static applyUserStyles(id, styles) {
+        let styleEl = window.document.getElementById(id);
+        if (styleEl) {
+            styleEl.innerHTML = styles;
+        } else {
+            styleEl = window.document.createElement('style');
+            styleEl.setAttribute('id', id);
+            styleEl.innerHTML = styles;
+            // insert common always first and then user css, as user CSS has bigger priority
+            if (id === 'vis_common_user') {
+                // try to find vis_user
+                const styleUserEl = window.document.getElementById('vis_user');
+                if (styleUserEl) {
+                    window.document.head.insertBefore(styleEl, styleUserEl);
+                } else {
+                    window.document.head.appendChild(styleEl);
+                }
+            } else if (id === 'vis_user') {
+                // try to find vis_user
+                window.document.head.appendChild(styleEl);
+            }
+        }
+    }
+
+    updateCommonCss() {
+        if (!this.visCommonCssLoaded || (this.props.visCommonCss && this.visCommonCssLoaded !== this.props.visCommonCss)) {
+            this.visCommonCssLoaded = this.props.visCommonCss || true;
+            if (this.props.visCommonCss) {
+                VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded || '');
+            } else {
+                this.props.socket.readFile('vis', 'css/vis-common-user.css')
+                    .then(file => {
+                        if (file.type) {
+                            file = file.data;
+                        }
+                        this.visCommonCssLoaded = file || true;
+                        VisEngine.applyUserStyles('vis_common_user', file || '');
+                    });
+            }
+        }
+    }
+
+    updateUserCss() {
+        if (!this.visUserCssLoaded || (this.props.visUserCss && this.visUserCssLoaded !== this.props.visUserCss)) {
+            this.visUserCssLoaded = this.props.visUserCss || true;
+            if (this.props.visUserCss) {
+                VisEngine.applyUserStyles('vis_user', this.visUserCssLoaded || '');
+            } else {
+                this.props.socket.readFile(`${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
+                    .then(file => {
+                        if (file.type) {
+                            file = file.data;
+                        }
+                        this.visUserCssLoaded = file || true;
+                        VisEngine.applyUserStyles('vis_user', file || '');
+                    });
+            }
+        }
+    }
+
     render() {
         if (!this.state.ready) {
             return null;
@@ -941,6 +1049,10 @@ class VisEngine extends React.Component {
 
         this.vis.editMode = this.props.editMode;
         this.vis.activeView = this.props.activeView;
+
+        this.updateCustomScripts();
+        this.updateCommonCss();
+        this.updateUserCss();
 
         return Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
@@ -993,6 +1105,8 @@ VisEngine.propTypes = {
     onFontsUpdate: PropTypes.func,
     showWidgetNames: PropTypes.bool,
     registerEditorCallback: PropTypes.func,
+    visCommonCss: PropTypes.string,
+    visUserCss: PropTypes.string,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

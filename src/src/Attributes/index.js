@@ -63,6 +63,7 @@ const Attributes = props => {
                     value={tab}
                     disabled={tab === 'Widget' && !props.selectedWidgets.length}
                     key={tab}
+                    saveCssFile={props.saveCssFile}
                     className={props.classes.viewTab}
                     onClick={() => {
                         setSelected(tab);
@@ -86,6 +87,7 @@ Attributes.propTypes = {
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
+    saveCssFile: PropTypes.func.isRequired,
 };
 
 export default withStyles(style)(Attributes);

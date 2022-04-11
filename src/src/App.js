@@ -161,6 +161,8 @@ class App extends GenericApp {
                 widgets: {},
             },
             clipboardImages: [],
+            visCommonCss: null,
+            visUserCss: null,
             ...this.state,
         });
 
@@ -303,6 +305,8 @@ class App extends GenericApp {
         window.localStorage.setItem('projectName', projectName);
 
         await this.setStateAsync({
+            visCommonCss: null,
+            visUserCss: null,
             project,
             history: [project],
             historyCursor: 0,
@@ -738,6 +742,16 @@ class App extends GenericApp {
         }
     };
 
+    saveCssFile = (directory, fileName, data) => {
+        if (fileName.endsWith('vis-common-user.css')) {
+            this.setState({ visCommonCss: data });
+        } else if (fileName.endsWith('vis-user.css')) {
+            this.setState({ visUserCss: data });
+        }
+
+        this.socket.writeFile64(directory, fileName, data);
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -755,10 +769,13 @@ class App extends GenericApp {
         }
 
         const visEngine = <VisEngine
+            key={this.state.projectName}
             activeView={this.state.selectedView || ''}
             editMode={!this.state.runtime && this.state.editMode}
             runtime={this.state.runtime}
             socket={this.socket}
+            visCommonCss={this.state.visCommonCss}
+            visUserCss={this.state.visUserCss}
             lang={this.socket.systemLang}
             views={this.state.visProject}
             adapterName={this.adapterName}
@@ -929,6 +946,7 @@ class App extends GenericApp {
                                         cssClone={this.cssClone}
                                         onPxToPercent={this.onPxToPercent}
                                         onPercentToPx={this.onPercentToPx}
+                                        saveCssFile={this.saveCssFile}
                                     />
                                 </div>
                             </ReactSplit>

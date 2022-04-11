@@ -64,7 +64,8 @@ const CSS = props => {
                 setType(window.localStorage.getItem('CSS.type'));
             }
         };
-        load();
+        load()
+            .then(() => {});
     }, []);
 
     const save = (value, saveType) => {
@@ -72,7 +73,8 @@ const CSS = props => {
         clearTimeout(timers[saveType].timer);
         timers[saveType].setTimer(setTimeout(() => {
             timers[saveType].setTimer(null);
-            props.socket.writeFile64(timers[saveType].directory, timers[saveType].file, value);
+            // inform views about changed CSS
+            props.saveCssFile(timers[saveType].directory, timers[saveType].file, value);
         }, 1000));
     };
 
@@ -135,6 +137,7 @@ CSS.propTypes = {
     projectName: PropTypes.string,
     socket: PropTypes.object,
     themeName: PropTypes.string,
+    saveCssFile: PropTypes.func.isRequired,
 };
 
 export default CSS;

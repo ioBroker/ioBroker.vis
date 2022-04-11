@@ -931,11 +931,12 @@ class VisCanWidget extends VisBaseWidget {
                         // ignore changes
                         console.log('Rerender ignored as no changes');
                         return;
-                    } else if (!this.updateOnStyle) {
+                    }
+                    if (!this.updateOnStyle) {
                         // apply new style changes directly on DOM
                         // fix position
                         VisCanWidget.applyStyle(this.widDiv, widgetStyle);
-                        this.widDiv.style.position = isRelative ? 'relative' : 'absolute';
+                        this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
                         console.log('Rerender ignored as only style applied');
                         return;
                     }
@@ -1043,7 +1044,12 @@ class VisCanWidget extends VisBaseWidget {
                     VisCanWidget.applyStyle(this.widDiv, widgetStyle);
                 }
 
-                this.widDiv.style.position = isRelative ? 'relative' : 'absolute';
+                this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
+
+                // by default, it is border-box
+                if (!widgetStyle['box-sizing']) {
+                    this.widDiv.style.boxSizing = 'border-box';
+                }
 
                 if (widgetData && widgetData.class) {
                     this.widDiv.className = addClass(this.widDiv.className, widgetData.class);
@@ -1155,6 +1161,7 @@ class VisCanWidget extends VisBaseWidget {
 
         // the helper div is always relative
         props.style.position = 'absolute';
+        props.style.boxSizing = 'border-box';
 
         // this code is used only to represent containers, but sometime all of them should be rewritten in React
         const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
