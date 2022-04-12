@@ -4,10 +4,12 @@ import {
     AccordionDetails,
     AccordionSummary,
     Checkbox,
+    IconButton,
     ListItemText,
     MenuItem,
     Select,
     TextField,
+    Tooltip,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -21,8 +23,10 @@ import './backgrounds.css';
 import { useState } from 'react';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
 import CloseIcon from '@mui/icons-material/Close';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+
 import { theme, background } from './ViewData';
 
 const styles = _theme => ({
@@ -365,163 +369,194 @@ const View = props => {
             : fields.map(() => false),
     );
 
+    const allOpened = !fields.find((group, key) => !accordionOpen[key]);
+    const allClosed = !fields.find((group, key) => accordionOpen[key]);
+
     return <div>
-        {fields.map((group, key) => <Accordion
-            classes={{
-                root: props.classes.clearPadding,
-                expanded: props.classes.clearPadding,
-            }}
-            square
-            key={key}
-            elevation={0}
-            expanded={accordionOpen[key]}
-            onChange={(e, expanded) => {
-                const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                newAccordionOpen[key] = expanded;
-                window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
-                setAccordionOpen(newAccordionOpen);
-            }}
-        >
-            <AccordionSummary
-                classes={{
-                    root: clsx(props.classes.clearPadding, accordionOpen[key]
-                        ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
-                    content: props.classes.clearPadding,
-                    expanded: props.classes.clearPadding,
-                    expandIcon: props.classes.clearPadding,
+        <div style={{ textAlign: 'right' }}>
+            {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        const newAccordionOpen = {};
+                        fields.forEach((group, key) => newAccordionOpen[key] = true);
+                        window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
+                >
+                    <UnfoldMoreIcon />
+                </IconButton>
+            </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
+            { !allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
+                <IconButton onClick={() => {
+                    const newAccordionOpen = {};
+                    fields.forEach((group, key) => newAccordionOpen[key] = false);
+                    window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                    setAccordionOpen(newAccordionOpen);
                 }}
-                expandIcon={<ExpandMoreIcon />}
+                >
+                    <UnfoldLessIcon />
+                </IconButton>
+            </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
+        </div>
+        <div>
+            {fields.map((group, key) => <Accordion
+                classes={{
+                    root: props.classes.clearPadding,
+                    expanded: props.classes.clearPadding,
+                }}
+                square
+                key={key}
+                elevation={0}
+                expanded={accordionOpen[key]}
+                onChange={(e, expanded) => {
+                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                    newAccordionOpen[key] = expanded;
+                    window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+                    setAccordionOpen(newAccordionOpen);
+                }}
             >
-                {group.name}
-            </AccordionSummary>
-            <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                <table style={{ width: '100%' }}>
-                    <tbody>
-                        {
-                            group.fields.map((field, key2) => {
-                                if (field.hide) {
-                                    return null;
-                                }
-
-                                let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
-                                if (value === null || value === undefined) {
-                                    value = '';
-                                }
-
-                                const change = changeValue => {
-                                    const project = JSON.parse(JSON.stringify(props.project));
-                                    if (field.notStyle) {
-                                        project[props.selectedView].settings[field.field] = changeValue;
-                                    } else {
-                                        project[props.selectedView].settings.style[field.field] = changeValue;
+                <AccordionSummary
+                    classes={{
+                        root: clsx(props.classes.clearPadding, accordionOpen[key]
+                            ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
+                        content: props.classes.clearPadding,
+                        expanded: props.classes.clearPadding,
+                        expandIcon: props.classes.clearPadding,
+                    }}
+                    expandIcon={<ExpandMoreIcon />}
+                >
+                    {group.name}
+                </AccordionSummary>
+                <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+                    <table style={{ width: '100%' }}>
+                        <tbody>
+                            {
+                                group.fields.map((field, key2) => {
+                                    if (field.hide) {
+                                        return null;
                                     }
-                                    props.changeProject(project);
-                                };
 
-                                let result = null;
+                                    let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
+                                    if (value === null || value === undefined) {
+                                        value = '';
+                                    }
 
-                                if (field.type === 'autocomplete') {
-                                    result = <Autocomplete
-                                        freeSolo
-                                        options={field.items}
-                                        inputValue={value}
-                                        value={value}
-                                        onInputChange={(e, inputValue) => change(inputValue)}
-                                        onChange={(e, inputValue) => change(inputValue)}
-                                        classes={{
-                                            input: clsx(props.classes.clearPadding, props.classes.fieldContent),
-                                        }}
-                                        renderInput={params => (
-                                            <TextField
-                                                variant="standard"
-                                                {...params}
-                                            />
-                                        )}
-                                    />;
-                                } else if (field.type === 'checkbox') {
-                                    result = <Checkbox
-                                        checked={!!value}
-                                        classes={{
-                                            root: clsx(props.classes.fieldContent, props.classes.clearPadding),
-                                        }}
-                                        size="small"
-                                        onChange={e => change(e.target.checked)}
-                                    />;
-                                } else if (field.type === 'select') {
-                                    result = <Select
-                                        variant="standard"
-                                        value={field.value ? field.value : value}
-                                        classes={{
-                                            root: props.classes.clearPadding,
-                                            select: clsx(props.classes.fieldContent, props.classes.clearPadding),
-                                        }}
-                                        onChange={field.onChange ? field.onChange : e => change(e.target.value)}
-                                        renderValue={field.renderValue}
-                                        fullWidth
-                                    >
-                                        {field.items.map(selectItem => <MenuItem
-                                            value={selectItem.value}
-                                            key={selectItem.value}
-                                        >
-                                            {field.itemModify ? field.itemModify(selectItem) : I18n.t(selectItem.name)}
-                                        </MenuItem>)}
-                                    </Select>;
-                                } else if (field.type === 'multi-select') {
-                                    result = <Select
-                                        variant="standard"
-                                        renderValue={selected => selected.join(', ')}
-                                        classes={{
-                                            root: props.classes.clearPadding,
-                                            select: clsx(props.classes.fieldContent, props.classes.clearPadding),
-                                        }}
-                                        value={value || []}
-                                        onChange={e => change(e.target.value)}
-                                        multiple
-                                        fullWidth
-                                    >
-                                        {field.items.map(selectItem => <MenuItem
-                                            value={selectItem.value}
-                                            key={selectItem.value}
-                                        >
-                                            <Checkbox checked={value.includes(selectItem.value)} />
-                                            <ListItemText primary={I18n.t(selectItem.name)} />
-                                        </MenuItem>)}
-                                    </Select>;
-                                } else if (field.type === 'raw') {
-                                    result = field.Component;
-                                } else if (field.type === 'color') {
-                                    result = <ColorPicker
-                                        value={value}
-                                        className={props.classes.fieldContentColor}
-                                        onChange={color => change(color)}
-                                        openAbove
-                                        color={field.value || ''}
-                                    />;
-                                } else {
-                                    result = <TextField
-                                        variant="standard"
-                                        fullWidth
-                                        InputProps={{
-                                            classes: {
+                                    const change = changeValue => {
+                                        const project = JSON.parse(JSON.stringify(props.project));
+                                        if (field.notStyle) {
+                                            project[props.selectedView].settings[field.field] = changeValue;
+                                        } else {
+                                            project[props.selectedView].settings.style[field.field] = changeValue;
+                                        }
+                                        props.changeProject(project);
+                                    };
+
+                                    let result = null;
+
+                                    if (field.type === 'autocomplete') {
+                                        result = <Autocomplete
+                                            freeSolo
+                                            options={field.items}
+                                            inputValue={value}
+                                            value={value}
+                                            onInputChange={(e, inputValue) => change(inputValue)}
+                                            onChange={(e, inputValue) => change(inputValue)}
+                                            classes={{
                                                 input: clsx(props.classes.clearPadding, props.classes.fieldContent),
-                                            },
-                                        }}
-                                        value={value}
-                                        onChange={e => change(e.target.value)}
-                                        type={field.type}
-                                    />;
-                                }
+                                            }}
+                                            renderInput={params => (
+                                                <TextField
+                                                    variant="standard"
+                                                    {...params}
+                                                />
+                                            )}
+                                        />;
+                                    } else if (field.type === 'checkbox') {
+                                        result = <Checkbox
+                                            checked={!!value}
+                                            classes={{
+                                                root: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                            }}
+                                            size="small"
+                                            onChange={e => change(e.target.checked)}
+                                        />;
+                                    } else if (field.type === 'select') {
+                                        result = <Select
+                                            variant="standard"
+                                            value={field.value ? field.value : value}
+                                            classes={{
+                                                root: props.classes.clearPadding,
+                                                select: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                            }}
+                                            onChange={field.onChange ? field.onChange : e => change(e.target.value)}
+                                            renderValue={field.renderValue}
+                                            fullWidth
+                                        >
+                                            {field.items.map(selectItem => <MenuItem
+                                                value={selectItem.value}
+                                                key={selectItem.value}
+                                            >
+                                                {field.itemModify ? field.itemModify(selectItem) : I18n.t(selectItem.name)}
+                                            </MenuItem>)}
+                                        </Select>;
+                                    } else if (field.type === 'multi-select') {
+                                        result = <Select
+                                            variant="standard"
+                                            renderValue={selected => selected.join(', ')}
+                                            classes={{
+                                                root: props.classes.clearPadding,
+                                                select: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                            }}
+                                            value={value || []}
+                                            onChange={e => change(e.target.value)}
+                                            multiple
+                                            fullWidth
+                                        >
+                                            {field.items.map(selectItem => <MenuItem
+                                                value={selectItem.value}
+                                                key={selectItem.value}
+                                            >
+                                                <Checkbox checked={value.includes(selectItem.value)} />
+                                                <ListItemText primary={I18n.t(selectItem.name)} />
+                                            </MenuItem>)}
+                                        </Select>;
+                                    } else if (field.type === 'raw') {
+                                        result = field.Component;
+                                    } else if (field.type === 'color') {
+                                        result = <ColorPicker
+                                            value={value}
+                                            className={props.classes.fieldContentColor}
+                                            onChange={color => change(color)}
+                                            openAbove
+                                            color={field.value || ''}
+                                        />;
+                                    } else {
+                                        result = <TextField
+                                            variant="standard"
+                                            fullWidth
+                                            InputProps={{
+                                                classes: {
+                                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                                },
+                                            }}
+                                            value={value}
+                                            onChange={e => change(e.target.value)}
+                                            type={field.type}
+                                        />;
+                                    }
 
-                                return <tr key={key2}>
-                                    <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>{I18n.t(field.name)}</td>
-                                    <td className={props.classes.fieldContent}>{result}</td>
-                                </tr>;
-                            })
-                        }
-                    </tbody>
-                </table>
-            </AccordionDetails>
-        </Accordion>)}
+                                    return <tr key={key2}>
+                                        <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>{I18n.t(field.name)}</td>
+                                        <td className={props.classes.fieldContent}>{result}</td>
+                                    </tr>;
+                                })
+                            }
+                        </tbody>
+                    </table>
+                </AccordionDetails>
+            </Accordion>)}
+        </div>
     </div>;
 };
 
