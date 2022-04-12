@@ -662,7 +662,21 @@ class VisBaseWidget extends React.Component {
 
     isWidgetFilteredOut(widgetData) {
         const vf = this.props.viewsActiveFilter[this.props.view];
-        return widgetData?.filterkey && vf?.length && (vf[0] === '$' || !widgetData.filterkey.find(wf => vf.includes(wf)));
+        if (widgetData?.filterkey && vf?.length) {
+            if (vf[0] === '$') {
+                return true;
+            }
+
+            // we cannot use here find as filterkey could be observable (can) and is not normal array
+            for (let f = 0; f < widgetData.filterkey.length; f++) {
+                if (vf.includes(widgetData.filterkey[f])) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        return false;
     }
 
     isWidgetHidden(widgetData, states) {
@@ -740,7 +754,7 @@ class VisBaseWidget extends React.Component {
                     return false;
             }
         } else {
-            return condition === 'not exist';
+            return condition && condition === 'not exist';
         }
     }
 

@@ -287,7 +287,7 @@ class VisView extends React.Component {
         if (left <= 0) {
             const pos = widgetsOrder.indexOf(widgetId);
             if (pos) {
-                console.log('Place first');
+                // console.log('Place first');
                 widgetsOrder.splice(pos, 1);
                 widgetsOrder.unshift(widgetId);
                 this.refRelativeView.current.prepend(shadowDiv);
@@ -357,10 +357,10 @@ class VisView extends React.Component {
 
                 const afterDiv = this.widgetsRefs[afterWid].widDiv || this.widgetsRefs[afterWid].refService.current;
                 if (afterDiv.nextSibling) {
-                    console.log(`Place after ${afterWid}`);
+                    // console.log(`Place after ${afterWid}`);
                     this.refRelativeView.current.insertBefore(shadowDiv, afterDiv.nextSibling);
                 } else {
-                    console.log('Place last');
+                    // console.log('Place last');
                     this.refRelativeView.current.appendChild(shadowDiv);
                 }
             }
@@ -699,7 +699,7 @@ class VisView extends React.Component {
         return fetch(`../../lib/css/themes/jquery-ui/${this.loadedjQueryTheme}/jquery-ui.min.css`)
             .then(resp => resp.text())
             .then(data => {
-                const _view = `visview_${this.props.view}`;
+                const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
                 data = data.replace('.ui-helper-hidden', `#${_view} .ui-helper-hidden`);
                 data = data.replace(/(}.)/g, `}#${_view} .`);
                 data = data.replace(/,\./g, `,#${_view} .`);
@@ -707,7 +707,7 @@ class VisView extends React.Component {
 
                 const style = window.document.createElement('style');
                 style.innerHTML = data;
-                style.setAttribute('id', `${this.props.view}_style`);
+                style.setAttribute('id', `${this.props.view.replace(/\s/g, '_')}_style`);
                 this.refView.current.prepend(style);
             })
             .catch(error => console.warn(`Cannot load jQueryUI theme "${this.loadedjQueryTheme}": ${error}`));
@@ -860,7 +860,7 @@ class VisView extends React.Component {
         return <div
             className={className}
             ref={this.refView}
-            id={`visview_${this.props.view}`}
+            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >

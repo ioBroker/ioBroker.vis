@@ -992,7 +992,7 @@ class App extends GenericApp {
                         setViewsManage={this.setViewsManage}
                         projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
                         setProjectsDialog={this.setProjectsDialog}
-                        selectedWidgets={this.state.selectedWidgets}
+                        selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                         setSelectedWidgets={this.setSelectedWidgets}
                         history={this.state.history}
                         historyCursor={this.state.historyCursor}
@@ -1009,6 +1009,7 @@ class App extends GenericApp {
                         orderWidgets={this.orderWidgets}
                         adapterName={this.adapterName}
                         instance={this.instance}
+                        editMode={this.state.editMode}
                     />
                     <div>
                         <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>

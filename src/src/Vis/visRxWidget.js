@@ -57,17 +57,18 @@ class VisRxWidget extends VisBaseWidget {
             }
 
             if (command === 'changeFilter') {
+                const visible = this.checkVisibility();
+                if (visible !== this.state.visible) {
+                    this.setState({ visible });
+                }
+                /*
                 if (!options || !options.filter.length) {
                     // just show
-                    if (this.filterDisplay !== undefined) {
-                        this.refService.current.style.display = this.filterDisplay;
-                        delete this.filterDisplay;
-                    }
+
                 } else if (options.filter[0] === '$') {
                     // hide all
                     if (this.state.rxData.filterkey) {
-                        this.filterDisplay = this.refService.current.style.display;
-                        this.refService.current.style.display = 'none';
+                        this.setState({ visible: false });
                     }
                 } else {
                     const wFilters = this.state.rxData.filterkey;
@@ -76,14 +77,16 @@ class VisRxWidget extends VisBaseWidget {
                         const found = wFilters.find(f => options.filter.includes(f));
 
                         if (!found) {
-                            this.filterDisplay = this.refService.current.style.display;
-                            this.refService.current.style.display = 'none';
-                        } else if (this.filterDisplay !== undefined) {
-                            this.refService.current.style.display = this.filterDisplay;
-                            delete this.filterDisplay;
+                            this.setState({ visible: false });
+                        } else  {
+                            const visible = this.checkVisibility();
+                            if (visible !== this.state.visible) {
+                                this.setState({ visible });
+                            }
                         }
                     }
                 }
+                */
             }
         }
 
@@ -157,10 +160,16 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     checkVisibility(stateId, newState) {
-        if (!this.editMode) {
+        newState = newState || this.state;
+        if (!this.state.editMode) {
             if (!this.isWidgetFilteredOut(newState.rxData)) {
-                if (this.linkContext.visibility[stateId]) {
-                    return this.isWidgetHidden(newState.rxData, newState.values);
+                if (stateId) {
+                    if (this.linkContext.visibility[stateId]) {
+                        return !this.isWidgetHidden(newState.rxData, newState.values);
+                    }
+                } else {
+                    // check if visible
+                    return !this.isWidgetHidden(newState.rxData, newState.values);
                 }
             } else {
                 return false;
@@ -230,7 +239,7 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     render() {
-        if (!this.state.visible) {
+        if (!this.state.visible && !this.state.editMode) {
             return null;
         }
 

@@ -120,7 +120,7 @@ const getFieldsBefore = () => [
             { name: 'name' },
             { name: 'comment' },
             { name: 'class', type: 'class' },
-            { name: 'filterkey', type: 'auto' },
+            { name: 'filterkey', type: 'filters' },
             { name: 'views', type: 'select-views' },
             { name: 'locked', type: 'checkbox' },
         ],

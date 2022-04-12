@@ -915,7 +915,7 @@ class VisCanWidget extends VisBaseWidget {
         const newStyle = JSON.stringify(widgetStyle);
         // detect if update required
         if (this.widDiv) {
-            if (this.oldEditMode === this.state.oldEditMode) {
+            if (this.oldEditMode === this.state.editMode) {
                 if (this.oldData === newData) {
                     if (this.oldStyle === newStyle || widgetData._no_style) {
                         // ignore changes
@@ -933,7 +933,7 @@ class VisCanWidget extends VisBaseWidget {
                 }
             }
         }
-        this.oldEditMode = this.state.oldEditMode;
+        this.oldEditMode = this.state.editMode;
         this.oldData = newData;
         this.oldStyle = newStyle;
 
