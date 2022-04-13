@@ -684,8 +684,7 @@ class App extends GenericApp {
             }
         });
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const currentZ = parseInt(widgets[selectedWidget].style['z-index']?.toString().match(/^(-?[0-9]+)/)[1]);
-            console.log(currentZ);
+            const currentZ = parseInt(widgets[selectedWidget].style['z-index']?.toString().match(/^(-?[0-9]+)/)[1]) || 0;
             if (type === 'front' && currentZ < maxZ) {
                 widgets[selectedWidget].style['z-index'] = maxZ + 1;
                 if (widgets[selectedWidget].style['z-index'] > 1599) {
@@ -923,6 +922,36 @@ class App extends GenericApp {
         this.socket.writeFile64(directory, fileName, data);
     }
 
+    renderRulers() {
+        if (!this.state.selectedView) {
+            return null;
+        }
+        return <>
+            <div style={{
+                width: `${this.state.project[this.state.selectedView].settings.sizex}px`,
+                height: `${this.state.project[this.state.selectedView].settings.sizey}px`,
+                position: 'absolute',
+                borderWidth: 1,
+                borderStyle: 'dashed',
+                borderColor: 'black',
+                zIndex: 1000,
+                pointerEvents: 'none',
+            }}
+            ></div>
+            <div style={{
+                width: `${parseInt(this.state.project[this.state.selectedView].settings.sizex) + 1}px`,
+                height: `${parseInt(this.state.project[this.state.selectedView].settings.sizey) + 1}px`,
+                position: 'absolute',
+                borderWidth: 1,
+                borderStyle: 'dashed',
+                borderColor: 'white',
+                zIndex: 1000,
+                pointerEvents: 'none',
+            }}
+            ></div>
+        </>;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -1097,6 +1126,7 @@ class App extends GenericApp {
                                                     height: '100%',
                                                 }}
                                             >
+                                                {this.renderRulers()}
                                                 { visEngine }
                                             </div>
                                         </ViewDrop>

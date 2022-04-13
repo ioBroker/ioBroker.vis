@@ -101,7 +101,7 @@ const Widgets = props => {
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('widgets')
             ? JSON.parse(window.localStorage.getItem('widgets'))
-            : Object.keys(widgetsList).map(() => false),
+            : {},
     );
 
     const [filter, setFilter] = useState('');
@@ -226,7 +226,7 @@ const Widgets = props => {
                     <AccordionDetails>
                         <div>
                             {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
-                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} widgetSet={category}/>)}
+                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} widgetSet={category} />)}
                         </div>
                     </AccordionDetails>
                 </Accordion>)
