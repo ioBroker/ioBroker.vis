@@ -181,44 +181,55 @@ class App extends GenericApp {
         console.log(e.key);
         if (document.activeElement.tagName === 'BODY') {
             if (e.ctrlKey && e.key === 'z' && this.state.historyCursor !== 0) {
+                e.preventDefault();
                 this.undo();
             }
             if (e.ctrlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
+                e.preventDefault();
                 this.redo();
             }
             if (this.state.selectedWidgets.length) {
                 if (e.ctrlKey && e.key === 'c') {
+                    e.preventDefault();
                     this.copyWidgets();
                 }
                 if (e.ctrlKey && e.key === 'x') {
+                    e.preventDefault();
                     this.cutWidgets();
                 }
                 if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
                     this.moveWidgets(e.ctrlKey ? -10 : -1, 0);
                 }
                 if (e.key === 'ArrowRight') {
+                    e.preventDefault();
                     this.moveWidgets(e.ctrlKey ? 10 : 1, 0);
                 }
                 if (e.key === 'ArrowUp') {
+                    e.preventDefault();
                     this.moveWidgets(0, e.ctrlKey ? -10 : -1);
                 }
                 if (e.key === 'ArrowDown') {
+                    e.preventDefault();
                     this.moveWidgets(0, e.ctrlKey ? 10 : 1);
                 }
             }
             if (e.ctrlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
+                e.preventDefault();
                 this.pasteWidgets();
             }
             if (e.ctrlKey && e.key === 'a') {
+                e.preventDefault();
                 this.setState({ selectedWidgets: Object.keys(this.state.project[this.state.selectedView].widgets) });
             }
             if (e.key === 'Escape') {
+                e.preventDefault();
                 this.setState({ selectedWidgets: [] });
             }
             if (e.key === 'Delete') {
+                e.preventDefault();
                 this.deleteWidgets();
             }
-            e.preventDefault();
         }
     }
 

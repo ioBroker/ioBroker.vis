@@ -8,24 +8,26 @@ import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
 
+const iconStyle = { width: 40 };
+
 const menuItemsData = [
     {
-        leftIcon: <BiCopy />,
+        leftIcon: <BiCopy style={iconStyle} />,
         label: 'Copy',
         callback: () => console.log('New clicked'),
     },
     {
-        leftIcon: <BiCut />,
+        leftIcon: <BiCut style={iconStyle} />,
         label: 'Cut',
         callback: () => console.log('Save clicked'),
     },
     {
-        leftIcon: <BiPaste />,
+        leftIcon: <BiPaste style={iconStyle} />,
         label: 'Paste',
         callback: () => console.log('Save clicked'),
     },
     {
-        leftIcon: <DeleteIcon />,
+        leftIcon: <DeleteIcon style={iconStyle} fontSize="small" />,
         label: 'Delete',
         callback: () => console.log('Save clicked'),
     },
@@ -33,32 +35,32 @@ const menuItemsData = [
         label: 'More',
         items: [
             {
-                leftIcon: <LockIcon />,
+                leftIcon: <LockIcon style={iconStyle} fontSize="small" />,
                 label: 'Lock',
                 callback: () => console.log('Save As > Option 1 clicked'),
             },
             {
-                leftIcon: <LockOpenIcon />,
+                leftIcon: <LockOpenIcon style={iconStyle} fontSize="small" />,
                 label: 'Unlock',
                 callback: () => console.log('Save As > Option 2 clicked'),
             },
             {
-                leftIcon: <RiBringToFront />,
+                leftIcon: <RiBringToFront style={iconStyle} />,
                 label: 'Bring to front',
                 callback: () => console.log('Save As > Option 2 clicked'),
             },
             {
-                leftIcon: <RiSendToBack />,
+                leftIcon: <RiSendToBack style={iconStyle} />,
                 label: 'Sent to back',
                 callback: () => console.log('Save As > Option 2 clicked'),
             },
             {
-                leftIcon: <BiExport />,
+                leftIcon: <BiExport style={iconStyle} />,
                 label: 'Export widgets',
                 callback: () => console.log('Save As > Option 2 clicked'),
             },
             {
-                leftIcon: <BiImport />,
+                leftIcon: <BiImport style={iconStyle} />,
                 label: 'Import widgets',
                 callback: () => console.log('Save As > Option 2 clicked'),
             },
