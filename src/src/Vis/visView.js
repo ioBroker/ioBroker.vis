@@ -19,7 +19,7 @@ import { ContextMenu } from 'mui-nested-menu';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
 import WIDGETS from './Widgets';
-import menuItemsData from './menuItemsData';
+import VisContextMenu from './VisContextMenu';
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -862,7 +862,7 @@ class VisView extends React.Component {
             style.overflow = 'hidden';
         }
 
-        return <ContextMenu menuItemsData={menuItemsData}>
+        return <VisContextMenu>
             <div
                 className={className}
                 ref={this.refView}
@@ -876,7 +876,7 @@ class VisView extends React.Component {
                 </div>
                 { rxAbsoluteWidgets }
             </div>
-        </ContextMenu>;
+        </VisContextMenu>;
     }
 }
 
