@@ -216,6 +216,9 @@ class VisBaseWidget extends React.Component {
     }
 
     onMouseDown(e) {
+        if (e.button === 2) {
+            return;
+        }
         e.stopPropagation();
         if (this.stealCursor) {
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);

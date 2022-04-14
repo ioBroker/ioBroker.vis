@@ -26,6 +26,7 @@
         "jquery-ui": "^1.13.1",
         "jszip": "^3.7.1",
         "moment": "^2.29.1",
+        "mui-nested-menu": "^2.0.1",
         "node-sass": "^6.0.1",
         "react": "^18.0.0",
         "react-ace": "^9.5.0",

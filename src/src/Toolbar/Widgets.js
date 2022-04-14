@@ -18,10 +18,16 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 
+import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Utils';
+import WidgetImportDialog from './WidgetImportDialog';
+import WidgetExportDialog from './WidgetExportDialog';
 
 const Widgets = props => {
+    const [exportDialog, setExportDialog] = useState(false);
+    const [importDialog, setImportDialog] = useState(false);
+
     if (!props.widgetsLoaded) {
         return null;
     }
@@ -225,7 +231,11 @@ const Widgets = props => {
             { type: 'divider' },
             [
                 [{
-                    type: 'icon-button', Icon: BiImport, name: 'Import widgets', size: 'normal',
+                    type: 'icon-button',
+                    Icon: BiImport,
+                    name: 'Import widgets',
+                    size: 'normal',
+                    onClick: () => setImportDialog(true),
                 }],
                 [{
                     type: 'icon-button',
@@ -233,12 +243,21 @@ const Widgets = props => {
                     name: 'Export widgets',
                     size: 'normal',
                     disabled: !props.selectedWidgets.length,
+                    onClick: () => setExportDialog(true),
                 }],
             ],
         ],
     };
 
-    return <ToolbarItems group={toolbar} {...props} classes={{}} />;
+    return <>
+        <ToolbarItems group={toolbar} {...props} classes={{}} />
+        <WidgetImportDialog open={importDialog} onClose={() => setImportDialog(false)} />
+        <WidgetExportDialog
+            open={exportDialog}
+            onClose={() => setExportDialog(false)}
+            widgets={props.selectedWidgets.map(selectedWidget => props.project[props.selectedView].widgets[selectedWidget])}
+        />
+    </>;
 };
 
 Widgets.propTypes = {

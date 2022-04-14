@@ -15,9 +15,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ContextMenu } from 'mui-nested-menu';
 import VisCanWidget from './visCanWidget';
 import { addClass } from './visUtils';
 import WIDGETS from './Widgets';
+import menuItemsData from './menuItemsData';
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -201,6 +203,9 @@ class VisView extends React.Component {
     }
 
     onMouseViewDown = this.props.runtime ? null : e => {
+        if (e.button === 2) {
+            return;
+        }
         e.stopPropagation();
 
         if (this.nextClickIsSteal) {
@@ -857,19 +862,21 @@ class VisView extends React.Component {
             style.overflow = 'hidden';
         }
 
-        return <div
-            className={className}
-            ref={this.refView}
-            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-            style={style}
-        >
-            { /* VisView.renderGitter() */ }
-            <div ref={this.refRelativeView} style={relativeStyle}>
-                { rxRelativeWidgets.map(item => item.rxWidget) }
+        return <ContextMenu menuItemsData={menuItemsData}>
+            <div
+                className={className}
+                ref={this.refView}
+                id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+                onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+                style={style}
+            >
+                { /* VisView.renderGitter() */ }
+                <div ref={this.refRelativeView} style={relativeStyle}>
+                    { rxRelativeWidgets.map(item => item.rxWidget) }
+                </div>
+                { rxAbsoluteWidgets }
             </div>
-            { rxAbsoluteWidgets }
-        </div>;
+        </ContextMenu>;
     }
 }
 
