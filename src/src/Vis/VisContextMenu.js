@@ -1,138 +1,98 @@
-import { Menu } from '@mui/material';
-
-import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import { useState } from 'react';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
 import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
-import { useState } from 'react';
-
-const iconStyle = { width: 40 };
-
-const menuItemsData = [
-    {
-        leftIcon: <BiCopy style={iconStyle} />,
-        label: 'Copy',
-        onClick: () => console.log('New clicked'),
-    },
-    {
-        leftIcon: <BiCut style={iconStyle} />,
-        label: 'Cut',
-        onClick: () => console.log('Save clicked'),
-    },
-    {
-        leftIcon: <BiPaste style={iconStyle} />,
-        label: 'Paste',
-        onClick: () => console.log('Save clicked'),
-    },
-    {
-        leftIcon: <DeleteIcon style={iconStyle} fontSize="small" />,
-        label: 'Delete',
-        onClick: () => console.log('Save clicked'),
-    },
-    {
-        label: 'More',
-        leftIcon: <span style={iconStyle} />,
-        items: [
-            {
-                leftIcon: <LockIcon style={iconStyle} fontSize="small" />,
-                label: 'Lock',
-                onClick: () => console.log('Save As > Option 1 clicked'),
-            },
-            {
-                leftIcon: <LockOpenIcon style={iconStyle} fontSize="small" />,
-                label: 'Unlock',
-                onClick: () => console.log('Save As > Option 2 clicked'),
-            },
-            {
-                leftIcon: <RiBringToFront style={iconStyle} />,
-                label: 'Bring to front',
-                onClick: () => console.log('Save As > Option 2 clicked'),
-            },
-            {
-                leftIcon: <RiSendToBack style={iconStyle} />,
-                label: 'Sent to back',
-                onClick: () => console.log('Save As > Option 2 clicked'),
-            },
-            {
-                leftIcon: <BiExport style={iconStyle} />,
-                label: 'Export widgets',
-                onClick: () => console.log('Save As > Option 2 clicked'),
-            },
-            {
-                leftIcon: <BiImport style={iconStyle} />,
-                label: 'Import widgets',
-                onClick: () => console.log('Save As > Option 2 clicked'),
-            },
-        ],
-    },
-];
-
-const contextMenuItems = (items, open, onClose) =>
-    items.map(item => (item.items ?
-        <NestedMenuItem
-            leftIcon={item.leftIcon}
-            label={item.label}
-            parentMenuOpen={open}
-            onContextMenu={e => {
-                e.stopPropagation();
-                e.preventDefault();
-            }}
-        >
-            {contextMenuItems(item.items, open, onClose)}
-        </NestedMenuItem> :
-        <IconMenuItem
-            onClick={() => {
-                item.onClick();
-                onClose();
-            }}
-            label={<span style={{ display: 'flex', alignItems: 'center' }}>
-                {item.leftIcon}
-                {item.label}
-            </span>}
-            onContextMenu={e => {
-                e.stopPropagation();
-                e.preventDefault();
-                item.onClick();
-                onClose();
-            }}
-        />
-    ));
+import IOContextMenu from '../Components/IOContextMenu';
+import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
+import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
 
 const VisContextMenu = props => {
-    const [menuPosition, setMenuPosition] = useState(null);
+    const [exportDialog, setExportDialog] = useState(false);
+    const [importDialog, setImportDialog] = useState(false);
 
-    const handleRightClick = async event => {
-        event.preventDefault();
-        if (menuPosition) {
-            setMenuPosition(null);
-            await new Promise(resolve => setTimeout(resolve, 200));
-        }
-        setMenuPosition({
-            top: event.pageY,
-            left: event.pageX,
-        });
-    };
+    const menuItemsData = [
+        {
+            leftIcon: <BiCopy />,
+            label: 'Copy',
+            onClick: () => props.copyWidgets(),
+            disabled: !props.selectedWidgets.length,
+        },
+        {
+            leftIcon: <BiCut />,
+            label: 'Cut',
+            onClick: () => props.cutWidgets(),
+            disabled: !props.selectedWidgets.length,
+        },
+        {
+            leftIcon: <BiPaste />,
+            label: 'Paste',
+            onClick: () => props.pasteWidgets(),
+            disabled: !Object.keys(props.widgetsClipboard.widgets).length,
+        },
+        {
+            leftIcon: <DeleteIcon fontSize="small" />,
+            label: 'Delete',
+            onClick: () => props.deleteWidgets(),
+            disabled: !props.selectedWidgets.length,
+        },
+        {
+            label: 'More',
+            items: [
+                {
+                    leftIcon: <LockIcon fontSize="small" />,
+                    label: 'Lock',
+                    onClick: () => console.log('Save As > Option 1 clicked'),
+                    disabled: !props.selectedWidgets.length,
+                },
+                {
+                    leftIcon: <LockOpenIcon fontSize="small" />,
+                    label: 'Unlock',
+                    onClick: () => console.log('Save As > Option 2 clicked'),
+                    disabled: !props.selectedWidgets.length,
+                },
+                {
+                    leftIcon: <RiBringToFront />,
+                    label: 'Bring to front',
+                    onClick: () => props.orderWidgets('front'),
+                    disabled: !props.selectedWidgets.length,
+                },
+                {
+                    leftIcon: <RiSendToBack />,
+                    label: 'Sent to back',
+                    onClick: () => props.orderWidgets('back'),
+                    disabled: !props.selectedWidgets.length,
+                },
+                {
+                    leftIcon: <BiExport />,
+                    label: 'Export widgets',
+                    onClick: () => setExportDialog(true),
+                    disabled: !props.selectedWidgets.length,
+                },
+                {
+                    leftIcon: <BiImport />,
+                    label: 'Import widgets',
+                    onClick: () => setImportDialog(true),
+                },
+            ],
+        },
+    ];
 
-    return (
-        <div onContextMenu={handleRightClick}>
+    return <>
+        <IOContextMenu menuItemsData={menuItemsData}>
             {props.children}
-            <Menu
-                open={!!menuPosition}
-                onClose={() => setMenuPosition(null)}
-                anchorReference="anchorPosition"
-                anchorPosition={menuPosition}
-            >
-                {contextMenuItems(menuItemsData, !!menuPosition, () => setMenuPosition(null))}
-            </Menu>
-        </div>
-    );
+        </IOContextMenu>
+        <WidgetImportDialog open={importDialog} onClose={() => setImportDialog(false)} />
+        <WidgetExportDialog
+            open={exportDialog}
+            onClose={() => setExportDialog(false)}
+            widgets={props.selectedWidgets.map(selectedWidget => props.project[props.selectedView].widgets[selectedWidget])}
+        />
+    </>;
 };
-
 export default VisContextMenu;

@@ -34,6 +34,7 @@ import VisEngine from './Vis/visEngine';
 import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
+import VisContextMenu from './Vis/VisContextMenu';
 
 const styles = theme => ({
     block: {
@@ -1138,7 +1139,19 @@ class App extends GenericApp {
                                                 }}
                                             >
                                                 {this.renderRulers()}
-                                                { visEngine }
+                                                <VisContextMenu
+                                                    selectedWidgets={this.state.selectedWidgets}
+                                                    deleteWidgets={this.deleteWidgets}
+                                                    cutWidgets={this.cutWidgets}
+                                                    copyWidgets={this.copyWidgets}
+                                                    pasteWidgets={this.pasteWidgets}
+                                                    orderWidgets={this.orderWidgets}
+                                                    widgetsClipboard={this.state.widgetsClipboard}
+                                                    project={this.state.project}
+                                                    selectedView={this.state.selectedView}
+                                                >
+                                                    { visEngine }
+                                                </VisContextMenu>
                                             </div>
                                         </ViewDrop>
                                     </div>

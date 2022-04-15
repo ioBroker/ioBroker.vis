@@ -206,7 +206,6 @@ class VisView extends React.Component {
         if (e.button === 2) {
             return;
         }
-        e.stopPropagation();
 
         if (this.nextClickIsSteal) {
             // click canceled
@@ -862,21 +861,19 @@ class VisView extends React.Component {
             style.overflow = 'hidden';
         }
 
-        return <VisContextMenu>
-            <div
-                className={className}
-                ref={this.refView}
-                id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-                onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-                style={style}
-            >
-                { /* VisView.renderGitter() */ }
-                <div ref={this.refRelativeView} style={relativeStyle}>
-                    { rxRelativeWidgets.map(item => item.rxWidget) }
-                </div>
-                { rxAbsoluteWidgets }
+        return <div
+            className={className}
+            ref={this.refView}
+            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+            style={style}
+        >
+            { /* VisView.renderGitter() */ }
+            <div ref={this.refRelativeView} style={relativeStyle}>
+                { rxRelativeWidgets.map(item => item.rxWidget) }
             </div>
-        </VisContextMenu>;
+            { rxAbsoluteWidgets }
+        </div>;
     }
 }
 
