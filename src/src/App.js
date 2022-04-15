@@ -442,7 +442,7 @@ class App extends GenericApp {
         await this.setStateAsync(newState);
     }
 
-    getNewWidgetId = () => {
+    getNewWidgetIdNumber = () => {
         const widgets = this.state.project[this.state.selectedView].widgets;
         let newKey = 1;
         Object.keys(widgets).forEach(name => {
@@ -453,6 +453,12 @@ class App extends GenericApp {
                 }
             }
         });
+
+        return newKey;
+    }
+
+    getNewWidgetId = () => {
+        let newKey = this.getNewWidgetIdNumber();
 
         newKey = `w${newKey.toString().padStart(6, 0)}`;
 
@@ -1048,6 +1054,7 @@ class App extends GenericApp {
                         alignWidgets={this.alignWidgets}
                         cloneWidgets={this.cloneWidgets}
                         orderWidgets={this.orderWidgets}
+                        getNewWidgetIdNumber={this.getNewWidgetIdNumber}
                         adapterName={this.adapterName}
                         instance={this.instance}
                         editMode={this.state.editMode}
@@ -1149,6 +1156,8 @@ class App extends GenericApp {
                                                     widgetsClipboard={this.state.widgetsClipboard}
                                                     project={this.state.project}
                                                     selectedView={this.state.selectedView}
+                                                    changeProject={this.changeProject}
+                                                    getNewWidgetIdNumber={this.getNewWidgetIdNumber}
                                                 >
                                                     { visEngine }
                                                 </VisContextMenu>

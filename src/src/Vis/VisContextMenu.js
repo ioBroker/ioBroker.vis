@@ -87,7 +87,14 @@ const VisContextMenu = props => {
         <IOContextMenu menuItemsData={menuItemsData}>
             {props.children}
         </IOContextMenu>
-        <WidgetImportDialog open={importDialog} onClose={() => setImportDialog(false)} />
+        <WidgetImportDialog
+            open={importDialog}
+            onClose={() => setImportDialog(false)}
+            changeProject={props.changeProject}
+            selectedView={props.selectedView}
+            project={props.project}
+            getNewWidgetIdNumber={props.getNewWidgetIdNumber}
+        />
         <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}

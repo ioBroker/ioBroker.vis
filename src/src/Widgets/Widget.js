@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import { withStyles } from '@mui/styles';
 
 import { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import image from '../img/Prev_HTML.png';
 
 const styles = () => ({
     widget: {
