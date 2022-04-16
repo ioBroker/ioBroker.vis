@@ -4,6 +4,8 @@ import { withStyles } from '@mui/styles';
 import { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
+import { Tooltip } from '@mui/material';
+import image from '../img/Prev_HTML.png';
 
 const styles = () => ({
     widget: {
@@ -61,12 +63,21 @@ const Widget = props => {
         />;
     }
 
-    const result = <div className={props.classes.widget} style={style}>
-        <div className={props.classes.widgetTitle}>{window._(props.widgetType.title)}</div>
-        <span className={props.classes.widgetImageContainer}>
-            { img }
-        </span>
-    </div>;
+    const result =
+    <Tooltip
+        title={<div>
+            <div><img src={image} alt="" /></div>
+            <div>Text</div>
+        </div>}
+        placement="right-end"
+    >
+        <div className={props.classes.widget} style={style}>
+            <div className={props.classes.widgetTitle}>{window._(props.widgetType.title)}</div>
+            <span className={props.classes.widgetImageContainer}>
+                { img }
+            </span>
+        </div>
+    </Tooltip>;
 
     const widthRef = useRef();
     const [, dragRef, preview] = useDrag(

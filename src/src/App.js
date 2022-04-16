@@ -35,6 +35,7 @@ import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
 import VisContextMenu from './Vis/VisContextMenu';
+import IODialog from './Components/IODialog';
 
 const styles = theme => ({
     block: {
@@ -164,6 +165,7 @@ class App extends GenericApp {
             clipboardImages: [],
             lockDragging: JSON.parse(window.localStorage.getItem('lockDragging')),
             disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
+            deleteWidgetsDialog: false,
             visCommonCss: null,
             visUserCss: null,
             ...this.state,
@@ -202,19 +204,19 @@ class App extends GenericApp {
                 }
                 if (e.key === 'ArrowLeft') {
                     e.preventDefault();
-                    this.moveWidgets(e.ctrlKey ? -10 : -1, 0);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? -10 : -1, 0);
                 }
                 if (e.key === 'ArrowRight') {
                     e.preventDefault();
-                    this.moveWidgets(e.ctrlKey ? 10 : 1, 0);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? 10 : 1, 0);
                 }
                 if (e.key === 'ArrowUp') {
                     e.preventDefault();
-                    this.moveWidgets(0, e.ctrlKey ? -10 : -1);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? -10 : -1);
                 }
                 if (e.key === 'ArrowDown') {
                     e.preventDefault();
-                    this.moveWidgets(0, e.ctrlKey ? 10 : 1);
+                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? 10 : 1);
                 }
             }
             if (e.ctrlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
@@ -511,7 +513,9 @@ class App extends GenericApp {
         await this.setStateAsync({ selectedWidgets: [newKey] });
     }
 
-    deleteWidgets = async () => {
+    deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true })
+
+    deleteWidgetsAction = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
@@ -737,6 +741,19 @@ class App extends GenericApp {
             const top = parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]);
             widgets[selectedWidget].style.left = `${left + leftShift}px`;
             widgets[selectedWidget].style.top = `${top + topShift}px`;
+        });
+        this.changeProject(project);
+    }
+
+    resizeWidgets = (widthShift, hieghtShift) => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+            const width = parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]) || boundingRect.width;
+            const height = parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]) || boundingRect.height;
+            widgets[selectedWidget].style.width = `${width + widthShift}px`;
+            widgets[selectedWidget].style.height = `${height + hieghtShift}px`;
         });
         this.changeProject(project);
     }
@@ -1222,6 +1239,16 @@ class App extends GenericApp {
                     onClose={() => this.setState({ createFirstProjectDialog: false })}
                     addProject={this.addProject}
                 />
+                <IODialog
+                    title="Delete widgets"
+                    open={this.state.deleteWidgetsDialog}
+                    onClose={() => this.setState({ deleteWidgetsDialog: false })}
+                    actionTitle="Delete"
+                    actionColor="secondary"
+                    action={() => this.deleteWidgetsAction()}
+                >
+                    {I18n.t(`Are you sure to delete widgets ${this.state.selectedWidgets.join(', ')}?`)}
+                </IODialog>
             </ThemeProvider>
         </StyledEngineProvider>;
     }
