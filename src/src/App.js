@@ -162,6 +162,8 @@ class App extends GenericApp {
                 widgets: {},
             },
             clipboardImages: [],
+            lockDragging: JSON.parse(window.localStorage.getItem('lockDragging')),
+            disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
             visCommonCss: null,
             visUserCss: null,
             ...this.state,
@@ -517,6 +519,14 @@ class App extends GenericApp {
         await this.changeProject(project);
     }
 
+    lockWidgets = async type => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        this.state.selectedWidgets.forEach(selectedWidget =>
+            widgets[selectedWidget].data.locked = !!(type === 'lock'));
+        await this.changeProject(project);
+    }
+
     cutWidgets = async () => {
         this.cutCopyWidgets('cut');
     }
@@ -630,11 +640,12 @@ class App extends GenericApp {
         const selectedWidgets = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             selectedWidgets.push(widgets[selectedWidget]);
+            const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
             coordinates.push({
                 left: parseInt(widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[1]),
                 top: parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]),
-                width: parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]),
-                height: parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]),
+                width: parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]) || boundingRect.width,
+                height: parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]) || boundingRect.height,
             });
         });
         if (type === 'left') {
@@ -675,13 +686,12 @@ class App extends GenericApp {
                 newCoordinates.top += coordinate.top;
             });
             selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = `${newCoordinates.top / selectedWidgets.length}px`);
+        } else if (type === 'horizontal-equal') {
+        } else if (type === 'vertical-equal') {
+
         } else if (type === 'width') {
 
         } else if (type === 'height') {
-
-        } else if (type === 'horizontal-equal') {
-
-        } else if (type === 'vertical-equal') {
 
         }
         this.changeProject(project);
@@ -745,6 +755,16 @@ class App extends GenericApp {
         await this.setStateAsync({
             historyCursor: this.state.historyCursor + 1,
         });
+    }
+
+    toggleLockDragging = () => {
+        window.localStorage.setItem('lockDragging', JSON.stringify(!this.state.lockDragging));
+        this.setState({ lockDragging: !this.state.lockDragging });
+    }
+
+    toggleDisableInteraction = () => {
+        window.localStorage.setItem('disableInteraction', JSON.stringify(!this.state.disableInteraction));
+        this.setState({ disableInteraction: !this.state.disableInteraction });
     }
 
     changeProject = async (project, isHistory) => {
@@ -1055,6 +1075,10 @@ class App extends GenericApp {
                         cloneWidgets={this.cloneWidgets}
                         orderWidgets={this.orderWidgets}
                         getNewWidgetIdNumber={this.getNewWidgetIdNumber}
+                        lockDragging={this.state.lockDragging}
+                        disableInteraction={this.state.disableInteraction}
+                        toggleLockDragging={this.toggleLockDragging}
+                        toggleDisableInteraction={this.toggleDisableInteraction}
                         adapterName={this.adapterName}
                         instance={this.instance}
                         editMode={this.state.editMode}
@@ -1158,6 +1182,7 @@ class App extends GenericApp {
                                                     selectedView={this.state.selectedView}
                                                     changeProject={this.changeProject}
                                                     getNewWidgetIdNumber={this.getNewWidgetIdNumber}
+                                                    lockWidgets={this.lockWidgets}
                                                 >
                                                     { visEngine }
                                                 </VisContextMenu>

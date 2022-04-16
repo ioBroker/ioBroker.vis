@@ -150,6 +150,7 @@ const Widgets = props => {
                         name: 'Align horizontal/equal',
                         size: 'normal',
                         disabled: props.selectedWidgets.length < 2,
+                        onClick: () => props.alignWidgets('horizontal-equal'),
                     },
                     {
                         type: 'icon-button',
@@ -157,6 +158,7 @@ const Widgets = props => {
                         name: 'Align width. Press more time to get the desired width.',
                         size: 'normal',
                         disabled: props.selectedWidgets.length < 2,
+                        onClick: () => props.alignWidgets('width'),
                     },
                     {
                         type: 'icon-button',
@@ -165,12 +167,6 @@ const Widgets = props => {
                         size: 'normal',
                         disabled: !props.selectedWidgets.length,
                         onClick: () => props.orderWidgets('front'),
-                    },
-                    {
-                        type: 'icon-button',
-                        Icon: OpenInNewIcon,
-                        name: 'Lock dragging',
-                        disabled: !props.selectedWidgets.length,
                     },
                 ],
                 [
@@ -204,6 +200,7 @@ const Widgets = props => {
                         name: 'Align vertical/equal',
                         size: 'normal',
                         disabled: props.selectedWidgets.length < 2,
+                        onClick: () => props.alignWidgets('vertical-equal'),
                     },
                     {
                         type: 'icon-button',
@@ -211,6 +208,7 @@ const Widgets = props => {
                         name: 'Align height. Press more time to get the desired height.',
                         size: 'normal',
                         disabled: props.selectedWidgets.length < 2,
+                        onClick: () => props.alignWidgets('height'),
                     },
                     {
                         type: 'icon-button',
@@ -220,13 +218,24 @@ const Widgets = props => {
                         disabled: !props.selectedWidgets.length,
                         onClick: () => props.orderWidgets('back'),
                     },
-                    {
-                        type: 'icon-button',
-                        Icon: LockIcon,
-                        name: 'Disable interaction',
-                        disabled: !props.selectedWidgets.length,
-                    },
                 ],
+            ],
+            { type: 'divider' },
+            [
+                [{
+                    type: 'icon-button',
+                    Icon: OpenInNewIcon,
+                    name: 'Lock dragging',
+                    selected: props.lockDragging,
+                    onClick: () => props.toggleLockDragging(),
+                }],
+                [{
+                    type: 'icon-button',
+                    Icon: LockIcon,
+                    name: 'Disable interaction',
+                    selected: props.disableInteraction,
+                    onClick: () => props.toggleDisableInteraction(),
+                }],
             ],
             { type: 'divider' },
             [

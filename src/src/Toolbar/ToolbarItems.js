@@ -11,6 +11,7 @@ import {
     MenuItem,
     Select,
     TextField,
+    ToggleButton,
     Tooltip,
 } from '@mui/material';
 
@@ -140,7 +141,7 @@ const getItem = (item, key, props, full) => {
                 </ButtonBase>
             </div>
             : <Tooltip key={key} title={item.name}>
-                <IconButton size="small" key={key} disabled={item.disabled} onClick={item.onClick} style={{ height: full ? '100%' : null }}>
+                <IconButton color={item.selected ? 'primary' : undefined} size="small" key={key} disabled={item.disabled} onClick={item.onClick} style={{ height: full ? '100%' : null }}>
                     <item.Icon fontSize={item.size ? item.size : 'small'} />
                 </IconButton>
             </Tooltip>;

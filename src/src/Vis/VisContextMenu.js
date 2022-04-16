@@ -47,13 +47,13 @@ const VisContextMenu = props => {
                 {
                     leftIcon: <LockIcon fontSize="small" />,
                     label: 'Lock',
-                    onClick: () => console.log('Save As > Option 1 clicked'),
+                    onClick: () => props.lockWidgets('lock'),
                     disabled: !props.selectedWidgets.length,
                 },
                 {
                     leftIcon: <LockOpenIcon fontSize="small" />,
                     label: 'Unlock',
-                    onClick: () => console.log('Save As > Option 2 clicked'),
+                    onClick: () => props.lockWidgets('unlock'),
                     disabled: !props.selectedWidgets.length,
                 },
                 {
