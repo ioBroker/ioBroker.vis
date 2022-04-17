@@ -37,6 +37,7 @@ class VisView extends React.Component {
 
         this.state = {
             mounted: false,
+            rulers: [],
         };
 
         this.refView = React.createRef();
@@ -473,6 +474,46 @@ class VisView extends React.Component {
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
 
+        if (this.props.views[this.props.view].settings.snapType === 2) {
+            this.movement.x -= (this.movement.x % this.props.views[this.props.view].settings.gridSize);
+            this.movement.y -= (this.movement.y % this.props.views[this.props.view].settings.gridSize);
+        }
+
+        const verticals = [];
+        const horizontals = [];
+        const rulers = [];
+
+        const viewRect = this.refRelativeView.current.getBoundingClientRect();
+        Object.keys(this.widgetsRefs).forEach(wid => {
+            if (!this.props.selectedWidgets.includes(wid)) {
+                const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                horizontals.push(Math.round(boundingRect.top));
+                horizontals.push(Math.round(boundingRect.bottom));
+                verticals.push(Math.round(boundingRect.left));
+                verticals.push(Math.round(boundingRect.right));
+            }
+        });
+        const selectedHorizontals = [];
+        const selectedVerticals = [];
+        this.props.selectedWidgets.forEach(wid => {
+            const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+            selectedHorizontals.push(Math.round(boundingRect.top));
+            selectedHorizontals.push(Math.round(boundingRect.bottom));
+            selectedVerticals.push(Math.round(boundingRect.left));
+            selectedVerticals.push(Math.round(boundingRect.right));
+        });
+        horizontals.forEach(horizontal => selectedHorizontals.forEach(selectedHorizontal => {
+            if (Math.abs(horizontal - selectedHorizontal) <= 4) {
+                rulers.push({ type: 'horizontal', value: horizontal - viewRect.top });
+            }
+        }));
+        verticals.forEach(vertical => selectedVerticals.forEach(selectedVertical => {
+            if (Math.abs(vertical - selectedVertical) <= 4) {
+                rulers.push({ type: 'vertical', value: vertical - viewRect.left });
+            }
+        }));
+        this.setState({ rulers });
+
         this.props.selectedWidgets.forEach(wid => {
             const widgetsRefs = this.widgetsRefs;
             if (widgetsRefs[wid]?.onMove) {
@@ -500,6 +541,8 @@ class VisView extends React.Component {
                 this.widgetsRefs[_wid].onCommand('stopMove');
             }
         });
+
+        this.setState({ rulers: [] });
     } : null;
 
     editWidgetsRect(widget) {
@@ -861,6 +904,12 @@ class VisView extends React.Component {
             style.overflow = 'hidden';
         }
 
+        if (this.props.views[this.props.view].settings.snapType === 2) {
+            style.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
+            style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
+            style.backgroundImage = 'radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px)';
+        }
+
         return <div
             className={className}
             ref={this.refView}
@@ -869,6 +918,24 @@ class VisView extends React.Component {
             style={style}
         >
             { /* VisView.renderGitter() */ }
+            {this.state.rulers.map((ruler, key) =>
+                <div
+                    key={key}
+                    style={{
+                        pointerEvents: 'none',
+                        position: 'absolute',
+                        width: ruler.type === 'horizontal' ? '100%' : 10,
+                        height: ruler.type === 'horizontal' ? 10 : '100%',
+                        borderStyle: 'solid',
+                        borderColor: 'black',
+                        borderWidth: 0,
+                        borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
+                        borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
+                        left: ruler.type === 'horizontal' ? 0 : ruler.value,
+                        top: ruler.type === 'horizontal' ? ruler.value : 0,
+                        zIndex: 1000,
+                    }}
+                ></div>)}
             <div ref={this.refRelativeView} style={relativeStyle}>
                 { rxRelativeWidgets.map(item => item.rxWidget) }
             </div>
