@@ -8,6 +8,9 @@ import {
 import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
+import {
+    AiOutlineGroup, AiOutlineUngroup,
+} from 'react-icons/ai';
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
@@ -17,6 +20,18 @@ const VisContextMenu = props => {
     const [importDialog, setImportDialog] = useState(false);
 
     const menuItemsData = [
+        {
+            leftIcon: <AiOutlineGroup />,
+            label: 'Group',
+            // onClick: () => props.copyWidgets(),
+            disabled: !props.selectedWidgets.length,
+        },
+        {
+            leftIcon: <AiOutlineUngroup />,
+            label: 'Ungroup',
+            // onClick: () => props.copyWidgets(),
+            disabled: !props.selectedWidgets.length,
+        },
         {
             leftIcon: <BiCopy />,
             label: 'Copy',

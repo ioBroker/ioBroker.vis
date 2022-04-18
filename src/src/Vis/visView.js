@@ -431,7 +431,7 @@ class VisView extends React.Component {
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : (e, wid) => {
+    onMouseWidgetDown = this.props.runtime ? null : (e, wid, isRelative, isResize) => {
         if (this.nextClickIsSteal) {
             // send to App.js the stolen attribute
 
@@ -451,9 +451,17 @@ class VisView extends React.Component {
             moved: false,
             startX: e.pageX,
             startY: e.pageY,
+            isResize,
             x: 0,
             y: 0,
         };
+
+        this.props.selectedWidgets.forEach(selectedWidget => {
+            const widgetRect = this.widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+            if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
+                this.movement.startWidget = this.widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+            }
+        });
 
         this.props.selectedWidgets.forEach(_wid => {
             if (this.widgetsRefs[_wid]?.onMove) {
@@ -474,16 +482,17 @@ class VisView extends React.Component {
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
 
-        if (this.props.views[this.props.view].settings.snapType === 2) {
-            this.movement.x -= (this.movement.x % this.props.views[this.props.view].settings.gridSize);
-            this.movement.y -= (this.movement.y % this.props.views[this.props.view].settings.gridSize);
+        const viewRect = this.refRelativeView.current.getBoundingClientRect();
+
+        if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 2) {
+            this.movement.x -= Math.round(((this.movement.startWidget.left - viewRect.left + this.movement.x) % this.props.views[this.props.view].settings.gridSize));
+            this.movement.y -= Math.round(((this.movement.startWidget.top - viewRect.top + this.movement.y) % this.props.views[this.props.view].settings.gridSize));
         }
 
         const verticals = [];
         const horizontals = [];
         const rulers = [];
 
-        const viewRect = this.refRelativeView.current.getBoundingClientRect();
         Object.keys(this.widgetsRefs).forEach(wid => {
             if (!this.props.selectedWidgets.includes(wid)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
@@ -927,7 +936,7 @@ class VisView extends React.Component {
                         width: ruler.type === 'horizontal' ? '100%' : 10,
                         height: ruler.type === 'horizontal' ? 10 : '100%',
                         borderStyle: 'solid',
-                        borderColor: 'black',
+                        borderColor: 'red',
                         borderWidth: 0,
                         borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
                         borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,

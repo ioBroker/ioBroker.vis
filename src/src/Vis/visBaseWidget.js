@@ -490,7 +490,7 @@ class VisBaseWidget extends React.Component {
     onResizeStart(e, type) {
         e.stopPropagation();
         this.resize = type;
-        this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
+        this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, true);
     }
 
     getResizeHandlers() {

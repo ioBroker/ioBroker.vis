@@ -6,8 +6,9 @@ import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
 import { useState } from 'react';
 
 const contextMenuItems = (items, open, onClose) =>
-    items.map(item => (item.items ?
+    items.map((item, key) => (item.items ?
         <NestedMenuItem
+            key={key}
             leftIcon={item.leftIcon}
             disabled={item.disabled}
             label={<span style={{ width: 40 }}>{I18n.t(item.label)}</span>}
@@ -20,6 +21,7 @@ const contextMenuItems = (items, open, onClose) =>
             {contextMenuItems(item.items, open, onClose)}
         </NestedMenuItem> :
         <IconMenuItem
+            key={key}
             onClick={() => {
                 item.onClick();
                 onClose();
