@@ -56,7 +56,7 @@ const IOContextMenu = props => {
     };
 
     return (
-        <div onContextMenu={handleRightClick}>
+        <div onContextMenu={handleRightClick} style={{ height: '100%' }}>
             {props.children}
             <Menu
                 open={!!menuPosition}

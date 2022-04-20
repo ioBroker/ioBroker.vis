@@ -23,14 +23,17 @@ const VisContextMenu = props => {
         {
             leftIcon: <AiOutlineGroup />,
             label: 'Group',
-            // onClick: () => props.copyWidgets(),
-            disabled: !props.selectedWidgets.length,
+            onClick: () => props.groupWidgets(),
+            disabled: props.selectedWidgets.length < 2,
         },
         {
             leftIcon: <AiOutlineUngroup />,
             label: 'Ungroup',
-            // onClick: () => props.copyWidgets(),
-            disabled: !props.selectedWidgets.length,
+            onClick: () => props.ungroupWidgets(),
+            disabled: !(
+                props.selectedWidgets.length === 1
+                && props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl === '_tplGroup'
+            ),
         },
         {
             leftIcon: <BiCopy />,

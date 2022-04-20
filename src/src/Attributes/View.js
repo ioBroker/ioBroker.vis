@@ -328,6 +328,7 @@ const View = props => {
                         <TextField
                             variant="standard"
                             value={view.settings.sizex}
+                            disabled={!props.editMode}
                             InputProps={{
                                 classes: {
                                     input: clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -348,6 +349,7 @@ const View = props => {
                         <TextField
                             variant="standard"
                             value={view.settings.sizey}
+                            disabled={!props.editMode}
                             InputProps={{
                                 classes: {
                                     input: clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -468,6 +470,7 @@ const View = props => {
                                         result = <Autocomplete
                                             freeSolo
                                             options={options}
+                                            disabled={!props.editMode}
                                             inputValue={value}
                                             value={value}
                                             onInputChange={(e, inputValue) => change(inputValue)}
@@ -484,6 +487,7 @@ const View = props => {
                                         />;
                                     } else if (field.type === 'checkbox') {
                                         result = <Checkbox
+                                            disabled={!props.editMode}
                                             checked={!!value}
                                             classes={{
                                                 root: clsx(props.classes.fieldContent, props.classes.clearPadding),
@@ -493,6 +497,7 @@ const View = props => {
                                         />;
                                     } else if (field.type === 'select') {
                                         result = <Select
+                                            disabled={!props.editMode}
                                             variant="standard"
                                             value={field.value ? field.value : value}
                                             classes={{
@@ -512,6 +517,7 @@ const View = props => {
                                         </Select>;
                                     } else if (field.type === 'multi-select') {
                                         result = <Select
+                                            disabled={!props.editMode}
                                             variant="standard"
                                             renderValue={selected => selected.join(', ')}
                                             classes={{
@@ -537,12 +543,14 @@ const View = props => {
                                         result = <ColorPicker
                                             value={value}
                                             className={props.classes.fieldContentColor}
+                                            disabled={!props.editMode}
                                             onChange={color => change(color)}
                                             openAbove
                                             color={field.value || ''}
                                         />;
                                     } else {
                                         result = <TextField
+                                            disabled={!props.editMode}
                                             variant="standard"
                                             fullWidth
                                             InputProps={{

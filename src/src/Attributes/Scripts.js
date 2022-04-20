@@ -13,6 +13,7 @@ const Scripts = props => <div>
         mode="javascript"
         theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
         width="100%"
+        readOnly={!props.editMode}
         value={props.project.___settings.scripts}
         onChange={newValue => {
             const project = JSON.parse(JSON.stringify(props.project));

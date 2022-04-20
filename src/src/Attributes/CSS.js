@@ -121,6 +121,7 @@ const CSS = props => {
         <AceEditor
             mode="css"
             theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
+            readOnly={!props.editMode}
             value={value}
             onChange={newValue => save(newValue, type)}
             width="100%"

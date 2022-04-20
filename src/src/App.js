@@ -89,12 +89,12 @@ const ViewDrop = props => {
             console.log(item);
             props.addWidget(item.widgetType.name, monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x, monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y);
         },
-        canDrop: (item, monitor) => true,
+        canDrop: (item, monitor) => props.editMode,
         collect: monitor => ({
             isOver: monitor.isOver(),
             CanDrop: monitor.canDrop(),
         }),
-    }), []);
+    }), [props.editMode]);
 
     return <div
         ref={drop}
@@ -152,6 +152,11 @@ class App extends GenericApp {
             projectsDialog: false,
             createFirstProjectDialog: false,
             selectedWidgets: [],
+            align: {
+                alignType: null,
+                alignIndex: 0,
+                alignValues: [],
+            },
             showCode: window.localStorage.getItem('showCode') === 'true',
             editMode: true,
             widgetsLoaded: false,
@@ -184,6 +189,9 @@ class App extends GenericApp {
 
     onKeyDown = e => {
         console.log(e.key);
+        if (!this.state.editMode) {
+            return;
+        }
         if (document.activeElement.tagName === 'BODY') {
             if (e.ctrlKey && e.key === 'z' && this.state.historyCursor !== 0) {
                 e.preventDefault();
@@ -225,11 +233,11 @@ class App extends GenericApp {
             }
             if (e.ctrlKey && e.key === 'a') {
                 e.preventDefault();
-                this.setState({ selectedWidgets: Object.keys(this.state.project[this.state.selectedView].widgets) });
+                this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets));
             }
             if (e.key === 'Escape') {
                 e.preventDefault();
-                this.setState({ selectedWidgets: [] });
+                this.setSelectedWidgets([]);
             }
             if (e.key === 'Delete') {
                 e.preventDefault();
@@ -446,11 +454,11 @@ class App extends GenericApp {
         await this.setStateAsync(newState);
     }
 
-    getNewWidgetIdNumber = () => {
+    getNewWidgetIdNumber = isGroup => {
         const widgets = this.state.project[this.state.selectedView].widgets;
         let newKey = 1;
         Object.keys(widgets).forEach(name => {
-            const matches = name.match(/^w([0-9]+)$/);
+            const matches = isGroup ? name.match(/^g([0-9]+)$/) : name.match(/^w([0-9]+)$/);
             if (matches) {
                 if (parseInt(matches[1]) >= newKey) {
                     newKey = parseInt(matches[1]) + 1;
@@ -465,6 +473,14 @@ class App extends GenericApp {
         let newKey = this.getNewWidgetIdNumber();
 
         newKey = `w${newKey.toString().padStart(6, 0)}`;
+
+        return newKey;
+    }
+
+    getNewGroupId = () => {
+        let newKey = this.getNewWidgetIdNumber(true);
+
+        newKey = `g${newKey.toString().padStart(6, 0)}`;
 
         return newKey;
     }
@@ -510,7 +526,7 @@ class App extends GenericApp {
         }
 
         await this.changeProject(project);
-        await this.setStateAsync({ selectedWidgets: [newKey] });
+        this.setSelectedWidgets([newKey]);
     }
 
     deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true })
@@ -519,7 +535,7 @@ class App extends GenericApp {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
-        await this.setStateAsync({ selectedWidgets: [] });
+        this.setSelectedWidgets([]);
         await this.changeProject(project);
     }
 
@@ -600,9 +616,9 @@ class App extends GenericApp {
                 }
             }
         });
-        await this.setStateAsync({ selectedWidgets: [] });
+        this.setSelectedWidgets([]);
         await this.changeProject(project);
-        await this.setStateAsync({ selectedWidgets: newKeys });
+        this.setSelectedWidgets(newKeys);
         if (this.state.widgetsClipboard.type === 'cut') {
             await this.setStateAsync({
                 widgetsClipboard: {
@@ -629,9 +645,9 @@ class App extends GenericApp {
             widgets[newKey] = newWidget;
             newKeys.push(newKey);
         });
-        await this.setStateAsync({ selectedWidgets: [] });
+        this.setSelectedWidgets([]);
         await this.changeProject(project);
-        await this.setStateAsync({ selectedWidgets: newKeys });
+        this.setSelectedWidgets(newKeys);
     }
 
     alignWidgets = type => {
@@ -691,12 +707,132 @@ class App extends GenericApp {
             });
             selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = `${newCoordinates.top / selectedWidgets.length}px`);
         } else if (type === 'horizontal-equal') {
+            const data = [];
+            let minLeft = 9999;
+            let maxRight = 0;
+            let contSize = 0;
+            let between;
+            this.state.selectedWidgets.forEach(selectedWidget => {
+                const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                const left = boundingRect.left;
+                const right = boundingRect.right;
+                contSize += boundingRect.width;
+                if (minLeft > left) minLeft = left;
+                if (maxRight < right) maxRight = right;
+                const _data = {
+                    wid:  selectedWidget,
+                    left,
+                };
+                data.push(_data);
+            });
+
+            between = (maxRight - minLeft - contSize) / (this.state.selectedWidgets.length - 1);
+
+            if (between < 0) between = 0;
+
+            data.sort((a, b) => {
+                const aName = a.left;
+                const bName = b.left;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            });
+            const first = data.shift();
+            const boundingRect = window.document.getElementById(`rx_${first.wid}`).getBoundingClientRect();
+            let left  = boundingRect.left;
+
+            data.forEach(element => {
+                left += between;
+                widgets[element.wid].style.left = `${left}px`;
+                const boundingRect = window.document.getElementById(`rx_${element.wid}`).getBoundingClientRect();
+                left += boundingRect.width;
+            });
         } else if (type === 'vertical-equal') {
+            const data = [];
+            let minTop = 9999;
+            let maxBottom = 0;
+            let contSize = 0;
+            let between;
 
+            this.state.selectedWidgets.forEach(selectedWidget => {
+                const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                const top = boundingRect.top;
+                const bottom = boundingRect.bottom;
+                contSize += boundingRect.height;
+                if (minTop > top) minTop = top;
+                if (maxBottom < bottom) maxBottom = bottom;
+
+                const _data = {
+                    wid: selectedWidget,
+                    top,
+                };
+                data.push(_data);
+            });
+
+            between = (maxBottom - minTop - contSize) / (this.state.selectedWidgets.length - 1);
+            if (between < 0) between = 0;
+
+            data.sort((a, b) => {
+                const aName = a.top;
+                const bName = b.top;
+                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
+            });
+            const first = data.shift();
+            const boundingRect = window.document.getElementById(`rx_${first.wid}`).getBoundingClientRect();
+            let top  = first.top + boundingRect.height;
+
+            data.forEach(element => {
+                top += between;
+                widgets[element.wid].style.top = `${top}px`;
+                const boundingRect = window.document.getElementById(`rx_${element.wid}`).getBoundingClientRect();
+                top += boundingRect.height;
+            });
         } else if (type === 'width') {
+            let { alignIndex, alignType, alignValues } = this.state.align;
+            if (alignType !== 'width') {
+                alignType = 'width';
+                alignIndex = 0;
+                alignValues = [];
+            }
+            if (!alignValues.length) {
+                this.state.selectedWidgets.forEach(selectedWidget => {
+                    const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                    const w = boundingRect.width;
+                    if (alignValues.indexOf(w) === -1) { alignValues.push(w); }
+                });
+            }
 
+            alignIndex++;
+            if (alignIndex >= alignValues.length) {
+                alignIndex = 0;
+            }
+
+            this.state.selectedWidgets.forEach(selectedWidget => {
+                widgets[selectedWidget].style.width = alignValues[alignIndex];
+            });
+            this.setState({ align: { alignType, alignIndex, alignValues } });
         } else if (type === 'height') {
+            let { alignIndex, alignType, alignValues } = this.state.align;
+            if (alignType !== 'height') {
+                alignType = 'height';
+                alignIndex = 0;
+                alignValues = [];
+            }
+            if (!alignValues.length) {
+                this.state.selectedWidgets.forEach(selectedWidget => {
+                    const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                    const h = boundingRect.height;
+                    if (alignValues.indexOf(h) === -1) { alignValues.push(h); }
+                });
+            }
 
+            alignIndex++;
+            if (alignIndex >= alignValues.length) {
+                alignIndex = 0;
+            }
+
+            this.state.selectedWidgets.forEach(selectedWidget => {
+                widgets[selectedWidget].style.height = alignValues[alignIndex];
+            });
+            this.setState({ align: { alignType, alignIndex, alignValues } });
         }
         this.changeProject(project);
     }
@@ -758,8 +894,49 @@ class App extends GenericApp {
         this.changeProject(project);
     }
 
+    groupWidgets = () => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        const group = {
+            tpl: '_tplGroup',
+            widgetSet: null,
+            data: {
+                members: this.state.selectedWidgets,
+            },
+        };
+        const groupId = this.getNewGroupId();
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            widgets[selectedWidget].grouped = true;
+            widgets[selectedWidget].groupid = groupId;
+        });
+        widgets[groupId] = group;
+    }
+
+    ungroupWidgets = () => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        const group = widgets[this.state.selectedWidgets[0]];
+        group.data.members.forEach(member => {
+            const widgetBoundingRect = window.document.getElementById(`${member}`).getBoundingClientRect();
+            const viewBoundingRect = window.document.getElementById('vis-react-container').getBoundingClientRect();
+            widgets[member].style.left = `${widgetBoundingRect.left - viewBoundingRect.left}px`;
+            widgets[member].style.top = `${widgetBoundingRect.top - viewBoundingRect.top}px`;
+            widgets[member].style.width = `${widgetBoundingRect.width}px`;
+            widgets[member].style.height = `${widgetBoundingRect.height}px`;
+            delete widgets[member].grouped;
+            delete widgets[member].groupid;
+        });
+        this.setSelectedWidgets(group.data.members);
+        delete widgets[this.state.selectedWidgets[0]];
+        this.changeProject(project);
+    }
+
+    setSelectedGroup = groupId => {
+        this.setState({ setSelectedGroup: groupId });
+    }
+
     undo = async () => {
-        await this.setStateAsync({ selectedWidgets: [] });
+        this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({
             historyCursor: this.state.historyCursor - 1,
@@ -767,7 +944,7 @@ class App extends GenericApp {
     }
 
     redo = async () => {
-        await this.setStateAsync({ selectedWidgets: [] });
+        this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
         await this.setStateAsync({
             historyCursor: this.state.historyCursor + 1,
@@ -888,7 +1065,12 @@ class App extends GenericApp {
     }
 
     setSelectedWidgets = (selectedWidgets, cb) => {
-        this.setState({ selectedWidgets }, () => cb && cb());
+        this.setState({
+            selectedWidgets,
+            alignType: null,
+            alignIndex: 0,
+            alignValues: [],
+        }, () => cb && cb());
         window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
     }
 
@@ -1176,7 +1358,7 @@ class App extends GenericApp {
                                             ? <pre>
                                                 {JSON.stringify(this.state.project, null, 2)}
                                             </pre> : null}
-                                        <ViewDrop addWidget={this.addWidget}>
+                                        <ViewDrop addWidget={this.addWidget} editMode={this.state.editMode}>
                                             <div
                                                 id="vis-react-container"
                                                 style={{
@@ -1200,6 +1382,8 @@ class App extends GenericApp {
                                                     changeProject={this.changeProject}
                                                     getNewWidgetIdNumber={this.getNewWidgetIdNumber}
                                                     lockWidgets={this.lockWidgets}
+                                                    groupWidgets={this.groupWidgets}
+                                                    ungroupWidgets={this.ungroupWidgets}
                                                 >
                                                     { visEngine }
                                                 </VisContextMenu>

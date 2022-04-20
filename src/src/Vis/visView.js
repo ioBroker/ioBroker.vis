@@ -489,6 +489,36 @@ class VisView extends React.Component {
             this.movement.y -= Math.round(((this.movement.startWidget.top - viewRect.top + this.movement.y) % this.props.views[this.props.view].settings.gridSize));
         }
 
+        if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 1) {
+            const left = this.movement.startWidget.left + this.movement.x;
+            const right = this.movement.startWidget.right + this.movement.x;
+            const top = this.movement.startWidget.top + this.movement.y;
+            const bottom = this.movement.startWidget.bottom + this.movement.y;
+            for (const wid in this.widgetsRefs) {
+                if (wid === this.props.selectedWidgets[0]) {
+                    continue;
+                }
+                const widgetRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+
+                if (Math.abs(widgetRect.top - bottom) <= 10 && left <= widgetRect.right && right >= widgetRect.left) {
+                    this.movement.y += Math.round(widgetRect.top - bottom);
+                    break;
+                }
+                if (Math.abs(widgetRect.bottom - top) <= 10 && left <= widgetRect.right && right >= widgetRect.left) {
+                    this.movement.y += Math.round(widgetRect.bottom - top);
+                    break;
+                }
+                if (Math.abs(widgetRect.left - right) <= 10 && top <= widgetRect.bottom && bottom >= widgetRect.top) {
+                    this.movement.x += Math.round(widgetRect.left - right);
+                    break;
+                }
+                if (Math.abs(widgetRect.right - left) <= 10 && top <= widgetRect.bottom && bottom >= widgetRect.top) {
+                    this.movement.x += Math.round(widgetRect.right - left);
+                    break;
+                }
+            }
+        }
+
         const verticals = [];
         const horizontals = [];
         const rulers = [];
@@ -915,8 +945,8 @@ class VisView extends React.Component {
 
         if (this.props.views[this.props.view].settings.snapType === 2) {
             style.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
-            style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
-            style.backgroundImage = 'radial-gradient(circle, #000000 1px, rgba(0, 0, 0, 0) 1px)';
+            // style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
+            style.backgroundImage = 'radial-gradient(circle at 1px 1px, black 1px, rgba(0, 0, 0, 0) 1px), radial-gradient(circle at 2px 2px, white 1px, rgba(0, 0, 0, 0) 1px)';
         }
 
         return <div

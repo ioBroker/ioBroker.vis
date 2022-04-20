@@ -107,14 +107,14 @@ const Widgets = props => {
                 Icon: UndoIcon,
                 name: `Undo (${props.historyCursor + 1} / ${props.history.length}`,
                 onClick: props.undo,
-                disabled: props.historyCursor === 0,
+                disabled: !props.editMode || props.historyCursor === 0,
             },
             {
                 type: 'icon-button',
                 Icon: RedoIcon,
                 name: 'Redo',
                 onClick: props.redo,
-                disabled: props.historyCursor === props.history.length - 1,
+                disabled: !props.editMode || props.historyCursor === props.history.length - 1,
             },
 
             { type: 'divider' },
