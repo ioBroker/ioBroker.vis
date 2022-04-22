@@ -797,7 +797,7 @@ class VisBaseWidget extends React.Component {
         const selected = this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         let classNames = selected ? 'vis-editmode-selected' : 'vis-editmode-overlay-not-selected';
 
-        if (this.state.editMode && !widget.groupid) {
+        if (this.state.editMode && !(widget.groupid && !this.props.selectedGroup)) {
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
                 style.top = this.state.style.top;
             }
@@ -847,12 +847,12 @@ class VisBaseWidget extends React.Component {
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;
-        if (!this.state.hideHelper && this.state.editMode && !widget.groupid && this.props.showWidgetNames !== false) {
+        if (!this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
             widgetName = <div ref={this.refName} className="vis-editmode-widget-name">{ this.props.id }</div>;
             style.overflow = 'visible';
         }
 
-        const overlay = this.state.hideHelper || this.props.runtime || !this.state.editMode || widget.groupid ? null : <div
+        const overlay = this.state.hideHelper || this.props.runtime || !this.state.editMode || (widget.groupid && !this.props.selectedGroup) ? null : <div
             className={classNames}
             onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
         />;

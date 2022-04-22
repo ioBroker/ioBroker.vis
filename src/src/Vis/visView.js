@@ -237,7 +237,7 @@ class VisView extends React.Component {
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
-            if (this.props.views[this.props.view].widgets[id].groupid) {
+            if (this.props.views[this.props.view].widgets[id].groupid && !this.props.selectedGroup) {
                 return null;
             }
             const widDiv = this.widgetsRefs[id].widDiv || this.widgetsRefs[id].refService.current;
@@ -757,6 +757,7 @@ class VisView extends React.Component {
             projectName: props.projectName,
             relativeWidgetOrder,
             moveAllowed,
+            selectedGroup: props.selectedGroup,
             VisView,
         };
 
@@ -822,7 +823,7 @@ class VisView extends React.Component {
                 if (this.props.editMode && this.props.selectedWidgets?.length) {
                     this.props.selectedWidgets.forEach(id => {
                         const widget = this.props.views[this.props.view].widgets[id];
-                        if (!widget || widget.grouped) {
+                        if (!widget || (widget.groupid && !this.props.selectedGroup)) {
                             return;
                         }
                         if (widget.style) {
@@ -850,8 +851,14 @@ class VisView extends React.Component {
 
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
-                    if (!widget || widget.grouped) {
+                    if (!widget || (widget.grouped && !this.props.selectedGroup)) {
                         return;
+                    }
+
+                    if (this.props.selectedGroup) {
+                        if (!(id === this.props.selectedGroup || widget.groupid === this.props.selectedGroup)) {
+                            return;
+                        }
                     }
 
                     const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, moveAllowed);

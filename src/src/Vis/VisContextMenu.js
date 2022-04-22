@@ -24,13 +24,22 @@ const VisContextMenu = props => {
             leftIcon: <AiOutlineGroup />,
             label: 'Group',
             onClick: () => props.groupWidgets(),
-            disabled: props.selectedWidgets.length < 2,
+            hide: props.selectedWidgets.length < 2,
         },
         {
             leftIcon: <AiOutlineUngroup />,
             label: 'Ungroup',
             onClick: () => props.ungroupWidgets(),
-            disabled: !(
+            hide: !(
+                props.selectedWidgets.length === 1
+                && props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl === '_tplGroup'
+            ),
+        },
+        {
+            // leftIcon: <AiOutlineUngroup />,
+            label: 'Edit group',
+            onClick: () => props.setSelectedGroup(props.selectedWidgets[0]),
+            hide: !(
                 props.selectedWidgets.length === 1
                 && props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl === '_tplGroup'
             ),
@@ -102,7 +111,7 @@ const VisContextMenu = props => {
     ];
 
     return <>
-        <IOContextMenu menuItemsData={menuItemsData}>
+        <IOContextMenu menuItemsData={menuItemsData} disabled={props.disabled}>
             {props.children}
         </IOContextMenu>
         <WidgetImportDialog

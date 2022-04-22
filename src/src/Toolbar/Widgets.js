@@ -17,6 +17,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';
@@ -56,6 +57,13 @@ const Widgets = props => {
                 width: 240,
                 value: props.selectedWidgets,
                 onChange: e => props.setSelectedWidgets(e.target.value),
+            },
+            {
+                type: 'icon-button',
+                Icon: CloseIcon,
+                name: `Close group ${props.selectedGroup} editor`,
+                hide: !props.selectedGroup,
+                onClick: () => props.setSelectedGroup(null),
             },
             [[
                 {
@@ -244,6 +252,7 @@ const Widgets = props => {
                     Icon: BiImport,
                     name: 'Import widgets',
                     size: 'normal',
+                    disabled: !props.editMode,
                     onClick: () => setImportDialog(true),
                 }],
                 [{

@@ -869,6 +869,17 @@ class App extends GenericApp {
         this.changeProject(project);
     }
 
+    widgetFieldToDimension(wid, field, value) {
+        const widgets = this.state.project[this.state.selectedView].widgets;
+        const matches = widgets[wid].style[field]?.toString().match(/^([-.0-9]+)(.*)$/);
+        if (!matches) {
+            return `${value}px`;
+        }
+        if (matches[2] === '%') {
+            this.onPxToPercent()
+        }
+    }
+
     moveWidgets = (leftShift, topShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
@@ -932,7 +943,7 @@ class App extends GenericApp {
     }
 
     setSelectedGroup = groupId => {
-        this.setState({ setSelectedGroup: groupId });
+        this.setState({ selectedGroup: groupId });
     }
 
     undo = async () => {
@@ -1122,17 +1133,15 @@ class App extends GenericApp {
     onPxToPercent = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
             this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
-        } else {
-            cb && cb(wids, attr, null); // cancel selection
         }
+        cb && cb(wids, attr, null); // cancel selection
     }
 
     onPercentToPx = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
             this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
-        } else {
-            cb && cb(wids, attr, null); // cancel selection
         }
+        cb && cb(wids, attr, null); // cancel selection
     }
 
     registerCallback = (name, view, cb) => {
@@ -1220,6 +1229,7 @@ class App extends GenericApp {
             selectedWidgets={this.state.selectedWidgets}
             setSelectedWidgets={this.setSelectedWidgets}
             onLoaded={() => this.setState({ widgetsLoaded: true })}
+            selectedGroup={this.state.selectedGroup}
             onWidgetsChanged={this.onWidgetsChanged}
             projectName={this.state.projectName}
             onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
@@ -1279,6 +1289,8 @@ class App extends GenericApp {
                         toggleLockDragging={this.toggleLockDragging}
                         toggleDisableInteraction={this.toggleDisableInteraction}
                         adapterName={this.adapterName}
+                        selectedGroup={this.state.selectedGroup}
+                        setSelectedGroup={this.setSelectedGroup}
                         instance={this.instance}
                         editMode={this.state.editMode}
                     />
@@ -1370,6 +1382,7 @@ class App extends GenericApp {
                                             >
                                                 {this.renderRulers()}
                                                 <VisContextMenu
+                                                    disabled={!this.state.editMode}
                                                     selectedWidgets={this.state.selectedWidgets}
                                                     deleteWidgets={this.deleteWidgets}
                                                     cutWidgets={this.cutWidgets}
@@ -1384,6 +1397,7 @@ class App extends GenericApp {
                                                     lockWidgets={this.lockWidgets}
                                                     groupWidgets={this.groupWidgets}
                                                     ungroupWidgets={this.ungroupWidgets}
+                                                    setSelectedGroup={this.setSelectedGroup}
                                                 >
                                                     { visEngine }
                                                 </VisContextMenu>

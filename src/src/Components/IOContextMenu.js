@@ -6,21 +6,29 @@ import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
 import { useState } from 'react';
 
 const contextMenuItems = (items, open, onClose) =>
-    items.map((item, key) => (item.items ?
-        <NestedMenuItem
-            key={key}
-            leftIcon={item.leftIcon}
-            disabled={item.disabled}
-            label={<span style={{ width: 40 }}>{I18n.t(item.label)}</span>}
-            parentMenuOpen={open}
-            onContextMenu={e => {
-                e.stopPropagation();
-                e.preventDefault();
-            }}
-        >
-            {contextMenuItems(item.items, open, onClose)}
-        </NestedMenuItem> :
-        <IconMenuItem
+    items.map((item, key) => {
+        if (item.items) {
+            if (item.hide) {
+                return null;
+            }
+            return <NestedMenuItem
+                key={key}
+                leftIcon={item.leftIcon}
+                disabled={item.disabled}
+                label={<span style={{ width: 40 }}>{I18n.t(item.label)}</span>}
+                parentMenuOpen={open}
+                onContextMenu={e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }}
+            >
+                {contextMenuItems(item.items, open, onClose)}
+            </NestedMenuItem>;
+        }
+        if (item.hide) {
+            return null;
+        }
+        return <IconMenuItem
             key={key}
             onClick={() => {
                 item.onClick();
@@ -37,13 +45,16 @@ const contextMenuItems = (items, open, onClose) =>
                 item.onClick();
                 onClose();
             }}
-        />
-    ));
+        />;
+    });
 
 const IOContextMenu = props => {
     const [menuPosition, setMenuPosition] = useState(null);
 
     const handleRightClick = async event => {
+        if (props.disabled) {
+            return;
+        }
         event.preventDefault();
         if (menuPosition) {
             setMenuPosition(null);

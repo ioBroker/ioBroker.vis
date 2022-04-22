@@ -1226,6 +1226,7 @@ ${this.scripts}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
                     setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
+                    selectedGroup={this.props.selectedGroup}
                     showWidgetNames={this.props.showWidgetNames}
                     registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
                 />;
