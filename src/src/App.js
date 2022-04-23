@@ -889,10 +889,10 @@ class App extends GenericApp {
             widgets[selectedWidget].style.left = `${left + leftShift}px`;
             widgets[selectedWidget].style.top = `${top + topShift}px`;
             const newStyle = this.pxToPercent(widgets[selectedWidget].style);
-            if (widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[2] === 'px') {
+            if (widgets[selectedWidget].style?.top?.toString().match(/^([0-9.-]+)/)[2] === 'px') {
                 widgets[selectedWidget].style.top = newStyle.top;
             }
-            if (widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[2] === 'px') {
+            if (widgets[selectedWidget].style?.left?.toString().match(/^([0-9.-]+)/)[2] === 'px') {
                 widgets[selectedWidget].style.left = newStyle.left;
             }
         });
@@ -904,8 +904,8 @@ class App extends GenericApp {
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
             const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
-            const width = parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]) || boundingRect.width;
-            const height = parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]) || boundingRect.height;
+            const width = parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9.-]+)/)?.[1]) || boundingRect.width;
+            const height = parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9.-]+)/)?.[1]) || boundingRect.height;
             widgets[selectedWidget].style.width = `${width + widthShift}px`;
             widgets[selectedWidget].style.height = `${height + hieghtShift}px`;
         });
