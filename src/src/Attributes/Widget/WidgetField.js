@@ -358,9 +358,9 @@ const WidgetField = props => {
                     title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
                     onClick={() => {
                         if (unit !== '%') {
-                            props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues));
+                            props.onPxToPercent(props.selectedWidgets, field.name, newValues => change(newValues[0]));
                         } else {
-                            props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues));
+                            props.onPercentToPx(props.selectedWidgets, field.name, newValues => change(newValues[0]));
                         }
                     }}
                 >

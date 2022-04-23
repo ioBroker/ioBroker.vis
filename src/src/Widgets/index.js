@@ -85,6 +85,14 @@ const styles = theme => ({
 });
 
 const Widgets = props => {
+    const [filter, setFilter] = useState('');
+
+    const [accordionOpen, setAccordionOpen] = useState(
+        window.localStorage.getItem('widgets')
+            ? JSON.parse(window.localStorage.getItem('widgets'))
+            : {},
+    );
+
     if (!props.widgetsLoaded) {
         return null;
     }
@@ -95,17 +103,19 @@ const Widgets = props => {
         if (!widgetsList[widgetType.set]) {
             widgetsList[widgetType.set] = {};
         }
+        const title = window._(widgetType.title) || '';
+        if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
+            return;
+        }
         widgetsList[widgetType.set][widgetType.name] = widgetType;
     });
-
-    const [accordionOpen, setAccordionOpen] = useState(
-        window.localStorage.getItem('widgets')
-            ? JSON.parse(window.localStorage.getItem('widgets'))
-            : {},
-    );
-
-    const [filter, setFilter] = useState('');
-    const [type, setType] = useState('');
+    if (filter) {
+        Object.keys(widgetsList).forEach(widgetType => {
+            if (!Object.keys(widgetsList[widgetType]).length) {
+                delete widgetsList[widgetType];
+            }
+        });
+    }
 
     const allOpened = !Object.keys(widgetsList).find(group => !accordionOpen[group]);
     const allClosed = !Object.keys(widgetsList).find(group => accordionOpen[group]);
@@ -160,51 +170,12 @@ const Widgets = props => {
                 }}
             />
         </div>
-        <div>
-            <FormControl variant="standard" fullWidth>
-                <InputLabel
-                    shrink={false}
-                    classes={{
-                        root: props.classes.label,
-                        shrink: props.classes.labelShrink,
-                    }}
-                >
-                    {type.length ? ' ' : I18n.t('type')}
-                </InputLabel>
-                <div className={props.classes.selectClearContainer}>
-                    <span className={props.classes.selectClear}>
-                        <Select
-                            fullWidth
-                            variant="standard"
-                            value={type}
-                            onChange={e => setType(e.target.value)}
-                            classes={{
-                                root: props.classes.clearPadding,
-                                select: props.classes.fieldContent,
-                            }}
-                        >
-                            {selectItems.map(selectItem => <MenuItem
-                                value={selectItem.value}
-                                key={selectItem.value}
-                            >
-                                {I18n.t(selectItem.name)}
-                            </MenuItem>)}
-                        </Select>
-                    </span>
-                    {
-                        type.length ? <IconButton size="small" onClick={() => setType('')}>
-                            <ClearIcon />
-                        </IconButton> : null
-                    }
-                </div>
-            </FormControl>
-        </div>
         <div className={props.classes.widgets}>
             {
                 Object.keys(widgetsList).map((category, categoryKey) => <Accordion
                     key={categoryKey}
                     elevation={0}
-                    expanded={accordionOpen[category]}
+                    expanded={accordionOpen[category] || false}
                     onChange={(e, expanded) => {
                         const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
                         newAccordionOpen[category] = expanded;

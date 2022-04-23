@@ -876,11 +876,11 @@ class App extends GenericApp {
             return `${value}px`;
         }
         if (matches[2] === '%') {
-            this.onPxToPercent()
+            this.onPxToPercent();
         }
     }
 
-    moveWidgets = (leftShift, topShift) => {
+    moveWidgets = async (leftShift, topShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
@@ -888,6 +888,13 @@ class App extends GenericApp {
             const top = parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]);
             widgets[selectedWidget].style.left = `${left + leftShift}px`;
             widgets[selectedWidget].style.top = `${top + topShift}px`;
+            const newStyle = this.pxToPercent(widgets[selectedWidget].style);
+            if (widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[2] === 'px') {
+                widgets[selectedWidget].style.top = newStyle.top;
+            }
+            if (widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[2] === 'px') {
+                widgets[selectedWidget].style.left = newStyle.left;
+            }
         });
         this.changeProject(project);
     }
@@ -1132,16 +1139,23 @@ class App extends GenericApp {
 
     onPxToPercent = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
-            this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
+            return this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
         }
-        cb && cb(wids, attr, null); // cancel selection
+        // cb && cb(wids, attr, null); // cancel selection
+    }
+
+    pxToPercent = style => {
+        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].pxToPercent) {
+            return this.visEngineHandlers[this.state.selectedView].pxToPercent(style);
+        }
+        // cb && cb(wids, attr, null); // cancel selection
     }
 
     onPercentToPx = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
-            this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
+            return this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
         }
-        cb && cb(wids, attr, null); // cancel selection
+        // cb && cb(wids, attr, null); // cancel selection
     }
 
     registerCallback = (name, view, cb) => {

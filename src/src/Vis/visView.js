@@ -613,6 +613,27 @@ class VisView extends React.Component {
         };
     }
 
+    pxToPercent = style => {
+        const pRect = {};
+        pRect.left   = this.refView.current.clientLeft;
+        pRect.top    = this.refView.current.clientTop;
+        pRect.height = this.refView.current.clientHeight;
+        pRect.width  = this.refView.current.clientWidth;
+
+        const getNumber = string => string?.toString()?.match(/^([0-9]+)/)?.[1] || 0;
+
+        const newStyle = {};
+        newStyle.top    = (getNumber(style.top)  * 100) / pRect.height;
+        newStyle.left   = (getNumber(style.left) * 100) / pRect.width;
+        newStyle.width  = (getNumber(style.width)  / pRect.width)  * 100;
+        newStyle.height = (getNumber(style.height) / pRect.height) * 100;
+        newStyle.top    = `${Math.round(newStyle.top * 100) / 100}%`;
+        newStyle.left   = `${Math.round(newStyle.left * 100) / 100}%`;
+        newStyle.width  = `${Math.round(newStyle.width * 100) / 100}%`;
+        newStyle.height = `${Math.round(newStyle.height * 100) / 100}%`;
+        return newStyle;
+    }
+
     onPxToPercent = (wids, attr, cb) => {
         const pRect = {};
         pRect.left   = this.refView.current.clientLeft;
@@ -644,6 +665,8 @@ class VisView extends React.Component {
         });
 
         cb && cb(results);
+
+        return results;
     }
 
     onPercentToPx = (wids, attr, cb) => {
@@ -661,6 +684,8 @@ class VisView extends React.Component {
         });
 
         cb && cb(results);
+
+        return results;
     }
 
     onKeyPress = e => {
@@ -674,12 +699,14 @@ class VisView extends React.Component {
                     this.regsiterDone = true;
                     this.props.registerEditorCallback('onStealStyle', this.props.view, this.onStealStyle);
                     this.props.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
+                    this.props.registerEditorCallback('pxToPercent', this.props.view, this.pxToPercent);
                     this.props.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
                 }
             } else {
                 this.regsiterDone = false;
                 this.props.registerEditorCallback('onStealStyle', this.props.view);
                 this.props.registerEditorCallback('onPxToPercent', this.props.view);
+                this.props.registerEditorCallback('pxToPercent', this.props.view);
                 this.props.registerEditorCallback('onPercentToPx', this.props.view);
             }
         }
