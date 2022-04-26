@@ -36,6 +36,7 @@ import {
 } from './Utils';
 import VisContextMenu from './Vis/VisContextMenu';
 import IODialog from './Components/IODialog';
+import { parseDimension } from './Vis/visUtils';
 
 const styles = theme => ({
     block: {
@@ -602,10 +603,11 @@ class App extends GenericApp {
         Object.keys(this.state.widgetsClipboard.widgets).forEach(clipboardWidgetId => {
             const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
             if (this.state.selectedView === this.state.widgetsClipboard.view) {
-                const left = parseInt(newWidget.style?.left?.toString().match(/^([0-9]+)/)[1]);
-                const top = parseInt(newWidget.style?.top?.toString().match(/^([0-9]+)/)[1]);
-                newWidget.style.left = `${left + 10}px`;
-                newWidget.style.top = `${top + 10}px`;
+                const boundingRect = this.getWidgetRelativeRect(clipboardWidgetId);
+                newWidget.style = this.pxToPercent(newWidget.style, {
+                    left: boundingRect.left + 10,
+                    top: boundingRect.top + 10,
+                });
             }
             const newKey = this.getNewWidgetId();
             widgets[newKey] = newWidget;
@@ -637,10 +639,11 @@ class App extends GenericApp {
         const newKeys = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const newWidget = JSON.parse(JSON.stringify(widgets[selectedWidget]));
-            const left = parseInt(newWidget.style?.left?.toString().match(/^([0-9]+)/)[1]);
-            const top = parseInt(newWidget.style?.top?.toString().match(/^([0-9]+)/)[1]);
-            newWidget.style.left = `${left + 10}px`;
-            newWidget.style.top = `${top + 10}px`;
+            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
+            newWidget.style = this.pxToPercent(newWidget.style, {
+                left: boundingRect.left + 10,
+                top: boundingRect.top + 10,
+            });
             const newKey = this.getNewWidgetId();
             widgets[newKey] = newWidget;
             newKeys.push(newKey);
@@ -662,10 +665,10 @@ class App extends GenericApp {
             selectedWidgets.push(widgets[selectedWidget]);
             const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
             coordinates.push({
-                left: parseInt(widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[1]),
-                top: parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]),
-                width: parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9]+)/)[1]) || boundingRect.width,
-                height: parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9]+)/)[1]) || boundingRect.height,
+                left: parseDimension(widgets[selectedWidget].style?.left).value,
+                top: parseDimension(widgets[selectedWidget].style?.top).value,
+                width: parseDimension(widgets[selectedWidget].style?.width).value || boundingRect.width,
+                height: parseDimension(widgets[selectedWidget].style?.height).value || boundingRect.height,
             });
         });
         if (type === 'left') {
@@ -843,7 +846,7 @@ class App extends GenericApp {
         let minZ = 0;
         let maxZ = 0;
         Object.keys(widgets).forEach(widget => {
-            const currentZ = parseInt(widgets[widget].style['z-index']?.toString().match(/^(-?[0-9]+)/)[1]) || 0;
+            const currentZ = parseInt(widgets[widget].style['z-index'] || 0);
             if (minZ > currentZ || minZ === 0) {
                 minZ = currentZ;
             }
@@ -852,7 +855,7 @@ class App extends GenericApp {
             }
         });
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const currentZ = parseInt(widgets[selectedWidget].style['z-index']?.toString().match(/^(-?[0-9]+)/)[1]) || 0;
+            const currentZ = parseInt(widgets[selectedWidget].style['z-index'] || 0);
             if (type === 'front' && currentZ < maxZ) {
                 widgets[selectedWidget].style['z-index'] = maxZ + 1;
                 if (widgets[selectedWidget].style['z-index'] > 1599) {
@@ -869,47 +872,42 @@ class App extends GenericApp {
         this.changeProject(project);
     }
 
-    widgetFieldToDimension(wid, field, value) {
-        const widgets = this.state.project[this.state.selectedView].widgets;
-        const matches = widgets[wid].style[field]?.toString().match(/^([-.0-9]+)(.*)$/);
-        if (!matches) {
-            return `${value}px`;
-        }
-        if (matches[2] === '%') {
-            this.onPxToPercent();
-        }
-    }
-
     moveWidgets = async (leftShift, topShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const left = parseInt(widgets[selectedWidget].style?.left?.toString().match(/^([0-9]+)/)[1]);
-            const top = parseInt(widgets[selectedWidget].style?.top?.toString().match(/^([0-9]+)/)[1]);
-            widgets[selectedWidget].style.left = `${left + leftShift}px`;
-            widgets[selectedWidget].style.top = `${top + topShift}px`;
-            const newStyle = this.pxToPercent(widgets[selectedWidget].style);
-            if (widgets[selectedWidget].style?.top?.toString().match(/^([0-9.-]+)/)[2] === 'px') {
-                widgets[selectedWidget].style.top = newStyle.top;
-            }
-            if (widgets[selectedWidget].style?.left?.toString().match(/^([0-9.-]+)/)[2] === 'px') {
-                widgets[selectedWidget].style.left = newStyle.left;
-            }
+            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
+            widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
+                left: boundingRect.left + leftShift,
+                top: boundingRect.top + topShift,
+            });
         });
         this.changeProject(project);
     }
 
-    resizeWidgets = (widthShift, hieghtShift) => {
+    resizeWidgets = (widthShift, heightShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
             const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
-            const width = parseInt(widgets[selectedWidget].style?.width?.toString().match(/^([0-9.-]+)/)?.[1]) || boundingRect.width;
-            const height = parseInt(widgets[selectedWidget].style?.height?.toString().match(/^([0-9.-]+)/)?.[1]) || boundingRect.height;
-            widgets[selectedWidget].style.width = `${width + widthShift}px`;
-            widgets[selectedWidget].style.height = `${height + hieghtShift}px`;
+            widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
+                width: boundingRect.width + widthShift,
+                height: boundingRect.height + heightShift,
+            });
         });
         this.changeProject(project);
+    }
+
+    getWidgetRelativeRect = widget => {
+        const widgetBoundingRect = window.document.getElementById(`${widget}`).getBoundingClientRect();
+        const viewBoundingRect = window.document.getElementById('vis-react-container').getBoundingClientRect();
+        const relativeRect = {
+            left: widgetBoundingRect.left - viewBoundingRect.left,
+            top: widgetBoundingRect.top - viewBoundingRect.top,
+            width: widgetBoundingRect.width,
+            height: widgetBoundingRect.height,
+        };
+        return relativeRect;
     }
 
     groupWidgets = () => {
@@ -935,10 +933,9 @@ class App extends GenericApp {
         const widgets = project[this.state.selectedView].widgets;
         const group = widgets[this.state.selectedWidgets[0]];
         group.data.members.forEach(member => {
-            const widgetBoundingRect = window.document.getElementById(`${member}`).getBoundingClientRect();
-            const viewBoundingRect = window.document.getElementById('vis-react-container').getBoundingClientRect();
-            widgets[member].style.left = `${widgetBoundingRect.left - viewBoundingRect.left}px`;
-            widgets[member].style.top = `${widgetBoundingRect.top - viewBoundingRect.top}px`;
+            const widgetBoundingRect = this.getWidgetRelativeRect(member);
+            widgets[member].style.left = `${widgetBoundingRect.left}px`;
+            widgets[member].style.top = `${widgetBoundingRect.top}px`;
             widgets[member].style.width = `${widgetBoundingRect.width}px`;
             widgets[member].style.height = `${widgetBoundingRect.height}px`;
             delete widgets[member].grouped;
@@ -1101,7 +1098,10 @@ class App extends GenericApp {
     onWidgetsChanged = (data, view, viewSettings) => {
         this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
         if (data) {
-            data.forEach(item => Object.assign(this.tempProject[item.view].widgets[item.wid].style, item.style));
+            data.forEach(item => {
+                const percentStyle = this.pxToPercent(this.tempProject[item.view].widgets[item.wid].style, item.style);
+                Object.assign(this.tempProject[item.view].widgets[item.wid].style, percentStyle);
+            });
         }
 
         // settings of view are changed
@@ -1144,9 +1144,9 @@ class App extends GenericApp {
         // cb && cb(wids, attr, null); // cancel selection
     }
 
-    pxToPercent = style => {
+    pxToPercent = (oldStyle, newStyle) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].pxToPercent) {
-            return this.visEngineHandlers[this.state.selectedView].pxToPercent(style);
+            return this.visEngineHandlers[this.state.selectedView].pxToPercent(oldStyle, newStyle);
         }
         // cb && cb(wids, attr, null); // cancel selection
     }
@@ -1246,6 +1246,8 @@ class App extends GenericApp {
             selectedGroup={this.state.selectedGroup}
             onWidgetsChanged={this.onWidgetsChanged}
             projectName={this.state.projectName}
+            lockDragging={this.state.lockDragging}
+            disableInteraction={this.state.disableInteraction}
             onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
             registerEditorCallback={this.state.runtime ? null : this.registerCallback}
         />;

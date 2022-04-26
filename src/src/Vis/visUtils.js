@@ -715,6 +715,20 @@ function removeClass(actualClass, toRemove) {
     return '';
 }
 
+function parseDimension(field) {
+    const result = { value: 0, dimension: 'px' };
+    if (!field) {
+        return result;
+    }
+    const match = field.toString().match(/^([0-9-.]+)([a-z%]*)$/);
+    if (!match) {
+        return result;
+    }
+    result.value = parseInt(match[1]);
+    result.dimension = match[2] || 'px';
+    return result;
+}
+
 module.exports = {
     getUsedObjectIDs,
     extractBinding,
@@ -722,6 +736,7 @@ module.exports = {
     replaceGroupAttr,
     getUsedObjectIDsInWidget,
     getUrlParameter,
+    parseDimension,
     addClass,
     removeClass,
 };

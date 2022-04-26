@@ -37,3 +37,4 @@ admin/i18n/flat.txt
 /src/package-lock.json
 /src/node_modules
 src/build
+/.vscode

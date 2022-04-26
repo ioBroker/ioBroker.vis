@@ -4,8 +4,8 @@ import {
 import PropTypes from 'prop-types';
 
 import {
-    Autocomplete, Box, Button, Checkbox, Input, ListItemText,
-    ListSubheader, MenuItem, Select, Slider, TextField,
+    Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
+    ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, Typography,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -16,6 +16,7 @@ import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
@@ -247,6 +248,10 @@ const WidgetField = props => {
     if (!window.collectClassesValue) {
         window.collectClassesValue = collectClasses();
     }
+
+    const textRef = useRef();
+    const [textDialogFocused, setTextDialogFocused] = useState(false);
+    const [textDialogEnabled, setTextDialogEnabled] = useState(true);
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
@@ -735,44 +740,72 @@ const WidgetField = props => {
     }
 
     if (!field.type || field.type === 'number' || field.type === 'password') {
-        return <TextField
-            variant="standard"
-            fullWidth
-            placeholder={isDifferent ? t('different') : null}
-            InputProps={{
-                classes: {
-                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                },
-            }}
-            value={value}
-            onChange={e => {
-                if (field.type === 'number') {
-                    const _value = parseFloat(e.target.value);
-                    if (field.min !== undefined) {
-                        if (_value < field.min) {
-                            change(field.min);
-                            return;
+        return <>
+            <TextField
+                variant="standard"
+                fullWidth
+                ref={textRef}
+                onFocus={() => setTextDialogFocused(true)}
+                onBlur={() => setTextDialogFocused(false)}
+                placeholder={isDifferent ? t('different') : null}
+                InputProps={{
+                    classes: {
+                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
+                    },
+                }}
+                value={value}
+                onChange={e => {
+                    if (field.type === 'number') {
+                        const _value = parseFloat(e.target.value);
+                        if (field.min !== undefined) {
+                            if (_value < field.min) {
+                                change(field.min);
+                                return;
+                            }
                         }
-                    }
-                    if (field.max !== undefined) {
-                        if (_value > field.max) {
-                            change(field.max);
-                            return;
+                        if (field.max !== undefined) {
+                            if (_value > field.max) {
+                                change(field.max);
+                                return;
+                            }
                         }
+                        change(_value);
+                    } else {
+                        change(e.target.value);
                     }
-                    change(_value);
-                } else {
-                    change(e.target.value);
-                }
-            }}
-            type={field.type ? field.type : 'text'}
-            // eslint-disable-next-line react/jsx-no-duplicate-props
-            inputProps={{
-                min: field.min,
-                max: field.max,
-                step: field.step,
-            }}
-        />;
+                }}
+                type={field.type ? field.type : 'text'}
+                // eslint-disable-next-line react/jsx-no-duplicate-props
+                inputProps={{
+                    min: field.min,
+                    max: field.max,
+                    step: field.step,
+                }}
+            />
+            <Popper
+                open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
+                anchorEl={textRef.current}
+                placement="bottom"
+                transition
+            >
+                {({ TransitionProps }) => (
+                    <Fade {...TransitionProps} timeout={350}>
+                        <Paper>
+                            <Button
+                                style={{ textTransform: 'none' }}
+                                onClick={() => change(value.toString().slice(window.location.origin.length))}
+                            >
+                                {I18n.t('Replace to ')}
+                                {value.toString().slice(window.location.origin.length)}
+                            </Button>
+                            <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
+                                <ClearIcon fontSize="small" />
+                            </IconButton>
+                        </Paper>
+                    </Fade>
+                )}
+            </Popper>
+        </>;
     }
 
     return <>

@@ -1228,6 +1228,8 @@ ${this.scripts}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                     selectedGroup={this.props.selectedGroup}
                     showWidgetNames={this.props.showWidgetNames}
+                    lockDragging={this.props.lockDragging}
+                    disableInteraction={this.props.disableInteraction}
                     registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
                 />;
             }

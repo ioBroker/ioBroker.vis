@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ContextMenu } from 'mui-nested-menu';
 import VisCanWidget from './visCanWidget';
-import { addClass } from './visUtils';
+import { addClass, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
 import VisContextMenu from './VisContextMenu';
 
@@ -444,6 +444,14 @@ class VisView extends React.Component {
             return;
         }
 
+        if (this.props.disableInteraction || this.props.lockDragging ||
+            this.props.selectedWidgets
+                .map(selectedWidget => this.props.views[this.props.view].widgets[selectedWidget])
+                .find(widget => widget.data.locked)
+        ) {
+            return;
+        }
+
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -613,25 +621,31 @@ class VisView extends React.Component {
         };
     }
 
-    pxToPercent = style => {
+    pxToPercent = (oldStyle, newStyle) => {
         const pRect = {};
         pRect.left   = this.refView.current.clientLeft;
         pRect.top    = this.refView.current.clientTop;
         pRect.height = this.refView.current.clientHeight;
         pRect.width  = this.refView.current.clientWidth;
 
-        const getNumber = string => string?.toString()?.match(/^([0-9]+)/)?.[1] || 0;
-
-        const newStyle = {};
-        newStyle.top    = (getNumber(style.top)  * 100) / pRect.height;
-        newStyle.left   = (getNumber(style.left) * 100) / pRect.width;
-        newStyle.width  = (getNumber(style.width)  / pRect.width)  * 100;
-        newStyle.height = (getNumber(style.height) / pRect.height) * 100;
-        newStyle.top    = `${Math.round(newStyle.top * 100) / 100}%`;
-        newStyle.left   = `${Math.round(newStyle.left * 100) / 100}%`;
-        newStyle.width  = `${Math.round(newStyle.width * 100) / 100}%`;
-        newStyle.height = `${Math.round(newStyle.height * 100) / 100}%`;
-        return newStyle;
+        const resultStyle = { ...newStyle };
+        if (newStyle.top && parseDimension(oldStyle.top).dimension === '%' && parseDimension(newStyle.top).dimension !== '%') {
+            resultStyle.top    = (parseDimension(newStyle.top).value  * 100) / pRect.height;
+            resultStyle.top    = `${Math.round(resultStyle.top * 100) / 100}%`;
+        }
+        if (newStyle.left && parseDimension(oldStyle.left).dimension === '%' && parseDimension(newStyle.left).dimension !== '%') {
+            resultStyle.left   = (parseDimension(newStyle.left).value * 100) / pRect.width;
+            resultStyle.left   = `${Math.round(resultStyle.left * 100) / 100}%`;
+        }
+        if (newStyle.width && parseDimension(oldStyle.width).dimension === '%' && parseDimension(newStyle.width).dimension !== '%') {
+            resultStyle.width  = (parseDimension(newStyle.width).value  / pRect.width)  * 100;
+            resultStyle.width  = `${Math.round(resultStyle.width * 100) / 100}%`;
+        }
+        if (newStyle.height && parseDimension(oldStyle.height).dimension === '%' && parseDimension(newStyle.height).dimension !== '%') {
+            resultStyle.height = (parseDimension(newStyle.height).value / pRect.height) * 100;
+            resultStyle.height = `${Math.round(resultStyle.height * 100) / 100}%`;
+        }
+        return { ...oldStyle, ...resultStyle };
     }
 
     onPxToPercent = (wids, attr, cb) => {
