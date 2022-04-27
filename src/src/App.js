@@ -8,6 +8,8 @@ import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import Loader from '@iobroker/adapter-react-v5/Components/Loader';
 import {
     IconButton,
+    Paper,
+    Popper,
     Tab, Tabs, Tooltip,
 } from '@mui/material';
 
@@ -569,29 +571,31 @@ class App extends GenericApp {
         });
         setTimeout(async () => {
             const clipboardImages = [];
-            let canvas;
-            try {
-                canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[0])));
-            } catch (e) {
+            for (const k in this.state.selectedWidgets) {
+                let canvas;
+                try {
+                    canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
+                } catch (e) {
                 //
-            }
-            if (canvas) {
-                const newCanvas = window.document.createElement('canvas');
-                newCanvas.height = 200;
-                newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
-                if (newCanvas.width > 200) {
-                    newCanvas.width = 200;
-                    newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
                 }
-                const ctx = newCanvas.getContext('2d');
-                ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-                ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-                clipboardImages.push(newCanvas.toDataURL(0));
-                await this.setStateAsync({
-                    clipboardImages,
-                });
-                setTimeout(() => this.setState({ clipboardImages: [] }), 1000);
+                if (canvas) {
+                    const newCanvas = window.document.createElement('canvas');
+                    newCanvas.height = 80;
+                    newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
+                    if (newCanvas.width > 80) {
+                        newCanvas.width = 80;
+                        newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
+                    }
+                    const ctx = newCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                    ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+                    clipboardImages.push(newCanvas.toDataURL(0));
+                }
             }
+            await this.setStateAsync({
+                clipboardImages,
+            });
+            setTimeout(() => this.setState({ clipboardImages: [] }), 4000);
         }, 100);
     }
 
@@ -1292,7 +1296,16 @@ class App extends GenericApp {
 
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
-                {this.state.clipboardImages.map(clipboardImage => <img width="200" src={clipboardImage} alt="" />)}
+                <Popper open={this.state.clipboardImages.length} style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}>
+                    <Paper style={{ display: 'inline-block', pointerEvents: 'initial' }}>
+                        {this.state.clipboardImages.map((clipboardImage, key) => <img
+                            style={{ padding: 4 }}
+                            key={key}
+                            src={clipboardImage}
+                            alt=""
+                        />)}
+                    </Paper>
+                </Popper>
                 <div className={this.props.classes.app}>
                     <Toolbar
                         classes={{}}
