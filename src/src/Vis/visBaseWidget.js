@@ -844,6 +844,10 @@ class VisBaseWidget extends React.Component {
         };
 
         const rxWidget = this.renderWidgetBody(props);
+        if (this.props.id === this.props.selectedGroup) {
+            style.top = 0;
+            style.left = 0;
+        }
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;

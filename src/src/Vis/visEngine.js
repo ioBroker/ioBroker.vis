@@ -316,7 +316,9 @@ class VisEngine extends React.Component {
     changeFilter(view, filter, showEffect, showDuration, hideEffect, hideDuration) {
         view = view || this.props.activeView;
         if (this.refViews[view]?.onCommand) {
-            this.refViews[view]?.onCommand('changeFilter', { filter, showEffect, showDuration, hideEffect, hideDuration });
+            this.refViews[view]?.onCommand('changeFilter', {
+                filter, showEffect, showDuration, hideEffect, hideDuration,
+            });
         }
     }
 

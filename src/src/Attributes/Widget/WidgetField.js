@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
-    ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, Typography,
+    ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';

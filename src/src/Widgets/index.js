@@ -4,11 +4,7 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
-    FormControl,
     IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
     TextField,
     Tooltip,
     Typography,
@@ -24,18 +20,6 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import Widget from './Widget';
 import { getWidgetTypes } from '../Utils';
-
-const selectItems = [
-    { value: 'all', name: '*' },
-    { value: 'basic', name: 'basic' },
-    { value: 'echarts', name: 'echarts' },
-    { value: 'eventlist', name: 'eventlist' },
-    { value: 'info', name: 'info' },
-    { value: 'jqplot', name: 'jqplot' },
-    { value: 'jqui', name: 'jqui' },
-    { value: 'swipe', name: 'swipe' },
-    { value: 'tabs', name: 'tabs' },
-];
 
 const styles = theme => ({
     widgets: { textAlign: 'center' },

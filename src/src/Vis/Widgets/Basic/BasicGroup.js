@@ -49,6 +49,9 @@ class BasicGroup extends VisRxWidget {
                 if (!_widget) {
                     return null;
                 }
+                if (this.props.selectedGroup) {
+                    return null;
+                }
 
                 // use same container for relative and absolute widgets (props.refService)
                 const { rxWidget } = this.props.VisView.getOneWidget(this.props, i, id, _widget, this.props.registerRef, props.refService, props.refService);

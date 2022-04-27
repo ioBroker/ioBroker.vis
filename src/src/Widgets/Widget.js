@@ -89,8 +89,6 @@ const Widget = props => {
                     {result}
                 </div>,
             }),
-            end: (item, monitor) => {
-            },
             collect: monitor => ({
                 isDragging: monitor.isDragging(),
                 handlerId: monitor.getHandlerId(),

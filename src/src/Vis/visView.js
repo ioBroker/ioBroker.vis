@@ -15,11 +15,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ContextMenu } from 'mui-nested-menu';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
-import VisContextMenu from './VisContextMenu';
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog

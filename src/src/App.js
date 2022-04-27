@@ -90,7 +90,7 @@ const ViewDrop = props => {
             console.log(item);
             props.addWidget(item.widgetType.name, monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x, monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y);
         },
-        canDrop: (item, monitor) => props.editMode,
+        canDrop: () => props.editMode,
         collect: monitor => ({
             isOver: monitor.isOver(),
             CanDrop: monitor.canDrop(),
@@ -573,15 +573,15 @@ class App extends GenericApp {
             try {
                 canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[0])));
             } catch (e) {
-
+                //
             }
             if (canvas) {
                 const newCanvas = window.document.createElement('canvas');
                 newCanvas.height = 200;
-                newCanvas.width = Math.ceil(canvas.width / canvas.height * newCanvas.height);
+                newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
                 if (newCanvas.width > 200) {
                     newCanvas.width = 200;
-                    newCanvas.height = Math.ceil(canvas.height / canvas.width * newCanvas.width);
+                    newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
                 }
                 const ctx = newCanvas.getContext('2d');
                 ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
@@ -904,6 +904,8 @@ class App extends GenericApp {
         const relativeRect = {
             left: widgetBoundingRect.left - viewBoundingRect.left,
             top: widgetBoundingRect.top - viewBoundingRect.top,
+            right: widgetBoundingRect.right - viewBoundingRect.left,
+            bottom: widgetBoundingRect.bottom - viewBoundingRect.top,
             width: widgetBoundingRect.width,
             height: widgetBoundingRect.height,
         };
@@ -919,13 +921,43 @@ class App extends GenericApp {
             data: {
                 members: this.state.selectedWidgets,
             },
+            style: {
+
+            },
         };
         const groupId = this.getNewGroupId();
+        let left = 0;
+        let top = 0;
+        let right = 0;
+        let bottom = 0;
         this.state.selectedWidgets.forEach(selectedWidget => {
             widgets[selectedWidget].grouped = true;
             widgets[selectedWidget].groupid = groupId;
+            const widgetBoundingRect = this.getWidgetRelativeRect(selectedWidget);
+            if (!left || widgetBoundingRect.left < left) {
+                left = widgetBoundingRect.left;
+            }
+            if (!top || widgetBoundingRect.top < top) {
+                top = widgetBoundingRect.top;
+            }
+            if (!right || widgetBoundingRect.right > right) {
+                right = widgetBoundingRect.right;
+            }
+            if (!bottom || widgetBoundingRect.bottom > bottom) {
+                bottom = widgetBoundingRect.bottom;
+            }
         });
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            const widgetBoundingRect = this.getWidgetRelativeRect(selectedWidget);
+            widgets[selectedWidget].style.left = widgetBoundingRect.left - left;
+            widgets[selectedWidget].style.top = widgetBoundingRect.top - top;
+        });
+        group.style.left = `${left}px`;
+        group.style.top = `${top}px`;
+        group.style.width = `${right - left}px`;
+        group.style.height = `${bottom - top}px`;
         widgets[groupId] = group;
+        this.changeProject(project);
     }
 
     ungroupWidgets = () => {
@@ -1142,6 +1174,7 @@ class App extends GenericApp {
             return this.visEngineHandlers[this.state.selectedView].onPxToPercent(wids, attr, cb);
         }
         // cb && cb(wids, attr, null); // cancel selection
+        return null;
     }
 
     pxToPercent = (oldStyle, newStyle) => {
@@ -1149,6 +1182,7 @@ class App extends GenericApp {
             return this.visEngineHandlers[this.state.selectedView].pxToPercent(oldStyle, newStyle);
         }
         // cb && cb(wids, attr, null); // cancel selection
+        return null;
     }
 
     onPercentToPx = (wids, attr, cb) => {
