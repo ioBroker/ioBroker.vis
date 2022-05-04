@@ -11,7 +11,6 @@ import {
     MenuItem,
     Select,
     TextField,
-    ToggleButton,
     Tooltip,
 } from '@mui/material';
 
@@ -138,6 +137,7 @@ const getItem = (item, key, props, full) => {
                 >
                     <div><item.Icon fontSize={item.size ? item.size : 'small'} /></div>
                     <div>{I18n.t(item.name)}</div>
+                    {item.subName ? <div style={{ fontSize: 10, opacity: 0.6 }}>{item.subName}</div> : null}
                 </ButtonBase>
             </div>
             : <Tooltip key={key} title={item.name}>

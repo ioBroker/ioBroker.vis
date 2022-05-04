@@ -70,8 +70,8 @@ class VisBaseWidget extends React.Component {
             this.stealCursor = this.refService.current.style.cursor || 'nocursor';
             this.refService.current.style.cursor = 'crosshair';
             this.refService.current.className = addClass(this.refService.current.className, 'vis-editmode-steal-style');
-            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-            resizers.forEach(item => item.style.display = 'none');
+            const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer');
+            resizers?.forEach(item => item.style.display = 'none');
             return true;
         }
 
@@ -81,13 +81,13 @@ class VisBaseWidget extends React.Component {
             }
             this.stealCursor = null;
             this.refService.current.className = removeClass(this.refService.current.className, 'vis-editmode-steal-style');
-            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-            resizers.forEach(item => item.style.display = '');
+            const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer');
+            resizers?.forEach(item => item.style.display = '');
             return true;
         }
 
         if (command === 'startMove') {
-            const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
+            const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
             if (overlay) {
                 if (this.state.selected) {
                     overlay.className = removeClass(overlay.className, 'vis-editmode-selected');
@@ -99,7 +99,7 @@ class VisBaseWidget extends React.Component {
         }
 
         if (command === 'stopMove') {
-            const overlay = this.refService.current.querySelector('.vis-editmode-overlay');
+            const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
             if (overlay) {
                 if (this.state.selected) {
                     overlay.className = addClass(overlay.className, 'vis-editmode-selected');

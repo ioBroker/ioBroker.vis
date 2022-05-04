@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { useRef, useEffect } from 'react';
+
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +14,12 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import IODialog from '../../Components/IODialog';
 
 const ViewDialog = props => {
+    const inputField = useRef(null);
+
+    useEffect(() => {
+        inputField.current?.focus();
+    }, []);
+
     const deleteView = async () => {
         const view = props.dialogView || props.selectedView;
         const project = JSON.parse(JSON.stringify(props.project));
@@ -23,7 +31,7 @@ const ViewDialog = props => {
 
     const addView = async () => {
         const project = JSON.parse(JSON.stringify(props.project));
-        const newProject = {
+        project[props.dialogName] = {
             name: props.dialogName,
             parentId: props.dialogParentId,
             settings: {
@@ -32,7 +40,6 @@ const ViewDialog = props => {
             widgets: {},
             activeWidgets: {},
         };
-        project[props.dialogName] = newProject;
         await props.changeProject(project);
         await props.changeView(props.dialogName);
         props.setDialog(null); // close dialog
@@ -116,6 +123,7 @@ const ViewDialog = props => {
     >
         {props.dialog === 'delete' ? null
             : <TextField
+                ref={inputField}
                 variant="standard"
                 label={dialogInputs[props.dialog]}
                 fullWidth

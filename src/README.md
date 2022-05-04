@@ -1,30 +1,30 @@
 ## Todo
 
 ### Palette
-- Show widgets in palette by group
-- Allow for one widget to show the detailed information with screenshot (i18n): many texts (HTML) and one picture (on none)
-- Add widget from palette
-- Close all groups / open all groups
+- ✅ Show widgets in palette by group
+- ✅ Allow for one widget to show the detailed information with screenshot (i18n): many texts (HTML) and one picture (on none)
+- ✅ Add widget from palette
+- ✅ Close all groups / open all groups
 - Take in count new react widget types => onLoaded([])
 
 ### View
-- Delete widget
-- Copy/paste/cut widget (With preview)
-- Move with keyboard (with shift and without)
-- Show rulers lines by moving of widget (red lines)
-- Show screen resolution
-- Grid and snap to grid
+- Delete widget (With suppress dialog)
+- Copy/paste/cut widget (With preview) - paste does not work
+- Move with keyboard (with shift and without) - somehow does not work
+- Show rulers lines by moving of widget (red lines) - ?
+- ✅ Show screen resolution
+- Grid and snap to grid - if enabled, the background disappeared
 - Align buttons in toolbar
-- Copy/paste/Cut buttons in toolbar
-- Export/Import widget
-- Rename button near Widget selector to "clone widgets" instead of copy widget
-- Lock/Unlock widget
-- Context menu
+- ✅ Copy/paste/Cut buttons in toolbar
+- Export/Import widget - preselect text or make it empty
+- ✅ Rename button near Widget selector to "clone widgets" instead of copy widget
+- Lock/Unlock widget - does not work. Locked widget could not be selected
+- Context menu - collect all widgets under cursor and show them in context menu
 - Bring to front / Send back (Max z-index is 1199)
-- Undo!!/Redo
+- ✅ Undo!!/Redo
 - Ctrl+A / Esc(Deselect all) / ...
-- If dimension is in % so after resize and move it should stay in %
-- Ask about not saved file (because of 1 sec delay)
+- ✅ If dimension is in % so after resize and move it should stay in %
+- ✅ Ask about not saved file (because of 1 sec delay)
 
 ## groups edit
 

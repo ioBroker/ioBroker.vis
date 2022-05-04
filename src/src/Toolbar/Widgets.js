@@ -113,7 +113,8 @@ const Widgets = props => {
             {
                 type: 'icon-button',
                 Icon: UndoIcon,
-                name: `Undo (${props.historyCursor + 1} / ${props.history.length}`,
+                name: 'Undo',
+                subName: `(${props.historyCursor + 1} / ${props.history.length})`,
                 onClick: props.undo,
                 disabled: !props.editMode || props.historyCursor === 0,
             },
@@ -126,6 +127,7 @@ const Widgets = props => {
             },
 
             { type: 'divider' },
+
             [
                 [
                     {
