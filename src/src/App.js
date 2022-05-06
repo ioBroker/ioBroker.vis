@@ -667,7 +667,7 @@ class App extends GenericApp {
         const selectedWidgets = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             selectedWidgets.push(widgets[selectedWidget]);
-            const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+            const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
             coordinates.push({
                 left: parseDimension(widgets[selectedWidget].style?.left).value,
                 top: parseDimension(widgets[selectedWidget].style?.top).value,
@@ -720,7 +720,7 @@ class App extends GenericApp {
             let contSize = 0;
             let between;
             this.state.selectedWidgets.forEach(selectedWidget => {
-                const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
                 const left = boundingRect.left;
                 const right = boundingRect.right;
                 contSize += boundingRect.width;
@@ -743,13 +743,13 @@ class App extends GenericApp {
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             });
             const first = data.shift();
-            const boundingRect = window.document.getElementById(`rx_${first.wid}`).getBoundingClientRect();
+            const boundingRect = window.document.getElementById(first.wid).getBoundingClientRect();
             let left  = boundingRect.left;
 
             data.forEach(element => {
                 left += between;
                 widgets[element.wid].style.left = `${left}px`;
-                const boundingRect = window.document.getElementById(`rx_${element.wid}`).getBoundingClientRect();
+                const boundingRect = window.document.getElementById(element.wid).getBoundingClientRect();
                 left += boundingRect.width;
             });
         } else if (type === 'vertical-equal') {
@@ -760,7 +760,7 @@ class App extends GenericApp {
             let between;
 
             this.state.selectedWidgets.forEach(selectedWidget => {
-                const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
                 const top = boundingRect.top;
                 const bottom = boundingRect.bottom;
                 contSize += boundingRect.height;
@@ -783,13 +783,13 @@ class App extends GenericApp {
                 return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
             });
             const first = data.shift();
-            const boundingRect = window.document.getElementById(`rx_${first.wid}`).getBoundingClientRect();
+            const boundingRect = window.document.getElementById(first.wid).getBoundingClientRect();
             let top  = first.top + boundingRect.height;
 
             data.forEach(element => {
                 top += between;
                 widgets[element.wid].style.top = `${top}px`;
-                const boundingRect = window.document.getElementById(`rx_${element.wid}`).getBoundingClientRect();
+                const boundingRect = window.document.getElementById(element.wid).getBoundingClientRect();
                 top += boundingRect.height;
             });
         } else if (type === 'width') {
@@ -801,7 +801,7 @@ class App extends GenericApp {
             }
             if (!alignValues.length) {
                 this.state.selectedWidgets.forEach(selectedWidget => {
-                    const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                    const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
                     const w = boundingRect.width;
                     if (alignValues.indexOf(w) === -1) { alignValues.push(w); }
                 });
@@ -825,7 +825,7 @@ class App extends GenericApp {
             }
             if (!alignValues.length) {
                 this.state.selectedWidgets.forEach(selectedWidget => {
-                    const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+                    const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
                     const h = boundingRect.height;
                     if (alignValues.indexOf(h) === -1) { alignValues.push(h); }
                 });
@@ -893,7 +893,7 @@ class App extends GenericApp {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const boundingRect = window.document.getElementById(`rx_${selectedWidget}`).getBoundingClientRect();
+            const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
             widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
                 width: boundingRect.width + widthShift,
                 height: boundingRect.height + heightShift,
