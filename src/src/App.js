@@ -5,6 +5,7 @@ import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import withStyles from '@mui/styles/withStyles';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
+import ConfirmDialog from '@iobroker/adapter-react-v5/Dialogs/Confirm';
 import Loader from '@iobroker/adapter-react-v5/Components/Loader';
 import {
     IconButton,
@@ -13,7 +14,7 @@ import {
     Tab, Tabs, Tooltip,
 } from '@mui/material';
 
-import html2canvas from 'html2canvas';
+// import html2canvas from 'html2canvas';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -37,8 +38,6 @@ import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
 import VisContextMenu from './Vis/VisContextMenu';
-import IODialog from './Components/IODialog';
-import { parseDimension } from './Vis/visUtils';
 
 const styles = theme => ({
     block: {
@@ -236,7 +235,8 @@ class App extends GenericApp {
             }
             if (e.ctrlKey && e.key === 'a') {
                 e.preventDefault();
-                this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets));
+                this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets)
+                    .filter(widget => !this.state.project[this.state.selectedView].widgets[widget].data.locked));
             }
             if (e.key === 'Escape') {
                 e.preventDefault();
@@ -558,10 +558,18 @@ class App extends GenericApp {
         this.cutCopyWidgets('copy');
     }
 
-    cutCopyWidgets = async  type => {
+    cutCopyWidgets = async type => {
         const widgets = {};
-        this.state.selectedWidgets.forEach(selectedWidget =>
-            widgets[selectedWidget] = this.state.project[this.state.selectedView].widgets[selectedWidget]);
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            widgets[selectedWidget] = this.state.project[this.state.selectedView].widgets[selectedWidget];
+            if (type === 'cut') {
+                if (project[this.state.selectedView]) {
+                    delete project[this.state.selectedView].widgets[selectedWidget];
+                }
+            }
+        });
+        await this.setSelectedWidgets([]);
         await this.setStateAsync({
             widgetsClipboard: {
                 type,
@@ -569,28 +577,30 @@ class App extends GenericApp {
                 widgets,
             },
         });
+        await this.changeProject(project);
         setTimeout(async () => {
             const clipboardImages = [];
             for (const k in this.state.selectedWidgets) {
-                let canvas;
-                try {
-                    canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
-                } catch (e) {
-                //
-                }
-                if (canvas) {
-                    const newCanvas = window.document.createElement('canvas');
-                    newCanvas.height = 80;
-                    newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
-                    if (newCanvas.width > 80) {
-                        newCanvas.width = 80;
-                        newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
-                    }
-                    const ctx = newCanvas.getContext('2d');
-                    ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-                    ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-                    clipboardImages.push(newCanvas.toDataURL(0));
-                }
+                clipboardImages.push(this.state.selectedWidgets[k]);
+                // let canvas;
+                // try {
+                //     canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
+                // } catch (e) {
+                // //
+                // }
+                // if (canvas) {
+                //     const newCanvas = window.document.createElement('canvas');
+                //     newCanvas.height = 80;
+                //     newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
+                //     if (newCanvas.width > 80) {
+                //         newCanvas.width = 80;
+                //         newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
+                //     }
+                //     const ctx = newCanvas.getContext('2d');
+                //     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+                //     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+                //     clipboardImages.push(newCanvas.toDataURL(0));
+                // }
             }
             await this.setStateAsync({
                 clipboardImages,
@@ -606,34 +616,20 @@ class App extends GenericApp {
         const newKeys = [];
         Object.keys(this.state.widgetsClipboard.widgets).forEach(clipboardWidgetId => {
             const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
-            if (this.state.selectedView === this.state.widgetsClipboard.view) {
+            if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
                 const boundingRect = this.getWidgetRelativeRect(clipboardWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
-                    left: boundingRect.left + 10,
-                    top: boundingRect.top + 10,
+                    left: `${boundingRect.left + 10}px`,
+                    top: `${boundingRect.top + 10}px`,
                 });
             }
             const newKey = this.getNewWidgetId();
             widgets[newKey] = newWidget;
             newKeys.push(newKey);
-            if (this.state.widgetsClipboard.type === 'cut') {
-                if (project[this.state.widgetsClipboard.view]) {
-                    delete project[this.state.widgetsClipboard.view].widgets[clipboardWidgetId];
-                }
-            }
         });
         this.setSelectedWidgets([]);
         await this.changeProject(project);
         this.setSelectedWidgets(newKeys);
-        if (this.state.widgetsClipboard.type === 'cut') {
-            await this.setStateAsync({
-                widgetsClipboard: {
-                    type: null,
-                    view: null,
-                    widgets: {},
-                },
-            });
-        }
     }
 
     cloneWidgets = async () => {
@@ -660,137 +656,111 @@ class App extends GenericApp {
     alignWidgets = type => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
-        const coordinates = [];
         const newCoordinates = {
-            left: 0, top: 0, width: 0, height: 0,
+            left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0,
         };
         const selectedWidgets = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
-            selectedWidgets.push(widgets[selectedWidget]);
-            const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-            coordinates.push({
-                left: parseDimension(widgets[selectedWidget].style?.left).value,
-                top: parseDimension(widgets[selectedWidget].style?.top).value,
-                width: parseDimension(widgets[selectedWidget].style?.width).value || boundingRect.width,
-                height: parseDimension(widgets[selectedWidget].style?.height).value || boundingRect.height,
-            });
+            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
+            selectedWidgets.push({ id: selectedWidget, widget: widgets[selectedWidget], coordinate: boundingRect });
         });
         if (type === 'left') {
-            coordinates.forEach(coordinate => {
-                if (newCoordinates.left === 0 || coordinate.left < newCoordinates.left) {
-                    newCoordinates.left = coordinate.left;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.left === 0 || selectedWidget.coordinate.left < newCoordinates.left) {
+                    newCoordinates.left = selectedWidget.coordinate.left;
                 }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = `${newCoordinates.left}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.left = `${newCoordinates.left}px`);
         } else if (type === 'right') {
-            coordinates.forEach(coordinate => {
-                if (newCoordinates.left === 0 || coordinate.left > newCoordinates.left) {
-                    newCoordinates.left = coordinate.left;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.right === 0 || selectedWidget.coordinate.right > newCoordinates.right) {
+                    newCoordinates.right = selectedWidget.coordinate.right;
                 }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = `${newCoordinates.left}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.left = `${newCoordinates.right - selectedWidget.coordinate.width}px`);
         } else if (type === 'top') {
-            coordinates.forEach(coordinate => {
-                if (newCoordinates.top === 0 || coordinate.top < newCoordinates.top) {
-                    newCoordinates.top = coordinate.top;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.top === 0 || selectedWidget.coordinate.top < newCoordinates.top) {
+                    newCoordinates.top = selectedWidget.coordinate.top;
                 }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = `${newCoordinates.top}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.top = `${newCoordinates.top}px`);
         } else if (type === 'bottom') {
-            coordinates.forEach(coordinate => {
-                if (newCoordinates.top === 0 || coordinate.top > newCoordinates.top) {
-                    newCoordinates.top = coordinate.top;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.bottom === 0 || selectedWidget.coordinate.bottom > newCoordinates.bottom) {
+                    newCoordinates.bottom = selectedWidget.coordinate.bottom;
                 }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = `${newCoordinates.top}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.top = `${newCoordinates.bottom - selectedWidget.coordinate.height}px`);
         } else if (type === 'horizontal-center') {
-            coordinates.forEach(coordinate => {
-                newCoordinates.left += coordinate.left;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.left === 0 || selectedWidget.coordinate.left < newCoordinates.left) {
+                    newCoordinates.left = selectedWidget.coordinate.left;
+                }
+                if (newCoordinates.right === 0 || selectedWidget.coordinate.right > newCoordinates.right) {
+                    newCoordinates.right = selectedWidget.coordinate.right;
+                }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.left = `${newCoordinates.left / selectedWidgets.length}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.left = `${(newCoordinates.left + (newCoordinates.right - newCoordinates.left) / 2) - (selectedWidget.coordinate.width / 2)}px`);
         } else if (type === 'vertical-center') {
-            coordinates.forEach(coordinate => {
-                newCoordinates.top += coordinate.top;
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.top === 0 || selectedWidget.coordinate.top < newCoordinates.top) {
+                    newCoordinates.top = selectedWidget.coordinate.top;
+                }
+                if (newCoordinates.bottom === 0 || selectedWidget.coordinate.bottom > newCoordinates.bottom) {
+                    newCoordinates.bottom = selectedWidget.coordinate.bottom;
+                }
             });
-            selectedWidgets.forEach(selectedWidget => selectedWidget.style.top = `${newCoordinates.top / selectedWidgets.length}px`);
+            selectedWidgets.forEach(selectedWidget => selectedWidget.widget.style.top = `${(newCoordinates.top + (newCoordinates.bottom - newCoordinates.top) / 2) - (selectedWidget.coordinate.height / 2)}px`);
         } else if (type === 'horizontal-equal') {
-            const data = [];
-            let minLeft = 9999;
-            let maxRight = 0;
-            let contSize = 0;
-            let between;
-            this.state.selectedWidgets.forEach(selectedWidget => {
-                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-                const left = boundingRect.left;
-                const right = boundingRect.right;
-                contSize += boundingRect.width;
-                if (minLeft > left) minLeft = left;
-                if (maxRight < right) maxRight = right;
-                const _data = {
-                    wid:  selectedWidget,
-                    left,
-                };
-                data.push(_data);
+            let widgetsWidth = 0;
+            let spaceWidth = 0;
+            let currentLeft = 0;
+            selectedWidgets.sort((selectedWidget1, selectedWidget2) => (selectedWidget1.coordinate.left > selectedWidget2.coordinate.left ? 1 : -1));
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.left === 0 || selectedWidget.coordinate.left < newCoordinates.left) {
+                    newCoordinates.left = selectedWidget.coordinate.left;
+                }
+                if (newCoordinates.right === 0 || selectedWidget.coordinate.right > newCoordinates.right) {
+                    newCoordinates.right = selectedWidget.coordinate.right;
+                }
+                widgetsWidth += selectedWidget.coordinate.width;
             });
-
-            between = (maxRight - minLeft - contSize) / (this.state.selectedWidgets.length - 1);
-
-            if (between < 0) between = 0;
-
-            data.sort((a, b) => {
-                const aName = a.left;
-                const bName = b.left;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-            });
-            const first = data.shift();
-            const boundingRect = window.document.getElementById(first.wid).getBoundingClientRect();
-            let left  = boundingRect.left;
-
-            data.forEach(element => {
-                left += between;
-                widgets[element.wid].style.left = `${left}px`;
-                const boundingRect = window.document.getElementById(element.wid).getBoundingClientRect();
-                left += boundingRect.width;
+            spaceWidth = newCoordinates.right - newCoordinates.left - widgetsWidth;
+            if (spaceWidth < 0) {
+                spaceWidth = 0;
+            }
+            selectedWidgets.forEach((selectedWidget, index) => {
+                selectedWidget.widget.style.left = `${newCoordinates.left + currentLeft}px`;
+                currentLeft += selectedWidget.coordinate.width;
+                if (index < selectedWidgets.length - 1) {
+                    currentLeft += spaceWidth / (selectedWidgets.length - 1);
+                }
             });
         } else if (type === 'vertical-equal') {
-            const data = [];
-            let minTop = 9999;
-            let maxBottom = 0;
-            let contSize = 0;
-            let between;
-
-            this.state.selectedWidgets.forEach(selectedWidget => {
-                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-                const top = boundingRect.top;
-                const bottom = boundingRect.bottom;
-                contSize += boundingRect.height;
-                if (minTop > top) minTop = top;
-                if (maxBottom < bottom) maxBottom = bottom;
-
-                const _data = {
-                    wid: selectedWidget,
-                    top,
-                };
-                data.push(_data);
+            let widgetsHeight = 0;
+            let spaceHeight = 0;
+            let currentTop = 0;
+            selectedWidgets.sort((selectedWidget1, selectedWidget2) => (selectedWidget1.coordinate.top > selectedWidget2.coordinate.top ? 1 : -1));
+            selectedWidgets.forEach(selectedWidget => {
+                if (newCoordinates.top === 0 || selectedWidget.coordinate.top < newCoordinates.top) {
+                    newCoordinates.top = selectedWidget.coordinate.top;
+                }
+                if (newCoordinates.bottom === 0 || selectedWidget.coordinate.bottom > newCoordinates.bottom) {
+                    newCoordinates.bottom = selectedWidget.coordinate.bottom;
+                }
+                widgetsHeight += selectedWidget.coordinate.height;
             });
-
-            between = (maxBottom - minTop - contSize) / (this.state.selectedWidgets.length - 1);
-            if (between < 0) between = 0;
-
-            data.sort((a, b) => {
-                const aName = a.top;
-                const bName = b.top;
-                return ((aName < bName) ? -1 : ((aName > bName) ? 1 : 0));
-            });
-            const first = data.shift();
-            const boundingRect = window.document.getElementById(first.wid).getBoundingClientRect();
-            let top  = first.top + boundingRect.height;
-
-            data.forEach(element => {
-                top += between;
-                widgets[element.wid].style.top = `${top}px`;
-                const boundingRect = window.document.getElementById(element.wid).getBoundingClientRect();
-                top += boundingRect.height;
+            spaceHeight = newCoordinates.bottom - newCoordinates.top - widgetsHeight;
+            if (spaceHeight < 0) {
+                spaceHeight = 0;
+            }
+            selectedWidgets.forEach((selectedWidget, index) => {
+                selectedWidget.widget.style.top = `${newCoordinates.top + currentTop}px`;
+                currentTop += selectedWidget.coordinate.height;
+                if (index < selectedWidgets.length - 1) {
+                    currentTop += spaceHeight / (selectedWidgets.length - 1);
+                }
             });
         } else if (type === 'width') {
             let { alignIndex, alignType, alignValues } = this.state.align;
@@ -1193,6 +1163,7 @@ class App extends GenericApp {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
             return this.visEngineHandlers[this.state.selectedView].onPercentToPx(wids, attr, cb);
         }
+        return null;
         // cb && cb(wids, attr, null); // cancel selection
     }
 
@@ -1298,12 +1269,13 @@ class App extends GenericApp {
             <ThemeProvider theme={this.state.theme}>
                 <Popper open={this.state.clipboardImages.length} style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}>
                     <Paper style={{ display: 'inline-block', pointerEvents: 'initial' }}>
-                        {this.state.clipboardImages.map((clipboardImage, key) => <img
+                        {/* {this.state.clipboardImages.map((clipboardImage, key) => <img
                             style={{ padding: 4 }}
                             key={key}
                             src={clipboardImage}
                             alt=""
-                        />)}
+                        />)} */}
+                        {this.state.clipboardImages.join(', ')}
                     </Paper>
                 </Popper>
                 <div className={this.props.classes.app}>
@@ -1448,6 +1420,7 @@ class App extends GenericApp {
                                                     disabled={!this.state.editMode}
                                                     selectedWidgets={this.state.selectedWidgets}
                                                     deleteWidgets={this.deleteWidgets}
+                                                    setSelectedWidgets={this.setSelectedWidgets}
                                                     cutWidgets={this.cutWidgets}
                                                     copyWidgets={this.copyWidgets}
                                                     pasteWidgets={this.pasteWidgets}
@@ -1500,7 +1473,21 @@ class App extends GenericApp {
                     onClose={() => this.setState({ createFirstProjectDialog: false })}
                     addProject={this.addProject}
                 />
-                <IODialog
+                {this.state.deleteWidgetsDialog ?
+                    <ConfirmDialog
+                        title={I18n.t('Delete widgets')}
+                        text={I18n.t(`Are you sure to delete widgets ${this.state.selectedWidgets.join(', ')}?`)}
+                        dialogName="deleteDialog"
+                        suppressQuestionMinutes={5}
+                        onClose={isYes => {
+                            if (isYes) {
+                                this.deleteWidgetsAction();
+                            }
+                            this.setState({ deleteWidgetsDialog: false });
+                        }}
+                    />
+                    : null}
+                {/* <IODialog
                     title="Delete widgets"
                     open={this.state.deleteWidgetsDialog}
                     onClose={() => this.setState({ deleteWidgetsDialog: false })}
@@ -1509,7 +1496,7 @@ class App extends GenericApp {
                     action={() => this.deleteWidgetsAction()}
                 >
                     {I18n.t(`Are you sure to delete widgets ${this.state.selectedWidgets.join(', ')}?`)}
-                </IODialog>
+                </IODialog> */}
             </ThemeProvider>
         </StyledEngineProvider>;
     }

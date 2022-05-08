@@ -44,6 +44,9 @@ const styles = theme => ({
         opacity: '80%',
         paddingTop: 4,
     },
+    toolbarTooltip: {
+        pointerEvents: 'none',
+    },
 });
 
 const getItem = (item, key, props, full) => {
@@ -140,7 +143,7 @@ const getItem = (item, key, props, full) => {
                     {item.subName ? <div style={{ fontSize: 10, opacity: 0.6 }}>{item.subName}</div> : null}
                 </ButtonBase>
             </div>
-            : <Tooltip key={key} title={item.name}>
+            : <Tooltip key={key} title={item.name} classes={{ popper: props.classes.toolbarTooltip }}>
                 <IconButton color={item.selected ? 'primary' : undefined} size="small" key={key} disabled={item.disabled} onClick={item.onClick} style={{ height: full ? '100%' : null }}>
                     <item.Icon fontSize={item.size ? item.size : 'small'} />
                 </IconButton>

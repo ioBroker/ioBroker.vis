@@ -11,11 +11,14 @@ import 'ace-builds/src-noconflict/theme-chrome';
 import { useEffect, useRef, useState } from 'react';
 import { TextField } from '@mui/material';
 import IODialog from '../../Components/IODialog';
+import { useFocus } from '../../Utils';
 
 const ImportDialog = props => {
     const [data, setData] = useState('');
     const [view, setView] = useState('');
     const [errors, setErrors] = useState([]);
+
+    const inputField = useFocus(props.open, true, true);
 
     useEffect(() => {
         setErrors([]);
@@ -57,7 +60,10 @@ const ImportDialog = props => {
             <AceEditor
                 mode="json"
                 theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-                ref={editor}
+                ref={node => {
+                    editor.current = node;
+                    inputField.current = node;
+                }}
                 value={data}
                 onChange={newValue => {
                     setData(newValue);

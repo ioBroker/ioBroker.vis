@@ -11,8 +11,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import IODialog from '../../Components/IODialog';
+import { useFocus } from '../../Utils';
 
 const FolderDialog = props => {
+    const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog !== 'add');
+
     if (!props.dialog) {
         return null;
     }
@@ -94,6 +97,7 @@ const FolderDialog = props => {
             : <TextField
                 variant="standard"
                 label={dialogInputs[props.dialog]}
+                inputRef={inputField}
                 fullWidth
                 value={props.dialogName}
                 onChange={e => props.setDialogName(e.target.value)}

@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import AceEditor from 'react-ace';
 
 import 'ace-builds/webpack-resolver';
@@ -10,10 +9,13 @@ import 'ace-builds/src-noconflict/theme-chrome';
 
 import { useEffect, useRef, useState } from 'react';
 import IODialog from '../Components/IODialog';
+import { useFocus } from '../Utils';
 
 const WidgetImportDialog = props => {
     const [data, setData] = useState('');
     const [errors, setErrors] = useState([]);
+
+    const inputField = useFocus(props.open, true, true);
 
     useEffect(() => {
         setErrors([]);
@@ -57,7 +59,10 @@ const WidgetImportDialog = props => {
             <AceEditor
                 mode="json"
                 theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-                ref={editor}
+                ref={node => {
+                    editor.current = node;
+                    inputField.current = node;
+                }}
                 value={data}
                 onChange={newValue => {
                     setData(newValue);

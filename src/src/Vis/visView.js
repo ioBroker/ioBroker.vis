@@ -127,6 +127,7 @@ class VisView extends React.Component {
 
             return filterList;
         }
+        return null;
     }
 
     changeFilter(options) {
@@ -405,10 +406,10 @@ class VisView extends React.Component {
         const widgets = this.getWidgetsInRect(this.selectDiv.getBoundingClientRect(), this.movement.simpleMode);
         if (JSON.stringify(widgets) !== JSON.stringify(this.movement.selectedWidgetsWithRectangle)) {
             // select
-            widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) && this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect(true));
+            widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) && this.widgetsRefs[id] && !this.props.views[this.props.view].widgets[id].data.locked && this.widgetsRefs[id].onTempSelect(true));
             // deselect
             this.movement.selectedWidgetsWithRectangle.forEach(id => !widgets.includes(id) && this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect(false));
-            this.movement.selectedWidgetsWithRectangle = widgets;
+            this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !this.props.views[this.props.view].widgets[widget].data.locked);
         }
     } : null;
 
@@ -989,10 +990,17 @@ class VisView extends React.Component {
             style.overflow = 'hidden';
         }
 
+        let gridDiv = null;
         if (this.props.views[this.props.view].settings.snapType === 2) {
-            style.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
-            // style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
-            style.backgroundImage = 'radial-gradient(circle at 1px 1px, black 1px, rgba(0, 0, 0, 0) 1px), radial-gradient(circle at 2px 2px, white 1px, rgba(0, 0, 0, 0) 1px)';
+            const gridStyle = {
+                width: '100%',
+                height: '100%',
+                pointerEvents: 'none',
+            };
+            gridStyle.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
+            // // style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
+            gridStyle.backgroundImage = 'radial-gradient(circle at 1px 1px, black 1px, rgba(0, 0, 0, 0) 1px), radial-gradient(circle at 2px 2px, white 1px, rgba(0, 0, 0, 0) 1px)';
+            gridDiv = <div style={gridStyle}></div>;
         }
 
         return <div
@@ -1002,6 +1010,7 @@ class VisView extends React.Component {
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
+            {gridDiv}
             { /* VisView.renderGitter() */ }
             {this.state.rulers.map((ruler, key) =>
                 <div

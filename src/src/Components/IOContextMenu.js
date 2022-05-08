@@ -75,7 +75,7 @@ const IOContextMenu = props => {
                 anchorReference="anchorPosition"
                 anchorPosition={menuPosition}
             >
-                {contextMenuItems(props.menuItemsData, !!menuPosition, () => setMenuPosition(null))}
+                {contextMenuItems(props.menuItemsData(menuPosition), !!menuPosition, () => setMenuPosition(null))}
             </Menu>
         </div>
     );

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { usePreview } from 'react-dnd-preview';
 
 const DEFAULT_SET_COLORS = {
@@ -244,3 +245,25 @@ export function isTouchDevice() {
         || (navigator.maxTouchPoints > 0)
         || (navigator.msMaxTouchPoints > 0));
 }
+
+export const useFocus = (open, select, isAce) => {
+    const inputField = useRef(null);
+
+    useEffect(() => {
+        let interval;
+        if (open) {
+            interval = setInterval(() => {
+                if (isAce ? inputField.current?.editor : inputField.current) {
+                    isAce ? inputField.current.editor.focus() : inputField.current.focus();
+                    if (select) {
+                        isAce ? inputField.current.editor.selectAll() : inputField.current.select();
+                    }
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+        return () => clearInterval(interval);
+    }, [open]);
+
+    return inputField;
+};

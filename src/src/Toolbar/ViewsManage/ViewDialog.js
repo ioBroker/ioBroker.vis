@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { useRef, useEffect } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
@@ -12,13 +11,10 @@ import {
 import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import IODialog from '../../Components/IODialog';
+import { useFocus } from '../../Utils';
 
 const ViewDialog = props => {
-    const inputField = useRef(null);
-
-    useEffect(() => {
-        inputField.current?.focus();
-    }, []);
+    const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog !== 'add');
 
     const deleteView = async () => {
         const view = props.dialogView || props.selectedView;
@@ -123,7 +119,7 @@ const ViewDialog = props => {
     >
         {props.dialog === 'delete' ? null
             : <TextField
-                ref={inputField}
+                inputRef={inputField}
                 variant="standard"
                 label={dialogInputs[props.dialog]}
                 fullWidth

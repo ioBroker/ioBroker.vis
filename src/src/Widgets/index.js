@@ -22,7 +22,7 @@ import Widget from './Widget';
 import { getWidgetTypes } from '../Utils';
 
 const styles = theme => ({
-    widgets: { textAlign: 'center' },
+    widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 80px)' },
     toggle: { width: 30, height: 30 },
     right: {
         float: 'right',
