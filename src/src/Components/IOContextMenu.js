@@ -1,9 +1,9 @@
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import { Menu } from '@mui/material';
-
+import { useState } from 'react';
 import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
 
-import { useState } from 'react';
+import { Menu } from '@mui/material';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const contextMenuItems = (items, open, onClose) =>
     items.map((item, key) => {
@@ -35,10 +35,22 @@ const contextMenuItems = (items, open, onClose) =>
                 onClose();
             }}
             disabled={item.disabled}
-            label={<span style={{ display: 'flex', alignItems: 'center' }}>
-                <span style={{ width: 40 }}>{item.leftIcon}</span>
-                {I18n.t(item.label)}
-            </span>}
+            label={[
+                <div style={{ display: 'flex', alignItems: 'center', ...item.style }}>
+                    <span style={{ width: 40 }}>{item.leftIcon}</span>
+                    {I18n.t(item.label)}
+                </div>,
+                item.subLabel ? <div style={{
+                    fontSize: 10,
+                    fontWeight: 'normal',
+                    display: 'block',
+                    paddingLeft: 40,
+                    marginTop: -6,
+                }}
+                >
+                    {item.subLabel}
+                </div> : null,
+            ]}
             onContextMenu={e => {
                 e.stopPropagation();
                 e.preventDefault();
@@ -52,7 +64,7 @@ const IOContextMenu = props => {
     const [menuPosition, setMenuPosition] = useState(null);
 
     const handleRightClick = async event => {
-        if (props.disabled) {
+        if (props.disabled || event.ctrlKey || event.shiftKey) {
             return;
         }
         event.preventDefault();
@@ -66,19 +78,17 @@ const IOContextMenu = props => {
         });
     };
 
-    return (
-        <div onContextMenu={handleRightClick} style={{ height: '100%' }}>
-            {props.children}
-            <Menu
-                open={!!menuPosition}
-                onClose={() => setMenuPosition(null)}
-                anchorReference="anchorPosition"
-                anchorPosition={menuPosition}
-            >
-                {contextMenuItems(props.menuItemsData(menuPosition), !!menuPosition, () => setMenuPosition(null))}
-            </Menu>
-        </div>
-    );
+    return <div onContextMenu={handleRightClick} style={{ height: '100%' }}>
+        {props.children}
+        <Menu
+            open={!!menuPosition}
+            onClose={() => setMenuPosition(null)}
+            anchorReference="anchorPosition"
+            anchorPosition={menuPosition}
+        >
+            {contextMenuItems(props.menuItemsData(menuPosition), !!menuPosition, () => setMenuPosition(null))}
+        </Menu>
+    </div>;
 };
 
 export default IOContextMenu;

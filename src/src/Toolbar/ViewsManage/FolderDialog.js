@@ -4,11 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import {
     TextField,
 } from '@mui/material';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';

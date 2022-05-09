@@ -9,7 +9,7 @@
 
 ### View
 - Delete widget (With suppress dialog)
-- Copy/paste/cut widget (With preview) - paste does not work
+- Copy/paste/cut widget (With preview) - paste does not work (BF: Check deletion of widget)
 - Move with keyboard (with shift and without) - somehow does not work
 - Show rulers lines by moving of widget (red lines) - ?
 - ✅ Show screen resolution

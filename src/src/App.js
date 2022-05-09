@@ -37,7 +37,7 @@ import VisEngine from './Vis/visEngine';
 import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
-import VisContextMenu from './Vis/VisContextMenu';
+import VisContextMenu from './Vis/visContextMenu';
 
 const styles = theme => ({
     block: {
@@ -1476,7 +1476,8 @@ class App extends GenericApp {
                 {this.state.deleteWidgetsDialog ?
                     <ConfirmDialog
                         title={I18n.t('Delete widgets')}
-                        text={I18n.t(`Are you sure to delete widgets ${this.state.selectedWidgets.join(', ')}?`)}
+                        text={I18n.t('Are you sure to delete widgets %s?', this.state.selectedWidgets.join(', '))}
+                        ok={I18n.t('Delete')}
                         dialogName="deleteDialog"
                         suppressQuestionMinutes={5}
                         onClose={isYes => {

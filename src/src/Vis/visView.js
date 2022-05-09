@@ -151,6 +151,8 @@ class VisView extends React.Component {
                 console.error(`Cannot change filter: ${error}`);
             }
         }
+
+        return null;
     }
 
     registerRef = (id, widDiv, refService, onMove, onResize, onTempSelect, onCommand) => {

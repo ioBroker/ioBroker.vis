@@ -1,7 +1,9 @@
+import { useState } from 'react';
+
+import WidgetIcon from '@mui/icons-material/Widgets';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import { useState } from 'react';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
@@ -11,27 +13,61 @@ import {
 import {
     AiOutlineGroup, AiOutlineUngroup,
 } from 'react-icons/ai';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
+
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
+import { getWidgetTypes } from '../Utils';
 
 const VisContextMenu = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
     const menuItemsData = menuPosition => {
-        const coordinatesWidgets = menuPosition ? Object.keys(props.project[props.selectedView].widgets).filter(widget => {
-            const rect = window.document.getElementById(widget)?.getBoundingClientRect();
-            if (rect) {
-                if (menuPosition.left >= rect.left && menuPosition.left <= rect.right && menuPosition.top >= rect.top && menuPosition.top <= rect.bottom) {
-                    return true;
+        const view = props.project[props.selectedView];
+        const coordinatesWidgets = menuPosition ? Object.keys(view.widgets)
+            .filter(widget => {
+                const rect = window.document.getElementById(widget)?.getBoundingClientRect();
+                if (view.widgets[widget].grouped) {
+                    return false;
+                }
+
+                return rect && menuPosition.left >= rect.left && menuPosition.left <= rect.right && menuPosition.top >= rect.top && menuPosition.top <= rect.bottom;
+            }) : [];
+
+        // find name and widget type
+        let widgetType = null;
+        let widgetName = '';
+        if (view && coordinatesWidgets[0] && view.widgets[coordinatesWidgets[0]] && view.widgets[coordinatesWidgets[0]].tpl) {
+            widgetName = coordinatesWidgets[0];
+            if (view.widgets[coordinatesWidgets[0]].data && view.widgets[coordinatesWidgets[0]].data.name) {
+                widgetName = view.widgets[coordinatesWidgets[0]].data.name;
+                widgetType = coordinatesWidgets[0];
+            } else {
+                const tpl = view.widgets[coordinatesWidgets[0]].tpl;
+                if (tpl === '_tplGroup') {
+                    widgetType = I18n.t('Group');
+                } else {
+                    const wSet = view.widgets[coordinatesWidgets[0]].widgetSet;
+                    const widgetItem = getWidgetTypes().find(item => item.name === tpl && item.set === wSet);
+                    widgetType = widgetItem ? widgetItem.title : tpl;
                 }
             }
-            return false;
-        }) : [];
+        }
 
         return [
             {
+                leftIcon: <WidgetIcon />,
+                hide: coordinatesWidgets.length !== 1,
+                label: widgetName,
+                subLabel: widgetType,
+                style: { fontWeight: 'bold' },
+                disabled: true,
+            },
+            {
+                hide: coordinatesWidgets.length < 2,
                 label: 'select',
                 items: [
                     {
@@ -54,19 +90,15 @@ const VisContextMenu = props => {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
                 onClick: () => props.ungroupWidgets(),
-                hide: !(
-                    props.selectedWidgets.length === 1
-                && props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl === '_tplGroup'
-                ),
+                hide: props.selectedWidgets.length !== 1 ||
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
             {
             // leftIcon: <AiOutlineUngroup />,
                 label: 'Edit group',
                 onClick: () => props.setSelectedGroup(props.selectedWidgets[0]),
-                hide: !(
-                    props.selectedWidgets.length === 1
-                && props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl === '_tplGroup'
-                ),
+                hide: props.selectedWidgets.length !== 1 ||
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
             {
                 leftIcon: <BiCopy />,
@@ -136,7 +168,10 @@ const VisContextMenu = props => {
     };
 
     return <>
-        <IOContextMenu menuItemsData={menuItemsData} disabled={props.disabled}>
+        <IOContextMenu
+            menuItemsData={menuItemsData}
+            disabled={props.disabled}
+        >
             {props.children}
         </IOContextMenu>
         <WidgetImportDialog
@@ -154,4 +189,8 @@ const VisContextMenu = props => {
         />
     </>;
 };
+
+VisContextMenu.propTypes = {
+};
+
 export default VisContextMenu;
