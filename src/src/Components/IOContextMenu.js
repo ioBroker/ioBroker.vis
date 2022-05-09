@@ -36,20 +36,22 @@ const contextMenuItems = (items, open, onClose) =>
             }}
             disabled={item.disabled}
             label={[
-                <div style={{ display: 'flex', alignItems: 'center', ...item.style }}>
+                <span key="main" style={{ display: 'flex', alignItems: 'center', ...item.style }}>
                     <span style={{ width: 40 }}>{item.leftIcon}</span>
                     {I18n.t(item.label)}
-                </div>,
-                item.subLabel ? <div style={{
-                    fontSize: 10,
-                    fontWeight: 'normal',
-                    display: 'block',
-                    paddingLeft: 40,
-                    marginTop: -6,
-                }}
+                </span>,
+                item.subLabel ? <span
+                    key="second"
+                    style={{
+                        fontSize: 10,
+                        fontWeight: 'normal',
+                        display: 'block',
+                        paddingLeft: 40,
+                        marginTop: -6,
+                    }}
                 >
                     {item.subLabel}
-                </div> : null,
+                </span> : null,
             ]}
             onContextMenu={e => {
                 e.stopPropagation();

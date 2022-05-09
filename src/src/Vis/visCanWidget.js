@@ -1091,13 +1091,15 @@ class VisCanWidget extends VisBaseWidget {
                 }
 
                 if (this.refService.current) {
-                    this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
-                    this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
-                    // Move helper to actual widget
-                    if (isRelative) {
-                        this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
-                        this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
-                    }
+                    setTimeout(() => {
+                        this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
+                        this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
+                        // Move helper to actual widget
+                        if (isRelative) {
+                            this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
+                            this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                        }
+                    }, 50);
                 }
 
                 this.onCommand('updateContainers');

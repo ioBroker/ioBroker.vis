@@ -40,7 +40,11 @@ const VisContextMenu = props => {
         // find name and widget type
         let widgetType = null;
         let widgetName = '';
+        let showSelect = coordinatesWidgets.length > 1;
         if (view && coordinatesWidgets[0] && view.widgets[coordinatesWidgets[0]] && view.widgets[coordinatesWidgets[0]].tpl) {
+            if (view.widgets[coordinatesWidgets[0]].data?.locked) {
+                showSelect = true;
+            }
             widgetName = coordinatesWidgets[0];
             if (view.widgets[coordinatesWidgets[0]].data && view.widgets[coordinatesWidgets[0]].data.name) {
                 widgetName = view.widgets[coordinatesWidgets[0]].data.name;
@@ -67,11 +71,12 @@ const VisContextMenu = props => {
                 disabled: true,
             },
             {
-                hide: coordinatesWidgets.length < 2,
-                label: 'select',
+                hide: !showSelect,
+                label: 'Select',
                 items: [
                     {
                         label: 'all',
+                        hide: coordinatesWidgets.length === 1,
                         onClick: () => props.setSelectedWidgets(coordinatesWidgets),
                     },
                     ...coordinatesWidgets.map(widget => ({

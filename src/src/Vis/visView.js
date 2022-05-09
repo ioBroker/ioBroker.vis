@@ -26,6 +26,8 @@ class VisView extends React.Component {
         WIDGET_SERVICE_DIV: 1200,
     };
 
+    static themeCache = {};
+
     static widgets = null;
 
     constructor(props) {
@@ -36,6 +38,8 @@ class VisView extends React.Component {
         this.state = {
             mounted: false,
             rulers: [],
+            loadedjQueryTheme: '',
+            themeCode: '',
         };
 
         this.refView = React.createRef();
@@ -72,8 +76,9 @@ class VisView extends React.Component {
     componentDidMount() {
         this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
-        this.setState({ mounted: true }, () =>
-            this.registerEditorHandlers());
+        this.loadJqueryTheme(this.getJQueryThemeName())
+            .then(() => this.setState({ mounted: true }, () =>
+                this.registerEditorHandlers()));
     }
 
     componentWillUnmount() {
@@ -815,31 +820,39 @@ class VisView extends React.Component {
     }
 
     loadJqueryTheme(jQueryTheme) {
-        if (this.loadedjQueryTheme) {
-            // unload old
-            let style = this.refView.current.querySelector(`#${this.props.view}_style`);
-            if (style) {
-                style.remove();
-                style = null;
-            }
-        }
-        this.loadedjQueryTheme = jQueryTheme;
+        if (VisView.themeCache[jQueryTheme]) {
+            let data = VisView.themeCache[jQueryTheme];
+            const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
+            data = data.replace('.ui-helper-hidden', `\n#${_view} .ui-helper-hidden`);
+            data = data.replace(/(}.)/g, `}\n#${_view} .`);
+            data = data.replace(/,\./g, `,#${_view} .`);
+            data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${jQueryTheme}/images`);
 
-        return fetch(`../../lib/css/themes/jquery-ui/${this.loadedjQueryTheme}/jquery-ui.min.css`)
+            this.setState({ loadedjQueryTheme: jQueryTheme, themeCode: data });
+            return Promise.resolve();
+        }
+
+        return fetch(`../../lib/css/themes/jquery-ui/${jQueryTheme}/jquery-ui.min.css`)
             .then(resp => resp.text())
             .then(data => {
-                const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
-                data = data.replace('.ui-helper-hidden', `#${_view} .ui-helper-hidden`);
-                data = data.replace(/(}.)/g, `}#${_view} .`);
-                data = data.replace(/,\./g, `,#${_view} .`);
-                data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${this.loadedjQueryTheme}/images`);
+                this.loadingTheme = false;
+                VisView.themeCache[jQueryTheme] = data;
 
-                const style = window.document.createElement('style');
-                style.innerHTML = data;
-                style.setAttribute('id', `${this.props.view.replace(/\s/g, '_')}_style`);
-                this.refView.current.prepend(style);
+                const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
+                data = data.replace('.ui-helper-hidden', `\n#${_view} .ui-helper-hidden`);
+                data = data.replace(/(}.)/g, `}\n#${_view} .`);
+                data = data.replace(/,\./g, `,#${_view} .`);
+                data = data.replace(/images/g, `../../lib/css/themes/jquery-ui/${jQueryTheme}/images`);
+
+                this.setState({ loadedjQueryTheme: jQueryTheme, themeCode: data });
             })
-            .catch(error => console.warn(`Cannot load jQueryUI theme "${this.loadedjQueryTheme}": ${error}`));
+            .catch(error => console.warn(`Cannot load jQueryUI theme "${jQueryTheme}": ${error}`));
+    }
+
+    getJQueryThemeName() {
+        const settings = this.props.view && this.props.views && this.props.views[this.props.view] && this.props.views[this.props.view].settings;
+
+        return settings?.theme || 'redmond';
     }
 
     render() {
@@ -851,7 +864,8 @@ class VisView extends React.Component {
         }
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
-        if (this.state.mounted) {
+        // and wait for themes too
+        if (this.state.mounted && this.state.themeCode && this.refView.current) {
             // save initial filter
             this.props.viewsActiveFilter[this.props.view] = (this.props.views[this.props.view].settings.filterkey || '').split(',').map(f => f.trim()).filter(f => f);
             const widgets = this.props.views[this.props.view].widgets;
@@ -943,11 +957,11 @@ class VisView extends React.Component {
 
         const settings = this.props.views[this.props.view].settings;
 
-        const jQueryTheme = settings?.theme || 'redmond';
-
-        if (this.refView.current && this.loadedjQueryTheme !== jQueryTheme) {
-            this.loadJqueryTheme(jQueryTheme)
-                .then(() => {});
+        if (this.state.loadedjQueryTheme !== this.getJQueryThemeName()) {
+            if (!this.loadingTheme) {
+                this.loadingTheme = true;
+                setTimeout(() => this.loadJqueryTheme(this.getJQueryThemeName()), this.state.loadedjQueryTheme ? 50 : 0);
+            }
         }
 
         // this was only if this.props.editMode
@@ -1002,7 +1016,7 @@ class VisView extends React.Component {
             gridStyle.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
             // // style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
             gridStyle.backgroundImage = 'radial-gradient(circle at 1px 1px, black 1px, rgba(0, 0, 0, 0) 1px), radial-gradient(circle at 2px 2px, white 1px, rgba(0, 0, 0, 0) 1px)';
-            gridDiv = <div style={gridStyle}></div>;
+            gridDiv = <div style={gridStyle} />;
         }
 
         return <div
@@ -1012,6 +1026,8 @@ class VisView extends React.Component {
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
             style={style}
         >
+            {/* eslint-disable-next-line react/no-danger */}
+            <style dangerouslySetInnerHTML={{ __html: this.state.themeCode }} />
             {gridDiv}
             { /* VisView.renderGitter() */ }
             {this.state.rulers.map((ruler, key) =>

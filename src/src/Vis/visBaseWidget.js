@@ -829,6 +829,8 @@ class VisBaseWidget extends React.Component {
                 } else {
                     style.cursor = 'default';
                 }
+            } else if (widget.data?.locked) {
+                style.cursor = 'default';
             } else {
                 style.cursor = 'pointer';
             }
