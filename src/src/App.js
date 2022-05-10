@@ -569,7 +569,9 @@ class App extends GenericApp {
                 }
             }
         });
-        await this.setSelectedWidgets([]);
+        if (type === 'cut') {
+            await this.setSelectedWidgets([]);
+        }
         await this.setStateAsync({
             widgetsClipboard: {
                 type,
@@ -577,7 +579,6 @@ class App extends GenericApp {
                 widgets,
             },
         });
-        await this.changeProject(project);
         setTimeout(async () => {
             const clipboardImages = [];
             for (const k in this.state.selectedWidgets) {
@@ -1268,7 +1269,7 @@ class App extends GenericApp {
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
                 <Popper open={this.state.clipboardImages.length} style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}>
-                    <Paper style={{ display: 'inline-block', pointerEvents: 'initial' }}>
+                    <Paper style={{ display: 'inline-block', pointerEvents: 'initial', zIndex: 1000, }}>
                         {/* {this.state.clipboardImages.map((clipboardImage, key) => <img
                             style={{ padding: 4 }}
                             key={key}

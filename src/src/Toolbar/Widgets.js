@@ -277,12 +277,14 @@ const Widgets = props => {
             changeProject={props.changeProject}
             selectedView={props.selectedView}
             project={props.project}
+            themeName={props.themeName}
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
         />
         <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}
             widgets={props.selectedWidgets.map(selectedWidget => props.project[props.selectedView].widgets[selectedWidget])}
+            themeName={props.themeName}
         />
     </>;
 };
