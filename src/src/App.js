@@ -35,6 +35,7 @@ import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import {
+    analyzeDraggableResizable,
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
 import VisContextMenu from './Vis/visContextMenu';
@@ -169,7 +170,7 @@ class App extends GenericApp {
                 type: null,
                 widgets: {},
             },
-            clipboardImages: [],
+            // clipboardImages: [],
             lockDragging: JSON.parse(window.localStorage.getItem('lockDragging')),
             disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
             deleteWidgetsDialog: false,
@@ -561,53 +562,54 @@ class App extends GenericApp {
     cutCopyWidgets = async type => {
         const widgets = {};
         const project = JSON.parse(JSON.stringify(this.state.project));
+
         this.state.selectedWidgets.forEach(selectedWidget => {
             widgets[selectedWidget] = this.state.project[this.state.selectedView].widgets[selectedWidget];
-            if (type === 'cut') {
-                if (project[this.state.selectedView]) {
-                    delete project[this.state.selectedView].widgets[selectedWidget];
-                }
+            if (type === 'cut' && project[this.state.selectedView]) {
+                delete project[this.state.selectedView].widgets[selectedWidget];
             }
         });
-        if (type === 'cut') {
-            await this.setSelectedWidgets([]);
-        }
+
         await this.setStateAsync({
             widgetsClipboard: {
                 type,
                 view: this.state.selectedView,
                 widgets,
             },
+            // clipboardImages: JSON.parse(JSON.stringify(this.state.selectedWidgets)),
         });
-        setTimeout(async () => {
-            const clipboardImages = [];
-            for (const k in this.state.selectedWidgets) {
-                clipboardImages.push(this.state.selectedWidgets[k]);
-                // let canvas;
-                // try {
-                //     canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
-                // } catch (e) {
-                // //
-                // }
-                // if (canvas) {
-                //     const newCanvas = window.document.createElement('canvas');
-                //     newCanvas.height = 80;
-                //     newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
-                //     if (newCanvas.width > 80) {
-                //         newCanvas.width = 80;
-                //         newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
-                //     }
-                //     const ctx = newCanvas.getContext('2d');
-                //     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
-                //     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-                //     clipboardImages.push(newCanvas.toDataURL(0));
-                // }
-            }
-            await this.setStateAsync({
-                clipboardImages,
-            });
-            setTimeout(() => this.setState({ clipboardImages: [] }), 4000);
-        }, 100);
+
+        // deselect all widgets
+        if (type === 'cut') {
+            await this.setSelectedWidgets([]);
+            await this.changeProject(project);
+        }
+
+        /*
+        const clipboardImages = [];
+        for (const k in this.state.selectedWidgets) {
+            clipboardImages.push(this.state.selectedWidgets[k]);
+            // let canvas;
+            // try {
+            //     canvas = (await html2canvas(window.document.getElementById(this.state.selectedWidgets[k])));
+            // } catch (e) {
+            // //
+            // }
+            // if (canvas) {
+            //     const newCanvas = window.document.createElement('canvas');
+            //     newCanvas.height = 80;
+            //     newCanvas.width = Math.ceil((canvas.width / canvas.height) * newCanvas.height);
+            //     if (newCanvas.width > 80) {
+            //         newCanvas.width = 80;
+            //         newCanvas.height = Math.ceil((canvas.height / canvas.width) * newCanvas.width);
+            //     }
+            //     const ctx = newCanvas.getContext('2d');
+            //     ctx.clearRect(0, 0, newCanvas.width, newCanvas.height);
+            //     ctx.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+            //     clipboardImages.push(newCanvas.toDataURL(0));
+            // }
+        }
+         */
     }
 
     pasteWidgets = async () => {
@@ -863,14 +865,22 @@ class App extends GenericApp {
     resizeWidgets = (widthShift, heightShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
+        let changed = false;
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-            widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                width: boundingRect.width + widthShift,
-                height: boundingRect.height + heightShift,
-            });
+            const el = window.document.getElementById(selectedWidget);
+            const result = analyzeDraggableResizable(el);
+            if (result.resizable) {
+                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
+
+                widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
+                    width: boundingRect.width + widthShift,
+                    height: boundingRect.height + heightShift,
+                });
+                changed = true;
+            }
         });
-        this.changeProject(project);
+
+        changed && this.changeProject(project);
     }
 
     getWidgetRelativeRect = widget => {
@@ -1268,15 +1278,29 @@ class App extends GenericApp {
 
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
-                <Popper open={this.state.clipboardImages.length} style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}>
-                    <Paper style={{ display: 'inline-block', pointerEvents: 'initial', zIndex: 1000, }}>
+                <Popper
+                    open={Object.keys(this.state.widgetsClipboard.widgets).length}
+                    style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
+                >
+                    <Paper
+                        style={{
+                            display: 'inline-block',
+                            pointerEvents: 'initial',
+                            zIndex: 1000,
+                            padding: 10,
+                            cursor: 'pointer',
+                            opacity: 0.8,
+                        }}
+                        title={I18n.t('Click to close')}
+                        onClick={() => this.setState({ widgetsClipboard: { widgets: {}, type: '' } })}
+                    >
                         {/* {this.state.clipboardImages.map((clipboardImage, key) => <img
                             style={{ padding: 4 }}
                             key={key}
                             src={clipboardImage}
                             alt=""
                         />)} */}
-                        {this.state.clipboardImages.join(', ')}
+                        {Object.keys(this.state.widgetsClipboard.widgets).join(', ')}
                     </Paper>
                 </Popper>
                 <div className={this.props.classes.app}>

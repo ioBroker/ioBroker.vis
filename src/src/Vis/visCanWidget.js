@@ -21,6 +21,7 @@ import {
     getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
+import { analyzeDraggableResizable } from '../Utils';
 
 class VisCanWidget extends VisBaseWidget {
     constructor(props) {
@@ -68,56 +69,6 @@ class VisCanWidget extends VisBaseWidget {
         Object.keys(linkContext).forEach(attr => linkContext[attr] = null);
     }
 
-    analyzeDraggableResizable(newState) {
-        newState = newState || {};
-        // try to read resize handlers
-        newState.resizable = true;
-        newState.draggable = true;
-
-        if (this.widDiv && this.widDiv.dataset) {
-            let resizableOptions = this.widDiv.dataset.visResizable;
-            if (resizableOptions) {
-                try {
-                    resizableOptions = JSON.parse(resizableOptions);
-                } catch (error) {
-                    console.error(`Cannot parse resizable options by ${this.props.id}: ${resizableOptions}`);
-                    resizableOptions = null;
-                }
-                if (resizableOptions) {
-                    if (resizableOptions.disabled !== undefined) {
-                        newState.resizable = !resizableOptions.disabled;
-                    }
-                    if (resizableOptions.handles !== undefined) {
-                        newState.resizeHandles = resizableOptions.handles.split(',').map(h => h.trim());
-                    }
-                }
-                const widgetStyle = this.props.allWidgets[this.props.id].style;
-                if (!newState.resizable && (!widgetStyle.width || !widgetStyle.height)) {
-                    newState.virtualHeight = this.widDiv.clientHeight;
-                    newState.virtualWidth = this.widDiv.clientWidth;
-                }
-            }
-
-            let draggableOptions = this.widDiv.dataset.visDraggable;
-            if (draggableOptions) {
-                try {
-                    draggableOptions = JSON.parse(draggableOptions);
-                } catch (error) {
-                    console.error(`Cannot parse draggable options by ${this.props.id}: ${draggableOptions}`);
-                    draggableOptions = null;
-                }
-                if (draggableOptions) {
-                    if (draggableOptions.disabled !== undefined) {
-                        newState.draggable = !draggableOptions.disabled;
-                    }
-                }
-            }
-            newState.hideHelper = this.widDiv.dataset.visHideHelper === 'true';
-        }
-
-        return newState;
-    }
-
     componentDidMount() {
         super.componentDidMount();
 
@@ -130,7 +81,7 @@ class VisCanWidget extends VisBaseWidget {
             const newState = { mounted: true };
 
             // try to read resize handlers
-            this.analyzeDraggableResizable(newState);
+            analyzeDraggableResizable(this.widDiv, newState, this.props.allWidgets[this.props.id].style);
 
             this.setState(newState);
         }
@@ -1060,7 +1011,7 @@ class VisCanWidget extends VisBaseWidget {
                         this.addGestures(widgetData);
                     }
                 } else {
-                    const newState = this.analyzeDraggableResizable();
+                    const newState = analyzeDraggableResizable(this.widDiv, null, this.props.allWidgets[this.props.id].style);
 
                     if (this.state.resizable !== newState.resizable ||
                         this.state.hideHelper !== newState.hideHelper ||

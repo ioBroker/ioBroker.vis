@@ -295,7 +295,17 @@ const View = props => {
                     notStyle: true,
                 },
                 {
-                    type: 'number', name: 'Grid size', field: 'gridSize', notStyle: true,
+                    type: 'color',
+                    name: 'Grid color',
+                    field: 'snapColor',
+                    hide: view.settings.snapType !== 2,
+                },
+                {
+                    type: 'number',
+                    name: 'Grid size',
+                    field: 'gridSize',
+                    notStyle: true,
+                    hide: view.settings.snapType !== 2,
                 },
                 {
                     type: 'select',

@@ -538,7 +538,7 @@ class VisView extends React.Component {
         const rulers = [];
 
         Object.keys(this.widgetsRefs).forEach(wid => {
-            if (!this.props.selectedWidgets.includes(wid)) {
+            if (!this.props.selectedWidgets.includes(wid) && !this.props.views[this.props.view].widgets[wid].grouped) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 horizontals.push(Math.round(boundingRect.top));
                 horizontals.push(Math.round(boundingRect.bottom));
@@ -549,19 +549,22 @@ class VisView extends React.Component {
         const selectedHorizontals = [];
         const selectedVerticals = [];
         this.props.selectedWidgets.forEach(wid => {
-            const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
-            selectedHorizontals.push(Math.round(boundingRect.top));
-            selectedHorizontals.push(Math.round(boundingRect.bottom));
-            selectedVerticals.push(Math.round(boundingRect.left));
-            selectedVerticals.push(Math.round(boundingRect.right));
+            // check if not in group
+            if (!this.props.views[this.props.view].widgets[wid].grouped) {
+                const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                selectedHorizontals.push(Math.round(boundingRect.top));
+                selectedHorizontals.push(Math.round(boundingRect.bottom));
+                selectedVerticals.push(Math.round(boundingRect.left));
+                selectedVerticals.push(Math.round(boundingRect.right));
+            }
         });
         horizontals.forEach(horizontal => selectedHorizontals.forEach(selectedHorizontal => {
-            if (Math.abs(horizontal - selectedHorizontal) <= 4) {
+            if (Math.abs(horizontal - selectedHorizontal) <= 0.3) {
                 rulers.push({ type: 'horizontal', value: horizontal - viewRect.top });
             }
         }));
         verticals.forEach(vertical => selectedVerticals.forEach(selectedVertical => {
-            if (Math.abs(vertical - selectedVertical) <= 4) {
+            if (Math.abs(vertical - selectedVertical) <= 0.3) {
                 rulers.push({ type: 'vertical', value: vertical - viewRect.left });
             }
         }));
@@ -1008,15 +1011,7 @@ class VisView extends React.Component {
 
         let gridDiv = null;
         if (this.props.views[this.props.view].settings.snapType === 2) {
-            const gridStyle = {
-                width: '100%',
-                height: '100%',
-                pointerEvents: 'none',
-            };
-            gridStyle.backgroundSize = `${this.props.views[this.props.view].settings.gridSize}px ${this.props.views[this.props.view].settings.gridSize}px`;
-            // // style.backgroundPosition = `${this.props.views[this.props.view].settings.gridSize / 2}px ${this.props.views[this.props.view].settings.gridSize / 2}px`;
-            gridStyle.backgroundImage = 'radial-gradient(circle at 1px 1px, black 1px, rgba(0, 0, 0, 0) 1px), radial-gradient(circle at 2px 2px, white 1px, rgba(0, 0, 0, 0) 1px)';
-            gridDiv = <div style={gridStyle} />;
+            gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
 
         return <div
@@ -1028,8 +1023,7 @@ class VisView extends React.Component {
         >
             {/* eslint-disable-next-line react/no-danger */}
             <style dangerouslySetInnerHTML={{ __html: this.state.themeCode }} />
-            {gridDiv}
-            { /* VisView.renderGitter() */ }
+            { gridDiv }
             {this.state.rulers.map((ruler, key) =>
                 <div
                     key={key}

@@ -8,29 +8,32 @@
 - Take in count new react widget types => onLoaded([])
 
 ### View
-- Delete widget (With suppress dialog)
-- Copy/paste/cut widget (With preview) - paste does not work (BF: Check deletion of widget)
-- Move with keyboard (with shift and without) - somehow does not work
-- Show rulers lines by moving of widget (red lines) - ?
-- ✅ Show screen resolution
-- Grid and snap to grid - if enabled, the background disappeared
-- Align buttons in toolbar
+- ✅ Delete widget (With suppress dialog)
+- ✅ Copy/paste/cut widget (With preview) - !cut does not work sometimes (BF: Check deletion of widget)
+- Move with keyboard (with shift and without) - !somehow does not work
+- Show rulers lines by moving of widget (red lines) - !on key press?
+- Show screen resolution - !bug
+- Grid and snap to grid - if enabled, the background disappeared - !6px
+- ✅ Align buttons in toolbar
 - ✅ Copy/paste/Cut buttons in toolbar
-- Export/Import widget - preselect text or make it empty
+- Export/Import widget - preselect text or make it empty - !group export
 - ✅ Rename button near Widget selector to "clone widgets" instead of copy widget
-- Lock/Unlock widget - does not work. Locked widget could not be selected
-- Context menu - collect all widgets under cursor and show them in context menu
+- ✅ Lock/Unlock widget
+- Remove show interaction - and replace with show widget ID 
+- ✅ Context menu - collect all widgets under cursor and show them in context menu
 - Bring to front / Send back (Max z-index is 1199)
 - ✅ Undo!!/Redo
-- Ctrl+A / Esc(Deselect all) / ...
+- ✅ Ctrl+A / Esc(Deselect all) / ...
 - ✅ If dimension is in % so after resize and move it should stay in %
 - ✅ Ask about not saved file (because of 1 sec delay)
 
 ## groups edit
+- ✅ Check
 
 
 ### Widget
 - By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
+
 - [Gestures] (do not implement)
 - Last change ? Denis
 - Signal by Rx
