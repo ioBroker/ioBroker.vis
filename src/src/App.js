@@ -1206,12 +1206,19 @@ class App extends GenericApp {
         if (!this.state.selectedView) {
             return null;
         }
+        if (!this.state.project[this.state.selectedView].settings.sizex || !this.state.project[this.state.selectedView].settings.sizey) {
+            return null;
+        }
         return <>
             <div style={{
                 width: `${this.state.project[this.state.selectedView].settings.sizex}px`,
                 height: `${this.state.project[this.state.selectedView].settings.sizey}px`,
                 position: 'absolute',
-                borderWidth: 1,
+                borderTopWidth: 0,
+                borderLeftWidth: 0,
+                borderRightWidth: 1,
+                borderBottomWidth: 1,
+                boxSizing: 'content-box',
                 borderStyle: 'dashed',
                 borderColor: 'black',
                 zIndex: 1000,
@@ -1222,7 +1229,11 @@ class App extends GenericApp {
                 width: `${parseInt(this.state.project[this.state.selectedView].settings.sizex) + 1}px`,
                 height: `${parseInt(this.state.project[this.state.selectedView].settings.sizey) + 1}px`,
                 position: 'absolute',
-                borderWidth: 1,
+                borderTopWidth: 0,
+                borderLeftWidth: 0,
+                borderRightWidth: 1,
+                borderBottomWidth: 1,
+                boxSizing: 'content-box',
                 borderStyle: 'dashed',
                 borderColor: 'white',
                 zIndex: 1000,

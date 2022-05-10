@@ -32,7 +32,7 @@
 
 
 ### Widget
-- By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
+- ✅By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
 
 - [Gestures] (do not implement)
 - Last change ? Denis
@@ -47,6 +47,9 @@
     - opened full (as now)
     - middle (without titles "Views of main", "Widgets", "Projects")
     - narrow (only important buttons: add view, active widgets, align - only one line) and user/theme/mode on one line
+
+### use react-rnd
+- POC ?
 
 ### Backend by start
 - Collect enabled widgets and pack all of them into widgets.html
