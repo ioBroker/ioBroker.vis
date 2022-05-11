@@ -50,7 +50,7 @@ const Widgets = props => {
             {
                 type: 'multiselect',
                 name: 'Active widget',
-                items: Object.keys(widgets)/* .filter(widget => !widgets[widget].groupid) */.map(widget => {
+                items: Object.keys(widgets).filter(widget => (props.selectedGroup ? widgets[widget].groupid === props.selectedGroup : !widgets[widget].groupid)).map(widget => {
                     const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === widgets[widget].tpl);
                     return {
                         name: `${widget} (${widgetType?.set} - ${widgets[widget].tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title})`,

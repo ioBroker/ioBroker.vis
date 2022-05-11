@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
-import {analyzeDraggableResizable} from "../Utils";
+import { analyzeDraggableResizable } from '../Utils';
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -422,7 +422,11 @@ class VisView extends React.Component {
         const widgets = this.getWidgetsInRect(this.selectDiv.getBoundingClientRect(), this.movement.simpleMode);
         if (JSON.stringify(widgets) !== JSON.stringify(this.movement.selectedWidgetsWithRectangle)) {
             // select
-            widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) && this.widgetsRefs[id] && !this.props.views[this.props.view].widgets[id].data.locked && this.widgetsRefs[id].onTempSelect(true));
+            widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) &&
+             this.widgetsRefs[id] &&
+              !this.props.views[this.props.view].widgets[id].data.locked &&
+               this.widgetsRefs[id].onTempSelect(true) &&
+               this.props.selectedGroup !== id);
             // deselect
             this.movement.selectedWidgetsWithRectangle.forEach(id => !widgets.includes(id) && this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect(false));
             this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !this.props.views[this.props.view].widgets[widget].data.locked);
@@ -1034,38 +1038,42 @@ class VisView extends React.Component {
             return null;
         }
         return [
-            <div key="black" style={{
-                width: `${this.props.views[this.props.view].settings.sizex}px`,
-                height: `${this.props.views[this.props.view].settings.sizey}px`,
-                position: 'absolute',
-                borderTopWidth: 0,
-                borderLeftWidth: 0,
-                borderRightWidth: 1,
-                borderBottomWidth: 1,
-                boxSizing: 'content-box',
-                borderStyle: 'dashed',
-                borderColor: 'black',
-                zIndex: 1000,
-                pointerEvents: 'none',
-                opacity: 0.7,
-            }}
+            <div
+                key="black"
+                style={{
+                    width: `${this.props.views[this.props.view].settings.sizex}px`,
+                    height: `${this.props.views[this.props.view].settings.sizey}px`,
+                    position: 'absolute',
+                    borderTopWidth: 0,
+                    borderLeftWidth: 0,
+                    borderRightWidth: 1,
+                    borderBottomWidth: 1,
+                    boxSizing: 'content-box',
+                    borderStyle: 'dashed',
+                    borderColor: 'black',
+                    zIndex: 1000,
+                    pointerEvents: 'none',
+                    opacity: 0.7,
+                }}
             ></div>,
-            <div key="white" style={{
-                width: `${parseInt(this.props.views[this.props.view].settings.sizex) + 1}px`,
-                height: `${parseInt(this.props.views[this.props.view].settings.sizey, 10) + 1}px`,
-                position: 'absolute',
-                borderTopWidth: 0,
-                borderLeftWidth: 0,
-                borderRightWidth: 1,
-                borderBottomWidth: 1,
-                boxSizing: 'content-box',
-                borderStyle: 'dashed',
-                borderColor: 'white',
-                zIndex: 1000,
-                pointerEvents: 'none',
-                opacity: 0.7,
-            }}
-            ></div>
+            <div
+                key="white"
+                style={{
+                    width: `${parseInt(this.props.views[this.props.view].settings.sizex) + 1}px`,
+                    height: `${parseInt(this.props.views[this.props.view].settings.sizey, 10) + 1}px`,
+                    position: 'absolute',
+                    borderTopWidth: 0,
+                    borderLeftWidth: 0,
+                    borderRightWidth: 1,
+                    borderBottomWidth: 1,
+                    boxSizing: 'content-box',
+                    borderStyle: 'dashed',
+                    borderColor: 'white',
+                    zIndex: 1000,
+                    pointerEvents: 'none',
+                    opacity: 0.7,
+                }}
+            ></div>,
         ];
     }
 

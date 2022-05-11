@@ -961,6 +961,7 @@ class App extends GenericApp {
 
     setSelectedGroup = groupId => {
         this.setState({ selectedGroup: groupId });
+        this.setSelectedWidgets([]);
     }
 
     undo = async () => {

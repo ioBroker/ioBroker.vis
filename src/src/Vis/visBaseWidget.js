@@ -241,6 +241,9 @@ class VisBaseWidget extends React.Component {
         if (this.props.views[this.props.view].widgets[this.props.id].data.locked) {
             return;
         }
+        if (this.props.selectedGroup === this.props.id) {
+            return;
+        }
         if (!this.props.selectedWidgets.includes(this.props.id)) {
             if (e.shiftKey || e.ctrlKey) {
                 // add or remove
@@ -878,10 +881,15 @@ class VisBaseWidget extends React.Component {
             style.overflow = 'visible';
         }
 
-        const overlay = this.state.hideHelper || this.props.runtime || !this.state.editMode || (widget.groupid && !this.props.selectedGroup) || widget.data.locked ? null : <div
-            className={classNames}
-            onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
-        />;
+        const overlay = this.state.hideHelper ||
+        this.props.runtime ||
+        !this.state.editMode ||
+        (widget.groupid && !this.props.selectedGroup) ||
+        widget.data.locked
+            ? null : <div
+                className={classNames}
+                onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
+            />;
 
         return <div
             id={props.id}
