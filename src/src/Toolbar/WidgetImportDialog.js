@@ -38,10 +38,27 @@ const WidgetImportDialog = props => {
         const project = JSON.parse(JSON.stringify(props.project));
         const widgets = JSON.parse(data);
         let newKeyNumber = props.getNewWidgetIdNumber();
+        let newGroupKeyNumber = props.getNewWidgetIdNumber(true);
+        const groupWidgets = {};
         widgets.forEach(widget => {
-            const newKey = `w${newKeyNumber.toString().padStart(6, 0)}`;
-            project[props.selectedView].widgets[newKey] = widget;
-            newKeyNumber++;
+            if (widget.tpl === '_tplGroup') {
+                const newKey = `g${newGroupKeyNumber.toString().padStart(6, 0)}`;
+                project[props.selectedView].widgets[newKey] = widget;
+                newGroupKeyNumber++;
+            } else {
+                const newKey = `w${newKeyNumber.toString().padStart(6, 0)}`;
+                project[props.selectedView].widgets[newKey] = widget;
+                if (widget.groupName) {
+                    groupWidgets[widget.groupName] = newKey;
+                    delete widget.groupName;
+                }
+                newKeyNumber++;
+            }
+        });
+        widgets.forEach(widget => {
+            if (widget.tpl === '_tplGroup') {
+                widget.data.members = widget.data.members.map(member => groupWidgets[member]);
+            }
         });
         props.changeProject(project);
     };

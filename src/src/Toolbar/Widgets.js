@@ -18,12 +18,15 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
 import CloseIcon from '@mui/icons-material/Close';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { useState } from 'react';
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Utils';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
+import i18n from '@iobroker/adapter-react-v5/i18n';
 
 const Widgets = props => {
     const [exportDialog, setExportDialog] = useState(false);
@@ -50,7 +53,7 @@ const Widgets = props => {
                 items: Object.keys(widgets)/* .filter(widget => !widgets[widget].groupid) */.map(widget => {
                     const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === widgets[widget].tpl);
                     return {
-                        name: `${widget} (${widgetType?.set} - ${widgetType?.title})`,
+                        name: `${widget} (${widgetType?.set} - ${widgets[widget].tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title})`,
                         value: widget,
                     };
                 }),
@@ -241,10 +244,10 @@ const Widgets = props => {
                 }],
                 [{
                     type: 'icon-button',
-                    Icon: LockIcon,
-                    name: 'Disable interaction',
-                    selected: props.disableInteraction,
-                    onClick: () => props.toggleDisableInteraction(),
+                    Icon: props.widgetHint === 'hide' ? VisibilityOffIcon : VisibilityIcon,
+                    color: props.widgetHint === 'light' ? 'white' : 'black',
+                    name: `Toggle widget hint (${props.widgetHint})`,
+                    onClick: () => props.toggleWidgetHint(),
                 }],
             ],
             { type: 'divider' },
@@ -283,7 +286,8 @@ const Widgets = props => {
         <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}
-            widgets={props.selectedWidgets.map(selectedWidget => props.project[props.selectedView].widgets[selectedWidget])}
+            widgets={props.project[props.selectedView].widgets}
+            selectedWidgets={props.selectedWidgets}
             themeName={props.themeName}
         />
     </>;

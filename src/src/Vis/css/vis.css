@@ -116,6 +116,14 @@ body, html {
     padding: 1px 3px;
     font-family: Arial, Helvetica, sans-serif;
 }
+.vis-editmode-widget-name.dark {
+    background: black;    
+    color: white;
+}
+.vis-editmode-widget-name.light {
+    background: white;    
+    color: black;
+}
 
 .vis-editmode-select-rect {
     border: 1px dashed white;

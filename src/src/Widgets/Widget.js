@@ -30,6 +30,14 @@ const styles = () => ({
         height: 32,
         width: 'auto',
     },
+    widgetTooltip: {
+        '& $widgetImage': {
+            zoom: 0.6,
+        },
+        '& $widgetImageWithSrc': {
+            height: 64,
+        },
+    },
     widgetImageContainer: {
         // borderLeftStyle: 'solid',
         // borderLeftWidth: 1,
@@ -65,10 +73,10 @@ const Widget = props => {
 
     const result =
     <Tooltip
-        title={<div>
-            <div><img src={image} alt="" /></div>
-            <div>Text</div>
-        </div>}
+        title={props.widgetType.help ? <div className={props.classes.widgetTooltip}>
+            <div>{ img }</div>
+            <div>{props.widgetType.help}</div>
+        </div> : ''}
         placement="right-end"
     >
         <div className={props.classes.widget} style={style}>

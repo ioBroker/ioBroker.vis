@@ -1225,10 +1225,12 @@ ${this.scripts}
                     setValue={this.setValue}
                     linkContext={this.linkContext}
                     formatUtils={this.formatUtils}
+                    widgetHint={this.props.widgetHint}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
                     setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                     selectedGroup={this.props.selectedGroup}
+                    setSelectedGroup={this.props.setSelectedGroup}
                     showWidgetNames={this.props.showWidgetNames}
                     lockDragging={this.props.lockDragging}
                     disableInteraction={this.props.disableInteraction}

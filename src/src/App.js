@@ -176,6 +176,7 @@ class App extends GenericApp {
             deleteWidgetsDialog: false,
             visCommonCss: null,
             visUserCss: null,
+            widgetHint: JSON.parse(window.localStorage.getItem('widgetHint')) || 'light',
             ...this.state,
         });
 
@@ -551,6 +552,18 @@ class App extends GenericApp {
         await this.changeProject(project);
     }
 
+    toggleWidgetHint = () => {
+        if (this.state.widgetHint === 'light') {
+            this.setState({ widgetHint: 'dark' });
+        }
+        if (this.state.widgetHint === 'dark') {
+            this.setState({ widgetHint: 'hide' });
+        }
+        if (this.state.widgetHint === 'hide') {
+            this.setState({ widgetHint: 'light' });
+        }
+    }
+
     cutWidgets = async () => {
         this.cutCopyWidgets('cut');
     }
@@ -832,14 +845,14 @@ class App extends GenericApp {
             }
         });
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const currentZ = parseInt(widgets[selectedWidget].style['z-index'] || 0);
-            if (type === 'front' && currentZ < maxZ) {
+            const currentZ = parseInt(widgets[selectedWidget].style['z-index']) || 0;
+            if (type === 'front' && currentZ <= maxZ) {
                 widgets[selectedWidget].style['z-index'] = maxZ + 1;
                 if (widgets[selectedWidget].style['z-index'] > 1599) {
                     widgets[selectedWidget].style['z-index'] = 1599;
                 }
             }
-            if (type === 'back' && currentZ > minZ) {
+            if (type === 'back' && currentZ >= minZ) {
                 widgets[selectedWidget].style['z-index'] = minZ - 1;
                 if (widgets[selectedWidget].style['z-index'] < 0) {
                     widgets[selectedWidget].style['z-index'] = 0;
@@ -855,11 +868,13 @@ class App extends GenericApp {
         this.state.selectedWidgets.forEach(selectedWidget => {
             const boundingRect = this.getWidgetRelativeRect(selectedWidget);
             widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                left: boundingRect.left + leftShift,
-                top: boundingRect.top + topShift,
+                left: Math.round(boundingRect.left + leftShift),
+                top: Math.round(boundingRect.top + topShift),
             });
         });
         this.changeProject(project);
+        setTimeout(() => this.showRulers(), 100);
+        setTimeout(() => this.showRulers(true), 2000);
     }
 
     resizeWidgets = (widthShift, heightShift) => {
@@ -873,8 +888,8 @@ class App extends GenericApp {
                 const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
 
                 widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                    width: boundingRect.width + widthShift,
-                    height: boundingRect.height + heightShift,
+                    width: Math.round(boundingRect.width + widthShift),
+                    height: Math.round(boundingRect.height + heightShift),
                 });
                 changed = true;
             }
@@ -1178,6 +1193,12 @@ class App extends GenericApp {
         // cb && cb(wids, attr, null); // cancel selection
     }
 
+    showRulers = hide => {
+        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].showRulers) {
+            this.visEngineHandlers[this.state.selectedView].showRulers(hide);
+        }
+    }
+
     registerCallback = (name, view, cb) => {
         // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
 
@@ -1275,10 +1296,12 @@ class App extends GenericApp {
             setSelectedWidgets={this.setSelectedWidgets}
             onLoaded={() => this.setState({ widgetsLoaded: true })}
             selectedGroup={this.state.selectedGroup}
+            setSelectedGroup={this.setSelectedGroup}
             onWidgetsChanged={this.onWidgetsChanged}
             projectName={this.state.projectName}
             lockDragging={this.state.lockDragging}
             disableInteraction={this.state.disableInteraction}
+            widgetHint={this.state.widgetHint}
             onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
             registerEditorCallback={this.state.runtime ? null : this.registerCallback}
         />;
@@ -1362,6 +1385,8 @@ class App extends GenericApp {
                         adapterName={this.adapterName}
                         selectedGroup={this.state.selectedGroup}
                         setSelectedGroup={this.setSelectedGroup}
+                        widgetHint={this.state.widgetHint}
+                        toggleWidgetHint={this.toggleWidgetHint}
                         instance={this.instance}
                         editMode={this.state.editMode}
                     />

@@ -197,7 +197,9 @@ const getFieldsAfter = (widget, widgets, fonts) => [
                 ]),
             { name: 'width', type: 'dimension' },
             { name: 'height', type: 'dimension' },
-            { name: 'z-index', type: 'number', min: -200, max: 200 },
+            {
+                name: 'z-index', type: 'number', min: -200, max: 200,
+            },
             { name: 'overflow-x', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
             { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
             { name: 'opacity' },
@@ -757,6 +759,10 @@ const Widget = props => {
                                             });
                                             project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
                                         });
+                                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                                        newAccordionOpen[group.name] = true;
+                                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                                        setAccordionOpen(newAccordionOpen);
                                         props.changeProject(project);
                                     }
                                     e.stopPropagation();

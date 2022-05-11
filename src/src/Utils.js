@@ -35,6 +35,7 @@ export const getWidgetTypes = () => {
                     name: script.attributes.id.value,
                     title: script.attributes['data-vis-name']?.value,
                     preview: script.attributes['data-vis-prev']?.value,
+                    help: script.attributes['data-vis-help']?.value,
                     set: widgetSet,
                     imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
                     init: script.attributes['data-vis-init']?.value,

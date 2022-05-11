@@ -240,6 +240,13 @@ class VisView extends React.Component {
         };
     }
 
+    onViewDoubleClick = e => {
+        if (this.props.selectedWidgets.length === 1 &&
+            this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
+            this.props.setSelectedGroup(this.props.selectedWidgets[0]);
+        }
+    }
+
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
@@ -499,8 +506,8 @@ class VisView extends React.Component {
         const viewRect = this.refRelativeView.current.getBoundingClientRect();
 
         if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 2) {
-            this.movement.x -= Math.round(((this.movement.startWidget.left - viewRect.left + this.movement.x) % this.props.views[this.props.view].settings.gridSize));
-            this.movement.y -= Math.round(((this.movement.startWidget.top - viewRect.top + this.movement.y) % this.props.views[this.props.view].settings.gridSize));
+            this.movement.x -= Math.ceil(((this.movement.startWidget.left - viewRect.left + this.movement.x) % this.props.views[this.props.view].settings.gridSize));
+            this.movement.y -= Math.ceil(((this.movement.startWidget.top - viewRect.top + this.movement.y) % this.props.views[this.props.view].settings.gridSize));
         }
 
         if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 1) {
@@ -533,12 +540,29 @@ class VisView extends React.Component {
             }
         }
 
+        this.showRulers();
+
+        this.props.selectedWidgets.forEach(wid => {
+            const widgetsRefs = this.widgetsRefs;
+            if (widgetsRefs[wid]?.onMove) {
+                widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
+            }
+        });
+    } : null;
+
+    showRulers = hide => {
         const verticals = [];
         const horizontals = [];
         const rulers = [];
+        if (hide) {
+            this.setState({ rulers });
+            return;
+        }
+
+        const viewRect = this.refRelativeView.current.getBoundingClientRect();
 
         Object.keys(this.widgetsRefs).forEach(wid => {
-            if (!this.props.selectedWidgets.includes(wid) && !this.props.views[this.props.view].widgets[wid].grouped) {
+            if (!this.props.selectedWidgets.includes(wid) && (!this.props.views[this.props.view].widgets[wid].grouped || this.props.selectedGroup)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 horizontals.push(Math.round(boundingRect.top));
                 horizontals.push(Math.round(boundingRect.bottom));
@@ -550,7 +574,7 @@ class VisView extends React.Component {
         const selectedVerticals = [];
         this.props.selectedWidgets.forEach(wid => {
             // check if not in group
-            if (!this.props.views[this.props.view].widgets[wid].grouped) {
+            if (!this.props.views[this.props.view].widgets[wid].grouped || this.props.selectedGroup) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 selectedHorizontals.push(Math.round(boundingRect.top));
                 selectedHorizontals.push(Math.round(boundingRect.bottom));
@@ -569,14 +593,7 @@ class VisView extends React.Component {
             }
         }));
         this.setState({ rulers });
-
-        this.props.selectedWidgets.forEach(wid => {
-            const widgetsRefs = this.widgetsRefs;
-            if (widgetsRefs[wid]?.onMove) {
-                widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
-            }
-        });
-    } : null;
+    }
 
     onMouseWidgetUp = !this.props.runtime ? e => {
         e && e.stopPropagation();
@@ -598,7 +615,7 @@ class VisView extends React.Component {
             }
         });
 
-        this.setState({ rulers: [] });
+        this.showRulers(true);
     } : null;
 
     editWidgetsRect(widget) {
@@ -724,6 +741,7 @@ class VisView extends React.Component {
                     this.props.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
                     this.props.registerEditorCallback('pxToPercent', this.props.view, this.pxToPercent);
                     this.props.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
+                    this.props.registerEditorCallback('showRulers', this.props.view, this.showRulers);
                 }
             } else {
                 this.regsiterDone = false;
@@ -731,6 +749,7 @@ class VisView extends React.Component {
                 this.props.registerEditorCallback('onPxToPercent', this.props.view);
                 this.props.registerEditorCallback('pxToPercent', this.props.view);
                 this.props.registerEditorCallback('onPercentToPx', this.props.view);
+                this.props.registerEditorCallback('showRulers', this.props.view);
             }
         }
     }
@@ -805,6 +824,7 @@ class VisView extends React.Component {
             adapterName: props.adapterName,
             instance: props.instance,
             projectName: props.projectName,
+            widgetHint: props.widgetHint,
             relativeWidgetOrder,
             moveAllowed,
             selectedGroup: props.selectedGroup,
@@ -1019,6 +1039,7 @@ class VisView extends React.Component {
             ref={this.refView}
             id={`visview_${this.props.view.replace(/\s/g, '_')}`}
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+            onDoubleClick={e => this.onViewDoubleClick(e)}
             style={style}
         >
             {/* eslint-disable-next-line react/no-danger */}

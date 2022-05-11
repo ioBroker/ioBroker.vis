@@ -190,7 +190,8 @@ const VisContextMenu = props => {
         <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}
-            widgets={props.selectedWidgets.map(selectedWidget => props.project[props.selectedView].widgets[selectedWidget])}
+            widgets={props.project[props.selectedView].widgets}
+            selectedWidgets={props.selectedWidgets}
         />
     </>;
 };

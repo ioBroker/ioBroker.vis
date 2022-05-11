@@ -253,6 +253,30 @@ const WidgetField = props => {
     const [textDialogFocused, setTextDialogFocused] = useState(false);
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
 
+    const urlPopper = <Popper
+        open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
+        anchorEl={textRef.current}
+        placement="bottom"
+        transition
+    >
+        {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={350}>
+                <Paper>
+                    <Button
+                        style={{ textTransform: 'none' }}
+                        onClick={() => change(`.${value.toString().slice(window.location.origin.length)}`)}
+                    >
+                        {I18n.t('Replace to ')}
+                        {`.${value.toString().slice(window.location.origin.length)}`}
+                    </Button>
+                    <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
+                        <ClearIcon fontSize="small" />
+                    </IconButton>
+                </Paper>
+            </Fade>
+        )}
+    </Popper>;
+
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
             props.socket.getObject(value).then(objectData => setObjectCache(objectData)).catch(() => setObjectCache(null));
@@ -311,9 +335,13 @@ const WidgetField = props => {
                     },
                     endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
+                ref={textRef}
                 value={value}
+                onFocus={() => setTextDialogFocused(true)}
+                onBlur={() => setTextDialogFocused(false)}
                 onChange={e => change(e.target.value)}
             />
+            {urlPopper}
             <IODialog
                 title={t('Select file')}
                 open={idDialog}
@@ -782,29 +810,7 @@ const WidgetField = props => {
                     step: field.step,
                 }}
             />
-            <Popper
-                open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
-                anchorEl={textRef.current}
-                placement="bottom"
-                transition
-            >
-                {({ TransitionProps }) => (
-                    <Fade {...TransitionProps} timeout={350}>
-                        <Paper>
-                            <Button
-                                style={{ textTransform: 'none' }}
-                                onClick={() => change(value.toString().slice(window.location.origin.length))}
-                            >
-                                {I18n.t('Replace to ')}
-                                {value.toString().slice(window.location.origin.length)}
-                            </Button>
-                            <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
-                                <ClearIcon fontSize="small" />
-                            </IconButton>
-                        </Paper>
-                    </Fade>
-                )}
-            </Popper>
+            {urlPopper}
         </>;
     }
 

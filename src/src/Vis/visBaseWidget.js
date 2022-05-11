@@ -856,8 +856,8 @@ class VisBaseWidget extends React.Component {
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;
-        if (!this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
-            widgetName = <div ref={this.refName} className="vis-editmode-widget-name">{ this.props.id }</div>;
+        if (this.props.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
+            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.props.widgetHint}`}>{ this.props.id }</div>;
             style.overflow = 'visible';
         }
 
