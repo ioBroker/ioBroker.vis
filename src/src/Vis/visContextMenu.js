@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 import WidgetIcon from '@mui/icons-material/Widgets';
@@ -197,6 +198,24 @@ const VisContextMenu = props => {
 };
 
 VisContextMenu.propTypes = {
+    changeProject: PropTypes.func,
+    children: PropTypes.any,
+    copyWidgets: PropTypes.func,
+    cutWidgets: PropTypes.func,
+    deleteWidgets: PropTypes.func,
+    disabled: PropTypes.bool,
+    getNewWidgetIdNumber: PropTypes.func,
+    groupWidgets: PropTypes.func,
+    lockWidgets: PropTypes.func,
+    orderWidgets: PropTypes.func,
+    pasteWidgets: PropTypes.func,
+    project: PropTypes.object,
+    selectedView: PropTypes.string,
+    selectedWidgets: PropTypes.array,
+    setSelectedGroup: PropTypes.func,
+    setSelectedWidgets: PropTypes.func,
+    ungroupWidgets: PropTypes.func,
+    widgetsClipboard: PropTypes.object,
 };
 
 export default VisContextMenu;

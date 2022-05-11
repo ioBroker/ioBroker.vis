@@ -13,7 +13,6 @@ import {
 
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
-import LockIcon from '@mui/icons-material/Lock';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -22,11 +21,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import { useState } from 'react';
+import i18n from '@iobroker/adapter-react-v5/i18n';
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Utils';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
-import i18n from '@iobroker/adapter-react-v5/i18n';
 
 const Widgets = props => {
     const [exportDialog, setExportDialog] = useState(false);

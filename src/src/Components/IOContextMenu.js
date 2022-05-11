@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
 
@@ -91,6 +92,12 @@ const IOContextMenu = props => {
             {contextMenuItems(props.menuItemsData(menuPosition), !!menuPosition, () => setMenuPosition(null))}
         </Menu>
     </div>;
+};
+
+IOContextMenu.propTypes = {
+    children: PropTypes.any,
+    disabled: PropTypes.bool,
+    menuItemsData: PropTypes.func,
 };
 
 export default IOContextMenu;

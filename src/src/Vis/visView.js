@@ -240,7 +240,7 @@ class VisView extends React.Component {
         };
     }
 
-    onViewDoubleClick = e => {
+    onViewDoubleClick = () => {
         if (this.props.selectedWidgets.length === 1 &&
             this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
             this.props.setSelectedGroup(this.props.selectedWidgets[0]);
