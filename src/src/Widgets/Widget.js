@@ -72,10 +72,10 @@ const Widget = props => {
 
     const result =
     <Tooltip
-        title={props.widgetType.help ? <div className={props.classes.widgetTooltip}>
+        title={<div className={props.classes.widgetTooltip}>
             <div>{ img }</div>
-            <div>{props.widgetType.help}</div>
-        </div> : ''}
+            { props.widgetType.help ? <div>{props.widgetType.help}</div> : null }
+        </div>}
         placement="right-end"
     >
         <div className={props.classes.widget} style={style}>

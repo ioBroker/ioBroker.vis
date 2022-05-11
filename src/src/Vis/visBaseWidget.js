@@ -86,7 +86,7 @@ class VisBaseWidget extends React.Component {
             return true;
         }
 
-        if (command === 'startMove') {
+        if (command === 'startMove' || command === 'startResize') {
             const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
             if (overlay) {
                 if (this.state.selected) {
@@ -95,10 +95,14 @@ class VisBaseWidget extends React.Component {
                     overlay.className = removeClass(overlay.className, 'vis-editmode-overlay-not-selected');
                 }
             }
+
+            if (command === 'startResize') {
+                this.resize = true;
+            }
             return true;
         }
 
-        if (command === 'stopMove') {
+        if (command === 'stopMove' || command === 'stopResize') {
             const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
             if (overlay) {
                 if (this.state.selected) {
@@ -106,6 +110,9 @@ class VisBaseWidget extends React.Component {
                 } else {
                     overlay.className = addClass(overlay.className, 'vis-editmode-overlay-not-selected');
                 }
+            }
+            if (command === 'stopResize') {
+                this.resize = false;
             }
             return true;
         }
@@ -344,7 +351,7 @@ class VisBaseWidget extends React.Component {
                     this.widDiv.style.height = `${this.movement.height + y}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
                 }
-            } else if (this.resize === 'bottom-right') {
+            } else { // bottom-right
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.refService.current.style.width = `${this.movement.width + x}px`;
                 if (this.widDiv) {

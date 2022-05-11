@@ -18,6 +18,7 @@ import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
+import {analyzeDraggableResizable} from "../Utils";
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -95,6 +96,7 @@ class VisView extends React.Component {
         }
         this.widgetsRefs = {};
         this.registerEditorHandlers(true);
+        this.uninstallKeyHandlers();
     }
 
     onCommand = (command, options) => {
@@ -551,13 +553,14 @@ class VisView extends React.Component {
     } : null;
 
     showRulers = hide => {
-        const verticals = [];
-        const horizontals = [];
         const rulers = [];
         if (hide) {
             this.setState({ rulers });
             return;
         }
+
+        const verticals = [];
+        const horizontals = [];
 
         const viewRect = this.refRelativeView.current.getBoundingClientRect();
 
@@ -570,6 +573,7 @@ class VisView extends React.Component {
                 verticals.push(Math.round(boundingRect.right));
             }
         });
+
         const selectedHorizontals = [];
         const selectedVerticals = [];
         this.props.selectedWidgets.forEach(wid => {
@@ -587,11 +591,13 @@ class VisView extends React.Component {
                 rulers.push({ type: 'horizontal', value: horizontal - viewRect.top });
             }
         }));
+
         verticals.forEach(vertical => selectedVerticals.forEach(selectedVertical => {
             if (Math.abs(vertical - selectedVertical) <= 0.3) {
                 rulers.push({ type: 'vertical', value: vertical - viewRect.left });
             }
         }));
+
         this.setState({ rulers });
     }
 
@@ -728,10 +734,6 @@ class VisView extends React.Component {
         return results;
     }
 
-    onKeyPress = e => {
-        console.log(e.key);
-    }
-
     registerEditorHandlers(unregister) {
         if (this.props.registerEditorCallback) {
             if (!unregister && this.props.activeView === this.props.view) {
@@ -741,7 +743,6 @@ class VisView extends React.Component {
                     this.props.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
                     this.props.registerEditorCallback('pxToPercent', this.props.view, this.pxToPercent);
                     this.props.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
-                    this.props.registerEditorCallback('showRulers', this.props.view, this.showRulers);
                 }
             } else {
                 this.regsiterDone = false;
@@ -749,7 +750,6 @@ class VisView extends React.Component {
                 this.props.registerEditorCallback('onPxToPercent', this.props.view);
                 this.props.registerEditorCallback('pxToPercent', this.props.view);
                 this.props.registerEditorCallback('onPercentToPx', this.props.view);
-                this.props.registerEditorCallback('showRulers', this.props.view);
             }
         }
     }
@@ -878,12 +878,185 @@ class VisView extends React.Component {
         return settings?.theme || 'redmond';
     }
 
+    installKeyHandlers() {
+        if (!this.keysHandlerInstalled) {
+            this.keysHandlerInstalled = true;
+            window.addEventListener('keydown', this.onKeyDown, false);
+        }
+    }
+
+    uninstallKeyHandlers() {
+        if (this.keysHandlerInstalled) {
+            this.keysHandlerInstalled = false;
+            window.removeEventListener('keydown', this.onKeyDown, false);
+        }
+    }
+
+    moveWidgets = async (leftShift, topShift) => {
+        if (!this.moveTimer) {
+            this.movement = {
+                x: 0,
+                y: 0,
+            };
+            this.props.selectedWidgets.forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onMove) {
+                    this.widgetsRefs[_wid].onMove(); // indicate start of movement
+                }
+            });
+
+            // Indicate about movement start
+            Object.keys(this.widgetsRefs).forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onCommand) {
+                    this.widgetsRefs[_wid].onCommand('startMove');
+                }
+            });
+        }
+
+        this.movement.x += leftShift;
+        this.movement.y += topShift;
+
+        this.props.selectedWidgets.forEach(wid => {
+            const widgetsRefs = this.widgetsRefs;
+            if (widgetsRefs[wid]?.onMove) {
+                widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
+            }
+        });
+
+        this.showRulers();
+
+        this.moveTimer && clearTimeout(this.moveTimer);
+        this.moveTimer = setTimeout(() => {
+            this.moveTimer = null;
+            this.showRulers(true);
+
+            this.props.selectedWidgets.forEach(wid => {
+                if (this.widgetsRefs[wid]?.onMove) {
+                    this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true, this.calculateRelativeWidgetPosition); // indicate end of movement
+                }
+            });
+
+            // Indicate about movement start
+            Object.keys(this.widgetsRefs).forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onCommand) {
+                    this.widgetsRefs[_wid].onCommand('stopMove');
+                }
+            });
+            this.movement = null;
+        }, 800);
+    }
+
+    resizeWidgets = async (widthShift, heightShift) => {
+        if (!this.moveTimer) {
+            this.movement = {
+                x: 0,
+                y: 0,
+                isResize: true,
+            };
+            // Indicate about movement start
+            Object.keys(this.widgetsRefs).forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onCommand) {
+                    this.widgetsRefs[_wid].onCommand('startResize');
+                }
+            });
+
+            this.props.selectedWidgets.forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onMove) {
+                    this.widgetsRefs[_wid].onMove(); // indicate start of resizing
+                }
+            });
+        }
+
+        this.movement.x += widthShift;
+        this.movement.y += heightShift;
+
+        this.props.selectedWidgets.forEach(wid => {
+            const widgetsRefs = this.widgetsRefs;
+            if (widgetsRefs[wid]?.onMove) {
+                widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
+            }
+        });
+
+        this.showRulers();
+
+        this.moveTimer && clearTimeout(this.moveTimer);
+        this.moveTimer = setTimeout(() => {
+            this.moveTimer = null;
+            this.showRulers(true);
+
+            this.props.selectedWidgets.forEach(wid => {
+                if (this.widgetsRefs[wid]?.onMove) {
+                    this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true, this.calculateRelativeWidgetPosition); // indicate end of movement
+                }
+            });
+
+            // Indicate about movement start
+            Object.keys(this.widgetsRefs).forEach(_wid => {
+                if (this.widgetsRefs[_wid]?.onCommand) {
+                    this.widgetsRefs[_wid].onCommand('stopResize');
+                }
+            });
+            this.movement = null;
+        }, 800);
+        /*return;
+
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = project[this.state.selectedView].widgets;
+        let changed = false;
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            const el = window.document.getElementById(selectedWidget);
+            const result = analyzeDraggableResizable(el);
+            if (result.resizable) {
+                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
+
+                widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
+                    width: boundingRect.width + widthShift,
+                    height: boundingRect.height + heightShift,
+                });
+                changed = true;
+            }
+        });
+
+        changed && (await this.changeProject(project));*/
+    }
+
+    onKeyDown = async e => {
+        if (!this.props.editMode) {
+            return;
+        }
+        if (document.activeElement.tagName === 'BODY') {
+            if (this.props.selectedWidgets.length) {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? -10 : -1, 0);
+                }
+                if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? 10 : 1, 0);
+                }
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? -10 : -1);
+                }
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    await this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? 10 : 1);
+                }
+            }
+        }
+    }
+
     render() {
         const rxAbsoluteWidgets = [];
         const rxRelativeWidgets = [];
 
         if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
             return null;
+        }
+
+        if (this.props.view === this.props.activeView && this.props.editMode && !this.keysHandlerInstalled) {
+            this.installKeyHandlers();
+        } else if ((this.props.view !== this.props.activeView || !this.props.editMode) && this.keysHandlerInstalled) {
+            this.uninstallKeyHandlers();
         }
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div

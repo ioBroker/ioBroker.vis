@@ -182,58 +182,45 @@ class App extends GenericApp {
 
         window.addEventListener('hashchange', this.onHashChange, false);
         window.addEventListener('keydown', this.onKeyDown, false);
-        window.addEventListener('beforeunload', e => {
-            if (this.state.needSave) {
-                e.returnValue = I18n.t('Are you sure? Some data didn\'t save.');
-                return I18n.t('Are you sure? Some data didn\'t save.');
-            }
-            return null;
-        });
+        window.addEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
-    onKeyDown = e => {
-        console.log(e.key);
+    onBeforeUnload = e => {
+        if (this.state.needSave) {
+            this.needRestart = true;
+            e.returnValue = I18n.t('Project doesn\'t saved. Are you sure?');
+            return e.returnValue;
+        }
+
+        return null;
+    };
+
+    onKeyDown = async e => {
         if (!this.state.editMode) {
             return;
         }
         if (document.activeElement.tagName === 'BODY') {
             if (e.ctrlKey && e.key === 'z' && this.state.historyCursor !== 0) {
                 e.preventDefault();
-                this.undo();
+                await this.undo();
             }
             if (e.ctrlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
                 e.preventDefault();
-                this.redo();
+                await this.redo();
             }
             if (this.state.selectedWidgets.length) {
                 if (e.ctrlKey && e.key === 'c') {
                     e.preventDefault();
-                    this.copyWidgets();
+                    await this.copyWidgets();
                 }
                 if (e.ctrlKey && e.key === 'x') {
                     e.preventDefault();
-                    this.cutWidgets();
-                }
-                if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? -10 : -1, 0);
-                }
-                if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](e.ctrlKey ? 10 : 1, 0);
-                }
-                if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? -10 : -1);
-                }
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    this[e.shiftKey ? 'resizeWidgets' : 'moveWidgets'](0, e.ctrlKey ? 10 : 1);
+                    await this.cutWidgets();
                 }
             }
             if (e.ctrlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
                 e.preventDefault();
-                this.pasteWidgets();
+                await this.pasteWidgets();
             }
             if (e.ctrlKey && e.key === 'a') {
                 e.preventDefault();
@@ -246,7 +233,7 @@ class App extends GenericApp {
             }
             if (e.key === 'Delete') {
                 e.preventDefault();
-                this.deleteWidgets();
+                await this.deleteWidgets();
             }
         }
     }
@@ -258,6 +245,7 @@ class App extends GenericApp {
         super.componentWillUnmount();
         window.removeEventListener('hashchange', this.onHashChange, false);
         window.removeEventListener('keydown', this.onKeyDown, false);
+        window.removeEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
     onHashChange = () => {
@@ -844,6 +832,7 @@ class App extends GenericApp {
                 maxZ = currentZ;
             }
         });
+
         this.state.selectedWidgets.forEach(selectedWidget => {
             const currentZ = parseInt(widgets[selectedWidget].style['z-index']) || 0;
             if (type === 'front' && currentZ <= maxZ) {
@@ -859,12 +848,15 @@ class App extends GenericApp {
                 }
             }
         });
-        this.changeProject(project);
+
+        return this.changeProject(project);
     }
 
+/*
     moveWidgets = async (leftShift, topShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
+
         this.state.selectedWidgets.forEach(selectedWidget => {
             const boundingRect = this.getWidgetRelativeRect(selectedWidget);
             widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
@@ -877,7 +869,7 @@ class App extends GenericApp {
         setTimeout(() => this.showRulers(true), 2000);
     }
 
-    resizeWidgets = (widthShift, heightShift) => {
+    resizeWidgets = async (widthShift, heightShift) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         let changed = false;
@@ -895,21 +887,26 @@ class App extends GenericApp {
             }
         });
 
-        changed && this.changeProject(project);
+        changed && (await this.changeProject(project));
     }
+*/
 
     getWidgetRelativeRect = widget => {
-        const widgetBoundingRect = window.document.getElementById(`${widget}`).getBoundingClientRect();
-        const viewBoundingRect = window.document.getElementById('vis-react-container').getBoundingClientRect();
-        const relativeRect = {
-            left: widgetBoundingRect.left - viewBoundingRect.left,
-            top: widgetBoundingRect.top - viewBoundingRect.top,
-            right: widgetBoundingRect.right - viewBoundingRect.left,
-            bottom: widgetBoundingRect.bottom - viewBoundingRect.top,
-            width: widgetBoundingRect.width,
-            height: widgetBoundingRect.height,
-        };
-        return relativeRect;
+        const el = window.document.getElementById(widget);
+        if (el) {
+            const widgetBoundingRect = el.getBoundingClientRect();
+            const viewBoundingRect = window.document.getElementById('vis-react-container').getBoundingClientRect();
+            return {
+                left: widgetBoundingRect.left - viewBoundingRect.left,
+                top: widgetBoundingRect.top - viewBoundingRect.top,
+                right: widgetBoundingRect.right - viewBoundingRect.left,
+                bottom: widgetBoundingRect.bottom - viewBoundingRect.top,
+                width: widgetBoundingRect.width,
+                height: widgetBoundingRect.height,
+            };
+        }
+
+        return null;
     }
 
     groupWidgets = () => {
@@ -957,7 +954,8 @@ class App extends GenericApp {
         group.style.width = `${right - left}px`;
         group.style.height = `${bottom - top}px`;
         widgets[groupId] = group;
-        this.changeProject(project);
+
+        return this.changeProject(project);
     }
 
     ungroupWidgets = () => {
@@ -975,7 +973,8 @@ class App extends GenericApp {
         });
         this.setSelectedWidgets(group.data.members);
         delete widgets[this.state.selectedWidgets[0]];
-        this.changeProject(project);
+
+        return this.changeProject(project);
     }
 
     setSelectedGroup = groupId => {
@@ -985,17 +984,13 @@ class App extends GenericApp {
     undo = async () => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
-        await this.setStateAsync({
-            historyCursor: this.state.historyCursor - 1,
-        });
+        await this.setStateAsync({ historyCursor: this.state.historyCursor - 1 });
     }
 
     redo = async () => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
-        await this.setStateAsync({
-            historyCursor: this.state.historyCursor + 1,
-        });
+        await this.setStateAsync({ historyCursor: this.state.historyCursor + 1 });
     }
 
     toggleLockDragging = () => {
@@ -1008,9 +1003,12 @@ class App extends GenericApp {
         this.setState({ disableInteraction: !this.state.disableInteraction });
     }
 
-    changeProject = async (project, isHistory) => {
-        const newState = { project, needSave: true };
-        if (!isHistory) {
+    saveHistory(project) {
+        this.historyTimer && clearTimeout(this.historyTimer);
+
+        this.historyTimer = setTimeout(() => {
+            this.historyTimer = null;
+
             let history = JSON.parse(JSON.stringify(this.state.history));
             let historyCursor = this.state.historyCursor;
             if (historyCursor !== history.length - 1) {
@@ -1021,11 +1019,16 @@ class App extends GenericApp {
                 history.shift();
             }
             historyCursor = history.length - 1;
-            newState.history = history;
-            newState.historyCursor = historyCursor;
-        }
+            this.setState({ history, historyCursor });
+        }, 1000);
+    }
 
-        await this.setStateAsync(newState);
+    changeProject = async (project, isHistory) => {
+        const newState = { project, needSave: true };
+        if (!isHistory) {
+            // do not save history too often
+            this.saveHistory(project);
+        }
 
         // save changes after 1 second
         // eslint-disable-next-line no-unused-expressions
@@ -1034,14 +1037,13 @@ class App extends GenericApp {
             this.savingTimer = null;
             await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
             this.setState({ needSave: false });
+            if (this.needRestart) {
+                window.location.reload();
+            }
         }, 1000);
 
-        this.setState({ visProject: project });
-        // this.visTimer && clearTimeout(this.visTimer);
-        // this.visTimer = setTimeout(() => {
-        //     this.visTimer = null;
-        //     this.setState({ visProject: project });
-        // }, 300);
+        newState.visProject = project;
+        await this.setStateAsync(newState);
     }
 
     addProject = async projectName => {
@@ -1193,11 +1195,13 @@ class App extends GenericApp {
         // cb && cb(wids, attr, null); // cancel selection
     }
 
+    /*
     showRulers = hide => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].showRulers) {
             this.visEngineHandlers[this.state.selectedView].showRulers(hide);
         }
     }
+    */
 
     registerCallback = (name, view, cb) => {
         // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
