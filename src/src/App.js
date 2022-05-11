@@ -176,7 +176,7 @@ class App extends GenericApp {
             deleteWidgetsDialog: false,
             visCommonCss: null,
             visUserCss: null,
-            widgetHint: JSON.parse(window.localStorage.getItem('widgetHint')) || 'light',
+            widgetHint: window.localStorage.getItem('widgetHint') || 'light',
             ...this.state,
         });
 
@@ -541,15 +541,18 @@ class App extends GenericApp {
     }
 
     toggleWidgetHint = () => {
+        let widgetHint;
         if (this.state.widgetHint === 'light') {
-            this.setState({ widgetHint: 'dark' });
-        }
+            widgetHint = 'dark';
+        } else
         if (this.state.widgetHint === 'dark') {
-            this.setState({ widgetHint: 'hide' });
-        }
+            widgetHint = 'hide';
+        } else
         if (this.state.widgetHint === 'hide') {
-            this.setState({ widgetHint: 'light' });
+            widgetHint = 'light';
         }
+        this.setState({ widgetHint: 'dark' });
+        window.localStorage.setItem('widgetHint', widgetHint);
     }
 
     cutWidgets = async () => {
@@ -851,45 +854,6 @@ class App extends GenericApp {
 
         return this.changeProject(project);
     }
-
-/*
-    moveWidgets = async (leftShift, topShift) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = project[this.state.selectedView].widgets;
-
-        this.state.selectedWidgets.forEach(selectedWidget => {
-            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
-            widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                left: Math.round(boundingRect.left + leftShift),
-                top: Math.round(boundingRect.top + topShift),
-            });
-        });
-        this.changeProject(project);
-        setTimeout(() => this.showRulers(), 100);
-        setTimeout(() => this.showRulers(true), 2000);
-    }
-
-    resizeWidgets = async (widthShift, heightShift) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = project[this.state.selectedView].widgets;
-        let changed = false;
-        this.state.selectedWidgets.forEach(selectedWidget => {
-            const el = window.document.getElementById(selectedWidget);
-            const result = analyzeDraggableResizable(el);
-            if (result.resizable) {
-                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-
-                widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                    width: Math.round(boundingRect.width + widthShift),
-                    height: Math.round(boundingRect.height + heightShift),
-                });
-                changed = true;
-            }
-        });
-
-        changed && (await this.changeProject(project));
-    }
-*/
 
     getWidgetRelativeRect = widget => {
         const el = window.document.getElementById(widget);
@@ -1195,14 +1159,6 @@ class App extends GenericApp {
         // cb && cb(wids, attr, null); // cancel selection
     }
 
-    /*
-    showRulers = hide => {
-        if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].showRulers) {
-            this.visEngineHandlers[this.state.selectedView].showRulers(hide);
-        }
-    }
-    */
-
     registerCallback = (name, view, cb) => {
         // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
 
@@ -1225,47 +1181,6 @@ class App extends GenericApp {
         }
 
         this.socket.writeFile64(directory, fileName, data);
-    }
-
-    renderRulers() {
-        if (!this.state.selectedView) {
-            return null;
-        }
-        if (!this.state.project[this.state.selectedView].settings.sizex || !this.state.project[this.state.selectedView].settings.sizey) {
-            return null;
-        }
-        return <>
-            <div style={{
-                width: `${this.state.project[this.state.selectedView].settings.sizex}px`,
-                height: `${this.state.project[this.state.selectedView].settings.sizey}px`,
-                position: 'absolute',
-                borderTopWidth: 0,
-                borderLeftWidth: 0,
-                borderRightWidth: 1,
-                borderBottomWidth: 1,
-                boxSizing: 'content-box',
-                borderStyle: 'dashed',
-                borderColor: 'black',
-                zIndex: 1000,
-                pointerEvents: 'none',
-            }}
-            ></div>
-            <div style={{
-                width: `${parseInt(this.state.project[this.state.selectedView].settings.sizex) + 1}px`,
-                height: `${parseInt(this.state.project[this.state.selectedView].settings.sizey) + 1}px`,
-                position: 'absolute',
-                borderTopWidth: 0,
-                borderLeftWidth: 0,
-                borderRightWidth: 1,
-                borderBottomWidth: 1,
-                boxSizing: 'content-box',
-                borderStyle: 'dashed',
-                borderColor: 'white',
-                zIndex: 1000,
-                pointerEvents: 'none',
-            }}
-            ></div>
-        </>;
     }
 
     render() {
@@ -1480,7 +1395,6 @@ class App extends GenericApp {
                                                     height: '100%',
                                                 }}
                                             >
-                                                {this.renderRulers()}
                                                 <VisContextMenu
                                                     disabled={!this.state.editMode}
                                                     selectedWidgets={this.state.selectedWidgets}

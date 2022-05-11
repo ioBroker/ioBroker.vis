@@ -1263,6 +1263,8 @@ VisEngine.propTypes = {
     registerEditorCallback: PropTypes.func,
     visCommonCss: PropTypes.string,
     visUserCss: PropTypes.string,
+    setSelectedGroup: PropTypes.func,
+    widgetHint: PropTypes.string,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

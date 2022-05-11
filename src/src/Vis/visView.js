@@ -614,7 +614,7 @@ class VisView extends React.Component {
             });
         }
 
-        // Indicate about movement start
+        // Indicate about movement stop
         Object.keys(this.widgetsRefs).forEach(_wid => {
             if (this.widgetsRefs[_wid]?.onCommand) {
                 this.widgetsRefs[_wid].onCommand('stopMove');
@@ -997,26 +997,6 @@ class VisView extends React.Component {
             });
             this.movement = null;
         }, 800);
-        /*return;
-
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = project[this.state.selectedView].widgets;
-        let changed = false;
-        this.state.selectedWidgets.forEach(selectedWidget => {
-            const el = window.document.getElementById(selectedWidget);
-            const result = analyzeDraggableResizable(el);
-            if (result.resizable) {
-                const boundingRect = window.document.getElementById(selectedWidget).getBoundingClientRect();
-
-                widgets[selectedWidget].style = this.pxToPercent(widgets[selectedWidget].style, {
-                    width: boundingRect.width + widthShift,
-                    height: boundingRect.height + heightShift,
-                });
-                changed = true;
-            }
-        });
-
-        changed && (await this.changeProject(project));*/
     }
 
     onKeyDown = async e => {
@@ -1043,6 +1023,50 @@ class VisView extends React.Component {
                 }
             }
         }
+    }
+
+    renderScreenSize() {
+        if (!this.props.editMode ||
+            !this.props.view ||
+            !this.props.views[this.props.view].settings.sizex ||
+            !this.props.views[this.props.view].settings.sizey
+        ) {
+            return null;
+        }
+        return [
+            <div key="black" style={{
+                width: `${this.props.views[this.props.view].settings.sizex}px`,
+                height: `${this.props.views[this.props.view].settings.sizey}px`,
+                position: 'absolute',
+                borderTopWidth: 0,
+                borderLeftWidth: 0,
+                borderRightWidth: 1,
+                borderBottomWidth: 1,
+                boxSizing: 'content-box',
+                borderStyle: 'dashed',
+                borderColor: 'black',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                opacity: 0.7,
+            }}
+            ></div>,
+            <div key="white" style={{
+                width: `${parseInt(this.props.views[this.props.view].settings.sizex) + 1}px`,
+                height: `${parseInt(this.props.views[this.props.view].settings.sizey, 10) + 1}px`,
+                position: 'absolute',
+                borderTopWidth: 0,
+                borderLeftWidth: 0,
+                borderRightWidth: 1,
+                borderBottomWidth: 1,
+                boxSizing: 'content-box',
+                borderStyle: 'dashed',
+                borderColor: 'white',
+                zIndex: 1000,
+                pointerEvents: 'none',
+                opacity: 0.7,
+            }}
+            ></div>
+        ];
     }
 
     render() {
@@ -1215,9 +1239,9 @@ class VisView extends React.Component {
             onDoubleClick={e => this.onViewDoubleClick(e)}
             style={style}
         >
-            {/* eslint-disable-next-line react/no-danger */}
-            <style dangerouslySetInnerHTML={{ __html: this.state.themeCode }} />
+            <style>{this.state.themeCode}</style>
             { gridDiv }
+            {this.renderScreenSize()}
             {this.state.rulers.map((ruler, key) =>
                 <div
                     key={key}
@@ -1268,6 +1292,8 @@ VisView.propTypes = {
     showWidgetNames: PropTypes.bool,
     container: PropTypes.bool,
     registerEditorCallback: PropTypes.func,
+    setSelectedGroup: PropTypes.func,
+    widgetHint: PropTypes.string,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

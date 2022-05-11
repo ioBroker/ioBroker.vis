@@ -45,6 +45,7 @@ class VisBaseWidget extends React.Component {
             selectedOne: selected && this.props.selectedWidgets.length === 1,
             resizable: true,
             resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
+            widgetHint: this.props.widgetHint,
         };
 
         this.onCommandBound = this.onCommand.bind(this);
@@ -111,6 +112,11 @@ class VisBaseWidget extends React.Component {
                     overlay.className = addClass(overlay.className, 'vis-editmode-overlay-not-selected');
                 }
             }
+
+            // show resizers again
+            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
+            resizers.forEach(item => item.style.display = 'block');
+
             if (command === 'stopResize') {
                 this.resize = false;
             }
@@ -159,6 +165,10 @@ class VisBaseWidget extends React.Component {
 
         if (props.editMode !== state.editMode) {
             return { editMode: props.editMode, applyBindings: true };
+        }
+
+        if (props.widgetHint !== state.widgetHint) {
+            return { widgetHint: props.widgetHint };
         }
 
         const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
@@ -863,8 +873,8 @@ class VisBaseWidget extends React.Component {
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;
-        if (this.props.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
-            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.props.widgetHint}`}>{ this.props.id }</div>;
+        if (this.state.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
+            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.state.widgetHint}`}>{ this.props.id }</div>;
             style.overflow = 'visible';
         }
 
@@ -914,6 +924,8 @@ VisBaseWidget.propTypes = {
     VisView: PropTypes.any,
     relativeWidgetOrder: PropTypes.array,
     moveAllowed: PropTypes.bool,
+    widgetHint: PropTypes.string,
+    selectedGroup: PropTypes.string,
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,
