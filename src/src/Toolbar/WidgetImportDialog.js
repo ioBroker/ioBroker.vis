@@ -39,27 +39,40 @@ const WidgetImportDialog = props => {
         const widgets = JSON.parse(data);
         let newKeyNumber = props.getNewWidgetIdNumber();
         let newGroupKeyNumber = props.getNewWidgetIdNumber(true);
-        const groupWidgets = {};
+        const newWidgets = {};
+
         widgets.forEach(widget => {
             if (widget.tpl === '_tplGroup') {
-                const newKey = `g${newGroupKeyNumber.toString().padStart(6, 0)}`;
-                project[props.selectedView].widgets[newKey] = widget;
+                const newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+                newWidgets[newKey] = widget;
+                // find all widgets that belong to this group and change groupid
+                let w;
+                do {
+                    w = widgets.find(item => item.groupid === widget._id);
+                    if (w) {
+                        w.groupid = newKey;
+                    }
+                } while (w);
+
                 newGroupKeyNumber++;
             } else {
-                const newKey = `w${newKeyNumber.toString().padStart(6, 0)}`;
-                project[props.selectedView].widgets[newKey] = widget;
-                if (widget.groupName) {
-                    groupWidgets[widget.groupName] = newKey;
-                    delete widget.groupName;
+                const newKey = `w${newKeyNumber.toString().padStart(6, '0')}`;
+                newWidgets[newKey] = widget;
+                if (widget.grouped && newWidgets[widget.groupid] && newWidgets[widget.groupid].data && newWidgets[widget.groupid].data.members) {
+                    // find group
+                    const pos = newWidgets[widget.groupid].data.members.indexOf(widget._id);
+                    if (pos !== -1) {
+                        newWidgets[widget.groupid].data.members[pos] = newKey;
+                    }
                 }
                 newKeyNumber++;
             }
         });
-        widgets.forEach(widget => {
-            if (widget.tpl === '_tplGroup') {
-                widget.data.members = widget.data.members.map(member => groupWidgets[member]);
-            }
-        });
+
+        Object.keys(newWidgets).forEach(wid => delete newWidgets[wid]._id);
+
+        project[props.selectedView].widgets = { ...project[props.selectedView].widgets, ...newWidgets };
+
         props.changeProject(project);
     };
 
@@ -69,7 +82,10 @@ const WidgetImportDialog = props => {
         title="Import widgets"
         closeTitle="Close"
         actionTitle="Import"
-        action={() => importWidgets()}
+        action={() => {
+            importWidgets();
+            props.onClose();
+        }}
         actionDisabled={!!errors.length}
     >
         <div>

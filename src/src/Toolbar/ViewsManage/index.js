@@ -107,6 +107,7 @@ const ViewsManage = props => {
     const renderFolders = parentId => {
         const folders = props.project.___settings.folders
             .filter(folder => (parentId ? folder.parentId === parentId : !folder.parentId));
+
         return folders.map((folder, key) => <div key={key}>
             <div className={props.classes.folderContainer}>
                 <Folder
@@ -187,21 +188,21 @@ const ViewsManage = props => {
             {...props}
             classes={{}}
         />
-        <ImportDialog
-            open={importDialog !== false}
+        {importDialog !== false ? <ImportDialog
+            open
             onClose={() => setImportDialog(false)}
             view={importDialog || ''}
             importViewAction={importViewAction}
             project={props.project}
             themeName={props.themeName}
-        />
-        <ExportDialog
-            open={exportDialog !== false}
+        /> : null}
+        {exportDialog !== false ? <ExportDialog
+            open
             onClose={() => setExportDialog(false)}
             view={exportDialog || ''}
             project={props.project}
             themeName={props.themeName}
-        />
+        /> : null}
     </IODialog>;
 };
 

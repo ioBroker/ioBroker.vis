@@ -13,27 +13,58 @@ import 'ace-builds/src-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-noconflict/theme-chrome';
 
 const WidgetExportDialog = props => {
-    const widgets = props.selectedWidgets.map(selectedWidget => props.widgets[selectedWidget]);
-    const groupWidgets = [];
-    widgets.forEach(widget => {
-        if (widget.tpl === '_tplGroup') {
-            widget.data.members.forEach(member => {
-                if (groupWidgets.includes(member)) {
-                    return;
-                }
-                const memberWidget = JSON.parse(JSON.stringify(props.widgets[member]));
-                memberWidget.groupName = member;
-                widgets.push(memberWidget);
-                groupWidgets.push(member);
-            });
-        }
+    const widgets = props.selectedWidgets.map(wid => {
+        const w = JSON.parse(JSON.stringify(props.widgets[wid]));
+        w._id = wid;
+        return w;
     });
+
+    const groupWidgets = [];
+
+    let gIdx = 1;
+    let wIdx = 1;
+    const len = widgets.length;
+    for (let w = 0; w < len; w++) {
+        const widget = widgets[w];
+        if (widget.tpl === '_tplGroup') {
+            const newId = `f${gIdx.toString().padStart(6, '0')}`;
+            gIdx++;
+
+            if (widget.data && widget.data.members) {
+                const members = [];
+                widget.data.members.forEach(member => {
+                    if (groupWidgets.includes(member)) {
+                        return;
+                    }
+                    const memberWidget = JSON.parse(JSON.stringify(props.widgets[member]));
+                    memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
+                    wIdx++;
+                    members.push(memberWidget._id);
+                    memberWidget.groupid = newId;
+                    memberWidget.grouped = true;
+                    widgets.push(memberWidget);
+                    groupWidgets.push(member);
+                });
+
+                widget.data.members = members;
+            }
+            widget._id = newId;
+        } else if (widget._id.startsWith('w')) {
+            widget._id = `i${wIdx.toString().padStart(6, '0')}`;
+            wIdx++;
+        }
+    }
+
     return <IODialog
         open={props.open}
         onClose={props.onClose}
-        title={I18n.t('Export widgets')}
+        title="Export widgets"
         closeTitle="Close"
-        action={() => copy(JSON.stringify(widgets, null, 2))}
+        action={() => {
+            copy(JSON.stringify(widgets, null, 2));
+            props.onClose();
+            window.alert(I18n.t('Copied to clipboard'));
+        }}
         actionTitle="Copy to clipboard"
         actionNoClose
         ActionIcon={FileCopyIcon}
@@ -52,6 +83,7 @@ WidgetExportDialog.propTypes = {
     open: PropTypes.bool,
     themeName: PropTypes.string,
     widgets: PropTypes.array,
+    selectedWidgets: PropTypes.object,
 };
 
 export default WidgetExportDialog;

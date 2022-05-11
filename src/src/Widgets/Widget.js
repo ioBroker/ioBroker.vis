@@ -1,9 +1,9 @@
+import { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-
-import { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
+
 import { Tooltip } from '@mui/material';
 
 const styles = () => ({

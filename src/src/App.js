@@ -1,17 +1,14 @@
 import React, { useRef } from 'react';
 import './App.scss';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
-
 import withStyles from '@mui/styles/withStyles';
+import { DndProvider, useDrop } from 'react-dnd';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
-import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import ConfirmDialog from '@iobroker/adapter-react-v5/Dialogs/Confirm';
-import Loader from '@iobroker/adapter-react-v5/Components/Loader';
 import {
-    IconButton,
-    Paper,
-    Popper,
-    Tab, Tabs, Tooltip,
+    IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar,
 } from '@mui/material';
 
 // import html2canvas from 'html2canvas';
@@ -23,19 +20,17 @@ import CodeOffIcon from '@mui/icons-material/CodeOff';
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 
-import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
-
+import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
+import ConfirmDialog from '@iobroker/adapter-react-v5/Dialogs/Confirm';
+import Loader from '@iobroker/adapter-react-v5/Components/Loader';
 import I18n from '@iobroker/adapter-react-v5/i18n';
-import { DndProvider, useDrop } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+
 import Attributes from './Attributes';
 import Widgets from './Widgets';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import {
-    analyzeDraggableResizable,
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
 import VisContextMenu from './Vis/visContextMenu';
@@ -64,6 +59,15 @@ const styles = theme => ({
     },
     viewTabs: theme.classes.viewTabs,
     viewTab: theme.classes.viewTab,
+    alert_info: {
+
+    },
+    alert_error: {
+        backgroundColor: '#f44336',
+    },
+    alert_success: {
+        backgroundColor: '#4caf50',
+    },
 });
 
 // temporary disable i18n warnings
@@ -132,6 +136,17 @@ class App extends GenericApp {
         super(props, extendedProps);
 
         this.visEngineHandlers = {};
+
+        this.alert = window.alert;
+        window.alert = message => {
+            if (message && message.toString().toLowerCase().includes('error')) {
+                console.error(message);
+                this.showAlert(message.toString(), 'error');
+            } else {
+                console.log(message);
+                this.showAlert(message.toString(), 'info');
+            }
+        };
     }
 
     setStateAsync(newState) {
@@ -149,6 +164,9 @@ class App extends GenericApp {
         }
 
         this.setState({
+            alert: false,
+            alertType: 'info',
+            alertMessage: '',
             runtime,
             projectName: 'main',
             viewsManage: false,
@@ -177,12 +195,22 @@ class App extends GenericApp {
             visCommonCss: null,
             visUserCss: null,
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
-            ...this.state,
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
+    }
+
+    componentWillUnmount() {
+        // eslint-disable-next-line no-unused-expressions
+        this.savingTimer && clearTimeout(this.savingTimer);
+        this.savingTimer = null;
+        super.componentWillUnmount();
+        window.removeEventListener('hashchange', this.onHashChange, false);
+        window.removeEventListener('keydown', this.onKeyDown, false);
+        window.removeEventListener('beforeunload', this.onBeforeUnload, false);
+        window.alert = this.alert;
     }
 
     onBeforeUnload = e => {
@@ -236,16 +264,6 @@ class App extends GenericApp {
                 await this.deleteWidgets();
             }
         }
-    }
-
-    componentWillUnmount() {
-        // eslint-disable-next-line no-unused-expressions
-        this.savingTimer && clearTimeout(this.savingTimer);
-        this.savingTimer = null;
-        super.componentWillUnmount();
-        window.removeEventListener('hashchange', this.onHashChange, false);
-        window.removeEventListener('keydown', this.onKeyDown, false);
-        window.removeEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
     onHashChange = () => {
@@ -536,7 +554,7 @@ class App extends GenericApp {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         this.state.selectedWidgets.forEach(selectedWidget =>
-            widgets[selectedWidget].data.locked = !!(type === 'lock'));
+            widgets[selectedWidget].data.locked = type === 'lock');
         await this.changeProject(project);
     }
 
@@ -1183,6 +1201,34 @@ class App extends GenericApp {
         this.socket.writeFile64(directory, fileName, data);
     }
 
+    showAlert(message, type) {
+        if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
+            type = 'info';
+        }
+
+        this.setState({
+            alert: true,
+            alertType: type,
+            alertMessage: message,
+        });
+    }
+
+    renderAlertDialog() {
+        return <Snackbar
+            className={this.props.classes['alert_' + this.state.alertType]}
+            open={this.state.alert}
+            autoHideDuration={6000}
+            onClose={reason => {
+                if (reason === 'clickaway') {
+                    return;
+                }
+
+                this.setState({ alert: false });
+            }}
+            message={this.state.alertMessage}
+        />;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StyledEngineProvider injectFirst>
@@ -1232,7 +1278,7 @@ class App extends GenericApp {
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
                 <Popper
-                    open={Object.keys(this.state.widgetsClipboard.widgets).length}
+                    open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                     style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
                 >
                     <Paper
@@ -1467,6 +1513,7 @@ class App extends GenericApp {
                         }}
                     />
                     : null}
+                {this.renderAlertDialog()}
                 {/* <IODialog
                     title="Delete widgets"
                     open={this.state.deleteWidgetsDialog}

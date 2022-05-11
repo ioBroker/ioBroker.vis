@@ -1,4 +1,6 @@
 import PropTypes from 'prop-types';
+import { useState } from 'react';
+
 import {
     MdAlignHorizontalCenter, MdAlignHorizontalLeft, MdAlignHorizontalRight, MdAlignVerticalBottom, MdAlignVerticalCenter, MdAlignVerticalTop,
 } from 'react-icons/md';
@@ -10,7 +12,6 @@ import {
 import {
     RiBringToFront, RiSendToBack,
 } from 'react-icons/ri';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -20,8 +21,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-import { useState } from 'react';
 import i18n from '@iobroker/adapter-react-v5/i18n';
+
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Utils';
 import WidgetImportDialog from './WidgetImportDialog';
@@ -273,7 +274,7 @@ const Widgets = props => {
 
     return <>
         <ToolbarItems group={toolbar} {...props} classes={{}} />
-        <WidgetImportDialog
+        {importDialog ? <WidgetImportDialog
             open={importDialog}
             onClose={() => setImportDialog(false)}
             changeProject={props.changeProject}
@@ -281,14 +282,14 @@ const Widgets = props => {
             project={props.project}
             themeName={props.themeName}
             getNewWidgetIdNumber={props.getNewWidgetIdNumber}
-        />
-        <WidgetExportDialog
+        /> : null}
+        {exportDialog ? <WidgetExportDialog
             open={exportDialog}
             onClose={() => setExportDialog(false)}
             widgets={props.project[props.selectedView].widgets}
             selectedWidgets={props.selectedWidgets}
             themeName={props.themeName}
-        />
+        /> : null}
     </>;
 };
 
