@@ -545,7 +545,14 @@ class App extends GenericApp {
     deleteWidgetsAction = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
-        this.state.selectedWidgets.forEach(selectedWidget => delete widgets[selectedWidget]);
+        this.state.selectedWidgets.forEach(selectedWidget => {
+            if (widgets[selectedWidget].tpl === '_tplGroup') {
+                widgets[selectedWidget].data.members.forEach(member => {
+                    delete widgets[member];
+                });
+            }
+            delete widgets[selectedWidget];
+        });
         this.setSelectedWidgets([]);
         await this.changeProject(project);
     }
@@ -569,7 +576,7 @@ class App extends GenericApp {
         if (this.state.widgetHint === 'hide') {
             widgetHint = 'light';
         }
-        this.setState({ widgetHint: 'dark' });
+        this.setState({ widgetHint });
         window.localStorage.setItem('widgetHint', widgetHint);
     }
 
@@ -1216,7 +1223,7 @@ class App extends GenericApp {
 
     renderAlertDialog() {
         return <Snackbar
-            className={this.props.classes['alert_' + this.state.alertType]}
+            className={this.props.classes[`alert_${this.state.alertType}`]}
             open={this.state.alert}
             autoHideDuration={6000}
             onClose={reason => {
