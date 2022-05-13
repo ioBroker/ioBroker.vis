@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
 import { addClass, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
-import { analyzeDraggableResizable } from '../Utils';
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog

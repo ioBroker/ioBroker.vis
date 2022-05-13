@@ -2374,7 +2374,7 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="Svg shape"
-        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 90px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block;width: 100%;height: 100%;fill: rgb(255, 255, 255);stroke: rgb(60, 152, 211); stroke-width: 4px;"> <circle cx="50" cy="50" r="47"></circle></svg></div> </div></div>'
+        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 90px; height: 90px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block;width: 100%;height: 100%;fill: rgb(255, 255, 255);stroke: rgb(60, 152, 211); stroke-width: 4px;"> <circle cx="50" cy="50" r="47"></circle></svg></div> </div></div>'
         data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle,star,arrow;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,360,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -2390,7 +2390,7 @@
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 3) + '"/>';
                 } else if (this.data.svgType === 'line') {
-                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
+                    svg = '<line vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
                 } else if (this.data.svgType === 'circle') {
                     svg = '<circle transform="scale(' + scaleWidth + ', ' + scaleHeight + ') rotate(' + rotate + ')" cx="0" cy="0" r="' + (50 - parseInt(strokeWidth, 10) / 2) + '" />';
                 } else if (this.data.svgType === 'pentagone') {
@@ -11392,7 +11392,7 @@ vis.binds.spotify = {
             "Swipe Navigation":     {"en": "Swipe Navigation",  "de": "Swipe Navigation",   "ru": "Swipe навигация"}
         });
     }
-    
+
     vis.binds.swipe = {
         loadedSwipe: false,
         loadedRound: false,
@@ -11442,7 +11442,7 @@ vis.binds.spotify = {
                 }, 100);
                 return;
             }
-            
+
             if (vis.editMode) {
                 $div.show()
                     .find('.translate-it')
@@ -11557,7 +11557,7 @@ vis.binds.spotify = {
         carousel: function (wid, view, data, style) {
             var $div = $('#' + wid);
             var childView = data.contains_view;
-            
+
             // if nothing found => wait
             if (!$div.length) {
                 setTimeout(function () {
@@ -11583,7 +11583,7 @@ vis.binds.spotify = {
 
 <script id="tplSwipe"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Swipe.png"></img>'
         data-vis-name="swipe Navigation"
@@ -11602,9 +11602,9 @@ vis.binds.spotify = {
 </script>
 
 
-<script id="tplCarousel" 
+<script id="tplCarousel"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Carousel.png"></img>'
         data-vis-name="Carousel"
@@ -11692,13 +11692,13 @@ vis.binds.spotify = {
     };
 </script>
 
-<script type="text/ejs" 
-        id="tplSTab" 
+<script type="text/ejs"
+        id="tplSTab"
         class="vis-tpl"
         data-vis-prev='<div id="prev_tplSTab" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev ui-selectee" style="top: 76px; left: 23px; width: 138px; height: 121px; position: absolute;" > <div class="vis-widget-prev-body"> <span style="width:100%;height:100%" class="ui-slider-tabs"> <!-- Unordered list representing the tabs --> <div class="ui-slider-tabs-list-wrapper"><div class="ui-slider-tabs-list-container" style="margin: 0px 35px;"><ul class="ui-slider-tabs-list" style="margin-left: 0px; width: 166px;"> <li class="selected" style="height: 32px;"><a href="#w00016_st1" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st2" style="height: 32px;">Tab</a></li><li style="height: 32px;"><a href="#w00016_st3" style="height: 32px;">Tab</a></li></ul><a href="#" class="ui-slider-left-arrow edge" style="width: 35px; height: 32px;"><div></div></a><a href="#" class="ui-slider-right-arrow" style="width: 35px; height: 32px;"><div></div></a></div></div><div class="ui-slider-tabs-content-container" style="height: 86px;"><div style="padding-left: 0px; height: 100%; display: block; left: 0px; width: 126px;" class="ui-slider-tab-content selected"> <div class="editmode-helper"></div> <div data-vis-contains="hallo" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div><div style="padding-left: 0px; height: 100%; left: 138px; width: 126px;" class="ui-slider-tab-content"> <div class="editmode-helper"></div> <div data-vis-contains="" class="vis-widget-body vis-view-container"></div> </div></div></span> </div> </div>'
         data-vis-set="tabs"
         data-vis-update-style="true"
-        data-vis-name="SliderTabs" 
+        data-vis-name="SliderTabs"
         data-vis-attrs="height[100]/slider,20,1000,1;show_tabs[1]/slider,1,8,1;title_tab_(1-show_tabs)[Tab];contains_view_(1-show_tabs)/views">
     <div class="vis-widget <%== this.data.attr('class') %>" style="top:0px; left: 0px; width: 250px; height: 250px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">

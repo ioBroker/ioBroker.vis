@@ -2338,7 +2338,9 @@ vis = $.extend(true, vis, {
 
         if (type) {
             types = type.split(',');
-            if (types.length < 2) types = type.split(';');
+            if (types.length < 2) {
+                types = type.split(';');
+            }
             var noIconTypes = [];
 
             for (var z = 0; z < types.length; z++) {
