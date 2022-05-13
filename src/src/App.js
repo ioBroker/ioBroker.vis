@@ -509,6 +509,12 @@ class App extends GenericApp {
             },
         };
 
+        if (this.state.selectedGroup) {
+            widgets[newKey].grouped = true;
+            widgets[newKey].groupid = this.state.selectedGroup;
+            widgets[this.state.selectedGroup].data.members.push(newKey);
+        }
+
         // check if we have any fields contain "oid" in it and pre-fill it with "nothing_selected" value
         const widgetTypes = getWidgetTypes();
         const tplWidget = widgetTypes.find(item => item.name === widgetType);
