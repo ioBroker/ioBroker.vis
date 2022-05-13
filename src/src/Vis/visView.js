@@ -471,6 +471,10 @@ class VisView extends React.Component {
             return;
         }
 
+        if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !isResize) {
+            return;
+        }
+
         this.refView.current.addEventListener('mousemove', this.onMouseWidgetMove);
         window.document.addEventListener('mouseup', this.onMouseWidgetUp);
 
@@ -505,6 +509,9 @@ class VisView extends React.Component {
     }
 
     onMouseWidgetMove = !this.props.runtime ? e => {
+        if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize) {
+            return;
+        }
         this.movement.moved = true;
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;

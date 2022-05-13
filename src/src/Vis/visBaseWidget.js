@@ -241,9 +241,6 @@ class VisBaseWidget extends React.Component {
         if (this.props.views[this.props.view].widgets[this.props.id].data.locked) {
             return;
         }
-        if (this.props.selectedGroup === this.props.id) {
-            return;
-        }
         if (!this.props.selectedWidgets.includes(this.props.id)) {
             if (e.shiftKey || e.ctrlKey) {
                 // add or remove
@@ -382,8 +379,8 @@ class VisBaseWidget extends React.Component {
                     wid: this.props.id,
                     view: this.props.view,
                     style: {
-                        top: this.refService.current.style.top,
-                        left: this.refService.current.style.left,
+                        top: this.state.style.top,
+                        left: this.state.style.left,
                         width: this.refService.current.style.width,
                         height: this.refService.current.style.height,
                     },

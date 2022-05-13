@@ -407,7 +407,7 @@ const WidgetField = props => {
                 } else {
                     const [, newValue, _newUnit] = e.target.value.toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
                     const newUnit = _newUnit || unit;
-                    change(newUnit === 'px' ? newValue : newValue + newUnit);
+                    change(newValue + newUnit);
                 }
             }}
         />;
