@@ -21,10 +21,15 @@ import { withStyles } from '@mui/styles';
 const styles = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
     viewManageButtonActions: theme.classes.viewManageButtonActions,
+    icon: {
+        cursor: 'grab',
+        display: 'inline-block',
+        lineHeight: '18px',
+    },
 });
 
 const View = props => {
-    const viewBlock = <div className={props.classes.viewManageBlock}>
+    const viewBlockPreview = <div className={props.classes.viewManageBlock}>
         <FileIcon />
         <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')}>
             <IconButton size="small" onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}>
@@ -32,7 +37,50 @@ const View = props => {
             </IconButton>
         </Tooltip>
         <span>{props.name}</span>
-        <span className={props.classes.viewManageButtonActions}>
+    </div>;
+
+    const widthRef = useRef();
+    const [{ isDragging }, dragRef, preview] = useDrag(
+        {
+            type: 'view',
+            item: () => ({
+                name: props.name,
+                preview: <div>{viewBlockPreview}</div>,
+            }),
+            end: (item, monitor) => {
+                const dropResult = monitor.getDropResult();
+                if (item && dropResult) {
+                    props.moveView(item.name, dropResult.folder.id);
+                }
+            },
+            collect: monitor => ({
+                isDragging: monitor.isDragging(),
+                handlerId: monitor.getHandlerId(),
+            }),
+        }, [props.project],
+    );
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true });
+    }, [props.project]);
+
+    useEffect(() => {
+        props.setIsDragging(isDragging);
+    }, [isDragging]);
+
+    return <div>
+        <div ref={widthRef}>
+            <div className={props.classes.viewManageBlock}>
+                <Tooltip title={I18n.t('Drag me')}>
+                    <div className={props.classes.icon} ref={dragRef}><FileIcon /></div>
+                </Tooltip>
+                <Tooltip title={I18n.t(props.openedViews.includes(props.name) ? 'Hide' : 'Show')}>
+                    <IconButton size="small" onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}>
+                        {props.openedViews.includes(props.name) ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                    </IconButton>
+                </Tooltip>
+                <span>{props.name}</span>
+                <span className={props.classes.viewManageButtonActions}>
             <Tooltip title={I18n.t('Import')}>
                 <IconButton onClick={() => props.setImportDialog(props.name)} size="small">
                     <BiImport />
@@ -59,38 +107,7 @@ const View = props => {
                 </IconButton>
             </Tooltip>
         </span>
-    </div>;
-
-    const widthRef = useRef();
-    const [, dragRef, preview] = useDrag(
-        {
-            type: 'view',
-            item: () => ({
-                name: props.name,
-                preview: <div style={{ width: widthRef.current.offsetWidth }}>
-                    {viewBlock}
-                </div>,
-            }),
-            end: (item, monitor) => {
-                const dropResult = monitor.getDropResult();
-                if (item && dropResult) {
-                    props.moveView(item.name, dropResult.folder.id);
-                }
-            },
-            collect: monitor => ({
-                isDragging: monitor.isDragging(),
-                handlerId: monitor.getHandlerId(),
-            }),
-        }, [props.project],
-    );
-
-    useEffect(() => {
-        preview(getEmptyImage(), { captureDraggingState: true });
-    }, [props.project]);
-
-    return <div ref={dragRef}>
-        <div ref={widthRef}>
-            {viewBlock}
+            </div>
         </div>
     </div>;
 };
@@ -105,6 +122,7 @@ View.propTypes = {
     setImportDialog: PropTypes.func,
     showDialog: PropTypes.func,
     toggleView: PropTypes.func,
+    setIsDragging: PropTypes.func,
 };
 
 export default withStyles(styles)(View);

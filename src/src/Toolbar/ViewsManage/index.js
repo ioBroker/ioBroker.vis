@@ -15,6 +15,7 @@ import { BiImport } from 'react-icons/bi';
 
 import IODialog from '../../Components/IODialog';
 import Folder from './Folder';
+import Root from './Root';
 import View from './View';
 import ExportDialog from './ExportDialog';
 import ImportDialog from './ImportDialog';
@@ -25,6 +26,7 @@ const styles = theme => ({
     viewManageButtonActions: theme.classes.viewManageButtonActions,
     dialog: {
         minWidth: 400,
+        minHeight: 300,
     },
     topBar: {
         flexDirection: 'row',
@@ -59,6 +61,8 @@ const ViewsManage = props => {
     const [folderDialogName, setFolderDialogName] = useState('');
     const [folderDialogId, setFolderDialogId] = useState(null);
     const [folderDialogParentId, setFolderDialogParentId] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [isOverRoot, setIsOverRoot] = useState(false);
 
     const [foldersCollapsed, setFoldersCollapsed] = useState([]);
     useEffect(() => {
@@ -96,6 +100,7 @@ const ViewsManage = props => {
         .map((name, key) => <div key={key} className={props.classes.viewContainer}>
             <View
                 name={name}
+                setIsDragging={setIsDragging}
                 moveView={moveView}
                 setExportDialog={setExportDialog}
                 setImportDialog={setImportDialog}
@@ -111,6 +116,7 @@ const ViewsManage = props => {
         return folders.map((folder, key) => <div key={key}>
             <div className={props.classes.folderContainer}>
                 <Folder
+                    setIsDragging={setIsDragging}
                     folder={folder}
                     setFolderDialog={setFolderDialog}
                     setFolderDialogName={setFolderDialogName}
@@ -158,23 +164,28 @@ const ViewsManage = props => {
                         </IconButton>
                     </Tooltip>
                 </AppBar>
-                <Folder
-                    folder={{ name: I18n.t('root'), id: null }}
-                    setFolderDialog={setFolderDialog}
-                    setFolderDialogName={setFolderDialogName}
-                    setFolderDialogId={setFolderDialogId}
-                    setFolderDialogParentId={setFolderDialogParentId}
-                    moveFolder={moveFolder}
-                    foldersCollapsed={foldersCollapsed}
-                    setFoldersCollapsed={setFoldersCollapsed}
-                    {...props}
-                    classes={{}}
-                />
-                {foldersCollapsed.includes(null) ? null
-                    : <div style={{ paddingLeft: 10 }}>
-                        {renderFolders()}
-                        {renderViews()}
-                    </div>}
+                <div style={{
+                    width: '100%',
+                    borderStyle: 'dashed',
+                    borderRadius: 4,
+                    borderWidth: 1,
+                    borderColor: isOverRoot ? 'rgba(200, 200, 200, 1)' : 'rgba(128, 128, 128, 0)',
+                    lineHeight: '32px',
+                    verticalAlign: 'middle',
+                    paddingLeft: 5,
+                }}>
+                    {foldersCollapsed.includes(null) ? null
+                        : <div style={{ paddingLeft: 10 }}>
+                            {renderFolders()}
+                            {renderViews()}
+                        </div>}
+                    <Root
+                        isDragging={isDragging}
+                        setIsOverRoot={setIsOverRoot}
+                        {...props}
+                        classes={{}}
+                    />
+                </div>
             </DndProvider>
         </div>
         <FolderDialog

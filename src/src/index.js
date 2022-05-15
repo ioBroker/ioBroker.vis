@@ -46,13 +46,11 @@ const ThemeContainer = () => {
             viewManageBlock: {
                 display: 'flex',
                 alignItems: 'center',
-                cursor: 'grab',
             },
             viewManageButtonActions: {
                 textAlign: 'right',
                 flex: 1,
             },
-
         },
     });
 
