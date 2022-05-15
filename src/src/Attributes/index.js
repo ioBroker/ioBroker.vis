@@ -22,7 +22,7 @@ const style = theme => ({
 });
 
 const tabs = {
-    CSS, Scripts, View, Widget,
+    View, Widget, CSS, Scripts,
 };
 
 const Attributes = props => {

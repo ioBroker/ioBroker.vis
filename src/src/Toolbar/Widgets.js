@@ -63,19 +63,12 @@ const Widgets = props => {
                 value: props.selectedWidgets,
                 onChange: e => props.setSelectedWidgets(e.target.value),
             },
-            {
-                type: 'icon-button',
-                Icon: CloseIcon,
-                name: `Close group ${props.selectedGroup} editor`,
-                hide: !props.selectedGroup,
-                onClick: () => props.setSelectedGroup(null),
-            },
             [[
                 {
                     type: 'icon-button',
                     Icon: DeleteIcon,
                     name: 'Delete widgets',
-                    disabled: !props.selectedWidgets.length,
+                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                     onClick: () => props.deleteWidgets(),
                 },
             ], [
@@ -83,7 +76,7 @@ const Widgets = props => {
                     type: 'icon-button',
                     Icon: FileCopyIcon,
                     name: 'Clone widget',
-                    disabled: !props.selectedWidgets.length,
+                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                     onClick: () => props.cloneWidgets(),
                 },
             ]],
@@ -94,7 +87,7 @@ const Widgets = props => {
                     Icon: BiCut,
                     name: 'Cut',
                     size: 'normal',
-                    disabled: !props.selectedWidgets.length,
+                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                     onClick: () => props.cutWidgets(),
                 },
                 {
@@ -102,7 +95,7 @@ const Widgets = props => {
                     Icon: BiCopy,
                     name: 'Copy',
                     size: 'normal',
-                    disabled: !props.selectedWidgets.length,
+                    disabled: !props.selectedWidgets.length || (props.selectedGroup && props.selectedWidgets.includes(props.selectedGroup)),
                     onClick: () => props.copyWidgets(),
                 },
             ], [
@@ -259,7 +252,7 @@ const Widgets = props => {
                     Icon: BiImport,
                     name: 'Import widgets',
                     size: 'normal',
-                    disabled: !props.editMode,
+                    disabled: !props.editMode || !!props.selectedGroup,
                     onClick: () => setImportDialog(true),
                 }],
                 [{
@@ -301,6 +294,7 @@ Widgets.propTypes = {
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,
+    selectedGroup: PropTypes.string,
 };
 
 export default Widgets;

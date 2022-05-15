@@ -299,6 +299,7 @@ const View = props => {
                     name: 'Grid color',
                     field: 'snapColor',
                     hide: view.settings.snapType !== 2,
+                    notStyle: true,
                 },
                 {
                     type: 'number',
@@ -386,7 +387,7 @@ const View = props => {
     const allOpened = !fields.find((group, key) => !accordionOpen[key]);
     const allClosed = !fields.find((group, key) => accordionOpen[key]);
 
-    return <div>
+    return <div style={{ height: '100%', overflowY: 'hidden' }}>
         <div style={{ textAlign: 'right' }}>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton
@@ -394,7 +395,7 @@ const View = props => {
                     onClick={() => {
                         const newAccordionOpen = {};
                         fields.forEach((group, key) => newAccordionOpen[key] = true);
-                        window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                        window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
                         setAccordionOpen(newAccordionOpen);
                     }}
                 >
@@ -405,7 +406,7 @@ const View = props => {
                 <IconButton onClick={() => {
                     const newAccordionOpen = {};
                     fields.forEach((group, key) => newAccordionOpen[key] = false);
-                    window.localStorage.setItem('widgets', JSON.stringify(newAccordionOpen));
+                    window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
                     setAccordionOpen(newAccordionOpen);
                 }}
                 >
@@ -413,7 +414,7 @@ const View = props => {
                 </IconButton>
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
         </div>
-        <div>
+        <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
             {fields.map((group, key) => <Accordion
                 classes={{
                     root: props.classes.clearPadding,

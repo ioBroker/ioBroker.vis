@@ -683,7 +683,10 @@ const Widget = props => {
     const allClosed = !fields.find(group => accordionOpen[group.name]);
 
     return <div>
-        <h4>
+        <div style={{ width: '100%' }}>
+            <div style={{ display: 'inline-block', width: 'calc(100% - 68px)' }}>
+                { props.selectedWidgets.join(', ') }
+            </div>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton
                     size="small"
@@ -708,8 +711,8 @@ const Widget = props => {
                     <UnfoldLessIcon />
                 </IconButton>
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
-            { props.selectedWidgets.join(', ') }
-        </h4>
+        </div>
+
         <div style={{ height: 'calc(100vh - 260px)', overflowY: 'auto'  }}>
             {fields.map(group => <Accordion
                 classes={{

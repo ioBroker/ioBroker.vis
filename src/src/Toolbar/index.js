@@ -147,6 +147,7 @@ Toolbar.propTypes = {
     toggleTheme: PropTypes.func,
     themeName: PropTypes.string,
     editMode: PropTypes.bool,
+    selectedGroup: PropTypes.string,
 };
 
 export default withStyles(styles)(Toolbar);

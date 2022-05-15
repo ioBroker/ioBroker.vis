@@ -177,6 +177,7 @@ Settings.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     project: PropTypes.object,
+    selectedGroup: PropTypes.string,
 };
 
 export default withStyles(styles)(Settings);

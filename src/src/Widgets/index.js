@@ -138,7 +138,7 @@ const Widgets = props => {
                 fullWidth
                 value={filter}
                 onChange={e => setFilter(e.target.value)}
-                label={filter.length ? ' ' : I18n.t('filter')}
+                label={filter.length ? ' ' : I18n.t('Filter')}
                 InputProps={{
                     className: props.classes.clearPadding,
                     endAdornment: filter.length ? <IconButton size="small" onClick={() => setFilter('')}>

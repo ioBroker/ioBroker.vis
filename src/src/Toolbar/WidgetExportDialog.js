@@ -50,8 +50,14 @@ const WidgetExportDialog = props => {
             }
             widget._id = newId;
         } else if (widget._id.startsWith('w')) {
-            widget._id = `i${wIdx.toString().padStart(6, '0')}`;
-            wIdx++;
+            if (widget.grouped) {
+                delete widget.grouped;
+                delete widget.groupid;
+                delete widget._id;
+            } else {
+                widget._id = `i${wIdx.toString().padStart(6, '0')}`;
+                wIdx++;
+            }
         }
     }
 
@@ -82,7 +88,7 @@ WidgetExportDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     themeName: PropTypes.string,
-    widgets: PropTypes.array,
+    widgets: PropTypes.objects,
     selectedWidgets: PropTypes.object,
 };
 
