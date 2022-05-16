@@ -43,7 +43,10 @@ const styles = theme => ({
     },
     rootCanDrop: {
         borderColor: 'rgba(200, 200, 200, 1)',
-    }
+    },
+    tooltip: {
+        pointerEvents: 'none',
+    },
 });
 
 const Folder = props => {
@@ -141,7 +144,7 @@ const Folder = props => {
         </div>
         <span className={props.classes.folderName}>{props.folder.name}</span>
         <span className={props.classes.viewManageButtonActions}>
-            <Tooltip title={I18n.t('Add view')}>
+            <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -151,7 +154,7 @@ const Folder = props => {
                     <AddIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={I18n.t('Add sub-folder')}>
+            <Tooltip title={I18n.t('Add sub-folder')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -163,7 +166,7 @@ const Folder = props => {
                     <CreateNewFolderClosedIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={I18n.t('Rename')}>
+            <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -175,18 +178,20 @@ const Folder = props => {
                     <EditIcon />
                 </IconButton>
             </Tooltip>
-            <Tooltip title={I18n.t('Delete')}>
-                <IconButton
-                    size="small"
-                    onClick={() => {
-                        props.setFolderDialog('delete');
-                        props.setFolderDialogId(props.folder.id);
-                    }}
-                    disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
-                        || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
-                >
-                    <DeleteIcon />
-                </IconButton>
+            <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
+                <span>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            props.setFolderDialog('delete');
+                            props.setFolderDialogId(props.folder.id);
+                        }}
+                        disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
+                            || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </span>
             </Tooltip>
         </span>
     </div>;

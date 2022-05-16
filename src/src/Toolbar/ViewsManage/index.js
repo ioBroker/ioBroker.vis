@@ -51,6 +51,9 @@ const styles = theme => ({
             visibility: 'initial',
         },
     },
+    tooltip: {
+        pointerEvents: 'none',
+    },
 });
 
 const ViewsManage = props => {
@@ -143,17 +146,17 @@ const ViewsManage = props => {
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />
                 <AppBar position="static" className={props.classes.topBar}>
-                    <Tooltip title={I18n.t('Add view')}>
+                    <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton size="small" onClick={() => props.showDialog('add', props.name)}>
                             <AddIcon />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={I18n.t('Import')}>
+                    <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton onClick={() => setImportDialog('')} size="small">
                             <BiImport />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title={I18n.t('Add folder')}>
+                    <Tooltip title={I18n.t('Add folder')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton
                             size="small"
                             onClick={() => {

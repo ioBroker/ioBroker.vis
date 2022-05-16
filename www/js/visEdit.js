@@ -1131,7 +1131,7 @@ vis = $.extend(true, vis, {
             $('.vis-import-text-drop-plus').hide();
             // try to extract project name from 2016-05-09-project.zip
             var m = file.name.match(/^\d{4}-\d{2}-\d{2}-([\w\d_-]+)\.zip$/);
-            if (m && !$project.val()) $project.val(m[1]);
+            m && !$project.val() && $project.val(m[1]);
 
             $('#start_import_project').prop('disabled', !$name.data('file') || !$project.val());
         };
@@ -1515,7 +1515,6 @@ vis = $.extend(true, vis, {
             $('#dialog_import_project').dialog('close');
             // Check if the name exists
             that.conn.readProjects(function (err, projects){
-                var text = '';
                 var name = $('#name_import_project').val();
                 if (projects.length) {
                     for (var d = 0; d < projects.length; d++) {
@@ -1531,7 +1530,7 @@ vis = $.extend(true, vis, {
                                                 // reload project
                                                 window.location.reload();
                                             } else {
-                                                that.confirmMessage(_('Project "%s" was succseffully imported. Open it?', name), null, null, 700, function (result) {
+                                                that.confirmMessage(_('Project "%s" was successfully imported. Open it?', name), null, null, 700, function (result) {
                                                     if (result) {
                                                         var url = window.location.href.split('#')[0].split('?')[0];
                                                         window.location = url + '?' + name;

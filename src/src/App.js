@@ -366,7 +366,7 @@ class App extends GenericApp {
             }
         }
 
-        if (len && !openedViews.length) {
+        if (!openedViews.length) {
             const view = Object.keys(project).find(_view => _view !== '___settings');
             if (view) {
                 openedViews[0] = view;
@@ -429,11 +429,16 @@ class App extends GenericApp {
         }
     }
 
-    refreshProjects = () => this.socket.readDir('vis.0', '')
-        .then(projects => this.setState({
+    refreshProjects = async reloadCurrentProject => {
+        const projects = await this.socket.readDir('vis.0', '');
+        await this.setStateAsync({
             projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
             createFirstProjectDialog: !projects.length,
-        }));
+        });
+        if (reloadCurrentProject) {
+            await this.loadProject(this.state.projectName);
+        }
+    }
 
     setViewsManage = newValue => this.setState({ viewsManage: newValue })
 
@@ -1053,7 +1058,14 @@ class App extends GenericApp {
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = setTimeout(async () => {
             this.savingTimer = null;
-            await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+            if ('TextEncoder' in window) {
+                const encoder = new TextEncoder();
+                const data = encoder.encode(JSON.stringify(this.state.project, null, 2))
+                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, data);
+            } else {
+                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+            }
+
             this.setState({ needSave: false });
             if (this.needRestart) {
                 window.location.reload();
@@ -1309,20 +1321,22 @@ class App extends GenericApp {
                                 label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
                                     {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : view}
                                     <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
-                                        <IconButton
-                                            size="small"
-                                            disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                if (isGroupEdited) {
-                                                    this.setState({ selectedGroup: null });
-                                                } else {
-                                                    this.toggleView(view, false);
-                                                }
-                                            }}
-                                        >
-                                            <CloseIcon fontSize="small" />
-                                        </IconButton>
+                                        <span>
+                                            <IconButton
+                                                size="small"
+                                                disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    if (isGroupEdited) {
+                                                        this.setState({ selectedGroup: null });
+                                                    } else {
+                                                        this.toggleView(view, false);
+                                                    }
+                                                }}
+                                            >
+                                                <CloseIcon fontSize="small" />
+                                            </IconButton>
+                                        </span>
                                     </Tooltip>
                                 </span>}
                                 className={this.props.classes.viewTab}
@@ -1437,6 +1451,7 @@ class App extends GenericApp {
                         needSave={this.state.needSave}
                         currentUser={this.state.currentUser}
                         themeName={this.state.themeName}
+                        themeType={this.state.themeType}
                         toggleTheme={() => this.toggleTheme()}
                         refreshProjects={this.refreshProjects}
                         viewsManage={this.state.viewsManage}

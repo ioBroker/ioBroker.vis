@@ -35,6 +35,9 @@ const styles = theme => ({
     rightBlock: { display: 'flex', alignItems: 'center', justifyContent: 'end' },
     lightedPanel: theme.classes.lightedPanel,
     toolbar: theme.classes.toolbar,
+    tooltip: {
+        pointerEvents: 'none',
+    },
 });
 
 const Toolbar = props => {
@@ -52,7 +55,7 @@ const Toolbar = props => {
                     themeName={props.themeName}
                     t={I18n.t}
                 />
-                <Tooltip title={I18n.t('Close editor')}>
+                <Tooltip title={I18n.t('Close editor')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton
                         size="small"
                         onClick={() => {
@@ -111,7 +114,7 @@ const Toolbar = props => {
                         { Utils.getObjectNameFromObj(props.currentUser, lang) }
                     </span>
                     { props.socket.isSecure
-                        ? <Tooltip title={I18n.t('Exit')}>
+                        ? <Tooltip title={I18n.t('Exit')} classes={{ popper: props.classes.tooltip }}>
                             <IconButton
                                 size="small"
                                 onClick={async () => {
