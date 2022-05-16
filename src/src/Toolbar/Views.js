@@ -80,6 +80,7 @@ const View = props => {
 
     return <>
         <ToolbarItems group={toolbar} {...props} classes={{}} />
+        <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} classes={{}} />
         <ViewDialog
             dialog={dialog}
             dialogView={dialogView}
@@ -92,7 +93,6 @@ const View = props => {
             classes={{}}
             {...props}
         />
-        <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} classes={{}} />
     </>;
 };
 

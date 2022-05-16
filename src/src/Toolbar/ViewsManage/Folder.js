@@ -1,20 +1,21 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { useEffect, useRef } from 'react';
+import { withStyles } from '@mui/styles';
+import { useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
+
 import {
     IconButton, Tooltip,
 } from '@mui/material';
-
-import { useDrag, useDrop } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FaFolder as FolderClosedIcon, FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
-
 import CreateNewFolderClosedIcon from '@mui/icons-material/CreateNewFolder';
-import { useEffect, useRef } from 'react';
-import { withStyles } from '@mui/styles';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
+import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 
 const styles = theme => ({
     viewManageBlock: theme.classes.viewManageBlock,
@@ -27,7 +28,22 @@ const styles = theme => ({
         cursor: 'grab',
         display: 'inline-block',
         lineHeight: '16px',
+        color: theme.palette.mode === 'dark' ? '#bad700' : '#f3bf00',
     },
+    noDrop: {
+        opacity: 0.4,
+    },
+    root: {
+        borderStyle: 'dashed',
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'rgba(128, 128, 128, 0)',
+        lineHeight: '32px',
+        verticalAlign: 'middle',
+    },
+    rootCanDrop: {
+        borderColor: 'rgba(200, 200, 200, 1)',
+    }
 });
 
 const Folder = props => {
@@ -68,8 +84,7 @@ const Folder = props => {
         }),
     }), [props.project]);
 
-    const widthRef = useRef();
-    const [{ isDragging, opacity }, dragRef, preview] = useDrag(
+    const [{ isDraggingThisItem }, dragRef, preview] = useDrag(
         {
             type: 'folder',
             item: () => ({
@@ -83,9 +98,8 @@ const Folder = props => {
                 }
             },
             collect: monitor => ({
-                isDragging: monitor.isDragging(),
+                isDraggingThisItem: monitor.isDragging(),
                 handlerId: monitor.getHandlerId(),
-                opacity: monitor.isDragging() ? 0.4 : 1,
             }),
         }, [props.project],
     );
@@ -95,99 +109,86 @@ const Folder = props => {
     }, [props.project]);
 
     useEffect(() => {
-        props.setIsDragging(isDragging);
-    }, [isDragging]);
+        props.setIsDragging(isDraggingThisItem ? props.folder.id : '');
+    }, [isDraggingThisItem]);
+
+    console.log(props.folder.name + ' ' + props.isDragging + ' ' + canDrop);
 
     return <div
         ref={drop}
-        style={{
-            borderStyle: 'dashed',
-            borderRadius: 4,
-            borderWidth: 1,
-            borderColor: isOver && canDrop ? 'rgba(200, 200, 200, 1)' : 'rgba(128, 128, 128, 0)',
-            lineHeight: '32px',
-            verticalAlign: 'middle',
-        }}
+        className={Utils.clsx(props.classes.root, props.classes.viewManageBlock, props.isDragging && !canDrop && props.classes.noDrop, props.isDragging && canDrop && props.classes.rootCanDrop)}
     >
-        <div>
-            <div ref={widthRef} style={{ opacity }}>
-                <div className={props.classes.viewManageBlock}>
-                    <Tooltip title={I18n.t('Drag me')}>
-                        <div className={props.classes.icon} ref={dragRef}>
-                            {props.foldersCollapsed.includes(props.folder.id)
-                                ? <FolderClosedIcon
-                                    fontSize={20}
-                                    onClick={() => {
-                                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
-                                        foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
-                                        props.setFoldersCollapsed(foldersCollapsed);
-                                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
-                                    }}
-                                />
-                                : <FolderOpenedIcon
-                                    fontSize={20}
-                                    onClick={() => {
-                                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
-                                        foldersCollapsed.push(props.folder.id);
-                                        props.setFoldersCollapsed(foldersCollapsed);
-                                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
-                                    }}
-                                />}
-                        </div>
-                    </Tooltip>
-                    <span className={props.classes.folderName}>{props.folder.name}</span>
-                    <span className={props.classes.viewManageButtonActions}>
-                        <Tooltip title={I18n.t('Add view')}>
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    props.showDialog('add', null, props.folder.id);
-                                }}
-                            >
-                                <AddIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title={I18n.t('Add sub-folder')}>
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    props.setFolderDialog('add');
-                                    props.setFolderDialogName('');
-                                    props.setFolderDialogParentId(props.folder.id);
-                                }}
-                            >
-                                <CreateNewFolderClosedIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title={I18n.t('Rename')}>
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    props.setFolderDialog('rename');
-                                    props.setFolderDialogName(props.folder.name);
-                                    props.setFolderDialogId(props.folder.id);
-                                }}
-                            >
-                                <EditIcon />
-                            </IconButton>
-                        </Tooltip>
-                        <Tooltip title={I18n.t('Delete')}>
-                            <IconButton
-                                size="small"
-                                onClick={() => {
-                                    props.setFolderDialog('delete');
-                                    props.setFolderDialogId(props.folder.id);
-                                }}
-                                disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
-                                    || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
-                            >
-                                <DeleteIcon />
-                            </IconButton>
-                        </Tooltip>
-                    </span>
-                </div>
-            </div>
+        <div className={props.classes.icon} ref={dragRef} title={I18n.t('Drag me')}>
+            {props.foldersCollapsed.includes(props.folder.id)
+                ? <FolderClosedIcon
+                    fontSize={20}
+                    onClick={() => {
+                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                        foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
+                        props.setFoldersCollapsed(foldersCollapsed);
+                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+                    }}
+                />
+                : <FolderOpenedIcon
+                    fontSize={20}
+                    onClick={() => {
+                        const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
+                        foldersCollapsed.push(props.folder.id);
+                        props.setFoldersCollapsed(foldersCollapsed);
+                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+                    }}
+                />}
         </div>
+        <span className={props.classes.folderName}>{props.folder.name}</span>
+        <span className={props.classes.viewManageButtonActions}>
+            <Tooltip title={I18n.t('Add view')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.showDialog('add', null, props.folder.id);
+                    }}
+                >
+                    <AddIcon />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={I18n.t('Add sub-folder')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.setFolderDialog('add');
+                        props.setFolderDialogName('');
+                        props.setFolderDialogParentId(props.folder.id);
+                    }}
+                >
+                    <CreateNewFolderClosedIcon />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={I18n.t('Rename')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.setFolderDialog('rename');
+                        props.setFolderDialogName(props.folder.name);
+                        props.setFolderDialogId(props.folder.id);
+                    }}
+                >
+                    <EditIcon />
+                </IconButton>
+            </Tooltip>
+            <Tooltip title={I18n.t('Delete')}>
+                <IconButton
+                    size="small"
+                    onClick={() => {
+                        props.setFolderDialog('delete');
+                        props.setFolderDialogId(props.folder.id);
+                    }}
+                    disabled={!!(props.project.___settings.folders.find(foundFolder => foundFolder.parentId === props.folder.id)
+                        || Object.values(props.project).find(foundView => foundView.parentId === props.folder.id))}
+                >
+                    <DeleteIcon />
+                </IconButton>
+            </Tooltip>
+        </span>
     </div>;
 };
 
@@ -201,6 +202,7 @@ Folder.propTypes = {
     setFolderDialogName: PropTypes.func,
     setFolderDialogParentId: PropTypes.func,
     setIsDragging: PropTypes.func,
+    isDragging: PropTypes.string,
 };
 
 export default withStyles(styles)(Folder);

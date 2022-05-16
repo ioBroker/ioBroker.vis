@@ -61,7 +61,7 @@ const ViewsManage = props => {
     const [folderDialogName, setFolderDialogName] = useState('');
     const [folderDialogId, setFolderDialogId] = useState(null);
     const [folderDialogParentId, setFolderDialogParentId] = useState(null);
-    const [isDragging, setIsDragging] = useState(false);
+    const [isDragging, setIsDragging] = useState('');
     const [isOverRoot, setIsOverRoot] = useState(false);
 
     const [foldersCollapsed, setFoldersCollapsed] = useState([]);
@@ -101,6 +101,7 @@ const ViewsManage = props => {
             <View
                 name={name}
                 setIsDragging={setIsDragging}
+                isDragging={isDragging}
                 moveView={moveView}
                 setExportDialog={setExportDialog}
                 setImportDialog={setImportDialog}
@@ -117,6 +118,7 @@ const ViewsManage = props => {
             <div className={props.classes.folderContainer}>
                 <Folder
                     setIsDragging={setIsDragging}
+                    isDragging={isDragging}
                     folder={folder}
                     setFolderDialog={setFolderDialog}
                     setFolderDialogName={setFolderDialogName}
@@ -172,13 +174,10 @@ const ViewsManage = props => {
                     borderColor: isOverRoot ? 'rgba(200, 200, 200, 1)' : 'rgba(128, 128, 128, 0)',
                     lineHeight: '32px',
                     verticalAlign: 'middle',
-                    paddingLeft: 5,
-                }}>
-                    {foldersCollapsed.includes(null) ? null
-                        : <div style={{ paddingLeft: 10 }}>
-                            {renderFolders()}
-                            {renderViews()}
-                        </div>}
+                }}
+                >
+                    {renderFolders()}
+                    {renderViews()}
                     <Root
                         isDragging={isDragging}
                         setIsOverRoot={setIsOverRoot}
@@ -226,6 +225,7 @@ ViewsManage.propTypes = {
     project: PropTypes.object,
     showDialog: PropTypes.func,
     themeName: PropTypes.string,
+    toggleView: PropTypes.func,
 };
 
 export default withStyles(styles)(ViewsManage);

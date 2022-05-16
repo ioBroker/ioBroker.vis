@@ -1,21 +1,25 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import ObjectBrowser from '@iobroker/adapter-react-v5/Components/ObjectBrowser';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import withStyles from '@mui/styles/withStyles';
+import copy from 'copy-to-clipboard';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListIcon from '@mui/icons-material/List';
-import withStyles from '@mui/styles/withStyles';
+
+import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
 import ProjectsManage from './ProjectsManage';
-import IODialog from '../Components/IODialog';
 
 const styles = () => ({
     objectsDialog: {
         minWidth: 800,
+        height: '100%',
+        overflow: 'hidden',
     },
 });
 
@@ -42,22 +46,24 @@ const Tools = props => {
         <ToolbarItems group={toolbar} last {...props} classes={{}} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
         <ProjectsManage open={props.projectsDialog} onClose={() => props.setProjectsDialog(false)} {...props} classes={{}} />
-        <IODialog
-            open={objectsDialog}
-            onClose={() => setObjectsDialog(false)}
-            title="Browse objects"
-            maxWidth="lg"
-            closeTitle={I18n.t('Close')}
-        >
-            <div className={props.classes.objectsDialog}>
-                <ObjectBrowser
-                    socket={props.socket}
-                    t={I18n.t}
-                    lang={I18n.lang}
-                    columns={['role', 'func', 'val', 'name']}
-                />
-            </div>
-        </IODialog>
+        {
+            objectsDialog ? <SelectID
+                ready
+                onClose={() => setObjectsDialog(false)}
+                socket={props.socket}
+                title={I18n.t('Browse objects')}
+                columns={['role', 'func', 'val', 'name']}
+                notEditable={false}
+                statesOnly
+                onOk={selected => {
+                    copy(selected);
+                    setObjectsDialog(false);
+                    window.alert(I18n.t('Copied'));
+                }}
+                ok={I18n.t('Copy to clipboard')}
+                cancel={I18n.t('Close')}
+            /> : null
+        }
     </>;
 };
 

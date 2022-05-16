@@ -94,7 +94,7 @@ const ProjectsManage = props => {
                         </IconButton>
                     </Tooltip>
                     <Tooltip title={I18n.t('Import')}>
-                        <IconButton onClick={() => setImportDialog('')} size="large" >
+                        <IconButton onClick={() => setImportDialog('')} size="large" style={{ width: 48 }}>
                             <BiImport fontSize={20} />
                         </IconButton>
                     </Tooltip>
