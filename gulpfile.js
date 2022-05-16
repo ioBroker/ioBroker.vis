@@ -499,4 +499,4 @@ gulp.task('updateReadme', done => {
 
 gulp.task('replace', gulp.series('replacePkg', 'replaceVis', 'replaceHtml'));
 
-gulp.task('default', gulp.series('updatePackages', 'updateReadme', 'replace'));
+gulp.task('default', gulp.series('updatePackages', 'updateReadme', 'replace', 'buildReact'));

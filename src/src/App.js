@@ -176,8 +176,11 @@ class App extends GenericApp {
         super.componentDidMount();
         let runtime = false;
 
-        if (window.location.search.includes('runtime') || window.location.pathname.endsWith('edit.html')) {
+        if (window.location.search.includes('runtime') || !window.location.pathname.endsWith('edit.html')) {
             runtime = true;
+        }
+        if (window.location.search.includes('edit') || window.location.port.startsWith('300')) {
+            runtime = false;
         }
 
         this.setState({

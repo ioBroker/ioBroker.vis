@@ -46,6 +46,8 @@ const Toolbar = props => {
 
     const lang = I18n.getLanguage();
 
+    const runtimeURL = `?${props.projectName}&runtime=true#${props.selectedView}`;
+
     return <div className={props.classes.lightedPanel}>
         <span className={props.classes.right}>
             <div className={props.classes.rightBlock}>
@@ -58,9 +60,7 @@ const Toolbar = props => {
                 <Tooltip title={I18n.t('Close editor')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton
                         size="small"
-                        onClick={() => {
-                            window.location.href = `${window.location.protocol}//${window.location.host}/vis/index.html`;
-                        }}
+                        onClick={() => window.location.href = runtimeURL}
                     >
                         <CloseIcon />
                     </IconButton>
@@ -79,7 +79,7 @@ const Toolbar = props => {
                     getContentAnchorEl={null}
                 >
                     <DropMenuItem onClick={() => {
-                        window.location.href = `${window.location.protocol}//${window.location.host}/vis/index.html`;
+                        window.location.href = runtimeURL;
                         setRight(false);
                     }}
                     >
@@ -87,7 +87,7 @@ const Toolbar = props => {
                         {I18n.t('Close editor')}
                     </DropMenuItem>
                     <DropMenuItem onClick={() => {
-                        window.open(`${window.location.protocol}//${window.location.host}/vis/index.html`, '_blank');
+                        window.open(runtimeURL, '_blank');
                         setRight(false);
                     }}
                     >

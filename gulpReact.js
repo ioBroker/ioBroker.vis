@@ -128,6 +128,20 @@ function init(gulp) {
                 ])
                     .pipe(replace('s.p+"static/media/copy-content', '"./static/media/copy-content'))
                     .pipe(gulp.dest('www/react/static/js/')),
+,
+
+                gulp.src([
+                    'src/build/index.html',
+                ])
+                    .pipe(replace('href="/', 'href="'))
+                    .pipe(replace('src="/', 'src="'))
+                    .pipe(rename('edit.html'))
+                    .pipe(gulp.dest('www/react/')),
+                gulp.src([
+                    'src/build/static/js/main.*.chunk.js',
+                ])
+                    .pipe(replace('s.p+"static/media/copy-content', '"./static/media/copy-content'))
+                    .pipe(gulp.dest('www/react/static/js/')),
             ]);
         });
     }
@@ -136,21 +150,21 @@ function init(gulp) {
 
     gulp.task('5-copy-dep', gulp.series('3-build-dep', '5-copy'));
 
+    function patchFile(htmlFile) {
+        if (fs.existsSync(htmlFile)) {
+            let code = fs.readFileSync(htmlFile).toString('utf8');
+            code = code.replace(/<script>const script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
+            code = code.replace(/<script>var script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
+
+            fs.writeFileSync(htmlFile, code);
+        }
+    }
+
     gulp.task('6-patch', done => {
-        if (fs.existsSync(__dirname + '/www/react/index.html')) {
-            let code = fs.readFileSync(__dirname + '/www/react/index.html').toString('utf8');
-            code = code.replace(/<script>const script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
-            code = code.replace(/<script>var script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
-
-            fs.writeFileSync(__dirname + '/www/react/index.html', code);
-        }
-        if (fs.existsSync(__dirname + '/src/build/index.html')) {
-            let code = fs.readFileSync(__dirname + '/src/build/index.html').toString('utf8');
-            code = code.replace(/<script>const script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
-            code = code.replace(/<script>var script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
-
-            fs.writeFileSync(__dirname + '/src/build/index.html', code);
-        }
+        patchFile(__dirname + '/www/react/index.html');
+        patchFile(__dirname + '/www/react/edit.html');
+        patchFile(__dirname + '/src/build/index.html');
+        patchFile(__dirname + '/src/build/edit.html');
         done();
     });
 
