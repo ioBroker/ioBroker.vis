@@ -1,15 +1,18 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
 import AceEditor from 'react-ace';
 
-import 'ace-builds/webpack-resolver';
+// import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-noconflict/theme-chrome';
 
 import { useEffect, useRef, useState } from 'react';
+
 import { TextField } from '@mui/material';
+
+import I18n from '@iobroker/adapter-react-v5/i18n';
+
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 

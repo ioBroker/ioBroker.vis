@@ -6,6 +6,7 @@ const replace    = require('gulp-replace');
 const pkg        = require('./package.json');
 const iopackage  = require('./io-package.json');
 const version    = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
+const gulpReact  = require('./gulpReact');
 /*const appName   = getAppName();
 
 function getAppName() {
@@ -13,7 +14,7 @@ function getAppName() {
     return parts[parts.length - 1].split('.')[0].toLowerCase();
 }
 */
-const fileName = 'words.js';
+const fileName   = 'words.js';
 const languages  =  {
     en: {},
     de: {},
@@ -367,6 +368,8 @@ function languages2words(src) {
 
     writeWordJs(bigOne, src);
 }
+
+gulpReact(gulp);
 
 gulp.task('wwwWords2languages', done => {
     words2languages('./www/');

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
-import 'ace-builds/webpack-resolver';
+// import 'ace-builds/webpack-resolver';
 import 'ace-builds/src-noconflict/mode-css';
 import 'ace-builds/src-min-noconflict/ext-searchbox';
 import 'ace-builds/src-min-noconflict/ext-language_tools';
