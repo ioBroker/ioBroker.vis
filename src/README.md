@@ -10,18 +10,18 @@
 ### View
 - ✅ Delete widget (With suppress dialog)
 - ✅ Copy/paste/cut widget (With preview) - !cut does not work sometimes (BF: Check deletion of widget)
-- Move with keyboard (with shift and without) - !somehow does not work
-- Show rulers lines by moving of widget (red lines) - !on key press?
-- Show screen resolution - !bug
-- Grid and snap to grid - if enabled, the background disappeared - !6px
+- ✅ Move with keyboard (with shift and without) - !somehow does not work
+- ✅ Show rulers lines by moving of widget (red lines) - !on key press?
+- ✅ Show screen resolution - !bug
+- ✅ Grid and snap to grid - if enabled, the background disappeared - !6px
 - ✅ Align buttons in toolbar
 - ✅ Copy/paste/Cut buttons in toolbar
-- Export/Import widget - preselect text or make it empty - !group export
+- ✅ Export/Import widget - preselect text or make it empty - !group export
 - ✅ Rename button near Widget selector to "clone widgets" instead of copy widget
 - ✅ Lock/Unlock widget
-- Remove show interaction - and replace with show widget ID 
+- ✅ Remove show interaction - and replace with show widget ID 
 - ✅ Context menu - collect all widgets under cursor and show them in context menu
-- Bring to front / Send back (Max z-index is 1199)
+- ✅ Bring to front / Send back (Max z-index is 1199)
 - ✅ Undo!!/Redo
 - ✅ Ctrl+A / Esc(Deselect all) / ...
 - ✅ If dimension is in % so after resize and move it should stay in %
@@ -35,7 +35,7 @@
 - ✅By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
 
 - [Gestures] (do not implement)
-- Last change ? Denis
+- Last change by Rx
 - Signal by Rx
 
 ### Runtime

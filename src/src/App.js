@@ -179,7 +179,7 @@ class App extends GenericApp {
         if (window.location.search.includes('runtime') || !window.location.pathname.endsWith('edit.html')) {
             runtime = true;
         }
-        if (window.location.search.includes('edit') || window.location.port.startsWith('300')) {
+        if (window.location.search.includes('edit') || (window.location.port.startsWith('300') && !window.location.search.includes('runtime'))) {
             runtime = false;
         }
 
@@ -413,6 +413,7 @@ class App extends GenericApp {
         await this.refreshProjects();
 
         const user = await this.socket.getCurrentUser();
+        this.dateFormat = await this.socket.getSystemConfig()?.common?.dateFormat;
         const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
         await this.setStateAsync({
             currentUser,
@@ -1387,6 +1388,7 @@ class App extends GenericApp {
             visCommonCss={this.state.visCommonCss}
             visUserCss={this.state.visUserCss}
             lang={this.socket.systemLang}
+            dateFormat={this.dateFormat}
             views={this.state.visProject}
             adapterName={this.adapterName}
             instance={this.instance}

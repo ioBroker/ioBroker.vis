@@ -838,6 +838,8 @@ class VisView extends React.Component {
             relativeWidgetOrder,
             moveAllowed,
             selectedGroup: props.selectedGroup,
+            lang: props.lang,
+            dateFormat: props.dateFormat,
             VisView,
         };
 
@@ -1047,6 +1049,8 @@ class VisView extends React.Component {
             <div
                 key="black"
                 style={{
+                    top: 0,
+                    left: 0,
                     width: `${this.props.views[this.props.view].settings.sizex}px`,
                     height: `${this.props.views[this.props.view].settings.sizey}px`,
                     position: 'absolute',
@@ -1065,6 +1069,8 @@ class VisView extends React.Component {
             <div
                 key="white"
                 style={{
+                    top: 0,
+                    left: 0,
                     width: `${parseInt(this.props.views[this.props.view].settings.sizex) + 1}px`,
                     height: `${parseInt(this.props.views[this.props.view].settings.sizey, 10) + 1}px`,
                     position: 'absolute',
@@ -1202,10 +1208,10 @@ class VisView extends React.Component {
         if (settings.sizex) {
             let ww = settings.sizex;
             let hh = settings.sizey;
-            if (parseFloat(ww).toString() === ww.toString()) {
+            if (isFinite(ww)) {
                 ww = parseFloat(ww);
             }
-            if (parseFloat(hh).toString() === hh.toString()) {
+            if (isFinite(hh)) {
                 hh = parseFloat(hh);
             }
 
@@ -1220,6 +1226,9 @@ class VisView extends React.Component {
         }
 
         relativeStyle.display = settings.style.display || 'flex';
+        relativeStyle.position = 'absolute';
+        relativeStyle.top = 0;
+        relativeStyle.left = 0;
 
         settings.style && Object.keys(settings.style).forEach(attr => {
             if (attr === 'background_class') {
@@ -1308,6 +1317,8 @@ VisView.propTypes = {
     registerEditorCallback: PropTypes.func,
     setSelectedGroup: PropTypes.func,
     widgetHint: PropTypes.string,
+    lang: PropTypes.string,
+    dateFormat: PropTypes.string.isRequired,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

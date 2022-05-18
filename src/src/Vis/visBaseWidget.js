@@ -15,6 +15,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import {
     addClass,
@@ -57,6 +58,9 @@ class VisBaseWidget extends React.Component {
     }
 
     componentWillUnmount() {
+        this.updateInterval && clearInterval(this.updateInterval);
+        this.updateInterval = null;
+
         // delete service ref from view
         this.props.registerRef && this.props.registerRef(this.props.id);
         if (this.shadowDiv) {
@@ -806,6 +810,359 @@ class VisBaseWidget extends React.Component {
         this.props.onWidgetsChanged(null, this.props.view, { order });
     }
 
+    static formatValue(value, decimals, _format) {
+        if (typeof decimals !== 'number') {
+            decimals = 2;
+            _format = decimals;
+        }
+        const format = _format === undefined ? '.,' : _format;
+        if (typeof value !== 'number') {
+            value = parseFloat(value);
+        }
+        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+    }
+
+    formatIntervalHelper(value, type) {
+        let singular;
+        let plural;
+        let special24;
+        if (this.props.lang === 'de') {
+            if (type === 'seconds') {
+                singular = 'Sekunde';
+                plural   = 'Sekunden';
+            } else if (type === 'minutes') {
+                singular = 'Minute';
+                plural   = 'Minuten';
+            } else if (type === 'hours') {
+                singular = 'Stunde';
+                plural   = 'Stunden';
+            } else if (type === 'days') {
+                singular = 'Tag';
+                plural   = 'Tagen';
+            }
+        } else
+        if (this.props.lang === 'ru') {
+            if (type === 'seconds') {
+                singular  = 'секунду';
+                plural    = 'секунд';
+                special24 = 'секунды';
+            } else if (type === 'minutes') {
+                singular  = 'минуту';
+                plural    = 'минут';
+                special24 = 'минуты';
+            } else if (type === 'hours') {
+                singular  = 'час';
+                plural    = 'часов';
+                special24 = 'часа';
+            } else if (type === 'days') {
+                singular  = 'день';
+                plural    = 'дней';
+                special24 = 'дня';
+            }
+        } else {
+            if (type === 'seconds') {
+                singular = 'second';
+                plural   = 'seconds';
+            } else if (type === 'minutes') {
+                singular = 'minute';
+                plural   = 'minutes';
+            } else if (type === 'hours') {
+                singular = 'hour';
+                plural   = 'hours';
+            } else if (type === 'days') {
+                singular = 'day';
+                plural   = 'days';
+            }
+        }
+
+        if (value === 1) {
+            if (this.props.lang === 'de') {
+                if (type === 'days') {
+                    return 'einem ' + singular;
+                } else {
+                    return 'einer ' + singular;
+                }
+            } else if (this.props.lang === 'ru') {
+                if (type === 'days' || type === 'hours') {
+                    return 'один ' + singular;
+                } else {
+                    return 'одну ' + singular;
+                }
+            } else {
+                return 'one ' + singular;
+            }
+        } else {
+            if (this.props.lang === 'de') {
+                return `${value} ${plural}`;
+            } else if (this.props.lang === 'ru') {
+                const d = value % 10;
+                if (d === 1 && value !== 11) {
+                    return `${value} ${singular}`;
+                } else
+                if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
+                    return `${value} ${special24}`;
+                } else {
+                    return `${value} ${plural}`;
+                }
+            } else {
+                return `${value} ${plural}`;
+            }
+        }
+    }
+
+    formatInterval(timestamp, isMomentJs) {
+        if (isMomentJs) {
+            return moment(new Date(timestamp)).fromNow();
+        }
+        let diff = Date.now() - timestamp;
+        diff = Math.round(diff / 1000);
+        let text;
+        if (diff <= 60) {
+            if (this.props.lang === 'de') {
+                text = 'vor ' + vis.binds.basic.formatIntervalHelper(diff, 'seconds');
+            } else if (this.props.lang === 'ru') {
+                text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' назад';
+            } else {
+                text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' ago';
+            }
+        } else if (diff < 3600) {
+            let m = Math.floor(diff / 60);
+            let s = diff - m * 60;
+            text = '';
+            if (this.props.lang === 'de') {
+                text = 'vor ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+            } else if (this.props.lang === 'ru') {
+                text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+            } else {
+                text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+            }
+
+            if (m < 5) {
+                // add seconds
+                if (this.props.lang === 'de') {
+                    text += ' und ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                } else if (this.props.lang === 'ru') {
+                    text += ' и ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                } else {
+                    text += ' and ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                }
+            }
+
+            if (this.props.lang === 'de') {
+                // nothing
+            } else if (this.props.lang === 'ru') {
+                text += ' назад';
+            } else {
+                text += ' ago';
+            }
+        } else if (diff < 3600 * 24) {
+            let h = Math.floor(diff / 3600);
+            let m = Math.floor((diff - h * 3600) / 60);
+            text = '';
+            if (this.props.lang === 'de') {
+                text = 'vor ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+            } else if (this.props.lang === 'ru') {
+                text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+            } else {
+                text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+            }
+
+            if (h < 10) {
+                // add seconds
+                if (this.props.lang === 'de') {
+                    text += ' und ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                } else if (this.props.lang === 'ru') {
+                    text += ' и ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                } else {
+                    text += ' and ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                }
+            }
+
+            if (this.props.lang === 'de') {
+                // nothing
+            } else if (this.props.lang === 'ru') {
+                text += ' назад';
+            } else {
+                text += ' ago';
+            }
+        } else {
+            let d = Math.floor(diff / (3600 * 24));
+            let h = Math.floor((diff - d * (3600 * 24)) / 3600);
+            text = '';
+            if (this.props.lang === 'de') {
+                text = 'vor ' + vis.binds.basic.formatIntervalHelper(d, 'days');
+            } else if (this.props.lang === 'ru') {
+                text = vis.binds.basic.formatIntervalHelper(d, 'days');
+            } else {
+                text = vis.binds.basic.formatIntervalHelper(d, 'days');
+            }
+
+            if (d < 3) {
+                // add seconds
+                if (this.props.lang === 'de') {
+                    text += ' und ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                } else if (this.props.lang === 'ru') {
+                    text += ' и ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                } else {
+                    text += ' and ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                }
+            }
+
+            if (this.props.lang === 'de') {
+                // nothing
+            } else if (this.props.lang === 'ru') {
+                text += ' назад';
+            } else {
+                text += ' ago';
+            }
+        }
+        return text;
+    }
+
+    startUpdateInterval() {
+        if (this.updateInterval) {
+            return;
+        }
+        this.updateInterval = this.updateInterval || setInterval(() => {
+            const timeIntervalEl = this.widDiv.querySelector('.time-interval');
+            if (timeIntervalEl) {
+                const time = parseInt(timeIntervalEl.dataset.time, 10);
+                const moment = timeIntervalEl.dataset.moment === 'true';
+                timeIntervalEl.innerHTML = this.formatInterval(time, moment);
+            }
+        }, 10000);
+    }
+
+    formatDate(dateObj, format, interval, isMomentJs) {
+        if (typeof format === 'boolean') {
+            interval = format;
+            format = 'auto';
+        }
+
+        if (format === 'auto') {
+            format = `${this.props.dateFormat || 'DD.MM.YYYY'} hh:mm:ss`;
+        }
+
+        format = format || this.props.dateFormat || 'DD.MM.YYYY';
+
+        if (!dateObj) {
+            return '';
+        }
+        let text = typeof dateObj;
+        if (text === 'string') {
+            dateObj = new Date(dateObj);
+        }
+        if (text !== 'object') {
+            if (isFinite(dateObj)) {
+                let i = parseInt(dateObj, 10);
+                // if greater than 2000.01.01 00:00:00
+                if (i > 946681200000) {
+                    dateObj = new Date(dateObj);
+                } else {
+                    dateObj = new Date(dateObj * 1000);
+                }
+            } else {
+                dateObj = new Date(dateObj);
+            }
+        }
+        if (interval) {
+            this.startUpdateInterval();
+            return `<span class="time-interval" data-time="${dateObj.getTime()}" data-moment="${isMomentJs || false}">${this.formatInterval(dateObj.getTime(), isMomentJs)}</span>`;
+        }
+
+        let v;
+
+        // Year
+        if (format.includes('YYYY') || format.includes('JJJJ') || format.includes('ГГГГ')) {
+            v = dateObj.getFullYear();
+            format = format.replace('YYYY', v);
+            format = format.replace('JJJJ', v);
+            format = format.replace('ГГГГ', v);
+        } else if (format.includes('YY') || format.includes('JJ') || format.includes('ГГ')) {
+            v = dateObj.getFullYear() % 100;
+            format = format.replace('YY', v);
+            format = format.replace('JJ', v);
+            format = format.replace('ГГ', v);
+        }
+        // Month
+        if (format.includes('MM') || format.includes('ММ')) {
+            v =  dateObj.getMonth() + 1;
+            if (v < 10) v = '0' + v;
+            format = format.replace('MM', v);
+            format = format.replace('ММ', v);
+        } else if (format.includes('M') || format.includes('М')) {
+            v =  dateObj.getMonth() + 1;
+            format = format.replace('M', v);
+            format = format.replace('М', v);
+        }
+
+        // Day
+        if (format.includes('DD') || format.includes('TT') || format.includes('ДД')) {
+            v =  dateObj.getDate();
+            if (v < 10) v = '0' + v;
+            format = format.replace('DD', v);
+            format = format.replace('TT', v);
+            format = format.replace('ДД', v);
+        } else if (format.includes('D') || format.includes('TT') || format.includes('Д')) {
+            v =  dateObj.getDate();
+            format = format.replace('D', v);
+            format = format.replace('T', v);
+            format = format.replace('Д', v);
+        }
+
+        // hours
+        if (format.includes('hh') || format.includes('SS') || format.includes('чч')) {
+            v =  dateObj.getHours();
+            if (v < 10) v = '0' + v;
+            format = format.replace('hh', v);
+            format = format.replace('SS', v);
+            format = format.replace('чч', v);
+        } else if (format.includes('h') || format.includes('S') || format.includes('ч')) {
+            v =  dateObj.getHours();
+            format = format.replace('h', v);
+            format = format.replace('S', v);
+            format = format.replace('ч', v);
+        }
+
+        // minutes
+        if (format.includes('mm') || format.includes('мм')) {
+            v =  dateObj.getMinutes();
+            if (v < 10) v = '0' + v;
+            format = format.replace('mm', v);
+            format = format.replace('мм', v);
+        } else if (format.includes('m') ||  format.includes('м')) {
+            v =  dateObj.getMinutes();
+            format = format.replace('m', v);
+            format = format.replace('v', v);
+        }
+
+        // milliseconds
+        if (format.includes('sss') || format.includes('ссс')) {
+            v =  dateObj.getMilliseconds();
+            if (v < 10) {
+                v = '00' + v;
+            } else if (v < 100) {
+                v = '0' + v;
+            }
+            format = format.replace('sss', v);
+            format = format.replace('ссс', v);
+        }
+
+        // seconds
+        if (format.includes('ss') || format.includes('сс')) {
+            v =  dateObj.getSeconds();
+            if (v < 10) v = '0' + v;
+            format = format.replace('ss', v);
+            format = format.replace('cc', v);
+        } else if (format.includes('s') || format.includes('с')) {
+            v =  dateObj.getHours();
+            format = format.replace('s', v);
+            format = format.replace('с', v);
+        }
+
+        return format;
+    }
+
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
@@ -931,6 +1288,8 @@ VisBaseWidget.propTypes = {
     moveAllowed: PropTypes.bool,
     widgetHint: PropTypes.string,
     selectedGroup: PropTypes.string,
+    lang: PropTypes.string,
+    dateFormat: PropTypes.string,
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,

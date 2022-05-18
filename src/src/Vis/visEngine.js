@@ -1216,6 +1216,7 @@ ${this.scripts}
                     userGroups={this.userGroups}
                     allWidgets={this.allWidgets}
                     jQuery={window.jQuery}
+                    lang={this.props.lang}
                     $$={window.$$}
                     adapterName={this.props.adapterName}
                     instance={this.props.instance}
@@ -1252,6 +1253,7 @@ VisEngine.propTypes = {
     views: PropTypes.object.isRequired,
     activeView: PropTypes.string,
     lang: PropTypes.string.isRequired,
+    dateFormat: PropTypes.string.isRequired,
     editMode: PropTypes.bool,
     onLoaded: PropTypes.func,
     selectedWidgets: PropTypes.array,

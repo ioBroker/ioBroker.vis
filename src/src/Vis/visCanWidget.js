@@ -300,7 +300,7 @@ class VisCanWidget extends VisBaseWidget {
             const widgetData = this.props.allWidgets[this.props.id].data;
             const lcDiv = this.widDiv.querySelector('.vis-last-change');
             if (lcDiv) {
-                lcDiv.innerHTML = this.binds.basic.formatDate(
+                lcDiv.innerHTML = window.vis.binds.basic.formatDate(
                     this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
                     widgetData['lc-format'], widgetData['lc-is-interval'],
                     widgetData['lc-is-moment'],
@@ -695,7 +695,7 @@ class VisCanWidget extends VisBaseWidget {
         const divLastChange = window.document.createElement('div');
         // `<div class="vis-last-change" data-type="${data['lc-type']}" data-format="${data['lc-format']}" data-interval="${data['lc-is-interval']}">${this.binds.basic.formatDate(this.states.attr(`${data['lc-oid']}.${data['lc-type'] === 'last-change' ? 'lc' : 'ts'}`), data['lc-format'], data['lc-is-interval'], data['lc-is-moment'])}</div>`
         divLastChange.className = 'vis-last-change';
-        divLastChange.innerHTML = this.binds.basic.formatDate(
+        divLastChange.innerHTML = this.formatDate(
             this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
             widgetData['lc-format'],
             widgetData['lc-is-interval'],
