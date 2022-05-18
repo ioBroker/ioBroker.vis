@@ -1213,6 +1213,7 @@ ${this.scripts}
                     can={this.can}
                     canStates={this.canStates}
                     user={this.user}
+                    dateFormat={this.vis.dateFormat}
                     userGroups={this.userGroups}
                     allWidgets={this.allWidgets}
                     jQuery={window.jQuery}
@@ -1253,7 +1254,6 @@ VisEngine.propTypes = {
     views: PropTypes.object.isRequired,
     activeView: PropTypes.string,
     lang: PropTypes.string.isRequired,
-    dateFormat: PropTypes.string.isRequired,
     editMode: PropTypes.bool,
     onLoaded: PropTypes.func,
     selectedWidgets: PropTypes.array,
