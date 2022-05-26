@@ -14,20 +14,24 @@
  * (Free for non-commercial use).
  */
 
+/************************************************************** */
 function replaceGroupAttr(inputStr, groupAttrList) {
     var newString = inputStr;
     var match = false;
-    var ms = inputStr.match(/(groupAttr\d+)+?/g);
+    var ms = inputStr.match(/(groupAttr\d+)+?/g); //get array, allmatching
     if (ms) {
-        match = true;
         ms.forEach(function (m) {
-            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+            if (m in groupAttrList){
+              newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+              match = true;
+            }
         });
-        console.log('Replaced ' + inputStr + ' with ' + newString + ' (based on ' + ms + ')');
+        if (match) console.log('Replaced ' + inputStr + ' with ' + newString + ' (based on ' + ms + ')');
     }
     return {doesMatch: match, newString: newString};
 }
 
+/***************************************************************/
 function getWidgetGroup(views, view, widget) {
     var widgets = views[view].widgets;
     var groupID = widgets[widget].groupid;
@@ -48,6 +52,25 @@ function getWidgetGroup(views, view, widget) {
     return null;
 }
 
+/***************************************************************/
+//Format: {objectID1;operation1;operation2;...} ..{ }.. { }
+//examples:
+//  {objectRed.lc; date(hh:mm)} .. {h:height; w:width; Math.max(20, Math.sqrt(h*h + w*w))} ...
+//  "color={objectRed;/(100);*(255);HEX2}"
+//
+//Return array of object
+//   {visOid     - 'objectRed.val' 
+//    systemOid  - 'objectRed'
+//    token      - '{objectRed;/(100);*(255);HEX2}'
+//    operations[] - {op, arg[], formula}...
+//    format     - 'color={objectRed;/(100);*(255);HEX2}'
+//    isSeconds  - false
+//later next fields are added:  
+//    type - 'date'|'style'  
+//    attr - 
+//    view - 
+//    widget - 
+//  }
 function extractBinding(format) {
     var oid = format.match(/{(.+?)}/g);
     var result = null;
@@ -142,7 +165,7 @@ function extractBinding(format) {
                         }
                     }
                 } else {
-                    var parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);
+                    var parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);  //Examples:  *(256); HEX2; date(hh:mm); array(value1,value2) 
                     if (parse && parse[1]) {
                         parse[1] = parse[1].trim();
                         // operators requires parameter
@@ -238,6 +261,62 @@ function extractBinding(format) {
     return result;
 }
 
+//**********************************************************************************/
+//Helper  for finding Group of widget(wid) 
+//avoids repeated searches for a single widget
+function GroupHelper(views){
+    this.views = views;
+    this.view = null;
+    this.wid = null;
+    this.groupwid = null; 
+    this.tryFound = false
+    
+    //reset props for new widget id 
+    this.initforWidget = function(view, wid){
+        this.view = view;
+        this.wid = wid;
+        this.groupwid = null;
+        this.tryFound = false
+    }  
+
+    this.tryGetGroupID = function(){
+        if ((this.groupwid==null) && !this.tryFound){
+            this.groupwid = getWidgetGroup(this.views, this.view, this.wid);
+            this.tryFound = true;
+            
+            if (this.groupwid)
+               this.views[this.view].widgets[this.wid].groupid = this.groupwid;                  
+         }
+
+    } 
+    //Checking widget attribute value for presence of "groupAttr". if so then replace to actual value
+    //If groupAttr Index wrone, then return "groupAttrN" -> "undefine"
+    this.checkValue = function(value) {
+        let result=value;
+
+        if (value.indexOf('groupAttr')>=0){
+        
+            this.tryGetGroupID();
+
+            if (this.groupwid) {
+                let res = replaceGroupAttr(value, this.views[this.view].widgets[this.groupwid].data); //Если индекс группы не найден то должен вернуть undefine
+                if (res.doesMatch) {
+                    result = res.newString;
+            }
+         }
+        }
+        else 
+        if (this.views[this.view].widgets[this.wid].grouped &&
+           !this.views[this.view].widgets[this.wid].groupid){
+            this.tryGetGroupID();
+           }
+
+
+        return result;
+    }
+}
+
+/************************************************************** */
 function getUsedObjectIDs(views, isByViews) {
     if (!views) {
         console.log('Check why views are not yet loaded!');
@@ -254,6 +333,10 @@ function getUsedObjectIDs(views, isByViews) {
     var view;
     var id;
     var sidd;
+    
+    //helper to optimize gettting(replacing) "groupAttr" for one widget
+    let groupHelper = new GroupHelper(views);
+
     for (view in views) {
         if (!views.hasOwnProperty(view)) continue;
 
@@ -263,10 +346,12 @@ function getUsedObjectIDs(views, isByViews) {
 
         for (id in views[view].widgets) {
             if (!views[view].widgets.hasOwnProperty(id)) continue;
+           
             // Check all attributes
             var data  = views[view].widgets[id].data;
             var style = views[view].widgets[id].style;
 
+            {//Region for version compatibility
             // fix error in naming
             if (views[view].widgets[id].groupped) {
                 views[view].widgets[id].grouped = true;
@@ -346,11 +431,67 @@ function getUsedObjectIDs(views, isByViews) {
             if (views[view].widgets[id].tpl === 'tplValueFloatBarVertical') {
                 views[view].widgets[id].tpl = 'tplValueFloatBar';
                 views[view].widgets[id].data.orientation = 'vertical';
+            } 
+            }//region end
+            
+            //Begin handling next widget model
+            groupHelper.initforWidget(view, id);
+
+            //define common finction to adding to subscribing Arrays
+            function sub_AddtoSubscribingArray(tagid, bindObj){
+            
+                //if (tagid.indexOf('local_')===0) return;   //adding because "local_" need for getting it state  in subscribeStates method 
+                if (tagid.indexOf('groupAttr')===0) return;  //skip. we prevent subscribe  
+
+                if (IDs.indexOf(tagid) === -1) IDs.push(tagid);
+                if (_views && _views[view].indexOf(tagid) === -1) _views[view].push(tagid);   
+
+                if (bindObj){
+                    if (!bindings[tagid]) bindings[tagid] = [];
+                    bindings[tagid].push(bindObj);
+                }            
+            }    
+
+            //define common finction to check binging format
+            function sub_CheckBindingPresent(attrValue, attr, typeId) {
+                var res=false;
+            
+                attrValue = groupHelper.checkValue(attrValue); //Check attrValue for "groupAttr" and replace it
+            
+                var oids = extractBinding(attrValue);
+                if (oids) {
+                    res=true;
+                    
+                    for (var t = 0; t < oids.length; t++) {
+                        var ssid = oids[t].systemOid;
+                        if (ssid) {
+                            oids[t].type = typeId;
+                            oids[t].attr = attr;
+                            oids[t].view = view;
+                            oids[t].widget = id;
+
+                            sub_AddtoSubscribingArray(ssid, oids[t]);
+                        }
+            
+                        if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
+                            for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
+                                let opssid = oids[t].operations[0].arg[ww].systemOid;
+                                if (opssid && opssid !== ssid) 
+                                    sub_AddtoSubscribingArray(opssid,oids[t]);
+                            }
+                        }
+                    }
+                }
+            
+             return res;
             }
 
+            //check all widget attributes 
             for (var attr in data) {
                 if (!data.hasOwnProperty(attr) || !attr) continue;
                 /* TODO DO do not forget remove it after a while. Required for import from DashUI */
+                
+                { //region
                 if (attr === 'state_id') {
                     data.state_oid = data[attr];
                     delete data[attr];
@@ -406,110 +547,73 @@ function getUsedObjectIDs(views, isByViews) {
                     delete data[attr];
                     attr = 'woeid';
                 }
+                }//region end 
 
-                if (typeof data[attr] === 'string') {
-                    var m;
-                    var oids = extractBinding(data[attr]);
-                    if (oids) {
-                        for (var t = 0; t < oids.length; t++) {
-                            var ssid = oids[t].systemOid;
-                            if (ssid) {
-                                if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
-                                if (_views && _views[view].indexOf(ssid) === -1) _views[view].push(ssid);
-                                if (!bindings[ssid]) bindings[ssid] = [];
-                                oids[t].type = 'data';
-                                oids[t].attr = attr;
-                                oids[t].view = view;
-                                oids[t].widget = id;
+                var attrValue = data[attr];
+                var savedValue = attrValue;
 
-                                bindings[ssid].push(oids[t]);
-                            }
+                if (typeof attrValue === 'string') {
+                  
+                    //try find {xxx} templates in string widget attribute       
+                    if (sub_CheckBindingPresent(attrValue, attr, 'data'))
+                    {
+                        //done. added to binding collections  
+                    }
+                    else
+                    //try check "oid" attributes  
+                    if (attr !== 'oidTrueValue'  && 
+                        attr !== 'oidFalseValue' && 
+                        attrValue &&
+                        (attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/) || attr === 'lc-oid')
+                       ){
+                        if (attrValue !== 'nothing_selected') {
 
-                            if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                                for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
-                                    ssid = oids[t].operations[0].arg[ww].systemOid;
-                                    if (!ssid) continue;
-                                    if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
-                                    if (_views && _views[view].indexOf(ssid) === -1) _views[view].push(ssid);
-                                    if (!bindings[ssid]) bindings[ssid] = [];
-                                    bindings[ssid].push(oids[t]);
-                                }
-                            }
-                        }
-                    } else
-                    if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/) || attr === 'lc-oid') && data[attr])) {
-                        if (data[attr] && data[attr] !== 'nothing_selected') {
-                            if (IDs.indexOf(data[attr]) === -1) {
-                                IDs.push(data[attr]);
-                            }
-                            if (_views && _views[view].indexOf(data[attr]) === -1) {
-                                _views[view].push(data[attr]);
-                            }
+                            attrValue = groupHelper.checkValue(attrValue);  //check value for "groupAttr" and if is replace it
+                            sub_AddtoSubscribingArray(attrValue);
+                            
+                            if (!vis.editMode &&(savedValue != attrValue)) //for run mode, if "groupAttr" changed to realTag
+                                data[attr]=attrValue;
                         }
 
                         // Visibility binding
-                        if (attr === 'visibility-oid' && data['visibility-oid']) {
-                            var vid = data['visibility-oid'];
-                            var vgroup = getWidgetGroup(views, view, id);
-                            if (vgroup) {
-                                var result1 = replaceGroupAttr(vid, views[view].widgets[vgroup].data);
-                                if (result1.doesMatch) {
-                                    vid = result1.newString;
-                                }
-                            }
+                        if (attr === 'visibility-oid') {
+                            attrValue = groupHelper.checkValue(attrValue); 
 
-                            if (!visibility[vid]) visibility[vid] = [];
-                            visibility[vid].push({view: view, widget: id});
+                            if (!visibility[attrValue]) visibility[attrValue] = [];
+                            visibility[attrValue].push({
+                                    view: view,
+                                    widget: id
+                            });
                         }
 
                         // Signal binding
-                        if (attr.match(/^signals-oid-/) && data[attr]) {
-                            var sid = data[attr];
-                            var group = getWidgetGroup(views, view, id);
-                            if (group) {
-                                var result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
-                                if (result2.doesMatch) {
-                                    sid = result2.newString;
-                                }
-                            }
+                        if (attr.match(/^signals-oid-/) ) {
+                            attrValue = groupHelper.checkValue(attrValue); 
 
-                            if (!signals[sid]) {
-                                signals[sid] = [];
-                            }
-                            signals[sid].push({
+                            if (!signals[attrValue]) signals[attrValue] = [];
+                            signals[attrValue].push({
                                 view:   view,
                                 widget: id,
                                 index:  parseInt(attr.substring('signals-oid-'.length), 10)
                             });
                         }
+                        // lastChanges
                         if (attr === 'lc-oid') {
-                            var lcsid = data[attr];
-                            var ggroup = getWidgetGroup(views, view, id);
-                            if (ggroup) {
-                                var result3 = replaceGroupAttr(lcsid, views[view].widgets[ggroup].data);
-                                if (result3.doesMatch) {
-                                    lcsid = result3.newString;
-                                }
-                            }
+                            attrValue = groupHelper.checkValue(attrValue); 
 
-                            if (!lastChanges[lcsid]) {
-                                lastChanges[lcsid] = [];
-                            }
-                            lastChanges[lcsid].push({
+                            if (!lastChanges[attrValue]) lastChanges[attrValue] = [];
+                            lastChanges[attrValue].push({
                                 view:   view,
                                 widget: id
                             });
                         }
-                    } else
-                    if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
-                        var _id = 'groupAttr' + m[1];
-                        if (data[_id]) {
-                            if (IDs.indexOf(data[_id]) === -1) {
-                                IDs.push(data[_id]);
-                            }
-                            if (_views && _views[view].indexOf(data[_id]) === -1) {
-                                _views[view].push(data[_id]);
-                            }
+                    } else{
+                        var m;
+                        // attribute has type="id" (using for groups attr)
+                        if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
+                            var _id = 'groupAttr' + m[1];
+                            if (data[_id]) 
+                                sub_AddtoSubscribingArray(data[_id]);
                         }
                     }
                 }
@@ -520,35 +624,7 @@ function getUsedObjectIDs(views, isByViews) {
                 for (var cssAttr in style) {
                     if (!style.hasOwnProperty(cssAttr) || !cssAttr) continue;
                     if (typeof style[cssAttr] === 'string') {
-                        var objIDs = extractBinding(style[cssAttr]);
-                        if (objIDs) {
-                            for (var tt = 0; tt < objIDs.length; tt++) {
-                                sidd = objIDs[tt].systemOid;
-                                if (sidd) {
-                                    if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
-                                    if (_views && _views[view].indexOf(sidd) === -1) _views[view].push(sidd);
-                                    if (!bindings[sidd]) bindings[sidd] = [];
-
-                                    objIDs[tt].type = 'style';
-                                    objIDs[tt].attr = cssAttr;
-                                    objIDs[tt].view = view;
-                                    objIDs[tt].widget = id;
-
-                                    bindings[sidd].push(objIDs[tt]);
-                                }
-
-                                if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
-                                    for (var w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
-                                        sidd = objIDs[tt].operations[0].arg[w].systemOid;
-                                        if (!sidd) continue;
-                                        if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
-                                        if (_views && _views[view].indexOf(sidd) === -1) _views[view].push(sidd);
-                                        if (!bindings[sidd]) bindings[sidd] = [];
-                                        bindings[sidd].push(objIDs[tt]);
-                                    }
-                                }
-                            }
-                        }
+                        sub_CheckBindingPresent(style[cssAttr], cssAttr,'style');
                     }
                 }
             }

@@ -1613,7 +1613,7 @@ var vis = {
 
         var widget = this.views[view].widgets[id];
 
-        if (groupId && widget) {
+        if (groupId && widget && this.editMode) { //for runtime it's not nessesary (attribut value replaced in getUsedObjectIDs())
             widget = JSON.parse(JSON.stringify(widget));
             var aCount = parseInt(this.views[view].widgets[groupId].data.attrCount, 10);
             if (aCount) {
@@ -2545,7 +2545,7 @@ var vis = {
         }
     },
     formatBinding:      function (format, view, wid, widget, doNotIgnoreEditMode) {
-        var oids = this.extractBinding(format, doNotIgnoreEditMode);
+        var oids = this.extractBinding(format, doNotIgnoreEditMode); //from cache
         for (var t = 0; t < oids.length; t++) {
             var value;
             if (oids[t].visOid) {
@@ -3017,6 +3017,7 @@ var vis = {
         }
         oids.length && this.conn.unsubscribe(oids);
     },
+    //******************************************************************************************* */
     updateState:        function (id, state) {
         if (id.indexOf('local_') !== 0) {
             // not needed for local variables
@@ -3045,6 +3046,8 @@ var vis = {
                 }
             }
         }
+
+        var that=this;
 
         if (!this.editMode && this.visibility[id]) {
             for (var k = 0; k < this.visibility[id].length; k++) {
@@ -3100,22 +3103,44 @@ var vis = {
             }
         }
 
-        // Bindings on every element
-        if (!this.editMode && this.bindings[id]) {
-            for (var i = 0; i < this.bindings[id].length; i++) {
-                var widget = this.views[this.bindings[id][i].view].widgets[this.bindings[id][i].widget];
-                var value = this.formatBinding(this.bindings[id][i].format, this.bindings[id][i].view, this.bindings[id][i].widget, widget);
+        {// Bindings on every element
+            let needRenderWidgets={}; //cache to prevent repeated render of the same widget 
 
-                widget[this.bindings[id][i].type][this.bindings[id][i].attr] = value;
-                if (this.widgets[this.bindings[id][i].widget] && this.bindings[id][i].type === 'data') {
-                    this.widgets[this.bindings[id][i].widget][this.bindings[id][i].type + '.' + this.bindings[id][i].attr] = value;
+            function sub_CheckWidgetBinding(bindItem){
+                if (that.subscribing.activeViews.indexOf(bindItem.view) == -1) //optimization, do not proceed if view is't visible
+                    return;
+            
+                var value = that.formatBinding(bindItem.format, bindItem.view, bindItem.widget, that.widgets[bindItem.widget]);
+                
+                if (that.views[bindItem.view]){
+                    var widget = that.views[bindItem.view].widgets[bindItem.widget];
+                    if (widget)
+                        widget[bindItem.type][bindItem.attr] = value;
+                }
+                
+                if (that.widgets[bindItem.widget] && bindItem.type === 'data') {
+                    that.widgets[bindItem.widget][bindItem.type + '.' + bindItem.attr] = value;
                 }
 
-                this.subscribeOidAtRuntime(value);
-                this.visibilityOidBinding(this.bindings[id][i], value);
+                that.subscribeOidAtRuntime(value);
+                that.visibilityOidBinding(bindItem, value);
 
-                this.reRenderWidget(this.bindings[id][i].view, this.bindings[id][i].view, this.bindings[id][i].widget);
+                //save to cache
+                needRenderWidgets[bindItem.widget] = bindItem.view; //that.reRenderWidget(bindItem.view, bindItem.view, bindItem.widget);
             }
+
+            if (!this.editMode && this.bindings[id]) {
+            for (var i = 0; i < this.bindings[id].length; i++) {
+                    let bindItem = this.bindings[id][i];
+                    sub_CheckWidgetBinding(bindItem);
+                }
+            }
+
+            //Rerender widgets once
+            for (var widget in needRenderWidgets){
+                if (!needRenderWidgets.hasOwnProperty(widget)) continue;
+                that.reRenderWidget(needRenderWidgets[widget], needRenderWidgets[widget], widget);    
+                }
         }
 
         // Inform other widgets, that do not support canJS
@@ -3128,6 +3153,7 @@ var vis = {
         }
         this.editMode && $.fn.selectId && $.fn.selectId('stateAll', id, state);
     },
+    //******************************************************************************************* */
     updateStates:       function (data) {
         if (data) {
             for (var id in data) {
