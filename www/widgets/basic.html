@@ -332,7 +332,8 @@
                 timer = null;
                 var view = viewArr[val];
                 if (!persistent) {
-                    $this.parent().find('div.vis-view').remove();
+                    //$this.parent().find('div.vis-view').find('div.vis-view').remove();
+                    $this.parent().find('div.vis-view').hide().appendTo($('#vis_container')); //for destroy hidden view in findAndDestroyViews()  
                 } else {
                     $this.parent().find('div.vis-view').hide().appendTo($('#vis_container'));
                 }
@@ -341,10 +342,20 @@
                         var $view = $('#visview_' + _view);
                         $view.show().data('persistent', persistent);
                         if (!$this.find('#visview_' + _view).length) {
+                            
+                            let err=$this.find('.container-error');
+                            if (err.length) err.remove()
+                           
                             $view.appendTo($this);
                         }
                     });
                 }
+                else{
+                    let err=$this.find('.container-error');
+                    if (!err.length) 
+                        $this.append('<span style="color: red" class="container-error">'+ _('error: view not found.') + ' </span>');   
+                }
+
                 vis.destroyUnusedViews();
             }
 
