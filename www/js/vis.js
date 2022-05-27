@@ -273,7 +273,11 @@ if (typeof systemLang !== 'undefined' && typeof cordova === 'undefined') {
     systemLang = visConfig.language || systemLang;
 }
 
-var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
+//used for subscribeOidAtRuntime. 
+// Oid value allows the format: "any.00.____"   or  "any.any.any.00.___"    So we need allow dot "." 
+
+var FORBIDDEN_CHARS = /[_\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.j-controller/blob/master/packages/common/lib/common/tools.js
+//var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
 var vis = {
@@ -3224,7 +3228,10 @@ var vis = {
     subscribeOidAtRuntime: function (oid, callback, force) {
         // if state value is an oid, and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
         // the id with invalid contains characters not allowed in oid's
+        FORBIDDEN_CHARS.lastIndex=0;
         if (!FORBIDDEN_CHARS.test(oid) && (this.subscribing.active.indexOf(oid) === -1 || force) && oid.length < 300) {
+         
+            // Oid value allows the format: "any.00.____"   or  "any.any.any.00.___" 
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 this.subscribing.active.push(oid);
 
