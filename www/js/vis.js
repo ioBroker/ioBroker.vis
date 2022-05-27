@@ -2947,6 +2947,7 @@ var vis = {
             storage.set(this.storageKeyInstance, this.instance);
         }
     },
+    //**********************************************************************************/
     subscribeStates:    function (view, callback) {
         if (!view || this.editMode) {
             return callback && callback();
@@ -2958,31 +2959,54 @@ var vis = {
         }
 
         this.subscribing.activeViews.push(view);
-
         this.subscribing.byViews[view] = this.subscribing.byViews[view] || [];
 
         // subscribe
-        var oids = [];
+        var oids_get = [];               //array for getting Values
+        var oids_subscribe = [];         //array for subscribe Values (exclude "local_")
+        
         for (var i = 0; i < this.subscribing.byViews[view].length; i++) {
-            if (this.subscribing.active.indexOf(this.subscribing.byViews[view][i]) === -1) {
-                this.subscribing.active.push(this.subscribing.byViews[view][i]);
-                oids.push(this.subscribing.byViews[view][i]);
+            let oid=this.subscribing.byViews[view][i];
+
+            //if (oid.indexOf('groupAttr') === 0)  //now not possible here, groupAttr changed to real VarName in getUsedObjectIDs()  (after #492)
+            //   continue;
+
+            if (oid.indexOf('local_') === 0){ 
+                if (((this.states[oid+'.val'] == 'null') || (this.states[oid+'.val'] == null))   //Value can be already set in view user script
+                    && !oids_get.includes(oid))
+                  oids_get.push(oid); //add only to "oids_get" array. will try to find it in URL params  
+
+                continue;
+            }
+
+            let pos = this.subscribing.active.indexOf(oid);  
+            if (pos === -1) {
+                this.subscribing.active.push(oid);
+                
+                oids_subscribe.push(oid);
+                oids_get.push(oid);
             }
         }
-        if (oids.length) {
+
+        if (oids_get.length) {
             var that = this;
-            console.debug('[' + Date.now() + '] Request ' + oids.length + ' states.');
-            this.conn.getStates(oids, function (error, data) {
+            console.debug('[' + Date.now() + '] Request ' + oids_get.length + ' Subscribe ' + oids_subscribe.length+' states.');
+            
+            this.conn.getStates(oids_get, function (error, data) {
                 error && that.showError(error);
 
                 that.updateStates(data);
-                that.conn.subscribe(oids);
+
+                if (oids_subscribe.length)
+                    that.conn.subscribe(oids_subscribe);
+                
                 callback && callback();
             });
         } else {
             callback && callback();
         }
     },
+    //******************************************************************************************* */
     unsubscribeStates:  function (view) {
         if (!view || this.editMode) return;
 
