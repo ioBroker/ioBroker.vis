@@ -332,7 +332,6 @@ function getUsedObjectIDs(views, isByViews) {
 
     var view;
     var id;
-    var sidd;
     
     //helper to optimize gettting(replacing) "groupAttr" for one widget
     let groupHelper = new GroupHelper(views);
