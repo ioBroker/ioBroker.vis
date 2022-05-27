@@ -324,15 +324,14 @@ var vis = {
     user:               '',   // logged in user
     loginRequired:      false,
     sound:              /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? $('<audio id="external_sound" autoplay muted></audio>').appendTo('body') : null,
+
+    //******************************************************************************* */
     _setValue:          function (id, state, isJustCreated) {
         var that = this;
         var oldValue = this.states.attr(id + '.val');
 
-        // If ID starts from 'local_', do not send changes to the server, we assume that it is a local variable of the client
-        if (id.indexOf('local_') === 0) {
-            that.states.attr(state);
-
             // Inform other widgets, that does not support canJS
+        function sub_UpdateWidgetsNotCanJS(){
             for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
                 try {
                     that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
@@ -340,6 +339,18 @@ var vis = {
                     that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
                 }
             }
+        }
+
+        // If ID starts from 'local_', do not send changes to the server, we assume that it is a local variable of the client
+        if (id.indexOf('local_') === 0) {
+            that.states.attr(state);
+
+            // Inform other widgets, that does not support canJS
+            sub_UpdateWidgetsNotCanJS();
+
+            //need update string to number
+            state.ts=Date.now();
+            state.lc=state.ts;
 
             // update local variable state -> needed for binding, etc.
             vis.updateState(id, state);
@@ -374,16 +385,11 @@ var vis = {
                 }
 
                 // Inform other widgets, that does not support canJS
-                for (var i = 0, len = that.onChangeCallbacks.length; i < len; i++) {
-                    try {
-                        that.onChangeCallbacks[i].callback(that.onChangeCallbacks[i].arg, id, state);
-                    } catch (e) {
-                        that.conn.logError('Error: can\'t update states object for ' + id + '(' + e + '): ' + JSON.stringify(e.stack));
-                    }
-                }
+                sub_UpdateWidgetsNotCanJS();
             }
         });
     },
+    //******************************************************************************* */
     setValue:           function (id, val) {
         if (!id) {
             console.log('ID is null for val=' + val);
