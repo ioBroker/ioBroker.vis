@@ -48,6 +48,18 @@ function getWidgetGroup(views, view, widget) {
     return null;
 }
 
+/***************************************************************/
+// get valeue of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
+function getObjPropValye(obj, PropPath){
+    if (!obj) return undefined;
+    let parts=PropPath.split('.');
+    for (let part of parts){
+     obj=obj[part];
+     if (!obj) return undefined;
+    }
+    return obj;
+ }
+
 function extractBinding(format) {
     var oid = format.match(/{(.+?)}/g);
     var result = null;
@@ -214,6 +226,12 @@ function extractBinding(format) {
                                 }
                             }
                         } else
+                        if (parse[1] === 'json'){       //json(objPropPath)  ex: json(prop1);  json(prop1.propA)
+                            operations = operations || [];
+                            parse[2] = (parse[2] || '').trim();
+                            parse[2] = parse[2].substring(1, parse[2].length - 1);
+                            operations.push({op: parse[1], arg: parse[2]});
+                        }else
                         // operators without parameter
                         {
                             operations = operations || [];
