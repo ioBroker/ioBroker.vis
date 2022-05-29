@@ -2706,7 +2706,7 @@ var vis = {
                             if((value) && (typeof value === 'string'))          
                             value = JSON.parse(value);
                             if (typeof value === 'object') 
-                                value = getObjPropValye(value, oids[t].operations[k].arg)
+                                value = getObjPropValue(value, oids[t].operations[k].arg)
                             break;   
                     } //switch
                 }

@@ -50,7 +50,7 @@ function getWidgetGroup(views, view, widget) {
 
 /***************************************************************/
 // get valeue of Obj property PropPath. PropPath is string like "Prop1" or "Prop1.Prop2" ...
-function getObjPropValye(obj, PropPath){
+function getObjPropValue(obj, PropPath){
     if (!obj) return undefined;
     let parts=PropPath.split('.');
     for (let part of parts){
