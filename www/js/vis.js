@@ -2702,6 +2702,12 @@ var vis = {
                         case 'ceil':
                             value = Math.ceil(parseFloat(value));
                             break;
+                        case 'json':
+                            if((value) && (typeof value === 'string'))          
+                            value = JSON.parse(value);
+                            if (typeof value === 'object') 
+                                value = getObjPropValye(value, oids[t].operations[k].arg)
+                            break;   
                     } //switch
                 }
             } //if for
