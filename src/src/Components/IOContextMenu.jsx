@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu';
+import { NestedMenuItem, IconMenuItem } from 'mui-nested-menu/index';
 
 import { Menu } from '@mui/material';
 

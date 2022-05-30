@@ -729,7 +729,19 @@ function parseDimension(field) {
     return result;
 }
 
-module.exports = {
+// module.exports = {
+//     getUsedObjectIDs,
+//     extractBinding,
+//     getWidgetGroup,
+//     replaceGroupAttr,
+//     getUsedObjectIDsInWidget,
+//     getUrlParameter,
+//     parseDimension,
+//     addClass,
+//     removeClass,
+// };
+
+export {
     getUsedObjectIDs,
     extractBinding,
     getWidgetGroup,

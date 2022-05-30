@@ -857,6 +857,7 @@ class VisEngine extends React.Component {
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             });
 
+            console.log(loadPromises);
         return Promise.all(loadPromises);
     }
 
@@ -881,6 +882,9 @@ class VisEngine extends React.Component {
                 document.body.appendChild(div);
 
                 return VisEngine.setInnerHTML(div, text)
+                    .catch((error) => {
+                        console.error(error);
+                    })
                     .then(() => {
                         // console.log('Loaded');
 
