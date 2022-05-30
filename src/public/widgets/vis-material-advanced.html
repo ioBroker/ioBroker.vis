@@ -1,0 +1,1122 @@
+<!--
+    ioBroker.vis vis-material-advanced Widget-Set
+
+    version: "0.8.1"
+
+    Copyright 2020 EdgarM73 edgar.miller@gmail.com
+-->
+<!-- here you can include so many css as you want -->
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/style.css" />
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/vma.css" />
+<link rel="stylesheet" href="widgets/vis-material-advanced/css/material.css" />
+<!-- <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap" rel="stylesheet"> -->
+<!-- here you can include so many js-files as you want -->
+
+<!-- here you can include so many js-files as you want -->
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/list.js"></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/base.js"></script>
+<!-- <script type="text/javascript"    src="widgets/vis-material-advanced/js/ListDiv/listDiv.js"></script> -->
+<!-- <script type="text/javascript"    src="widgets/vis-material-advanced/js/ListRegenRadar/listRegenRadar.js"></script> -->
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/ListDoor/listDoor.js"></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/ListWindow/listWindow.js"></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListTemp/listTemp.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListHumidity/listHumidity.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListPressure/listPressure.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListTempHumid/listTempHumid.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListOccupancy/listOccupancy.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLight/listLight.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLightDim/listLightDim.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListLightKelvin/listLightKelvin.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListWindowShutter/listWindowShutter.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListVolume/listVolume.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListThermostat/listThermostat.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListBoolean/listBoolean.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListPresence/listPresence.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListNumber/listNumber.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListText/listText.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListValve/listValve.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/ListGarage/listGarage.js></script>
+<script type=text/javascript    src=widgets/vis-material-advanced/js/TempIcon/TempIcon.js></script>
+<script type="text/javascript"    src="widgets/vis-material-advanced/js/vis-material-advanced.js"></script>
+
+
+<!-- the full description  of format in data-vis-attrs can be found here:
+    https://github.com/ioBroker/ioBroker.vis/blob/master/www/js/visEditInspect.js#L39
+
+    ----------------------------------------------------------
+    Mandatory XML attributes:
+        id="tplVis-material-advancedWIDGETNAME"
+        type="text/ejs"
+        class="vis-tpl"
+
+        "type" and "class" are always the same. "id" is unique and must start with "tplSETNAME" and ends with widget name. Use camel-case for it.
+
+    ----------------------------------------------------------
+    data-vis-attrs - divided with semicolon the list of attributes, like attr1/id;attr2/color
+        Full format of one attribute is: attr_name(start-end)[default_value]/type,idFilter/onChangeFunc
+            attr_name - the name of the attribute, e.g. "myID"
+            start-end - creates automatically attributes from attr_namestart to attr_nameend, like "myID(1-3)" creates myID1, myID2, myID3
+            default_value - by creation of widget this attribute will be filled with this value, e.g. "myID[#001122]/color"
+            type - some predefined types have edit helpers, else it will be shown as text field
+
+                Type format:
+                      id - Object ID Dialog
+                      checkbox
+                      image - image
+                      number,min,max,step - non-float number. min,max,step are optional
+                      color - color picker
+                      views - Name of the view
+                      effect - jquery UI show/hide effects
+                      eff_opt - additional option to effect slide (up, down, left, right)
+                      fontName - Font name
+                      slider,min,max,step - Default step is ((max - min) / 100)
+                      select,value1,value2,... - dropdown select
+                      nselect,value1,value2,... - same as select, but without translation of items
+                      style,fileFilter,nameFilter,attrFilter
+                      custom,functionName,options,... - custom editor - functionName is starting from vis.binds.[widgetset.funct]. E.g. custom/timeAndWeather.editWeather,short
+                      group.name - define new or old group. All following attributes belongs to new group till new group.xyz
+                      group.name/byindex - like group, but all following attributes will be grouped by ID. Like group.windows/byindex;slide(1-4)/id;slide_type(1-4)/select,open,closed  Following groups will be created Windows1(slide1,slide_type1), Windows2(slide2,slide_type2), Windows3(slide3,slide_type3), Windows4(slide4,slide_type4)
+                      text - dialog box with html editor
+                      html - dialog box with html editor
+
+                If type is "id", you can define filer for "Select ID Dialog", like "myID/id,level.temperature".
+                Additionally you can define callback(onChangeFunc), which will be called if this attribute was changed by user for different purposes: validate entry, fill other attributes, ...
+
+        You can define additional data-vis-attrs line: data-vis-attrs0, data-vis-attrs1. Anyway data-vis-attrs must be there. You may not skip numbers.
+        E.g. in "data-vis-attrs="A;" data-vis-attrs1="B" attribute B will be not parsed.
+
+    --------------------------------------------------------
+    data-vis-type
+        Help information for user. Used for search.
+        You can define more than one type divided by comma.
+        There are following common types, but you can use your own specific types:
+            ctrl   - widget that can write some Object IDs
+            val    - widget that shows some information from Object IDs
+            static - widget do not read information from Object IDs or URL
+            button - button widget
+            dimmer - dimmer widget
+            weather - weather widget
+            ...
+
+    --------------------------------------------------------
+    data-vis-set
+        Name of the widget set. Must be equal to the name of this HTML file
+
+    --------------------------------------------------------
+    data-vis-prev
+        Html code used as preview of this widget. If widget is complex you can just use image as preview:
+        data-vis-prev='<img src="widgets/hqwidgets/img/prev/Prev_tplVis-material-advancedShowInstance.png"></img>'
+        Of course the image must exist.
+
+    --------------------------------------------------------
+    data-vis-name
+        Readable name of widget shown in vis editor.
+
+    --------------------------------------------------------
+    data-vis-beta="true"
+        Shows "BETA" symbol in vis editor by preview
+
+    --------------------------------------------------------
+    data-vis-update-style="true"
+        Call redraw of widget if some of the CSS styles in editor for this widget was changed
+
+    You can read about Magic tags here: http://canjs.com/guides/EJS.html
+    Following magic tags are exist:
+        <% %> - execute javascript
+        <%= %> - place escaped result to HTML document
+        <%== %> - place unescaped result to HTML document
+
+    You can do "if" conditions and "for" cycles.
+
+-->
+<!--
+
+<script
+    id="tplMaListDiv"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListDiv" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_door.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="opacityColor[white]/color;"
+    data-vis-attrs6="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs7="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[widgets/vis-material-advanced/img/fts_door.png]/image;"
+    data-vis-attrs10="cardIconOpen[widgets/vis-material-advanced/img/fts_door_open.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListDiv"    >
+    <div class="vis-widget mdw-list vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>"
+         data-oid="<%= this.data.oid %>">
+        <div class="vis-widget-body vma_inner_container_div" >
+            <%   let init = genListDiv(this.data);  %>
+            <%==  init.widget   %>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListDiv(this.data.wid, this.view, this.data);  %>
+</script> -->
+
+<!-- <script
+    id="tplMaListRegenRadarDWD"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-RegenRadarDWD" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_door.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="opacityColor[white]/color;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style= "true"
+    data-vis-name="ListRegenRadarDWD"     >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListRegenRadar(this.data);           %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListRegenRadarDWD(this.data.wid, this.view, this.data);   %>
+</script> -->
+
+
+<script
+    id="tplMaListDoor"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListDoor2" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_door.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;iWiki/custom,'https://github.com/iobroker-community-adapters/ioBroker.vis-material-advanced/wiki/Properties',wiki;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs7="group.icons;"
+    data-vis-attrs8="cardIconClosed[/icons-mfd-svg/fts_door.svg]/image;"
+    data-vis-attrs9="cardIconOpen[/icons-mfd-svg/fts_door_open.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style= "true"
+    data-vis-name="ListDoor" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListDoor(this.data);    %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListWindow"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindow" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_window_2w.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_window_2w.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_window_2w_open.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListWindow"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindow(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListWindow3"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindow3" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_window_2w.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;colorTilted[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_window_2w.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_window_2w_open.svg]/image;cardIconTilted[/icons-mfd-svg/fts_window_2w_tilt.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListWindow3"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindow(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenCloseTilted(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+<script
+    id="tplMaListTemp"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListTemp" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/temp_temperature.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[18]/number;above[24]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/temp_temperature.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListTemp" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListTemperature(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaTempIcon"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedTempIcon" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temp_verlauf_100.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="colorizeByValue/checkbox;min/number;max/number;IcontypeSVG[]/checkbox;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/temp_verlauf_100.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="TempIcon"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %> icon-widget" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genTemperatureIcon(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdTempIcon(this.data.wid, this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaListHumid"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListHumid" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/weather_humidity_rel.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id,value.humidity;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[40]/number;above[60]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/weather_humidity_rel.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListHumid"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListHumidity(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'humid'); %>
+</script>
+
+
+<script
+    id="tplMaListPressure"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListPressure" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/weather_barometric_pressure.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;below[18]/number;above[24]/number;color-low[blue]/color;color-high[red]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/weather_barometric_pressure.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListPressure"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListPressure(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVal(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListTempHumid"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListTempHumid" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temperature.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,value.temperature;oid2/id,value.humidity;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="group.icons;"
+    data-vis-attrs8="cardIcon[widgets/vis-material-advanced/img/temperature.png]/image;"
+    data-vis-attrs9="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs10="group.border;"
+    data-vis-attrs11="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs12="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs13="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-name="ListTemperatureHumid"   >
+    <div  id="<%= this.data.attr('wid') %>"  class="vis-widget vma_outer_div  <%==this.data.attr( 'class') %> ">
+        <%   let init = genListTempHumid(this.data);  %>
+        <%== init.widget %>
+    </div>
+<% vis.binds['vis-material-advanced'].tplMdListTempHumid(this.data.wid,  this.view, this.data,'temp','humid');  %>
+</script>
+
+<script
+    id="tplMaListPresence"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListPresence" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/female_white.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;presenceColor[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="iconPresent[widgets/vis-material-advanced/img/female_white_star.png]/image;"
+    data-vis-attrs10="iconNotPresent[widgets/vis-material-advanced/img/female_white.png]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListPresence"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListPresence(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListPresence(this.data.wid, this.view, this.data,'humid'); %>
+</script>
+
+<script
+    id="tplMaListOccupancy"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListOccupancy" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/message_presence_active.svg " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;motionColor[yellow]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="iconMotion[/icons-mfd-svg/message_presence_active.svg]/image;"
+    data-vis-attrs10="iconNoMotion[/icons-mfd-svg/message_presence_inactive.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListOccupancy"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListOccupancy(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOccupancy(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListLight"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLight" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/light_light_dim_100.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;lightOnColor[yellow]/color;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIconOn[/icons-mfd-svg/light_light_dim_100.svg]/image;"
+    data-vis-attrs11="cardIconOff[/icons-mfd-svg/light_light_dim_00.svg]/image;"
+    data-vis-attrs12="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs13="group.border;"
+    data-vis-attrs14="border/checkbox;borderColor[white]/color;borderRadius[10]/number,0,20,1;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListLight"         >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>"  >
+        <%   let init = genListLight(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLight(this.data.wid, this.view, this.data,'pressure');  %>
+</script>
+
+
+<script
+    id="tplMaListLightDim"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLightDim" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/light_control.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;low[20]/number;high[70]/number;"
+    data-vis-attrs8="lightLowColor[white]/color;lightMediumColor[yellow]/color;lightHighColor[red]/color;"
+    data-vis-attrs9="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;readOnly/checkbox;"
+    data-vis-attrs10="group.icons;"
+    data-vis-attrs11="cardIconOn[/icons-mfd-svg/light_light_dim_100.svg]/image;"
+    data-vis-attrs12="cardIconOff[/icons-mfd-svg/light_light_dim_00.svg]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,dimmer"
+    data-vis-update-style="true"
+    data-vis-name="ListLightDim"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListLightDim(this.data);     %>
+        <%== init.widget    %>
+        <div  class="vma_value_container ">
+            <div class="vma_value vma-slider"
+                style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                <% if(!this.data.readOnly) { %>
+                    <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                        data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                        data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: 0,max:100,step:5,inverted:false}) %> />
+                    </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                <% } %>
+            </div>
+        </div>
+        <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLightDim(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+<script
+    id="tplMaListLightKelvin"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListLightKelvin" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/fts_kelvin_warmweiss.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="min[2700]/number;max[6500]/number;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon-warmwhite[widgets/vis-material-advanced/img/fts_kelvin_warmweiss.png]/image;"
+    data-vis-attrs11="cardIcon-medium[widgets/vis-material-advanced/img/fts_kelvin_mittel.png]/image;"
+    data-vis-attrs12="cardIcon-coldwhite[widgets/vis-material-advanced/img/fts_kelvin_kaltweiss.png]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs16="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs17="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,dimmer,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListLightKelvin"       >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListLightKelvin(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('TextColor') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min),max:parseFloat(data.max),step:100,inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListLightKelvin(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+
+
+<script
+    id="tplMaListThermostat"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListThermostat" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/sani_heating_temp.svg " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,level.temperature;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;min[14]/number;max[30]/number;"
+    data-vis-attrs7="readOnly/checkbox;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIcon[/icons-mfd-svg/sani_heating_temp.svg]/image;"
+    data-vis-attrs10="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs11="group.border;"
+    data-vis-attrs12="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs13="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs14="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-name="ListThermostat">
+    <div  id="<%= this.data.attr('wid') %>"  class="vis-widget vma_outer_div  <%=this.data.attr( 'class') %> ">
+        <%   let init = genListThermostat(this.data);  %>
+        <%== init.widget %>
+        <div  class="vma_value_container ">
+            <div class="vma_value vma-slider"
+                style="color:    <%= this.data.attr('TextColor') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                <% if(!this.data.readOnly) { %>
+                    <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                        data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                        data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: parseFloat(data.min),max:parseFloat(data.max),step:0.5,inverted:false}) %> />
+                    </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                <% } %>
+            </div>
+        </div>
+        <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+    </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListThermostat(this.data.wid,  this.view, this.data,'temp');  %>
+</script>
+
+<script
+    id="tplMaListWindowShutter"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListWindowShutter" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_shutter_manual.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="inverted[checked]/checkbox;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs10="group.border;"
+    data-vis-attrs11="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs12="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs13="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListWindowShutter"      >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListWindowShutter(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min:0,max:100,step:1,inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListWindowShutter(this.data.wid, this.view, this.data); %>
+</script>
+
+
+
+<script
+    id="tplMaListVolume"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListVolume" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/audio_volume_low.svg " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;valueAsSubtitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="Min[0]/number;Max[100]/number;step[5]/select,1,5,10;"
+    data-vis-attrs8="readOnly/checkbox;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon-high[/icons-mfd-svg/audio_volume_high.svg]/image;"
+    data-vis-attrs11="cardIcon-medium[/icons-mfd-svg/audio_volume_mid.svg]/image;"
+    data-vis-attrs12="cardIcon-low[/icons-mfd-svg/audio_volume_mute.svg]/image;"
+    data-vis-attrs13="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs14="group.border;"
+    data-vis-attrs15="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs16="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs17="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListVolume"  >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListVolume(this.data);   %>
+        <%== init.widget  %>
+            <div  class="vma_value_container ">
+                <div class="vma_value vma-slider"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+                        <div class="sliderJQUI" id="<%= this.data.attr('wid') %>_slider"
+                            data-oid="<%= this.data.attr('oid') %>" data-oid2="<%= this.data.attr('oid-2') %>" data-oid-working="<%= this.data.attr('oid-working') %>"  ,
+                            data-oid2-working="<%= this.data.attr('oid-2-working') %>"<%= (el) -> vis.binds.jqueryui.slider(el, {min: this.data.attr('Min'),max:this.data.attr('Max'),step:parseInt(this.data.attr('step')),inverted:false}) %> />
+                        </div><label for="<%= this.data.attr('wid') %>_checkbox"><label>
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body" ></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListVolume(this.data.wid, this.view, this.data); %>
+</script>
+
+
+<script
+    id="tplMaListBoolean"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListBoolean" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/checked.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="true[Wahr]/text;false[Falsch]/text;"
+    data-vis-attrs8="colorizeByValue/checkbox;color-true/color;color-false/color;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIconTrue[/icons-mfd-svg/status_light_low.svg]/image;"
+    data-vis-attrs11="cardIconFalse[/icons-mfd-svg/status_light_off.svg]/image;"
+    data-vis-attrs12="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs13="group.border;"
+    data-vis-attrs14="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs15="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs16="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,button"
+    data-vis-update-style="true"
+    data-vis-name="ListBoolean" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListBoolean(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListBoolean(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+
+<script
+    id="tplMaListNumber"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNumber" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/123.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;unit[]/select,,percent,Celsius,Fahrenheit,ppm,kmh,mph,mm,m,mb,GB,Wh,V,Hz,mA;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="low/number;high/number;"
+    data-vis-attrs8="colorizeByValue/checkbox;color-low/color;color-high/color;"
+    data-vis-attrs9="group.border;"
+    data-vis-attrs10="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs11="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs12="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListNumber"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+            <%   let init = genListNumber(this.data);      %>
+            <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListNumber(this.data.wid, this.view, this.data);  %>
+</script>
+
+
+<script
+    id="tplMaListText"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListText" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/abc.png " style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;searchString/text;stringFoundColor/color;"
+    data-vis-attrs8="group.border;"
+    data-vis-attrs9="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs10="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs11="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListText"    >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListText(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListText(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListValve"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListValve" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/sani_valve_50.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;"
+    data-vis-attrs8="below[18]/number;above[24]/number;color-medium[darkyellow]/color;color-high[red]/color;"
+    data-vis-attrs9="group.icons;"
+    data-vis-attrs10="cardIcon[/icons-mfd-svg/sani_valve_50.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-update-style="true"
+    data-vis-name="ListValve" >
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListValve(this.data);   %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListValve(this.data.wid, this.view, this.data,'pressure'); %>
+</script>
+
+<script
+    id="tplMaListGarage"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListGarage" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="/icons-mfd-svg/fts_garage_door_100.svg" style="width: 100px; height: 100px;"></div></div>'
+        data-vis-attrs="oid/id;title/text;subtitle/text;showTitle[checked]/checkbox;onlyTitle[]/checkbox;"
+    data-vis-attrs0="group.BoxStyle;"
+    data-vis-attrs1="titleSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs2="widgetBackground[#121212]/color;TextColor[white]/color;"
+    data-vis-attrs3="subtitleSize[x-small]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs4="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs5="valueSize[medium]/select, medium, xx-small, x-small, small, large, x-large, xx-large, smaller, larger;"
+    data-vis-attrs6="opacityColor[white]/color;"
+    data-vis-attrs7="colorizeByValue/checkbox;colorOpen[orange]/color;"
+    data-vis-attrs8="group.icons;"
+    data-vis-attrs9="cardIconClosed[/icons-mfd-svg/fts_garage_door_100.svg]/image;"
+    data-vis-attrs10="cardIconOpen[/icons-mfd-svg/fts_garage.svg]/image;"
+    data-vis-attrs11="showIcon[checked]/checkbox;centerIcon[]/checkbox;"
+    data-vis-attrs12="group.border;"
+    data-vis-attrs13="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;"
+    data-vis-attrs14="useOverallRoundedValues[checked]/checkbox;roundLeftUp[10]/number,0,20,1;roundLeftBottom[0]/number,0,20,1;roundRightUp[0]/number,0,20,1;roundRightBottom[10]/number,0,20,1;"
+    data-vis-attrs15="boxShadow[unchecked]/checkbox;shadowWidth[2]/number,1,10,1"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,switch"
+    data-vis-update-style="true"
+    data-vis-name="ListGarage"    >
+    <div class="vis-widget mdw-list vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" >
+        <%   let init = genListGarage(this.data);  %>
+        <%== init.widget %>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListOpenClose(this.data.wid, this.view, this.data);  %>
+</script>
+
+<!--
+<script
+    id="tplMaListNew"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNew" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/garage.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id;title[not working yet]/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="borderRadius[10]/number;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIconClosed[widgets/vis-material-advanced/img/garage_closed.png]/image;"
+    data-vis-attrs5="cardIconOpen[widgets/vis-material-advanced/img/garage.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-beta="true"
+    data-vis-name="ListNew">
+<div id="<%= this.data.attr('wid') %>" class=" vma_outer_div  <%==this.data.attr( 'class') %> ">
+    <div class="vma_inner_container_div" >
+        <div class="vma_picture">
+            <img class="vma_icon"        src="<%= this.data.attr('cardIcon') %>">
+        </div>
+        <div class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+            <div  class="vma_title">
+                <%= this.data.attr('title') %>
+            </div>
+            <div  class="vma_subtitle" style=" color: <%= this.data.attr('Text-color') %>;">
+                <%= this.data.attr('subtitle') %>
+            </div>
+        </div>
+        <div  class="vma_value_container">
+            <div class="vma_value"
+                style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+            </div>
+        </div>
+        <div class="vma_overlay"  ></div>
+    </div>
+</div>
+<% vis.binds['vis-material-advanced'].tplMdListNew(this.data.wid, this.view, this.data);  %>
+</script>
+
+<script
+    id="tplMaListNewDuo"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListNewDuo" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev " style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/temperature.png " style="width: 100px; height: 100px; "></div></div>'
+    data-vis-attrs="oid/id,value.temperature;oid2/id,value.humidity;title[to be tested]/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;"
+    data-vis-attrs2="borderRadius[10]/number,1,20,1;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/temperature.png]/image;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val"
+    data-vis-beta="true"
+    data-vis-name="ListNewDuo"  >
+    <div  id="<%= this.data.attr('wid') %>" class=" vma_outer_div  <%==this.data.attr( 'class') %> ">
+        <div  class="vma_inner_container_div" >
+            <div  class="vma_picture">
+                <img class="vma_icon" src="<%= this.data.attr('cardIcon') %>">
+            </div>
+            <div  class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+                <div class="vma_title">
+                    <%= this.data.attr('title') %>
+                </div>
+                <div class="vma_subtitle" style=" color: <%= this.data.attr('Text-color') %>;">
+                    <%= this.data.attr('subtitle') %>
+                </div>
+            </div>
+            <div class="vma_value_container">
+                <div class="vma_value2_1"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                </div>
+                <div class="vma_value2_2"
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                </div>
+            </div>
+            <div class="vma_overlay"  ></div>
+        </div>
+    </div>
+<% vis.binds['vis-material-advanced'].tplMdListNewDuo(this.data.wid, this.view, this.data);  %>
+</script>
+-->
+
+<!--
+<script
+    id="tplMaListRadio"
+    type="text/ejs"
+    class="vis-tpl"
+    data-vis-prev='<div id="prev_tplVis-material-advancedListRadio" style="position: relative; text-align: initial;padding: 4px ">
+        <div class="vis-widget_prev" style="width: 100px; height: 100px; padding:2px; background-color: #121212 " >
+        <img src="widgets/vis-material-advanced/img/radio.png " style="width: 100px; height: 100px;"></div></div>'
+    data-vis-attrs="oid/id;value;title/text;subtitle/text;widgetBackground[#121212]/color;Text-color[white]/color;"
+    data-vis-attrs0="valueAlign[right]/select,left,center,right;valueVertical[center]/select,top,center,bottom;"
+    data-vis-attrs1="opacityColor[white]/color;colorizeByValue/checkbox;lightOnColor[yellow]/color;"
+    data-vis-attrs2="borderRadius[10]/number,0,20,1;border/checkbox;borderColor[white]/color;readOnly/checkbox;"
+    data-vis-attrs3="group.icons;"
+    data-vis-attrs4="cardIcon[widgets/vis-material-advanced/img/radio.png]/id;"
+    data-vis-set="vis-material-advanced"
+    data-vis-type="val,ctrl"
+    data-vis-update-style="true"
+    data-vis-name="ListRadio">
+    <div class="vis-widget vma_outer_div <%= this.data.attr( 'class') %>" id="<%= this.data.attr('wid') %>" style="background-color: <%= this.data.attr('widgetBackground') %>; " >
+        <div class="vis-widget-body vma_inner_container_div"  >
+            <div class="vma_picture">
+                <img class="vma_icon" src="{<%= this.data.attr('cardIcon') %>}">
+            </div>
+            <div class="vma_title_subtitle_container" style="color: <%= this.data.attr('Text-color') %>;">
+                <div  class="vma_title" >
+                    <%= this.data.attr('title') %>
+                </div>
+                <div  class="vma_subtitle" style=" color:  <%= this.data.attr('Text-color') %>;" >
+                    <%= this.data.attr('subtitle') %>
+                </div>
+            </div>
+            <div  class="vma_value_container ">
+                <div class="vma_value  "
+                    style="color:    <%= this.data.attr('Text-color') %>; text-align:<%= this.data.attr('valueAlign') %>; vertical-align:<%= this.data.attr('valueVertical') %>;" >
+                    <% if(!this.data.readOnly) { %>
+
+                        <label class="vma-switch">
+                                <input type="checkbox" checked="" name="<%=this.data.attr( 'wid') %>_checkbox" id="<%= this.data.attr('wid') %>_checkbox"  data-oid="<%= this.data.attr('oid') %>">
+                                 <span class="vma-slider-switch round"></span>
+                        </label>
+
+                    <% } %>
+                </div>
+            </div>
+            <div class="vma_overlay ms-button-op vis-widget-body"></div>
+        </div>
+    </div>
+    <% vis.binds['vis-material-advanced'].tplMdListRadio(this.data.wid, this.view, this.data,'pressure');  %>
+</script>
+-->

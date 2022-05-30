@@ -263,6 +263,14 @@ var servConn = {
                 url = url.replace(/:\d+/, '');
             }
 
+            if (window._authIoBroker && document.cookie) {
+                if (url.indexOf('?') !== -1) {
+                    url = url + '&' + document.cookie;
+                } else {
+                    url = url + '?' + document.cookie;
+                }
+            }
+
             this._socket = io.connect(url, {
                 query:                          'key=' + connOptions.socketSession,
                 'reconnection limit':           10000,
