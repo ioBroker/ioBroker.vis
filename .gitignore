@@ -38,3 +38,4 @@ admin/i18n/flat.txt
 /src/node_modules
 src/build
 /.vscode
+/src/dist

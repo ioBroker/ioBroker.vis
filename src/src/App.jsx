@@ -135,18 +135,21 @@ const ViewDrop = props => {
 class App extends GenericApp {
     constructor(props) {
         const extendedProps = { ...props };
+        const modules = import.meta.globEager('./i18n/*.json');
         extendedProps.translations = {
-            en: require('./i18n/en'),
-            de: require('./i18n/de'),
-            ru: require('./i18n/ru'),
-            pt: require('./i18n/pt'),
-            nl: require('./i18n/nl'),
-            fr: require('./i18n/fr'),
-            it: require('./i18n/it'),
-            es: require('./i18n/es'),
-            pl: require('./i18n/pl'),
-            'zh-cn': require('./i18n/zh-cn'),
+            en: modules['./i18n/en.json'].default,
+            de: modules['./i18n/de.json'].default,
+            ru: modules['./i18n/ru.json'].default,
+            pt: modules['./i18n/pt.json'].default,
+            nl: modules['./i18n/nl.json'].default,
+            fr: modules['./i18n/fr.json'].default,
+            it: modules['./i18n/it.json'].default,
+            es: modules['./i18n/es.json'].default,
+            pl: modules['./i18n/pl.json'].default,
+            'zh-cn': modules['./i18n/zh-cn.json'].default,
         };
+
+        console.log(extendedProps.translations);
 
         extendedProps.sentryDSN = window.sentryDSN;
 

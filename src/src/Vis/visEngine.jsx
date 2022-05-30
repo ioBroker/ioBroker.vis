@@ -27,7 +27,7 @@ import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
 import './lib/can.custom.js';
-import $$ from './lib/quo.standalone'; // Gestures library
+import * as $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
 
 import VisView from './visView';
@@ -882,9 +882,6 @@ class VisEngine extends React.Component {
                 document.body.appendChild(div);
 
                 return VisEngine.setInnerHTML(div, text)
-                    .catch((error) => {
-                        console.error(error);
-                    })
                     .then(() => {
                         // console.log('Loaded');
 
