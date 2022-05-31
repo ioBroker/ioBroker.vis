@@ -2,6 +2,10 @@ import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
 // import 'ace-builds/webpack-resolver';
+import ace from 'ace-builds/src-noconflict/ace';
+import jsonWorkerUrl from 'ace-builds/src-noconflict/worker-json?url';
+
+ace.config.setModuleUrl('ace/mode/json_worker', jsonWorkerUrl);
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import 'ace-builds/src-noconflict/theme-clouds_midnight';

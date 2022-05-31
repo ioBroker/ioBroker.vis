@@ -27,14 +27,12 @@ import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
 import './lib/can.custom.js';
-import * as quo from './lib/quo.standalone'; // Gestures library
+import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
 
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter } from './visUtils';
-
-const $$ = quo.default;
 
 class VisEngine extends React.Component {
     constructor(props) {

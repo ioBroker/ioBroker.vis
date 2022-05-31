@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
     plugins: [
         react(),
         svgr(),
-        viteCommonjs(),
+        viteCommonjs({include: ['src/Vis/lib/quo.standalone']}),
         federation({
             // remotes: {
             //   CustomComponent: {
@@ -64,7 +64,7 @@ export default defineConfig(({ mode }) => ({
             plugins: [
                 // Solves:
                 // https://github.com/vitejs/vite/issues/5308
-                esbuildCommonjs(['@iobroker/adapter-react', 'mui-nested-menu']),
+                esbuildCommonjs(['@iobroker/adapter-react', 'mui-nested-menu', 'src/Vis/lib/quo.standalone']),
                 NodeGlobalsPolyfillPlugin({
                     buffer: true,
                 }),

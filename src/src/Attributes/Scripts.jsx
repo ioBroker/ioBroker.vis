@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
-// import 'ace-builds/webpack-resolver';
+import ace from 'ace-builds/src-noconflict/ace';
+import javascriptWorkerUrl from 'ace-builds/src-noconflict/worker-javascript?url';
+
+ace.config.setModuleUrl('ace/mode/javascript_worker', javascriptWorkerUrl);
+
 import 'ace-builds/src-noconflict/mode-javascript';
 import 'ace-builds/src-min-noconflict/ext-searchbox';
 import 'ace-builds/src-min-noconflict/ext-language_tools';
