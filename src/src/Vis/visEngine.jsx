@@ -26,7 +26,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
-import './lib/can.custom.js';
+// import './lib/can.custom.js';
 import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
 
