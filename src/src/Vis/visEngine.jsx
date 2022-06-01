@@ -27,7 +27,7 @@ import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
 // import './lib/can.custom.js';
-import $$ from './lib/quo.standalone'; // Gestures library
+// import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';
 
 import VisView from './visView';
@@ -39,7 +39,7 @@ class VisEngine extends React.Component {
         super(props);
         window.jQuery = window.$;
         window.$ = window.jQuery; // jQuery library
-        window.$$ = $$; // Gestures library
+        // window.$$ = $$; // Gestures library
         window.systemLang = this.props.lang || window.systemLang || 'en';
 
         this.state = {
