@@ -16,7 +16,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import VisCanWidget from './visCanWidget';
-import { addClass, parseDimension } from './visUtils';
+import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
 
 class VisView extends React.Component {
@@ -52,7 +52,8 @@ class VisView extends React.Component {
     static collectInformation() {
         if (!VisView.widgets) {
             VisView.widgets = {};
-            WIDGETS.forEach(Widget => {
+            const collectedWidgets = [...WIDGETS, ...getRemoteWidgets()];
+            collectedWidgets.forEach(Widget => {
                 if (!Widget.getWidgetInfo) {
                     console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
                 } else {

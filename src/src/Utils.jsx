@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { usePreview } from 'react-dnd-preview';
+import VisView from './Vis/visView';
 
 const DEFAULT_SET_COLORS = {
     basic: '#f1f1f1',
@@ -45,6 +46,19 @@ export const getWidgetTypes = () => {
                         .join(''),
                 };
             });
+
+            Object.values(VisView.widgets).forEach(widget => {
+                const widgetInfo = widget.getWidgetInfo();
+                console.log(widgetInfo);
+                window.visWidgetTypes.push({
+                    name: widgetInfo.id,
+                    preview: widgetInfo.visPrev,
+                    title: widgetInfo.visName,
+                    params: widgetInfo.visAttrs,
+                    set: widgetInfo.visSet,
+                })
+            });
+
     }
 
     return window.visWidgetTypes;

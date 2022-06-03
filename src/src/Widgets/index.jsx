@@ -83,6 +83,7 @@ const Widgets = props => {
     const widgetsList = {};
 
     const widgetTypes = getWidgetTypes();
+    console.log(widgetTypes);
     widgetTypes.forEach(widgetType => {
         if (!widgetsList[widgetType.set]) {
             widgetsList[widgetType.set] = {};

@@ -13,6 +13,8 @@
  * (Free for non-commercial use).
  */
 
+import MaterialDemo from "./Widgets/MaterialWidgets/MaterialDemo";
+
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
     let match = false;
@@ -690,6 +692,10 @@ function getUrlParameter(attr) {
     return '';
 }
 
+function getRemoteWidgets(socket) {
+    return [MaterialDemo];
+}
+
 function addClass(actualClass, toAdd) {
     if (actualClass) {
         const parts = actualClass.split(' ').map(cl => cl.trim()).filter(cl => cl);
@@ -751,4 +757,5 @@ export {
     parseDimension,
     addClass,
     removeClass,
+    getRemoteWidgets
 };
