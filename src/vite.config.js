@@ -47,6 +47,11 @@ export default defineConfig(({ mode }) => ({
                     singleton: true,
                     // requiredVersion: pkg.dependencies['@mui/material'],
                 },
+                './src/visRxWidget.jsx': {
+                    singleton: true,
+                    version: '1.0.0',
+                    packageName: './src/visRxWidget.jsx'
+                },
             },
         }),
     ],
