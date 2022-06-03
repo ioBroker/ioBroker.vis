@@ -13,8 +13,6 @@
  * (Free for non-commercial use).
  */
 
-import MaterialDemo from "./Widgets/MaterialWidgets/MaterialDemo";
-
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
     let match = false;
@@ -693,10 +691,22 @@ function getUrlParameter(attr) {
 }
 
 async function getRemoteWidgets(socket) {
-    const instances = await socket.getAdapterInstances()
-    console.log(instances);
-    // const dynamicRules = instances.filter(obj => obj.common.javascriptRules);
-    return [MaterialDemo];
+    const result = [];
+    const instances = Object.values(await socket.getObjectView(
+        `system.adapter.`,
+        `system.adapter.\u9999`,
+        'instance'
+    ));
+    const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
+    for (let instanceKey in dynamicWidgetInstances) {
+        const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
+        for (let widgetKey in dynamicWidgetInstance.common.visWidgets) {
+            const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
+            const Component = await window.importFederation(widgetKey, {url: visWidget.url, format: 'esm', from: 'vite'}, visWidget.name);
+            result.push(Component);
+        }
+    }
+    return result;
 }
 
 function addClass(actualClass, toAdd) {
