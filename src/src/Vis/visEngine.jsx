@@ -874,27 +874,24 @@ class VisEngine extends React.Component {
         return Promise.resolve();
     }
 
-    loadWidgets() {
-        return fetch('widgets.html')
-            .then(data => data.text())
-            .then(text => {
-                const div = document.createElement('div');
-                document.body.appendChild(div);
+    async loadWidgets() {
+        try {
+            const data = await fetch('widgets.html');
+            const text = await data.text();
+            const div = document.createElement('div');
+            document.body.appendChild(div);
 
-                return VisEngine.setInnerHTML(div, text)
-                    .then(() => {
-                        // console.log('Loaded');
+            await VisEngine.setInnerHTML(div, text)
+            // console.log('Loaded');
 
-                        // Send react widgets to App only in edit mode
-                        const arrayWidgets = [];
-                        !this.props.runtime && Object.keys(VisView.collectInformation()).forEach(item => arrayWidgets.push(item));
-                        this.props.onLoaded && this.props.onLoaded(arrayWidgets);
-                    });
-            })
-            .catch(error => {
-                console.error(`Cannot load widgets: ${error}`);
-                console.error(`Cannot load widgets: ${JSON.stringify(error.stack)}`);
-            });
+            // Send react widgets to App only in edit mode
+            const arrayWidgets = [];
+            !this.props.runtime && Object.keys((await VisView.collectInformation(this.props.socket))).forEach(item => arrayWidgets.push(item));
+            this.props.onLoaded && this.props.onLoaded(arrayWidgets);
+        } catch (error) {
+            console.error(`Cannot load widgets: ${error}`);
+            console.error(`Cannot load widgets: ${JSON.stringify(error.stack)}`);
+        }
     }
 
     /*

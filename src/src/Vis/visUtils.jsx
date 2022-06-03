@@ -692,7 +692,10 @@ function getUrlParameter(attr) {
     return '';
 }
 
-function getRemoteWidgets(socket) {
+async function getRemoteWidgets(socket) {
+    const instances = await socket.getAdapterInstances()
+    console.log(instances);
+    // const dynamicRules = instances.filter(obj => obj.common.javascriptRules);
     return [MaterialDemo];
 }
 

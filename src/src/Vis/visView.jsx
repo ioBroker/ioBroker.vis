@@ -49,10 +49,10 @@ class VisView extends React.Component {
         this.movement = null;
     }
 
-    static collectInformation() {
+    static async collectInformation(socket) {
         if (!VisView.widgets) {
             VisView.widgets = {};
-            const collectedWidgets = [...WIDGETS, ...getRemoteWidgets()];
+            const collectedWidgets = [...WIDGETS, ...(await getRemoteWidgets(socket))];
             collectedWidgets.forEach(Widget => {
                 if (!Widget.getWidgetInfo) {
                     console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
