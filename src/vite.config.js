@@ -61,6 +61,9 @@ export default defineConfig(({ mode }) => ({
             '/adapter': 'http://localhost:8081',
         },
     },
+    build: {
+        cssCodeSplit: false,
+    },
     optimizeDeps: {
         esbuildOptions: {
             define: {
