@@ -2356,7 +2356,6 @@
         class="vis-tpl"
         data-vis-set="basic"
         data-vis-type="static"
-        data-vis-help="Help for HTML Widget"
         data-vis-prev='<img src="widgets/basic/img/Prev_HTML.png"></img>'
         data-vis-prev1='<div id="prev_tplFrame" style=" position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev vis-widget-lock" style="width: 80px; height: 80px; border: 3px solid rgb(73, 185, 255); border-radius: 20px;"><div style="top: 30px; color: rgb(73, 185, 255); font-size: 20px; text-align: center; padding-top: 32px;">HTML</div></div>'
         data-vis-name="HTML"
@@ -2374,7 +2373,7 @@
         data-vis-set="basic"
         data-vis-type="static"
         data-vis-name="Svg shape"
-        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px"><div class="vis-widget_prev" style="width: 90px; height: 90px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block;width: 100%;height: 100%;fill: rgb(255, 255, 255);stroke: rgb(60, 152, 211); stroke-width: 4px;"> <circle cx="50" cy="50" r="47"></circle></svg></div> </div></div>'
+        data-vis-prev='<div id="prev_tplShapes" style="position: relative; text-align: initial;padding: 4px "><div class="vis-widget_prev " style="width: 90px; height: 90px; left: 502px; top: 174px; position: absolute;"> <div class="vis-widget-prev-body"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 100 100" style="display: block;width: 100%;height: 100%;fill: rgb(255, 255, 255);stroke: rgb(60, 152, 211); stroke-width: 4px;"> <circle cx="50" cy="50" r="47"></circle></svg></div> </div></div>'
         data-vis-attrs="svgType[circle]/select,line,triangle,square,pentagone,hexagone,octagone,circle,star,arrow;strokeColor[#009cb3]/color;fill[#00b3ac]/color;strokeWidth[5]/slider,0,100,1;rotate/slider,0,360,1;scaleWidth[1]/slider,0,1,0.1;scaleHeight[1]/slider,0,1,0.1">
     <div class="vis-widget <%== this.data.attr('class') %>" style="width: 100px; height: 100px;" id="<%= this.data.attr('wid') %>">
         <div class="vis-widget-body">
@@ -2390,7 +2389,7 @@
                     svg = '<polygon transform="rotate(' + rotate + ')  scale(' + scaleWidth + ', ' + scaleHeight + ') " ' +
                         'points="' + vis.binds.basic.circlePoints(50 - strokeWidth, 3) + '"/>';
                 } else if (this.data.svgType === 'line') {
-                    svg = '<line vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
+                    svg = '<line  vector-effect="non-scaling-stroke"  transform="rotate(' + rotate + ')" x1="-50" y1="0" x2="50" y2="0"/>';
                 } else if (this.data.svgType === 'circle') {
                     svg = '<circle transform="scale(' + scaleWidth + ', ' + scaleHeight + ') rotate(' + rotate + ')" cx="0" cy="0" r="' + (50 - parseInt(strokeWidth, 10) / 2) + '" />';
                 } else if (this.data.svgType === 'pentagone') {
