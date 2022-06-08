@@ -19,6 +19,7 @@ module.exports = {
     },
     plugins: [
         'react',
+        'only-warn',
     ],
     rules: {
         'arrow-parens': [1, 'as-needed'],
