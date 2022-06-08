@@ -68,6 +68,7 @@ module.exports = {
         'no-loop-func': 'off',
         'no-continue': 'off',
         'implicit-arrow-linebreak': 'off',
+        'react/function-component-definition': 'off',
         radix: 'off',
         indent: ['error', 4, { SwitchCase: 1 }],
         'no-alert': 'off',
