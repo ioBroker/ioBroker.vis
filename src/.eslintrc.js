@@ -10,16 +10,14 @@ module.exports = {
         // 'react-app',
         'plugin:eqeqeq-fix/recommended',
     ],
-    parser: 'babel-eslint',
     parserOptions: {
         ecmaFeatures: {
             jsx: true,
         },
-        ecmaVersion: 12,
+        ecmaVersion: 'latest',
         sourceType: 'module',
     },
     plugins: [
-        'only-warn',
         'react',
     ],
     rules: {
