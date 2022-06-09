@@ -35,6 +35,10 @@ export default defineConfig(({ mode }) => ({
                     singleton: true,
                     // requiredVersion: pkg.dependencies['@mui/material'],
                 },
+                '@mui/icons-material': {
+                    singleton: true,
+                    // requiredVersion: pkg.dependencies['@mui/material'],
+                },
                 '@mui/styles': {
                     singleton: true,
                     // requiredVersion: pkg.dependencies['@mui/material'],
