@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
-import ace from 'ace-builds/src-noconflict/ace';
-import cssWorkerUrl from 'ace-builds/src-noconflict/worker-css?url';
-
-ace.config.setModuleUrl('ace/mode/css_worker', cssWorkerUrl);
+import 'ace-builds/webpack-resolver';
 
 import 'ace-builds/src-noconflict/mode-css';
 import 'ace-builds/src-min-noconflict/ext-searchbox';

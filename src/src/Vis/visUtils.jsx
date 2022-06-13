@@ -702,8 +702,8 @@ async function getRemoteWidgets(socket) {
         const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
         for (let widgetKey in dynamicWidgetInstance.common.visWidgets) {
             const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
-            const Component = await window.importFederation(widgetKey, {url: visWidget.url, format: 'esm', from: 'vite'}, visWidget.name);
-            result.push(Component);
+            // const Component = await window.importFederation(widgetKey, {url: visWidget.url, format: 'esm', from: 'vite'}, visWidget.name);
+            // result.push(Component);
         }
     }
     return result;

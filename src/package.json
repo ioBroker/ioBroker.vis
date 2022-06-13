@@ -42,6 +42,7 @@
         "react-dnd-preview": "^6.0.2",
         "react-dnd-touch-backend": "^16.0.1",
         "react-dom": "^18.1.0",
+        "react-scripts": "^5.0.1",
         "react-dropzone": "^14.2.1",
         "react-icons": "^4.3.1",
         "react-image-crop": "^10.0.1",
@@ -52,14 +53,19 @@
         "uuid": "^8.3.2"
     },
     "scripts": {
-        "start": "vite",
-        "build": "vite build",
-        "preview": "vite preview --port 3000"
+        "start": "craco start",
+        "old-start": "react-scripts start",
+        "lint": "eslint --fix --ext .js,.jsx src",
+        "build": "craco build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
     },
     "eslintConfig": {
         "extends": "react-app"
     },
     "devDependencies": {
+        "@craco/craco": "^6.4.3",
+        "craco-esbuild": "^0.5.1",
         "@dilesoft/vite-plugin-federation-dynamic": "^1.1.9",
         "@honkhonk/vite-plugin-svgr": "^1.1.0",
         "@originjs/vite-plugin-commonjs": "^1.0.3",
