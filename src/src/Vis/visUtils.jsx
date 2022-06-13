@@ -690,20 +690,110 @@ function getUrlParameter(attr) {
     return '';
 }
 
+const loadModule = async (url, module, component) => {
+    await new Promise((resolve, reject) => {
+        const element = document.createElement('script');
+
+        element.src = url;
+        element.type = 'text/javascript';
+        element.async = true;
+
+        element.onload = () => {
+            element.parentElement.removeChild(element);
+            resolve();
+        };
+        element.onerror = error => {
+            element.parentElement.removeChild(element);
+            reject(error);
+        };
+
+        document.head.appendChild(element);
+    });
+    // console.log((await window['app2']).init);
+    const factory = await window[module].get(component);
+    return factory();
+};
+
+const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
+  new Promise((resolve, reject) => {
+    // check if remote exists on window
+    if (!window[remote]) {
+      // search dom to see if remote tag exists, but might still be loading (async)
+      const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
+      // when remote is loaded..
+      const onload = async () => {
+        // check if it was initialized
+        if (!window[remote].__initialized) {
+          // if share scope doesnt exist (like in webpack 4) then expect shareScope to be a manual object
+          if (typeof __webpack_share_scopes__ === 'undefined') {
+            // use default share scope object passed in manually
+            await window[remote].init(shareScope.default);
+          } else {
+            // otherwise, init share scope as usual
+            await window[remote].init(__webpack_share_scopes__[shareScope]);
+          }
+          // mark remote as initialized
+          window[remote].__initialized = true;
+        }
+        // resolve promise so marking remote as loaded
+        resolve();
+      };
+      if (existingRemote) {
+        // if existing remote but not loaded, hook into its onload and wait for it to be ready
+        existingRemote.onload = onload;
+        existingRemote.onerror = reject;
+        // check if remote fallback exists as param passed to function
+        // TODO: should scan public config for a matching key if no override exists
+      } else if (remoteFallbackUrl) {
+        // inject remote if a fallback exists and call the same onload function
+        var d = document,
+          script = d.createElement('script');
+        script.type = 'text/javascript';
+        // mark as data-webpack so runtime can track it internally
+        script.setAttribute('data-webpack', `${remote}`);
+        script.async = true;
+        script.onerror = reject;
+        script.onload = onload;
+        script.src = remoteFallbackUrl;
+        d.getElementsByTagName('head')[0].appendChild(script);
+      } else {
+        // no remote and no fallback exist, reject
+        reject(`Cannot Find Remote ${remote} to inject`);
+      }
+    } else {
+      // remote already instantiated, resolve
+      resolve();
+    }
+  });
+
+const loadComponent = (remote, sharedScope, module, url) => {
+    return async () => {
+      await getOrLoadRemote(remote, sharedScope, url);
+      const container = window[remote];
+      const factory = await container.get(module);
+      const Module = factory();
+      return Module;
+    };
+  };
+
 async function getRemoteWidgets(socket) {
     const result = [];
     const instances = Object.values(await socket.getObjectView(
-        `system.adapter.`,
-        `system.adapter.\u9999`,
-        'instance'
+        'system.adapter.',
+        'system.adapter.\u9999',
+        'instance',
     ));
     const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
-    for (let instanceKey in dynamicWidgetInstances) {
+    for (const instanceKey in dynamicWidgetInstances) {
         const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
-        for (let widgetKey in dynamicWidgetInstance.common.visWidgets) {
+        for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
             const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
             // const Component = await window.importFederation(widgetKey, {url: visWidget.url, format: 'esm', from: 'vite'}, visWidget.name);
-            // result.push(Component);
+            // const Component = await loadModule('http://localhost:4173/customWidgets.js', visWidget.name, `./${visWidget.name}`);
+            // const Component = await loadComponent('MaterialDemo', 'default', `./MaterialDemo`, 'http://localhost:4173/customWidgets.js')();
+            const Component = await loadComponent(visWidget.url, 'default', `./${visWidget.name}`, visWidget.name)();
+            console.log(Component);
+            result.push(Component.default);
         }
     }
     return result;
@@ -770,5 +860,5 @@ export {
     parseDimension,
     addClass,
     removeClass,
-    getRemoteWidgets
+    getRemoteWidgets,
 };

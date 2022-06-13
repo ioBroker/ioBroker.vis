@@ -134,18 +134,10 @@ const ViewDrop = props => {
 
 class App extends GenericApp {
     constructor(props) {
+        window.iobroker_vis.get('./visRxWidget').then(comp => window.visRxWidget = comp().default);
+
         const extendedProps = { ...props };
         extendedProps.translations = {
-            en: require('./i18n/en'),
-            de: require('./i18n/de'),
-            ru: require('./i18n/ru'),
-            pt: require('./i18n/pt'),
-            nl: require('./i18n/nl'),
-            fr: require('./i18n/fr'),
-            it: require('./i18n/it'),
-            es: require('./i18n/es'),
-            pl: require('./i18n/pl'),
-            'zh-cn': require('./i18n/zh-cn'),
         };
 
         console.log(extendedProps.translations);
@@ -291,12 +283,12 @@ class App extends GenericApp {
                 await this.deleteWidgets();
             }
         }
-    }
+    };
 
     onHashChange = () => {
         this.changeView(decodeURIComponent(window.location.hash.slice(1)))
             .then(() => {});
-    }
+    };
 
     loadProject = async projectName => {
         let file;
@@ -409,7 +401,7 @@ class App extends GenericApp {
         });
 
         await this.changeView(selectedView);
-    }
+    };
 
     async onConnectionReady() {
         await this.refreshProjects();
@@ -443,11 +435,11 @@ class App extends GenericApp {
         if (reloadCurrentProject) {
             await this.loadProject(this.state.projectName);
         }
-    }
+    };
 
-    setViewsManage = newValue => this.setState({ viewsManage: newValue })
+    setViewsManage = newValue => this.setState({ viewsManage: newValue });
 
-    setProjectsDialog = newValue => this.setState({ projectsDialog: newValue })
+    setProjectsDialog = newValue => this.setState({ projectsDialog: newValue });
 
     loadSelectedWidgets(selectedView) {
         selectedView = selectedView || this.state.selectedView;
@@ -495,7 +487,7 @@ class App extends GenericApp {
         }
 
         await this.setStateAsync(newState);
-    }
+    };
 
     getNewWidgetIdNumber = isGroup => {
         const widgets = this.state.project[this.state.selectedView].widgets;
@@ -510,7 +502,7 @@ class App extends GenericApp {
         });
 
         return newKey;
-    }
+    };
 
     getNewWidgetId = () => {
         let newKey = this.getNewWidgetIdNumber();
@@ -518,7 +510,7 @@ class App extends GenericApp {
         newKey = `w${newKey.toString().padStart(6, 0)}`;
 
         return newKey;
-    }
+    };
 
     getNewGroupId = () => {
         let newKey = this.getNewWidgetIdNumber(true);
@@ -526,7 +518,7 @@ class App extends GenericApp {
         newKey = `g${newKey.toString().padStart(6, 0)}`;
 
         return newKey;
-    }
+    };
 
     addWidget = async (widgetType, x, y) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -576,9 +568,9 @@ class App extends GenericApp {
 
         await this.changeProject(project);
         this.setSelectedWidgets([newKey]);
-    }
+    };
 
-    deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true })
+    deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true });
 
     deleteWidgetsAction = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -593,7 +585,7 @@ class App extends GenericApp {
         });
         this.setSelectedWidgets([]);
         await this.changeProject(project);
-    }
+    };
 
     lockWidgets = async type => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -601,7 +593,7 @@ class App extends GenericApp {
         this.state.selectedWidgets.forEach(selectedWidget =>
             widgets[selectedWidget].data.locked = type === 'lock');
         await this.changeProject(project);
-    }
+    };
 
     toggleWidgetHint = () => {
         let widgetHint;
@@ -616,15 +608,15 @@ class App extends GenericApp {
         }
         this.setState({ widgetHint });
         window.localStorage.setItem('widgetHint', widgetHint);
-    }
+    };
 
     cutWidgets = async () => {
         this.cutCopyWidgets('cut');
-    }
+    };
 
     copyWidgets = async () => {
         this.cutCopyWidgets('copy');
-    }
+    };
 
     cutCopyWidgets = async type => {
         const widgets = {};
@@ -677,7 +669,7 @@ class App extends GenericApp {
             // }
         }
          */
-    }
+    };
 
     pasteWidgets = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -700,7 +692,7 @@ class App extends GenericApp {
         this.setSelectedWidgets([]);
         await this.changeProject(project);
         this.setSelectedWidgets(newKeys);
-    }
+    };
 
     cloneWidgets = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -721,7 +713,7 @@ class App extends GenericApp {
         this.setSelectedWidgets([]);
         await this.changeProject(project);
         this.setSelectedWidgets(newKeys);
-    }
+    };
 
     alignWidgets = type => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -882,7 +874,7 @@ class App extends GenericApp {
             this.setState({ align: { alignType, alignIndex, alignValues } });
         }
         this.changeProject(project);
-    }
+    };
 
     orderWidgets = type => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -916,7 +908,7 @@ class App extends GenericApp {
         });
 
         return this.changeProject(project);
-    }
+    };
 
     getWidgetRelativeRect = widget => {
         const el = window.document.getElementById(widget);
@@ -934,7 +926,7 @@ class App extends GenericApp {
         }
 
         return null;
-    }
+    };
 
     groupWidgets = () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -983,7 +975,7 @@ class App extends GenericApp {
         widgets[groupId] = group;
 
         return this.changeProject(project);
-    }
+    };
 
     ungroupWidgets = () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -1002,34 +994,34 @@ class App extends GenericApp {
         delete widgets[this.state.selectedWidgets[0]];
 
         return this.changeProject(project);
-    }
+    };
 
     setSelectedGroup = groupId => {
         this.setState({ selectedGroup: groupId });
         this.setSelectedWidgets([]);
-    }
+    };
 
     undo = async () => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor - 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor - 1 });
-    }
+    };
 
     redo = async () => {
         this.setSelectedWidgets([]);
         await this.changeProject(this.state.history[this.state.historyCursor + 1], true);
         await this.setStateAsync({ historyCursor: this.state.historyCursor + 1 });
-    }
+    };
 
     toggleLockDragging = () => {
         window.localStorage.setItem('lockDragging', JSON.stringify(!this.state.lockDragging));
         this.setState({ lockDragging: !this.state.lockDragging });
-    }
+    };
 
     toggleDisableInteraction = () => {
         window.localStorage.setItem('disableInteraction', JSON.stringify(!this.state.disableInteraction));
         this.setState({ disableInteraction: !this.state.disableInteraction });
-    }
+    };
 
     saveHistory(project) {
         this.historyTimer && clearTimeout(this.historyTimer);
@@ -1065,7 +1057,7 @@ class App extends GenericApp {
             this.savingTimer = null;
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
-                const data = encoder.encode(JSON.stringify(this.state.project, null, 2))
+                const data = encoder.encode(JSON.stringify(this.state.project, null, 2));
                 await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, data);
             } else {
                 await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
@@ -1079,7 +1071,7 @@ class App extends GenericApp {
 
         newState.visProject = project;
         await this.setStateAsync(newState);
-    }
+    };
 
     addProject = async projectName => {
         try {
@@ -1103,7 +1095,7 @@ class App extends GenericApp {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {
@@ -1118,7 +1110,7 @@ class App extends GenericApp {
             window.alert(`Cannot rename: ${e}`);
             console.error(e);
         }
-    }
+    };
 
     deleteProject = async projectName => {
         try {
@@ -1130,7 +1122,7 @@ class App extends GenericApp {
         } catch (e) {
             console.error(e);
         }
-    }
+    };
 
     toggleView = (view, isShow, isActivate) => {
         const openedViews = JSON.parse(JSON.stringify(this.state.openedViews));
@@ -1150,7 +1142,7 @@ class App extends GenericApp {
                 await this.changeView(openedViews[0]);
             }
         });
-    }
+    };
 
     setSelectedWidgets = (selectedWidgets, cb) => {
         this.setState({
@@ -1160,13 +1152,13 @@ class App extends GenericApp {
             alignValues: [],
         }, () => cb && cb());
         window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
-    }
+    };
 
     toggleCode = () => {
         const oldShowCode = this.state.showCode;
         this.setState({ showCode: !oldShowCode });
         window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
-    }
+    };
 
     onWidgetsChanged = (data, view, viewSettings) => {
         this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
@@ -1196,7 +1188,7 @@ class App extends GenericApp {
             this.changeProject(this.tempProject);
             this.tempProject = null;
         }, 200);
-    }
+    };
 
     onFontsUpdate = fonts => {
         this.setState({ fonts });
@@ -1208,7 +1200,7 @@ class App extends GenericApp {
         } else {
             cb && cb(attr, null); // cancel selection
         }
-    }
+    };
 
     onPxToPercent = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPxToPercent) {
@@ -1216,7 +1208,7 @@ class App extends GenericApp {
         }
         // cb && cb(wids, attr, null); // cancel selection
         return null;
-    }
+    };
 
     pxToPercent = (oldStyle, newStyle) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].pxToPercent) {
@@ -1224,7 +1216,7 @@ class App extends GenericApp {
         }
         // cb && cb(wids, attr, null); // cancel selection
         return null;
-    }
+    };
 
     onPercentToPx = (wids, attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onPercentToPx) {
@@ -1232,7 +1224,7 @@ class App extends GenericApp {
         }
         return null;
         // cb && cb(wids, attr, null); // cancel selection
-    }
+    };
 
     registerCallback = (name, view, cb) => {
         // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
@@ -1256,7 +1248,7 @@ class App extends GenericApp {
         }
 
         this.socket.writeFile64(directory, fileName, data);
-    }
+    };
 
     showAlert(message, type) {
         if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
@@ -1356,7 +1348,9 @@ class App extends GenericApp {
             <IconButton
                 onClick={() => this.toggleCode()}
                 size="small"
-                style={{ cursor: 'default', opacity: this.state.showCode ? 1 : 0, width: 34, height: 34 }}
+                style={{
+                    cursor: 'default', opacity: this.state.showCode ? 1 : 0, width: 34, height: 34,
+                }}
                 className={this.props.classes.tabButton}
             >
                 {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}

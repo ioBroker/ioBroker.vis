@@ -1,6 +1,7 @@
 const CracoEsbuildPlugin = require('craco-esbuild');
 const { ProvidePlugin, IgnorePlugin } = require('webpack');
 const { ModuleFederationPlugin } = require('webpack').container;
+const deps = require("./package.json").dependencies;
 
 console.log('craco');
 
@@ -13,53 +14,22 @@ module.exports = {
                 React: 'react',
             }),
             new ModuleFederationPlugin({
-                name: 'vis',
+                name: 'iobroker_vis',
                 filename: 'remoteEntry.js',
                 remotes: {
                 },
                 exposes: {
                     './visRxWidget': './src/Vis/visRxWidget',
                 },
-                shared: {
-                    react: {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies.react,
-                    },
-                    'react-dom': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['react-dom'],
-                    },
-                    '@iobroker/adapter-react-v5': {
-                        singleton: true,
-                    },
-                    '@mui/material': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['@mui/material'],
-                    },
-                    '@mui/icons-material': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['@mui/material'],
-                    },
-                    '@mui/styles': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['@mui/material'],
-                    },
-                    'react-ace': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['@mui/material'],
-                    },
-                    'prop-types': {
-                        singleton: true,
-                    // requiredVersion: pkg.dependencies['@mui/material'],
-                    },
-                    './src/myvisRxWidget': {
-                        singleton: true,
-                    },
-                },
+                shared: 
+                [
+                    'react', 'react-dom', '@mui/material', '@mui/styles', '@mui/icons-material', 'prop-types','@iobroker/adapter-react-v5', 'react-ace'
+                ]
+
             }),
-            new IgnorePlugin({
-              resourceRegExp: /myvisRxWidget/,
-            })
+            // new IgnorePlugin({
+            //     resourceRegExp: /myvisRxWidget/,
+            // }),
         ],
         // configure: (webpackConfig) => {
         //   console.log(webpackConfig);
