@@ -15,6 +15,8 @@ const themeName = Utils.getThemeName();
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);
 // window.sentryDSN = 'https://6ccbeba86d86457b82ded80109fa7aba@sentry.iobroker.net/144';
 
+window.visRxWidget = require('./Vis/visRxWidget').default;
+
 const ThemeContainer = () => {
     const [currentTheme, setCurrentTheme] = useState(themeName);
 

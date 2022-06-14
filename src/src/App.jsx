@@ -134,8 +134,6 @@ const ViewDrop = props => {
 
 class App extends GenericApp {
     constructor(props) {
-        window.iobroker_vis.get('./visRxWidget').then(comp => window.visRxWidget = comp().default);
-
         const extendedProps = { ...props };
         extendedProps.translations = {
         };
