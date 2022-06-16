@@ -699,6 +699,10 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
             // when remote is loaded..
             const onload = async () => {
                 // check if it was initialized
+                if (!window[remote]) {
+                    reject(`Cannot load ${remote} from ${remoteFallbackUrl}`);
+                    return;
+                }
                 if (!window[remote].__initialized) {
                     // if share scope doesnt exist (like in webpack 4) then expect shareScope to be a manual object
                     if (typeof __webpack_share_scopes__ === 'undefined') {
@@ -728,7 +732,7 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
                 // mark as data-webpack so runtime can track it internally
                 script.setAttribute('data-webpack', `${remote}`);
                 script.async = true;
-                script.onerror = reject;
+                script.onerror = () => reject(`Cannot load ${remote} from ${remoteFallbackUrl}`);
                 script.onload = onload;
                 script.src = remoteFallbackUrl;
                 d.getElementsByTagName('head')[0].appendChild(script);
@@ -764,9 +768,13 @@ async function getRemoteWidgets(socket) {
         for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
             const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
             // const Component = await loadComponent('Thermostat', 'default', './Thermostat', 'http://localhost:3001/customWidgets.js')();
-            const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
-            console.log(Component);
-            result.push(Component.default);
+            try {
+                const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
+                console.log(Component);
+                result.push(Component.default);
+            } catch (e) {
+                console.error(e);
+            }
         }
     }
     return result;
