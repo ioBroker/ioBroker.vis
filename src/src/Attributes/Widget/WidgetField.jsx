@@ -204,11 +204,7 @@ const WidgetField = props => {
                 ? project[props.selectedView].widgets[selectedWidget].style
                 : project[props.selectedView].widgets[selectedWidget].data;
 
-            if (field.default && data[field.name] === field.default) {
-                delete data[field.name];
-            } else {
-                data[field.name] = value;
-            }
+            data[field.name] = value;
 
             if (field.onChangeFunc) {
                 window.vis.binds[widget.widgetSet][field.onChangeFunc](
@@ -234,7 +230,9 @@ const WidgetField = props => {
 
     const propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
     useEffect(() => {
-        setCachedValue(propValue);
+        if (propValue !== undefined) {
+            setCachedValue(propValue);
+        }
     }, [propValue]);
     let value = cachedValue;
     if (value === undefined || value === null) {

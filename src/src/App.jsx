@@ -544,16 +544,17 @@ class App extends GenericApp {
         // extract groups
         const fields = parseAttributes(tplWidget.params);
 
-        fields.forEach(field => {
-            if (field.fields) {
-                field.fields.forEach(_field => {
-                    if (_field.name.includes('oid')) {
-                        widgets[newKey].data[_field.name] = 'nothing_selected';
+        fields.forEach(group => {
+            if (group.fields) {
+                group.fields.forEach(field => {
+                    if (field.name.includes('oid')) {
+                        widgets[newKey].data[field.name] = 'nothing_selected';
+                    }
+                    if (field.default) {
+                        widgets[newKey].data[field.name] = field.default;
+                        widgets[newKey].data[`g_${group.name}`] = true;
                     }
                 });
-            } else
-            if (field.name.includes('oid')) {
-                widgets[newKey].data[field.name] = 'nothing_selected';
             }
         });
 

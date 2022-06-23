@@ -758,7 +758,9 @@ const Widget = props => {
                                         const project = JSON.parse(JSON.stringify(props.project));
                                         props.selectedWidgets.forEach(selectedWidget => {
                                             group.fields.forEach(field => {
-                                                project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = null;
+                                                if (project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] === undefined) {
+                                                    project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = field.default || null;
+                                                }
                                             });
                                             project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
                                         });
