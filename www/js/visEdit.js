@@ -3586,6 +3586,12 @@ vis = $.extend(true, vis, {
                             mapping[importObject[widget].groupName] = widgetId;
                         }
 
+                        if (importObject[widget].tpl === '_tplGroup') {
+                            for (var d = 0; d < importObject[widget].data.members.length; d++) {
+                                vis.views[view].widgets[importObject[widget].data.members[d]].groupid=widgetId;
+                            }                                
+                        }
+
                         // (tpl, data, style, wid, view, noSave, noAnimate)
                         if (!importObject[widget].grouped) widgets.push(widgetId);
                     }
