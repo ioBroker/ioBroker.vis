@@ -3982,7 +3982,10 @@ vis = $.extend(true, vis, {
             widgetSet: options.tpl === '_tplGroup' ? null : ($tpl ? $tpl.attr('data-vis-set') : undefined)
         };
 
-        if (options.grouped || viewDiv !== view) this.views[view].widgets[widgetId].grouped = true;
+        if (options.grouped || viewDiv !== view) {
+            this.views[view].widgets[widgetId].grouped = true;
+            this.views[view].widgets[widgetId].groupid = viewDiv;
+        }
         // if group edit
         if (viewDiv !== view) {
             this.views[view].widgets[viewDiv].data.members.push(widgetId);
