@@ -637,13 +637,20 @@ const Widget = props => {
     }
 
     const fieldsBefore = useMemo(getFieldsBefore, []);
-    const fieldsAfter = useMemo(() => getFieldsAfter(
-        props.selectedWidgets.length === 1 ? widget : commonValues,
-        props.project[props.selectedView].widgets, props.fonts,
-    ),
-    [props.project, props.selectedView, props.fonts]);
+    const fieldsAfter = useMemo(
+        () => getFieldsAfter(
+            props.selectedWidgets.length === 1 ? widget : commonValues,
+            props.project[props.selectedView].widgets,
+
+            props.fonts,
+        ),
+        [props.project, props.selectedView, props.fonts],
+    );
     const fieldsSignals = useMemo(() => getSignals(signalsCount), [signalsCount]);
     const customFields = fields;
+    if (!fields) {
+        return null;
+    }
 
     fields = [...fieldsBefore, ...fields, ...fieldsAfter, ...[fieldsSignals]];
 

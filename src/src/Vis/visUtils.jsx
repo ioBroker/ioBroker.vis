@@ -720,8 +720,9 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
             };
             if (existingRemote) {
                 // if existing remote but not loaded, hook into its onload and wait for it to be ready
-                existingRemote.onload = onload;
-                existingRemote.onerror = reject;
+                // existingRemote.onload = onload;
+                // existingRemote.onerror = reject;
+                resolve();
                 // check if remote fallback exists as param passed to function
                 // TODO: should scan public config for a matching key if no override exists
             } else if (remoteFallbackUrl) {
@@ -771,14 +772,22 @@ async function getRemoteWidgets(socket) {
             try {
                 if (visWidget.components) {
                     for (const componentKey in visWidget.components) {
-                        const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.components[componentKey]}`, visWidget.url)();
-                        console.log(Component);
-                        result.push(Component.default);
+                        try {
+                            const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.components[componentKey]}`, visWidget.url)();
+                            console.log(Component);
+                            result.push(Component.default);
+                        } catch (e) {
+                            console.error(e);
+                        }
                     }
                 } else {
-                    const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
-                    console.log(Component);
-                    result.push(Component.default);
+                    try {
+                        const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
+                        console.log(Component);
+                        result.push(Component.default);
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
             } catch (e) {
                 console.error(e);
