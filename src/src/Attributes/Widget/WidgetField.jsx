@@ -362,8 +362,6 @@ const WidgetField = props => {
                         change(selected);
                         isDoubleClick && setIdDialog(false);
                     }}
-                    actionTitle={t('Select')}
-                    actionDisabled={!value}
                     t={t}
                     lang={I18n.lang}
                     socket={props.socket}
@@ -812,11 +810,7 @@ const WidgetField = props => {
         </>;
     }
 
-    return <>
-        {field.type}
-        {'/'}
-        {value}
-    </>;
+    return `${field.type}/${value}`;
 };
 
 WidgetField.propTypes = {
