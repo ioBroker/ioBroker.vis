@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
+import { withStyles } from '@mui/styles';
+import clsx from 'clsx';
+import { useEffect, useState } from 'react';
+
 import {
     Tab, Tabs, Typography,
 } from '@mui/material';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
-import { useEffect, useState } from 'react';
 
-import clsx from 'clsx';
-import { withStyles } from '@mui/styles';
 import CSS from './CSS';
 import Scripts from './Scripts';
 import View from './View';
@@ -15,6 +16,7 @@ import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
 
 const style = theme => ({
+    data: console.log(theme),
     blockHeader: theme.classes.blockHeader,
     lightedPanel: theme.classes.lightedPanel,
     viewTabs: theme.classes.viewTabs,

@@ -192,6 +192,7 @@ const WidgetField = props => {
     } = props;
 
     const [cachedValue, setCachedValue] = useState('');
+    const [instances, setInstances] = useState([]);
 
     const cacheTimer = useRef(null);
 
@@ -232,6 +233,14 @@ const WidgetField = props => {
     useEffect(() => {
         if (propValue !== undefined) {
             setCachedValue(propValue);
+        }
+        if (field.type === 'instance') {
+            props.socket.getAdapterInstances(field.adapter || '')
+                .then(_instances => {
+                    const inst = _instances.map(obj => obj._id.replace('system.adapter.', ''));
+                    inst.push('openeweathermap.2');
+                    setInstances(inst);
+                });
         }
     }, [propValue]);
     let value = cachedValue;
@@ -733,6 +742,29 @@ const WidgetField = props => {
             {'/'}
             {value}
         </>;
+    }
+
+    if (field.type === 'instance') {
+        return <Select
+            variant="standard"
+            value={value}
+            placeholder={isDifferent ? t('different') : null}
+            defaultValue={field.default}
+            classes={{
+                root: props.classes.clearPadding,
+                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+            }}
+            onChange={e => change(e.target.value)}
+            renderValue={selectValue => selectValue}
+            fullWidth
+        >
+            {instances.map(id => <MenuItem
+                value={field.isShort ? id.split('.').pop() : id}
+                key={id}
+            >
+                {field.isShort ? id.split('.').pop() : id}
+            </MenuItem>)}
+        </Select>;
     }
 
     if (field.type === 'text' || field.type === 'html') {

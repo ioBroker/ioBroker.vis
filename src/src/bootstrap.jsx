@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import './index.css';
-// import theme from '@iobroker/adapter-react-v5/Theme';
-// import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import { Utils } from '@iobroker/adapter-react-v5';
 import App from './App';
 import * as serviceWorker from './serviceWorker';

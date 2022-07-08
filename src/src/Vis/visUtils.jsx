@@ -769,6 +769,10 @@ async function getRemoteWidgets(socket) {
         for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
             const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
             // const Component = await loadComponent('Thermostat', 'default', './Thermostat', 'http://localhost:3001/customWidgets.js')();
+            if (!visWidget.url.startsWith('http')) {
+                visWidget.url = `./vis/widgets/${visWidget.url}`;
+            }
+
             try {
                 if (visWidget.components) {
                     for (const componentKey in visWidget.components) {
