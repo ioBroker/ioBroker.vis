@@ -16,7 +16,6 @@ import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
 
 const style = theme => ({
-    data: console.log(theme),
     blockHeader: theme.classes.blockHeader,
     lightedPanel: theme.classes.lightedPanel,
     viewTabs: theme.classes.viewTabs,
