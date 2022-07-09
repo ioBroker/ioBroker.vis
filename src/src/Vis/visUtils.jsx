@@ -12,6 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
+import I18n from '@iobroker/adapter-react-v5/i18n';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -763,38 +764,71 @@ async function getRemoteWidgets(socket) {
         'instance',
     ));
     const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
-    console.log(dynamicWidgetInstances);
+
+    // console.log(dynamicWidgetInstances);
+
     for (const instanceKey in dynamicWidgetInstances) {
         const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
+        let commonUrl;
         for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
-            const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
-            // const Component = await loadComponent('Thermostat', 'default', './Thermostat', 'http://localhost:3001/customWidgets.js')();
-            if (!visWidget.url.startsWith('http')) {
-                visWidget.url = `./vis/widgets/${visWidget.url}`;
-            }
+            if (widgetKey === 'i18n') {
+                continue;
+            } else {
+                const visWidget = dynamicWidgetInstance.common.visWidgets[widgetKey];
+                // const Component = await loadComponent('Thermostat', 'default', './Thermostat', 'http://localhost:3001/customWidgets.js')();
+                if (!visWidget.url.startsWith('http')) {
+                    visWidget.url = `./vis/widgets/${visWidget.url}`;
+                }
 
-            try {
-                if (visWidget.components) {
-                    for (const componentKey in visWidget.components) {
+                try {
+                    if (visWidget.components) {
+                        for (const componentKey in visWidget.components) {
+                            try {
+                                const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.components[componentKey]}`, visWidget.url)();
+                                console.log(Component);
+                                result.push(Component.default);
+                                commonUrl = visWidget.url;
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }
+                    } else {
                         try {
-                            const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.components[componentKey]}`, visWidget.url)();
+                            const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
                             console.log(Component);
                             result.push(Component.default);
+                            commonUrl = visWidget.url;
                         } catch (e) {
                             console.error(e);
                         }
                     }
-                } else {
-                    try {
-                        const Component = await loadComponent(visWidget.name, 'default', `./${visWidget.name}`, visWidget.url)();
-                        console.log(Component);
-                        result.push(Component.default);
-                    } catch (e) {
-                        console.error(e);
-                    }
+                } catch (e) {
+                    console.error(e);
                 }
-            } catch (e) {
-                console.error(e);
+            }
+        }
+
+        if (commonUrl && dynamicWidgetInstance.common.visWidgets.i18n === true) {
+            // load i18n from files
+            const pos = commonUrl.lastIndexOf('/');
+            let i18nURL;
+            if (pos !== -1) {
+                i18nURL = commonUrl.substring(0, pos);
+            } else {
+                i18nURL = commonUrl;
+            }
+            const lang = I18n.getLanguage();
+            const file = `${i18nURL}/i18n/${lang}.json`;
+
+            await fetch(file)
+                .then(data => data.json())
+                .then(json => I18n.extendTranslations(json, lang))
+                .catch(error => console.log(`Cannot load i18n "${file}": ${error}`));
+        } else if (dynamicWidgetInstance.common.visWidgets.i18n && typeof dynamicWidgetInstance.common.visWidgets.i18n === 'object') {
+            try {
+                I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
+            } catch (error) {
+                console.error(`Cannot import i18n: ${error}`);
             }
         }
     }

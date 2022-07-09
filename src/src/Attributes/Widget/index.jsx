@@ -799,7 +799,8 @@ const Widget = props => {
                                         : <>
                                             <td className={props.classes.fieldTitle}>
                                                 { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                { field.title || (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                { field.title || (field.label && I18n.t(field.label)) ||
+                                                    (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
                                                 { group.isStyle ?
                                                     <ColorizeIcon
                                                         fontSize="small"

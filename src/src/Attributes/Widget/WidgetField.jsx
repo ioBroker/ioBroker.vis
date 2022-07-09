@@ -230,6 +230,7 @@ const WidgetField = props => {
     };
 
     const propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+
     useEffect(() => {
         if (propValue !== undefined) {
             setCachedValue(propValue);
@@ -243,6 +244,7 @@ const WidgetField = props => {
                 });
         }
     }, [propValue]);
+
     let value = cachedValue;
     if (value === undefined || value === null) {
         if (field.default) {
@@ -260,7 +262,7 @@ const WidgetField = props => {
     const [textDialogFocused, setTextDialogFocused] = useState(false);
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
 
-    const urlPopper = <Popper
+    const urlPopper = !field.type || field.type === 'number' || field.type === 'password' || field.type === 'image' ? <Popper
         open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
         anchorEl={textRef.current}
         placement="bottom"
@@ -282,7 +284,7 @@ const WidgetField = props => {
                 </Paper>
             </Fade>
         )}
-    </Popper>;
+    </Popper> : null;
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
@@ -506,17 +508,21 @@ const WidgetField = props => {
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => change(e.target.value)}
+            renderValue={value =>
+                typeof options[0] === 'object' ?
+                    t(options.find(o => o.value === value).label) :
+                    (field.type === 'select' ? t(value) : value)}
             fullWidth
         >
             {options.map(selectItem => <MenuItem
-                value={selectItem}
-                key={selectItem}
+                value={typeof selectItem === 'object' ? selectItem.value : selectItem}
+                key={typeof selectItem === 'object' ? selectItem.value : selectItem}
                 style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
             >
                 {
                     selectItem === ''
                         ? <i>{t('none')}</i>
-                        : (field.type === 'select' ? t(selectItem) : selectItem)
+                        : (field.type === 'select' ? (typeof selectItem === 'object' ? t(selectItem.label) : t(selectItem)) : selectItem)
                 }
             </MenuItem>)}
         </Select>;

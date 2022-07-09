@@ -857,7 +857,8 @@ class VisEngine extends React.Component {
                 oldScript.parentNode.replaceChild(newScript, oldScript);
             });
 
-            console.log(loadPromises);
+        // console.log(loadPromises);
+
         return Promise.all(loadPromises);
     }
 
