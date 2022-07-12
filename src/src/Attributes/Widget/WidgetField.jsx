@@ -508,10 +508,14 @@ const WidgetField = props => {
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => change(e.target.value)}
-            renderValue={value =>
-                typeof options[0] === 'object' ?
-                    t(options.find(o => o.value === value).label) :
-                    (field.type === 'select' ? t(value) : value)}
+            renderValue={value => {
+                if (typeof options[0] === 'object') {
+                    const item = options.find(o => o.value === value);
+                    return item ? t(item.label) : value;
+                } else {
+                    return field.type === 'select' ? t(value) : value;
+                }
+            }}
             fullWidth
         >
             {options.map(selectItem => <MenuItem
