@@ -87,21 +87,19 @@ const Widget = props => {
     </Tooltip>;
 
     const widthRef = useRef();
-    const [, dragRef, preview] = useDrag(
-        {
-            type: 'widget',
-            item: () => ({
-                widgetType: props.widgetType,
-                preview: <div style={{ width: widthRef.current.offsetWidth }}>
-                    {result}
-                </div>,
-            }),
-            collect: monitor => ({
-                isDragging: monitor.isDragging(),
-                handlerId: monitor.getHandlerId(),
-            }),
-        }, [props.widgetType],
-    );
+    const [, dragRef, preview] = useDrag({
+        type: 'widget',
+        item: () => ({
+            widgetType: props.widgetType,
+            preview: <div style={{ width: widthRef.current.offsetWidth }}>
+                {result}
+            </div>,
+        }),
+        collect: monitor => ({
+            isDragging: monitor.isDragging(),
+            handlerId: monitor.getHandlerId(),
+        }),
+    }, [props.widgetType]);
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
