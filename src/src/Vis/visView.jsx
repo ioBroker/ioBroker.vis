@@ -841,6 +841,7 @@ class VisView extends React.Component {
             selectedGroup: props.selectedGroup,
             lang: props.lang,
             dateFormat: props.dateFormat,
+            systemConfig: props.systemConfig,
             VisView,
         };
 
@@ -1320,6 +1321,7 @@ VisView.propTypes = {
     widgetHint: PropTypes.string,
     lang: PropTypes.string,
     dateFormat: PropTypes.string.isRequired,
+    systemConfig: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

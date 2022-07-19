@@ -123,6 +123,7 @@ class VisEngine extends React.Component {
                 this.vis.isFloatComma = systemConfig.common.isFloatComma;
                 this.systemLang = systemConfig.common.language || 'en';
                 this.vis.language = systemConfig.common.language || 'en';
+                this.systemConfig = systemConfig;
                 return this.loadWidgets();
             })
             .then(() => this.setState({ ready: true }));
@@ -1236,6 +1237,7 @@ ${this.scripts}
                     lockDragging={this.props.lockDragging}
                     disableInteraction={this.props.disableInteraction}
                     registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
+                    systemConfig={this.systemConfig}
                 />;
             }
 

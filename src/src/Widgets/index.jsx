@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { useState } from 'react';
+import clsx from 'clsx';
+import withStyles from '@mui/styles/withStyles';
+
 import {
     Accordion,
     AccordionDetails,
@@ -9,29 +12,28 @@ import {
     Tooltip,
     Typography,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import { useState } from 'react';
-import clsx from 'clsx';
+import I18n from '@iobroker/adapter-react-v5/i18n';
+
 import Widget from './Widget';
 import { getWidgetTypes } from '../Utils';
 
 const styles = theme => ({
-    widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 80px)' },
+    widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
     toggle: { width: 30, height: 30 },
     right: {
         float: 'right',
     },
     button: {
-        padding: '0px 4px',
+        padding: '0 4px',
     },
     label: {
-        top: '-10px',
+        top: -10,
     },
     labelShrink: {
         display: 'none',
@@ -46,16 +48,16 @@ const styles = theme => ({
     groupSummary: {
         '&&&&&&': {
             marginTop: 20,
-            borderRadius: '4px',
-            padding: '2px',
+            borderRadius: 4,
+            padding: 2,
         },
     },
     groupSummaryExpanded: {
         '&&&&&&': {
             marginTop: 20,
-            borderTopRightRadius: '4px',
-            borderTopLeftRadius: '4px',
-            padding: '2px',
+            borderTopRightRadius: 4,
+            borderTopLeftRadius: 4,
+            padding: 2,
         },
     },
     blockHeader: theme.classes.blockHeader,
