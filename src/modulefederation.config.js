@@ -1,3 +1,13 @@
+const makeFederation = require('@iobroker/vis-widgets-react-dev/modulefederation.config');
+
+module.exports = makeFederation(
+    'iobroker_vis',
+    {
+        './visRxWidget': './src/Vis/visRxWidget',
+    },
+    true,
+);
+/*
 const makeShared = pkgs => {
     const result = {};
     pkgs.forEach(
@@ -5,6 +15,7 @@ const makeShared = pkgs => {
             result[packageName] = {
                 requiredVersion: '*',
                 singleton: true,
+                eager: true,
             };
         },
     );
@@ -21,6 +32,17 @@ module.exports = {
     },
     shared:
         makeShared([
-            'react', 'react-dom', '@mui/material', '@mui/styles', '@mui/icons-material', 'prop-types', '@iobroker/adapter-react-v5', 'react-ace',
+            'react',
+            'react-dom',
+            'react-dom/client',
+            'clsx',
+            '@mui/material',
+            '@mui/styles',
+            '@mui/material/styles',
+            '@mui/icons-material',
+            'prop-types',
+            '@iobroker/adapter-react-v5',
+            'react-ace',
+            '@iobroker/vis-widgets-react-dev',
         ]),
-};
+};*/

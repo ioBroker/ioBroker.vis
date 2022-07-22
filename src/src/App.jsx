@@ -6,6 +6,7 @@ import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
+import { VisRxWidget } from '@iobroker/vis-widgets-react-dev';
 
 import {
     IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar,
@@ -1403,8 +1404,11 @@ class App extends GenericApp {
             return visEngine;
         }
 
+        const simulatePreload = true;
+
         return <StyledEngineProvider injectFirst>
             <ThemeProvider theme={this.state.theme}>
+                {!simulatePreload ? <VisRxWidget /> : null}
                 <Popper
                     open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                     style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}

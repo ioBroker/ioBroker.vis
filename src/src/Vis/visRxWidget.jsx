@@ -94,39 +94,59 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     onStateChanged(id, state, doNotApplyState) {
-        const newState = {
+        this.newState = this.newState || {
             values: JSON.parse(JSON.stringify(this.state.values || {})),
             rxData: { ...this.state.data },
             rxStyle: { ...this.state.style },
             applyBindings: false,
         };
 
-        id && state && Object.keys(state).forEach(attr => newState.values[`${id}.${attr}`] = state[attr]);
+        if (id && state) {
+            Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
+        }
 
-        Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, newState));
+        Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));
 
-        newState.visible = this.checkVisibility(id, newState);
-        const userGroups = newState.rxData['visibility-groups'];
-        newState.disabled = false;
+        this.newState.visible = this.checkVisibility(id, this.newState);
+        const userGroups = this.newState.rxData['visibility-groups'];
+        this.newState.disabled = false;
 
-        if (newState.rxData.filterkey && typeof newState.rxData.filterkey === 'string') {
-            newState.rxData.filterkey = newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
+        if (this.newState.rxData.filterkey && typeof this.newState.rxData.filterkey === 'string') {
+            this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
         }
 
         if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
-            if (newState.rxData['visibility-groups-action'] === 'disabled') {
-                newState.disabled = true;
+            if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
+                this.newState.disabled = true;
             } else {
                 // newState.rxData['visibility-groups-action'] === 'hide'
-                newState.visible = false;
+                this.newState.visible = false;
             }
         }
 
         if (doNotApplyState) {
+            const newState = this.newState;
+            this.newState = null;
             return newState;
         }
 
-        this.setState(newState);
+        this.updateTimer && clearTimeout(this.updateTimer);
+
+        // compare
+        if (JSON.stringify(this.state.values) !== JSON.stringify(this.newState.values) ||
+            JSON.stringify(this.state.rxData) !== JSON.stringify(this.newState.rxData) ||
+            JSON.stringify(this.state.rxStyle) !== JSON.stringify(this.newState.rxStyle) ||
+            this.state.applyBindings !== this.newState.applyBindings
+        ) {
+            this.updateTimer = setTimeout(() => {
+                this.updateTimer = null;
+                this.setState(this.newState);
+                this.newState = null;
+            }, 50);
+        } else {
+            this.newState = null;
+        }
+
         return null;
     }
 
@@ -149,13 +169,17 @@ class VisRxWidget extends VisBaseWidget {
         });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         super.componentDidMount();
-        this.linkContext.IDs.forEach(oid => this.props.socket.subscribeState(oid, this.onStateChangedBind));
+        for (let i = 0; i < this.linkContext.IDs.length; i++) {
+            await this.props.socket.subscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
+        }
     }
 
-    componentWillUnmount() {
-        this.linkContext.IDs.forEach(oid => this.props.socket.unsubscribeState(oid, this.onStateChangedBind));
+    async componentWillUnmount() {
+        for (let i = 0; i < this.linkContext.IDs.length; i++) {
+            await this.props.socket.unsubscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
+        }
         super.componentWillUnmount();
     }
 
@@ -179,7 +203,7 @@ class VisRxWidget extends VisBaseWidget {
         return true;
     }
 
-    onPropertiesUpdated() {
+    async onPropertiesUpdated() {
         const oldIDs = this.linkContext.IDs;
         this.linkContext = {
             IDs: [],
@@ -193,10 +217,14 @@ class VisRxWidget extends VisBaseWidget {
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
-        unsubscribe.forEach(id => this.props.socket.unsubscribeState(id, this.onStateChangedBind));
+        for (let i = 0; i < unsubscribe.length; i++) {
+            await this.props.socket.unsubscribeState(unsubscribe[i], this.onStateChangedBind);
+        }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
-        subscribe.forEach(id => this.props.socket.subscribeState(id, this.onStateChangedBind));
+        for (let i = 0; i < subscribe.length; i++) {
+            await this.props.socket.subscribeState(subscribe[i], this.onStateChangedBind);
+        }
 
         this.onStateChanged();
     }
@@ -244,9 +272,9 @@ class VisRxWidget extends VisBaseWidget {
         }
 
         if (this.state.applyBindings && !this.bindingsTimer) {
-            this.bindingsTimer = setTimeout(() => {
+            this.bindingsTimer = setTimeout(async () => {
                 this.bindingsTimer = null;
-                this.onPropertiesUpdated();
+                await this.onPropertiesUpdated();
             }, 10);
         }
 

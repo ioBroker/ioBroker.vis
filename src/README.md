@@ -56,6 +56,9 @@
 - Do not copy widgetName.html into widgets folder
 - Remove unused widget folders
 
+### Edit widgets
+- Old `onChangeFunc` should work
+
 ### Widgets
 All widgets from vis.1 must work in vis.2 or rewritten in react
 - Basic
