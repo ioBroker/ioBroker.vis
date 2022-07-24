@@ -474,7 +474,11 @@ function walk(dir, _results) {
                 if (stat.isDirectory()) {
                     walk(`${dir}/${file}`, results);
                 } else {
-                    if (!file.endsWith('.npmignore') && !file.endsWith('.gitignore')) {
+                    if (!file.endsWith('.npmignore') &&
+                        !file.endsWith('.gitignore') &&
+                        !file.endsWith('.DS_Store') &&
+                        !file.endsWith('_socket/info.js')
+                    ) {
                         results.push(`${dir}/${file}`);
                     }
                 }
