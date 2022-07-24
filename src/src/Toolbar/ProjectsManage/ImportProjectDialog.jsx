@@ -52,9 +52,9 @@ const ImportProjectDialog = props => {
             }
 
             props.socket.getRawSocket().emit('sendToHost', host, 'writeDirAsZip', {
-                id: props.adapterName + '.' + props.instance,
+                id: `${props.adapterName}.${props.instance}`,
                 name: projectName || 'main',
-                data: evt.target.result.split(',')[1]
+                data: evt.target.result.split(',')[1],
             }, async result => {
                 if (result.error) {
                     window.alert(I18n.t('Cannot upload project: %s', result.error));
@@ -79,14 +79,14 @@ const ImportProjectDialog = props => {
         accept: {
             'application/zip': ['.zip'],
             'application/json': ['.json'],
-        }
+        },
     });
 
     const confirmDialog = showConfirmation ? <ConfirmDialog
-        title={ I18n.t('Project already exists.') }
-        text={ I18n.t('Do you want to overwrite it?') }
-        ok={ I18n.t('Overwrite') }
-        cancel={ I18n.t('Cancel') }
+        title={I18n.t('Project already exists.')}
+        text={I18n.t('Do you want to overwrite it?')}
+        ok={I18n.t('Overwrite')}
+        cancel={I18n.t('Cancel')}
         onClose={isYes => {
             setShowConfirmation(false);
             if (isYes) {
@@ -96,10 +96,10 @@ const ImportProjectDialog = props => {
     /> : null;
 
     const askOpenDialog = askOpenProject ? <ConfirmDialog
-        title={ I18n.t('Project "%s" was successfully imported', projectName) }
-        text={ I18n.t('Open it?', projectName) }
-        ok={ I18n.t('Open') }
-        cancel={ I18n.t('Ignore') }
+        title={I18n.t('Project "%s" was successfully imported', projectName)}
+        text={I18n.t('Open it?', projectName)}
+        ok={I18n.t('Open')}
+        cancel={I18n.t('Ignore')}
         onClose={isYes => {
             setAskOpenProject(false);
 
@@ -130,14 +130,18 @@ const ImportProjectDialog = props => {
                 borderRadius: 4,
                 borderStyle: 'dashed',
                 borderWidth: 1,
-                borderColor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green'): 'inherit',
+                borderColor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
             }}
         >
             <input {...getInputProps()} />
-            <p style={{ textAlign: 'center', olor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green'): 'inherit' }}>
+            <p style={{ textAlign: 'center', olor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit' }}>
                 {files && files.length ? <>
                     <span>{files[0].name}</span>
-                    <span style={{ fontSize: 10, opacity: 0.5, display: 'block' }}>({Utils.formatBytes(files[0].size)})</span>
+                    <span style={{ fontSize: 10, opacity: 0.5, display: 'block' }}>
+                        (
+                        {Utils.formatBytes(files[0].size)}
+                        )
+                    </span>
                 </> : I18n.t('Drop the files here ...')}
             </p>
         </div>

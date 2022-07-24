@@ -1,13 +1,12 @@
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 
 import {
     Tab, Tabs, Typography,
 } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import CSS from './CSS';
 import Scripts from './Scripts';
@@ -49,7 +48,7 @@ const Attributes = props => {
     const TabContent = tabs[selected];
 
     return <>
-        <Typography variant="h6" gutterBottom className={clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
+        <Typography variant="h6" gutterBottom className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
             {I18n.t('Attributes')}
         </Typography>
         <Tabs

@@ -58,6 +58,8 @@ const Widget = props => {
         if (m) {
             img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
         }
+    } else if (props.widgetType.preview && (props.widgetType.preview.endsWith('.svg') || props.widgetType.preview.endsWith('.png') || props.widgetType.preview.endsWith('.jpg'))) {
+        img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
     }
 
     if (!img) {

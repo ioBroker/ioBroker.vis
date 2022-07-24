@@ -73,7 +73,9 @@ const IOContextMenu = props => {
         event.preventDefault();
         if (menuPosition) {
             setMenuPosition(null);
-            await new Promise(resolve => setTimeout(resolve, 200));
+            await new Promise(resolve => {
+                setTimeout(resolve, 200);
+            });
         }
         setMenuPosition({
             top: event.pageY,

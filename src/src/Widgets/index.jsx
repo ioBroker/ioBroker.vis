@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import clsx from 'clsx';
 import withStyles from '@mui/styles/withStyles';
 
 import {
@@ -18,7 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Utils';
@@ -110,7 +109,7 @@ const Widgets = props => {
     const allClosed = !Object.keys(widgetsList).find(group => accordionOpen[group]);
 
     return <>
-        <Typography variant="h6" gutterBottom className={clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
+        <Typography variant="h6" gutterBottom className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton
                     size="small"
@@ -175,7 +174,7 @@ const Widgets = props => {
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         classes={{
-                            root: clsx(props.classes.clearPadding, accordionOpen[category]
+                            root: Utils.clsx(props.classes.clearPadding, accordionOpen[category]
                                 ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                             content: props.classes.clearPadding,
                             expandIcon: props.classes.clearPadding,

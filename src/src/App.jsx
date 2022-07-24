@@ -160,9 +160,10 @@ class App extends GenericApp {
     }
 
     setStateAsync(newState) {
-        return new Promise(resolve =>
+        return new Promise(resolve => {
             this.setState(newState, () =>
-                resolve()));
+                resolve());
+        });
     }
 
     componentDidMount() {
@@ -679,7 +680,7 @@ class App extends GenericApp {
         Object.keys(this.state.widgetsClipboard.widgets).forEach(clipboardWidgetId => {
             const newWidget = JSON.parse(JSON.stringify(this.state.widgetsClipboard.widgets[clipboardWidgetId]));
             if (this.state.widgetsClipboard.type === 'copy' && this.state.selectedView === this.state.widgetsClipboard.view) {
-                const boundingRect = this.getWidgetRelativeRect(clipboardWidgetId);
+                const boundingRect = App.getWidgetRelativeRect(clipboardWidgetId);
                 newWidget.style = this.pxToPercent(newWidget.style, {
                     left: `${boundingRect.left + 10}px`,
                     top: `${boundingRect.top + 10}px`,
@@ -701,7 +702,7 @@ class App extends GenericApp {
         const newKeys = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
             const newWidget = JSON.parse(JSON.stringify(widgets[selectedWidget]));
-            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
+            const boundingRect = App.getWidgetRelativeRect(selectedWidget);
             newWidget.style = this.pxToPercent(newWidget.style, {
                 left: boundingRect.left + 10,
                 top: boundingRect.top + 10,
@@ -723,7 +724,7 @@ class App extends GenericApp {
         };
         const selectedWidgets = [];
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const boundingRect = this.getWidgetRelativeRect(selectedWidget);
+            const boundingRect = App.getWidgetRelativeRect(selectedWidget);
             selectedWidgets.push({ id: selectedWidget, widget: widgets[selectedWidget], coordinate: boundingRect });
         });
         if (type === 'left') {
@@ -910,7 +911,7 @@ class App extends GenericApp {
         return this.changeProject(project);
     };
 
-    getWidgetRelativeRect = widget => {
+    static getWidgetRelativeRect(widget) {
         const el = window.document.getElementById(widget);
         if (el) {
             const widgetBoundingRect = el.getBoundingClientRect();
@@ -926,7 +927,7 @@ class App extends GenericApp {
         }
 
         return null;
-    };
+    }
 
     groupWidgets = () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -949,7 +950,7 @@ class App extends GenericApp {
         this.state.selectedWidgets.forEach(selectedWidget => {
             widgets[selectedWidget].grouped = true;
             widgets[selectedWidget].groupid = groupId;
-            const widgetBoundingRect = this.getWidgetRelativeRect(selectedWidget);
+            const widgetBoundingRect = App.getWidgetRelativeRect(selectedWidget);
             if (!left || widgetBoundingRect.left < left) {
                 left = widgetBoundingRect.left;
             }
@@ -964,7 +965,7 @@ class App extends GenericApp {
             }
         });
         this.state.selectedWidgets.forEach(selectedWidget => {
-            const widgetBoundingRect = this.getWidgetRelativeRect(selectedWidget);
+            const widgetBoundingRect = App.getWidgetRelativeRect(selectedWidget);
             widgets[selectedWidget].style.left = widgetBoundingRect.left - left;
             widgets[selectedWidget].style.top = widgetBoundingRect.top - top;
         });
@@ -982,7 +983,7 @@ class App extends GenericApp {
         const widgets = project[this.state.selectedView].widgets;
         const group = widgets[this.state.selectedWidgets[0]];
         group.data.members.forEach(member => {
-            const widgetBoundingRect = this.getWidgetRelativeRect(member);
+            const widgetBoundingRect = App.getWidgetRelativeRect(member);
             widgets[member].style.left = `${widgetBoundingRect.left}px`;
             widgets[member].style.top = `${widgetBoundingRect.top}px`;
             widgets[member].style.width = `${widgetBoundingRect.width}px`;

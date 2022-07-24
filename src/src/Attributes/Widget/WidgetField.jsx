@@ -209,7 +209,11 @@ const WidgetField = props => {
 
             if (field.onChangeFunc) {
                 window.vis.binds[widget.widgetSet][field.onChangeFunc](
-                    selectedWidget, props.selectedView, value, field.name, props.isStyle,
+                    selectedWidget,
+                    props.selectedView,
+                    value,
+                    field.name,
+                    props.isStyle,
                     props.isStyle ? widget.style[field.name] : widget.data[field.name],
                 );
             }
@@ -432,7 +436,7 @@ const WidgetField = props => {
     if (field.type === 'eff_opt') {
         return <>
             {field.type}
-            {'/'}
+            /
             {value}
         </>;
     }
@@ -508,13 +512,12 @@ const WidgetField = props => {
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => change(e.target.value)}
-            renderValue={value => {
+            renderValue={_value => {
                 if (typeof options[0] === 'object') {
-                    const item = options.find(o => o.value === value);
-                    return item ? t(item.label) : value;
-                } else {
-                    return field.type === 'select' ? t(value) : value;
+                    const item = options.find(o => o.value === _value);
+                    return item ? t(item.label) : _value;
                 }
+                return field.type === 'select' ? t(_value) : _value;
             }}
             fullWidth
         >
@@ -749,7 +752,7 @@ const WidgetField = props => {
     if (field.type === 'custom') {
         return <>
             {field.type}
-            {'/'}
+            /
             {value}
         </>;
     }

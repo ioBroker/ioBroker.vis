@@ -236,8 +236,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
         const fields = JSON.parse(JSON.stringify(widgetParams));
-        let groupIndex;
-        while ((groupIndex = fields.findIndex(group => group.indexFrom)) > -1) {
+        let groupIndex = fields.findIndex(group => group.indexFrom);
+        while (groupIndex > -1) {
             const group = fields[groupIndex];
             group.singleName = group.name;
             const from = Number.isInteger(group.indexFrom) ? group.indexFrom : widgetData?.[group.indexFrom];
@@ -259,6 +259,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 indexedGroups.push(indexedGroup);
             }
             fields.splice(groupIndex, 1, ...indexedGroups);
+            groupIndex = fields.findIndex(_group => _group.indexFrom);
         }
         fields.forEach(group => {
             if (!group.singleName) {
@@ -268,8 +269,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 commonGroups[group.name] = 0;
             }
             commonGroups[group.name]++;
-            let fieldIndex;
-            while ((fieldIndex = group.fields.findIndex(field => field.indexFrom)) > -1) {
+            let fieldIndex = group.fields.findIndex(field => field.indexFrom);
+            while (fieldIndex > -1) {
                 const field = group.fields[fieldIndex];
                 field.singleName = field.name;
                 const from = Number.isInteger(field.indexFrom) ? field.indexFrom : parseInt(widgetData?.[field.indexFrom]);
@@ -286,7 +287,10 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     indexedFields.push(indexedField);
                 }
                 group.fields.splice(fieldIndex, 1, ...indexedFields);
+
+                fieldIndex = group.fields.findIndex(_field => _field.indexFrom);
             }
+
             group.fields.forEach(field => {
                 if (!field.singleName) {
                     field.singleName = field.name;
@@ -300,6 +304,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
         });
         return fields;
     }
+
+    return null;
 };
 
 export const DndPreview = () => {

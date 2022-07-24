@@ -90,7 +90,7 @@ WidgetExportDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     themeName: PropTypes.string,
-    widgets: PropTypes.objects,
+    widgets: PropTypes.object,
     selectedWidgets: PropTypes.object,
 };
 

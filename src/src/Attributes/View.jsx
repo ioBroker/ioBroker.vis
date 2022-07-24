@@ -13,11 +13,10 @@ import {
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import Autocomplete from '@mui/material/Autocomplete';
-import clsx from 'clsx';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 
-import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
+import { ColorPicker, Utils } from '@iobroker/adapter-react-v5';
 
 import './backgrounds.css';
 import { useState } from 'react';
@@ -350,7 +349,7 @@ const View = props => {
                             disabled={!props.editMode}
                             InputProps={{
                                 classes: {
-                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                                 },
                             }}
                             onChange={e => {
@@ -371,7 +370,7 @@ const View = props => {
                             disabled={!props.editMode}
                             InputProps={{
                                 classes: {
-                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                                 },
                             }}
                             onChange={e => {
@@ -441,7 +440,7 @@ const View = props => {
             >
                 <AccordionSummary
                     classes={{
-                        root: clsx(props.classes.clearPadding, accordionOpen[key]
+                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[key]
                             ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
                         content: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
@@ -495,7 +494,7 @@ const View = props => {
                                             onInputChange={(e, inputValue) => change(inputValue)}
                                             onChange={(e, inputValue) => change(inputValue)}
                                             classes={{
-                                                input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                                input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                                             }}
                                             renderInput={params => (
                                                 <TextField
@@ -509,7 +508,7 @@ const View = props => {
                                             disabled={!props.editMode}
                                             checked={!!value}
                                             classes={{
-                                                root: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                                root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
                                             }}
                                             size="small"
                                             onChange={e => change(e.target.checked)}
@@ -521,7 +520,7 @@ const View = props => {
                                             value={field.value ? field.value : value}
                                             classes={{
                                                 root: props.classes.clearPadding,
-                                                select: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
                                             }}
                                             onChange={field.onChange ? field.onChange : e => change(e.target.value)}
                                             renderValue={field.renderValue}
@@ -541,7 +540,7 @@ const View = props => {
                                             renderValue={selected => selected.join(', ')}
                                             classes={{
                                                 root: props.classes.clearPadding,
-                                                select: clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                                select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
                                             }}
                                             value={value || []}
                                             onChange={e => change(e.target.value)}
@@ -574,7 +573,7 @@ const View = props => {
                                             fullWidth
                                             InputProps={{
                                                 classes: {
-                                                    input: clsx(props.classes.clearPadding, props.classes.fieldContent),
+                                                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                                                 },
                                             }}
                                             value={value}

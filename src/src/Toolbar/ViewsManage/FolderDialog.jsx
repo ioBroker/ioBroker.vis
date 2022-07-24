@@ -24,9 +24,9 @@ const FolderDialog = props => {
     const folderObject = props.project.___settings.folders.find(folder => folder.id === props.dialogFolder);
 
     const dialogTitles = {
-        delete: `${I18n.t('Are you want to delete folder ') + folderObject?.name}?`,
-        rename: `${I18n.t('Rename folder ') + folderObject?.name}`,
-        add: props.dialogParentId ? I18n.t('Add subfolder ') : I18n.t('Add folder '),
+        delete: `${I18n.t('Are you want to delete folder "%s"', folderObject?.name)}?`,
+        rename: `${I18n.t('Rename folder "%s"', folderObject?.name)}`,
+        add: props.dialogParentId ? I18n.t('Add sub-folder') : I18n.t('Add folder'),
     };
 
     const dialogButtons = {

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
@@ -11,7 +12,6 @@ import {
     TextField,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import { useEffect, useState } from 'react';
 
 import SaveIcon from '@mui/icons-material/Save';
 import IODialog from '../Components/IODialog';
@@ -177,7 +177,7 @@ Settings.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     project: PropTypes.object,
-    selectedGroup: PropTypes.string,
+    // selectedGroup: PropTypes.string,
 };
 
 export default withStyles(styles)(Settings);

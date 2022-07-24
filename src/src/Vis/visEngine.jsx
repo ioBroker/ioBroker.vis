@@ -457,25 +457,27 @@ class VisEngine extends React.Component {
                 }
                 let objects = {};
 
-                return new Promise((resolve, reject) => this.props.socket.getRawSocket().emit('getObjects', (err, res) => {
-                    if (err) {
-                        reject(err);
-                        return;
-                    }
-
-                    if (res && res.rows) {
-                        for (let i = 0; i < res.rows.length; i++) {
-                            objects[res.rows[i].id] = res.rows[i].value;
+                return new Promise((resolve, reject) => {
+                    this.props.socket.getRawSocket().emit('getObjects', (err, res) => {
+                        if (err) {
+                            reject(err);
+                            return;
                         }
-                    } else {
-                        objects = res;
-                        resolve(objects);
-                    }
-                }))
+
+                        if (res && res.rows) {
+                            for (let i = 0; i < res.rows.length; i++) {
+                                objects[res.rows[i].id] = res.rows[i].value;
+                            }
+                        } else {
+                            objects = res;
+                            resolve(objects);
+                        }
+                    });
+                })
                     .then(() => this.props.socket.getEnums(!useCache))
                     .then(enums => {
                         Object.assign(objects, enums);
-                        return new Promise((resolve, reject) =>
+                        return new Promise((resolve, reject) => {
                             this.props.socket.getRawSocket().emit(
                                 'getObjectView',
                                 'system',
@@ -483,7 +485,8 @@ class VisEngine extends React.Component {
                                 {
                                     startkey: 'system.adapter.',
                                     endkey: 'system.adapter.\u9999',
-                                }, (err, res) => {
+                                },
+                                (err, res) => {
                                     if (err) {
                                         reject(err);
                                     } else {
@@ -499,7 +502,8 @@ class VisEngine extends React.Component {
                                         resolve();
                                     }
                                 },
-                            ));
+                            );
+                        });
                     })
                     .then(() => this.props.socket.getObjectView('', '\u9999', 'chart')
                         .catch(() => null))
@@ -610,7 +614,7 @@ class VisEngine extends React.Component {
             this.refViews[view] && console.error(`Someone tries to register new ref for view ${view}`);
             this.refViews[view] = { ref, onCommand };
         }
-    }
+    };
 
     unregisterViewRef = (view, ref) => {
         if (this.refViews[view] && this.refViews[view].ref === ref) {
@@ -619,7 +623,7 @@ class VisEngine extends React.Component {
             this.refViews[view] && console.error(`Someone tries to unregister new ref for view ${view}`);
             delete this.refViews[view];
         }
-    }
+    };
 
     getViewRef = view => this.refViews[view]?.ref;
 
@@ -811,7 +815,7 @@ class VisEngine extends React.Component {
             // If some de-bounce running, change last value
             this.statesDebounce[id].state = val;
         }
-    }
+    };
 
     // Following code is only required if legacy vis is used
     // eslint-disable-next-line camelcase
@@ -850,7 +854,9 @@ class VisEngine extends React.Component {
                     });
 
                 if (onLoad) {
-                    const promise = new Promise(resolve => newScript.onload = resolve);
+                    const promise = new Promise(resolve => {
+                        newScript.onload = resolve;
+                    });
                     loadPromises.push(promise);
                 }
 
@@ -883,7 +889,7 @@ class VisEngine extends React.Component {
             const div = document.createElement('div');
             document.body.appendChild(div);
 
-            await VisEngine.setInnerHTML(div, text)
+            await VisEngine.setInnerHTML(div, text);
             // console.log('Loaded');
 
             // Send react widgets to App only in edit mode
@@ -915,13 +921,13 @@ class VisEngine extends React.Component {
             console.error('Someone installs handler without to remove it!');
         }
         this.widgetChangeHandlers[wid] = cb;
-    }
+    };
 
     unregisterChangeHandler = (wid, cb) => {
         if (this.widgetChangeHandlers[wid] === cb) {
             delete this.widgetChangeHandlers[wid];
         }
-    }
+    };
 
     onStateChange = (id, state) => {
         // console.log(`[${new Date().toISOString()}] STATE_CHANGE: ${id}`);
@@ -1026,7 +1032,7 @@ class VisEngine extends React.Component {
                 this.props.socket.log(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
             }
         });
-    }
+    };
 
     subscribe = IDs => {
         if (!Array.isArray(IDs)) {
@@ -1044,7 +1050,7 @@ class VisEngine extends React.Component {
                 }
             }
         });
-    }
+    };
 
     createCanState(id) {
         const _val = `${id}.val`;
@@ -1089,7 +1095,7 @@ class VisEngine extends React.Component {
                 }
             }
         });
-    }
+    };
 
     updateCustomScripts() {
         if (this.props.views) {

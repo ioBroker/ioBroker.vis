@@ -10,6 +10,8 @@ module.exports = {
     devServer: {
         proxy: {
             '/vis': 'http://localhost:8082',
+            '/widgets': 'http://localhost:8082',
+            'widgets': 'http://localhost:8082',
         },
     },
     webpack: {

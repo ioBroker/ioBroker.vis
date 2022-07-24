@@ -485,7 +485,7 @@ class VisBaseWidget extends React.Component {
                 this.movement = null;
             }
         }
-    }
+    };
 
     onTempSelect = selected => {
         const ref = this.refService.current?.querySelector('.vis-editmode-overlay');
@@ -509,7 +509,7 @@ class VisBaseWidget extends React.Component {
         } else {
             ref.className = removeClass(ref.className, 'vis-editmode-selected');
         }
-    }
+    };
 
     onResizeStart(e, type) {
         e.stopPropagation();
@@ -670,6 +670,7 @@ class VisBaseWidget extends React.Component {
         ];
     }
 
+    /*
     isUserMemberOfGroup(user, userGroups) {
         if (!userGroups) {
             return true;
@@ -781,12 +782,14 @@ class VisBaseWidget extends React.Component {
             return condition && condition === 'not exist';
         }
     }
+    */
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(classNames, style) {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
+    /*
     changeOrder(e, dir) {
         e.stopPropagation();
 
@@ -809,6 +812,7 @@ class VisBaseWidget extends React.Component {
 
         this.props.onWidgetsChanged(null, this.props.view, { order });
     }
+    */
 
     static formatValue(value, decimals, _format) {
         if (typeof decimals !== 'number') {
@@ -819,9 +823,10 @@ class VisBaseWidget extends React.Component {
         if (typeof value !== 'number') {
             value = parseFloat(value);
         }
-        return isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
+        return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
+    /*
     formatIntervalHelper(value, type) {
         let singular;
         let plural;
@@ -909,7 +914,7 @@ class VisBaseWidget extends React.Component {
             }
         }
     }
-
+    */
     formatInterval(timestamp, isMomentJs) {
         if (isMomentJs) {
             return moment(new Date(timestamp)).fromNow();

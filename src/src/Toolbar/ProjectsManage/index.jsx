@@ -67,19 +67,19 @@ const ProjectsManage = props => {
 
     const getLiveHost = async () => {
         const res = await props.socket.getObjectView('system.host.', 'system.host.\u9999', 'host');
-        const hosts = Object.keys(res).map(id => id + '.alive');
+        const hosts = Object.keys(res).map(id => `${id}.alive`);
         if (!hosts.length) {
             return null;
         }
         const states = await props.socket.getForeignStates(hosts);
         for (const h in states) {
-            if (states.hasOwnProperty(h) && states[h].val) {
+            if (states[h].val) {
                 return h.substring(0, h.length - '.alive'.length);
             }
         }
 
         return null;
-    }
+    };
 
     const exportProject = async (projectName, isAnonymize) => {
         const host = await getLiveHost();
@@ -91,11 +91,11 @@ const ProjectsManage = props => {
 
         // to do find active host
         props.socket.getRawSocket().emit('sendToHost', host, 'readDirAsZip', {
-            id: props.adapterName + '.' + props.instance,
+            id: `${props.adapterName}.${props.instance}`,
             name: projectName || 'main',
             options: {
-                settings: isAnonymize
-            }
+                settings: isAnonymize,
+            },
         }, data => {
             if (data.error) {
                 window.alert(data.error);
@@ -104,15 +104,15 @@ const ProjectsManage = props => {
                 let date = d.getFullYear();
                 let m = d.getMonth() + 1;
                 if (m < 10) {
-                    m = '0' + m;
+                    m = `0${m}`;
                 }
-                date += '-' + m;
+                date += `-${m}`;
                 m = d.getDate();
                 if (m < 10) {
-                    m = '0' + m;
+                    m = `0${m}`;
                 }
                 date += `-${m}-`;
-                $('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
+                window.$('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
                 document.getElementById('zip_download').click();
                 document.getElementById('zip_download').remove();
             }
@@ -124,18 +124,22 @@ const ProjectsManage = props => {
         open={!!showExportDialog}
         anchorEl={anchorEl}
     >
-        <MenuItem onClick={async () => {
-            setAnchorEl(null);
-            setShowExportDialog(null);
-            await exportProject(showExportDialog);
-        }}>
+        <MenuItem
+            onClick={async () => {
+                setAnchorEl(null);
+                setShowExportDialog(null);
+                await exportProject(showExportDialog);
+            }}
+        >
             {I18n.t('normal')}
         </MenuItem>
-        <MenuItem onClick={async () => {
-            setAnchorEl(null);
-            setShowExportDialog(null);
-            await exportProject(showExportDialog, true);
-        }}>
+        <MenuItem
+            onClick={async () => {
+                setAnchorEl(null);
+                setShowExportDialog(null);
+                await exportProject(showExportDialog, true);
+            }}
+        >
             {I18n.t('anonymize')}
         </MenuItem>
     </Menu>;
@@ -174,10 +178,13 @@ const ProjectsManage = props => {
                 </Button>
                 <span className={props.classes.viewManageButtonActions}>
                     <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>
-                        <IconButton onClick={event => {
-                            setAnchorEl(event.currentTarget);
-                            setShowExportDialog(projectName);
-                        }} size="small">
+                        <IconButton
+                            onClick={event => {
+                                setAnchorEl(event.currentTarget);
+                                setShowExportDialog(projectName);
+                            }}
+                            size="small"
+                        >
                             <BiExport fontSize="20" />
                         </IconButton>
                     </Tooltip>

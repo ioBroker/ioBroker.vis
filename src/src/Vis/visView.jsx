@@ -135,7 +135,7 @@ class VisView extends React.Component {
             return filterList;
         }
         return null;
-    }
+    };
 
     changeFilter(options) {
         options = { filter: '', ...options };
@@ -182,7 +182,7 @@ class VisView extends React.Component {
             // Clicked outside the box
             this.cancelStealMode(null);
         }
-    }
+    };
 
     onStealStyle = (attr, cb) => {
         if (!attr) {
@@ -199,7 +199,7 @@ class VisView extends React.Component {
             this.widgetsRefs[wid].onCommand && this.widgetsRefs[wid].onCommand('startStealMode'));
 
         window.document.addEventListener('mousedown', this.onMouseWindowDown);
-    }
+    };
 
     cancelStealMode(result) {
         if (this.nextClickIsSteal) {
@@ -240,14 +240,14 @@ class VisView extends React.Component {
             selectedWidgetsWithRectangle: [],
             simpleMode: e.shiftKey || e.ctrlKey,
         };
-    }
+    };
 
     onViewDoubleClick = () => {
         if (this.props.selectedWidgets.length === 1 &&
             this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
             this.props.setSelectedGroup(this.props.selectedWidgets[0]);
         }
-    }
+    };
 
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
@@ -385,7 +385,7 @@ class VisView extends React.Component {
                 }
             }
         }
-    }
+    };
 
     onMouseViewMove = !this.props.runtime ? e => {
         if (!this.selectDiv && this.refView.current) {
@@ -506,7 +506,7 @@ class VisView extends React.Component {
                 this.widgetsRefs[_wid].onCommand('startMove');
             }
         });
-    }
+    };
 
     onMouseWidgetMove = !this.props.runtime ? e => {
         if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize) {
@@ -610,7 +610,7 @@ class VisView extends React.Component {
         }));
 
         this.setState({ rulers });
-    }
+    };
 
     onMouseWidgetUp = !this.props.runtime ? e => {
         e && e.stopPropagation();
@@ -689,7 +689,7 @@ class VisView extends React.Component {
             resultStyle.height = `${Math.round(resultStyle.height * 100) / 100}%`;
         }
         return { ...oldStyle, ...resultStyle };
-    }
+    };
 
     onPxToPercent = (wids, attr, cb) => {
         const pRect = {};
@@ -724,7 +724,7 @@ class VisView extends React.Component {
         cb && cb(results);
 
         return results;
-    }
+    };
 
     onPercentToPx = (wids, attr, cb) => {
         const results = wids.map(wid => {
@@ -743,7 +743,7 @@ class VisView extends React.Component {
         cb && cb(results);
 
         return results;
-    }
+    };
 
     registerEditorHandlers(unregister) {
         if (this.props.registerEditorCallback) {
@@ -957,7 +957,7 @@ class VisView extends React.Component {
             });
             this.movement = null;
         }, 800);
-    }
+    };
 
     resizeWidgets = async (widthShift, heightShift) => {
         if (!this.moveTimer) {
@@ -1011,7 +1011,7 @@ class VisView extends React.Component {
             });
             this.movement = null;
         }, 800);
-    }
+    };
 
     onKeyDown = async e => {
         if (!this.props.editMode) {
@@ -1037,7 +1037,7 @@ class VisView extends React.Component {
                 }
             }
         }
-    }
+    };
 
     renderScreenSize() {
         if (!this.props.editMode ||
@@ -1210,10 +1210,10 @@ class VisView extends React.Component {
         if (settings.sizex) {
             let ww = settings.sizex;
             let hh = settings.sizey;
-            if (isFinite(ww)) {
+            if (Number.isFinite(ww)) {
                 ww = parseFloat(ww);
             }
-            if (isFinite(hh)) {
+            if (Number.isFinite(hh)) {
                 hh = parseFloat(hh);
             }
 

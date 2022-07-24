@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { withStyles } from '@mui/styles';
 import { useDrag, useDrop } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -57,7 +57,7 @@ const Folder = props => {
         <span className={props.classes.folderName}>{props.folder.name}</span>
     </div>;
 
-    const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    const [{ canDrop }, drop] = useDrop(() => ({
         accept: ['view', 'folder'],
         drop: () => ({ folder: props.folder }),
         canDrop: (item, monitor) => {
@@ -87,25 +87,23 @@ const Folder = props => {
         }),
     }), [props.project]);
 
-    const [{ isDraggingThisItem }, dragRef, preview] = useDrag(
-        {
-            type: 'folder',
-            item: () => ({
-                folder: props.folder,
-                preview: <div>{folderBlock}</div>,
-            }),
-            end: (item, monitor) => {
-                const dropResult = monitor.getDropResult();
-                if (item && dropResult) {
-                    props.moveFolder(item.folder.id, dropResult.folder.id);
-                }
-            },
-            collect: monitor => ({
-                isDraggingThisItem: monitor.isDragging(),
-                handlerId: monitor.getHandlerId(),
-            }),
-        }, [props.project],
-    );
+    const [{ isDraggingThisItem }, dragRef, preview] = useDrag({
+        type: 'folder',
+        item: () => ({
+            folder: props.folder,
+            preview: <div>{folderBlock}</div>,
+        }),
+        end: (item, monitor) => {
+            const dropResult = monitor.getDropResult();
+            if (item && dropResult) {
+                props.moveFolder(item.folder.id, dropResult.folder.id);
+            }
+        },
+        collect: monitor => ({
+            isDraggingThisItem: monitor.isDragging(),
+            handlerId: monitor.getHandlerId(),
+        }),
+    }, [props.project]);
 
     useEffect(() => {
         preview(getEmptyImage(), { captureDraggingState: true });
@@ -115,7 +113,7 @@ const Folder = props => {
         props.setIsDragging(isDraggingThisItem ? props.folder.id : '');
     }, [isDraggingThisItem]);
 
-    console.log(props.folder.name + ' ' + props.isDragging + ' ' + canDrop);
+    console.log(`${props.folder.name} ${props.isDragging} ${canDrop}`);
 
     return <div
         ref={drop}

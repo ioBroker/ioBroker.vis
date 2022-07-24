@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { i18n as I18n } from '@iobroker/adapter-react-v5';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -701,16 +701,18 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
             const onload = async () => {
                 // check if it was initialized
                 if (!window[remote]) {
-                    reject(`Cannot load ${remote} from ${remoteFallbackUrl}`);
+                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
                     return;
                 }
                 if (!window[remote].__initialized) {
-                    // if share scope doesnt exist (like in webpack 4) then expect shareScope to be a manual object
+                    // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
+                    // eslint-disable-next-line camelcase
                     if (typeof __webpack_share_scopes__ === 'undefined') {
                         // use default share scope object passed in manually
                         await window[remote].init(shareScope.default);
                     } else {
                         // otherwise, init share scope as usual
+                        // eslint-disable-next-line camelcase,no-undef
                         await window[remote].init(__webpack_share_scopes__[shareScope]);
                     }
                     // mark remote as initialized
@@ -734,13 +736,13 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
                 // mark as data-webpack so runtime can track it internally
                 script.setAttribute('data-webpack', `${remote}`);
                 script.async = true;
-                script.onerror = () => reject(`Cannot load ${remote} from ${remoteFallbackUrl}`);
+                script.onerror = () => reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
                 script.onload = onload;
                 script.src = remoteFallbackUrl;
                 d.getElementsByTagName('head')[0].appendChild(script);
             } else {
                 // no remote and no fallback exist, reject
-                reject(`Cannot Find Remote ${remote} to inject`);
+                reject(new Error(`Cannot Find Remote ${remote} to inject`));
             }
         } else {
             // remote already instantiated, resolve
