@@ -670,7 +670,7 @@ class VisBaseWidget extends React.Component {
         ];
     }
 
-    /*
+
     isUserMemberOfGroup(user, userGroups) {
         if (!userGroups) {
             return true;
@@ -782,14 +782,12 @@ class VisBaseWidget extends React.Component {
             return condition && condition === 'not exist';
         }
     }
-    */
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(classNames, style) {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
-    /*
     changeOrder(e, dir) {
         e.stopPropagation();
 
@@ -812,7 +810,6 @@ class VisBaseWidget extends React.Component {
 
         this.props.onWidgetsChanged(null, this.props.view, { order });
     }
-    */
 
     static formatValue(value, decimals, _format) {
         if (typeof decimals !== 'number') {
@@ -826,7 +823,6 @@ class VisBaseWidget extends React.Component {
         return Number.isNaN(value) ? '' : value.toFixed(decimals || 0).replace(format[0], format[1]).replace(/\B(?=(\d{3})+(?!\d))/g, format[0]);
     }
 
-    /*
     formatIntervalHelper(value, type) {
         let singular;
         let plural;
@@ -864,57 +860,57 @@ class VisBaseWidget extends React.Component {
                 plural    = 'дней';
                 special24 = 'дня';
             }
-        } else {
-            if (type === 'seconds') {
-                singular = 'second';
-                plural   = 'seconds';
-            } else if (type === 'minutes') {
-                singular = 'minute';
-                plural   = 'minutes';
-            } else if (type === 'hours') {
-                singular = 'hour';
-                plural   = 'hours';
-            } else if (type === 'days') {
-                singular = 'day';
-                plural   = 'days';
-            }
+        } else if (type === 'seconds') {
+            singular = 'second';
+            plural   = 'seconds';
+        } else if (type === 'minutes') {
+            singular = 'minute';
+            plural   = 'minutes';
+        } else if (type === 'hours') {
+            singular = 'hour';
+            plural   = 'hours';
+        } else if (type === 'days') {
+            singular = 'day';
+            plural   = 'days';
         }
 
         if (value === 1) {
             if (this.props.lang === 'de') {
                 if (type === 'days') {
-                    return 'einem ' + singular;
-                } else {
-                    return 'einer ' + singular;
+                    return `einem ${singular}`;
                 }
-            } else if (this.props.lang === 'ru') {
-                if (type === 'days' || type === 'hours') {
-                    return 'один ' + singular;
-                } else {
-                    return 'одну ' + singular;
-                }
-            } else {
-                return 'one ' + singular;
+                return `einer ${singular}`;
             }
+
+            if (this.props.lang === 'ru') {
+                if (type === 'days' || type === 'hours') {
+                    return `один ${singular}`;
+                }
+                return `одну ${singular}`;
+            }
+
+            return `one ${singular}`;
         } else {
             if (this.props.lang === 'de') {
                 return `${value} ${plural}`;
-            } else if (this.props.lang === 'ru') {
+            }
+
+            if (this.props.lang === 'ru') {
                 const d = value % 10;
                 if (d === 1 && value !== 11) {
                     return `${value} ${singular}`;
-                } else
+                }
                 if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
                     return `${value} ${special24}`;
-                } else {
-                    return `${value} ${plural}`;
                 }
+
+                return `${value} ${plural}`;
             } else {
                 return `${value} ${plural}`;
             }
         }
     }
-    */
+
     formatInterval(timestamp, isMomentJs) {
         if (isMomentJs) {
             return moment(new Date(timestamp)).fromNow();
@@ -924,32 +920,32 @@ class VisBaseWidget extends React.Component {
         let text;
         if (diff <= 60) {
             if (this.props.lang === 'de') {
-                text = 'vor ' + vis.binds.basic.formatIntervalHelper(diff, 'seconds');
+                text = `vor ${this.formatIntervalHelper(diff, 'seconds')}`;
             } else if (this.props.lang === 'ru') {
-                text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' назад';
+                text = `${this.formatIntervalHelper(diff, 'seconds')} назад`;
             } else {
-                text = vis.binds.basic.formatIntervalHelper(diff, 'seconds') + ' ago';
+                text = `${this.formatIntervalHelper(diff, 'seconds')} ago`;
             }
         } else if (diff < 3600) {
-            let m = Math.floor(diff / 60);
-            let s = diff - m * 60;
+            const m = Math.floor(diff / 60);
+            const s = diff - m * 60;
             text = '';
             if (this.props.lang === 'de') {
-                text = 'vor ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                text = `vor ${this.formatIntervalHelper(m, 'minutes')}`;
             } else if (this.props.lang === 'ru') {
-                text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                text = this.formatIntervalHelper(m, 'minutes');
             } else {
-                text = vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                text = this.formatIntervalHelper(m, 'minutes');
             }
 
             if (m < 5) {
                 // add seconds
                 if (this.props.lang === 'de') {
-                    text += ' und ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    text += ` und ${this.formatIntervalHelper(s, 'seconds')}`;
                 } else if (this.props.lang === 'ru') {
-                    text += ' и ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    text += ` и ${this.formatIntervalHelper(s, 'seconds')}`;
                 } else {
-                    text += ' and ' + vis.binds.basic.formatIntervalHelper(s, 'seconds');
+                    text += ` and ${this.formatIntervalHelper(s, 'seconds')}`;
                 }
             }
 
@@ -961,25 +957,25 @@ class VisBaseWidget extends React.Component {
                 text += ' ago';
             }
         } else if (diff < 3600 * 24) {
-            let h = Math.floor(diff / 3600);
-            let m = Math.floor((diff - h * 3600) / 60);
+            const h = Math.floor(diff / 3600);
+            const m = Math.floor((diff - h * 3600) / 60);
             text = '';
             if (this.props.lang === 'de') {
-                text = 'vor ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                text = `vor ${this.formatIntervalHelper(h, 'hours')}`;
             } else if (this.props.lang === 'ru') {
-                text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+                text = this.formatIntervalHelper(h, 'hours');
             } else {
-                text = vis.binds.basic.formatIntervalHelper(h, 'hours');
+                text = this.formatIntervalHelper(h, 'hours');
             }
 
             if (h < 10) {
                 // add seconds
                 if (this.props.lang === 'de') {
-                    text += ' und ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    text += ` und ${this.formatIntervalHelper(m, 'minutes')}`;
                 } else if (this.props.lang === 'ru') {
-                    text += ' и ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    text += ` и ${this.formatIntervalHelper(m, 'minutes')}`;
                 } else {
-                    text += ' and ' + vis.binds.basic.formatIntervalHelper(m, 'minutes');
+                    text += ` and ${this.formatIntervalHelper(m, 'minutes')}`;
                 }
             }
 
@@ -995,21 +991,21 @@ class VisBaseWidget extends React.Component {
             let h = Math.floor((diff - d * (3600 * 24)) / 3600);
             text = '';
             if (this.props.lang === 'de') {
-                text = 'vor ' + vis.binds.basic.formatIntervalHelper(d, 'days');
+                text = `vor ${this.formatIntervalHelper(d, 'days')}`;
             } else if (this.props.lang === 'ru') {
-                text = vis.binds.basic.formatIntervalHelper(d, 'days');
+                text = this.formatIntervalHelper(d, 'days');
             } else {
-                text = vis.binds.basic.formatIntervalHelper(d, 'days');
+                text = this.formatIntervalHelper(d, 'days');
             }
 
             if (d < 3) {
                 // add seconds
                 if (this.props.lang === 'de') {
-                    text += ' und ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    text += ` und ${this.formatIntervalHelper(h, 'hours')}`;
                 } else if (this.props.lang === 'ru') {
-                    text += ' и ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    text += ` и ${this.formatIntervalHelper(h, 'hours')}`;
                 } else {
-                    text += ' and ' + vis.binds.basic.formatIntervalHelper(h, 'hours');
+                    text += ` and ${this.formatIntervalHelper(h, 'hours')}`;
                 }
             }
 

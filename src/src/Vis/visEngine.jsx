@@ -1171,7 +1171,8 @@ ${this.scripts}
                         }
                         this.visCommonCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_common_user', file || '');
-                    });
+                    })
+                    .catch(e => console.warn(`Common user CSS not found: ${e}`));
             }
         }
     }

@@ -1,7 +1,0 @@
-
-items="Temp Humidity Pressure TempHumid Occupancy Light LightDim LightKelvin WindowShutter Volume Boolean Number Text Valve Garage"
-
-for i in $items
-do
-echo "<script type="text/javascript"    src="widgets/vis-material-advanced/js/List$i/list$i.js"></script>"
-done
