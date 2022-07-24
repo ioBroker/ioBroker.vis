@@ -12,16 +12,13 @@ const del        = require('del');
 const cp         = require('child_process');
 
 function init(gulp) {
-    gulp.task('clean', () => {
+    gulp.task('0-clean', () => {
         return del([
-            // 'src/node_modules/**/*',
-            'admin/**/*',
-            'admin/*',
-            'src/build/**/*'
+            'src/build/**/*',
+            'www/**/*'
         ]).then(() => del([
-            // 'src/node_modules',
             'src/build',
-            'admin/'
+            'www'
         ]));
     });
 
@@ -62,7 +59,7 @@ function init(gulp) {
         }
     });
 
-    gulp.task('2-npm-dep', gulp.series('clean', '2-npm'));
+    gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
     function build() {
         return new Promise((resolve, reject) => {
@@ -78,15 +75,15 @@ function init(gulp) {
 
             console.log(options.cwd);
 
-            let script = __dirname + '/src/node_modules/react-scripts/scripts/build.js';
+            let script = __dirname + '/src/node_modules/@craco/craco/bin/craco.js';
             if (!fs.existsSync(script)) {
-                script = __dirname + '/node_modules/react-scripts/scripts/build.js';
+                script = __dirname + '/node_modules/@craco/craco/bin/craco.js';
             }
             if (!fs.existsSync(script)) {
                 console.error('Cannot find execution file: ' + script);
                 reject('Cannot find execution file: ' + script);
             } else {
-                const child = cp.fork(script, [], options);
+                const child = cp.fork(script, ['build'], options);
                 child.stdout.on('data', data => console.log(data.toString()));
                 child.stderr.on('data', data => console.log(data.toString()));
                 child.on('close', code => {
@@ -102,48 +99,18 @@ function init(gulp) {
     gulp.task('3-build-dep', gulp.series('2-npm', '3-build'));
 
     function copyFiles() {
-        return del([
-            'www/react/**/*'
-        ]).then(() => {
-            return Promise.all([
-                gulp.src([
-                    'src/build/**/*',
-                    '!src/build/index.html',
-                    '!src/build/static/js/main.*.chunk.js',
-                    '!src/build/i18n/**/*',
-                    '!src/build/i18n',
-                    'admin-config/*'
-                ])
-                    .pipe(gulp.dest('www/react/')),
+        return Promise.all([
+            gulp.src([
+                'src/build/**/*'
+            ])
+                .pipe(gulp.dest('www/')),
 
-                gulp.src([
-                    'src/build/index.html',
-                ])
-                    .pipe(replace('href="/', 'href="'))
-                    .pipe(replace('src="/', 'src="'))
-                    .pipe(rename('index.html'))
-                    .pipe(gulp.dest('www/react/')),
-                gulp.src([
-                    'src/build/static/js/main.*.chunk.js',
-                ])
-                    .pipe(replace('s.p+"static/media/copy-content', '"./static/media/copy-content'))
-                    .pipe(gulp.dest('www/react/static/js/')),
-,
-
-                gulp.src([
-                    'src/build/index.html',
-                ])
-                    .pipe(replace('href="/', 'href="'))
-                    .pipe(replace('src="/', 'src="'))
-                    .pipe(rename('edit.html'))
-                    .pipe(gulp.dest('www/react/')),
-                gulp.src([
-                    'src/build/static/js/main.*.chunk.js',
-                ])
-                    .pipe(replace('s.p+"static/media/copy-content', '"./static/media/copy-content'))
-                    .pipe(gulp.dest('www/react/static/js/')),
-            ]);
-        });
+            gulp.src([
+                'src/build/index.html',
+            ])
+                .pipe(rename('edit.html'))
+                .pipe(gulp.dest('www/')),
+        ]);
     }
 
     gulp.task('5-copy', () => copyFiles());
@@ -161,8 +128,8 @@ function init(gulp) {
     }
 
     gulp.task('6-patch', done => {
-        patchFile(__dirname + '/www/react/index.html');
-        patchFile(__dirname + '/www/react/edit.html');
+        patchFile(__dirname + '/www/index.html');
+        patchFile(__dirname + '/www/edit.html');
         patchFile(__dirname + '/src/build/index.html');
         patchFile(__dirname + '/src/build/edit.html');
         done();

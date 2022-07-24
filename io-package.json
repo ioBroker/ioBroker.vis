@@ -211,6 +211,7 @@
                 "name": "Command for vis",
                 "type": "string",
                 "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                "role": "state",
                 "states": {
                     "alert": "alert",
                     "changeView": "changeView",

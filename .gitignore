@@ -39,3 +39,4 @@ admin/i18n/flat.txt
 src/build
 /.vscode
 /src/dist
+/www
