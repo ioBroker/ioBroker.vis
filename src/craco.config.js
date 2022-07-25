@@ -9,10 +9,9 @@ module.exports = {
     ],
     devServer: {
         proxy: {
-            '/vis': 'http://localhost:8082',
-            '/widgets': 'http://localhost:8082',
-            widgets: 'http://localhost:8082',
-            '/widgets.html': 'http://localhost:8082',
+            '/vis': 'http://localhost:8082/vis',
+            '/widgets': 'http://localhost:8082/vis',
+            '/widgets.html': 'http://localhost:8082/vis',
         },
     },
     webpack: {
