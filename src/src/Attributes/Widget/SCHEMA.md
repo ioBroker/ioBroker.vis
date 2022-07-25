@@ -6,9 +6,9 @@ class MyWidget extends Generic {
      static getWidgetInfo() {
         return {
             id: 'tplMaterial2Switches',                      // Unique widget type ID. Should start with `tpl` followed by unique widget set ID.
-            visSet: 'vis-2-widgets-material',                // Uniqie ID of widget set 
-            visSetLabel: 'vis_2_widgets_material_set_label', // Label of widget set. it is enought to set label only in one widget of set
-            visSetColor: '#0783ff',                          // Color of widget set. it is enought to set color only in one widget of set
+            visSet: 'vis-2-widgets-material',                // Unique ID of widget set 
+            visSetLabel: 'vis_2_widgets_material_set_label', // Label of widget set. it is enough to set label only in one widget of set
+            visSetColor: '#0783ff',                          // Color of widget set. it is enough to set color only in one widget of set
             visName: 'Switches',                             // Name of widget
             visWidgetLabel: 'vis_2_widgets_material_switches_or_buttons', // Label of widget
             visWidgetColor: '#005cc4',                       // Optional widget color. If not set, default color of widget set will be used.
@@ -85,7 +85,19 @@ class MyWidget extends Generic {
     }
 ```
 
-### Group
+## Common settings
+- `id`: [mandatory] Unique widget type ID. Should start with `tpl` followed by unique widget set ID.
+- `visSet`: [mandatory] Unique ID of widget set
+- `visSetLabel`: Label of widget set. it is enough to set label only in one widget of set
+- `visSetColor`: Color of widget set. it is enough to set color only in one widget of set
+- `visName`: [mandatory] Name of widget
+- `visWidgetLabel`: Label of widget
+- `visWidgetColor`: color of widget 
+- `visAttrs`: Groups with attributes.
+
+## Group
+`visAttrs` consist of groups.
+
 Group can have the following attributes:
 - `name`: name of group. There are some predefined groups: `common`, `visibility`, `fixed`, `signals`, `css_common`, `css_font_text`, `css_background`, `css_border`, `css_shadow_padding`, `gestures`, `last_change`, `echarts`. Avoid using of all reserved group names except `common`.
 - `label`: Translated label of group. Like `vis_2_widgets_material_group_switch`. Label is not required for `common` group.
@@ -94,6 +106,8 @@ Group can have the following attributes:
 - `fields`: Array of fields. See next chapter
 
 ## Fields
+`visAttrs[x].fields` consist of input fields.
+
 - `name`: [mandatory] Attribute name to be stored in data
 - `label`: [optional] Label to be displayed in the UI
 - `default`: [optional] default initial value
