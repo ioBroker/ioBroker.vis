@@ -6,6 +6,8 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { Tooltip } from '@mui/material';
 
+import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
+
 const styles = () => ({
     widget: {
         borderStyle: 'solid',
@@ -49,9 +51,24 @@ const styles = () => ({
 
 const Widget = props => {
     const style = {};
+    if (props.widgetType?.color) {
+        style.backgroundColor = props.widgetType.color;
+    } else if (props.widgetSetProps?.color) {
+        style.backgroundColor = props.widgetSetProps.color;
+    } else
     if (window.visSets && window.visSets[props.widgetSet]?.color) {
         style.backgroundColor = window.visSets[props.widgetSet].color;
     }
+
+    const titleStyle = {};
+    if (style.backgroundColor) {
+        if (Utils.isUseBright(style.backgroundColor)) {
+            titleStyle.color = 'white';
+        } else {
+            titleStyle.color = 'black';
+        }
+    }
+
     let img;
     if (props.widgetType.preview?.startsWith('<img')) {
         const m = props.widgetType.preview.match(/src="([^"]+)"/) || props.widgetType.preview.match(/src='([^']+)'/);
@@ -72,8 +89,7 @@ const Widget = props => {
         />;
     }
 
-    const result =
-    <Tooltip
+    const result = <Tooltip
         title={<div className={props.classes.widgetTooltip}>
             <div>{ img }</div>
             { props.widgetType.help ? <div>{props.widgetType.help}</div> : null }
@@ -81,7 +97,7 @@ const Widget = props => {
         placement="right-end"
     >
         <div className={props.classes.widget} style={style}>
-            <div className={props.classes.widgetTitle}>{window._(props.widgetType.title)}</div>
+            <div className={props.classes.widgetTitle} style={titleStyle}>{props.widgetType.label ? I18n.t(props.widgetType.label) : window._(props.widgetType.title)}</div>
             <span className={props.classes.widgetImageContainer}>
                 { img }
             </span>
@@ -116,6 +132,9 @@ const Widget = props => {
 
 Widget.propTypes = {
     classes: PropTypes.object,
+    widgetSetProps: PropTypes.object,
+    widgetSet: PropTypes.string,
+    widgetType: PropTypes.object,
 };
 
 export default withStyles(styles)(Widget);

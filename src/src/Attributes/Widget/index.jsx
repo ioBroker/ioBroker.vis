@@ -344,13 +344,13 @@ const getFieldsAfter = (widget, widgets, fonts) => [
     },
 ];
 
-const checkFunction = (funcText, project, selectedView, selectedWidgets) => {
+const checkFunction = (funcText, project, selectedView, selectedWidgets, index) => {
     try {
-        const _func = new Function('data', `return ${funcText}`);
+        const _func = new Function('data', 'index', `return ${funcText}`);
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {
             const data = project[selectedView].widgets[selectedWidgets].data;
-            isHidden[i] = _func(data);
+            isHidden[i] = _func(data, index);
         }
         let _isHdn = isHidden[0];
         if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {
@@ -774,13 +774,20 @@ const Widget = props => {
                     }}
                     expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
                 >
-                    <div style={{
-                        display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center',
-                    }}
+                    <div
+                        style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                            alignItems: 'center',
+                        }}
                     >
                         <div>
                             {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                            {window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : '')}
+                            {group.label ?
+                                I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
+                                :
+                                (window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
                         </div>
                         <div>
                             <Checkbox
@@ -821,14 +828,16 @@ const Widget = props => {
                                 group.fields.map((field, key2) => {
                                     let error;
                                     let disabled;
-                                    if (field.hidden && checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets)) {
-                                        return null;
+                                    if (field.hidden) {
+                                        if (checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets, field.index)) {
+                                            return null;
+                                        }
                                     }
                                     if (field.error) {
-                                        error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets);
+                                        error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
                                     }
                                     if (field.disabled) {
-                                        disabled = checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets);
+                                        disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
                                     }
 
                                     return <tr key={key2} className={props.classes.fieldRow}>

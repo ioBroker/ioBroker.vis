@@ -243,11 +243,21 @@ const WidgetField = props => {
             setCachedValue(propValue);
         }
         if (field.type === 'instance') {
-            props.socket.getAdapterInstances(field.adapter || '')
-                .then(_instances => {
-                    const inst = _instances.map(obj => obj._id.replace('system.adapter.', ''));
-                    setInstances(inst);
-                });
+            if (field.adapter === '_dataSources') {
+                props.socket.getAdapterInstances('')
+                    .then(_instances => {
+                        const inst = _instances
+                            .filter(obj => obj.common.getHistory)
+                            .map(obj => obj._id.replace('system.adapter.', ''));
+                        setInstances(inst);
+                    });
+            } else {
+                props.socket.getAdapterInstances(field.adapter || '')
+                    .then(_instances => {
+                        const inst = _instances.map(obj => obj._id.replace('system.adapter.', ''));
+                        setInstances(inst);
+                    });
+            }
         }
     }, [propValue]);
 
@@ -306,10 +316,8 @@ const WidgetField = props => {
                 fullWidth
                 placeholder={isDifferent ? t('different') : null}
                 InputProps={{
-                    classes: {
-                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                    },
-                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
+                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 error={!!error}
                 helperText={typeof error === 'string' ? I18n.t(error)  : null}
@@ -325,7 +333,7 @@ const WidgetField = props => {
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
-                customFilter={field.filter}
+                customFilter={field.filter || (field.type === 'hid' || field.type === 'history' ? { common: { custom: '_dataSources' } } : null)}
             /> : null}
         </>;
     }
@@ -367,7 +375,7 @@ const WidgetField = props => {
                 onChange={e => change(e.target.value)}
             />
             {urlPopper}
-            <IODialog
+            {idDialog ? <IODialog
                 title={t('Select file')}
                 open={idDialog}
                 onClose={() => setIdDialog(false)}
@@ -393,7 +401,7 @@ const WidgetField = props => {
                     lang={I18n.lang}
                     socket={props.socket}
                 />
-            </IODialog>
+            </IODialog> : null}
         </>;
     }
 
@@ -469,6 +477,8 @@ const WidgetField = props => {
                 min={field.min}
                 max={field.max}
                 step={field.step}
+                marks={field.marks}
+                valueLabelDisplay={field.valueLabelDisplay}
             />
             <Input
                 className={props.classes.fieldContentSliderInput}
@@ -476,9 +486,7 @@ const WidgetField = props => {
                 disabled={disabled}
                 size="small"
                 onChange={e => change(parseInt(e.target.value))}
-                classes={{
-                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                }}
+                classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
                 inputProps={{
                     step: field.step,
                     min: field.min,
@@ -519,6 +527,9 @@ const WidgetField = props => {
 
         if (field.type === 'widget') {
             options = Object.keys(props.project[props.selectedView].widgets);
+            if (field.tpl) {
+                options = options.filter(id => props.project[props.selectedView].widgets[id].tpl === field.tpl);
+            }
         }
 
         return <Select
@@ -537,7 +548,7 @@ const WidgetField = props => {
                     const item = options.find(o => o.value === _value);
                     return item ? t(item.label) : _value;
                 }
-                return field.type === 'select' ? t(_value) : _value;
+                return field.type === 'select' && !field.noTranslation ? t(_value) : _value;
             }}
             fullWidth
         >
@@ -549,14 +560,16 @@ const WidgetField = props => {
                 {
                     selectItem === ''
                         ? <i>{t('none')}</i>
-                        : (field.type === 'select' ? (typeof selectItem === 'object' ? t(selectItem.label) : t(selectItem)) : selectItem)
+                        : (field.type === 'select' && !field.noTranslation ? (typeof selectItem === 'object' ? t(selectItem.label) : t(selectItem)) : selectItem)
                 }
             </MenuItem>)}
         </Select>;
     }
 
     if (field.type === 'select-views') {
-        const options = getViewOptions(props.project).filter(option => option.type === 'folder' || option.view !== props.selectedView);
+        const options = getViewOptions(props.project)
+            .filter(option => option.type === 'folder' || option.view !== props.selectedView);
+
         return <Select
             variant="standard"
             disabled={disabled}
@@ -638,10 +651,6 @@ const WidgetField = props => {
         let options = field.options;
         if (field.type === 'class') {
             options = window.collectClassesValue.filter(cssClass => cssClass.match(/^vis-style-/));
-        } else
-        if (field.type === 'views') {
-            options = Object.keys(props.project)
-                .filter(view => !view.startsWith('__'));
         } else
         if (field.type === 'filters') {
             options = window.vis ? window.vis.updateFilter() : [];
@@ -742,6 +751,7 @@ const WidgetField = props => {
             filterAttrs: field.filterAttrs,
             removeName:  field.removeName,
         });
+
         return <Select
             variant="standard"
             value={value}
@@ -805,7 +815,7 @@ const WidgetField = props => {
         </Select>;
     }
 
-    if (field.type === 'text' || field.type === 'html') {
+    if (field.type === 'text' || field.type === 'html' || field.type === 'json') {
         return <>
             <TextField
                 size="small"
@@ -826,13 +836,13 @@ const WidgetField = props => {
                 }}
                 rows={2}
             />
-            <TextDialog
+            {idDialog ? <TextDialog
                 open={idDialog}
                 value={value}
                 onChange={newValue => change(newValue)}
                 onClose={() => setIdDialog(false)}
                 type={field.type}
-            />
+            /> : null}
         </>;
     }
 

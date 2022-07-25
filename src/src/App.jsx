@@ -22,10 +22,7 @@ import PlayIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import ConfirmDialog from '@iobroker/adapter-react-v5/Dialogs/Confirm';
-import Loader from '@iobroker/adapter-react-v5/Components/Loader';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { i18n as I18n, Utils, Loader, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
 import Widgets from './Widgets';
@@ -88,21 +85,6 @@ const styles = theme => ({
     },
 });
 
-// temporary disable i18n warnings
-I18n.t = (word, ...args) => {
-    const translation = I18n.translations[I18n.lang];
-    if (translation) {
-        const w = translation[word];
-        if (w) {
-            word = w;
-        }
-    }
-    for (const arg of args) {
-        word = word.replace('%s', arg);
-    }
-    return word;
-};
-
 const ViewDrop = props => {
     const targetRef = useRef();
 
@@ -112,7 +94,11 @@ const ViewDrop = props => {
             console.log(monitor.getClientOffset());
             console.log(targetRef.current.getBoundingClientRect());
             console.log(item);
-            props.addWidget(item.widgetType.name, monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x, monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y);
+            props.addWidget(
+                item.widgetType.name,
+                monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
+                monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
+            );
         },
         canDrop: () => props.editMode,
         collect: monitor => ({
@@ -157,6 +143,9 @@ class App extends GenericApp {
                 this.showAlert(message.toString(), 'info');
             }
         };
+
+        // temporary disable translation warnings
+        I18n.disableWarning(true);
     }
 
     setStateAsync(newState) {
@@ -527,7 +516,7 @@ class App extends GenericApp {
         widgets[newKey] = {
             tpl: widgetType,
             data: {},
-            style:{
+            style: {
                 left: `${x}px`,
                 top: `${y}px`,
             },
@@ -549,7 +538,7 @@ class App extends GenericApp {
         fields.forEach(group => {
             if (group.fields) {
                 group.fields.forEach(field => {
-                    if (field.name.includes('oid')) {
+                    if (field.name.includes('oid') || field.type === 'id') {
                         widgets[newKey].data[field.name] = 'nothing_selected';
                     }
                     if (field.default) {
@@ -559,6 +548,10 @@ class App extends GenericApp {
                 });
             }
         });
+
+        if (tplWidget.style) {
+            widgets[newKey].style = Object.assign(widgets[newKey].style, tplWidget.style);
+        }
 
         // Custom init of widgets
         if (tplWidget.init) {

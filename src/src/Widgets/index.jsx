@@ -82,6 +82,7 @@ const Widgets = props => {
         return null;
     }
     const widgetsList = {};
+    const widgetSetProps = {};
 
     const widgetTypes = getWidgetTypes();
 
@@ -91,9 +92,17 @@ const Widgets = props => {
         if (!widgetsList[widgetType.set]) {
             widgetsList[widgetType.set] = {};
         }
-        const title = window._(widgetType.title) || '';
+        const title = widgetType.label ? I18n.t(widgetType.label) : window._(widgetType.title) || '';
         if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
             return;
+        }
+        if (widgetType.setLabel) {
+            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
+            widgetSetProps[widgetType.set].label = I18n.t(widgetType.setLabel);
+        }
+        if (widgetType.setColor) {
+            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
+            widgetSetProps[widgetType.set].color = widgetType.setColor;
         }
         widgetsList[widgetType.set][widgetType.name] = widgetType;
     });
@@ -180,12 +189,17 @@ const Widgets = props => {
                             expandIcon: props.classes.clearPadding,
                         }}
                     >
-                        {category}
+                        {(widgetSetProps[category] && widgetSetProps[category].label) || category}
                     </AccordionSummary>
                     <AccordionDetails>
                         <div>
                             {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
-                                <Widget widgetType={widgetsList[category][widgetTypeName]} key={widgetKey} widgetSet={category} />)}
+                                <Widget
+                                    widgetType={widgetsList[category][widgetTypeName]}
+                                    key={widgetKey}
+                                    widgetSet={category}
+                                    widgetSetProps={widgetSetProps[category]}
+                                />)}
                         </div>
                     </AccordionDetails>
                 </Accordion>)

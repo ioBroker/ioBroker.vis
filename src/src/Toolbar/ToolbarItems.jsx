@@ -207,7 +207,7 @@ const ToolbarItems = props => <div
             })
         }
     </div>
-    <div className={props.classes.toolbarLabel}>{I18n.t(props.group.name)}</div>
+    <div className={props.classes.toolbarLabel}>{props.group.name}</div>
 </div>;
 
 ToolbarItems.propTypes = {

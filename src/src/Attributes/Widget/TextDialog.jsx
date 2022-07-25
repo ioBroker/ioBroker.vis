@@ -19,7 +19,7 @@ const TextDialog = props => {
 
     return <IODialog
         keyboardDisabled
-        title="Text edit"
+        title={props.type === 'json' ? 'JSON edit' : (props.type === 'html' ? 'HTML edit' : 'Text edit')}
         open={props.open}
         actionTitle="Save"
         action={() => props.onChange(value)}
@@ -31,9 +31,7 @@ const TextDialog = props => {
                 theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
                 width="100%"
                 value={value}
-                onChange={newValue => {
-                    changeValue(newValue);
-                }}
+                onChange={newValue => changeValue(newValue)}
                 setOptions={{
                     enableBasicAutocompletion: true,
                     enableLiveAutocompletion: true,

@@ -820,12 +820,17 @@ async function getRemoteWidgets(socket) {
                 i18nURL = commonUrl;
             }
             const lang = I18n.getLanguage();
-            const file = `${i18nURL}/i18n/${lang}.json`;
+            let file = `${i18nURL}/i18n/${lang}.json`;
+
+            if (window.location.port === '3000' && file.startsWith('http')) {
+                file = file.replace('/i18n/', `/widgets/${dynamicWidgetInstances[instanceKey]._id.replace('system.adapter.', '').replace(/\.\d*$/, '')}/i18n/`).replace('4173', '3000');
+            }
 
             await fetch(file)
                 .then(data => data.json())
                 .then(json => I18n.extendTranslations(json, lang))
-                .catch(error => console.log(`Cannot load i18n "${file}": ${error}`));
+                .catch(error =>
+                    console.log(`Cannot load i18n "${file}": ${error}`));
         } else if (dynamicWidgetInstance.common.visWidgets.i18n && typeof dynamicWidgetInstance.common.visWidgets.i18n === 'object') {
             try {
                 I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
@@ -834,6 +839,7 @@ async function getRemoteWidgets(socket) {
             }
         }
     }
+
     return result;
 }
 

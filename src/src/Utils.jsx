@@ -49,13 +49,18 @@ export const getWidgetTypes = () => {
 
         Object.values(VisView.widgets).forEach(widget => {
             const widgetInfo = widget.getWidgetInfo();
-            console.log(widgetInfo);
+
             window.visWidgetTypes.push({
                 name: widgetInfo.id,
                 preview: widgetInfo.visPrev,
                 title: widgetInfo.visName,
                 params: widgetInfo.visAttrs,
                 set: widgetInfo.visSet,
+                style: widgetInfo.visDefaultStyle,
+                label: widgetInfo.visWidgetLabel,
+                setLabel: widgetInfo.visSetLabel,
+                setColor: widgetInfo.visSetColor,
+                color: widgetInfo.visWidgetColor,
             });
         });
     }
