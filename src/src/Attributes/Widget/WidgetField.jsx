@@ -5,7 +5,8 @@ import PropTypes from 'prop-types';
 
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
-    ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField,
+    ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, FormControl,
+    FormHelperText,
 } from '@mui/material';
 
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
@@ -189,6 +190,8 @@ const WidgetField = props => {
         instance,
         projectName,
         isDifferent,
+        error,
+        disabled,
     } = props;
 
     const [cachedValue, setCachedValue] = useState('');
@@ -243,7 +246,6 @@ const WidgetField = props => {
             props.socket.getAdapterInstances(field.adapter || '')
                 .then(_instances => {
                     const inst = _instances.map(obj => obj._id.replace('system.adapter.', ''));
-                    inst.push('openeweathermap.2');
                     setInstances(inst);
                 });
         }
@@ -266,33 +268,33 @@ const WidgetField = props => {
     const [textDialogFocused, setTextDialogFocused] = useState(false);
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
 
-    const urlPopper = !field.type || field.type === 'number' || field.type === 'password' || field.type === 'image' ? <Popper
+    const urlPopper = (!field.type || field.type === 'number' || field.type === 'password' || field.type === 'image') && !disabled ? <Popper
         open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
         anchorEl={textRef.current}
         placement="bottom"
         transition
     >
-        {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={350}>
-                <Paper>
-                    <Button
-                        style={{ textTransform: 'none' }}
-                        onClick={() => change(`.${value.toString().slice(window.location.origin.length)}`)}
-                    >
-                        {I18n.t('Replace to ')}
-                        {`.${value.toString().slice(window.location.origin.length)}`}
-                    </Button>
-                    <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
-                        <ClearIcon fontSize="small" />
-                    </IconButton>
-                </Paper>
-            </Fade>
-        )}
+        {({ TransitionProps }) => <Fade {...TransitionProps} timeout={350}>
+            <Paper>
+                <Button
+                    style={{ textTransform: 'none' }}
+                    onClick={() => change(`.${value.toString().slice(window.location.origin.length)}`)}
+                >
+                    {I18n.t('Replace to ')}
+                    {`.${value.toString().slice(window.location.origin.length)}`}
+                </Button>
+                <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
+                    <ClearIcon fontSize="small" />
+                </IconButton>
+            </Paper>
+        </Fade>}
     </Popper> : null;
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
-            props.socket.getObject(value).then(objectData => setObjectCache(objectData)).catch(() => setObjectCache(null));
+            props.socket.getObject(value)
+                .then(objectData =>
+                    setObjectCache(objectData)).catch(() => setObjectCache(null));
         }
         if (objectCache && !value) {
             setObjectCache(null);
@@ -309,13 +311,16 @@ const WidgetField = props => {
                     },
                     endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
+                error={!!error}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                disabled={disabled}
                 value={value}
                 onChange={e => change(e.target.value)}
             />
             <div style={{ fontStyle: 'italic' }}>
                 {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[I18n.lang] : objectCache.common.name) : null}
             </div>
-            {idDialog ? <SelectID
+            {idDialog && !disabled ? <SelectID
                 selected={value}
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
@@ -326,14 +331,20 @@ const WidgetField = props => {
     }
 
     if (field.type === 'checkbox') {
-        return <Checkbox
-            checked={!!value}
-            classes={{
-                root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
-            }}
-            size="small"
-            onChange={e => change(e.target.checked)}
-        />;
+        return <FormControl
+            error={!!error}
+            component="fieldset"
+            variant="standard"
+        >
+            <Checkbox
+                disabled={disabled}
+                checked={!!value}
+                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding) }}
+                size="small"
+                onChange={e => change(e.target.checked)}
+            />
+            {typeof error === 'string' ? <FormHelperText>{I18n.t(error)}</FormHelperText> : null}
+        </FormControl>;
     }
 
     if (field.type === 'image') {
@@ -342,11 +353,12 @@ const WidgetField = props => {
                 variant="standard"
                 fullWidth
                 placeholder={isDifferent ? t('different') : null}
+                error={!!error}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                disabled={disabled}
                 InputProps={{
-                    classes: {
-                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                    },
-                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>...</Button>,
+                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 ref={textRef}
                 value={value}
@@ -393,12 +405,14 @@ const WidgetField = props => {
             variant="standard"
             fullWidth
             placeholder={isDifferent ? t('different') : null}
+            error={!!error}
+            helperText={typeof error === 'string' ? I18n.t(error)  : null}
+            disabled={disabled}
             InputProps={{
-                classes: {
-                    input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                },
+                classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
                 endAdornment: !isDifferent ? <Button
                     size="small"
+                    disabled={disabled}
                     title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
                     onClick={() => {
                         if (unit !== '%') {
@@ -426,6 +440,9 @@ const WidgetField = props => {
 
     if (field.type === 'color') {
         return <ColorPicker
+            error={!!error}
+            helperText={typeof error === 'string' ? I18n.t(error)  : null}
+            disabled={disabled}
             value={value}
             className={props.classes.fieldContentColor}
             onChange={color => change(color)}
@@ -444,6 +461,7 @@ const WidgetField = props => {
     if (field.type === 'slider') {
         return <div style={{ display: 'flex' }}>
             <Slider
+                disabled={disabled}
                 className={props.classes.fieldContentSlider}
                 size="small"
                 onChange={(e, newValue) => change(newValue)}
@@ -455,6 +473,7 @@ const WidgetField = props => {
             <Input
                 className={props.classes.fieldContentSliderInput}
                 value={value}
+                disabled={disabled}
                 size="small"
                 onChange={e => change(parseInt(e.target.value))}
                 classes={{
@@ -504,6 +523,7 @@ const WidgetField = props => {
 
         return <Select
             variant="standard"
+            disabled={disabled}
             value={value}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
@@ -539,6 +559,7 @@ const WidgetField = props => {
         const options = getViewOptions(props.project).filter(option => option.type === 'folder' || option.view !== props.selectedView);
         return <Select
             variant="standard"
+            disabled={disabled}
             value={value || []}
             placeholder={isDifferent ? t('different') : null}
             multiple
@@ -550,28 +571,28 @@ const WidgetField = props => {
             onChange={e => change(e.target.value.filter(selectValue => selectValue !== null))}
             fullWidth
         >
-            {options.map((option, key) =>
-                (option.type === 'view' ?
-                    <MenuItem
-                        value={option.view}
-                        key={key}
-                        style={{ paddingLeft: option.level * 16 }}
-                    >
-                        <FileIcon />
-                        <Checkbox checked={(value || []).includes(option.view)} />
-                        <ListItemText primary={t(option.view)} />
-                    </MenuItem>
-                    :
-                    <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }}>
-                        <FolderOpenIcon />
-                        {option.folder.name}
-                    </ListSubheader>))}
+            {options.map((option, key) => (option.type === 'view' ?
+                <MenuItem
+                    value={option.view}
+                    key={key}
+                    style={{ paddingLeft: option.level * 16 }}
+                >
+                    <FileIcon />
+                    <Checkbox checked={(value || []).includes(option.view)} />
+                    <ListItemText primary={t(option.view)} />
+                </MenuItem>
+                :
+                <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }}>
+                    <FolderOpenIcon />
+                    {option.folder.name}
+                </ListSubheader>))}
         </Select>;
     }
 
     if (field.type === 'groups') {
         return <Select
             variant="standard"
+            disabled={disabled}
             value={value || []}
             placeholder={isDifferent ? t('different') : null}
             multiple
@@ -599,7 +620,10 @@ const WidgetField = props => {
                 value={group._id.split('.')[2]}
                 key={group._id.split('.')[2]}
             >
-                <Checkbox checked={(value || []).includes(group._id.split('.')[2])} />
+                <Checkbox
+                    disabled={disabled}
+                    checked={(value || []).includes(group._id.split('.')[2])}
+                />
                 <TextWithIcon
                     value={group._id}
                     t={t}
@@ -627,24 +651,24 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
+            disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             options={options || []}
             inputValue={value || ''}
             value={value || ''}
             onInputChange={(e, inputValue) => change(inputValue)}
             onChange={(e, inputValue) => change(inputValue)}
-            classes={{
-                input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-            }}
+            classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
             renderOption={field.name === 'font-family' ?
                 (optionProps, option) => (
                     <div style={{ fontFamily: option }} {...optionProps}>{option}</div>) : null}
-            renderInput={params => (
-                <TextField
-                    variant="standard"
-                    {...params}
-                />
-            )}
+            renderInput={params => <TextField
+                variant="standard"
+                error={!!error}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                disabled={disabled}
+                {...params}
+            />}
         />;
     }
 
@@ -654,6 +678,7 @@ const WidgetField = props => {
         return <Autocomplete
             freeSolo
             fullWidth
+            disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             options={options || []}
             inputValue={value || ''}
@@ -670,9 +695,7 @@ const WidgetField = props => {
                 }
                 change(inputValue);
             }}
-            classes={{
-                input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-            }}
+            classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
             getOptionLabel={option => {
                 if (typeof option === 'string') {
                     return option;
@@ -680,35 +703,35 @@ const WidgetField = props => {
                 return option.type === 'view' ? option.view : option.folder.name;
             }}
             getOptionDisabled={option => option.type === 'folder'}
-            renderOption={(optionProps, option) => (option.type === 'view' ?
-                <Box
-                    component="li"
-                    style={{ paddingLeft: option.level * 16 }}
-                    {...optionProps}
-                    key={`view${option.view}`}
-                >
-                    <FileIcon />
-                    {t(option.view)}
-                </Box>
-                :
-                <Box
-                    component="li"
-                    style={{ paddingLeft: option.level * 16 }}
-                    {...optionProps}
-                    key={`folder${option.folder.id}`}
-                >
-                    <FolderOpenIcon />
-                    {option.folder.name}
-                </Box>)}
-            renderInput={params => (
-                <TextField
-                    variant="standard"
-                    {...params}
-                    inputProps={{
-                        ...params.inputProps,
-                    }}
-                />
-            )}
+            renderOption={(optionProps, option) =>
+                (option.type === 'view' ?
+                    <Box
+                        component="li"
+                        style={{ paddingLeft: option.level * 16 }}
+                        {...optionProps}
+                        key={`view${option.view}`}
+                    >
+                        <FileIcon />
+                        {t(option.view)}
+                    </Box>
+                    :
+                    <Box
+                        component="li"
+                        style={{ paddingLeft: option.level * 16 }}
+                        {...optionProps}
+                        key={`folder${option.folder.id}`}
+                    >
+                        <FolderOpenIcon />
+                        {option.folder.name}
+                    </Box>)}
+            renderInput={params => <TextField
+                variant="standard"
+                error={!!error}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                disabled={disabled}
+                {...params}
+                inputProps={{ ...params.inputProps }}
+            />}
         />;
     }
 
@@ -722,6 +745,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
+            disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
             classes={{
@@ -761,6 +785,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             value={value}
+            disabled={disabled}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
             classes={{
@@ -789,14 +814,17 @@ const WidgetField = props => {
                 value={value}
                 multiline
                 fullWidth
+                error={!!error}
+                disabled={disabled}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                onChange={e => change(e.target.value)}
                 InputProps={{
-                    endAdornment: <Button size="small" onClick={() => setIdDialog(true)}>{I18n.t('Edit')}</Button>,
+                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>{I18n.t('Edit')}</Button>,
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },
                 }}
                 rows={2}
-                disabled
             />
             <TextDialog
                 open={idDialog}
@@ -814,13 +842,14 @@ const WidgetField = props => {
                 variant="standard"
                 fullWidth
                 ref={textRef}
+                error={!!error}
+                disabled={disabled}
+                helperText={typeof error === 'string' ? I18n.t(error)  : null}
                 onFocus={() => setTextDialogFocused(true)}
                 onBlur={() => setTextDialogFocused(false)}
                 placeholder={isDifferent ? t('different') : null}
                 InputProps={{
-                    classes: {
-                        input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
-                    },
+                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
                 }}
                 value={value}
                 onChange={e => {
@@ -876,6 +905,8 @@ WidgetField.propTypes = {
     selectedWidgets: PropTypes.array,
     socket: PropTypes.object,
     widget: PropTypes.object.isRequired,
+    error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    disabled: PropTypes.bool,
 };
 
 export default WidgetField;

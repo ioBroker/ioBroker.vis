@@ -73,28 +73,6 @@ async function generateWidgetsHtml(widgetSets) {
     return false;
 }
 
-/*function upload() {
-    return new Promise(resolve => {
-        adapter.log.info(`Upload ${adapter.name} anew, while changes detected...`);
-        const file = utils.controllerDir + '/iobroker.js';
-        const child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
-        let count = 0;
-        child.stdout.on('data', data => {
-            count++;
-            adapter.log.debug(data.toString().replace('\n', ''));
-            !(count % 100) && adapter.log.info(count + ' files uploaded...');
-        });
-
-        child.stderr.on('data', data =>
-            adapter.log.error(data.toString().replace('\n', '')));
-
-        child.on('exit', exitCode => {
-            adapter.log.info(`Uploaded. ${exitCode ? 'Exit - ' + exitCode : 0}`);
-            resolve(exitCode);
-        });
-    });
-}
-*/
 async function generateConfigPage() {
     let changed = false;
 
@@ -136,10 +114,6 @@ async function generateConfigPage() {
     }
 
     return changed;
-}
-
-async function indicateError() {
-    isLicenseError = true;
 }
 
 // delete this function as js.controller 4.0 will be mainstream
@@ -335,7 +309,7 @@ function doLicense(license, uuid) {
                             resolve(false);
                         }
                     } else {
-                        await indicateError();
+                        isLicenseError = true
                         adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? data.result : 'unknown'}`);
                         resolve(true);
                     }
@@ -573,15 +547,13 @@ async function main() {
 
     // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
-        await indicateError();
+        isLicenseError = true
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-        isLicenseError = true;
     } else {
         const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
         if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
-            await indicateError();
+            isLicenseError = true
             adapter.log.error('UUID not found!');
-            isLicenseError = true;
         } else {
             let license = adapter.config.license;
             if (adapter.config.useLicenseManager) {
@@ -590,7 +562,6 @@ async function main() {
             }
 
             if (!license) {
-                await indicateError();
                 adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
                 isLicenseError = true;
             } else {

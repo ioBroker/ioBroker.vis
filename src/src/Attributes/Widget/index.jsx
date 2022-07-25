@@ -49,6 +49,12 @@ const styles = theme => ({
         fontSize: '80%',
         position: 'relative',
     },
+    fieldTitleDisabled: {
+        opacity: 0.8,
+    },
+    fieldTitleError: {
+        color: theme.palette.error.main,
+    },
     colorize: {
         display: 'none',
         position: 'absolute',
@@ -337,6 +343,27 @@ const getFieldsAfter = (widget, widgets, fonts) => [
         ],
     },
 ];
+
+const checkFunction = (funcText, project, selectedView, selectedWidgets) => {
+    try {
+        const _func = new Function('data', `return ${funcText}`);
+        const isHidden = [];
+        for (let i = 0; i < selectedWidgets.length; i++) {
+            const data = project[selectedView].widgets[selectedWidgets].data;
+            isHidden[i] = _func(data);
+        }
+        let _isHdn = isHidden[0];
+        if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {
+            _isHdn = false;
+        }
+        if (_isHdn) {
+            return true;
+        }
+    } catch (e) {
+        console.error(`Cannot execute hidden on "${funcText}": ${e}`);
+    }
+    return false;
+};
 
 const Widget = props => {
     const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
@@ -791,46 +818,60 @@ const Widget = props => {
                     <table style={{ width: '100%' }}>
                         <tbody>
                             {
-                                group.fields.map((field, key2) => <tr key={key2} className={props.classes.fieldRow}>
-                                    {field.type === 'delimiter' ?
-                                        <td colSpan="2">
-                                            <Divider style={{ borderBottomWidth: 'thick' }} />
-                                        </td>
-                                        : <>
-                                            <td className={props.classes.fieldTitle}>
-                                                { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                { field.title || (field.label && I18n.t(field.label)) ||
-                                                    (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
-                                                { group.isStyle ?
-                                                    <ColorizeIcon
-                                                        fontSize="small"
-                                                        className={props.classes.colorize}
-                                                        onClick={() => props.cssClone(field.name, newValue => {
-                                                            if (newValue !== null && newValue !== undefined) {
-                                                                const project = JSON.parse(JSON.stringify(props.project));
-                                                                props.selectedWidgets.forEach(selectedWidget =>
-                                                                    project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
-                                                                props.changeProject(project);
-                                                            }
-                                                        })}
-                                                    /> : null }
-                                            </td>
-                                            <td className={props.classes.fieldContent}>
-                                                <div className={props.classes.fieldContentDiv}>
-                                                    <div className={props.classes.fieldInput}>
-                                                        {accordionOpen[group.name] && group.hasValues ?
-                                                            <WidgetField
-                                                                field={field}
-                                                                widget={props.selectedWidgets.length > 1 ? commonValues : widget}
-                                                                isStyle={group.isStyle}
-                                                                isDifferent={isDifferent[field.name]}
-                                                                {...props}
-                                                            /> : null}
+                                group.fields.map((field, key2) => {
+                                    let error;
+                                    let disabled;
+                                    if (field.hidden && checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets)) {
+                                        return null;
+                                    }
+                                    if (field.error) {
+                                        error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets);
+                                    }
+                                    if (field.disabled) {
+                                        disabled = checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets);
+                                    }
+
+                                    return <tr key={key2} className={props.classes.fieldRow}>
+                                        {field.type === 'delimiter' ?
+                                            <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
+                                            : <>
+                                                <td className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}>
+                                                    { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
+                                                    { field.title || (field.label && I18n.t(field.label)) ||
+                                                        (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                    { group.isStyle ?
+                                                        <ColorizeIcon
+                                                            fontSize="small"
+                                                            className={props.classes.colorize}
+                                                            onClick={() => props.cssClone(field.name, newValue => {
+                                                                if (newValue !== null && newValue !== undefined) {
+                                                                    const project = JSON.parse(JSON.stringify(props.project));
+                                                                    props.selectedWidgets.forEach(selectedWidget =>
+                                                                        project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                    props.changeProject(project);
+                                                                }
+                                                            })}
+                                                        /> : null }
+                                                </td>
+                                                <td className={props.classes.fieldContent}>
+                                                    <div className={props.classes.fieldContentDiv}>
+                                                        <div className={props.classes.fieldInput}>
+                                                            {accordionOpen[group.name] && group.hasValues ?
+                                                                <WidgetField
+                                                                    error={error}
+                                                                    disabled={disabled}
+                                                                    field={field}
+                                                                    widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                                    isStyle={group.isStyle}
+                                                                    isDifferent={isDifferent[field.name]}
+                                                                    {...props}
+                                                                /> : null}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </td>
-                                        </>}
-                                </tr>)
+                                                </td>
+                                            </>}
+                                    </tr>;
+                                })
                             }
                         </tbody>
                     </table>
