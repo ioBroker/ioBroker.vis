@@ -106,8 +106,21 @@ const getItem = (item, key, props, full) => {
                     value={selectItem.value}
                     key={selectItem.value}
                 >
-                    <Checkbox checked={(item.value ? item.value : value).includes(selectItem.value)} />
-                    {I18n.t(selectItem.name)}
+                    {selectItem.subName ?
+                        <div style={{ display: 'flex' }}>
+                            <div><Checkbox checked={(item.value ? item.value : value).includes(selectItem.value)} /></div>
+                            <div>
+                                <div style={{ fontWeight: 'bold' }}>{selectItem.name}</div>
+                                <div style={{ fontSize: 10, fontStyle: 'italic' }}>{selectItem.subName}</div>
+                            </div>
+                        </div>
+                        :
+                        <>
+                            <Checkbox checked={(item.value ? item.value : value).includes(selectItem.value)} />
+                            {I18n.t(selectItem.name)}
+                        </>
+                    }
+
                 </MenuItem>)}
             </Select>
         </FormControl>;

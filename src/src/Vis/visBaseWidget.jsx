@@ -34,7 +34,6 @@ class VisBaseWidget extends React.Component {
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         this.refService = React.createRef();
-        this.refName = React.createRef();
         this.resize = false;
         this.widDiv = null;
 
@@ -839,8 +838,16 @@ class VisBaseWidget extends React.Component {
     }
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
-    renderWidgetBody(classNames, style) {
-        return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
+    renderWidgetBody(props) {
+        return <div
+            style={{
+                width: '100%',
+                height: '100%',
+                overflow: 'hidden',
+            }}
+        >
+            <pre>{ JSON.stringify(this.state.data, null, 2) }</pre>
+        </div>;
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -1231,15 +1238,13 @@ class VisBaseWidget extends React.Component {
     onToggleRelative(e) {
         e.stopPropagation();
         e.preventDefault();
-        if (this.props.isRelative) {
-            this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
-                wid: this.props.id,
-                view: this.props.view,
-                style: {
-                    position: this.props.isRelative ? 'absolute' : 'relative',
-                },
-            }]);
-        }
+        this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+            wid: this.props.id,
+            view: this.props.view,
+            style: {
+                position: this.props.isRelative ? 'absolute' : 'relative',
+            },
+        }]);
     }
 
     render() {
@@ -1302,6 +1307,8 @@ class VisBaseWidget extends React.Component {
         };
 
         const rxWidget = this.renderWidgetBody(props);
+
+        // in group edit mode show it in the top left corner
         if (this.props.id === this.props.selectedGroup) {
             style.top = 0;
             style.left = 0;
@@ -1310,7 +1317,10 @@ class VisBaseWidget extends React.Component {
 
         let widgetName = null;
         if (this.state.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
-            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.state.widgetHint}`}>
+            // show widget name on widget body
+            let widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
+
+            widgetName = <div className={Utils.clsx('vis-editmode-widget-name', this.state.widgetHint, widgetNameBottom && 'bottom')}>
                 <span>{ this.props.id }</span>
                 <AnchorIcon onClick={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
             </div>;

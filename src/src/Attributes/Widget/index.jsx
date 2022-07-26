@@ -20,6 +20,7 @@ import Utils from '@iobroker/adapter-react-v5/Components/Utils';
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
 import { getWidgetTypes, parseAttributes } from '../../Utils';
+import i18n from "@iobroker/adapter-react-v5/i18n";
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -717,10 +718,26 @@ const Widget = props => {
     const allOpened = !fields.find(group => !accordionOpen[group.name]);
     const allClosed = !fields.find(group => accordionOpen[group.name]);
 
+    let list;
+    if (props.selectedWidgets.length === 1) {
+        const tpl = widgets[props.selectedWidgets[0]].tpl;
+        const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
+        list = <div>
+            <span>{props.selectedWidgets[0]}</span>
+            <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 8 }}>
+                <span style={{ fontWeight: 'bold', marginRight: 4 }}>{widgetType?.set}</span>
+                -
+                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title}</span>
+            </span>
+        </div>;
+    } else {
+        list = props.selectedWidgets.join(', ');
+    }
+
     return <div>
         <div style={{ width: '100%' }}>
             <div style={{ display: 'inline-block', width: 'calc(100% - 68px)' }}>
-                { props.selectedWidgets.join(', ') }
+                {list}
             </div>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton

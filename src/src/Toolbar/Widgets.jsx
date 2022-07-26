@@ -52,9 +52,11 @@ const Widgets = props => {
                 items: Object.keys(widgets).filter(widget => (props.selectedGroup ?
                     widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
                     !widgets[widget].groupid)).map(widget => {
-                    const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === widgets[widget].tpl);
+                    const tpl = widgets[widget].tpl;
+                    const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
                     return {
-                        name: `${widget} (${widgetType?.set} - ${widgets[widget].tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title})`,
+                        name: widget,
+                        subName: `(${widgetType?.set} - ${tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title})`,
                         value: widget,
                     };
                 }),

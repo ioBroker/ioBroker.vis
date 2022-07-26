@@ -237,12 +237,6 @@ class VisRxWidget extends VisBaseWidget {
 
         props.className = `vis-widget ${this.state.rxData.class || ''}`;
 
-        if (this.props.isRelative) {
-            props.style.position = this.state.rxStyle.position || 'relative';
-        } else {
-            props.style.position = 'absolute';
-        }
-
         if (!this.state.editMode && this.state.disabled) {
             props.className = addClass(props.className, 'vis-user-disabled');
         }
@@ -252,6 +246,14 @@ class VisRxWidget extends VisBaseWidget {
             attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
             props.style[attr] = value;
         });
+
+        if (this.props.isRelative) {
+            props.style.position = this.state.rxStyle.position || 'relative';
+            delete props.style.top;
+            delete props.style.left;
+        } else {
+            props.style.position = 'absolute';
+        }
 
         // by default, it is border-box
         if (!this.state.rxStyle['box-sizing']) {
