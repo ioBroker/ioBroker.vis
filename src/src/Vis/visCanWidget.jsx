@@ -215,6 +215,8 @@ class VisCanWidget extends VisBaseWidget {
                 return this.props.allWidgets[this.props.id]?.data?.filterkey;
             }
         }
+
+        return null;
     }
 
     componentDidUpdate(/* prevProps, prevState, snapshot */) {
@@ -262,7 +264,7 @@ class VisCanWidget extends VisBaseWidget {
             this.widDiv.remove();
             this.widDiv = null;
         }
-    }
+    };
 
     changeHandler = (type, item, stateId) => {
         // console.log(`[${this.props.id}] update widget because of "${type}" "${stateId}": ${JSON.stringify(state)}`);
@@ -280,7 +282,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.applyBinding(stateId);
             }
         }
-    }
+    };
 
     updateSignal(item) {
         if (this.widDiv) {
@@ -302,7 +304,8 @@ class VisCanWidget extends VisBaseWidget {
             if (lcDiv) {
                 lcDiv.innerHTML = window.vis.binds.basic.formatDate(
                     this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
-                    widgetData['lc-format'], widgetData['lc-is-interval'],
+                    widgetData['lc-format'],
+                    widgetData['lc-is-interval'],
                     widgetData['lc-is-moment'],
                 );
             } else {
@@ -1001,6 +1004,7 @@ class VisCanWidget extends VisBaseWidget {
                 const visName = tplEl.dataset.visName || (wid[0] === 'g' ? 'group' : 'noname');
                 const visSet = tplEl.dataset.visSet || 'noset';
                 this.updateOnStyle = tplEl.dataset.visUpdateStyle === 'true';
+                this.resizeLocked = tplEl.dataset.visResizeLocked === 'true';
                 this.widDiv.className = addClass(this.widDiv.className, `vis-tpl-${visSet}-${visName.replace(/\s/g, '-')}`);
 
                 if (!this.state.editMode) {
@@ -1097,7 +1101,7 @@ class VisCanWidget extends VisBaseWidget {
                 // move widget to foreground
                 this.widDiv.style.zIndex = 500 + zIndex;
             } else {
-                this.widDiv.style.zIndex = (parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10)).toString();
+                this.widDiv.style.zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10).toString();
             }
             props.style.zIndex = 800 + zIndex;
 

@@ -346,6 +346,7 @@ const getFieldsAfter = (widget, widgets, fonts) => [
 
 const checkFunction = (funcText, project, selectedView, selectedWidgets, index) => {
     try {
+        // eslint-disable-next-line no-new-func
         const _func = new Function('data', 'index', `return ${funcText}`);
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {

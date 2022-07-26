@@ -66,7 +66,8 @@ const CSS = props => {
             }
         };
         load()
-            .then(() => {});
+            .then(() => {})
+            .catch(e => console.error('Error loading CSS: ', e));
     }, []);
 
     const save = (value, saveType) => {

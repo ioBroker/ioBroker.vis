@@ -12,6 +12,9 @@ class MyWidget extends Generic {
             visName: 'Switches',                             // Name of widget
             visWidgetLabel: 'vis_2_widgets_material_switches_or_buttons', // Label of widget
             visWidgetColor: '#005cc4',                       // Optional widget color. If not set, default color of widget set will be used.
+            visResizeLocked: true,                           // require, that width is always equal to height
+            visResizable: false,                             // widget is not resizable 
+            visDraggable: false,                             // widget is not draggable 
             visAttrs: [
                 {
                     name: 'common', // group name

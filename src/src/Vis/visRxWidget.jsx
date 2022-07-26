@@ -38,10 +38,13 @@ class VisRxWidget extends VisBaseWidget {
         // apply bindings and modifications
         const newState = this.onStateChanged(null, null, true);
 
+        this.resizeLocked = options.visResizeLocked;
+
         this.state = {
             ...this.state,
-            resizable: options.resizable === undefined ? true : options.resizable,
-            resizeHandles: options.resizeHandles === undefined ? this.state.resizeHandles : options.resizeHandles,
+            resizable: options.resizable === undefined ? (options.visResizable === undefined ? true : options.visResizable) : options.resizable,
+            draggable: options.visDraggable === undefined ? true : options.visDraggable,
+            resizeHandles: options.resizeHandles === undefined ? (options.visResizeHandles === undefined ? ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'] : options.visResizeHandles) : options.resizeHandles,
             rxData: newState.rxData,
             rxStyle: newState.rxStyle,
             values: {},

@@ -61,6 +61,9 @@ export const getWidgetTypes = () => {
                 setLabel: widgetInfo.visSetLabel,
                 setColor: widgetInfo.visSetColor,
                 color: widgetInfo.visWidgetColor,
+                resizable: widgetInfo.visResizable,
+                resizeLocked: widgetInfo.visResizeLocked,
+                draggable: widgetInfo.visDraggable,
             });
         });
     }

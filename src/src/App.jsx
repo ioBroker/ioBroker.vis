@@ -22,7 +22,9 @@ import PlayIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { i18n as I18n, Utils, Loader, Confirm as ConfirmDialog } from '@iobroker/adapter-react-v5';
+import {
+    i18n as I18n, Utils, Loader, Confirm as ConfirmDialog
+} from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
 import Widgets from './Widgets';

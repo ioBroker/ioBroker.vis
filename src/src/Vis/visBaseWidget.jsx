@@ -17,6 +17,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
+import AnchorIcon from '@mui/icons-material/Anchor';
+
+import { Utils } from '@iobroker/adapter-react-v5';
+
 import {
     addClass,
     removeClass,
@@ -319,58 +323,106 @@ class VisBaseWidget extends React.Component {
             } else if (this.resize === 'top') {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.width = this.refService.current.style.height;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.top = `${this.movement.top + y}px`;
                     this.widDiv.style.height = `${this.movement.height - y}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.width = this.widDiv.style.height;
+                    }
                 }
             } else if (this.resize === 'bottom') {
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.widDiv && (this.widDiv.style.height = `${this.movement.height + y}px`);
+                if (this.resizeLocked) {
+                    this.refService.current.style.width = this.refService.current.style.height;
+                }
+                if (this.widDiv && this.resizeLocked) {
+                    this.widDiv.style.width = this.widDiv.style.height;
+                }
             } else if (this.resize === 'left') {
                 this.refService.current.style.left = `${this.movement.left + x}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.left = `${this.movement.left + x}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.height = this.widDiv.style.width;
+                    }
                 }
             } else if (this.resize === 'right') {
                 this.refService.current.style.width = `${this.movement.width + x}px`;
                 this.widDiv && (this.widDiv.style.width = `${this.movement.width + x}px`);
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
+                if (this.widDiv && this.resizeLocked) {
+                    this.widDiv.style.height = this.widDiv.style.width;
+                }
             } else if (this.resize === 'top-left') {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.left = `${this.movement.left + x}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.top = `${this.movement.top + y}px`;
                     this.widDiv.style.left = `${this.movement.left + x}px`;
                     this.widDiv.style.height = `${this.movement.height - y}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.height = this.widDiv.style.width;
+                    }
                 }
             } else if (this.resize === 'top-right') {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
                 this.refService.current.style.width = `${this.movement.width + x}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.top = `${this.movement.top + y}px`;
                     this.widDiv.style.height = `${this.movement.height - y}px`;
                     this.widDiv.style.width = `${this.movement.width + x}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.height = this.widDiv.style.width;
+                    }
                 }
             } else if (this.resize === 'bottom-left') {
                 this.refService.current.style.left = `${this.movement.left + x}px`;
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.left = `${this.movement.left + x}px`;
                     this.widDiv.style.height = `${this.movement.height + y}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.height = this.widDiv.style.width;
+                    }
                 }
             } else { // bottom-right
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.refService.current.style.width = `${this.movement.width + x}px`;
+                if (this.resizeLocked) {
+                    this.refService.current.style.height = this.refService.current.style.width;
+                }
                 if (this.widDiv) {
                     this.widDiv.style.height = `${this.movement.height + y}px`;
                     this.widDiv.style.width = `${this.movement.width + x}px`;
+                    if (this.resizeLocked) {
+                        this.widDiv.style.height = this.widDiv.style.width;
+                    }
                 }
             }
 
@@ -530,6 +582,7 @@ class VisBaseWidget extends React.Component {
         const shiftEm = `${shift}em`;
         const thicknessEm = `${thickness}em`;
         const offsetEm = `${shift - thickness}em`;
+
         return [
             // top
             !this.props.isRelative && this.state.resizeHandles.includes('n') ? <div
@@ -670,7 +723,7 @@ class VisBaseWidget extends React.Component {
         ];
     }
 
-
+    // eslint-disable-next-line react/no-unused-class-component-methods
     isUserMemberOfGroup(user, userGroups) {
         if (!userGroups) {
             return true;
@@ -685,6 +738,7 @@ class VisBaseWidget extends React.Component {
         });
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData) {
         const vf = this.props.viewsActiveFilter[this.props.view];
         if (widgetData?.filterkey && vf?.length) {
@@ -704,6 +758,7 @@ class VisBaseWidget extends React.Component {
         return false;
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetHidden(widgetData, states) {
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];
@@ -788,6 +843,7 @@ class VisBaseWidget extends React.Component {
         return <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}><pre>{ JSON.stringify(this.state.data, null, 2) }</pre></div>;
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     changeOrder(e, dir) {
         e.stopPropagation();
 
@@ -890,25 +946,25 @@ class VisBaseWidget extends React.Component {
             }
 
             return `one ${singular}`;
-        } else {
-            if (this.props.lang === 'de') {
-                return `${value} ${plural}`;
-            }
-
-            if (this.props.lang === 'ru') {
-                const d = value % 10;
-                if (d === 1 && value !== 11) {
-                    return `${value} ${singular}`;
-                }
-                if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
-                    return `${value} ${special24}`;
-                }
-
-                return `${value} ${plural}`;
-            } else {
-                return `${value} ${plural}`;
-            }
         }
+
+        if (this.props.lang === 'de') {
+            return `${value} ${plural}`;
+        }
+
+        if (this.props.lang === 'ru') {
+            const d = value % 10;
+            if (d === 1 && value !== 11) {
+                return `${value} ${singular}`;
+            }
+            if (d >= 2 && d <= 4 && (value > 20 || value < 10)) {
+                return `${value} ${special24}`;
+            }
+
+            return `${value} ${plural}`;
+        }
+
+        return `${value} ${plural}`;
     }
 
     formatInterval(timestamp, isMomentJs) {
@@ -987,8 +1043,8 @@ class VisBaseWidget extends React.Component {
                 text += ' ago';
             }
         } else {
-            let d = Math.floor(diff / (3600 * 24));
-            let h = Math.floor((diff - d * (3600 * 24)) / 3600);
+            const d = Math.floor(diff / (3600 * 24));
+            const h = Math.floor((diff - d * (3600 * 24)) / 3600);
             text = '';
             if (this.props.lang === 'de') {
                 text = `vor ${this.formatIntervalHelper(d, 'days')}`;
@@ -1028,12 +1084,12 @@ class VisBaseWidget extends React.Component {
             const timeIntervalEl = this.widDiv.querySelector('.time-interval');
             if (timeIntervalEl) {
                 const time = parseInt(timeIntervalEl.dataset.time, 10);
-                const moment = timeIntervalEl.dataset.moment === 'true';
-                timeIntervalEl.innerHTML = this.formatInterval(time, moment);
+                timeIntervalEl.innerHTML = this.formatInterval(time, timeIntervalEl.dataset.moment === 'true');
             }
         }, 10000);
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     formatDate(dateObj, format, interval, isMomentJs) {
         if (typeof format === 'boolean') {
             interval = format;
@@ -1049,13 +1105,13 @@ class VisBaseWidget extends React.Component {
         if (!dateObj) {
             return '';
         }
-        let text = typeof dateObj;
+        const text = typeof dateObj;
         if (text === 'string') {
             dateObj = new Date(dateObj);
         }
         if (text !== 'object') {
-            if (isFinite(dateObj)) {
-                let i = parseInt(dateObj, 10);
+            if (Number.isFinite(dateObj)) {
+                const i = parseInt(dateObj, 10);
                 // if greater than 2000.01.01 00:00:00
                 if (i > 946681200000) {
                     dateObj = new Date(dateObj);
@@ -1088,7 +1144,9 @@ class VisBaseWidget extends React.Component {
         // Month
         if (format.includes('MM') || format.includes('ММ')) {
             v =  dateObj.getMonth() + 1;
-            if (v < 10) v = '0' + v;
+            if (v < 10) {
+                v = `0${v}`;
+            }
             format = format.replace('MM', v);
             format = format.replace('ММ', v);
         } else if (format.includes('M') || format.includes('М')) {
@@ -1100,7 +1158,9 @@ class VisBaseWidget extends React.Component {
         // Day
         if (format.includes('DD') || format.includes('TT') || format.includes('ДД')) {
             v =  dateObj.getDate();
-            if (v < 10) v = '0' + v;
+            if (v < 10) {
+                v = `0${v}`;
+            }
             format = format.replace('DD', v);
             format = format.replace('TT', v);
             format = format.replace('ДД', v);
@@ -1114,7 +1174,9 @@ class VisBaseWidget extends React.Component {
         // hours
         if (format.includes('hh') || format.includes('SS') || format.includes('чч')) {
             v =  dateObj.getHours();
-            if (v < 10) v = '0' + v;
+            if (v < 10) {
+                v = `0${v}`;
+            }
             format = format.replace('hh', v);
             format = format.replace('SS', v);
             format = format.replace('чч', v);
@@ -1128,7 +1190,9 @@ class VisBaseWidget extends React.Component {
         // minutes
         if (format.includes('mm') || format.includes('мм')) {
             v =  dateObj.getMinutes();
-            if (v < 10) v = '0' + v;
+            if (v < 10) {
+                v = `0${v}`;
+            }
             format = format.replace('mm', v);
             format = format.replace('мм', v);
         } else if (format.includes('m') ||  format.includes('м')) {
@@ -1141,9 +1205,9 @@ class VisBaseWidget extends React.Component {
         if (format.includes('sss') || format.includes('ссс')) {
             v =  dateObj.getMilliseconds();
             if (v < 10) {
-                v = '00' + v;
+                v = `00${v}`;
             } else if (v < 100) {
-                v = '0' + v;
+                v = `0${v}`;
             }
             format = format.replace('sss', v);
             format = format.replace('ссс', v);
@@ -1152,7 +1216,7 @@ class VisBaseWidget extends React.Component {
         // seconds
         if (format.includes('ss') || format.includes('сс')) {
             v =  dateObj.getSeconds();
-            if (v < 10) v = '0' + v;
+            if (v < 10) v = `0${v}`;
             format = format.replace('ss', v);
             format = format.replace('cc', v);
         } else if (format.includes('s') || format.includes('с')) {
@@ -1162,6 +1226,20 @@ class VisBaseWidget extends React.Component {
         }
 
         return format;
+    }
+
+    onToggleRelative(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (this.props.isRelative) {
+            this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                wid: this.props.id,
+                view: this.props.view,
+                style: {
+                    position: this.props.isRelative ? 'absolute' : 'relative',
+                },
+            }]);
+        }
     }
 
     render() {
@@ -1232,16 +1310,18 @@ class VisBaseWidget extends React.Component {
 
         let widgetName = null;
         if (this.state.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
-            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.state.widgetHint}`}>{ this.props.id }</div>;
+            widgetName = <div ref={this.refName} className={`vis-editmode-widget-name ${this.state.widgetHint}`}>
+                <span>{ this.props.id }</span>
+                <AnchorIcon onClick={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
+            </div>;
             style.overflow = 'visible';
         }
 
         const overlay = this.state.hideHelper ||
-        this.props.runtime ||
-        !this.state.editMode ||
-        (widget.groupid && !this.props.selectedGroup) ||
-        widget.data.locked
-            ? null : <div
+            this.props.runtime ||
+            !this.state.editMode ||
+            (widget.groupid && !this.props.selectedGroup) ||
+            widget.data.locked ? null : <div
                 className={classNames}
                 onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
             />;
