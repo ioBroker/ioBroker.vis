@@ -1303,6 +1303,15 @@ class VisView extends React.Component {
                 listRelativeWidgetsOrder.sort((a, b) => {
                     const posA = relativeWidgetOrder.indexOf(a);
                     const posB = relativeWidgetOrder.indexOf(b);
+                    if (posA === -1 && posB === -1) {
+                        return 0;
+                    }
+                    if (posA === -1) {
+                        return 1;
+                    }
+                    if (posB === -1) {
+                        return -1;
+                    }
                     return posA - posB;
                 });
 

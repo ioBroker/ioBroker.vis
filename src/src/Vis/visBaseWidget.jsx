@@ -1255,7 +1255,7 @@ class VisBaseWidget extends React.Component {
             style: {
                 position: this.props.isRelative ? 'absolute' : 'relative',
                 width: this.props.isRelative ? widget.style.absoluteWidth || '100px' : '100%',
-                absoluteWidth: this.props.isRelative ? widget.style.width : null,
+                absoluteWidth: !this.props.isRelative ? widget.style.width : null,
                 noPxToPercent: true, // special command
             },
         }]);
