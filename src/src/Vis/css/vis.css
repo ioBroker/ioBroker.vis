@@ -117,6 +117,9 @@ body, html {
     font-family: Arial, Helvetica, sans-serif;
     overflow: visible;
 }
+.vis-editmode-widget-name-long {
+    padding: 1px 33px 1px 3px;
+}
 .vis-editmode-widget-name.dark {
     background: black;
     color: white;
@@ -157,15 +160,98 @@ body, html {
     transform: scale(2);
     color: #F00;
 }
+.vis-anchor:active {
+    transform: scale(1.7);
+    color: #F00;
+}
 .vis-anchor-enabled {
     color: #0b9512;
 }
 .vis-anchor-disabled {
     opacity: 0.7;
 }
+.vis-expand {
+    transform: rotate(90deg);
+    position: absolute;
+    top: 0;
+    right: 17px;
+    /* font-size: 10px;*/
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.vis-expand:hover {
+    transform: scale(2) rotate(90deg);
+    color: #F00;
+}
+.vis-expand:active {
+    transform: scale(1.7) rotate(90deg);
+    color: #F00;
+}
+.vis-expand-enabled {
+    color: #0b9512;
+}
+.vis-expand-disabled {
+    opacity: 0.7;
+}
 
+.vis-view-column {
+    flex: 1 0 0;
+    max-width: 500px;
+    min-width: 100px;
+    height: 100%;
+    position: relative;
+}
 
-/* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWERE */
+.vis-view-column-edit {
+    border: 1px dashed #888888;
+}
+
+.vis-editmode-widget-move-buttons {
+    background: #002e4f;
+    border-radius: 3px 3px 0 0;
+    position: absolute;
+    top: -13px;
+    right: 0;
+    overflow: visible;
+    height: 13px;
+    width: 30px;
+}
+.vis-editmode-widget-move-buttons.dark {
+    background: black;
+    color: white;
+}
+.vis-editmode-widget-move-buttons.light {
+    background: white;
+    color: black;
+}
+.vis-editmode-widget-move-buttons.bottom {
+    top: -0;
+    border-radius: 0 0 3px 3px;
+    opacity: 0.5;
+    z-index: 1002;
+}
+.vis-editmode-move-button {
+    position: absolute;
+    top: 0;
+    left: 1px;
+    width: 13px;
+    height: 13px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: inline-block;
+}
+.vis-editmode-move-button:hover {
+    transform: scale(2);
+    color: #F00;
+}
+.vis-editmode-move-button:active {
+    transform: scale(1.7);
+    color: #F00;
+}
+
+/* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWHERE */
 /*
 .vis-no-user-select {
     -webkit-touch-callout: none;

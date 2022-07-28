@@ -18,6 +18,9 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 
 import AnchorIcon from '@mui/icons-material/Anchor';
+import ExpandIcon from '@mui/icons-material/Expand';
+import UpIcon from '@mui/icons-material/ArrowUpward';
+import DownIcon from '@mui/icons-material/ArrowDownward';
 
 import { Utils } from '@iobroker/adapter-react-v5';
 
@@ -31,6 +34,8 @@ class VisBaseWidget extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.uuid = `${Date.now()}.${Math.round(Math.random() * 1000000)}`;
 
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         this.refService = React.createRef();
@@ -57,7 +62,7 @@ class VisBaseWidget extends React.Component {
 
     componentDidMount() {
         // register service ref by view for resize and move
-        this.props.registerRef(this.props.id, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
+        this.props.registerRef(this.props.id, this.uuid, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
     }
 
     componentWillUnmount() {
@@ -65,7 +70,7 @@ class VisBaseWidget extends React.Component {
         this.updateInterval = null;
 
         // delete service ref from view
-        this.props.registerRef && this.props.registerRef(this.props.id);
+        this.props.registerRef && this.props.registerRef(this.props.id, this.uuid);
         if (this.shadowDiv) {
             this.shadowDiv.remove();
             this.shadowDiv = null;
@@ -264,7 +269,7 @@ class VisBaseWidget extends React.Component {
                 // set select
                 this.props.setSelectedWidgets([this.props.id]);
             }
-        } else if (this.props.moveAllowed && this.state.draggable !== false) {
+        } else if (this.props.moveAllowed && this.state.draggable !== false && !this.props.isRelative) {
             // User can drag only objects of the same type
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
         }
@@ -484,7 +489,7 @@ class VisBaseWidget extends React.Component {
                 // calculate widget position
                 calculateRelativeWidgetPosition(this.props.id, left, top, this.shadowDiv, this.movement.order);
             }
-            console.log(this.movement.order.join(', '));
+            // console.log(this.movement.order.join(', '));
 
             // End of movement
             if (save) {
@@ -582,6 +587,9 @@ class VisBaseWidget extends React.Component {
         const thicknessEm = `${thickness}em`;
         const offsetEm = `${shift - thickness}em`;
 
+        const widgetWidth100 = this.props.views[this.props.view].widgets[this.props.id].style.width === '100%';
+        const widgetHeight100 = this.props.views[this.props.view].widgets[this.props.id].style.height === '100%';
+
         return [
             // top
             !this.props.isRelative && this.state.resizeHandles.includes('n') ? <div
@@ -601,7 +609,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'top')}
             /> : null,
             // bottom
-            this.state.resizeHandles.includes('s') ? <div
+            !widgetHeight100 && this.state.resizeHandles.includes('s') ? <div
                 key="bottom"
                 className="vis-editmode-resizer"
                 style={{
@@ -635,7 +643,7 @@ class VisBaseWidget extends React.Component {
                 onMouseDown={e => this.onResizeStart(e, 'left')}
             /> : null,
             // right
-            this.state.resizeHandles.includes('e') ? <div
+            !widgetWidth100 && this.state.resizeHandles.includes('e') ? <div
                 key="right"
                 className="vis-editmode-resizer"
                 style={{
@@ -853,6 +861,7 @@ class VisBaseWidget extends React.Component {
     // eslint-disable-next-line react/no-unused-class-component-methods
     changeOrder(e, dir) {
         e.stopPropagation();
+        e.preventDefault();
 
         const order = [...this.props.relativeWidgetOrder];
         const pos = order.indexOf(this.props.id);
@@ -1238,14 +1247,57 @@ class VisBaseWidget extends React.Component {
     onToggleRelative(e) {
         e.stopPropagation();
         e.preventDefault();
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+
         this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
                 position: this.props.isRelative ? 'absolute' : 'relative',
+                width: this.props.isRelative ? widget.style.absoluteWidth || '100px' : '100%',
+                absoluteWidth: this.props.isRelative ? widget.style.width : null,
+                noPxToPercent: true, // special command
             },
         }]);
     }
+
+    onToggleWidth(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+
+        this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+            wid: this.props.id,
+            view: this.props.view,
+            style: {
+                width: widget.style.width === '100%' ? widget.style.absoluteWidth || '100px' : '100%',
+                absoluteWidth: widget.style.width !== '100%' ? widget.style.width : null,
+                noPxToPercent: true, // special command
+            },
+        }]);
+    }
+
+    /*onRelativeChange(e, isDown) {
+        e.stopPropagation();
+        e.preventDefault();
+        const order = [...this.props.relativeWidgetOrder];
+        const index = order.indexOf(this.props.id);
+        if (isDown) {
+            if (index !== order.length - 1) {
+                return;
+            }
+            order.splice(index, 1);
+            order.splice(index + 1, 0, this.props.id);
+        } else {
+            if (!index) {
+                return;
+            }
+            order.splice(index, 1);
+            order.splice(index - 1, 0, this.props.id);
+        }
+
+        this.props.onWidgetsChanged && this.props.onWidgetsChanged(null, this.props.view, { order });
+    }*/
 
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
@@ -1282,7 +1334,7 @@ class VisBaseWidget extends React.Component {
             style.userSelect = 'none';
 
             if (selected) {
-                if (this.props.moveAllowed && this.state.draggable !== false) {
+                if (this.props.moveAllowed && this.state.draggable !== false && !this.props.isRelative) {
                     style.cursor = 'move';
                 } else {
                     style.cursor = 'default';
@@ -1316,14 +1368,39 @@ class VisBaseWidget extends React.Component {
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
         let widgetName = null;
+        let widgetMoveButtons = null;
         if (this.state.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
             // show widget name on widget body
             const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
 
-            widgetName = <div className={Utils.clsx('vis-editmode-widget-name', this.state.widgetHint, widgetNameBottom && 'bottom')}>
+            widgetName = <div
+                className={Utils.clsx(
+                    'vis-editmode-widget-name',
+                    this.state.widgetHint,
+                    widgetNameBottom && 'bottom',
+                    this.props.isRelative && 'vis-editmode-widget-name-long',
+                )}
+            >
                 <span>{ this.props.id }</span>
-                <AnchorIcon onClick={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
+                <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
+                {this.props.isRelative ? <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
             </div>;
+
+            if (this.props.isRelative) {
+                const pos = this.props.relativeWidgetOrder.indexOf(this.props.id);
+                const showUp = !!pos;
+                const showDown = pos !== this.props.relativeWidgetOrder.length - 1;
+                if (showUp || showDown) {
+                    widgetMoveButtons = <div
+                        className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'bottom')}
+                        style={{ width: !showUp || !showDown ? 15 : undefined }}
+                    >
+                        {showUp   ? <UpIcon onMouseDown={e => this.changeOrder(e, -1)} className="vis-editmode-move-button" /> : null}
+                        {showDown ? <DownIcon onMouseDown={e => this.changeOrder(e, 1)} className="vis-editmode-move-button" style={{ left: showUp ? 15 : undefined }} /> : null}
+                    </div>;
+                }
+            }
+
             style.overflow = 'visible';
         }
 
@@ -1343,6 +1420,7 @@ class VisBaseWidget extends React.Component {
             style={props.style}
         >
             { widgetName }
+            { widgetMoveButtons }
             { overlay }
             { this.state.selectedOne ? this.getResizeHandlers() : null }
             { rxWidget }

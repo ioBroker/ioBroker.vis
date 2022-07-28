@@ -243,8 +243,11 @@ class VisRxWidget extends VisBaseWidget {
 
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
-            attr = attr.replace(/(-\w)/g, text => text[1].toLowerCase());
-            props.style[attr] = value;
+            if (value !== null && value !== undefined) {
+                attr = attr.replace(/(-\w)/g,
+                    text => text[1].toUpperCase());
+                props.style[attr] = value;
+            }
         });
 
         if (this.props.isRelative) {

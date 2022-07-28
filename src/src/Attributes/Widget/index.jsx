@@ -732,7 +732,7 @@ const Widget = props => {
         list = props.selectedWidgets.join(', ');
     }
 
-    return <div>
+    return <>
         <div style={{ width: '100%' }}>
             <div style={{ display: 'inline-block', width: 'calc(100% - 68px)' }}>
                 {list}
@@ -763,7 +763,7 @@ const Widget = props => {
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
         </div>
 
-        <div style={{ height: 'calc(100vh - 260px)', overflowY: 'auto'  }}>
+        <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
             {fields.map(group => <Accordion
                 classes={{
                     root: props.classes.clearPadding,
@@ -936,7 +936,7 @@ const Widget = props => {
                 {JSON.stringify(customFields, null, 2)}
             </pre> : null}
         </div>
-    </div>;
+    </>;
 };
 
 Widget.propTypes = {

@@ -1189,8 +1189,21 @@ class App extends GenericApp {
         this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
         if (data) {
             data.forEach(item => {
-                const percentStyle = this.pxToPercent(this.tempProject[item.view].widgets[item.wid].style, item.style);
-                Object.assign(this.tempProject[item.view].widgets[item.wid].style, percentStyle);
+                if (item.style) {
+                    const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
+                    if (item.style.noPxToPercent) {
+                        delete item.style.noPxToPercent;
+                        Object.assign(currentStyle, item.style);
+                    } else {
+                        const percentStyle = this.pxToPercent(currentStyle, item.style);
+                        Object.assign(currentStyle, percentStyle);
+                    }
+                    Object.keys(currentStyle).forEach(key => {
+                        if (currentStyle[key] === undefined || currentStyle[key] === null) {
+                            delete currentStyle[key];
+                        }
+                    });
+                }
             });
         }
 
