@@ -15,9 +15,20 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
+
+import { Utils } from '@iobroker/adapter-react-v5';
+
 import VisCanWidget from './visCanWidget';
 import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
+
+const generateClassNameEngine = createGenerateClassName({
+    productionPrefix: 'vis',
+});
+
+const MAX_COLUMNS = 8;
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -33,17 +44,22 @@ class VisView extends React.Component {
     constructor(props) {
         super(props);
 
-        VisView.collectInformation();
+        this.promiseToCollect = VisView.collectInformation(props.socket);
 
         this.state = {
             mounted: false,
             rulers: [],
             loadedjQueryTheme: '',
             themeCode: '',
+            width: 0,
         };
 
         this.refView = React.createRef();
         this.refRelativeView = React.createRef();
+        this.refRelativeColumnsView = new Array(MAX_COLUMNS);
+        for (let r = 0; r < MAX_COLUMNS; r++) {
+            this.refRelativeColumnsView[r] = React.createRef();
+        }
         this.widgetsRefs = {};
         this.selectDiv = null;
         this.movement = null;
@@ -75,11 +91,19 @@ class VisView extends React.Component {
     }
 
     componentDidMount() {
-        this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+        if (this.refRelativeView.current) {
+            if (this.refRelativeView.current.offsetWidth !== this.state.width) {
+                this.setState({ width: this.refRelativeView.current.offsetWidth });
+            }
+        }
 
-        this.loadJqueryTheme(this.getJQueryThemeName())
-            .then(() => this.setState({ mounted: true }, () =>
-                this.registerEditorHandlers()));
+        this.promiseToCollect.then(() => {
+            this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+
+            this.loadJqueryTheme(this.getJQueryThemeName())
+                .then(() => this.setState({ mounted: true }, () =>
+                    this.registerEditorHandlers()));
+        });
     }
 
     componentWillUnmount() {
@@ -162,7 +186,7 @@ class VisView extends React.Component {
         return null;
     }
 
-    registerRef = (id, widDiv, refService, onMove, onResize, onTempSelect, onCommand) => {
+    registerRef = (id, uuid, widDiv, refService, onMove, onResize, onTempSelect, onCommand) => {
         if (onMove) {
             this.widgetsRefs[id] = {
                 widDiv,
@@ -171,8 +195,9 @@ class VisView extends React.Component {
                 onResize,
                 onTempSelect,
                 onCommand,
+                uuid,
             };
-        } else {
+        } else if (this.widgetsRefs[id] && this.widgetsRefs[id].uuid === uuid) {
             delete this.widgetsRefs[id];
         }
     };
@@ -671,6 +696,17 @@ class VisView extends React.Component {
         pRect.height = this.refView.current.clientHeight;
         pRect.width  = this.refView.current.clientWidth;
 
+        if (oldStyle.position === 'relative') {
+            delete newStyle.top;
+            delete newStyle.left;
+            if (oldStyle.width === '100%') {
+                delete newStyle.width;
+            }
+            if (oldStyle.height === '100%') {
+                delete newStyle.height;
+            }
+        }
+
         const resultStyle = { ...newStyle };
         if (newStyle.top && parseDimension(oldStyle.top).dimension === '%' && parseDimension(newStyle.top).dimension !== '%') {
             resultStyle.top    = (parseDimension(newStyle.top).value  * 100) / pRect.height;
@@ -767,6 +803,11 @@ class VisView extends React.Component {
 
     componentDidUpdate() {
         this.registerEditorHandlers();
+        if (this.refRelativeView.current) {
+            if (this.refRelativeView.current.offsetWidth !== this.state.width) {
+                this.setState({ width: this.refRelativeView.current.offsetWidth });
+            }
+        }
     }
 
     static renderGitter(step, color) {
@@ -800,13 +841,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, refAbsoluteView, refRelativeView, onMouseWidgetDown, relativeWidgetOrder, moveAllowed) {
-        const isRelative = widget.style && (
-            widget.style.position === 'relative' ||
-            widget.style.position === 'static' ||
-            widget.style.position === 'sticky'
-        );
-
+    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed) {
         const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
 
         const _props = {
@@ -822,7 +857,7 @@ class VisView extends React.Component {
             isRelative,
             viewsActiveFilter: props.viewsActiveFilter,
             setValue: props.setValue,
-            refParent: isRelative ? refRelativeView : refAbsoluteView,
+            refParent,
             linkContext: props.linkContext,
             formatUtils: props.formatUtils,
             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
@@ -851,9 +886,7 @@ class VisView extends React.Component {
         _props.jQuery = props.jQuery;
         _props.$$ = props.$$;
 
-        const rxWidget = <Widget {..._props} />;
-
-        return { rxWidget, isRelative };
+        return <Widget {..._props} />;
     }
 
     loadJqueryTheme(jQueryTheme) {
@@ -906,6 +939,7 @@ class VisView extends React.Component {
         }
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     moveWidgets = async (leftShift, topShift) => {
         if (!this.moveTimer) {
             this.movement = {
@@ -959,6 +993,7 @@ class VisView extends React.Component {
         }, 800);
     };
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     resizeWidgets = async (widthShift, heightShift) => {
         if (!this.moveTimer) {
             this.movement = {
@@ -1091,9 +1126,85 @@ class VisView extends React.Component {
         ];
     }
 
+    static getRelativeStyle(settings) {
+        const relativeStyle = {};
+        // this was only if this.props.editMode
+        if (settings.sizex) {
+            let ww = settings.sizex;
+            let hh = settings.sizey;
+            if (Number.isFinite(ww)) {
+                ww = parseFloat(ww);
+            }
+            if (Number.isFinite(hh)) {
+                hh = parseFloat(hh);
+            }
+
+            if (typeof ww === 'number' || ww.match(/\d$/)) {
+                ww += 'px';
+            }
+            if (typeof hh === 'number' || hh.match(/\d$/)) {
+                hh += 'px';
+            }
+            relativeStyle.width = ww;
+            relativeStyle.height = hh;
+        } else {
+            relativeStyle.width = '100%';
+            relativeStyle.height = '100%';
+        }
+
+        relativeStyle.display = settings.style.display || 'flex';
+        if (relativeStyle.display === 'flex') {
+            // relativeStyle.flexDirection = 'row';
+            relativeStyle.flexWrap = 'wrap';
+            relativeStyle.gap = 8;
+            // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
+            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+        }
+        relativeStyle.position = 'absolute';
+        relativeStyle.top = 0;
+        relativeStyle.left = 0;
+
+        return relativeStyle;
+    }
+
+    getCountOfRelativeColumns(relativeWidgetsCount) {
+        // number of columns
+        const width = this.state.width;
+        if (width) {
+            let columns;
+            if (width < 600) {
+                columns = 1;
+            } else if (width < 900) {
+                columns = 2;
+            } else if (width < 1200) {
+                columns = 3;
+            } else if (width < 2064) {
+                columns = 4;
+            } else {
+                columns = Math.floor(width / 500) + 1;
+            }
+
+            if (columns > relativeWidgetsCount) {
+                columns = relativeWidgetsCount;
+            }
+            if (columns > MAX_COLUMNS) {
+                columns = MAX_COLUMNS;
+            }
+
+            return columns;
+        }
+
+        return 1;
+    }
+
+    renderRelativeView(settings, rxRelativeWidgets) {
+        return ;
+    }
+
     render() {
-        const rxAbsoluteWidgets = [];
-        const rxRelativeWidgets = [];
+        let rxAbsoluteWidgets = [];
+        let rxRelativeWidgets = [];
 
         if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
             return null;
@@ -1147,6 +1258,10 @@ class VisView extends React.Component {
                     }
                 }
 
+                const listRelativeWidgetsOrder = [];
+                const listAbsoluteWidgetsOrder = [];
+
+                // calculate order of relative widgets
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
@@ -1158,20 +1273,23 @@ class VisView extends React.Component {
                             return;
                         }
                     }
-
-                    const { rxWidget, isRelative } = VisView.getOneWidget(this.props, relativeWidgetOrder.indexOf(id), id, widget, this.registerRef, this.refView, this.refRelativeView, this.onMouseWidgetDown, relativeWidgetOrder, moveAllowed);
-
+                    const isRelative = widget.style && (
+                        widget.style.position === 'relative' ||
+                        widget.style.position === 'static' ||
+                        widget.style.position === 'sticky'
+                    );
                     if (isRelative) {
-                        if (!relativeWidgetOrder.includes(id)) {
-                            relativeWidgetOrder.push(id);
+                        if (!listRelativeWidgetsOrder.includes(id)) {
+                            listRelativeWidgetsOrder.push(id);
                         }
-                        rxRelativeWidgets.push({ id, rxWidget });
                     } else {
-                        const pos = relativeWidgetOrder.indexOf(id);
+                        const pos = listRelativeWidgetsOrder.indexOf(id);
                         if (pos !== -1) {
-                            relativeWidgetOrder.splice(pos, 1);
+                            listRelativeWidgetsOrder.splice(pos, 1);
                         }
-                        rxAbsoluteWidgets.push(rxWidget);
+                        if (!listAbsoluteWidgetsOrder.includes(id)) {
+                            listAbsoluteWidgetsOrder.push(id);
+                        }
                     }
                 });
 
@@ -1182,16 +1300,72 @@ class VisView extends React.Component {
                 }
 
                 // sort relative widgets according to order
-                rxRelativeWidgets.sort((a, b) => {
-                    const posA = relativeWidgetOrder.indexOf(a.id);
-                    const posB = relativeWidgetOrder.indexOf(b.id);
+                listRelativeWidgetsOrder.sort((a, b) => {
+                    const posA = relativeWidgetOrder.indexOf(a);
+                    const posB = relativeWidgetOrder.indexOf(b);
+                    if (posA === -1 && posB === -1) {
+                        return 0;
+                    }
+                    if (posA === -1) {
+                        return 1;
+                    }
+                    if (posB === -1) {
+                        return -1;
+                    }
                     return posA - posB;
                 });
+
+                const columns = this.getCountOfRelativeColumns(listRelativeWidgetsOrder.length);
+                const wColumns = new Array(columns);
+                for (let w = 0; w < wColumns.length; w++) {
+                    wColumns[w] = [];
+                }
+
+                rxAbsoluteWidgets = listAbsoluteWidgetsOrder.map((id, index) => VisView.getOneWidget(
+                    this.props,
+                    index,
+                    id,
+                    this.props.views[this.props.view].widgets[id],
+                    this.registerRef,
+                    false,
+                    this.refView,
+                    this.onMouseWidgetDown,
+                    relativeWidgetOrder,
+                    moveAllowed,
+                ));
+
+                if (listRelativeWidgetsOrder.length) {
+                    listRelativeWidgetsOrder.forEach((id, index) => {
+                        const column = columns <= 1 ? 0 : index % columns;
+                        const w = VisView.getOneWidget(
+                            this.props,
+                            index,
+                            id,
+                            this.props.views[this.props.view].widgets[id],
+                            this.registerRef,
+                            true,
+                            this.refRelativeColumnsView[column],
+                            this.onMouseWidgetDown,
+                            listRelativeWidgetsOrder,
+                            moveAllowed,
+                        );
+                        wColumns[column].push(w);
+                    });
+
+                    rxRelativeWidgets = wColumns.map((column, i) => <div
+                        ref={this.refRelativeColumnsView[i]}
+                        key={i}
+                        className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
+                    >
+                        {column}
+                    </div>);
+                } else {
+                    rxRelativeWidgets = null;
+                }
             }
         }
 
         let className = 'vis-view';
-        const relativeStyle = {};
         const style = {
             width: '100%',
             height: '100%',
@@ -1206,32 +1380,6 @@ class VisView extends React.Component {
             }
         }
 
-        // this was only if this.props.editMode
-        if (settings.sizex) {
-            let ww = settings.sizex;
-            let hh = settings.sizey;
-            if (Number.isFinite(ww)) {
-                ww = parseFloat(ww);
-            }
-            if (Number.isFinite(hh)) {
-                hh = parseFloat(hh);
-            }
-
-            if (typeof ww === 'number' || ww.match(/\d$/)) {
-                ww += 'px';
-            }
-            if (typeof hh === 'number' || hh.match(/\d$/)) {
-                hh += 'px';
-            }
-            relativeStyle.width = ww;
-            relativeStyle.height = hh;
-        }
-
-        relativeStyle.display = settings.style.display || 'flex';
-        relativeStyle.position = 'absolute';
-        relativeStyle.top = 0;
-        relativeStyle.left = 0;
-
         settings.style && Object.keys(settings.style).forEach(attr => {
             if (attr === 'background_class') {
                 className = addClass(className, settings.style.background_class);
@@ -1242,6 +1390,13 @@ class VisView extends React.Component {
                 style[attr] = value;
             }
         });
+
+        if (!style.backgroundColor && !style.background) {
+            style.backgroundColor = this.props.themeType === 'dark' ? '#000' : '#fff';
+        }
+        if (!style.color) {
+            style.color = this.props.themeType === 'dark' ? '#fff' : '#000';
+        }
 
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
@@ -1256,40 +1411,46 @@ class VisView extends React.Component {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
 
-        return <div
-            className={className}
-            ref={this.refView}
-            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-            onDoubleClick={e => this.onViewDoubleClick(e)}
-            style={style}
-        >
-            <style>{this.state.themeCode}</style>
-            { gridDiv }
-            {this.renderScreenSize()}
-            {this.state.rulers.map((ruler, key) =>
-                <div
-                    key={key}
-                    style={{
-                        pointerEvents: 'none',
-                        position: 'absolute',
-                        width: ruler.type === 'horizontal' ? '100%' : 10,
-                        height: ruler.type === 'horizontal' ? 10 : '100%',
-                        borderStyle: 'solid',
-                        borderColor: 'red',
-                        borderWidth: 0,
-                        borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
-                        borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
-                        left: ruler.type === 'horizontal' ? 0 : ruler.value,
-                        top: ruler.type === 'horizontal' ? ruler.value : 0,
-                        zIndex: 1000,
-                    }}
-                ></div>)}
-            <div ref={this.refRelativeView} style={relativeStyle}>
-                { rxRelativeWidgets.map(item => item.rxWidget) }
-            </div>
-            { rxAbsoluteWidgets }
-        </div>;
+        return <StylesProvider generateClassName={generateClassNameEngine}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.props.theme}>
+                    <div
+                        className={className}
+                        ref={this.refView}
+                        id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+                        onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+                        onDoubleClick={e => this.onViewDoubleClick(e)}
+                        style={style}
+                    >
+                        <style>{this.state.themeCode}</style>
+                        { gridDiv }
+                        {this.renderScreenSize()}
+                        {this.state.rulers.map((ruler, key) =>
+                            <div
+                                key={key}
+                                style={{
+                                    pointerEvents: 'none',
+                                    position: 'absolute',
+                                    width: ruler.type === 'horizontal' ? '100%' : 10,
+                                    height: ruler.type === 'horizontal' ? 10 : '100%',
+                                    borderStyle: 'solid',
+                                    borderColor: 'red',
+                                    borderWidth: 0,
+                                    borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
+                                    borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
+                                    left: ruler.type === 'horizontal' ? 0 : ruler.value,
+                                    top: ruler.type === 'horizontal' ? ruler.value : 0,
+                                    zIndex: 1000,
+                                }}
+                            ></div>)}
+                        {rxRelativeWidgets ? <div ref={this.refRelativeView} style={VisView.getRelativeStyle(settings)}>
+                            { rxRelativeWidgets }
+                        </div> : null}
+                        { rxAbsoluteWidgets }
+                    </div>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </StylesProvider>;
     }
 }
 
@@ -1322,6 +1483,9 @@ VisView.propTypes = {
     lang: PropTypes.string,
     dateFormat: PropTypes.string.isRequired,
     systemConfig: PropTypes.object,
+    themeType: PropTypes.string,
+    themeName: PropTypes.string,
+    theme: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

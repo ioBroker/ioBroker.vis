@@ -77,13 +77,14 @@ class VisCanWidget extends VisBaseWidget {
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
             // console.log('Widget mounted');
-            this.renderWidget();
-            const newState = { mounted: true };
+            this.renderWidget(() => {
+                const newState = { mounted: true };
 
-            // try to read resize handlers
-            analyzeDraggableResizable(this.widDiv, newState, this.props.allWidgets[this.props.id].style);
+                // try to read resize handlers
+                analyzeDraggableResizable(this.widDiv, newState, this.props.allWidgets[this.props.id].style);
 
-            this.setState(newState);
+                this.setState(newState);
+            });
         }
     }
 
@@ -164,7 +165,7 @@ class VisCanWidget extends VisBaseWidget {
                 }
             } else if (command === 'changeFilter') {
                 if (!this.widDiv) {
-                    return;
+                    return null;
                 }
 
                 if (!options || !options.filter.length) {
@@ -803,11 +804,23 @@ class VisCanWidget extends VisBaseWidget {
         });
     }
 
-    renderWidget(update, newWidgetData, newWidgetStyle) {
+    renderWidget(update, newWidgetData, newWidgetStyle, _count, cb) {
+        if (typeof update === 'function') {
+            cb = update;
+            update = false;
+        }
+        _count = _count || 0;
         // console.log(`[${Date.now()}] Render widget`);
         let parentDiv = this.props.refParent;
         if (Object.prototype.hasOwnProperty.call(parentDiv, 'current')) {
             parentDiv = parentDiv.current;
+        }
+
+        if (!parentDiv) {
+            if (_count < 5) {
+                setTimeout(() => this.renderWidget(update, newWidgetData, newWidgetStyle, _count + 1, cb), 50);
+            }
+            return;
         }
 
         const wid = this.props.id;
@@ -1068,6 +1081,7 @@ class VisCanWidget extends VisBaseWidget {
                 this.props.socket.log.error(`${l} - ${lines[l]}`);
             }
         }
+        cb && cb();
     }
 
     shouldComponentUpdate(nextProps, nextState) {

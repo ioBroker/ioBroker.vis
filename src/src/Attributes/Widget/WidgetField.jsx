@@ -286,7 +286,7 @@ const WidgetField = props => {
     const [textDialogEnabled, setTextDialogEnabled] = useState(true);
 
     const urlPopper = (!field.type || field.type === 'number' || field.type === 'password' || field.type === 'image') && !disabled ? <Popper
-        open={textDialogFocused && textDialogEnabled && value && value.toString().startsWith(window.location.origin)}
+        open={textDialogFocused && textDialogEnabled && !!value && value.toString().startsWith(window.location.origin)}
         anchorEl={textRef.current}
         placement="bottom"
         transition

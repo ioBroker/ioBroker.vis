@@ -14,13 +14,11 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import CodeIcon from '@mui/icons-material/Code';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
 import { getWidgetTypes, parseAttributes } from '../../Utils';
-import i18n from "@iobroker/adapter-react-v5/i18n";
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -727,14 +725,14 @@ const Widget = props => {
             <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 8 }}>
                 <span style={{ fontWeight: 'bold', marginRight: 4 }}>{widgetType?.set}</span>
                 -
-                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title}</span>
+                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? I18n.t('group') : widgetType?.title}</span>
             </span>
         </div>;
     } else {
         list = props.selectedWidgets.join(', ');
     }
 
-    return <div>
+    return <>
         <div style={{ width: '100%' }}>
             <div style={{ display: 'inline-block', width: 'calc(100% - 68px)' }}>
                 {list}
@@ -765,7 +763,7 @@ const Widget = props => {
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
         </div>
 
-        <div style={{ height: 'calc(100vh - 260px)', overflowY: 'auto'  }}>
+        <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
             {fields.map(group => <Accordion
                 classes={{
                     root: props.classes.clearPadding,
@@ -938,7 +936,7 @@ const Widget = props => {
                 {JSON.stringify(customFields, null, 2)}
             </pre> : null}
         </div>
-    </div>;
+    </>;
 };
 
 Widget.propTypes = {

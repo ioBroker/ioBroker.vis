@@ -63,15 +63,18 @@ const View = props => {
             {
                 type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'), disabled: !!props.selectedGroup,
             },
-            [[
-                {
-                    type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'), disabled: !!props.selectedGroup,
-                },
-            ], [
-                {
-                    type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'), disabled: !!props.selectedGroup,
-                },
-            ]],
+            [
+                [
+                    {
+                        type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'), disabled: !!props.selectedGroup,
+                    },
+                ],
+                [
+                    {
+                        type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'), disabled: !!props.selectedGroup,
+                    },
+                ],
+            ],
             {
                 type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManage(true), disabled: !!props.selectedGroup,
             },
