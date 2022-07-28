@@ -1318,7 +1318,7 @@ class VisBaseWidget extends React.Component {
         let widgetName = null;
         if (this.state.widgetHint !== 'hide' && !this.state.hideHelper && this.state.editMode && !(widget.groupid && !this.props.selectedGroup) && this.props.showWidgetNames !== false) {
             // show widget name on widget body
-            let widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
+            const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
 
             widgetName = <div className={Utils.clsx('vis-editmode-widget-name', this.state.widgetHint, widgetNameBottom && 'bottom')}>
                 <span>{ this.props.id }</span>

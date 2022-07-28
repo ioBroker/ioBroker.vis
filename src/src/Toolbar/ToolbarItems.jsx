@@ -70,9 +70,10 @@ const getItem = (item, key, props, full) => {
 
         props.changeProject(project);
     };
+
     if (item.type === 'select') {
         return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
-            <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
+            {props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
             <Select
                 variant="standard"
                 style={{ width: item.width }}
@@ -90,7 +91,7 @@ const getItem = (item, key, props, full) => {
     }
     if (item.type === 'multiselect') {
         return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
-            <InputLabel shrink>{I18n.t(item.name)}</InputLabel>
+            {props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
             <Select
                 variant="standard"
                 style={{ width: item.width }}
@@ -120,7 +121,6 @@ const getItem = (item, key, props, full) => {
                             {I18n.t(selectItem.name)}
                         </>
                     }
-
                 </MenuItem>)}
             </Select>
         </FormControl>;
@@ -137,8 +137,8 @@ const getItem = (item, key, props, full) => {
         />;
     }
     if (item.type === 'icon-button') {
-        return full
-            ? <div key={key} style={{ textAlign: 'center' }}>
+        return props.toolbarHeight !== 'veryNarrow' && full ?
+            <div key={key} style={{ textAlign: 'center' }}>
                 <ButtonBase
                     className={item.disabled ? props.classes.disabled : null}
                     onClick={item.onClick}
@@ -151,12 +151,13 @@ const getItem = (item, key, props, full) => {
                         justifyContent: 'start',
                     }}
                 >
-                    <div><item.Icon fontSize={item.size ? item.size : 'small'} /></div>
+                    <div><item.Icon fontSize={item.size && props.toolbarHeight !== 'veryNarrow' ? item.size : 'small'} /></div>
                     <div>{I18n.t(item.name)}</div>
                     {item.subName ? <div style={{ fontSize: 10, opacity: 0.6 }}>{item.subName}</div> : null}
                 </ButtonBase>
             </div>
-            : <Tooltip key={key} title={item.name} classes={{ popper: props.classes.toolbarTooltip }}>
+            :
+            <Tooltip key={key} title={item.name} classes={{ popper: props.classes.toolbarTooltip }}>
                 <div>
                     <IconButton
                         color={item.selected ? 'primary' : undefined}
@@ -194,39 +195,61 @@ const getItem = (item, key, props, full) => {
         value={value}
         type={item.type}
         onChange={item.onChange ? item.onChange : e => change(e.target.value)}
-        InputLabelProps={{
-            shrink: true,
-        }}
-        label={I18n.t(item.name)}
+        InputLabelProps={{ shrink: true }}
+        label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
         className={props.classes.textInput}
     />;
 };
 
-const ToolbarItems = props => <div
-    className={props.classes.toolbarBlock}
-    style={props.last ? { borderRightWidth: 0 } : null}
->
-    <div className={props.classes.toolbarItems}>
-        {
-            props.group.items.map((item, key) => {
-                if (Array.isArray(item)) {
-                    return <div key={key} className={props.classes.toolbarCol}>
-                        {item.map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
-                            {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
-                        </div>)}
-                    </div>;
-                }
-                return getItem(item, key, props, true);
-            })
-        }
-    </div>
-    <div className={props.classes.toolbarLabel}>{props.group.name}</div>
-</div>;
+const ToolbarItems = props => {
+    let items = props.group.items;
+
+    // flatten buttons
+    if (props.toolbarHeight === 'veryNarrow') {
+        const _items = [];
+        items.forEach(item => {
+            if (Array.isArray(item)) {
+                item.forEach(_item => {
+                    if (Array.isArray(_item)) {
+                        _item.forEach(__item => _items.push(__item));
+                    } else {
+                        _items.push(_item);
+                    }
+                });
+            } else {
+                _items.push(item);
+            }
+        });
+        items = _items;
+    }
+
+    return <div
+        className={props.classes.toolbarBlock}
+        style={props.last ? { borderRightWidth: 0 } : null}
+    >
+        <div className={props.classes.toolbarItems}>
+            {
+                items.map((item, key) => {
+                    if (Array.isArray(item)) {
+                        return <div key={key} className={props.classes.toolbarCol}>
+                            {item.map((subItem, subKey) => <div key={subKey} className={props.classes.toolbarRow}>
+                                {subItem.map((subItem2, subKey2) => getItem(subItem2, subKey2, props))}
+                            </div>)}
+                        </div>;
+                    }
+                    return getItem(item, key, props, true);
+                })
+            }
+        </div>
+        {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>{props.group.name}</div> : null}
+    </div>;
+};
 
 ToolbarItems.propTypes = {
     classes: PropTypes.object,
     group: PropTypes.object,
     last: PropTypes.bool,
+    toolbarHeight: PropTypes.string,
 };
 
 export default withStyles(styles)(ToolbarItems);

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
+    <title>Vis</title>
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta
@@ -28,10 +29,19 @@
       document.head.appendChild(script);
     </script>
     <!--script type="text/javascript" src="%PUBLIC_URL%/../../socket.io/socket.io.js"></script-->
-    <title>Vis</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
   </body>
+  <script>
+    // set background as early as possible
+    var themeType = window.localStorage.getItem('App.themeType');
+    themeType = themeType || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    if (themeType === 'dark') {
+      window.document.body.className += 'body-dark';
+    } else {
+      window.document.body.className += 'body-light';
+    }
+  </script>
 </html>

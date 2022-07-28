@@ -15,9 +15,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
+
 import VisCanWidget from './visCanWidget';
 import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
+
+const generateClassNameEngine = createGenerateClassName({
+    productionPrefix: 'vis',
+});
 
 class VisView extends React.Component {
     // 1300 z-index is the React dialog
@@ -33,7 +40,7 @@ class VisView extends React.Component {
     constructor(props) {
         super(props);
 
-        VisView.collectInformation();
+        this.promiseToCollect = VisView.collectInformation(props.socket);
 
         this.state = {
             mounted: false,
@@ -75,11 +82,13 @@ class VisView extends React.Component {
     }
 
     componentDidMount() {
-        this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+        this.promiseToCollect.then(() => {
+            this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
-        this.loadJqueryTheme(this.getJQueryThemeName())
-            .then(() => this.setState({ mounted: true }, () =>
-                this.registerEditorHandlers()));
+            this.loadJqueryTheme(this.getJQueryThemeName())
+                .then(() => this.setState({ mounted: true }, () =>
+                    this.registerEditorHandlers()));
+        });
     }
 
     componentWillUnmount() {
@@ -906,6 +915,7 @@ class VisView extends React.Component {
         }
     }
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     moveWidgets = async (leftShift, topShift) => {
         if (!this.moveTimer) {
             this.movement = {
@@ -959,6 +969,7 @@ class VisView extends React.Component {
         }, 800);
     };
 
+    // eslint-disable-next-line react/no-unused-class-component-methods
     resizeWidgets = async (widthShift, heightShift) => {
         if (!this.moveTimer) {
             this.movement = {
@@ -1228,6 +1239,13 @@ class VisView extends React.Component {
         }
 
         relativeStyle.display = settings.style.display || 'flex';
+        if (relativeStyle.display === 'flex') {
+            // relativeStyle.flexDirection = 'row';
+            relativeStyle.flexWrap = 'wrap';
+            // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
+            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+        }
         relativeStyle.position = 'absolute';
         relativeStyle.top = 0;
         relativeStyle.left = 0;
@@ -1243,6 +1261,13 @@ class VisView extends React.Component {
             }
         });
 
+        if (!style.backgroundColor && !style.background) {
+            style.backgroundColor = this.props.themeType === 'dark' ? '#000' : '#fff';
+        }
+        if (!style.color) {
+            style.color = this.props.themeType === 'dark' ? '#fff' : '#000';
+        }
+
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
         }
@@ -1256,40 +1281,46 @@ class VisView extends React.Component {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
 
-        return <div
-            className={className}
-            ref={this.refView}
-            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-            onDoubleClick={e => this.onViewDoubleClick(e)}
-            style={style}
-        >
-            <style>{this.state.themeCode}</style>
-            { gridDiv }
-            {this.renderScreenSize()}
-            {this.state.rulers.map((ruler, key) =>
-                <div
-                    key={key}
-                    style={{
-                        pointerEvents: 'none',
-                        position: 'absolute',
-                        width: ruler.type === 'horizontal' ? '100%' : 10,
-                        height: ruler.type === 'horizontal' ? 10 : '100%',
-                        borderStyle: 'solid',
-                        borderColor: 'red',
-                        borderWidth: 0,
-                        borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
-                        borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
-                        left: ruler.type === 'horizontal' ? 0 : ruler.value,
-                        top: ruler.type === 'horizontal' ? ruler.value : 0,
-                        zIndex: 1000,
-                    }}
-                ></div>)}
-            <div ref={this.refRelativeView} style={relativeStyle}>
-                { rxRelativeWidgets.map(item => item.rxWidget) }
-            </div>
-            { rxAbsoluteWidgets }
-        </div>;
+        return <StylesProvider generateClassName={generateClassNameEngine}>
+            <StyledEngineProvider injectFirst>
+                <ThemeProvider theme={this.props.theme}>
+                    <div
+                        className={className}
+                        ref={this.refView}
+                        id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+                        onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+                        onDoubleClick={e => this.onViewDoubleClick(e)}
+                        style={style}
+                    >
+                        <style>{this.state.themeCode}</style>
+                        { gridDiv }
+                        {this.renderScreenSize()}
+                        {this.state.rulers.map((ruler, key) =>
+                            <div
+                                key={key}
+                                style={{
+                                    pointerEvents: 'none',
+                                    position: 'absolute',
+                                    width: ruler.type === 'horizontal' ? '100%' : 10,
+                                    height: ruler.type === 'horizontal' ? 10 : '100%',
+                                    borderStyle: 'solid',
+                                    borderColor: 'red',
+                                    borderWidth: 0,
+                                    borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
+                                    borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
+                                    left: ruler.type === 'horizontal' ? 0 : ruler.value,
+                                    top: ruler.type === 'horizontal' ? ruler.value : 0,
+                                    zIndex: 1000,
+                                }}
+                            ></div>)}
+                        <div ref={this.refRelativeView} style={relativeStyle}>
+                            { rxRelativeWidgets.map(item => item.rxWidget) }
+                        </div>
+                        { rxAbsoluteWidgets }
+                    </div>
+                </ThemeProvider>
+            </StyledEngineProvider>
+        </StylesProvider>;
     }
 }
 
@@ -1322,6 +1353,9 @@ VisView.propTypes = {
     lang: PropTypes.string,
     dateFormat: PropTypes.string.isRequired,
     systemConfig: PropTypes.object,
+    themeType: PropTypes.string,
+    themeName: PropTypes.string,
+    theme: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

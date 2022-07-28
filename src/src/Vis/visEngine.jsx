@@ -77,7 +77,6 @@ class VisEngine extends React.Component {
         this.viewsActiveFilter = {};
         this.statesDebounce = {};
         this.onChangeCallbacks = [];
-        this.bindingsCache = {};
 
         this.idControlInstance = `${this.props.adapterName}.${this.props.instance}.control.instance`;
         this.idControlData = `${this.props.adapterName}.${this.props.instance}.control.data`;
@@ -121,7 +120,6 @@ class VisEngine extends React.Component {
             .then(systemConfig => {
                 this.vis.dateFormat = systemConfig.common.dateFormat;
                 this.vis.isFloatComma = systemConfig.common.isFloatComma;
-                this.systemLang = systemConfig.common.language || 'en';
                 this.vis.language = systemConfig.common.language || 'en';
                 this.systemConfig = systemConfig;
                 return this.loadWidgets();
@@ -1245,6 +1243,9 @@ ${this.scripts}
                     disableInteraction={this.props.disableInteraction}
                     registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
                     systemConfig={this.systemConfig}
+                    themeType={this.props.themeType}
+                    themeName={this.props.themeName}
+                    theme={this.props.theme}
                 />;
             }
 
@@ -1275,6 +1276,9 @@ VisEngine.propTypes = {
     visUserCss: PropTypes.string,
     setSelectedGroup: PropTypes.func,
     widgetHint: PropTypes.string,
+    themeType: PropTypes.string,
+    themeName: PropTypes.string,
+    theme: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

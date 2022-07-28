@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
+import { StylesProvider, createGenerateClassName } from '@mui/styles';
+
 import './index.css';
 import { Utils } from '@iobroker/adapter-react-v5';
 import App from './App';
@@ -16,8 +18,24 @@ console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "
 
 window.visRxWidget = require('./Vis/visRxWidget').default;
 
+const generateClassName = createGenerateClassName({
+    productionPrefix: 'vis-a',
+});
+
+function modifyClasses(className, addClass, removeClass) {
+    const classes = (className || '').split(' ').map(c => c.trim()).filter(c => c);
+    const pos = classes.indexOf(removeClass);
+    if (pos !== -1) {
+        classes.splice(pos, 1);
+    }
+    !classes.includes(addClass) && classes.push(addClass);
+    return classes.join(' ');
+}
+
 const ThemeContainer = () => {
     const [currentTheme, setCurrentTheme] = useState(themeName);
+
+    const newTheme = theme(currentTheme);
 
     const appTheme = () => ({
         classes: {
@@ -36,13 +54,13 @@ const ThemeContainer = () => {
                 minHeight: 0,
             },
             lightedPanel: {
-                backgroundColor: theme(currentTheme).palette.mode === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 90%)',
+                backgroundColor: newTheme.palette.mode === 'dark' ? 'hsl(0deg 0% 20%)' : 'hsl(0deg 0% 90%)',
             },
             toolbar: {
                 display: 'flex',
                 alignItems: 'center',
-                paddingTop: '10px',
-                paddingBottom: '10px',
+                paddingTop: 10,
+                paddingBottom: 10,
             },
             viewManageBlock: {
                 display: 'flex',
@@ -55,18 +73,32 @@ const ThemeContainer = () => {
         },
     });
 
-    const getTheme = () => createTheme(appTheme(), theme(currentTheme));
+    const getTheme = () => createTheme(appTheme(), newTheme);
 
-    return <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={getTheme()}>
-            <App
-                socket={{ port: 8082 }}
-                onThemeChange={_theme => {
-                    setCurrentTheme(_theme);
-                }}
-            />
-        </ThemeProvider>
-    </StyledEngineProvider>;
+    if (newTheme.palette.mode === 'dark') {
+        window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
+    } else {
+        window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+    }
+
+    return <StylesProvider generateClassName={generateClassName}>
+        <StyledEngineProvider injectFirst>
+            <ThemeProvider theme={getTheme()}>
+                <App
+                    socket={{ port: 8082 }}
+                    onThemeChange={_theme => {
+                        if (newTheme.palette.mode === 'dark') {
+                            window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
+                        } else {
+                            window.document.body.className = modifyClasses(window.document.body.className, 'body-light', 'body-dark');
+                        }
+
+                        setCurrentTheme(_theme);
+                    }}
+                />
+            </ThemeProvider>
+        </StyledEngineProvider>
+    </StylesProvider>;
 };
 
 function build() {

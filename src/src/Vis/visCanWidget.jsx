@@ -164,7 +164,7 @@ class VisCanWidget extends VisBaseWidget {
                 }
             } else if (command === 'changeFilter') {
                 if (!this.widDiv) {
-                    return;
+                    return null;
                 }
 
                 if (!options || !options.filter.length) {
