@@ -71,6 +71,20 @@ export const getWidgetTypes = () => {
     return window.visWidgetTypes;
 };
 
+const deepClone = obj => {
+    const newObj = Array.isArray(obj) ? [] : {};
+    for (const key in obj) {
+        if (obj[key]) {
+            if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
+                newObj[key] = deepClone(obj[key]);
+            } else {
+                newObj[key] = obj[key];
+            }
+        }
+    }
+    return newObj;
+};
+
 export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonFields, widgetSet, widgetData) => {
     if (typeof widgetParams === 'string') {
         let groupName = 'common';
@@ -243,7 +257,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
     if (Array.isArray(widgetParams)) {
         commonGroups = commonGroups || { common: 1 };
         commonFields = commonFields || {};
-        const fields = JSON.parse(JSON.stringify(widgetParams));
+        const fields = deepClone(widgetParams);
         let groupIndex = fields.findIndex(group => group.indexFrom);
         while (groupIndex > -1) {
             const group = fields[groupIndex];

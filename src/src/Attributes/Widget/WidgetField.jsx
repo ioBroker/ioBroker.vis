@@ -220,6 +220,13 @@ const WidgetField = props => {
                     props.isStyle ? widget.style[field.name] : widget.data[field.name],
                 );
             }
+            if (field.onChange) {
+                field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
+                    const project = JSON.parse(JSON.stringify(props.project));
+                    project[props.selectedView].widgets[selectedWidget].data = newData;
+                    setTimeout(() => props.changeProject(project), 100);
+                }, props.socket);
+            }
         });
 
         props.changeProject(project);
