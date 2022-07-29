@@ -16,7 +16,9 @@ import {
 
 import withStyles from '@mui/styles/withStyles';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
+
+import MultiSelect from './MultiSelect';
 
 const styles = theme => ({
     toolbarBlock: {
@@ -89,8 +91,18 @@ const getItem = (item, key, props, full) => {
             </Select>
         </FormControl>;
     }
+
     if (item.type === 'multiselect') {
-        return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
+        return <MultiSelect
+            key={key}
+            // style={{ margin: '0px 10px' }}
+            label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
+            width={item.width}
+            value={item.value ? item.value : value}
+            onChange={_value => item.onChange(_value)}
+            options={item.items}
+        />;
+        /*return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
             {props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
             <Select
                 variant="standard"
@@ -119,11 +131,10 @@ const getItem = (item, key, props, full) => {
                         <>
                             <Checkbox checked={(item.value ? item.value : value).includes(selectItem.value)} />
                             {I18n.t(selectItem.name)}
-                        </>
-                    }
+                        </>}
                 </MenuItem>)}
             </Select>
-        </FormControl>;
+        </FormControl>;*/
     }
     if (item.type === 'checkbox') {
         return <FormControlLabel

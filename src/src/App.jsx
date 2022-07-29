@@ -1209,6 +1209,15 @@ class App extends GenericApp {
 
         // settings of view are changed
         if (view && viewSettings) {
+            // special processing for group editing
+            if (viewSettings.order && this.state.selectedGroup) {
+                const order = viewSettings.order;
+                delete viewSettings.order;
+                const widget = this.tempProject[this.state.selectedView].widgets[this.state.selectedGroup];
+                widget.data = widget.data || {};
+                widget.data.members = order;
+            }
+
             Object.keys(viewSettings).forEach(attr => {
                 if (viewSettings[attr] === null) {
                     delete this.tempProject[view].settings[attr];

@@ -43,11 +43,34 @@ class BasicGroup extends VisRxWidget {
             props.style.overflow = 'visible';
         }
 
-        const groupWidgets = widget?.data?.members;
+        const groupWidgets = [...(widget?.data?.members || [])];
         let rxGroupWidgets = null;
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (groupWidgets?.length && this.state.mounted) {
+            // first relative, then absolute
+            groupWidgets.sort((a, b) => {
+                const widgetA = this.props.views[this.props.view].widgets[a];
+                const widgetB = this.props.views[this.props.view].widgets[b];
+                const isRelativeA = widgetA.style && (
+                    widgetA.style.position === 'relative' ||
+                    widgetA.style.position === 'static'   ||
+                    widgetA.style.position === 'sticky'
+                );
+                const isRelativeB = widgetB.style && (
+                    widgetB.style.position === 'relative' ||
+                    widgetB.style.position === 'static'   ||
+                    widgetB.style.position === 'sticky'
+                );
+                if (isRelativeA && isRelativeB) {
+                    return 0;
+                }
+                if (isRelativeA) {
+                    return -1;
+                }
+                return 1;
+            });
+
             rxGroupWidgets = groupWidgets.map((id, index) => {
                 const _widget = this.props.views[this.props.view].widgets[id];
                 if (!_widget) {
@@ -61,8 +84,21 @@ class BasicGroup extends VisRxWidget {
                     _widget.style.position === 'static' ||
                     _widget.style.position === 'sticky'
                 );
+
                 // use same container for relative and absolute widgets (props.refService)
-                return this.props.VisView.getOneWidget(this.props, index, id, _widget, this.props.registerRef, isRelative, props.refService, null, null, false, false, true);
+                return this.props.VisView.getOneWidget(
+                    this.props,
+                    index,
+                    id,
+                    _widget,
+                    this.props.registerRef,
+                    isRelative,
+                    props.refService,
+                    null,
+                    groupWidgets,
+                    false,
+                    false,
+                );
             });
         }
 

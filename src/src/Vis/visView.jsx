@@ -1231,7 +1231,33 @@ class VisView extends React.Component {
             const widgets = this.props.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
-                const relativeWidgetOrder = this.props.views[this.props.view].settings?.order || [];
+                const relativeWidgetOrder = this.props.selectedGroup ? this.props.views[this.props.view].widgets[this.props.selectedGroup].data.members : (this.props.views[this.props.view].settings?.order || []);
+
+                // by group editing first relative, then absolute
+                if (this.props.selectedGroup) {
+                    relativeWidgetOrder.sort((a, b) => {
+                        const widgetA = this.props.views[this.props.view].widgets[a];
+                        const widgetB = this.props.views[this.props.view].widgets[b];
+                        const isRelativeA = widgetA.style && (
+                            widgetA.style.position === 'relative' ||
+                            widgetA.style.position === 'static'   ||
+                            widgetA.style.position === 'sticky'
+                        );
+                        const isRelativeB = widgetB.style && (
+                            widgetB.style.position === 'relative' ||
+                            widgetB.style.position === 'static'   ||
+                            widgetB.style.position === 'sticky'
+                        );
+                        if (isRelativeA && isRelativeB) {
+                            return 0;
+                        }
+                        if (isRelativeA) {
+                            return -1;
+                        }
+                        return 1;
+                    });
+                }
+
                 const relativeWidgets = [];
                 const absoluteWidgets = [];
                 const unknownWidgets = [];
@@ -1289,7 +1315,7 @@ class VisView extends React.Component {
                         widget.style.position === 'static' ||
                         widget.style.position === 'sticky'
                     );
-                    if (isRelative) {
+                    if (isRelative && id !== this.props.selectedGroup) {
                         if (!listRelativeWidgetsOrder.includes(id)) {
                             listRelativeWidgetsOrder.push(id);
                         }
@@ -1304,9 +1330,11 @@ class VisView extends React.Component {
                     }
                 });
 
-                for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
-                    if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
-                        relativeWidgetOrder.splice(t, 1);
+                if (!this.props.selectedGroup) {
+                    for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
+                        if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
+                            relativeWidgetOrder.splice(t, 1);
+                        }
                     }
                 }
 
@@ -1357,7 +1385,7 @@ class VisView extends React.Component {
                             true,
                             this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
                             this.onMouseWidgetDown,
-                            listRelativeWidgetsOrder,
+                            this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
                             moveAllowed,
                         );
                         wColumns[column].push(w);

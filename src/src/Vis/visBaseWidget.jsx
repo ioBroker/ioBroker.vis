@@ -881,6 +881,7 @@ class VisBaseWidget extends React.Component {
         e.preventDefault();
 
         const order = [...this.props.relativeWidgetOrder];
+
         const pos = order.indexOf(this.props.id);
         if (dir > 0) {
             if (pos === order.length - 1) {
@@ -1388,6 +1389,11 @@ class VisBaseWidget extends React.Component {
             // show widget name on widget body
             const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
 
+            // come again when ref is filled
+            if (!this.refService.current) {
+                setTimeout(() => this.forceUpdate(), 50);
+            }
+
             widgetName = <div
                 className={Utils.clsx(
                     'vis-editmode-widget-name',
@@ -1405,7 +1411,15 @@ class VisBaseWidget extends React.Component {
             if (this.props.isRelative) {
                 const pos = this.props.relativeWidgetOrder.indexOf(this.props.id);
                 const showUp = !!pos;
-                const showDown = pos !== this.props.relativeWidgetOrder.length - 1;
+                let showDown = pos !== this.props.relativeWidgetOrder.length - 1;
+                if (showDown && this.props.selectedGroup) {
+                    // Check if the next widget is relative
+                    const widget__ = this.props.views[this.props.view].widgets[this.props.relativeWidgetOrder[pos + 1]];
+                    if (widget__.style.position === 'absolute') {
+                        showDown = false;
+                    }
+                }
+
                 if (showUp || showDown) {
                     widgetMoveButtons = <div
                         className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'bottom')}
