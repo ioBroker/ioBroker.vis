@@ -39,12 +39,16 @@ class BasicGroup extends VisRxWidget {
         super.renderWidgetBody(props);
         const widget = this.props.views[this.props.view].widgets[this.props.id];
 
+        if (this.props.id === this.props.selectedGroup) {
+            props.style.overflow = 'visible';
+        }
+
         const groupWidgets = widget?.data?.members;
         let rxGroupWidgets = null;
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (groupWidgets?.length && this.state.mounted) {
-            rxGroupWidgets = groupWidgets.map((id, i) => {
+            rxGroupWidgets = groupWidgets.map((id, index) => {
                 const _widget = this.props.views[this.props.view].widgets[id];
                 if (!_widget) {
                     return null;
@@ -52,10 +56,13 @@ class BasicGroup extends VisRxWidget {
                 if (this.props.selectedGroup) {
                     return null;
                 }
-
+                const isRelative = _widget.style && (
+                    _widget.style.position === 'relative' ||
+                    _widget.style.position === 'static' ||
+                    _widget.style.position === 'sticky'
+                );
                 // use same container for relative and absolute widgets (props.refService)
-                const { rxWidget } = this.props.VisView.getOneWidget(this.props, i, id, _widget, this.props.registerRef, props.refService, props.refService);
-                return rxWidget;
+                return this.props.VisView.getOneWidget(this.props, index, id, _widget, this.props.registerRef, isRelative, props.refService, null, null, false, false, true);
             });
         }
 

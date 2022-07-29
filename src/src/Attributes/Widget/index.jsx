@@ -43,6 +43,9 @@ const styles = theme => ({
             minHeight: 'initial',
         },
     },
+    checkBox: {
+        marginTop: '-4px !important',
+    },
     fieldTitle: {
         width: 140,
         fontSize: '80%',
@@ -830,9 +833,7 @@ const Widget = props => {
                                     e.stopPropagation();
                                 }}
                                 size="small"
-                                classes={{
-                                    root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
-                                }}
+                                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox)}}
                             />
                         </div>
                     </div>

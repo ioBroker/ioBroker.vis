@@ -701,7 +701,7 @@ class VisEngine extends React.Component {
     }
 
     initCanObjects() {
-        // creat Can objects
+        // creat "Can" objects
         return new this.can.Map({ 'nothing_selected.val': null });
 
         /*

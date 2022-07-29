@@ -235,7 +235,7 @@ class VisRxWidget extends VisBaseWidget {
     renderWidgetBody(props) {
         props.id = this.props.id;
 
-        props.className = `vis-widget ${this.state.rxData.class || ''}`;
+        props.className = `vis-widget${this.state.rxData.class ? ` ${this.state.rxData.class}` : ''}`;
 
         if (!this.state.editMode && this.state.disabled) {
             props.className = addClass(props.className, 'vis-user-disabled');
