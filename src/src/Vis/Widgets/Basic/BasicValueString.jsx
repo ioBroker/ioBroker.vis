@@ -23,8 +23,21 @@ class BasicValueString extends VisRxWidget {
             id: 'tplValueString',
             visSet: 'basic',
             visName: 'String',
-            visAttrs: 'oid;html_prepend;html_append;test_html',
             visPrev: 'widgets/basic/img/Prev_ValueString.png',
+            visAttrs: [{
+                name: 'common',
+                fields: [
+                    { name: 'oid', type: 'id' },
+                    { name: 'html_prepend', type: 'html' },
+                    { name: 'html_append', type: 'html' },
+                    { name: 'test_html', type: 'html' },
+                ],
+            }],
+            visWidgetLabel: 'value_string',  // Label of widget
+            visDefaultStyle: {
+                width: 100,
+                height: 30,
+            },
         };
     }
 

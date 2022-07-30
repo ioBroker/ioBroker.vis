@@ -25,6 +25,12 @@ class BasicViewInWidget extends VisRxWidget {
             visName: 'View in widget',
             visAttrs: 'contains_view/views',
             visPrev: 'widgets/basic/img/Prev_ContainerView.png',
+            visWidgetLabel: 'view_in_widget',  // Label of widget
+            visSetLabel: 'set_basic',
+            visDefaultStyle: {
+                width: 300,
+                height: 200,
+            },
         };
     }
 

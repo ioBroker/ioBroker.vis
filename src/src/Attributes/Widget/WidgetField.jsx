@@ -12,12 +12,11 @@ import {
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
-import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import ClearIcon from '@mui/icons-material/Clear';
+import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
@@ -152,18 +151,21 @@ const getViewOptions = (project, options = [], parentId = null, level = 0) => {
                 folder,
                 level: level + 1,
             });
+
             getViewOptions(project, options, folder.id, level + 1);
         });
-    Object.keys(project)
-        .filter(view => (project[view].parentId || null) === parentId &&
-                !view.startsWith('__'))
-        .forEach(view => {
-            options.push({
-                type: 'view',
-                view,
-                level: level + 1,
-            });
+
+    const keys = Object.keys(project)
+        .filter(view => (project[view].parentId || null) === parentId && !view.startsWith('__'));
+
+    keys.forEach(view => {
+        options.push({
+            type: 'view',
+            view,
+            level: level + 1,
         });
+    });
+
     return options;
 };
 
@@ -222,9 +224,9 @@ const WidgetField = props => {
             }
             if (field.onChange) {
                 field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
-                    const project = JSON.parse(JSON.stringify(props.project));
-                    project[props.selectedView].widgets[selectedWidget].data = newData;
-                    setTimeout(() => props.changeProject(project), 100);
+                    const _project = JSON.parse(JSON.stringify(props.project));
+                    _project[props.selectedView].widgets[selectedWidget].data = newData;
+                    setTimeout(() => props.changeProject(_project), 100);
                 }, props.socket);
             }
         });
@@ -574,7 +576,7 @@ const WidgetField = props => {
     }
 
     if (field.type === 'select-views') {
-        const options = getViewOptions(props.project)
+        const options = getViewOptions(props.project, [], null, 0, true)
             .filter(option => option.type === 'folder' || option.view !== props.selectedView);
 
         return <Select
@@ -582,29 +584,44 @@ const WidgetField = props => {
             disabled={disabled}
             value={value || []}
             placeholder={isDifferent ? t('different') : null}
-            multiple
-            renderValue={selected => selected.join(', ')}
+            multiple={field.multiple !== false}
+            renderValue={selected => (field.multiple !== false ? selected.join(', ') : selected)}
             classes={{
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
-            onChange={e => change(e.target.value.filter(selectValue => selectValue !== null))}
+            onChange={e => {
+                if (field.multiple !== false) {
+                    change(e.target.value.filter(selectValue => selectValue !== null));
+                } else {
+                    change(e.target.value);
+                }
+            }}
             fullWidth
         >
             {options.map((option, key) => (option.type === 'view' ?
                 <MenuItem
                     value={option.view}
                     key={key}
-                    style={{ paddingLeft: option.level * 16 }}
+                    style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}
                 >
-                    <FileIcon />
-                    <Checkbox checked={(value || []).includes(option.view)} />
-                    <ListItemText primary={t(option.view)} />
+                    <FileIcon style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                    <span style={{ verticalAlign: 'middle' }}>{field.multiple !== false ? <Checkbox checked={(value || []).includes(option.view)} /> : null}</span>
+                    <ListItemText primary={t(option.view)} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
-                <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }}>
-                    <FolderOpenIcon />
-                    {option.folder.name}
+                <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}>
+                    <FolderOpenedIcon
+                        className={props.classes.icon}
+                        style={{
+                            verticalAlign: 'middle',
+                            marginRight: 6,
+                            marginTop: -3,
+                            fontSize: 20,
+                            color: '#00dc00',
+                        }}
+                    />
+                    <span style={{ fontSize: '1rem' }}>{option.folder.name}</span>
                 </ListSubheader>))}
         </Select>;
     }
@@ -737,7 +754,7 @@ const WidgetField = props => {
                         {...optionProps}
                         key={`folder${option.folder.id}`}
                     >
-                        <FolderOpenIcon />
+                        <FolderOpenedIcon style={{ color: '#00dc00', fontSize: 20 }} />
                         {option.folder.name}
                     </Box>)}
             renderInput={params => <TextField

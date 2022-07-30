@@ -21,7 +21,23 @@ class BasicGroup extends VisRxWidget {
         return {
             id: '_tplGroup',
             visSet: 'basic',
-            visAttrs: 'attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;',
+            // visAttrs: 'attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;',
+            visAttrs: [{
+                name: 'common',
+                fields: [
+                    {
+                        name: 'objects',
+                        singleName: 'objects',
+                        fields: [{
+                            name: 'attrCount',
+                            type: 'slider',
+                            min: 1,
+                            max: 19,
+                            step: 1,
+                        }],
+                    },
+                ],
+            }],
         };
     }
 
