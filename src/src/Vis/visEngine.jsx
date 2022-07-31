@@ -96,6 +96,8 @@ class VisEngine extends React.Component {
             unregisterViewRef: this.unregisterViewRef,
         };
 
+        this.refSound = /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? React.createRef() : null;
+
         this.conn = this.createConnection();
         this.canStates = this.initCanObjects();
         this.vis = this.createLegacyVisObject();
@@ -122,6 +124,11 @@ class VisEngine extends React.Component {
                 this.vis.isFloatComma = systemConfig.common.isFloatComma;
                 this.vis.language = systemConfig.common.language || 'en';
                 this.systemConfig = systemConfig;
+
+                this.props.socket.subscribeState(this.idControlInstance, this.onStateChange);
+                this.props.socket.subscribeState(this.idControlData, this.onStateChange);
+                this.props.socket.subscribeState(this.idControlCommand, this.onStateChange);
+
                 return this.loadWidgets();
             })
             .then(() => this.setState({ ready: true }));
@@ -159,6 +166,10 @@ class VisEngine extends React.Component {
         // unsubscribe all
         Object.keys(this.subscribes).forEach(id =>
             this.props.socket.unsubscribeState(id, this.onStateChange));
+
+        this.props.socket.unsubscribeState(this.idControlInstance, this.onStateChange);
+        this.props.socket.unsubscribeState(this.idControlData, this.onStateChange);
+        this.props.socket.unsubscribeState(this.idControlCommand, this.onStateChange);
 
         let userScript = window.document.getElementById('#vis_user_scripts');
         if (userScript) {
@@ -205,7 +216,7 @@ class VisEngine extends React.Component {
             user: '',
             _: window._,
             dateFormat: '',
-            instance: this.props.instance,
+            instance: window.localStorage.getItem('visInstance'),
             loginRequired: false,
             viewsActiveFilter: this.viewsActiveFilter,
             onChangeCallbacks: this.onChangeCallbacks,
@@ -309,6 +320,14 @@ class VisEngine extends React.Component {
                     this.onChangeCallbacks.splice(index, 1);
                 }
             },
+            generateInstance() {
+                let instance = (Math.random() * 4294967296).toString(16);
+                instance = `0000000${instance}`;
+                instance = instance.substring(instance.length - 8);
+                window.vis.instance = instance;
+                window.localStorage.setItem('visInstance', instance);
+                return this.instance;
+            },
         };
     }
 
@@ -352,7 +371,7 @@ class VisEngine extends React.Component {
 
         return <Dialog
             key="__messageDialog"
-            open
+            open={!0}
             onClose={() => {
                 const callback = this.state.showMessage.callback;
                 if (typeof callback === 'function') {
@@ -927,6 +946,103 @@ class VisEngine extends React.Component {
         }
     };
 
+    onUserCommand(instance, command, data) {
+        const currentInstance = window.localStorage.getItem('visInstance');
+        if (!instance || (instance !== currentInstance && instance !== 'FFFFFFFF' && !instance.includes('*'))) {
+            return false;
+        }
+        if (this.props.editMode && command !== 'tts' && command !== 'playSound') {
+            // show command
+            window.alert(I18n.t('Received user command: %s', JSON.stringify({ instance, command, data })));
+            return true;
+        } else {
+            // external Commands
+            switch (command) {
+                case 'alert': {
+                    const [message, title, icon] = data.split(';');
+                    this.showMessage(message, title, icon);
+                    break;
+                }
+                case 'changedView':
+                    // Do nothing
+                    return false;
+                case 'changeView': {
+                    const [project, view] = data.split('/');
+                    if (view) {
+                        // detect actual project
+                        if (project !== this.props.projectName) {
+                            if (window.location.search.includes('runtime=')) {
+                                document.location.href = `./?${project}&runtime=true#${view}`;
+                            } else {
+                                document.location.href = `./?${project}#${view}`;
+                            }
+                            return true;
+                        }
+                    }
+
+                    window.vis.changeView(view || project, view || project);
+                    break;
+                }
+                case 'refresh':
+                case 'reload':
+                    setTimeout(() =>
+                        window.location.reload(), 1);
+                    break;
+                case 'dialog':
+                case 'dialogOpen':
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('open');
+                    break;
+                case 'dialogClose':
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('close');
+                    break;
+                case 'popup':
+                    window.open(data);
+                    break;
+                case 'playSound':
+                    setTimeout(() => {
+                        let href;
+                        this.sound = /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? $('<audio id="external_sound" autoplay muted></audio>').appendTo('body') : null;
+
+                        if (data && data.match(/^http(s)?:\/\//)) {
+                            href = data;
+                        } else {
+                            href = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${data}`;
+                        }
+                        // force read from server
+                        href += `?${Date.now()}`;
+                        if (this.refSound?.current) {
+                            this.refSound.current.setAttribute('src', href);
+                            this.refSound.current.setAttribute('muted', false);
+                            this.refSound.current.play();
+                        } else if (typeof Audio !== 'undefined') {
+                            const snd = new Audio(href); // buffers automatically when created
+                            snd.play();
+                        } else {
+                            // noinspection JSJQueryEfficiency
+                            let $sound = this.$('#external_sound');
+                            if (!$sound.length) {
+                                this.$('body').append('<audio id="external_sound"></audio>');
+                                $sound = this.$('#external_sound');
+                            }
+                            $sound.attr('src', href);
+                            window.document.getElementById('external_sound').play();
+                        }
+                    }, 1);
+                    break;
+                case 'tts':
+                    if (typeof window.app !== 'undefined') {
+                        window.app.tts(data);
+                    }
+                    break;
+                default:
+                    this.conn.logError(`unknown external command ${command}`);
+            }
+            return false;
+        }
+    }
+
     onStateChange = (id, state) => {
         // console.log(`[${new Date().toISOString()}] STATE_CHANGE: ${id}`);
         if (!id || state === null || typeof state !== 'object') {
@@ -952,12 +1068,12 @@ class VisEngine extends React.Component {
 
             // if command is an object {instance: 'iii', command: 'cmd', data: 'ddd'}
             if (state.val && state.val.instance) {
-                if (this.onCommand(state.val.instance, state.val.command, state.val.data)) {
+                if (this.onUserCommand(state.val.instance, state.val.command, state.val.data)) {
                     // clear state
                     this.props.socket.setState(id, { val: '', ack: true })
                         .catch(error => console.error(`Cannot reset ${id}: ${error}`));
                 }
-            } else if (this.onCommand(this._cmdInstance, state.val, this._cmdData)) {
+            } else if (this.onUserCommand(this._cmdInstance, state.val, this._cmdData)) {
                 // clear state
                 this.props.socket.setState(id, { val: '', ack: true })
                     .catch(error => console.error(`Cannot reset ${id}: ${error}`));
@@ -1251,6 +1367,10 @@ ${this.scripts}
 
             return null;
         });
+
+        if (this.refSound) {
+            views.push(<audio ref={this.refSound} key="__audio_145" id="external_sound" autoPlay muted></audio>);
+        }
 
         views.push(this.renderMessageDialog());
 

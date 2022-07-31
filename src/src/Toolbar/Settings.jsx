@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import withStyles from '@mui/styles/withStyles';
+
 import {
     Button,
     Checkbox,
@@ -11,9 +12,11 @@ import {
     Select,
     TextField,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 
 import SaveIcon from '@mui/icons-material/Save';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import IODialog from '../Components/IODialog';
 
 const styles = () => ({
@@ -29,7 +32,7 @@ const styles = () => ({
 
 const Settings = props => {
     const [settings, setSettings] = useState({});
-    const [instance, setInstance] = useState('');
+    const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
     /* eslint no-underscore-dangle: 0 */
     useEffect(() => setSettings(props.project.___settings), [props.open]);
 
@@ -95,7 +98,7 @@ const Settings = props => {
         {
             type: 'raw',
             Node: <>
-                <TextField variant="standard" label={I18n.t('Instance id')} value={instance} onChange={e => setInstance(e.target.value)} />
+                <TextField variant="standard" label={I18n.t('Browser instance ID')} value={instance} onChange={e => setInstance(e.target.value)} />
                 <Button
                     variant="contained"
                     color="grey"
@@ -103,6 +106,8 @@ const Settings = props => {
                         let newInstance = (Math.random() * 4294967296).toString(16);
                         newInstance = `0000000${newInstance}`;
                         newInstance = newInstance.substring(newInstance.length - 8);
+                        window.localStorage.setItem('visInstance', newInstance);
+                        window.vis.instance = newInstance;
                         setInstance(newInstance);
                     }}
                 >
