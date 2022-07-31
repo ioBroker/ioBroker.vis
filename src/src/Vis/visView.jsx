@@ -1453,6 +1453,9 @@ class VisView extends React.Component {
         if (this.props.views[this.props.view].settings.snapType === 2) {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
+        if (this.props.style) {
+            Object.assign(style, this.props.style);
+        }
 
         return <StylesProvider generateClassName={generateClassNameEngine}>
             <StyledEngineProvider injectFirst>
@@ -1529,6 +1532,7 @@ VisView.propTypes = {
     themeType: PropTypes.string,
     themeName: PropTypes.string,
     theme: PropTypes.object,
+    style: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
