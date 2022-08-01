@@ -479,7 +479,7 @@ class Vis {
             // console.log((new Date()) + " socket.io disconnect");
             // this.$('#server-disconnect').dialog('open');
         }
-    }
+    };
 
     onCommand(instance, command, data) {
         let parts;

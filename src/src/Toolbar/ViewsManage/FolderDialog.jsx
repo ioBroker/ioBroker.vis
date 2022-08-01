@@ -9,7 +9,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
@@ -60,18 +60,18 @@ const FolderDialog = props => {
     const dialogActions = {
         delete: deleteFolder,
         rename: renameFolder,
-        add: addFolder,
+        add:    addFolder,
     };
 
     const dialogInputs = {
         rename: I18n.t('New name'),
-        add: I18n.t('Name'),
+        add:    I18n.t('Name'),
     };
 
     const dialogIcons = {
         delete: DeleteIcon,
         rename: EditIcon,
-        add: AddIcon,
+        add:    AddIcon,
     };
 
     const DialogIcon = dialogIcons[props.dialog];

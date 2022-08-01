@@ -21,7 +21,23 @@ class BasicGroup extends VisRxWidget {
         return {
             id: '_tplGroup',
             visSet: 'basic',
-            visAttrs: 'attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;',
+            // visAttrs: 'attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;',
+            visAttrs: [{
+                name: 'common',
+                fields: [
+                    {
+                        name: 'objects',
+                        singleName: 'objects',
+                        fields: [{
+                            name: 'attrCount',
+                            type: 'slider',
+                            min: 1,
+                            max: 19,
+                            step: 1,
+                        }],
+                    },
+                ],
+            }],
         };
     }
 
@@ -39,12 +55,39 @@ class BasicGroup extends VisRxWidget {
         super.renderWidgetBody(props);
         const widget = this.props.views[this.props.view].widgets[this.props.id];
 
-        const groupWidgets = widget?.data?.members;
+        if (this.props.id === this.props.selectedGroup) {
+            props.style.overflow = 'visible';
+        }
+
+        const groupWidgets = [...(widget?.data?.members || [])];
         let rxGroupWidgets = null;
 
         // wait till view has real div (ref), because of CanJS widgets. they really need a DOM div
         if (groupWidgets?.length && this.state.mounted) {
-            rxGroupWidgets = groupWidgets.map((id, i) => {
+            // first relative, then absolute
+            groupWidgets.sort((a, b) => {
+                const widgetA = this.props.views[this.props.view].widgets[a];
+                const widgetB = this.props.views[this.props.view].widgets[b];
+                const isRelativeA = widgetA.style && (
+                    widgetA.style.position === 'relative' ||
+                    widgetA.style.position === 'static'   ||
+                    widgetA.style.position === 'sticky'
+                );
+                const isRelativeB = widgetB.style && (
+                    widgetB.style.position === 'relative' ||
+                    widgetB.style.position === 'static'   ||
+                    widgetB.style.position === 'sticky'
+                );
+                if (isRelativeA && isRelativeB) {
+                    return 0;
+                }
+                if (isRelativeA) {
+                    return -1;
+                }
+                return 1;
+            });
+
+            rxGroupWidgets = groupWidgets.map((id, index) => {
                 const _widget = this.props.views[this.props.view].widgets[id];
                 if (!_widget) {
                     return null;
@@ -52,10 +95,26 @@ class BasicGroup extends VisRxWidget {
                 if (this.props.selectedGroup) {
                     return null;
                 }
+                const isRelative = _widget.style && (
+                    _widget.style.position === 'relative' ||
+                    _widget.style.position === 'static' ||
+                    _widget.style.position === 'sticky'
+                );
 
                 // use same container for relative and absolute widgets (props.refService)
-                const { rxWidget } = this.props.VisView.getOneWidget(this.props, i, id, _widget, this.props.registerRef, props.refService, props.refService);
-                return rxWidget;
+                return this.props.VisView.getOneWidget(
+                    this.props,
+                    index,
+                    id,
+                    _widget,
+                    this.props.registerRef,
+                    isRelative,
+                    props.refService,
+                    null,
+                    groupWidgets,
+                    false,
+                    false,
+                );
             });
         }
 

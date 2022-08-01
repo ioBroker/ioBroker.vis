@@ -48,7 +48,7 @@ const Widgets = props => {
         items: [
             {
                 type: 'multiselect',
-                name: 'Active widget',
+                name: 'Active widget(s)',
                 items: Object.keys(widgets).filter(widget => (props.selectedGroup ?
                     widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
                     !widgets[widget].groupid)).map(widget => {
@@ -62,7 +62,7 @@ const Widgets = props => {
                 }),
                 width: 240,
                 value: props.selectedWidgets,
-                onChange: e => props.setSelectedWidgets(e.target.value),
+                onChange: value => props.setSelectedWidgets(value),
             },
             [[
                 {

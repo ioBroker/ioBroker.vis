@@ -158,10 +158,11 @@ Group can have the following attributes:
     - `noTranslation` - [optional] if true, options will not be translated.
   - `nselect` - Same as `select` but values will not be translated and `options` can be only like `['auto', 'on', 'off']` 
   - `fontname` - Font selector
-  - `effect` - Effect selector. One of `['','show','blind', 'bounce', 'clip', 'drop', 'explode', 'fade', 'fold', 'highlight', 'puff', 'pulsate', 'scale', 'shake', 'size', 'slide']. It used for old jQuery widgets.
+  - `effect` - Effect selector. One of `['','show','blind', 'bounce', 'clip', 'drop', 'explode', 'fade', 'fold', 'highlight', 'puff', 'pulsate', 'scale', 'shake', 'size', 'slide']`. It used for old jQuery widgets.
   - `widget` - Widget ID selector. It could have additional settings:
     - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`
   - `select-views` - Select view via drop-down menu with folders.
+    - `multiple` - [optional] if false, only one view can be selected. Default is true. 
   - `groups` - Select user group
   - `auto` - Autocomplete. It must have additional settings:
     - `options` - [mandatory] array of options. Like `['auto', 'on', 'off']`

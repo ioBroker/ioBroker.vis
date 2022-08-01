@@ -317,7 +317,7 @@ class VisView extends React.Component {
     }
 
     calculateRelativeWidgetPosition = (widgetId, left, top, shadowDiv, widgetsOrder) => {
-        left = parseFloat(left);
+        /* left = parseFloat(left);
         top = parseFloat(top);
 
         const viewRect = this.refRelativeView.current.getBoundingClientRect();
@@ -410,6 +410,7 @@ class VisView extends React.Component {
                 }
             }
         }
+        */
     };
 
     onMouseViewMove = !this.props.runtime ? e => {
@@ -541,7 +542,7 @@ class VisView extends React.Component {
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
 
-        const viewRect = this.refRelativeView.current.getBoundingClientRect();
+        const viewRect = this.refView.current.getBoundingClientRect();
 
         if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 2) {
             this.movement.x -= Math.ceil(((this.movement.startWidget.left - viewRect.left + this.movement.x) % this.props.views[this.props.view].settings.gridSize));
@@ -598,7 +599,7 @@ class VisView extends React.Component {
         const verticals = [];
         const horizontals = [];
 
-        const viewRect = this.refRelativeView.current.getBoundingClientRect();
+        const viewRect = this.refView.current.getBoundingClientRect();
 
         Object.keys(this.widgetsRefs).forEach(wid => {
             if (!this.props.selectedWidgets.includes(wid) && (!this.props.views[this.props.view].widgets[wid].grouped || this.props.selectedGroup)) {
@@ -841,7 +842,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed) {
+    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode) {
         const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
 
         const _props = {
@@ -850,7 +851,7 @@ class VisView extends React.Component {
             view: props.view,
             views: props.views,
             userGroups: props.userGroups,
-            editMode: props.editMode,
+            editMode: editMode === false ? false : props.editMode,
             user: props.user,
             allWidgets: props.allWidgets,
             socket: props.socket,
@@ -877,6 +878,9 @@ class VisView extends React.Component {
             lang: props.lang,
             dateFormat: props.dateFormat,
             systemConfig: props.systemConfig,
+            theme: props.theme,
+            themeName: props.themeName,
+            themeType: props.themeType,
             VisView,
         };
 
@@ -1126,44 +1130,51 @@ class VisView extends React.Component {
         ];
     }
 
-    static getRelativeStyle(settings) {
+    getRelativeStyle(settings, groupId) {
         const relativeStyle = {};
-        // this was only if this.props.editMode
-        if (settings.sizex) {
-            let ww = settings.sizex;
-            let hh = settings.sizey;
-            if (Number.isFinite(ww)) {
-                ww = parseFloat(ww);
-            }
-            if (Number.isFinite(hh)) {
-                hh = parseFloat(hh);
-            }
-
-            if (typeof ww === 'number' || ww.match(/\d$/)) {
-                ww += 'px';
-            }
-            if (typeof hh === 'number' || hh.match(/\d$/)) {
-                hh += 'px';
-            }
-            relativeStyle.width = ww;
-            relativeStyle.height = hh;
+        if (groupId) {
+            const groupWidgetStyle = this.props.views[this.props.view].widgets[groupId].style;
+            relativeStyle.width = groupWidgetStyle?.width || '100%';
+            relativeStyle.height = groupWidgetStyle?.height || '100%';
         } else {
-            relativeStyle.width = '100%';
-            relativeStyle.height = '100%';
-        }
+            // this was only if this.props.editMode
+            if (settings.sizex) {
+                let ww = settings.sizex;
+                let hh = settings.sizey;
+                if (Number.isFinite(ww)) {
+                    ww = parseFloat(ww);
+                }
+                if (Number.isFinite(hh)) {
+                    hh = parseFloat(hh);
+                }
 
-        relativeStyle.display = settings.style.display || 'flex';
-        if (relativeStyle.display === 'flex') {
-            // relativeStyle.flexDirection = 'row';
-            relativeStyle.flexWrap = 'wrap';
-            relativeStyle.gap = 8;
-            // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
-            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
-            // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+                if (typeof ww === 'number' || ww.match(/\d$/)) {
+                    ww += 'px';
+                }
+                if (typeof hh === 'number' || hh.match(/\d$/)) {
+                    hh += 'px';
+                }
+                relativeStyle.width = ww;
+                relativeStyle.height = hh;
+            } else {
+                relativeStyle.width = '100%';
+                relativeStyle.height = '100%';
+            }
+
+            relativeStyle.display = settings.style.display || 'flex';
+
+            if (relativeStyle.display === 'flex') {
+                // relativeStyle.flexDirection = 'row';
+                relativeStyle.flexWrap = 'wrap';
+                relativeStyle.gap = 8;
+                // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
+                // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+                // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
+            }
+            relativeStyle.position = 'absolute';
+            relativeStyle.top = 0;
+            relativeStyle.left = 0;
         }
-        relativeStyle.position = 'absolute';
-        relativeStyle.top = 0;
-        relativeStyle.left = 0;
 
         return relativeStyle;
     }
@@ -1198,10 +1209,6 @@ class VisView extends React.Component {
         return 1;
     }
 
-    renderRelativeView(settings, rxRelativeWidgets) {
-        return ;
-    }
-
     render() {
         let rxAbsoluteWidgets = [];
         let rxRelativeWidgets = [];
@@ -1224,7 +1231,33 @@ class VisView extends React.Component {
             const widgets = this.props.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
-                const relativeWidgetOrder = this.props.views[this.props.view].settings?.order || [];
+                const relativeWidgetOrder = this.props.selectedGroup ? this.props.views[this.props.view].widgets[this.props.selectedGroup].data.members : (this.props.views[this.props.view].settings?.order || []);
+
+                // by group editing first relative, then absolute
+                if (this.props.selectedGroup) {
+                    relativeWidgetOrder.sort((a, b) => {
+                        const widgetA = this.props.views[this.props.view].widgets[a];
+                        const widgetB = this.props.views[this.props.view].widgets[b];
+                        const isRelativeA = widgetA.style && (
+                            widgetA.style.position === 'relative' ||
+                            widgetA.style.position === 'static'   ||
+                            widgetA.style.position === 'sticky'
+                        );
+                        const isRelativeB = widgetB.style && (
+                            widgetB.style.position === 'relative' ||
+                            widgetB.style.position === 'static'   ||
+                            widgetB.style.position === 'sticky'
+                        );
+                        if (isRelativeA && isRelativeB) {
+                            return 0;
+                        }
+                        if (isRelativeA) {
+                            return -1;
+                        }
+                        return 1;
+                    });
+                }
+
                 const relativeWidgets = [];
                 const absoluteWidgets = [];
                 const unknownWidgets = [];
@@ -1264,21 +1297,25 @@ class VisView extends React.Component {
                 // calculate order of relative widgets
                 Object.keys(widgets).forEach(id => {
                     const widget = this.props.views[this.props.view].widgets[id];
+                    // Ignore grouped widgets in non-group-edit mode. They will be rendered in BasicGroup
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
                         return;
                     }
 
-                    if (this.props.selectedGroup) {
-                        if (!(id === this.props.selectedGroup || widget.groupid === this.props.selectedGroup)) {
-                            return;
-                        }
+                    // if group edit => ignore all widgets from other groups
+                    if (this.props.selectedGroup &&
+                        id !== this.props.selectedGroup &&
+                        widget.groupid !== this.props.selectedGroup
+                    ) {
+                        return;
                     }
+
                     const isRelative = widget.style && (
                         widget.style.position === 'relative' ||
                         widget.style.position === 'static' ||
                         widget.style.position === 'sticky'
                     );
-                    if (isRelative) {
+                    if (isRelative && id !== this.props.selectedGroup) {
                         if (!listRelativeWidgetsOrder.includes(id)) {
                             listRelativeWidgetsOrder.push(id);
                         }
@@ -1293,9 +1330,11 @@ class VisView extends React.Component {
                     }
                 });
 
-                for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
-                    if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
-                        relativeWidgetOrder.splice(t, 1);
+                if (!this.props.selectedGroup) {
+                    for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
+                        if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
+                            relativeWidgetOrder.splice(t, 1);
+                        }
                     }
                 }
 
@@ -1315,7 +1354,7 @@ class VisView extends React.Component {
                     return posA - posB;
                 });
 
-                const columns = this.getCountOfRelativeColumns(listRelativeWidgetsOrder.length);
+                const columns = this.props.selectedGroup ? 1 : this.getCountOfRelativeColumns(listRelativeWidgetsOrder.length);
                 const wColumns = new Array(columns);
                 for (let w = 0; w < wColumns.length; w++) {
                     wColumns[w] = [];
@@ -1344,21 +1383,25 @@ class VisView extends React.Component {
                             this.props.views[this.props.view].widgets[id],
                             this.registerRef,
                             true,
-                            this.refRelativeColumnsView[column],
+                            this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
                             this.onMouseWidgetDown,
-                            listRelativeWidgetsOrder,
+                            this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
                             moveAllowed,
                         );
                         wColumns[column].push(w);
                     });
 
-                    rxRelativeWidgets = wColumns.map((column, i) => <div
-                        ref={this.refRelativeColumnsView[i]}
-                        key={i}
-                        className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
-                    >
-                        {column}
-                    </div>);
+                    if (this.props.selectedGroup) {
+                        rxRelativeWidgets = wColumns[0];
+                    } else {
+                        rxRelativeWidgets = wColumns.map((column, i) => <div
+                            ref={this.refRelativeColumnsView[i]}
+                            key={i}
+                            className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
+                        >
+                            {column}
+                        </div>);
+                    }
                 } else {
                     rxRelativeWidgets = null;
                 }
@@ -1410,6 +1453,9 @@ class VisView extends React.Component {
         if (this.props.views[this.props.view].settings.snapType === 2) {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
+        if (this.props.style) {
+            Object.assign(style, this.props.style);
+        }
 
         return <StylesProvider generateClassName={generateClassNameEngine}>
             <StyledEngineProvider injectFirst>
@@ -1443,7 +1489,7 @@ class VisView extends React.Component {
                                     zIndex: 1000,
                                 }}
                             ></div>)}
-                        {rxRelativeWidgets ? <div ref={this.refRelativeView} style={VisView.getRelativeStyle(settings)}>
+                        {rxRelativeWidgets ? <div ref={this.refRelativeView} style={this.getRelativeStyle(settings, this.props.selectedGroup)} className="vis-relative-view">
                             { rxRelativeWidgets }
                         </div> : null}
                         { rxAbsoluteWidgets }
@@ -1486,6 +1532,7 @@ VisView.propTypes = {
     themeType: PropTypes.string,
     themeName: PropTypes.string,
     theme: PropTypes.object,
+    style: PropTypes.object,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

@@ -74,7 +74,7 @@ export const getWidgetTypes = () => {
 const deepClone = obj => {
     const newObj = Array.isArray(obj) ? [] : {};
     for (const key in obj) {
-        if (obj[key]) {
+        if (obj[key] !== undefined) {
             if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                 newObj[key] = deepClone(obj[key]);
             } else {
@@ -324,6 +324,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 commonFields[`${group.name}.${field.name}`]++;
             });
         });
+
         return fields;
     }
 

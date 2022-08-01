@@ -138,6 +138,15 @@ class VisCanWidget extends VisBaseWidget {
                     }
                 }
             });
+            // absolute widgets must have top and left
+            if (el.style.position === 'absolute') {
+                if (!el.style.top) {
+                    el.style.top = '0px';
+                }
+                if (!el.style.left) {
+                    el.style.left = '0px';
+                }
+            }
         }
     }
 

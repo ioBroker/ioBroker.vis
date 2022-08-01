@@ -25,6 +25,12 @@ class BasicViewInWidget extends VisRxWidget {
             visName: 'View in widget',
             visAttrs: 'contains_view/views',
             visPrev: 'widgets/basic/img/Prev_ContainerView.png',
+            visWidgetLabel: 'view_in_widget',  // Label of widget
+            visSetLabel: 'set_basic',
+            visDefaultStyle: {
+                width: 300,
+                height: 200,
+            },
         };
     }
 
@@ -69,7 +75,6 @@ class BasicViewInWidget extends VisRxWidget {
                 view={view}
                 activeView={view}
                 views={this.props.views}
-                editMode={this.props.editMode}
                 can={this.props.can}
                 canStates={this.props.canStates}
                 user={this.props.user}
@@ -85,10 +90,16 @@ class BasicViewInWidget extends VisRxWidget {
                 setValue={this.props.setValue}
                 linkContext={this.props.linkContext}
                 formatUtils={this.props.formatUtils}
-                selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
-                setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
-                onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                 showWidgetNames={this.props.showWidgetNames}
+                dateFormat={this.props.dateFormat}
+                lang={this.props.lang}
+                themeType={this.props.themeType}
+                themeName={this.props.themeName}
+                theme={this.props.theme}
+                systemConfig={this.props.systemConfig}
+                container={this.props.container}
+                editMode={false}
+                runtime={this.props.runtime}
             />
         </div>;
     }

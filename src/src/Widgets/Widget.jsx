@@ -97,6 +97,7 @@ const Widget = props => {
         placement="right-end"
     >
         <div className={props.classes.widget} style={style}>
+            <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
             <div className={props.classes.widgetTitle} style={titleStyle}>{props.widgetType.label ? I18n.t(props.widgetType.label) : window._(props.widgetType.title)}</div>
             <span className={props.classes.widgetImageContainer}>
                 { img }
@@ -135,6 +136,7 @@ Widget.propTypes = {
     widgetSetProps: PropTypes.object,
     widgetSet: PropTypes.string,
     widgetType: PropTypes.object,
+    widgetTypeName: PropTypes.string,
 };
 
 export default withStyles(styles)(Widget);
