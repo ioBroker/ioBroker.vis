@@ -577,7 +577,7 @@ async function main() {
     const configChanged = await generateConfigPage();
     const enabledList = await readAdaptersList();
 
-    const widgetSets = syncWidgetSets(false, enabledList);
+    const {widgetSets, filesChanged} = syncWidgetSets(false, enabledList);
     const widgetsChanged = await generateWidgetsHtml(widgetSets);
 
     const indexHtml = fs.readFileSync(__dirname + '/www/index.html').toString('utf8');
@@ -592,7 +592,7 @@ async function main() {
     }
     uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
 
-    if (configChanged || widgetsChanged || uploadedIndexHtml !== indexHtml) {
+    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
         await uploadAdapter();
     }
     adapter.stop();

@@ -7,7 +7,7 @@
         "@emotion/react": "^11.9.3",
         "@emotion/styled": "^11.9.3",
         "@iobroker/adapter-react-v5": "^3.1.27",
-        "@iobroker/vis-widgets-react-dev": "^0.1.7",
+        "@iobroker/vis-2-widgets-react-dev": "^0.3.0",
         "@mui/icons-material": "^5.8.4",
         "@mui/material": "^5.9.1",
         "@mui/styles": "^5.9.1",
