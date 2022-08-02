@@ -194,13 +194,13 @@ const Widgets = props => {
                     <AccordionDetails>
                         <div>
                             {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
-                                widgetTypeName === '_tplGroup' ? null : <Widget
+                                (widgetTypeName === '_tplGroup' ? null : <Widget
                                     widgetType={widgetsList[category][widgetTypeName]}
                                     key={widgetKey}
                                     widgetSet={category}
                                     widgetSetProps={widgetSetProps[category]}
                                     widgetTypeName={widgetTypeName}
-                                />)}
+                                />))}
                         </div>
                     </AccordionDetails>
                 </Accordion>)

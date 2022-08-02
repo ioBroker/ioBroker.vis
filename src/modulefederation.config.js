@@ -1,4 +1,4 @@
-const makeFederation = require('@iobroker/vis-widgets-react-dev/modulefederation.config');
+const makeFederation = require('@iobroker/vis-2-widgets-react-dev/modulefederation.config');
 
 module.exports = makeFederation(
     'iobroker_vis',
@@ -43,6 +43,6 @@ module.exports = {
             'prop-types',
             '@iobroker/adapter-react-v5',
             'react-ace',
-            '@iobroker/vis-widgets-react-dev',
+            '@iobroker/vis-2-widgets-react-dev',
         ]),
 };*/

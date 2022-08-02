@@ -6,7 +6,7 @@ import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
-import { VisRxWidget } from '@iobroker/vis-widgets-react-dev';
+import { VisRxWidget } from '@iobroker/vis-2-widgets-react-dev';
 
 import {
     IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar,

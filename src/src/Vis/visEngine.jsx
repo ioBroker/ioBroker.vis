@@ -955,92 +955,91 @@ class VisEngine extends React.Component {
             // show command
             window.alert(I18n.t('Received user command: %s', JSON.stringify({ instance, command, data })));
             return true;
-        } else {
-            // external Commands
-            switch (command) {
-                case 'alert': {
-                    const [message, title, icon] = data.split(';');
-                    this.showMessage(message, title, icon);
-                    break;
-                }
-                case 'changedView':
-                    // Do nothing
-                    return false;
-                case 'changeView': {
-                    const [project, view] = data.split('/');
-                    if (view) {
-                        // detect actual project
-                        if (project !== this.props.projectName) {
-                            if (window.location.search.includes('runtime=')) {
-                                document.location.href = `./?${project}&runtime=true#${view}`;
-                            } else {
-                                document.location.href = `./?${project}#${view}`;
-                            }
-                            return true;
-                        }
-                    }
-
-                    window.vis.changeView(view || project, view || project);
-                    break;
-                }
-                case 'refresh':
-                case 'reload':
-                    setTimeout(() =>
-                        window.location.reload(), 1);
-                    break;
-                case 'dialog':
-                case 'dialogOpen':
-                    // noinspection JSJQueryEfficiency
-                    window.jQuery(`#${data}_dialog`).dialog('open');
-                    break;
-                case 'dialogClose':
-                    // noinspection JSJQueryEfficiency
-                    window.jQuery(`#${data}_dialog`).dialog('close');
-                    break;
-                case 'popup':
-                    window.open(data);
-                    break;
-                case 'playSound':
-                    setTimeout(() => {
-                        let href;
-                        this.sound = /^((?!chrome|android).)*safari/i.test(window.navigator.userAgent) ? $('<audio id="external_sound" autoplay muted></audio>').appendTo('body') : null;
-
-                        if (data && data.match(/^http(s)?:\/\//)) {
-                            href = data;
-                        } else {
-                            href = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${data}`;
-                        }
-                        // force read from server
-                        href += `?${Date.now()}`;
-                        if (this.refSound?.current) {
-                            this.refSound.current.setAttribute('src', href);
-                            this.refSound.current.setAttribute('muted', false);
-                            this.refSound.current.play();
-                        } else if (typeof Audio !== 'undefined') {
-                            const snd = new Audio(href); // buffers automatically when created
-                            snd.play();
-                        } else {
-                            // noinspection JSJQueryEfficiency
-                            let $sound = this.$('#external_sound');
-                            if (!$sound.length) {
-                                this.$('body').append('<audio id="external_sound"></audio>');
-                                $sound = this.$('#external_sound');
-                            }
-                            $sound.attr('src', href);
-                            window.document.getElementById('external_sound').play();
-                        }
-                    }, 1);
-                    break;
-                case 'tts':
-                    if (typeof window.app !== 'undefined') {
-                        window.app.tts(data);
-                    }
-                    break;
-                default:
-                    this.conn.logError(`unknown external command ${command}`);
-            }
-            return false;
         }
+        // external Commands
+        switch (command) {
+            case 'alert': {
+                const [message, title, icon] = data.split(';');
+                this.showMessage(message, title, icon);
+                break;
+            }
+            case 'changedView':
+                // Do nothing
+                return false;
+            case 'changeView': {
+                const [project, view] = data.split('/');
+                if (view) {
+                    // detect actual project
+                    if (project !== this.props.projectName) {
+                        if (window.location.search.includes('runtime=')) {
+                            document.location.href = `./?${project}&runtime=true#${view}`;
+                        } else {
+                            document.location.href = `./?${project}#${view}`;
+                        }
+                        return true;
+                    }
+                }
+
+                window.vis.changeView(view || project, view || project);
+                break;
+            }
+            case 'refresh':
+            case 'reload':
+                setTimeout(() =>
+                    window.location.reload(), 1);
+                break;
+            case 'dialog':
+            case 'dialogOpen':
+                // noinspection JSJQueryEfficiency
+                window.jQuery(`#${data}_dialog`).dialog('open');
+                break;
+            case 'dialogClose':
+                // noinspection JSJQueryEfficiency
+                window.jQuery(`#${data}_dialog`).dialog('close');
+                break;
+            case 'popup':
+                window.open(data);
+                break;
+            case 'playSound':
+                setTimeout(() => {
+                    let href;
+
+                    if (data && data.match(/^http(s)?:\/\//)) {
+                        href = data;
+                    } else {
+                        href = `${window.location.protocol}//${window.location.hostname}:${window.location.port}${data}`;
+                    }
+                    // force read from server
+                    href += `?${Date.now()}`;
+                    if (this.refSound?.current) {
+                        this.refSound.current.setAttribute('src', href);
+                        this.refSound.current.setAttribute('muted', false);
+                        this.refSound.current.play();
+                    } else if (typeof Audio !== 'undefined') {
+                        const snd = new Audio(href); // buffers automatically when created
+                        snd.play();
+                    } else {
+                        // noinspection JSJQueryEfficiency
+                        let $sound = this.$('#external_sound');
+                        if (!$sound.length) {
+                            this.$('body').append('<audio id="external_sound"></audio>');
+                            $sound = this.$('#external_sound');
+                        }
+                        $sound.attr('src', href);
+                        window.document.getElementById('external_sound').play();
+                    }
+                }, 1);
+                break;
+            case 'tts':
+                if (typeof window.app !== 'undefined') {
+                    window.app.tts(data);
+                }
+                break;
+            default:
+                this.conn.logError(`unknown external command ${command}`);
+        }
+
+        return false;
     }
 
     onStateChange = (id, state) => {
