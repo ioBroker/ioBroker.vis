@@ -104,6 +104,9 @@ class VisRxWidget extends VisBaseWidget {
             applyBindings: false,
         };
 
+        delete this.newState.rxData._originalData;
+        delete this.newState.rxStyle._originalData;
+
         if (id && state) {
             Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
         }
@@ -139,7 +142,7 @@ class VisRxWidget extends VisBaseWidget {
         if (JSON.stringify(this.state.values) !== JSON.stringify(this.newState.values) ||
             JSON.stringify(this.state.rxData) !== JSON.stringify(this.newState.rxData) ||
             JSON.stringify(this.state.rxStyle) !== JSON.stringify(this.newState.rxStyle) ||
-            this.state.applyBindings !== this.newState.applyBindings
+            JSON.stringify(this.state.applyBindings) !== JSON.stringify(this.newState.applyBindings)
         ) {
             this.updateTimer = setTimeout(() => {
                 this.updateTimer = null;
@@ -242,6 +245,9 @@ class VisRxWidget extends VisBaseWidget {
         }
 
         Object.keys(this.state.rxStyle).forEach(attr => {
+            if (attr.startsWith('_')) {
+                debugger;
+            }
             const value = this.state.rxStyle[attr];
             if (value !== null && value !== undefined) {
                 attr = attr.replace(

@@ -119,14 +119,18 @@ class VisCanWidget extends VisBaseWidget {
             // style is a string
             // "height: 10; width: 20"
             style = VisBaseWidget.parseStyle(style);
-            Object.keys(style).forEach(attr => el.style[attr] = style[attr]);
+            Object.keys(style).forEach(attr => {
+                if (!attr.startsWith('_')) {
+                    el.style[attr] = style[attr];
+                }
+            });
         } else if (style) {
             // style is an object
             // {
             //      height: 10,
             // }
             Object.keys(style).forEach(attr => {
-                if (attr && style[attr] !== undefined && style[attr] !== null) {
+                if (attr && style[attr] !== undefined && style[attr] !== null && !attr.startsWith('_')) {
                     let value = style[attr];
                     if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
                         if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {

@@ -953,7 +953,9 @@ class VisEngine extends React.Component {
         }
         if (this.props.editMode && command !== 'tts' && command !== 'playSound') {
             // show command
-            window.alert(I18n.t('Received user command: %s', JSON.stringify({ instance, command, data })));
+            if (command !== 'changedView') {
+                window.alert(I18n.t('Received user command: %s', JSON.stringify({ instance, command, data })));
+            }
             return true;
         }
         // external Commands

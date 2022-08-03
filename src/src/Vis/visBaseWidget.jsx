@@ -31,7 +31,6 @@ import {
 
 const RESIZERS_OPACITY = 0.9;
 
-
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
@@ -47,9 +46,13 @@ class VisBaseWidget extends React.Component {
 
         const selected = this.props.editMode && this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id);
 
+        const data = JSON.parse(JSON.stringify(widget.data || {}));
+        const style = JSON.parse(JSON.stringify(widget.style || {}));
+        VisBaseWidget.replacePRJ_NAME(data, style, props);
+
         this.state = {
-            data: JSON.parse(JSON.stringify(widget.data || {})),
-            style: JSON.parse(JSON.stringify(widget.style || {})),
+            data,
+            style,
             // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
             editMode: this.props.editMode,
@@ -61,6 +64,33 @@ class VisBaseWidget extends React.Component {
         };
 
         this.onCommandBound = this.onCommand.bind(this);
+    }
+
+    static replacePRJ_NAME(data, style, props) {
+        if (data) {
+            delete data._originalData;
+            Object.keys(data).forEach(attr => {
+                if (attr && data[attr] && typeof data[attr] === 'string' && (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && data[attr].startsWith('_PRJ_NAME')) {
+                    if (!data._originalData) {
+                        data._originalData = JSON.stringify(data);
+                    }
+                    // "_PRJ_NAME".length = 9
+                    data[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
+                }
+            });
+        }
+        if (style) {
+            delete style._originalData;
+            Object.keys(style).forEach(attr => {
+                if (attr === 'background-image' && style[attr] && style[attr].startsWith('_PRJ_NAME')) {
+                    if (!style._originalData) {
+                        style._originalData = JSON.stringify(style);
+                    }
+                    // "_PRJ_NAME".length = 9
+                    style[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;
+                }
+            });
+        }
     }
 
     componentDidMount() {
@@ -144,12 +174,22 @@ class VisBaseWidget extends React.Component {
     static getDerivedStateFromProps(props, state) {
         const widget = props.views[props.view].widgets[props.id];
 
-        if (JSON.stringify(widget.style || {}) !== JSON.stringify(state.style) ||
-            JSON.stringify(widget.data || {}) !== JSON.stringify(state.data)
+        let _style = state.style._originalData ? state.style._originalData : JSON.stringify(state.style);
+        let _data = state.data._originalData ? state.data._originalData : JSON.stringify(state.data);
+
+        if (JSON.stringify(widget.style || {}) !== _style ||
+            JSON.stringify(widget.data || {}) !== _data
         ) {
-            Object.keys(state.style).forEach(attr => {
-                if (state.style[attr] !== widget.style[attr]) {
-                    console.log(`[${Date.now()}] Rerender because of ${attr}: ${state.style[attr]} !== ${widget.style[attr]}`);
+            _style = JSON.parse(_style);
+            Object.keys(_style).forEach(attr => {
+                if (_style[attr] !== widget.style[attr]) {
+                    console.log(`[${Date.now()}] Rerender because of style.${attr}: ${_style[attr]} !== ${widget.style[attr]}`);
+                }
+            });
+            _data = JSON.parse(_data);
+            Object.keys(_data).forEach(attr => {
+                if (_data[attr] !== widget.data[attr]) {
+                    console.log(`[${Date.now()}] Rerender because of data.${attr}: ${_data[attr]} !== ${widget.data[attr]}`);
                 }
             });
             const data = JSON.parse(JSON.stringify(widget.data || {}));
@@ -157,19 +197,7 @@ class VisBaseWidget extends React.Component {
             const style = JSON.parse(JSON.stringify(widget.style || {}));
 
             // replace all _PRJ_NAME with vis.0/name
-            Object.keys(data).forEach(attr => {
-                if (attr && data[attr] && typeof data[attr] === 'string' && (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && data[attr].startsWith('_PRJ_NAME')) {
-                    // "_PRJ_NAME".length = 9
-                    data[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
-                }
-            });
-
-            Object.keys(style).forEach(attr => {
-                if (attr === 'background-image' && style[attr] && style[attr].startsWith('_PRJ_NAME')) {
-                    // "_PRJ_NAME".length = 9
-                    style[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;
-                }
-            });
+            VisBaseWidget.replacePRJ_NAME(data, style, props);
 
             return {
                 style,
@@ -1457,7 +1485,7 @@ class VisBaseWidget extends React.Component {
             { widgetName }
             { widgetMoveButtons }
             { overlay }
-            { this.state.selectedOne ? this.getResizeHandlers() : null }
+            { this.state.editMode && this.state.selectedOne ? this.getResizeHandlers() : null }
             { rxWidget }
         </div>;
     }
