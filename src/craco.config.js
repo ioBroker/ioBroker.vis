@@ -12,7 +12,7 @@ module.exports = {
             '/vis': 'http://localhost:8082/vis',
             '/widgets': 'http://localhost:8082/vis',
             '/widgets.html': 'http://localhost:8082/vis',
-            '/files': 'http://localhost:8081',
+            '/vis.0': 'http://localhost:8082',
         },
     },
     webpack: {
