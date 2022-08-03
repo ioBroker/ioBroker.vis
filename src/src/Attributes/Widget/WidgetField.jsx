@@ -397,6 +397,7 @@ const WidgetField = props => {
                     allowDelete
                     allowView
                     showToolbar
+                    imagePrefix="./"
                     selected={value}
                     onSelect={(selected, isDoubleClick) => {
                         const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
