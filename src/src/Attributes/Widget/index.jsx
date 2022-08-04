@@ -13,6 +13,7 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import CodeIcon from '@mui/icons-material/Code';
+import InfoIcon from '@mui/icons-material/Info';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
@@ -50,6 +51,7 @@ const styles = theme => ({
         width: 140,
         fontSize: '80%',
         position: 'relative',
+        lineHeight: '21px',
     },
     fieldTitleDisabled: {
         opacity: 0.8,
@@ -119,6 +121,11 @@ const styles = theme => ({
         },
     },
     lightedPanel: theme.classes.lightedPanel,
+    infoIcon: {
+        width: 16,
+        verticalAlign: 'middle',
+        marginLeft: 3,
+    },
 });
 
 const getFieldsBefore = () => [
@@ -870,7 +877,7 @@ const Widget = props => {
                                         {field.type === 'delimiter' ?
                                             <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
                                             : <>
-                                                <td className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}>
+                                                <td className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)} title={I18n.t(field.tooltip)}>
                                                     { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
                                                     { field.title || (field.label && I18n.t(field.label)) ||
                                                         (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
@@ -887,6 +894,7 @@ const Widget = props => {
                                                                 }
                                                             })}
                                                         /> : null }
+                                                    {field.tooltip ? <InfoIcon className={props.classes.infoIcon} /> : null}
                                                 </td>
                                                 <td className={props.classes.fieldContent}>
                                                     <div className={props.classes.fieldContentDiv}>

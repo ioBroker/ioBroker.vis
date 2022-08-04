@@ -273,11 +273,21 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     index: i,
                     name: `${group.singleName}-${i}`,
                 };
-                indexedGroup.fields.forEach(field => {
+                indexedGroup.fields.forEach((field, ii) => {
                     field.singleName = field.name;
                     field.name = `${field.name}${i}`;
                     field.index = i;
+                    if (typeof group.fields[ii].hidden === 'function') {
+                        field.hidden = group.fields[ii].hidden;
+                    }
+                    if (typeof group.fields[ii].disabled === 'function') {
+                        field.disabled = group.fields[ii].disabled;
+                    }
+                    if (typeof group.fields[ii].error === 'function') {
+                        field.error = group.fields[ii].error;
+                    }
                 });
+
                 indexedGroups.push(indexedGroup);
             }
             fields.splice(groupIndex, 1, ...indexedGroups);
@@ -306,8 +316,18 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         index: i,
                         name: `${field.singleName}${i}`,
                     };
+                    if (typeof field.hidden === 'function') {
+                        indexedField.hidden = field.hidden;
+                    }
+                    if (typeof field.disabled === 'function') {
+                        indexedField.disabled = field.disabled;
+                    }
+                    if (typeof field.error === 'function') {
+                        indexedField.error = field.error;
+                    }
                     indexedFields.push(indexedField);
                 }
+
                 group.fields.splice(fieldIndex, 1, ...indexedFields);
 
                 fieldIndex = group.fields.findIndex(_field => _field.indexFrom);
