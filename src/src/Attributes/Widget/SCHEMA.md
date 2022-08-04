@@ -114,7 +114,7 @@ Group can have the following attributes:
 - `name`: [mandatory] Attribute name to be stored in data
 - `label`: [optional] Label to be displayed in the UI
 - `default`: [optional] default initial value
-- `hidden`: [optional] JS code to calculate the hidden state of the attribute. 
+- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
    Example `!!data["oid" + index]` or `data.type !== "digital" && data.type !== "digital2"`.
 - `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.

@@ -348,8 +348,13 @@ const getFieldsAfter = (widget, widgets, fonts) => [
 
 const checkFunction = (funcText, project, selectedView, selectedWidgets, index) => {
     try {
-        // eslint-disable-next-line no-new-func
-        const _func = new Function('data', 'index', `return ${funcText}`);
+        let _func;
+        if (typeof funcText === 'function') {
+            _func = funcText;
+        } else {
+            // eslint-disable-next-line no-new-func
+            _func = new Function('data', 'index', `return ${funcText}`);
+        }
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {
             const data = project[selectedView].widgets[selectedWidgets].data;
@@ -842,7 +847,7 @@ const Widget = props => {
                     <table style={{ width: '100%' }}>
                         <tbody>
                             {
-                                group.fields.map((field, key2) => {
+                                group.fields.map((field, fieldIndex) => {
                                     let error;
                                     let disabled;
                                     if (field.hidden) {
@@ -861,7 +866,7 @@ const Widget = props => {
                                         }
                                     }
 
-                                    return <tr key={key2} className={props.classes.fieldRow}>
+                                    return <tr key={fieldIndex} className={props.classes.fieldRow}>
                                         {field.type === 'delimiter' ?
                                             <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
                                             : <>
