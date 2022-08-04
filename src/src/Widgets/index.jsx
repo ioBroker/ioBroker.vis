@@ -17,7 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
+import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Utils';
@@ -67,6 +67,11 @@ const styles = theme => ({
     selectClear: {
         flex: 1,
     },
+    groupIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 4,
+    },
 });
 
 const Widgets = props => {
@@ -103,6 +108,14 @@ const Widgets = props => {
         if (widgetType.setColor) {
             widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
             widgetSetProps[widgetType.set].color = widgetType.setColor;
+        }
+        if (widgetType.adapter) {
+            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
+            if (window.location.port === '3000') {
+                widgetSetProps[widgetType.set].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+            } else {
+                widgetSetProps[widgetType.set].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+            }
         }
         widgetsList[widgetType.set][widgetType.name] = widgetType;
     });
@@ -189,7 +202,8 @@ const Widgets = props => {
                             expandIcon: props.classes.clearPadding,
                         }}
                     >
-                        {(widgetSetProps[category] && widgetSetProps[category].label) || category}
+                        {widgetSetProps[category]?.icon ? <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} /> : null}
+                        {widgetSetProps[category]?.label || category}
                     </AccordionSummary>
                     <AccordionDetails>
                         <div>

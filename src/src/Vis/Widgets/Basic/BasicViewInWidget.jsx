@@ -100,6 +100,7 @@ class BasicViewInWidget extends VisRxWidget {
                 container={this.props.container}
                 editMode={false}
                 runtime={this.props.runtime}
+                visInWidget
             />
         </div>;
     }

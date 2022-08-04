@@ -89,6 +89,8 @@ const Widget = props => {
         />;
     }
 
+    const label = props.widgetType.label ? I18n.t(props.widgetType.label) : window._(props.widgetType.title);
+
     const result = <Tooltip
         title={<div className={props.classes.widgetTooltip}>
             <div>{ img }</div>
@@ -98,7 +100,7 @@ const Widget = props => {
     >
         <div className={props.classes.widget} style={style}>
             <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
-            <div className={props.classes.widgetTitle} style={titleStyle}>{props.widgetType.label ? I18n.t(props.widgetType.label) : window._(props.widgetType.title)}</div>
+            <div className={props.classes.widgetTitle} style={titleStyle}>{label}</div>
             <span className={props.classes.widgetImageContainer}>
                 { img }
             </span>

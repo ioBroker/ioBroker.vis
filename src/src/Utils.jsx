@@ -21,6 +21,7 @@ export const getWidgetTypes = () => {
     if (!window.visWidgetTypes) {
         window.visSets = {};
 
+        // Old CanJS widgets
         window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
             .map(script => {
                 const widgetSet = script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : 'basic';
@@ -47,6 +48,7 @@ export const getWidgetTypes = () => {
                 };
             });
 
+        // React widgets
         Object.values(VisView.widgets).forEach(widget => {
             const widgetInfo = widget.getWidgetInfo();
 
@@ -64,6 +66,7 @@ export const getWidgetTypes = () => {
                 resizable: widgetInfo.visResizable,
                 resizeLocked: widgetInfo.visResizeLocked,
                 draggable: widgetInfo.visDraggable,
+                adapter: widget.adapter || undefined,
             });
         });
     }

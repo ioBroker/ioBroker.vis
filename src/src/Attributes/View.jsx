@@ -383,6 +383,23 @@ const View = props => {
                 },
             ],
         },
+        {
+            name: 'Navigation',
+            fields: [
+                {
+                    type: 'checkbox', name: 'Show navigation', field: 'navigation', notStyle: true,
+                },
+                {
+                    type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true,
+                },
+                {
+                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true,
+                },
+                {
+                    type: 'color', name: 'Bar color', field: 'navigationColor', notStyle: true,
+                },
+            ],
+        },
     ];
 
     const [accordionOpen, setAccordionOpen] = useState(

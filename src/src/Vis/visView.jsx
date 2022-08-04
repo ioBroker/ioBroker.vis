@@ -18,11 +18,13 @@ import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
+
 import { Utils } from '@iobroker/adapter-react-v5';
 
 import VisCanWidget from './visCanWidget';
 import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
+import VisNavigation from './visNavigation';
 
 const generateClassNameEngine = createGenerateClassName({
     productionPrefix: 'vis',
@@ -52,6 +54,7 @@ class VisView extends React.Component {
             loadedjQueryTheme: '',
             themeCode: '',
             width: 0,
+            menuWidth: window.localStorage.getItem('vis.menuWidth') || 'full',
         };
 
         this.refView = React.createRef();
@@ -91,11 +94,7 @@ class VisView extends React.Component {
     }
 
     componentDidMount() {
-        if (this.refRelativeView.current) {
-            if (this.refRelativeView.current.offsetWidth !== this.state.width) {
-                this.setState({ width: this.refRelativeView.current.offsetWidth });
-            }
-        }
+        this.updateViewWidth();
 
         this.promiseToCollect.then(() => {
             this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
@@ -316,8 +315,8 @@ class VisView extends React.Component {
         return widgets;
     }
 
-    calculateRelativeWidgetPosition = (widgetId, left, top, shadowDiv, widgetsOrder) => {
-        /* left = parseFloat(left);
+    calculateRelativeWidgetPosition = null; /*(widgetId, left, top, shadowDiv, widgetsOrder) => {
+        left = parseFloat(left);
         top = parseFloat(top);
 
         const viewRect = this.refRelativeView.current.getBoundingClientRect();
@@ -410,8 +409,9 @@ class VisView extends React.Component {
                 }
             }
         }
-        */
+
     };
+    */
 
     onMouseViewMove = !this.props.runtime ? e => {
         if (!this.selectDiv && this.refView.current) {
@@ -802,13 +802,17 @@ class VisView extends React.Component {
         }
     }
 
-    componentDidUpdate() {
-        this.registerEditorHandlers();
+    updateViewWidth() {
         if (this.refRelativeView.current) {
             if (this.refRelativeView.current.offsetWidth !== this.state.width) {
                 this.setState({ width: this.refRelativeView.current.offsetWidth });
             }
         }
+    }
+
+    componentDidUpdate() {
+        this.registerEditorHandlers();
+        this.updateViewWidth();
     }
 
     static renderGitter(step, color) {
@@ -1209,6 +1213,26 @@ class VisView extends React.Component {
         return 1;
     }
 
+    renderNavigation(content) {
+        return <VisNavigation
+            socket={this.props.socket}
+            activeView={this.props.activeView}
+            views={this.props.views}
+            view={this.props.view}
+            editMode={this.props.editMode}
+            themeType={this.props.themeType}
+            menuWidth={this.state.menuWidth}
+            setMenuWidth={menuWidth => {
+                window.localStorage.setItem('vis.menuWidth', menuWidth);
+                this.setState({ menuWidth });
+                // re-calculate the width of the view
+                setTimeout(() => this.updateViewWidth(), 300);
+            }}
+        >
+            {content}
+        </VisNavigation>;
+    }
+
     render() {
         let rxAbsoluteWidgets = [];
         let rxRelativeWidgets = [];
@@ -1457,43 +1481,49 @@ class VisView extends React.Component {
             Object.assign(style, this.props.style);
         }
 
+        let renderedView = <div
+            className={className}
+            ref={this.refView}
+            id={`visview_${this.props.view.replace(/\s/g, '_')}`}
+            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
+            onDoubleClick={e => this.onViewDoubleClick(e)}
+            style={style}
+        >
+            <style>{this.state.themeCode}</style>
+            { gridDiv }
+            {this.renderScreenSize()}
+            {this.state.rulers.map((ruler, key) =>
+                <div
+                    key={key}
+                    style={{
+                        pointerEvents: 'none',
+                        position: 'absolute',
+                        width: ruler.type === 'horizontal' ? '100%' : 10,
+                        height: ruler.type === 'horizontal' ? 10 : '100%',
+                        borderStyle: 'solid',
+                        borderColor: 'red',
+                        borderWidth: 0,
+                        borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
+                        borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
+                        left: ruler.type === 'horizontal' ? 0 : ruler.value,
+                        top: ruler.type === 'horizontal' ? ruler.value : 0,
+                        zIndex: 1000,
+                    }}
+                ></div>)}
+            {rxRelativeWidgets ? <div ref={this.refRelativeView} style={this.getRelativeStyle(settings, this.props.selectedGroup)} className="vis-relative-view">
+                { rxRelativeWidgets }
+            </div> : null}
+            { rxAbsoluteWidgets }
+        </div>;
+
+        if (settings.navigation && !this.props.visInWidget) {
+            renderedView = this.renderNavigation(renderedView);
+        }
+
         return <StylesProvider generateClassName={generateClassNameEngine}>
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.props.theme}>
-                    <div
-                        className={className}
-                        ref={this.refView}
-                        id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-                        onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-                        onDoubleClick={e => this.onViewDoubleClick(e)}
-                        style={style}
-                    >
-                        <style>{this.state.themeCode}</style>
-                        { gridDiv }
-                        {this.renderScreenSize()}
-                        {this.state.rulers.map((ruler, key) =>
-                            <div
-                                key={key}
-                                style={{
-                                    pointerEvents: 'none',
-                                    position: 'absolute',
-                                    width: ruler.type === 'horizontal' ? '100%' : 10,
-                                    height: ruler.type === 'horizontal' ? 10 : '100%',
-                                    borderStyle: 'solid',
-                                    borderColor: 'red',
-                                    borderWidth: 0,
-                                    borderLeftWidth: ruler.type === 'horizontal' ? 0 : 1,
-                                    borderTopWidth: ruler.type === 'horizontal' ? 1 : 0,
-                                    left: ruler.type === 'horizontal' ? 0 : ruler.value,
-                                    top: ruler.type === 'horizontal' ? ruler.value : 0,
-                                    zIndex: 1000,
-                                }}
-                            ></div>)}
-                        {rxRelativeWidgets ? <div ref={this.refRelativeView} style={this.getRelativeStyle(settings, this.props.selectedGroup)} className="vis-relative-view">
-                            { rxRelativeWidgets }
-                        </div> : null}
-                        { rxAbsoluteWidgets }
-                    </div>
+                    {renderedView}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;
@@ -1533,6 +1563,7 @@ VisView.propTypes = {
     themeName: PropTypes.string,
     theme: PropTypes.object,
     style: PropTypes.object,
+    visInWidget: PropTypes.bool,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

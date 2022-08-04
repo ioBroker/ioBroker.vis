@@ -754,8 +754,7 @@ const loadComponent = (remote, sharedScope, module, url) => async () => {
     await getOrLoadRemote(remote, sharedScope, url);
     const container = window[remote];
     const factory = await container.get(module);
-    const Module = factory();
-    return Module;
+    return factory();
 };
 
 async function getRemoteWidgets(socket) {
@@ -767,7 +766,6 @@ async function getRemoteWidgets(socket) {
     ));
     const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
 
-    // console.log(dynamicWidgetInstances);
     for (const instanceKey in dynamicWidgetInstances) {
         const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
         for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
@@ -790,6 +788,7 @@ async function getRemoteWidgets(socket) {
                             try {
                                 const Component = await loadComponent(visWidgetsCollection.name, 'default', `./${visWidgetsCollection.components[componentKey]}`, visWidgetsCollection.url)();
                                 console.log(Component);
+                                Component.default.adapter = dynamicWidgetInstance.common.name;
                                 result.push(Component.default);
                             } catch (e) {
                                 console.error(e);
@@ -832,7 +831,8 @@ async function getRemoteWidgets(socket) {
                 }
             }
         }
-        if (dynamicWidgetInstance.common.visWidgets.i18n && typeof dynamicWidgetInstance.common.visWidgets.i18n === 'object') {
+
+        if (dynamicWidgetInstance.common.visWidgets?.i18n && typeof dynamicWidgetInstance.common.visWidgets?.i18n === 'object') {
             try {
                 I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
             } catch (error) {
