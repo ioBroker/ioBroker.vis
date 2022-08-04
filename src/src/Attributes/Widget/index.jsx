@@ -854,7 +854,11 @@ const Widget = props => {
                                         error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
                                     }
                                     if (field.disabled) {
-                                        disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
+                                        if (field.disabled === true) {
+                                            disabled = true;
+                                        } else {
+                                            disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
+                                        }
                                     }
 
                                     return <tr key={key2} className={props.classes.fieldRow}>

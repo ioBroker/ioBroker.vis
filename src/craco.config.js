@@ -10,7 +10,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/vis.0': 'http://localhost:8082',
-            '/vis': 'http://localhost:8082/vis',
+            '/vis': 'http://localhost:8082',
             '/widgets': 'http://localhost:8082/vis',
             '/widgets.html': 'http://localhost:8082/vis',
             '/web': 'http://localhost:8082',

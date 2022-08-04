@@ -116,10 +116,23 @@ Group can have the following attributes:
 - `default`: [optional] default initial value
 - `hidden`: [optional] JS code to calculate the hidden state of the attribute. 
    Example `!!data["oid" + index]` or `data.type !== "digital" && data.type !== "digital2"`.
-- `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`.
+- `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.
 - `onChange`: in development
 - `component`: in development
+- `onChange`: [optional] Script, that will be called, when value of attribute will be changed. Example: 
+```
+onChange: async (field, data, changeData, socket) => {
+    const object = await socket.getObject(data[field]);
+    if (object && object.common) {
+        data.name = typeof object.common.name === 'object' ? object.common.name[I18n.getLanguage()] || object.common.name.en : object.common.name;
+    } else {
+        data.name = data[field].split('.').pop();
+        data.withStates = false;
+    }
+    changeData(data);
+},
+```
 - `type`: default value is '' and just an input field. It can have the following values:
   - `instance` - Instance selector. It could have additional settings: 
      - `adapter` - [optional] Additionally, you can provide `adapter` to filter the instances of specific adapter. With special adapter name `_dataSources` you can get all adapters with flag `common.getHistory`.

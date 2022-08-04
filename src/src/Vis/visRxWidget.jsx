@@ -146,8 +146,9 @@ class VisRxWidget extends VisBaseWidget {
         ) {
             this.updateTimer = setTimeout(() => {
                 this.updateTimer = null;
-                this.setState(this.newState);
+                const newState = this.newState;
                 this.newState = null;
+                this.setState(newState);
             }, 50);
         } else {
             this.newState = null;
