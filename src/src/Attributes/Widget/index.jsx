@@ -381,7 +381,7 @@ const checkFunction = (funcText, project, selectedView, selectedWidgets, index) 
 };
 
 const Widget = props => {
-    const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
+    const widgetTypes = props.widgetTypes;
     const widgets = props.project[props.selectedView]?.widgets;
 
     const fieldsData = useMemo(() => {
@@ -845,7 +845,7 @@ const Widget = props => {
                                     e.stopPropagation();
                                 }}
                                 size="small"
-                                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox)}}
+                                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox) }}
                             />
                         </div>
                     </div>
@@ -957,7 +957,24 @@ const Widget = props => {
     </>;
 };
 
-Widget.propTypes = {
+const WidgetContainer = props => {
+    const widgetTypes = useMemo(() => getWidgetTypes(), [props.widgetsLoaded]);
+    const widgets = props.project[props.selectedView]?.widgets;
+
+    let widgetsExist = 0;
+    widgets && props.selectedWidgets.forEach(selectedWidget => {
+        if (widgets[selectedWidget] && widgetTypes.find(type => type.name === widgets[selectedWidget].tpl)) {
+            widgetsExist++;
+        }
+    });
+    if (!widgets || props.selectedWidgets.length !== widgetsExist) {
+        return null;
+    }
+
+    return <Widget widgetTypes={widgetTypes} {...props} />;
+};
+
+WidgetContainer.propTypes = {
     adapterName: PropTypes.string.isRequired,
     changeProject: PropTypes.func,
     classes: PropTypes.object,
@@ -971,4 +988,4 @@ Widget.propTypes = {
     widgetsLoaded: PropTypes.bool,
 };
 
-export default withStyles(styles)(Widget);
+export default withStyles(styles)(WidgetContainer);
