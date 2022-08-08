@@ -272,7 +272,7 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
             const indexedGroups = [];
             for (let i = from; i <= to; i++) {
                 const indexedGroup = {
-                    ...JSON.parse(JSON.stringify(group)),
+                    ...deepClone(group),
                     index: i,
                     name: `${group.singleName}-${i}`,
                 };
@@ -315,19 +315,10 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 const indexedFields = [];
                 for (let i = from; i <= to; i++) {
                     const indexedField = {
-                        ...JSON.parse(JSON.stringify(field)),
+                        ...deepClone(field),
                         index: i,
                         name: `${field.singleName}${i}`,
                     };
-                    if (typeof field.hidden === 'function') {
-                        indexedField.hidden = field.hidden;
-                    }
-                    if (typeof field.disabled === 'function') {
-                        indexedField.disabled = field.disabled;
-                    }
-                    if (typeof field.error === 'function') {
-                        indexedField.error = field.error;
-                    }
                     indexedFields.push(indexedField);
                 }
 
