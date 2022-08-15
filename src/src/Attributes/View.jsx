@@ -2,11 +2,13 @@ import PropTypes from 'prop-types';
 import {
     Accordion,
     AccordionDetails,
-    AccordionSummary,
-    Checkbox,
+    AccordionSummary, Button,
+    Checkbox, Fade,
     IconButton,
     ListItemText,
     MenuItem,
+    Paper,
+    Popper,
     Select,
     TextField,
     Tooltip,
@@ -14,12 +16,12 @@ import {
 import withStyles from '@mui/styles/withStyles';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-
-import { ColorPicker, Utils } from '@iobroker/adapter-react-v5';
+import {
+    ColorPicker, Utils, I18n, IconPicker,
+} from '@iobroker/adapter-react-v5';
 
 import './backgrounds.css';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
@@ -27,6 +29,9 @@ import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 import { theme, background } from './ViewData';
+import IODialog from "../Components/IODialog";
+import FileBrowser from "./Widget/FileBrowser";
+import ClearIcon from "@mui/icons-material/Clear";
 
 const styles = _theme => ({
     backgroundClass: {
@@ -126,6 +131,22 @@ const resolution = [
     { value: '1080x1920', name: 'Full HD - Portrait' },
     { value: '1920x1080', name: 'Full HD - Landscape' },
 ];
+
+const checkFunction = (funcText, settings) => {
+    try {
+        let _func;
+        if (typeof funcText === 'function') {
+            _func = funcText;
+        } else {
+            // eslint-disable-next-line no-new-func
+            _func = new Function('data', `return ${funcText}`);
+        }
+        return _func(settings);
+    } catch (e) {
+        console.error(`Cannot execute hidden on "${funcText}": ${e}`);
+    }
+    return false;
+};
 
 const View = props => {
     if (!props.project[props.selectedView]) {
@@ -390,13 +411,25 @@ const View = props => {
                     type: 'checkbox', name: 'Show navigation', field: 'navigation', notStyle: true,
                 },
                 {
-                    type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true,
+                    type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true,
+                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'color', name: 'Bar color', field: 'navigationColor', notStyle: true,
+                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || !data.navigationBar',
+                },
+                {
+                    type: 'icon', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
+                },
+                {
+                    type: 'image', name: 'Image', field: 'navigationImage', notStyle: true, hidden: '!data.navigation || data.navigationIcon',
+                },
+                {
+                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation',
+                },
+                {
+                    type: 'checkbox', name: 'Header for all views', field: 'navigationHeaderTextAll', notStyle: true, hidden: '!data.navigation || !data.navigationHeaderText',
                 },
             ],
         },
@@ -407,6 +440,10 @@ const View = props => {
             ? JSON.parse(window.localStorage.getItem('attributesView'))
             : fields.map(() => false),
     );
+    const [showDialog, setShowDialog] = useState(false);
+    const [textDialogFocused, setTextDialogFocused] = useState(false);
+    const [textDialogEnabled, setTextDialogEnabled] = useState(true);
+    const textRef = useRef();
 
     const allOpened = !fields.find((group, key) => !accordionOpen[key]);
     const allClosed = !fields.find((group, key) => accordionOpen[key]);
@@ -475,7 +512,23 @@ const View = props => {
                                     if (field.hide) {
                                         return null;
                                     }
-
+                                    let error;
+                                    let disabled = false;
+                                    if (field.hidden) {
+                                        if (checkFunction(field.hidden, props.project[props.selectedView].settings)) {
+                                            return null;
+                                        }
+                                    }
+                                    if (field.error) {
+                                        error = checkFunction(field.error, props.project[props.selectedView].settings);
+                                    }
+                                    if (field.disabled) {
+                                        if (field.disabled === true) {
+                                            disabled = true;
+                                        } else {
+                                            disabled = !!checkFunction(field.disabled, props.project[props.selectedView].settings);
+                                        }
+                                    }
                                     let value = field.notStyle ? view.settings[field.field] : view.settings.style[field.field];
                                     if (value === null || value === undefined) {
                                         value = '';
@@ -491,7 +544,29 @@ const View = props => {
                                         props.changeProject(project);
                                     };
 
-                                    let result = null;
+                                    const urlPopper = field.type === 'image' && !disabled ? <Popper
+                                        open={textDialogFocused && textDialogEnabled && !!value && value.toString().startsWith(window.location.origin)}
+                                        anchorEl={textRef.current}
+                                        placement="bottom"
+                                        transition
+                                    >
+                                        {({ TransitionProps }) => <Fade {...TransitionProps} timeout={350}>
+                                            <Paper>
+                                                <Button
+                                                    style={{ textTransform: 'none' }}
+                                                    onClick={() => change(`.${value.toString().slice(window.location.origin.length)}`)}
+                                                >
+                                                    {I18n.t('Replace to ')}
+                                                    {`.${value.toString().slice(window.location.origin.length)}`}
+                                                </Button>
+                                                <IconButton size="small" onClick={() => setTextDialogEnabled(false)}>
+                                                    <ClearIcon fontSize="small" />
+                                                </IconButton>
+                                            </Paper>
+                                        </Fade>}
+                                    </Popper> : null;
+
+                                    let result;
 
                                     if (field.type === 'autocomplete' || field.type === 'filter') {
                                         let options;
@@ -505,7 +580,7 @@ const View = props => {
                                         result = <Autocomplete
                                             freeSolo
                                             options={options}
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             inputValue={value}
                                             value={value}
                                             onInputChange={(e, inputValue) => change(inputValue)}
@@ -522,7 +597,7 @@ const View = props => {
                                         />;
                                     } else if (field.type === 'checkbox') {
                                         result = <Checkbox
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             checked={!!value}
                                             classes={{
                                                 root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
@@ -532,7 +607,7 @@ const View = props => {
                                         />;
                                     } else if (field.type === 'select') {
                                         result = <Select
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             variant="standard"
                                             value={field.value ? field.value : value}
                                             classes={{
@@ -552,7 +627,7 @@ const View = props => {
                                         </Select>;
                                     } else if (field.type === 'multi-select') {
                                         result = <Select
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             variant="standard"
                                             renderValue={selected => selected.join(', ')}
                                             classes={{
@@ -578,14 +653,73 @@ const View = props => {
                                         result = <ColorPicker
                                             value={value}
                                             className={props.classes.fieldContentColor}
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             onChange={color => change(color)}
                                             openAbove
                                             color={field.value || ''}
                                         />;
+                                    } else if (field.type === 'icon') {
+                                        result = <IconPicker
+                                            t={I18n.t}
+                                            lang={I18n.getLanguage()}
+                                            value={value}
+                                            onChange={fileBlob => change(fileBlob)}
+                                            previewClassName={props.classes.iconPreview}
+                                            // icon={ImageIcon}
+                                            // classes={props.classes}
+                                        />;
+                                    } else if (field.type === 'image') {
+                                        result = <>
+                                            <TextField
+                                                variant="standard"
+                                                fullWidth
+                                                error={!!error}
+                                                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                                                disabled={disabled}
+                                                InputProps={{
+                                                    classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
+                                                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
+                                                }}
+                                                ref={textRef}
+                                                value={value}
+                                                onFocus={() => setTextDialogFocused(true)}
+                                                onBlur={() => setTextDialogFocused(false)}
+                                                onChange={e => change(e.target.value)}
+                                            />
+                                            {urlPopper}
+                                            {showDialog ? <IODialog
+                                                title={I18n.t('Select file')}
+                                                open={showDialog}
+                                                onClose={() => setShowDialog(false)}
+                                            >
+                                                <FileBrowser
+                                                    ready
+                                                    allowUpload
+                                                    allowDownload
+                                                    allowCreateFolder
+                                                    allowDelete
+                                                    allowView
+                                                    showToolbar
+                                                    imagePrefix="./"
+                                                    selected={value}
+                                                    filterByType="images"
+                                                    onSelect={(selected, isDoubleClick) => {
+                                                        const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                                                        if (selected.startsWith(projectPrefix)) {
+                                                            selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                                                        }
+                                                        change(selected);
+                                                        isDoubleClick && setShowDialog(false);
+                                                    }}
+                                                    t={I18n.t}
+                                                    lang={I18n.getLanguage()}
+                                                    socket={props.socket}
+                                                />
+                                            </IODialog> : null}
+                                        </>;
                                     } else {
                                         result = <TextField
-                                            disabled={!props.editMode}
+                                            disabled={!props.editMode || disabled}
                                             variant="standard"
                                             fullWidth
                                             InputProps={{
@@ -596,6 +730,8 @@ const View = props => {
                                             value={value}
                                             onChange={e => change(e.target.value)}
                                             type={field.type}
+                                            error={!!error}
+                                            helperText={typeof error === 'string' ? I18n.t(error) : null}
                                         />;
                                     }
 
@@ -619,6 +755,10 @@ View.propTypes = {
     groups: PropTypes.array,
     project: PropTypes.object,
     selectedView: PropTypes.string,
+
+    adapterName: PropTypes.string,
+    instance: PropTypes.number,
+    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(View);

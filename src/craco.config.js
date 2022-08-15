@@ -11,6 +11,7 @@ module.exports = {
         proxy: {
             '/vis.0': 'http://localhost:8082',
             '/adapter': 'http://localhost:8082',
+            '/habpanel': 'http://localhost:8082',
             '/vis': 'http://localhost:8082',
             '/widgets': 'http://localhost:8082/vis',
             '/widgets.html': 'http://localhost:8082/vis',

@@ -18,7 +18,6 @@ import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
-
 import { Utils } from '@iobroker/adapter-react-v5';
 
 import VisCanWidget from './visCanWidget';
@@ -1222,6 +1221,9 @@ class VisView extends React.Component {
             editMode={this.props.editMode}
             themeType={this.props.themeType}
             menuWidth={this.state.menuWidth}
+            adapterName={this.props.adapterName}
+            instance={this.props.instance}
+            projectName={this.props.projectName}
             setMenuWidth={menuWidth => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });

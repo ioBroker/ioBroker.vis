@@ -96,7 +96,8 @@ class VisRxWidget extends VisBaseWidget {
         return null;
     }
 
-    onIdStateUpdate(id, state) {
+    // eslint-disable-next-line no-unused-vars
+    onStateUpdated(id, state) {
 
     }
 
@@ -113,7 +114,7 @@ class VisRxWidget extends VisBaseWidget {
 
         if (id && state) {
             Object.keys(state).forEach(attr => this.newState.values[`${id}.${attr}`] = state[attr]);
-            this.onIdStateUpdate(id, state);
+            this.onStateUpdated(id, state);
         }
 
         Object.keys(this.linkContext.bindings).forEach(_id => this.applyBinding(_id, this.newState));

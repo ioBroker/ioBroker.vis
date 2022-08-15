@@ -44,6 +44,9 @@ class VisEngine extends React.Component {
 
         this.state = {
             ready: false,
+
+            timeInterval: '1week',
+            timeStart: '2022-01-01T00:00:00',
         };
 
         // this.jsonViews = JSON.stringify(props.views);

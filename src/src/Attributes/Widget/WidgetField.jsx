@@ -12,7 +12,7 @@ import {
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import {I18n, IconPicker, Utils} from '@iobroker/adapter-react-v5';
 
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import ClearIcon from '@mui/icons-material/Clear';
@@ -329,7 +329,7 @@ const WidgetField = props => {
                     endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>...</Button>,
                 }}
                 error={!!error}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
                 value={value}
                 onChange={e => change(e.target.value)}
@@ -371,7 +371,7 @@ const WidgetField = props => {
                 fullWidth
                 placeholder={isDifferent ? t('different') : null}
                 error={!!error}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
                 InputProps={{
                     classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
@@ -399,6 +399,7 @@ const WidgetField = props => {
                     showToolbar
                     imagePrefix="./"
                     selected={value}
+                    filterByType="images"
                     onSelect={(selected, isDoubleClick) => {
                         const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
                         if (selected.startsWith(projectPrefix)) {
@@ -424,7 +425,7 @@ const WidgetField = props => {
             fullWidth
             placeholder={isDifferent ? t('different') : null}
             error={!!error}
-            helperText={typeof error === 'string' ? I18n.t(error)  : null}
+            helperText={typeof error === 'string' ? I18n.t(error) : null}
             disabled={disabled}
             InputProps={{
                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
@@ -459,7 +460,7 @@ const WidgetField = props => {
     if (field.type === 'color') {
         return <ColorPicker
             error={!!error}
-            helperText={typeof error === 'string' ? I18n.t(error)  : null}
+            helperText={typeof error === 'string' ? I18n.t(error) : null}
             disabled={disabled}
             value={value}
             className={props.classes.fieldContentColor}
@@ -699,7 +700,7 @@ const WidgetField = props => {
             renderInput={params => <TextField
                 variant="standard"
                 error={!!error}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
                 {...params}
             />}
@@ -761,7 +762,7 @@ const WidgetField = props => {
             renderInput={params => <TextField
                 variant="standard"
                 error={!!error}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 disabled={disabled}
                 {...params}
                 inputProps={{ ...params.inputProps }}
@@ -840,6 +841,19 @@ const WidgetField = props => {
         </Select>;
     }
 
+    if (field.type === 'icon') {
+        if (field.type === 'icon') {
+            return <IconPicker
+                label="Icon"
+                t={I18n.t}
+                lang={I18n.getLanguage()}
+                value={value}
+                onChange={fileBlob => change(fileBlob)}
+                previewClassName={props.classes.iconPreview}
+            />;
+        }
+    }
+
     if (field.type === 'text' || field.type === 'html' || field.type === 'json') {
         return <>
             <TextField
@@ -851,7 +865,7 @@ const WidgetField = props => {
                 fullWidth
                 error={!!error}
                 disabled={disabled}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 onChange={e => change(e.target.value)}
                 InputProps={{
                     endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>{I18n.t('Edit')}</Button>,
@@ -879,7 +893,7 @@ const WidgetField = props => {
                 ref={textRef}
                 error={!!error}
                 disabled={disabled}
-                helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                helperText={typeof error === 'string' ? I18n.t(error) : null}
                 onFocus={() => setTextDialogFocused(true)}
                 onBlur={() => setTextDialogFocused(false)}
                 placeholder={isDifferent ? t('different') : null}
