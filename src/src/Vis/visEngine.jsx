@@ -46,7 +46,7 @@ class VisEngine extends React.Component {
             ready: false,
 
             timeInterval: window.localStorage.getItem('timeInterval') || 'week',
-            timeStart: window.localStorage.getItem('timeStart') || '2022-01-01T00:00:00',
+            timeStart: window.localStorage.getItem('timeStart') || null,
         };
 
         // this.jsonViews = JSON.stringify(props.views);
