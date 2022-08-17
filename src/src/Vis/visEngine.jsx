@@ -45,8 +45,8 @@ class VisEngine extends React.Component {
         this.state = {
             ready: false,
 
-            timeInterval: '1week',
-            timeStart: '2022-01-01T00:00:00',
+            timeInterval: window.localStorage.getItem('timeInterval') || 'week',
+            timeStart: window.localStorage.getItem('timeStart') || '2022-01-01T00:00:00',
         };
 
         // this.jsonViews = JSON.stringify(props.views);
@@ -136,6 +136,16 @@ class VisEngine extends React.Component {
             })
             .then(() => this.setState({ ready: true }));
     }
+
+    setTimeInterval = timeInterval => {
+        this.setState({ timeInterval });
+        window.localStorage.setItem('timeInterval', timeInterval);
+    };
+
+    setTimeStart = timeStart => {
+        this.setState({ timeStart });
+        window.localStorage.setItem('timeStart', timeStart);
+    };
 
     detectWakeUp() {
         this.oldTime = Date.now();
@@ -1358,6 +1368,10 @@ ${this.scripts}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                     selectedGroup={this.props.selectedGroup}
                     setSelectedGroup={this.props.setSelectedGroup}
+                    timeInterval={this.state.timeInterval}
+                    setTimeInterval={this.setTimeInterval}
+                    timeStart={this.state.timeStart}
+                    setTimeStart={this.setTimeStart}
                     showWidgetNames={this.props.showWidgetNames}
                     lockDragging={this.props.lockDragging}
                     disableInteraction={this.props.disableInteraction}

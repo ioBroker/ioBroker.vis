@@ -314,7 +314,7 @@ class VisView extends React.Component {
         return widgets;
     }
 
-    calculateRelativeWidgetPosition = null; /*(widgetId, left, top, shadowDiv, widgetsOrder) => {
+    calculateRelativeWidgetPosition = null; /* (widgetId, left, top, shadowDiv, widgetsOrder) => {
         left = parseFloat(left);
         top = parseFloat(top);
 
@@ -884,6 +884,10 @@ class VisView extends React.Component {
             theme: props.theme,
             themeName: props.themeName,
             themeType: props.themeType,
+            timeInterval: props.timeInterval,
+            setTimeInterval: props.setTimeInterval,
+            timeStart: props.timeStart,
+            setTimeStart: props.setTimeStart,
             VisView,
         };
 
