@@ -45,8 +45,8 @@ class VisEngine extends React.Component {
         this.state = {
             ready: false,
 
-            timeInterval: window.localStorage.getItem('timeInterval') || 'week',
-            timeStart: window.localStorage.getItem('timeStart') || null,
+            timeInterval: JSON.parse(window.localStorage.getItem('timeInterval')) || 'week',
+            timeStart: JSON.parse(window.localStorage.getItem('timeStart')) || null,
         };
 
         // this.jsonViews = JSON.stringify(props.views);
@@ -139,12 +139,12 @@ class VisEngine extends React.Component {
 
     setTimeInterval = timeInterval => {
         this.setState({ timeInterval });
-        window.localStorage.setItem('timeInterval', timeInterval);
+        window.localStorage.setItem('timeInterval', JSON.stringify(timeInterval));
     };
 
     setTimeStart = timeStart => {
         this.setState({ timeStart });
-        window.localStorage.setItem('timeStart', timeStart);
+        window.localStorage.setItem('timeStart', JSON.stringify(timeStart));
     };
 
     detectWakeUp() {
