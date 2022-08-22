@@ -1,4 +1,7 @@
 import PropTypes from 'prop-types';
+import { useEffect, useRef, useState } from 'react';
+import withStyles from '@mui/styles/withStyles';
+
 import {
     Accordion,
     AccordionDetails,
@@ -11,24 +14,22 @@ import {
     Popper,
     Select,
     TextField,
+    Autocomplete, Slider, Input,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import Autocomplete from '@mui/material/Autocomplete';
+
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CloseIcon from '@mui/icons-material/Close';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import {
     ColorPicker, Utils, I18n, IconPicker,
 } from '@iobroker/adapter-react-v5';
 
 import './backgrounds.css';
-import { useEffect, useRef, useState } from 'react';
-
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import CloseIcon from '@mui/icons-material/Close';
-import ClearIcon from "@mui/icons-material/Clear";
 
 import { theme, background } from './ViewData';
 import IODialog from '../Components/IODialog';
-import FileBrowser from "./Widget/FileBrowser";
+import FileBrowser from './Widget/FileBrowser';
 
 const styles = _theme => ({
     backgroundClass: {
@@ -90,6 +91,19 @@ const styles = _theme => ({
         },
     },
     lightedPanel: _theme.classes.lightedPanel,
+    fieldContentSlider: {
+        display: 'inline',
+        width: 'calc(100% - 82px)',
+        marginRight: 8,
+    },
+    fieldContentSliderInput: {
+        display: 'inline',
+        width: 50,
+    },
+    fieldContentSliderClear: {
+        display: 'inline',
+        width: 32,
+    },
 });
 
 const resolution = [
@@ -432,6 +446,100 @@ const View = props => {
                 },
             ],
         },
+        {
+            name: 'Responsive settings',
+            fields: [
+                /*{
+                    type: 'select',
+                    name: 'Direction',
+                    field: 'flexDirection',
+                    notStyle: true,
+                    items: [
+                        { name: 'Column', value: 'column' },
+                        { name: 'Row', value: 'row' },
+                    ],
+                },
+                {
+                    type: 'select',
+                    name: 'Wrap',
+                    field: 'flexWrap',
+                    notStyle: true,
+                    items: [
+                        { name: 'Wrap', value: 'wrap' },
+                        { name: 'No wrap', value: 'nowrap' },
+                    ],
+                },
+                {
+                    type: 'select',
+                    name: 'Justify content',
+                    field: 'justifyContent',
+                    notStyle: true,
+                    items: [
+                        { name: 'flex-start', value: 'flex-start' },
+                        { name: 'center', value: 'center' },
+                        { name: 'flex-end', value: 'flex-end' },
+                        { name: 'space-between', value: 'space-between' },
+                        { name: 'space-around', value: 'space-around' },
+                        { name: 'space-evenly', value: 'space-evenly' },
+                    ],
+                },
+                {
+                    type: 'select',
+                    name: 'Align items',
+                    field: 'alignItems',
+                    notStyle: true,
+                    items: [
+                        { name: 'flex-start', value: 'flex-start' },
+                        { name: 'center', value: 'center' },
+                        { name: 'flex-end', value: 'flex-end' },
+                        { name: 'stretch', value: 'stretch' },
+                        { name: 'baseline', value: 'baseline' },
+                    ],
+                },
+                {
+                    type: 'select',
+                    name: 'Align content',
+                    field: 'alignContent',
+                    hidden: data => data.flexWrap === 'nowrap',
+                    notStyle: true,
+                    items: [
+                        { name: 'flex-start', value: 'flex-start' },
+                        { name: 'center', value: 'center' },
+                        { name: 'flex-end', value: 'flex-end' },
+                        { name: 'stretch', value: 'stretch' },
+                        { name: 'space-between', value: 'space-between' },
+                        { name: 'space-around', value: 'space-around' },
+                    ],
+                },*/
+                {
+                    type: 'slider',
+                    name: 'Column width',
+                    field: 'columnWidth',
+                    min: 200,
+                    max: 2000,
+                    step: 10,
+                    notStyle: true,
+                },
+                {
+                    type: 'slider',
+                    name: 'Column gap',
+                    field: 'columnGap',
+                    min: 0,
+                    max: 200,
+                    step: 1,
+                    notStyle: true,
+                },
+                {
+                    type: 'slider',
+                    name: 'Row gap',
+                    field: 'rowGap',
+                    min: 0,
+                    max: 200,
+                    step: 1,
+                    notStyle: true,
+                },
+            ],
+        },
     ];
 
     const [accordionOpen, setAccordionOpen] = useState(
@@ -710,6 +818,36 @@ const View = props => {
                                             />
                                         </IODialog> : null}
                                     </>;
+                                } else if (field.type === 'slider') {
+                                    result = <div style={{ display: 'flex' }}>
+                                        <Slider
+                                            disabled={!props.editMode || disabled}
+                                            className={props.classes.fieldContentSlider}
+                                            size="small"
+                                            onChange={(e, newValue) => change(newValue)}
+                                            value={typeof value === 'number' ? value : 0}
+                                            min={field.min}
+                                            max={field.max}
+                                            step={field.step}
+                                            marks={field.marks}
+                                            valueLabelDisplay={field.valueLabelDisplay}
+                                        />
+                                        <Input
+                                            className={props.classes.fieldContentSliderInput}
+                                            value={value}
+                                            disabled={disabled}
+                                            size="small"
+                                            onChange={e => change(parseFloat(e.target.value))}
+                                            classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
+                                            inputProps={{
+                                                step: field.step,
+                                                min: field.min,
+                                                max: field.max,
+                                                type: 'number',
+                                            }}
+                                        />
+                                        <IconButton onClick={() => change(null)}><ClearIcon /></IconButton>
+                                    </div>;
                                 } else {
                                     result = <TextField
                                         disabled={!props.editMode || disabled}

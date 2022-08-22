@@ -496,7 +496,7 @@ const WidgetField = props => {
                 value={value}
                 disabled={disabled}
                 size="small"
-                onChange={e => change(parseInt(e.target.value))}
+                onChange={e => change(parseFloat(e.target.value))}
                 classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
                 inputProps={{
                     step: field.step,

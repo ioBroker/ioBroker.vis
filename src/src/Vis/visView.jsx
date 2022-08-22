@@ -1173,7 +1173,11 @@ class VisView extends React.Component {
             if (relativeStyle.display === 'flex') {
                 // relativeStyle.flexDirection = 'row';
                 relativeStyle.flexWrap = 'wrap';
-                relativeStyle.gap = 8;
+                relativeStyle.columnGap = 8;
+
+                if (Number.isFinite(settings.columnGap)) {
+                    relativeStyle.columnGap = parseInt(settings.columnGap, 10);
+                }
                 // relativeStyle.justifyContent = settings.style.justifyContent || 'center';
                 // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
                 // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
@@ -1186,31 +1190,35 @@ class VisView extends React.Component {
         return relativeStyle;
     }
 
-    getCountOfRelativeColumns(relativeWidgetsCount) {
+    getCountOfRelativeColumns(settings, relativeWidgetsCount) {
         // number of columns
         const width = this.state.width;
         if (width) {
-            let columns;
-            if (width < 600) {
-                columns = 1;
-            } else if (width < 900) {
-                columns = 2;
-            } else if (width < 1200) {
-                columns = 3;
-            } else if (width < 2064) {
-                columns = 4;
+            if (settings.columnWidth && Number.isFinite(settings.columnWidth)) {
+                return Math.floor(this.state.width / settings.columnWidth) + 1;
             } else {
-                columns = Math.floor(width / 500) + 1;
-            }
+                let columns;
+                if (width < 600) {
+                    columns = 1;
+                } else if (width < 900) {
+                    columns = 2;
+                } else if (width < 1200) {
+                    columns = 3;
+                } else if (width < 2064) {
+                    columns = 4;
+                } else {
+                    columns = Math.floor(width / 500) + 1;
+                }
 
-            if (columns > relativeWidgetsCount) {
-                columns = relativeWidgetsCount;
-            }
-            if (columns > MAX_COLUMNS) {
-                columns = MAX_COLUMNS;
-            }
+                if (columns > relativeWidgetsCount) {
+                    columns = relativeWidgetsCount;
+                }
+                if (columns > MAX_COLUMNS) {
+                    columns = MAX_COLUMNS;
+                }
 
-            return columns;
+                return columns;
+            }
         }
 
         return 1;
@@ -1246,6 +1254,7 @@ class VisView extends React.Component {
         if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
             return null;
         }
+        const settings = this.props.views[this.props.view].settings;
 
         if (this.props.view === this.props.activeView && this.props.editMode && !this.keysHandlerInstalled) {
             this.installKeyHandlers();
@@ -1261,7 +1270,10 @@ class VisView extends React.Component {
             const widgets = this.props.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
-                const relativeWidgetOrder = this.props.selectedGroup ? this.props.views[this.props.view].widgets[this.props.selectedGroup].data.members : (this.props.views[this.props.view].settings?.order || []);
+                const relativeWidgetOrder = this.props.selectedGroup ?
+                    this.props.views[this.props.view].widgets[this.props.selectedGroup].data.members
+                    :
+                    (this.props.views[this.props.view].settings?.order || []);
 
                 // by group editing first relative, then absolute
                 if (this.props.selectedGroup) {
@@ -1384,7 +1396,7 @@ class VisView extends React.Component {
                     return posA - posB;
                 });
 
-                const columns = this.props.selectedGroup ? 1 : this.getCountOfRelativeColumns(listRelativeWidgetsOrder.length);
+                const columns = this.props.selectedGroup ? 1 : this.getCountOfRelativeColumns(settings, listRelativeWidgetsOrder.length);
                 const wColumns = new Array(columns);
                 for (let w = 0; w < wColumns.length; w++) {
                     wColumns[w] = [];
@@ -1443,8 +1455,6 @@ class VisView extends React.Component {
             width: '100%',
             height: '100%',
         };
-
-        const settings = this.props.views[this.props.view].settings;
 
         if (this.state.loadedjQueryTheme !== this.getJQueryThemeName()) {
             if (!this.loadingTheme) {
@@ -1516,7 +1526,11 @@ class VisView extends React.Component {
                         zIndex: 1000,
                     }}
                 ></div>)}
-            {rxRelativeWidgets ? <div ref={this.refRelativeView} style={this.getRelativeStyle(settings, this.props.selectedGroup)} className="vis-relative-view">
+            {rxRelativeWidgets ? <div
+                ref={this.refRelativeView}
+                style={this.getRelativeStyle(settings, this.props.selectedGroup)}
+                className="vis-relative-view"
+            >
                 { rxRelativeWidgets }
             </div> : null}
             { rxAbsoluteWidgets }

@@ -696,14 +696,14 @@ class VisCanWidget extends VisBaseWidget {
         if (widgetData['lc-position-horz'] === 'left') {
             css.right = `calc(100% - ${offset}px)`;
             if (!widgetData['lc-padding']) {
-                css.paddingRight = '10px';
-                css.paddingLeft = '10px';
+                css.paddingRight = 10;
+                css.paddingLeft = 10;
             }
         } else if (widgetData['lc-position-horz'] === 'right') {
             css.left = `calc(100% + ${offset}px)`;
             if (!widgetData['lc-padding']) {
-                css.paddingRight = '10px';
-                css.paddingLeft = '10px';
+                css.paddingRight = 10;
+                css.paddingLeft = 10;
             }
         } else if (widgetData['lc-position-horz'] === 'middle') {
             css.left = `calc(50% + ${offset}px)`;
@@ -885,6 +885,9 @@ class VisCanWidget extends VisBaseWidget {
             if (isRelative) {
                 delete widgetStyle.top;
                 delete widgetStyle.left;
+                if (Number.isFinite(this.props.views[this.props.view].settings.rowGap)) {
+                    widgetStyle['margin-bottom'] = parseFloat(this.props.views[this.props.view].settings.rowGap) + 'px';
+                }
             }
         } catch (e) {
             console.log(`[${wid}] Cannot bind data of widget: ${e}`);

@@ -61,6 +61,7 @@ class VisBaseWidget extends React.Component {
             resizable: true,
             resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
             widgetHint: this.props.widgetHint,
+            gap: style.position === 'relative' ? (Number.isFinite(props.views[props.view].settings.rowGap) ? parseFloat(props.views[props.view].settings.rowGap) : 0) : 0,
         };
 
         this.onCommandBound = this.onCommand.bind(this);
@@ -173,12 +174,15 @@ class VisBaseWidget extends React.Component {
 
     static getDerivedStateFromProps(props, state) {
         const widget = props.views[props.view].widgets[props.id];
+        const gap = widget.style.position === 'relative' ?
+            (Number.isFinite(props.views[props.view].settings.rowGap) ? parseFloat(props.views[props.view].settings.rowGap) : 0) : 0;
 
         let _style = state.style._originalData ? state.style._originalData : JSON.stringify(state.style);
         let _data = state.data._originalData ? state.data._originalData : JSON.stringify(state.data);
 
         if (JSON.stringify(widget.style || {}) !== _style ||
-            JSON.stringify(widget.data || {}) !== _data
+            JSON.stringify(widget.data || {}) !== _data ||
+            gap !== state.gap
         ) {
             _style = JSON.parse(_style);
             Object.keys(_style).forEach(attr => {
@@ -202,6 +206,7 @@ class VisBaseWidget extends React.Component {
             return {
                 style,
                 data,
+                gap,
                 applyBindings: { top: widget.style.top, left: widget.style.left },
             };
         }
@@ -1383,6 +1388,10 @@ class VisBaseWidget extends React.Component {
             }
         }
 
+        if (style.position === 'relative' && Number.isFinite(this.props.views[this.props.view].settings.rowGap)) {
+            style.marginBottom = parseFloat(this.props.views[this.props.view].settings.rowGap);
+        }
+
         const props = {
             className: '',
             style,
@@ -1451,10 +1460,11 @@ class VisBaseWidget extends React.Component {
                 if (showUp || showDown) {
                     widgetMoveButtons = <div
                         className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'bottom')}
-                        style={{ width: !showUp || !showDown ? 15 : undefined }}
+                        style={{ width: !showUp || !showDown ? 30 : undefined }}
                     >
+                        <div className="vis-editmode-widget-number">{this.props.relativeWidgetOrder.indexOf(this.props.id) + 1}</div>
                         {showUp   ? <UpIcon onMouseDown={e => this.changeOrder(e, -1)} className="vis-editmode-move-button" /> : null}
-                        {showDown ? <DownIcon onMouseDown={e => this.changeOrder(e, 1)} className="vis-editmode-move-button" style={{ left: showUp ? 15 : undefined }} /> : null}
+                        {showDown ? <DownIcon onMouseDown={e => this.changeOrder(e, 1)} className="vis-editmode-move-button" style={{ left: showUp ? 30 : undefined }} /> : null}
                     </div>;
                 }
             }

@@ -228,7 +228,8 @@ body, html {
     right: 0;
     overflow: visible;
     height: 13px;
-    width: 30px;
+    width: 45px;
+    font-size: 12px;
 }
 .vis-editmode-widget-move-buttons.dark {
     background: black;
@@ -247,7 +248,7 @@ body, html {
 .vis-editmode-move-button {
     position: absolute;
     top: 0;
-    left: 1px;
+    left: 16px;
     width: 13px;
     height: 13px;
     cursor: pointer;
@@ -261,6 +262,12 @@ body, html {
 .vis-editmode-move-button:active {
     transform: scale(1.7);
     color: #F00;
+}
+.vis-editmode-widget-number {
+    position: absolute;
+    top: -1.5px;
+    left: 10px;
+    font-size: 11px;
 }
 
 /* IT IS UNKNOWN ARE BELOW CLASSES USED SOMEWHERE */
