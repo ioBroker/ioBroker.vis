@@ -779,80 +779,87 @@ const Widget = props => {
         </div>
 
         <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
-            {fields.map(group => <Accordion
-                classes={{
-                    root: props.classes.clearPadding,
-                    expanded: props.classes.clearPadding,
-                }}
-                square
-                key={group.name}
-                elevation={0}
-                expanded={!!(accordionOpen[group.name] && group.hasValues)}
-                onChange={(e, expanded) => {
-                    const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                    newAccordionOpen[group.name] = expanded;
-                    window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                    setAccordionOpen(newAccordionOpen);
-                }}
-            >
-                <AccordionSummary
+            {fields.map(group => {
+                if (group.hidden) {
+                    if (checkFunction(group.hidden, props.project, props.selectedView, props.selectedWidgets)) {
+                        return null;
+                    }
+                }
+
+                return <Accordion
                     classes={{
-                        root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
-                            ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
-                        content: props.classes.clearPadding,
+                        root: props.classes.clearPadding,
                         expanded: props.classes.clearPadding,
-                        expandIcon: props.classes.clearPadding,
                     }}
-                    expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
+                    square
+                    key={group.name}
+                    elevation={0}
+                    expanded={!!(accordionOpen[group.name] && group.hasValues)}
+                    onChange={(e, expanded) => {
+                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                        newAccordionOpen[group.name] = expanded;
+                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                        setAccordionOpen(newAccordionOpen);
+                    }}
                 >
-                    <div
-                        style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                            alignItems: 'center',
+                    <AccordionSummary
+                        classes={{
+                            root: Utils.clsx(props.classes.clearPadding, accordionOpen[group.name]
+                                ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
+                            content: props.classes.clearPadding,
+                            expanded: props.classes.clearPadding,
+                            expandIcon: props.classes.clearPadding,
                         }}
+                        expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
                     >
-                        <div>
-                            {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
-                            {group.label ?
-                                I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
-                                :
-                                (window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
-                        </div>
-                        <div>
-                            <Checkbox
-                                checked={group.hasValues}
-                                onClick={e => {
-                                    if (group.hasValues) {
-                                        setClearGroup(group);
-                                    } else {
-                                        const project = JSON.parse(JSON.stringify(props.project));
-                                        props.selectedWidgets.forEach(selectedWidget => {
-                                            group.fields.forEach(field => {
-                                                if (project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] === undefined) {
-                                                    project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = field.default || null;
-                                                }
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                width: '100%',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <div>
+                                {ICONS[`group.${group.singleName || group.name}`] ? ICONS[`group.${group.singleName || group.name}`] : null}
+                                {group.label ?
+                                    I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
+                                    :
+                                    (window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
+                            </div>
+                            <div>
+                                <Checkbox
+                                    checked={group.hasValues}
+                                    onClick={e => {
+                                        if (group.hasValues) {
+                                            setClearGroup(group);
+                                        } else {
+                                            const project = JSON.parse(JSON.stringify(props.project));
+                                            props.selectedWidgets.forEach(selectedWidget => {
+                                                group.fields.forEach(field => {
+                                                    if (project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] === undefined) {
+                                                        project[props.selectedView].widgets[selectedWidget][group.isStyle ? 'style' : 'data'][field.name] = field.default || null;
+                                                    }
+                                                });
+                                                project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
                                             });
-                                            project[props.selectedView].widgets[selectedWidget].data[`g_${group.name}`] = true;
-                                        });
-                                        const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
-                                        newAccordionOpen[group.name] = true;
-                                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                                        setAccordionOpen(newAccordionOpen);
-                                        props.changeProject(project);
-                                    }
-                                    e.stopPropagation();
-                                }}
-                                size="small"
-                                classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox) }}
-                            />
+                                            const newAccordionOpen = JSON.parse(JSON.stringify(accordionOpen));
+                                            newAccordionOpen[group.name] = true;
+                                            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+                                            setAccordionOpen(newAccordionOpen);
+                                            props.changeProject(project);
+                                        }
+                                        e.stopPropagation();
+                                    }}
+                                    size="small"
+                                    classes={{ root: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding, props.classes.checkBox) }}
+                                />
+                            </div>
                         </div>
-                    </div>
-                </AccordionSummary>
-                <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
-                    <table style={{ width: '100%' }}>
-                        <tbody>
+                    </AccordionSummary>
+                    <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
+                        <table style={{ width: '100%' }}>
+                            <tbody>
                             {
                                 group.fields.map((field, fieldIndex) => {
                                     let error;
@@ -916,10 +923,11 @@ const Widget = props => {
                                     </tr>;
                                 })
                             }
-                        </tbody>
-                    </table>
-                </AccordionDetails>
-            </Accordion>)}
+                            </tbody>
+                        </table>
+                    </AccordionDetails>
+                </Accordion>
+            })}
             <IODialog
                 title="Are you sure"
                 onClose={() => setClearGroup(null)}

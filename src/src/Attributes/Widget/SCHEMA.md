@@ -107,6 +107,7 @@ Group can have the following attributes:
 - `indexFrom`: [optional] start index of iterator
 - `indexTo`: [optional] if `indexFrom` is defined, `indexTo` is required and could be a number or a name of attribute in same widget.
 - `fields`: Array of fields. See next chapter
+- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
 
 ## Fields
 `visAttrs[x].fields` consist of input fields.

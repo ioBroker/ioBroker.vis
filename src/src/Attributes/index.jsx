@@ -3,7 +3,8 @@ import { withStyles } from '@mui/styles';
 import { useEffect, useState } from 'react';
 
 import {
-    Tab, Tabs, Typography,
+    IconButton,
+    Tab, Tabs, Tooltip, Typography,
 } from '@mui/material';
 
 import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -13,6 +14,7 @@ import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
+import ClearIcon from "@mui/icons-material/Clear";
 
 const style = theme => ({
     blockHeader: theme.classes.blockHeader,
@@ -48,8 +50,23 @@ const Attributes = props => {
     const TabContent = tabs[selected];
 
     return <>
-        <Typography variant="h6" gutterBottom className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
+        <Typography
+            variant="h6"
+            gutterBottom
+            className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
+            style={{ display: 'flex', lineHeight: '34px' }}
+        >
             {I18n.t('Attributes')}
+            <div style={{ flex: 1 }}></div>
+            <Tooltip title={I18n.t('Hide attributes')}>
+                <IconButton
+                    size="small"
+                    onClick={() =>
+                        props.onHide(true)}
+                >
+                    <ClearIcon />
+                </IconButton>
+            </Tooltip>
         </Typography>
         <Tabs
             className={props.classes.viewTabs}
@@ -71,7 +88,7 @@ const Attributes = props => {
                 />)
             }
         </Tabs>
-        <div style={{ height: 'calc(100% - 82px', overflowY: 'auto' }}>
+        <div style={{ height: 'calc(100% - 89px', overflowY: 'auto' }}>
             {
                 selected === 'Widget' && !(props.widgetsLoaded && props.selectedView && props.selectedWidgets?.length) ?
                     null : <TabContent key={selected} {...props} classes={{}} />
@@ -88,6 +105,7 @@ Attributes.propTypes = {
     projectName: PropTypes.string.isRequired,
     saveCssFile: PropTypes.func.isRequired,
     editMode: PropTypes.bool,
+    onHide: PropTypes.func,
 };
 
 export default withStyles(style)(Attributes);

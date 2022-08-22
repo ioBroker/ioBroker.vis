@@ -20,6 +20,8 @@ import CodeIcon from '@mui/icons-material/Code';
 import CodeOffIcon from '@mui/icons-material/CodeOff';
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
+import IconPalette from '@mui/icons-material/Palette';
+import IconAttributes from '@mui/icons-material/ListAlt';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
@@ -73,7 +75,7 @@ const styles = theme => ({
     },
     tabsContainer: {
         width: '100%',
-        // display: 'flex',
+        display: 'flex',
         alignItems: 'center',
     },
     tab: {
@@ -91,14 +93,13 @@ const styles = theme => ({
         whiteSpace: 'nowrap',
     },
     viewTabs: {
-        width: 'calc(100% - 102px)',
         display: 'inline-block',
         ...theme.classes.viewTabs,
     },
-    viewTabsCode: {
-        width: 'calc(100% - 68px)',
+    viewTab: {
+        padding: '6px 12px',
+        ...theme.classes.viewTab,
     },
-    viewTab: { padding: '6px 12px', ...theme.classes.viewTab },
     alert_info: {
 
     },
@@ -107,6 +108,18 @@ const styles = theme => ({
     },
     alert_success: {
         backgroundColor: '#4caf50',
+    },
+    buttonShowAttributes: {
+        position: 'absolute',
+        top: 4,
+        right: 0,
+        zIndex: 10,
+    },
+    buttonShowPalette: {
+        // position: 'absolute',
+        // top: 4,
+        // left: 0,
+        // zIndex: 10,
     },
 });
 
@@ -224,6 +237,8 @@ class App extends GenericApp {
             visCommonCss: null,
             visUserCss: null,
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
+            hidePalette: window.localStorage.getItem('Vis.hidePalette') === 'true',
+            hideAttributes: window.localStorage.getItem('Vis.hideAttributes') === 'true',
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
@@ -431,8 +446,8 @@ class App extends GenericApp {
         await this.setStateAsync({
             currentUser,
             selectedView: '',
-            splitSizes: window.localStorage.getItem('splitSizes')
-                ? JSON.parse(window.localStorage.getItem('splitSizes'))
+            splitSizes: window.localStorage.getItem('Vis.splitSizes')
+                ? JSON.parse(window.localStorage.getItem('Vis.splitSizes'))
                 : [20, 60, 20],
         });
 
@@ -1279,7 +1294,7 @@ class App extends GenericApp {
         if (cb) {
             this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
             this.visEngineHandlers[view][name] = cb;
-        } else {
+        } else if (this.visEngineHandlers[view]) {
             delete this.visEngineHandlers[view][name];
             if (!Object.keys(this.visEngineHandlers[view]).length) {
                 delete this.visEngineHandlers[view];
@@ -1326,6 +1341,19 @@ class App extends GenericApp {
 
     renderTabs() {
         return <div className={this.props.classes.tabsContainer}>
+            {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
+                <div className={this.props.classes.tabButton}>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            window.localStorage.removeItem('Vis.hidePalette');
+                            this.setState({ hidePalette: false });
+                        }}
+                    >
+                        <IconPalette />
+                    </IconButton>
+                </div>
+            </Tooltip> : null}
             {!this.state.showCode ? <Tooltip title={I18n.t('Toggle runtime')}>
                 <div className={this.props.classes.tabButton}>
                     <IconButton
@@ -1347,7 +1375,8 @@ class App extends GenericApp {
             </Tooltip>
             <Tabs
                 value={this.state.selectedView}
-                className={Utils.clsx(this.props.classes.viewTabs, this.state.showCode && this.props.classes.viewTabsCode)}
+                style={{ width: `calc(100% - ${68 + (!this.state.showCode ? 40 : 0) + (this.state.hidePalette ? 40 : 0) + (this.state.hideAttributes ? 40 : 0)}px)` }}
+                className={this.props.classes.viewTabs}
                 variant="scrollable"
                 scrollButtons="auto"
             >
@@ -1401,6 +1430,126 @@ class App extends GenericApp {
             >
                 {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
             </IconButton>
+            {this.state.hideAttributes ? <Tooltip title={I18n.t('Show palette')}>
+                <div className={this.props.classes.tabButton}>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            window.localStorage.removeItem('Vis.hideAttributes');
+                            this.setState({ hideAttributes: false });
+                        }}
+                    >
+                        <IconAttributes />
+                    </IconButton>
+                </div>
+            </Tooltip> : null}
+        </div>;
+    }
+
+    renderPalette() {
+        return <div
+            style={this.state.hidePalette ? { display: 'none' } : null}
+            className={Utils.clsx(
+                this.props.classes.block,
+                this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
+                this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
+            )}
+        >
+            <Widgets
+                classes={{}}
+                widgetsLoaded={this.state.widgetsLoaded}
+                onHide={() => {
+                    window.localStorage.setItem('Vis.hidePalette', 'true');
+                    this.setState({ hidePalette: true });
+                }}
+            />
+        </div>;
+    }
+
+    renderWorkspace(visEngine) {
+        return <div key="engine">
+            {this.renderTabs()}
+            <div
+                className={Utils.clsx(
+                    this.props.classes.canvas,
+                    this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,
+                    this.state.toolbarHeight === 'veryNarrow' && this.props.classes.canvasVeryNarrow,
+                )}
+            >
+                {this.state.showCode
+                    ? <pre>
+                        {JSON.stringify(this.state.project, null, 2)}
+                    </pre> : null}
+                <ViewDrop addWidget={this.addWidget} editMode={this.state.editMode}>
+                    <div
+                        id="vis-react-container"
+                        style={{
+                            position: 'relative',
+                            display: this.state.showCode ? 'none' : 'block',
+                            width: '100%',
+                            height: '100%',
+                        }}
+                    >
+                        <VisContextMenu
+                            disabled={!this.state.editMode}
+                            selectedWidgets={this.state.selectedWidgets}
+                            deleteWidgets={this.deleteWidgets}
+                            setSelectedWidgets={this.setSelectedWidgets}
+                            cutWidgets={this.cutWidgets}
+                            copyWidgets={this.copyWidgets}
+                            pasteWidgets={this.pasteWidgets}
+                            orderWidgets={this.orderWidgets}
+                            widgetsClipboard={this.state.widgetsClipboard}
+                            project={this.state.project}
+                            selectedView={this.state.selectedView}
+                            changeProject={this.changeProject}
+                            getNewWidgetIdNumber={this.getNewWidgetIdNumber}
+                            lockWidgets={this.lockWidgets}
+                            groupWidgets={this.groupWidgets}
+                            ungroupWidgets={this.ungroupWidgets}
+                            setSelectedGroup={this.setSelectedGroup}
+                        >
+                            { visEngine }
+                        </VisContextMenu>
+                    </div>
+                </ViewDrop>
+            </div>
+        </div>;
+    }
+
+    renderAttributes() {
+        return <div
+            className={Utils.clsx(
+                this.props.classes.block,
+                this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
+                this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
+            )}
+        >
+            <Attributes
+                classes={{}}
+                selectedView={this.state.selectedView}
+                groups={this.state.groups}
+                project={this.state.project}
+                changeProject={this.changeProject}
+                openedViews={this.state.openedViews}
+                projectName={this.state.projectName}
+                selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
+                widgetsLoaded={this.state.widgetsLoaded}
+                socket={this.socket}
+                themeName={this.state.themeName}
+                fonts={this.state.fonts}
+                adapterName={this.adapterName}
+                instance={this.instance}
+                cssClone={this.cssClone}
+                onPxToPercent={this.onPxToPercent}
+                onPercentToPx={this.onPercentToPx}
+                saveCssFile={this.saveCssFile}
+                editMode={this.state.editMode}
+                onHide={() => {
+                    window.localStorage.setItem('Vis.hideAttributes', 'true');
+                    this.setState({ hideAttributes: true });
+                }}
+            />
         </div>;
     }
 
@@ -1545,109 +1694,38 @@ class App extends GenericApp {
                                 this.setState({ toolbarHeight: value });
                             }}
                         />
-                        <div>
+                        <div style={{ position: 'relative' }}>
                             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                                 <DndPreview />
+                                {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace(visEngine) : null}
                                 <ReactSplit
                                     direction={SplitDirection.Horizontal}
-                                    initialSizes={this.state.splitSizes}
-                                    minWidths={[240, 0, 240]}
+                                    initialSizes={this.state.hidePalette && !this.state.hideAttributes ? [this.state.splitSizes[0] + this.state.splitSizes[1], this.state.splitSizes[2]] : (
+                                        !this.state.hidePalette && this.state.hideAttributes ? [this.state.splitSizes[0], this.state.splitSizes[1] + this.state.splitSizes[2]] : this.state.splitSizes)}
+                                    minWidths={this.state.hidePalette && !this.state.hideAttributes ? [0, 240] : (
+                                        !this.state.hidePalette && this.state.hideAttributes ? [240, 0] : [240, 0, 240])}
                                     onResizeFinished={(gutterIdx, newSizes) => {
-                                        this.setState({ splitSizes: newSizes });
-                                        window.localStorage.setItem('splitSizes', JSON.stringify(newSizes));
+                                        let splitSizes = [];
+                                        if (this.state.hidePalette && !this.state.hideAttributes) {
+                                            splitSizes[0] = this.state.splitSizes[0];
+                                            splitSizes[1] = newSizes[0] - this.state.splitSizes[0];
+                                            splitSizes[2] = newSizes[1];
+                                        } else if (!this.state.hidePalette && this.state.hideAttributes) {
+                                            splitSizes[0] = newSizes[0];
+                                            splitSizes[1] = newSizes[1] - this.state.splitSizes[2];
+                                            splitSizes[2] = this.state.splitSizes[2];
+                                        } else {
+                                            splitSizes = newSizes;
+                                        }
+                                        this.setState({ splitSizes });
+                                        window.localStorage.setItem('Vis.splitSizes', JSON.stringify(splitSizes));
                                     }}
                                     theme={this.state.themeName === 'dark' ? GutterTheme.Dark : GutterTheme.Light}
                                     gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                                 >
-                                    <div
-                                        className={Utils.clsx(
-                                            this.props.classes.block,
-                                            this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
-                                            this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
-                                        )}
-                                    >
-                                        <Widgets
-                                            classes={{}}
-                                            widgetsLoaded={this.state.widgetsLoaded}
-                                        />
-                                    </div>
-                                    <div>
-                                        {this.renderTabs()}
-                                        <div
-                                            className={Utils.clsx(
-                                                this.props.classes.canvas,
-                                                this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,
-                                                this.state.toolbarHeight === 'veryNarrow' && this.props.classes.canvasVeryNarrow,
-                                            )}
-                                        >
-                                            {this.state.showCode
-                                                ? <pre>
-                                                    {JSON.stringify(this.state.project, null, 2)}
-                                                </pre> : null}
-                                            <ViewDrop addWidget={this.addWidget} editMode={this.state.editMode}>
-                                                <div
-                                                    id="vis-react-container"
-                                                    style={{
-                                                        position: 'relative',
-                                                        display: this.state.showCode ? 'none' : 'block',
-                                                        width: '100%',
-                                                        height: '100%',
-                                                    }}
-                                                >
-                                                    <VisContextMenu
-                                                        disabled={!this.state.editMode}
-                                                        selectedWidgets={this.state.selectedWidgets}
-                                                        deleteWidgets={this.deleteWidgets}
-                                                        setSelectedWidgets={this.setSelectedWidgets}
-                                                        cutWidgets={this.cutWidgets}
-                                                        copyWidgets={this.copyWidgets}
-                                                        pasteWidgets={this.pasteWidgets}
-                                                        orderWidgets={this.orderWidgets}
-                                                        widgetsClipboard={this.state.widgetsClipboard}
-                                                        project={this.state.project}
-                                                        selectedView={this.state.selectedView}
-                                                        changeProject={this.changeProject}
-                                                        getNewWidgetIdNumber={this.getNewWidgetIdNumber}
-                                                        lockWidgets={this.lockWidgets}
-                                                        groupWidgets={this.groupWidgets}
-                                                        ungroupWidgets={this.ungroupWidgets}
-                                                        setSelectedGroup={this.setSelectedGroup}
-                                                    >
-                                                        { visEngine }
-                                                    </VisContextMenu>
-                                                </div>
-                                            </ViewDrop>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className={Utils.clsx(
-                                            this.props.classes.block,
-                                            this.state.toolbarHeight === 'narrow' && this.props.classes.blockNarrow,
-                                            this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
-                                        )}
-                                    >
-                                        <Attributes
-                                            classes={{}}
-                                            selectedView={this.state.selectedView}
-                                            groups={this.state.groups}
-                                            project={this.state.project}
-                                            changeProject={this.changeProject}
-                                            openedViews={this.state.openedViews}
-                                            projectName={this.state.projectName}
-                                            selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
-                                            widgetsLoaded={this.state.widgetsLoaded}
-                                            socket={this.socket}
-                                            themeName={this.state.themeName}
-                                            fonts={this.state.fonts}
-                                            adapterName={this.adapterName}
-                                            instance={this.instance}
-                                            cssClone={this.cssClone}
-                                            onPxToPercent={this.onPxToPercent}
-                                            onPercentToPx={this.onPercentToPx}
-                                            saveCssFile={this.saveCssFile}
-                                            editMode={this.state.editMode}
-                                        />
-                                    </div>
+                                    {!this.state.hidePalette ? this.renderPalette() : null}
+                                    {this.renderWorkspace(visEngine)}
+                                    {!this.state.hideAttributes ? this.renderAttributes() : null}
                                 </ReactSplit>
                             </DndProvider>
                         </div>

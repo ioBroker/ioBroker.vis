@@ -131,7 +131,15 @@ const Widgets = props => {
     const allClosed = !Object.keys(widgetsList).find(group => accordionOpen[group]);
 
     return <>
-        <Typography variant="h6" gutterBottom className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}>
+        <Typography
+            variant="h6"
+            gutterBottom
+            className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
+            style={{ display: 'flex', lineHeight: '34px' }}
+        >
+
+            <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
+            <div style={{ flex: 1 }}></div>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton
                     size="small"
@@ -145,7 +153,7 @@ const Widgets = props => {
                     <UnfoldMoreIcon />
                 </IconButton>
             </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-            { !allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
+            {!allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
                 <IconButton onClick={() => {
                     const newAccordionOpen = {};
                     Object.keys(widgetsList).forEach(group => newAccordionOpen[group] = false);
@@ -156,7 +164,15 @@ const Widgets = props => {
                     <UnfoldLessIcon />
                 </IconButton>
             </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
-            {I18n.t('Palette')}
+            <Tooltip title={I18n.t('Hide palette')}>
+                <IconButton
+                    size="small"
+                    onClick={() =>
+                        props.onHide(true)}
+                >
+                    <ClearIcon />
+                </IconButton>
+            </Tooltip>
         </Typography>
         <div>
             <TextField
@@ -225,6 +241,8 @@ const Widgets = props => {
 
 Widgets.propTypes = {
     classes: PropTypes.object,
+    onHide: PropTypes.func,
+    widgetsLoaded: PropTypes.bool,
 };
 
 export default withStyles(styles)(Widgets);
