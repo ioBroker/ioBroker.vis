@@ -7,6 +7,10 @@ import {
     Tab, Tabs, Tooltip, Typography,
 } from '@mui/material';
 
+import ClearIcon from '@mui/icons-material/Clear';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+
 import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import CSS from './CSS';
@@ -14,7 +18,6 @@ import Scripts from './Scripts';
 import View from './View';
 import Widget from './Widget';
 import usePrevious from '../Utils/usePrevious';
-import ClearIcon from "@mui/icons-material/Clear";
 
 const style = theme => ({
     blockHeader: theme.classes.blockHeader,
@@ -31,6 +34,10 @@ const Attributes = props => {
     const [selected, setSelected] = useState(window.localStorage.getItem('Attributes')
         ? window.localStorage.getItem('Attributes')
         : 'View');
+    const [isAllOpened, setIsAllOpened] = useState(false);
+    const [isAllClosed, setIsAllClosed] = useState(true);
+    const [triggerAllOpened, setTriggerAllOpened] = useState(0);
+    const [triggerAllClosed, setTriggerAllClosed] = useState(0);
 
     const prevSelectedWidgets = usePrevious(props.selectedWidgets);
 
@@ -54,10 +61,29 @@ const Attributes = props => {
             variant="h6"
             gutterBottom
             className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
-            style={{ display: 'flex', lineHeight: '34px' }}
+            style={{
+                display: 'flex',
+                lineHeight: '34px',
+                height: 34,
+            }}
         >
             {I18n.t('Attributes')}
             <div style={{ flex: 1 }}></div>
+            {selected === 'View' || selected === 'Widget' ? <div style={{ textAlign: 'right' }}>
+                {!isAllOpened ? <Tooltip title={I18n.t('Expand all')}>
+                    <IconButton
+                        size="small"
+                        onClick={() => setTriggerAllOpened(triggerAllOpened + 1)}
+                    >
+                        <UnfoldMoreIcon />
+                    </IconButton>
+                </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
+                { !isAllClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
+                    <IconButton onClick={() => setTriggerAllClosed(triggerAllClosed + 1)}>
+                        <UnfoldLessIcon />
+                    </IconButton>
+                </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
+            </div> : null}
             <Tooltip title={I18n.t('Hide attributes')}>
                 <IconButton
                     size="small"
@@ -91,7 +117,17 @@ const Attributes = props => {
         <div style={{ height: 'calc(100% - 89px', overflowY: 'auto' }}>
             {
                 selected === 'Widget' && !(props.widgetsLoaded && props.selectedView && props.selectedWidgets?.length) ?
-                    null : <TabContent key={selected} {...props} classes={{}} />
+                    null : <TabContent
+                        key={selected}
+                        {...props}
+                        classes={{}}
+                        setIsAllOpened={setIsAllOpened}
+                        setIsAllClosed={setIsAllClosed}
+                        isAllOpened={isAllOpened}
+                        isAllClosed={isAllClosed}
+                        triggerAllOpened={triggerAllOpened}
+                        triggerAllClosed={triggerAllClosed}
+                    />
             }
         </div>
     </>;

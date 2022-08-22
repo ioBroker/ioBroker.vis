@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useMemo, useState } from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -9,8 +9,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LockIcon from '@mui/icons-material/Lock';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import ColorizeIcon from '@mui/icons-material/Colorize';
 import CodeIcon from '@mui/icons-material/Code';
 import InfoIcon from '@mui/icons-material/Info';
@@ -721,8 +719,23 @@ const Widget = props => {
     );
 
     const [clearGroup, setClearGroup] = useState(null);
-
     const [showWidgetCode, setShowWidgetCode] = useState(window.localStorage.getItem('showWidgetCode') === 'true');
+    const [triggerAllOpened, setTriggerAllOpened] = useState(0);
+    const [triggerAllClosed, setTriggerAllClosed] = useState(0);
+
+    useEffect(() => {
+        const newAccordionOpen = {};
+        if (props.triggerAllOpened !== triggerAllOpened) {
+            fields.forEach(group => newAccordionOpen[group.name] = true);
+            setTriggerAllOpened(props.triggerAllOpened);
+        }
+        if (props.triggerAllClosed !== triggerAllClosed) {
+            fields.forEach(group => newAccordionOpen[group.name] = false);
+            setTriggerAllClosed(props.triggerAllClosed);
+        }
+        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+        setAccordionOpen(newAccordionOpen);
+    }, [props.triggerAllOpened, props.triggerAllClosed]);
 
     if (!widgets) {
         return null;
@@ -730,6 +743,13 @@ const Widget = props => {
 
     const allOpened = !fields.find(group => !accordionOpen[group.name]);
     const allClosed = !fields.find(group => accordionOpen[group.name]);
+
+    if (props.isAllClosed !== allClosed) {
+        setTimeout(() => props.setIsAllClosed(allClosed), 50);
+    }
+    if (props.isAllOpened !== allOpened) {
+        setTimeout(() => props.setIsAllOpened(allOpened), 50);
+    }
 
     let list;
     if (props.selectedWidgets.length === 1) {
@@ -749,33 +769,9 @@ const Widget = props => {
 
     return <>
         <div style={{ width: '100%' }}>
-            <div style={{ display: 'inline-block', width: 'calc(100% - 68px)' }}>
+            <div style={{ display: 'inline-block', width: '100%' }}>
                 {list}
             </div>
-            {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
-                <IconButton
-                    size="small"
-                    onClick={() => {
-                        const newAccordionOpen = {};
-                        fields.forEach(group => newAccordionOpen[group.name] = true);
-                        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                        setAccordionOpen(newAccordionOpen);
-                    }}
-                >
-                    <UnfoldMoreIcon />
-                </IconButton>
-            </Tooltip> : <IconButton size="small" disabled><UnfoldMoreIcon /></IconButton>}
-            { !allClosed ? <Tooltip size="small" title={I18n.t('Collapse all')}>
-                <IconButton onClick={() => {
-                    const newAccordionOpen = {};
-                    fields.forEach(group => newAccordionOpen[group.name] = false);
-                    window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-                    setAccordionOpen(newAccordionOpen);
-                }}
-                >
-                    <UnfoldLessIcon />
-                </IconButton>
-            </Tooltip> : <IconButton size="small" disabled><UnfoldLessIcon /></IconButton> }
         </div>
 
         <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>
@@ -859,8 +855,7 @@ const Widget = props => {
                     </AccordionSummary>
                     <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                         <table style={{ width: '100%' }}>
-                            <tbody>
-                            {
+                            <tbody>{
                                 group.fields.map((field, fieldIndex) => {
                                     let error;
                                     let disabled;
@@ -994,6 +989,13 @@ WidgetContainer.propTypes = {
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,
     widgetsLoaded: PropTypes.bool,
+
+    setIsAllOpened: PropTypes.func,
+    setIsAllClosed: PropTypes.func,
+    isAllOpened: PropTypes.bool,
+    isAllClosed: PropTypes.bool,
+    triggerAllOpened: PropTypes.number,
+    triggerAllClosed: PropTypes.number,
 };
 
 export default withStyles(styles)(WidgetContainer);
