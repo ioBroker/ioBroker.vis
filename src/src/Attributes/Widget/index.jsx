@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import {useEffect, useMemo, useState} from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, IconButton, Tooltip, Button,
+    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, Button,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -728,13 +728,15 @@ const Widget = props => {
         if (props.triggerAllOpened !== triggerAllOpened) {
             fields.forEach(group => newAccordionOpen[group.name] = true);
             setTriggerAllOpened(props.triggerAllOpened);
+            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+            setAccordionOpen(newAccordionOpen);
         }
         if (props.triggerAllClosed !== triggerAllClosed) {
             fields.forEach(group => newAccordionOpen[group.name] = false);
             setTriggerAllClosed(props.triggerAllClosed);
+            window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
+            setAccordionOpen(newAccordionOpen);
         }
-        window.localStorage.setItem('attributesWidget', JSON.stringify(newAccordionOpen));
-        setAccordionOpen(newAccordionOpen);
     }, [props.triggerAllOpened, props.triggerAllClosed]);
 
     if (!widgets) {

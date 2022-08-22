@@ -9,7 +9,7 @@ import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 import { VisRxWidget } from '@iobroker/vis-2-widgets-react-dev';
 
 import {
-    IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar,
+    IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar, LinearProgress,
 } from '@mui/material';
 
 // import html2canvas from 'html2canvas';
@@ -29,11 +29,12 @@ import {
 } from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
-import Widgets from './Widgets';
+import Palette from './Palette';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import VisView from './Vis/visView';
+import { registerWidgetsLoadIndicator } from './Vis/visUtils';
 import {
     DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
 } from './Utils';
@@ -184,6 +185,7 @@ class App extends GenericApp {
 
         // temporary disable translation warnings
         I18n.disableWarning(true);
+        registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
     }
 
     setStateAsync(newState) {
@@ -239,6 +241,7 @@ class App extends GenericApp {
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
             hidePalette: window.localStorage.getItem('Vis.hidePalette') === 'true',
             hideAttributes: window.localStorage.getItem('Vis.hideAttributes') === 'true',
+            loadingProgress: { step: 0, total: 0 },
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
@@ -431,6 +434,11 @@ class App extends GenericApp {
         });
 
         await this.changeView(selectedView);
+    };
+
+    setWidgetsLoadingProgress = (step, total) => {
+        console.log('setWidgetsLoadingProgress', step, total);
+        this.setState({ loadingProgress: { step, total } });
     };
 
     async onConnectionReady() {
@@ -1455,7 +1463,8 @@ class App extends GenericApp {
                 this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
             )}
         >
-            <Widgets
+            {!this.state.widgetsLoaded ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
+            <Palette
                 classes={{}}
                 widgetsLoaded={this.state.widgetsLoaded}
                 onHide={() => {

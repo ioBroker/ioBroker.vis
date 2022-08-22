@@ -132,6 +132,7 @@ BasicViewInWidget8.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
+    dateFormat: PropTypes.string,
 };
 
 export default BasicViewInWidget8;

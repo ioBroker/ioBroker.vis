@@ -449,7 +449,8 @@ const View = props => {
         {
             name: 'Responsive settings',
             fields: [
-                /*{
+                /*
+                {
                     type: 'select',
                     name: 'Direction',
                     field: 'flexDirection',
@@ -510,7 +511,8 @@ const View = props => {
                         { name: 'space-between', value: 'space-between' },
                         { name: 'space-around', value: 'space-around' },
                     ],
-                },*/
+                },
+                */
                 {
                     type: 'slider',
                     name: 'Column width',
@@ -557,13 +559,15 @@ const View = props => {
         if (props.triggerAllOpened !== triggerAllOpened) {
             fields.forEach((group, key) => newAccordionOpen[key] = true);
             setTriggerAllOpened(props.triggerAllOpened);
+            window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+            setAccordionOpen(newAccordionOpen);
         }
         if (props.triggerAllClosed !== triggerAllClosed) {
             fields.forEach((group, key) => newAccordionOpen[key] = false);
             setTriggerAllClosed(props.triggerAllClosed);
+            window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
+            setAccordionOpen(newAccordionOpen);
         }
-        window.localStorage.setItem('attributesView', JSON.stringify(newAccordionOpen));
-        setAccordionOpen(newAccordionOpen);
     }, [props.triggerAllOpened, props.triggerAllClosed]);
 
     const allOpened = !fields.find((group, key) => !accordionOpen[key]);

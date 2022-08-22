@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import withStyles from '@mui/styles/withStyles';
 
 import {
@@ -10,6 +10,7 @@ import {
     TextField,
     Tooltip,
     Typography,
+    LinearProgress,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -74,7 +75,7 @@ const styles = theme => ({
     },
 });
 
-const Widgets = props => {
+const Palette = props => {
     const [filter, setFilter] = useState('');
 
     const [accordionOpen, setAccordionOpen] = useState(
@@ -137,7 +138,6 @@ const Widgets = props => {
             className={Utils.clsx(props.classes.blockHeader, props.classes.lightedPanel)}
             style={{ display: 'flex', lineHeight: '34px' }}
         >
-
             <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
             <div style={{ flex: 1 }}></div>
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
@@ -239,10 +239,10 @@ const Widgets = props => {
     </>;
 };
 
-Widgets.propTypes = {
+Palette.propTypes = {
     classes: PropTypes.object,
     onHide: PropTypes.func,
     widgetsLoaded: PropTypes.bool,
 };
 
-export default withStyles(styles)(Widgets);
+export default withStyles(styles)(Palette);

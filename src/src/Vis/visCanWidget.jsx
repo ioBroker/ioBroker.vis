@@ -886,7 +886,7 @@ class VisCanWidget extends VisBaseWidget {
                 delete widgetStyle.top;
                 delete widgetStyle.left;
                 if (Number.isFinite(this.props.views[this.props.view].settings.rowGap)) {
-                    widgetStyle['margin-bottom'] = parseFloat(this.props.views[this.props.view].settings.rowGap) + 'px';
+                    widgetStyle['margin-bottom'] = `${parseFloat(this.props.views[this.props.view].settings.rowGap)}px`;
                 }
             }
         } catch (e) {
@@ -1167,7 +1167,6 @@ class VisCanWidget extends VisBaseWidget {
                 view={view}
                 activeView={view}
                 views={this.props.views}
-                editMode={false}
                 can={this.props.can}
                 canStates={this.props.canStates}
                 user={this.props.user}
@@ -1188,6 +1187,16 @@ class VisCanWidget extends VisBaseWidget {
                 setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
                 onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
                 showWidgetNames={this.props.showWidgetNames}
+                dateFormat={this.props.dateFormat}
+                lang={this.props.lang}
+                themeType={this.props.themeType}
+                themeName={this.props.themeName}
+                theme={this.props.theme}
+                systemConfig={this.props.systemConfig}
+                container={this.props.container}
+                editMode={false}
+                runtime={this.props.runtime}
+                visInWidget
             />;
         }) : null;
 

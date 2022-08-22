@@ -20,11 +20,10 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     const ms = inputStr.match(/(groupAttr\d+)+?/g);
     if (ms) {
         match = true;
-        ms.forEach(m => {
-            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
-        });
+        ms.forEach(m =>
+            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]));
 
-        console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
+        //console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
     }
 
     return { doesMatch: match, newString };
@@ -97,7 +96,7 @@ function extractBinding(format) {
                 const yy = systemOid.split(':', 2);
                 visOid = xx[1].trim();
                 systemOid = yy[1].trim();
-                operations = operations || [];
+                operations = [];
                 operations.push({
                     op: 'eval',
                     arg: [{
@@ -691,157 +690,182 @@ function getUrlParameter(attr) {
     return '';
 }
 
-const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) =>
-    new Promise((resolve, reject) => {
-    // check if remote exists on window
-        if (!window[remote]) {
-            // search dom to see if remote tag exists, but might still be loading (async)
-            const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
-            // when remote is loaded..
-            const onload = async () => {
-                // check if it was initialized
-                if (!window[remote]) {
-                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                    return;
-                }
-                if (!window[remote].__initialized) {
-                    // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
-                    // eslint-disable-next-line camelcase
-                    if (typeof __webpack_share_scopes__ === 'undefined') {
-                        // use default share scope object passed in manually
-                        await window[remote].init(shareScope.default);
-                    } else {
-                        // otherwise, init share scope as usual
-                        // eslint-disable-next-line camelcase,no-undef
-                        await window[remote].init(__webpack_share_scopes__[shareScope]);
-                    }
-                    // mark remote as initialized
-                    window[remote].__initialized = true;
-                }
-                // resolve promise so marking remote as loaded
-                resolve();
-            };
-            if (existingRemote) {
-                // if existing remote but not loaded, hook into its onload and wait for it to be ready
-                // existingRemote.onload = onload;
-                // existingRemote.onerror = reject;
-                resolve();
-                // check if remote fallback exists as param passed to function
-                // TODO: should scan public config for a matching key if no override exists
-            } else if (remoteFallbackUrl) {
-                // inject remote if a fallback exists and call the same onload function
-                const d = document;
-                const script = d.createElement('script');
-                script.type = 'text/javascript';
-                // mark as data-webpack so runtime can track it internally
-                script.setAttribute('data-webpack', `${remote}`);
-                script.async = true;
-                script.onerror = () => reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
-                script.onload = onload;
-                script.src = remoteFallbackUrl;
-                d.getElementsByTagName('head')[0].appendChild(script);
-            } else {
-                // no remote and no fallback exist, reject
-                reject(new Error(`Cannot Find Remote ${remote} to inject`));
+const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
+    window[`_promise_${remote}`] = window[`_promise_${remote}`] || new Promise((resolve, reject) => {
+        // check if remote exists on window
+        // search dom to see if remote tag exists, but might still be loading (async)
+        const existingRemote = document.querySelector(`[data-webpack="${remote}"]`);
+        // when remote is loaded...
+        const onload = async () => {
+            // check if it was initialized
+            if (!window[remote]) {
+                reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+                return;
             }
-        } else {
-            // remote already instantiated, resolve
+            if (!window[remote].__initialized) {
+                // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
+                // eslint-disable-next-line camelcase
+                if (typeof __webpack_share_scopes__ === 'undefined') {
+                    // use default share scope object passed in manually
+                    await window[remote].init(shareScope.default);
+                } else {
+                    // otherwise, init share scope as usual
+                    // eslint-disable-next-line camelcase,no-undef
+                    await window[remote].init(__webpack_share_scopes__[shareScope]);
+                }
+                // mark remote as initialized
+                window[remote].__initialized = true;
+            }
+            // resolve promise so marking remote as loaded
             resolve();
+        };
+        if (existingRemote) {
+            console.warn(`SOMEONE IS LOADING THE REMOTE ${remote}`);
+            // if existing remote but not loaded, hook into its onload and wait for it to be ready
+            // existingRemote.onload = onload;
+            // existingRemote.onerror = reject;
+            resolve();
+            // check if remote fallback exists as param passed to function
+            // TODO: should scan public config for a matching key if no override exists
+        } else if (remoteFallbackUrl) {
+            // inject remote if a fallback exists and call the same onload function
+            const d = document;
+            const script = d.createElement('script');
+            script.type = 'text/javascript';
+            // mark as data-webpack so runtime can track it internally
+            script.setAttribute('data-webpack', `${remote}`);
+            script.async = true;
+            script.onerror = () => reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+            script.onload = onload;
+            script.src = remoteFallbackUrl;
+            d.getElementsByTagName('head')[0].appendChild(script);
+        } else {
+            // no remote and no fallback exist, reject
+            reject(new Error(`Cannot Find Remote ${remote} to inject`));
         }
     });
 
-const loadComponent = (remote, sharedScope, module, url) => async () => {
-    await getOrLoadRemote(remote, sharedScope, url);
-    const container = window[remote];
-    const factory = await container.get(module);
-    return factory();
+    return window[`_promise_${remote}`];
 };
 
-async function getRemoteWidgets(socket) {
-    const result = [];
-    const instances = Object.values(await socket.getObjectView(
+const loadComponent = (remote, sharedScope, module, url) =>
+    () => getOrLoadRemote(remote, sharedScope, url)
+        .then(() => window[remote].get(module))
+        .then(factory => factory());
+
+function registerWidgetsLoadIndicator(cb) {
+    window.__widgetsLoadIndicator = cb;
+}
+
+function getRemoteWidgets(socket) {
+    return socket.getObjectView(
         'system.adapter.',
         'system.adapter.\u9999',
         'instance',
-    ));
-    const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
+    )
+        .then(objects => {
+            const result = [];
+            let count = 0;
+            const instances = Object.values(objects);
+            const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
 
-    for (const instanceKey in dynamicWidgetInstances) {
-        const dynamicWidgetInstance = dynamicWidgetInstances[instanceKey];
-        for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
-            if (widgetKey === 'i18n') {
-                // ignore
-            } else {
-                const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetKey];
-                // const Component = await loadComponent('Thermostat', 'default', './Thermostat', 'http://localhost:3001/customWidgets.js')();
-                if (!visWidgetsCollection.url.startsWith('http')) {
-                    visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
-                }
-
-                try {
-                    if (visWidgetsCollection.components) {
-                        let widgetsName;
-                        if (!widgetsName) {
-                            widgetsName = visWidgetsCollection.name;
+            const promises = [];
+            for (let i = 0; i < dynamicWidgetInstances.length; i++) {
+                const dynamicWidgetInstance = dynamicWidgetInstances[i];
+                for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
+                    if (widgetKey === 'i18n') {
+                        // ignore
+                    } else {
+                        const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetKey];
+                        if (!visWidgetsCollection.url.startsWith('http')) {
+                            visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
                         }
-                        for (const componentKey in visWidgetsCollection.components) {
-                            try {
-                                const Component = await loadComponent(visWidgetsCollection.name, 'default', `./${visWidgetsCollection.components[componentKey]}`, visWidgetsCollection.url)();
-                                console.log(Component);
-                                Component.default.adapter = dynamicWidgetInstance.common.name;
-                                result.push(Component.default);
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        }
-                        if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === true) {
-                            // load i18n from files
-                            const pos = visWidgetsCollection.url.lastIndexOf('/');
-                            let i18nURL;
-                            if (pos !== -1) {
-                                i18nURL = visWidgetsCollection.url.substring(0, pos);
-                            } else {
-                                i18nURL = visWidgetsCollection.url;
-                            }
-                            const lang = I18n.getLanguage();
-                            /*
-                            let file = `${i18nURL}/i18n/${lang}.json`;
 
-                            if (window.location.port === '3000' && file.startsWith('http')) {
-                                file = file.replace('/i18n/', `/widgets/${dynamicWidgetInstances[instanceKey]._id.replace('system.adapter.', '').replace(/\.\d*$/, '')}/i18n/`).replace('4173', '3000');
-                            }
-                            */
+                        try {
+                            if (visWidgetsCollection.components) {
+                                let widgetsName;
+                                if (!widgetsName) {
+                                    widgetsName = visWidgetsCollection.name;
+                                }
+                                for (const componentKey in visWidgetsCollection.components) {
+                                    ((_componentKey, _visWidgetsCollection) => {
+                                        const start = Date.now();
 
-                            await fetch(`${i18nURL}/i18n/${lang}.json`)
-                                .then(data => data.json())
-                                .then(json => I18n.extendTranslations(json, lang))
-                                .catch(error =>
-                                    console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`));
-                        } else if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === 'component') {
-                            try {
-                                const translations = await loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)();
-                                I18n.extendTranslations(translations.default);
-                            } catch (e) {
-                                console.error(e);
+                                        const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
+                                            .then(Component => {
+                                                count++;
+                                                console.log(Component);
+                                                Component.default.adapter = dynamicWidgetInstance.common.name;
+                                                result.push(Component.default);
+                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                            })
+                                            .catch(e => console.error(e))
+                                            .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
+
+                                        promises.push(promise);
+                                    })(componentKey, visWidgetsCollection);
+                                }
+
+                                if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === true) {
+                                    // load i18n from files
+                                    const pos = visWidgetsCollection.url.lastIndexOf('/');
+                                    let i18nURL;
+                                    if (pos !== -1) {
+                                        i18nURL = visWidgetsCollection.url.substring(0, pos);
+                                    } else {
+                                        i18nURL = visWidgetsCollection.url;
+                                    }
+                                    const lang = I18n.getLanguage();
+                                    /*
+                                    let file = `${i18nURL}/i18n/${lang}.json`;
+
+                                    if (window.location.port === '3000' && file.startsWith('http')) {
+                                        file = file.replace('/i18n/', `/widgets/${dynamicWidgetInstances[instanceKey]._id.replace('system.adapter.', '').replace(/\.\d*$/, '')}/i18n/`).replace('4173', '3000');
+                                    }
+                                    */
+
+                                    const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
+                                        .then(data => data.json())
+                                        .then(json => {
+                                            count++;
+                                            I18n.extendTranslations(json, lang);
+                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                        })
+                                        .catch(error =>
+                                            console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`));
+                                    promises.push(i18nPromise);
+                                } else if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === 'component') {
+                                    const i18nPromise = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
+                                        .then(translations => {
+                                            count++;
+                                            I18n.extendTranslations(translations.default);
+                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                        })
+                                        .catch(error =>
+                                            console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
+
+                                    promises.push(i18nPromise);
+                                }
                             }
+                        } catch (e) {
+                            console.error(e);
                         }
                     }
-                } catch (e) {
-                    console.error(e);
+                }
+
+                if (dynamicWidgetInstance.common.visWidgets?.i18n && typeof dynamicWidgetInstance.common.visWidgets?.i18n === 'object') {
+                    try {
+                        I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
+                    } catch (error) {
+                        console.error(`Cannot import i18n: ${error}`);
+                    }
                 }
             }
-        }
 
-        if (dynamicWidgetInstance.common.visWidgets?.i18n && typeof dynamicWidgetInstance.common.visWidgets?.i18n === 'object') {
-            try {
-                I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
-            } catch (error) {
-                console.error(`Cannot import i18n: ${error}`);
-            }
-        }
-    }
-
-    return result;
+            return Promise.all(promises)
+                .then(() => result);
+        })
+        .catch(e => console.error('Cannot read instances', e));
 }
 
 function addClass(actualClass, toAdd) {
@@ -906,4 +930,5 @@ export {
     addClass,
     removeClass,
     getRemoteWidgets,
+    registerWidgetsLoadIndicator,
 };

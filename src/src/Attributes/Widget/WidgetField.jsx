@@ -12,7 +12,7 @@ import {
 import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
 import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
 import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
-import {I18n, IconPicker, Utils} from '@iobroker/adapter-react-v5';
+import { I18n, IconPicker, Utils } from '@iobroker/adapter-react-v5';
 
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import ClearIcon from '@mui/icons-material/Clear';

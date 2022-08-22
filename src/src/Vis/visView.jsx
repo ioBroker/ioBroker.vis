@@ -67,29 +67,36 @@ class VisView extends React.Component {
         this.movement = null;
     }
 
-    static async collectInformation(socket) {
+    static collectInformation(socket) {
         if (!VisView.widgets) {
             VisView.widgets = {};
-            const collectedWidgets = [...WIDGETS, ...(await getRemoteWidgets(socket))];
-            collectedWidgets.forEach(Widget => {
-                if (!Widget.getWidgetInfo) {
-                    console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
-                } else {
-                    const info = Widget.getWidgetInfo();
-                    if (!info.visSet) {
-                        console.error(`No visSet in info for "${Widget.constructor.name}"`);
-                    }
+            return new Promise(resolve => {
+                setTimeout(() =>
+                    getRemoteWidgets(socket)
+                        .then(widgetSets => {
+                            const collectedWidgets = [...WIDGETS, ...widgetSets];
+                            collectedWidgets.forEach(Widget => {
+                                if (!Widget.getWidgetInfo) {
+                                    console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
+                                } else {
+                                    const info = Widget.getWidgetInfo();
+                                    if (!info.visSet) {
+                                        console.error(`No visSet in info for "${Widget.constructor.name}"`);
+                                    }
 
-                    if (!info.id) {
-                        console.error(`No id in info for "${Widget.constructor.name}"`);
-                    } else {
-                        VisView.widgets[info.id] = Widget;
-                    }
-                }
+                                    if (!info.id) {
+                                        console.error(`No id in info for "${Widget.constructor.name}"`);
+                                    } else {
+                                        VisView.widgets[info.id] = Widget;
+                                    }
+                                }
+                            });
+                            resolve(VisView.widgets);
+                        }), 0);
             });
         }
 
-        return VisView.widgets;
+        return Promise.resolve(VisView.widgets);
     }
 
     componentDidMount() {
@@ -1196,29 +1203,29 @@ class VisView extends React.Component {
         if (width) {
             if (settings.columnWidth && Number.isFinite(settings.columnWidth)) {
                 return Math.floor(this.state.width / settings.columnWidth) + 1;
-            } else {
-                let columns;
-                if (width < 600) {
-                    columns = 1;
-                } else if (width < 900) {
-                    columns = 2;
-                } else if (width < 1200) {
-                    columns = 3;
-                } else if (width < 2064) {
-                    columns = 4;
-                } else {
-                    columns = Math.floor(width / 500) + 1;
-                }
-
-                if (columns > relativeWidgetsCount) {
-                    columns = relativeWidgetsCount;
-                }
-                if (columns > MAX_COLUMNS) {
-                    columns = MAX_COLUMNS;
-                }
-
-                return columns;
             }
+
+            let columns;
+            if (width < 600) {
+                columns = 1;
+            } else if (width < 900) {
+                columns = 2;
+            } else if (width < 1200) {
+                columns = 3;
+            } else if (width < 2064) {
+                columns = 4;
+            } else {
+                columns = Math.floor(width / 500) + 1;
+            }
+
+            if (columns > relativeWidgetsCount) {
+                columns = relativeWidgetsCount;
+            }
+            if (columns > MAX_COLUMNS) {
+                columns = MAX_COLUMNS;
+            }
+
+            return columns;
         }
 
         return 1;
