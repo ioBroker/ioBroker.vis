@@ -305,7 +305,7 @@ class VisNavigation extends React.Component {
         return <div
             className={Utils.clsx(
                 this.props.classes.toolBar,
-                this.props.menuWidth === 'hidden' && this.props.classes.toolBarWithClosedMenu
+                this.props.menuWidth === 'hidden' && this.props.classes.toolBarWithClosedMenu,
             )}
             style={style}
         >

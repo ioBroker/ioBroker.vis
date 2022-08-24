@@ -144,6 +144,12 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     onChangeFunc: match[4] ? match[4].substring(1).split('/')[1] : undefined,
                 };
 
+                // special case for Object ID filter
+                if (field.onChangeFunc && field.onChangeFunc.startsWith('filterType')) {
+                    field.filter = field.onChangeFunc.substring('filterType'.length).toLowerCase();
+                    delete field.onChangeFunc;
+                }
+
                 if (widgetIndex > 0 && !repeats && commonFields && !commonFields[`${groupName}.${field.name}`]) {
                     return;
                 }

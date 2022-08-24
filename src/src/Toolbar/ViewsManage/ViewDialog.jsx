@@ -14,7 +14,7 @@ import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 
 const ViewDialog = props => {
-    const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog !== 'add');
+    const inputField = useFocus(!!props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     const deleteView = async () => {
         const view = props.dialogView || props.selectedView;

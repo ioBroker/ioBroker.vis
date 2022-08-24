@@ -34,6 +34,58 @@ import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter } from './visUtils';
 
+function _translateWord(text, lang, dictionary) {
+    if (!text) {
+        return '';
+    }
+    lang = lang || window.systemLang;
+    dictionary = dictionary || window.systemDictionary;
+
+    if (dictionary[text]) {
+        let newText = dictionary[text][lang];
+        if (newText) {
+            return newText;
+        }
+        if (lang !== 'en') {
+            newText = dictionary[text].en;
+            if (newText) {
+                return newText;
+            }
+        }
+    } else if (typeof text === 'string' && !text.match(/_tooltip$/)) {
+        // console.log(`"${text}": {en: "${text}", de: "${text}", ru: "${text}"},`);
+    } else if (typeof text !== 'string') {
+        console.warn(`Trying to translate non-text: ${text}`);
+    }
+
+    return text;
+}
+
+function translate(text, arg1, arg2, arg3) {
+    text = _translateWord(text);
+
+    let pos = text.includes('%s');
+    if (pos !== -1) {
+        text = text.replace('%s', arg1);
+    } else {
+        return text;
+    }
+
+    pos = text.includes('%s');
+    if (pos !== -1) {
+        text = text.replace('%s', arg2);
+    } else {
+        return text;
+    }
+
+    pos = text.includes('%s');
+    if (pos !== -1) {
+        text = text.replace('%s', arg3);
+    }
+
+    return text;
+}
+
 class VisEngine extends React.Component {
     constructor(props) {
         super(props);
@@ -227,7 +279,7 @@ class VisEngine extends React.Component {
             activeView: this.props.activeView,
             language: this.props.lang,
             user: '',
-            _: window._,
+            _: translate,
             dateFormat: '',
             instance: window.localStorage.getItem('visInstance'),
             loginRequired: false,

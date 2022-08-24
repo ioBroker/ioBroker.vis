@@ -23,7 +23,7 @@ function replaceGroupAttr(inputStr, groupAttrList) {
         ms.forEach(m =>
             newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]));
 
-        //console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
+        // console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
     }
 
     return { doesMatch: match, newString };
@@ -789,18 +789,18 @@ function getRemoteWidgets(socket) {
                                 }
                                 for (const componentKey in visWidgetsCollection.components) {
                                     ((_componentKey, _visWidgetsCollection) => {
-                                        const start = Date.now();
+                                        // const start = Date.now();
 
                                         const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
                                             .then(Component => {
                                                 count++;
-                                                console.log(Component);
+                                                // console.log(Component);
                                                 Component.default.adapter = dynamicWidgetInstance.common.name;
                                                 result.push(Component.default);
                                                 window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
                                             })
-                                            .catch(e => console.error(e))
-                                            .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
+                                            .catch(e => console.error(e));
+                                            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 
                                         promises.push(promise);
                                     })(componentKey, visWidgetsCollection);

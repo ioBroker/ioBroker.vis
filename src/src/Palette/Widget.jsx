@@ -89,7 +89,7 @@ const Widget = props => {
         />;
     }
 
-    const label = props.widgetType.label ? I18n.t(props.widgetType.label) : window._(props.widgetType.title);
+    const label = props.widgetType.label ? I18n.t(props.widgetType.label) : window.vis._(props.widgetType.title);
 
     const result = <Tooltip
         title={<div className={props.classes.widgetTooltip}>

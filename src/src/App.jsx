@@ -437,7 +437,7 @@ class App extends GenericApp {
     };
 
     setWidgetsLoadingProgress = (step, total) => {
-        console.log('setWidgetsLoadingProgress', step, total);
+        // console.log('setWidgetsLoadingProgress', step, total);
         this.setState({ loadingProgress: { step, total } });
     };
 

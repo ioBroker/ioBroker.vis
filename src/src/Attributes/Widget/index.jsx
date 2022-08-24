@@ -823,7 +823,7 @@ const Widget = props => {
                                 {group.label ?
                                     I18n.t(group.label) + (group.index !== undefined ? ` [${group.index}]` : '')
                                     :
-                                    (window._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
+                                    (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
                             </div>
                             <div>
                                 <Checkbox
@@ -884,7 +884,7 @@ const Widget = props => {
                                                 <td className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)} title={I18n.t(field.tooltip)}>
                                                     { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
                                                     { field.title || (field.label && I18n.t(field.label)) ||
-                                                        (window._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                        (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
                                                     { group.isStyle ?
                                                         <ColorizeIcon
                                                             fontSize="small"

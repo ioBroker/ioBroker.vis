@@ -15,7 +15,7 @@ import IODialog from '../../Components/IODialog';
 import { useFocus } from '../../Utils';
 
 const FolderDialog = props => {
-    const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog !== 'add');
+    const inputField = useFocus(props.dialog && props.dialog !== 'delete', props.dialog === 'add');
 
     if (!props.dialog) {
         return null;

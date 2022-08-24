@@ -252,9 +252,6 @@ class VisRxWidget extends VisBaseWidget {
         }
 
         Object.keys(this.state.rxStyle).forEach(attr => {
-            if (attr.startsWith('_')) {
-                debugger;
-            }
             const value = this.state.rxStyle[attr];
             if (value !== null && value !== undefined) {
                 attr = attr.replace(

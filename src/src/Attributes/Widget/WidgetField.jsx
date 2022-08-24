@@ -313,7 +313,8 @@ const WidgetField = props => {
         if (value && (!objectCache || value !== objectCache._id)) {
             props.socket.getObject(value)
                 .then(objectData =>
-                    setObjectCache(objectData)).catch(() => setObjectCache(null));
+                    setObjectCache(objectData))
+                .catch(() => setObjectCache(null));
         }
         if (objectCache && !value) {
             setObjectCache(null);
@@ -342,7 +343,17 @@ const WidgetField = props => {
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
-                customFilter={field.filter || (field.type === 'hid' || field.type === 'history' ? { common: { custom: '_dataSources' } } : null)}
+                types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] : null}
+                expertMode={field.filter === 'chart'}
+                customFilter={field.type === 'hid' || field.type === 'history' ?
+                    { common: { custom: '_dataSources' } }
+                    : (typeof field.filter === 'string' &&
+                    field.filter !== 'chart' &&
+                    field.filter !== 'channel' &&
+                    field.filter !== 'device' ?
+                        { type: field.filter }
+                        :
+                        (field.filter ? field.filter : null))}
             /> : null}
         </>;
     }

@@ -102,7 +102,8 @@ const getItem = (item, key, props, full) => {
             onChange={_value => item.onChange(_value)}
             options={item.items}
         />;
-        /*return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
+        /*
+        return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
             {props.toolbarHeight !== 'veryNarrow' ? <InputLabel shrink>{I18n.t(item.name)}</InputLabel> : null}
             <Select
                 variant="standard"
@@ -134,7 +135,8 @@ const getItem = (item, key, props, full) => {
                         </>}
                 </MenuItem>)}
             </Select>
-        </FormControl>;*/
+        </FormControl>;
+        */
     }
     if (item.type === 'checkbox') {
         return <FormControlLabel

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import withStyles from '@mui/styles/withStyles';
 
 import {
@@ -10,7 +10,6 @@ import {
     TextField,
     Tooltip,
     Typography,
-    LinearProgress,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -98,7 +97,7 @@ const Palette = props => {
         if (!widgetsList[widgetType.set]) {
             widgetsList[widgetType.set] = {};
         }
-        const title = widgetType.label ? I18n.t(widgetType.label) : window._(widgetType.title) || '';
+        const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
         if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
             return;
         }
