@@ -769,6 +769,15 @@ const Widget = props => {
         list = props.selectedWidgets.join(', ');
     }
 
+    let jsonCustomFields = null;
+    if (showWidgetCode) {
+        try {
+            jsonCustomFields = JSON.stringify(customFields, null, 2);
+        } catch (e) {
+            // ignore
+        }
+    }
+
     return <>
         <div style={{ width: '100%' }}>
             <div style={{ display: 'inline-block', width: '100%' }}>
@@ -956,7 +965,7 @@ const Widget = props => {
             </Button>
             {showWidgetCode ? <pre>
                 {JSON.stringify(widget, null, 2)}
-                {JSON.stringify(customFields, null, 2)}
+                {jsonCustomFields}
             </pre> : null}
         </div>
     </>;

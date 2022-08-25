@@ -872,7 +872,9 @@ class VisCanWidget extends VisBaseWidget {
             widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
             this.applyBindings(true, widgetData, widgetStyle);
             if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
-                widgetData.filterkey = widgetData.filterkey.split(',').map(f => f.trim()).filter(f => f);
+                widgetData.filterkey = widgetData.filterkey.split(',')
+                    .map(f => f.trim())
+                    .filter(f => f);
             }
 
             isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
@@ -1087,6 +1089,8 @@ class VisCanWidget extends VisBaseWidget {
                 }
 
                 this.onCommand('updateContainers');
+            } else {
+                console.log('Div not jet rendered');
             }
 
             this.props.registerRef(wid, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);

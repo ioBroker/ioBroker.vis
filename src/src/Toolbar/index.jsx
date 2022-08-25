@@ -111,7 +111,7 @@ const Toolbar = props => {
             window.localStorage.setItem('Vis.lastCommand', 'open');
             setLastCommand('open');
             setRight(false);
-            window.open(runtimeURL, '_blank');
+            window.open(runtimeURL, 'vis.runtime');
         }}
         >
             <PlayArrowIcon />
@@ -192,7 +192,7 @@ const Toolbar = props => {
         </Tooltip>;
     } else if (lastCommand === 'open') {
         lastCommandButton = <Tooltip title={I18n.t('Open runtime in new window')} classes={{ popper: classes.tooltip }}>
-            <IconButton size="small" onClick={() => window.open(runtimeURL, '_blank')}>
+            <IconButton size="small" onClick={() => window.open(runtimeURL, 'vis.runtime')}>
                 <PlayArrowIcon />
             </IconButton>
         </Tooltip>;

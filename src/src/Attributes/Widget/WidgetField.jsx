@@ -6,17 +6,16 @@ import PropTypes from 'prop-types';
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
     ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, FormControl,
-    FormHelperText,
+    FormHelperText, ListItemIcon,
 } from '@mui/material';
-
-import ColorPicker from '@iobroker/adapter-react-v5/Components/ColorPicker';
-import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import TextWithIcon from '@iobroker/adapter-react-v5/Components/TextWithIcon';
-import { I18n, IconPicker, Utils } from '@iobroker/adapter-react-v5';
 
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import ClearIcon from '@mui/icons-material/Clear';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
+
+import {
+    I18n, IconPicker, Utils, Icon, ColorPicker, SelectID, TextWithIcon,
+} from '@iobroker/adapter-react-v5';
 
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
@@ -257,7 +256,12 @@ const WidgetField = props => {
                     .then(_instances => {
                         const inst = _instances
                             .filter(obj => obj.common.getHistory)
-                            .map(obj => obj._id.replace('system.adapter.', ''));
+                            .map(obj => ({
+                                id: obj._id.replace('system.adapter.', ''),
+                                idShort: obj._id.split('.').pop(),
+                                name: obj.common.name,
+                                icon: obj.common.icon,
+                            }));
                         setInstances(inst);
                     });
             } else {
@@ -554,6 +558,8 @@ const WidgetField = props => {
             }
         }
 
+        const withIcons = !!options.find(item => item && item.icon);
+
         return <Select
             variant="standard"
             disabled={disabled}
@@ -568,7 +574,14 @@ const WidgetField = props => {
             renderValue={_value => {
                 if (typeof options[0] === 'object') {
                     const item = options.find(o => o.value === _value);
-                    return item ? t(item.label) : _value;
+                    const text = item ? t(item.label) : _value;
+                    if (withIcons && item.icon) {
+                        return <>
+                            <Icon src={item.icon} />
+                            <span style={item.color ? { color: item.color } : null}>{text}</span>
+                        </>;
+                    }
+                    return text;
                 }
                 return field.type === 'select' && !field.noTranslation ? t(_value) : _value;
             }}
@@ -579,11 +592,22 @@ const WidgetField = props => {
                 key={typeof selectItem === 'object' ? selectItem.value : selectItem}
                 style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
             >
-                {
-                    selectItem === ''
-                        ? <i>{t('none')}</i>
-                        : (field.type === 'select' && !field.noTranslation ? (typeof selectItem === 'object' ? t(selectItem.label) : t(selectItem)) : selectItem)
-                }
+                {selectItem.icon ? <ListItemIcon>
+                    <Icon src={selectItem.icon} style={{ width: 24 }} />
+                </ListItemIcon>
+                    :
+                    (withIcons ? <ListItemIcon><div style={{ width: 24 }} /></ListItemIcon> : null)}
+                <ListItemText>
+                    {selectItem === '' ?
+                        <i>{t('none')}</i>
+                        :
+                        (field.type === 'select' && !field.noTranslation ?
+                            (typeof selectItem === 'object' ?
+                                <span style={selectItem.color ? { color: selectItem.color } : null}>{t(selectItem.label)}</span> : t(selectItem)
+                            ) : (typeof selectItem === 'object' ?
+                                <span style={selectItem.color ? { color: selectItem.color } : null}>{selectItem.label}</span> : selectItem
+                            ))}
+                </ListItemText>
             </MenuItem>)}
         </Select>;
     }
@@ -843,11 +867,14 @@ const WidgetField = props => {
             renderValue={selectValue => selectValue}
             fullWidth
         >
-            {instances.map(id => <MenuItem
-                value={field.isShort ? id.split('.').pop() : id}
-                key={id}
+            {instances.map(instance => <MenuItem
+                value={field.isShort ? instance.idShort : instance.id}
+                key={instance.id}
             >
-                {field.isShort ? id.split('.').pop() : id}
+                <ListItemIcon>
+                    <img src={`./${instance.name}.admin/${instance.icon}`} width="24" height="24" alt={instance.name} />
+                </ListItemIcon>
+                <ListItemText>{field.isShort ? instance.idShort : instance.id}</ListItemText>
             </MenuItem>)}
         </Select>;
     }
