@@ -244,7 +244,10 @@ const WidgetField = props => {
         }
     };
 
-    const propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    let propValue = props.isStyle ? widget.style[field.name] : widget.data[field.name];
+    if (propValue === undefined) {
+        propValue = null;
+    }
 
     useEffect(() => {
         if (propValue !== undefined) {
@@ -556,6 +559,13 @@ const WidgetField = props => {
             if (field.tpl) {
                 options = options.filter(id => props.project[props.selectedView].widgets[id].tpl === field.tpl);
             }
+            options.unshift('');
+            if (!field.tpl) {
+                options = options.map(id => ({
+                    value: id,
+                    label: `${id || t('none')} ${id ? `(${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
+                }));
+            }
         }
 
         const withIcons = !!options.find(item => item && item.icon);
@@ -574,7 +584,7 @@ const WidgetField = props => {
             renderValue={_value => {
                 if (typeof options[0] === 'object') {
                     const item = options.find(o => o.value === _value);
-                    const text = item ? t(item.label) : _value;
+                    const text = item ? (field.type === 'select' && !field.noTranslation ? t(item.label) : item.label) : _value;
                     if (withIcons && item.icon) {
                         return <>
                             <Icon src={item.icon} />
