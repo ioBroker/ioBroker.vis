@@ -560,12 +560,10 @@ const WidgetField = props => {
                 options = options.filter(id => props.project[props.selectedView].widgets[id].tpl === field.tpl);
             }
             options.unshift('');
-            if (!field.tpl) {
-                options = options.map(id => ({
-                    value: id,
-                    label: `${id || t('none')} ${id ? `(${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
-                }));
-            }
+            options = options.map(id => ({
+                value: id,
+                label: `${id || t('none')}${id ? ` (${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
+            }));
         }
 
         const withIcons = !!options.find(item => item && item.icon);
