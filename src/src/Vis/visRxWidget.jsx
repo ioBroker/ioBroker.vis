@@ -24,6 +24,7 @@ class VisRxWidget extends VisBaseWidget {
         const options = this.getWidgetInfo();
 
         const widgetAttrInfo = {};
+        this.widgetAttrInfo = widgetAttrInfo;
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
             options.visAttrs.forEach(group =>
@@ -245,6 +246,7 @@ class VisRxWidget extends VisBaseWidget {
             visibility: {},
             lastChanges: {},
             signals: {},
+            widgetAttrInfo: this.widgetAttrInfo,
         };
         // extract bindings anew as data or style were changes
         getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, this.linkContext);

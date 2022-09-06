@@ -480,7 +480,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     (attr.match(/oid\d{0,2}$/) ||
                         attr.startsWith('oid') ||
                         attr.startsWith('signals-oid-') ||
-                        (linkContext.widgetAttrInfo && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/)] && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/)].type === 'id')
+                        (linkContext.widgetAttrInfo && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/, '')] && linkContext.widgetAttrInfo[attr.replace(/\d{0,2}$/, '')].type === 'id')
                     ) && data[attr]
                 )
             ) {
