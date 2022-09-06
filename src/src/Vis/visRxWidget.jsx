@@ -189,6 +189,16 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
+    onRxDataChanged(prevRxData) {
+
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
+            this.onRxDataChanged(prevState.rxData);
+        }
+    }
+
     async componentWillUnmount() {
         for (let i = 0; i < this.linkContext.IDs.length; i++) {
             await this.props.socket.unsubscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
