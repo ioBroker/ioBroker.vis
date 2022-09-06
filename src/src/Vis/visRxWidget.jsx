@@ -23,12 +23,22 @@ class VisRxWidget extends VisBaseWidget {
 
         const options = this.getWidgetInfo();
 
+        const widgetAttrInfo = {};
+        // collect all attributes (only types)
+        if (Array.isArray(options.visAttrs)) {
+            options.visAttrs.forEach(group =>
+                group.fields && group.fields.forEach(item => {
+                    widgetAttrInfo[item.name] = { type: item.type };
+                }));
+        }
+
         this.linkContext = {
             IDs: [],
             bindings: {},
             visibility: {},
             lastChanges: {},
             signals: {},
+            widgetAttrInfo,
         };
 
         getUsedObjectIDsInWidget(props.views, props.view, props.id, this.linkContext);
@@ -96,7 +106,7 @@ class VisRxWidget extends VisBaseWidget {
         return null;
     }
 
-    // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars,class-methods-use-this
     onStateUpdated(id, state) {
 
     }
@@ -189,12 +199,13 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
+    // eslint-disable-next-line no-unused-vars,class-methods-use-this
     onRxDataChanged(prevRxData) {
 
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
+        if (prevState && JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
             this.onRxDataChanged(prevState.rxData);
         }
     }

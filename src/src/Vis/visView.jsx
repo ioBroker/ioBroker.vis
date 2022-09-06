@@ -102,13 +102,14 @@ class VisView extends React.Component {
     componentDidMount() {
         this.updateViewWidth();
 
-        this.promiseToCollect.then(() => {
-            this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+        this.promiseToCollect
+            .then(() => {
+                this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
-            this.loadJqueryTheme(this.getJQueryThemeName())
-                .then(() => this.setState({ mounted: true }, () =>
-                    this.registerEditorHandlers()));
-        });
+                this.loadJqueryTheme(this.getJQueryThemeName())
+                    .then(() => this.setState({ mounted: true }, () =>
+                        this.registerEditorHandlers()));
+            });
     }
 
     componentWillUnmount() {

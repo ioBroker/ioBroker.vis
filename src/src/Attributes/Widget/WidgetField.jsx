@@ -875,14 +875,14 @@ const WidgetField = props => {
             renderValue={selectValue => selectValue}
             fullWidth
         >
-            {instances.map(instance => <MenuItem
-                value={field.isShort ? instance.idShort : instance.id}
-                key={instance.id}
+            {instances.map(_instance => <MenuItem
+                value={field.isShort ? _instance.idShort : _instance.id}
+                key={_instance.id}
             >
                 <ListItemIcon>
-                    <img src={`./${instance.name}.admin/${instance.icon}`} width="24" height="24" alt={instance.name} />
+                    <img src={`./${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
                 </ListItemIcon>
-                <ListItemText>{field.isShort ? instance.idShort : instance.id}</ListItemText>
+                <ListItemText>{field.isShort ? _instance.idShort : _instance.id}</ListItemText>
             </MenuItem>)}
         </Select>;
     }
