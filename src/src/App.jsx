@@ -384,6 +384,14 @@ class App extends GenericApp {
                         delete project[view].widgets[wid];
                         project[view].widgets[newWid] = widget;
                     }
+                    // If widget is not unique, change its name
+                    if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
+                        const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                        console.log(`Rename widget ${wid} to ${_newWid}`);
+                        const widget = project[view].widgets[wid];
+                        delete project[view].widgets[wid];
+                        project[view].widgets[_newWid] = widget;
+                    }
                 });
             }
         });
@@ -532,14 +540,19 @@ class App extends GenericApp {
         await this.setStateAsync(newState);
     };
 
-    getNewWidgetIdNumber = isGroup => {
-        const widgets = this.state.project[this.state.selectedView].widgets;
+    getNewWidgetIdNumber = (isGroup, project) => {
+        const widgets = [];
+        project = project || this.state.project;
+        Object.keys(project).forEach(view =>
+            project[view].widgets && Object.keys(project[view].widgets).forEach(widget =>
+                widgets.push(widget)));
         let newKey = 1;
-        Object.keys(widgets).forEach(name => {
+        widgets.forEach(name => {
             const matches = isGroup ? name.match(/^g([0-9]+)$/) : name.match(/^w([0-9]+)$/);
             if (matches) {
-                if (parseInt(matches[1]) >= newKey) {
-                    newKey = parseInt(matches[1]) + 1;
+                const num = parseInt(matches[1], 10);
+                if (num >= newKey) {
+                    newKey = num + 1;
                 }
             }
         });
@@ -547,16 +560,16 @@ class App extends GenericApp {
         return newKey;
     };
 
-    getNewWidgetId = () => {
-        let newKey = this.getNewWidgetIdNumber();
+    getNewWidgetId = project => {
+        let newKey = this.getNewWidgetIdNumber(false, project);
 
         newKey = `w${newKey.toString().padStart(6, 0)}`;
 
         return newKey;
     };
 
-    getNewGroupId = () => {
-        let newKey = this.getNewWidgetIdNumber(true);
+    getNewGroupId = project => {
+        let newKey = this.getNewWidgetIdNumber(true, project);
 
         newKey = `g${newKey.toString().padStart(6, 0)}`;
 

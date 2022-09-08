@@ -92,7 +92,14 @@ class VisEngine extends React.Component {
         window.jQuery = window.$;
         window.$ = window.jQuery; // jQuery library
         // window.$$ = $$; // Gestures library
-        window.systemLang = this.props.lang || window.systemLang || 'en';
+        window.systemLang = props.lang || window.systemLang || 'en';
+
+        // modify jquery dialog to add it to view (originally dialog was added to body) (because of styles)
+        window.$.ui.dialog.prototype._appendTo = function () {
+            const wid = this.options.wid;
+            const view = Object.keys(props.views).find(v => props.views[v].widgets && props.views[v].widgets[wid]);
+            return this.document.find(view ? `#visview_${view}` : 'body').eq(0);
+        };
 
         this.state = {
             ready: false,

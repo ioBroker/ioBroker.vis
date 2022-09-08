@@ -24,7 +24,6 @@ class VisRxWidget extends VisBaseWidget {
         const options = this.getWidgetInfo();
 
         const widgetAttrInfo = {};
-        this.widgetAttrInfo = widgetAttrInfo;
         // collect all attributes (only types)
         if (Array.isArray(options.visAttrs)) {
             options.visAttrs.forEach(group =>
@@ -205,9 +204,19 @@ class VisRxWidget extends VisBaseWidget {
 
     }
 
+    // eslint-disable-next-line no-unused-vars,class-methods-use-this
+    onRxStyleChanged(prevRxData) {
+
+    }
+
     componentDidUpdate(prevProps, prevState) {
-        if (prevState && JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
-            this.onRxDataChanged(prevState.rxData);
+        if (prevState) {
+            if (JSON.stringify(this.state.rxData) !== JSON.stringify(prevState.rxData)) {
+                this.onRxDataChanged(prevState.rxData);
+            }
+            if (JSON.stringify(this.state.rxStyle) !== JSON.stringify(prevState.rxStyle)) {
+                this.onRxStyleChanged(prevState.rxStyle);
+            }
         }
     }
 
@@ -246,7 +255,7 @@ class VisRxWidget extends VisBaseWidget {
             visibility: {},
             lastChanges: {},
             signals: {},
-            widgetAttrInfo: this.widgetAttrInfo,
+            widgetAttrInfo: this.linkContext.widgetAttrInfo,
         };
         // extract bindings anew as data or style were changes
         getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, this.linkContext);

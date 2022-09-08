@@ -23,9 +23,20 @@ class BasicViewInWidget extends VisRxWidget {
             id: 'tplContainerView',
             visSet: 'basic',
             visName: 'View in widget',
-            visAttrs: 'contains_view/views',
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        {
+                            name: 'contains_view',
+                            label: 'vis_2_widgets_basic_contains_view',
+                            type: 'views',
+                        },
+                    ],
+                },
+            ],
             visPrev: 'widgets/basic/img/Prev_ContainerView.png',
-            visWidgetLabel: 'view_in_widget',  // Label of widget
+            visWidgetLabel: 'vis_2_widgets_basic_view_in_widget',  // Label of widget
             visSetLabel: 'set_basic',
             visDefaultStyle: {
                 width: 300,

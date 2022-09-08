@@ -217,8 +217,15 @@ const Palette = props => {
                             expandIcon: props.classes.clearPadding,
                         }}
                     >
-                        {widgetSetProps[category]?.icon ? <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} /> : null}
-                        {widgetSetProps[category]?.label || category}
+                        {widgetSetProps[category]?.icon ?
+                            <Icon className={props.classes.groupIcon} src={widgetSetProps[category].icon} />
+                            :
+                            null}
+                        {widgetSetProps[category]?.label ?
+                            (widgetSetProps[category].label.startsWith('Vis 2') ?
+                                widgetSetProps[category].label : `Vis 2 - ${widgetSetProps[category].label}`)
+                            :
+                            category}
                     </AccordionSummary>
                     <AccordionDetails>
                         <div>

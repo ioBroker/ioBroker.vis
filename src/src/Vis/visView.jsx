@@ -1444,9 +1444,14 @@ class VisView extends React.Component {
                     if (this.props.selectedGroup) {
                         rxRelativeWidgets = wColumns[0];
                     } else {
+                        const style = {};
+                        if (settings.columnWidth && Number.isFinite(settings.columnWidth)) {
+                            style.maxWidth = parseFloat(settings.columnWidth);
+                        }
                         rxRelativeWidgets = wColumns.map((column, i) => <div
                             ref={this.refRelativeColumnsView[i]}
                             key={i}
+                            style={style}
                             className={Utils.clsx('vis-view-column', this.props.editMode && 'vis-view-column-edit')}
                         >
                             {column}
