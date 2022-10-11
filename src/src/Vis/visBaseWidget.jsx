@@ -82,14 +82,12 @@ class VisBaseWidget extends React.Component {
         }
         if (style) {
             delete style._originalData;
-            Object.keys(style).forEach(attr => {
-                if (attr === 'background-image' && style[attr] && style[attr].startsWith('_PRJ_NAME')) {
-                    if (!style._originalData) {
-                        style._originalData = JSON.stringify(style);
-                    }
-                    style[attr] = `../${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;  // "_PRJ_NAME".length = 9
+            if (style['background-image'] && style['background-image'].startsWith('_PRJ_NAME')) {
+                if (!style._originalData) {
+                    style._originalData = JSON.stringify(style);
                 }
-            });
+                style['background-image'] = `../${props.adapterName}.${props.instance}/${props.projectName}${style['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
+            }
         }
     }
 

@@ -870,6 +870,21 @@ class VisCanWidget extends VisBaseWidget {
         try {
             widgetData = { wid, ...(widget.data || {}) };
             widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
+            // Replace _PRJ_NAME
+            Object.keys(widgetData).forEach(attr => {
+                if (attr &&
+                    widgetData[attr] &&
+                    typeof widgetData[attr] === 'string' &&
+                    (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && widgetData[attr].startsWith('_PRJ_NAME')
+                ) {
+                    // "_PRJ_NAME".length = 9
+                    widgetData[attr] = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetData[attr].substring(9)}`;
+                }
+            });
+            if (widgetStyle['background-image'] && widgetStyle['background-image'].startsWith('_PRJ_NAME')) {
+                widgetStyle['background-image'] = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetStyle['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
+            }
+
             this.applyBindings(true, widgetData, widgetStyle);
             if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
                 widgetData.filterkey = widgetData.filterkey.split(',')
