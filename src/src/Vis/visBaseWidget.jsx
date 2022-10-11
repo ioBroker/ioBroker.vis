@@ -76,7 +76,7 @@ class VisBaseWidget extends React.Component {
                         data._originalData = JSON.stringify(data);
                     }
                     // "_PRJ_NAME".length = 9
-                    data[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
+                    data[attr] = `../${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
                 }
             });
         }
@@ -87,8 +87,7 @@ class VisBaseWidget extends React.Component {
                     if (!style._originalData) {
                         style._originalData = JSON.stringify(style);
                     }
-                    // "_PRJ_NAME".length = 9
-                    style[attr] = `${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;
+                    style[attr] = `../${props.adapterName}.${props.instance}/${props.projectName}${style[attr].substring(9)}`;  // "_PRJ_NAME".length = 9
                 }
             });
         }

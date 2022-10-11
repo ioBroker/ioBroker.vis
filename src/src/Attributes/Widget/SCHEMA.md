@@ -119,7 +119,6 @@ Group can have the following attributes:
    Example `!!data["oid" + index]` or `data.type !== "digital" && data.type !== "digital2"`.
 - `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.
-- `onChange`: in development
 - `component`: in development
 - `onChange`: [optional] Script, that will be called, when value of attribute will be changed. Example: 
 ```

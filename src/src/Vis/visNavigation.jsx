@@ -196,7 +196,7 @@ class VisNavigation extends React.Component {
                 }
 
                 if (item.icon && item.icon.startsWith('_PRJ_NAME/')) {
-                    item.icon = `${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${item.icon.substring(9)}`;
+                    item.icon = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${item.icon.substring(9)}`;  // "_PRJ_NAME".length = 9
                 }
             }
         });

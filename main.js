@@ -46,10 +46,10 @@ async function generateWidgetsHtml(widgetSets) {
         } else {
             name = widgetSets[w] + '.html';
         }
-        file = fs.readFileSync(__dirname + '/www/widgets/' + name);
+        file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
         // extract all css and js
 
-        text += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
+        text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
     }
 
     let data;
@@ -94,8 +94,16 @@ async function generateConfigPage() {
         adapter.log.info('config.js changed. Upload.');
         await adapter.writeFileAsync(adapterName, 'config.js', configJs);
         fs.writeFileSync(__dirname + '/www/config.js', configJs);
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
     } else if (!fs.existsSync(__dirname + '/www/config.js') || fs.readFileSync(__dirname + '/www/config.js').toString() !== configJs) {
         fs.writeFileSync(__dirname + '/www/config.js', configJs);
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
+    }
+    if (!fs.existsSync(__dirname + '/www/js/config.js') || fs.readFileSync(__dirname + '/www/js/config.js').toString() !== configJs) {
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
     }
 
     // Create common user CSS file

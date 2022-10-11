@@ -383,6 +383,16 @@ const WidgetField = props => {
     }
 
     if (field.type === 'image') {
+        let _value;
+        if (idDialog) {
+            _value = value;
+            if (_value.startsWith('../')) {
+                _value = _value.substring(3);
+            } else if (_value.startsWith('_PRJ_NAME/')) {
+                _value = _value.replace('_PRJ_NAME/', `../${adapterName}.${instance}/${projectName}/`);
+            }
+        }
+
         return <>
             <TextField
                 variant="standard"
@@ -415,13 +425,17 @@ const WidgetField = props => {
                     allowDelete
                     allowView
                     showToolbar
-                    imagePrefix="./"
-                    selected={value}
+                    imagePrefix="../"
+                    selected={_value}
                     filterByType="images"
                     onSelect={(selected, isDoubleClick) => {
                         const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
                         if (selected.startsWith(projectPrefix)) {
                             selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                        } else if (selected.startsWith('/')) {
+                            selected = `..${selected}`;
+                        } else if (!selected.startsWith('.')) {
+                            selected = `../${selected}`;
                         }
                         change(selected);
                         isDoubleClick && setIdDialog(false);

@@ -124,6 +124,16 @@ const styles = theme => ({
         verticalAlign: 'middle',
         marginLeft: 3,
     },
+    smallImageDiv: {
+        width: 30,
+        height: 30,
+        display: 'inline-block',
+        float: 'right',
+    },
+    smallImage: {
+        maxWidth: '100%',
+        maxHeight: '100%',
+    },
 });
 
 const getFieldsBefore = () => [
@@ -681,7 +691,6 @@ const Widget = props => {
         () => getFieldsAfter(
             props.selectedWidgets.length === 1 ? widget : commonValues,
             props.project[props.selectedView].widgets,
-
             props.fonts,
         ),
         [props.project, props.selectedView, props.fonts],
@@ -866,51 +875,69 @@ const Widget = props => {
                     </AccordionSummary>
                     <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                         <table style={{ width: '100%' }}>
-                            <tbody>{
-                                group.fields.map((field, fieldIndex) => {
-                                    let error;
-                                    let disabled;
-                                    if (field.hidden) {
-                                        if (checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets, field.index)) {
-                                            return null;
+                            <tbody>
+                                {
+                                    group.fields.map((field, fieldIndex) => {
+                                        let error;
+                                        let disabled;
+                                        if (field.hidden) {
+                                            if (checkFunction(field.hidden, props.project, props.selectedView, props.selectedWidgets, field.index)) {
+                                                return null;
+                                            }
                                         }
-                                    }
-                                    if (field.error) {
-                                        error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
-                                    }
-                                    if (field.disabled) {
-                                        if (field.disabled === true) {
-                                            disabled = true;
-                                        } else {
-                                            disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
+                                        if (field.error) {
+                                            error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
                                         }
-                                    }
+                                        if (field.disabled) {
+                                            if (field.disabled === true) {
+                                                disabled = true;
+                                            } else {
+                                                disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
+                                            }
+                                        }
 
-                                    return <tr key={fieldIndex} className={props.classes.fieldRow}>
-                                        {field.type === 'delimiter' ?
-                                            <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
-                                            : <>
-                                                <td className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)} title={I18n.t(field.tooltip)}>
-                                                    { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                    { field.title || (field.label && I18n.t(field.label)) ||
-                                                        (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
-                                                    { group.isStyle ?
-                                                        <ColorizeIcon
-                                                            fontSize="small"
-                                                            className={props.classes.colorize}
-                                                            onClick={() => props.cssClone(field.name, newValue => {
-                                                                if (newValue !== null && newValue !== undefined) {
-                                                                    const project = JSON.parse(JSON.stringify(props.project));
-                                                                    props.selectedWidgets.forEach(selectedWidget =>
-                                                                        project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
-                                                                    props.changeProject(project);
-                                                                }
-                                                            })}
-                                                        /> : null }
-                                                    {field.tooltip ? <InfoIcon className={props.classes.infoIcon} /> : null}
-                                                </td>
-                                                <td className={props.classes.fieldContent}>
-                                                    <div className={props.classes.fieldContentDiv}>
+                                        return <tr key={fieldIndex} className={props.classes.fieldRow}>
+                                            {field.type === 'delimiter' ?
+                                                <td colSpan="2"><Divider style={{ borderBottomWidth: 'thick' }} /></td>
+                                                : <>
+                                                    <td
+                                                        className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}
+                                                        title={I18n.t(field.tooltip)}
+                                                    >
+                                                        { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
+                                                        { field.title || (field.label && I18n.t(field.label)) ||
+                                                            (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                        { field.type === 'image' && !isDifferent[field.name] && widget && widget.data[field.name] ?
+                                                            <div className={props.classes.smallImageDiv}>
+                                                                <img
+                                                                    src={widget.data[field.name].startsWith('_PRJ_NAME/') ?
+                                                                        widget.data[field.name].replace('_PRJ_NAME/', `../${props.adapterName}.${props.instance}/${props.projectName}/`)
+                                                                        :
+                                                                        widget.data[field.name]}
+                                                                    className={props.classes.smallImage}
+                                                                    onError={e => {
+                                                                        e.target.onerror = null;
+                                                                        e.target.style.display = 'none';
+                                                                    }}
+                                                                    alt={field.name}
+                                                                />
+                                                            </div> : null }
+                                                        { group.isStyle ?
+                                                            <ColorizeIcon
+                                                                fontSize="small"
+                                                                className={props.classes.colorize}
+                                                                onClick={() => props.cssClone(field.name, newValue => {
+                                                                    if (newValue !== null && newValue !== undefined) {
+                                                                        const project = JSON.parse(JSON.stringify(props.project));
+                                                                        props.selectedWidgets.forEach(selectedWidget =>
+                                                                            project[props.selectedView].widgets[selectedWidget].style[field.name] = newValue);
+                                                                        props.changeProject(project);
+                                                                    }
+                                                                })}
+                                                            /> : null }
+                                                        {field.tooltip ? <InfoIcon className={props.classes.infoIcon} /> : null}
+                                                    </td>
+                                                    <td className={props.classes.fieldContent}>
                                                         <div className={props.classes.fieldInput}>
                                                             {accordionOpen[group.name] && group.hasValues ?
                                                                 <WidgetField
@@ -923,16 +950,15 @@ const Widget = props => {
                                                                     {...props}
                                                                 /> : null}
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </>}
-                                    </tr>;
-                                })
-                            }
+                                                    </td>
+                                                </>}
+                                        </tr>;
+                                    })
+                                }
                             </tbody>
                         </table>
                     </AccordionDetails>
-                </Accordion>
+                </Accordion>;
             })}
             <IODialog
                 title="Are you sure"

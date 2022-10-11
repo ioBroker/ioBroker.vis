@@ -774,12 +774,21 @@ const View = props => {
                                         // classes={props.classes}
                                     />;
                                 } else if (field.type === 'image') {
+                                    let _value;
+                                    if (showDialog) {
+                                        _value = value;
+                                        if (_value.startsWith('../')) {
+                                            _value = _value.substring(3);
+                                        } else if (_value.startsWith('_PRJ_NAME')) {
+                                            _value = _value.replace('_PRJ_NAME', `../${props.adapterName}.${props.instance}/${props.projectName}/`);
+                                        }
+                                    }
                                     result = <>
                                         <TextField
                                             variant="standard"
                                             fullWidth
                                             error={!!error}
-                                            helperText={typeof error === 'string' ? I18n.t(error)  : null}
+                                            helperText={typeof error === 'string' ? I18n.t(error) : null}
                                             disabled={disabled}
                                             InputProps={{
                                                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
@@ -805,13 +814,17 @@ const View = props => {
                                                 allowDelete
                                                 allowView
                                                 showToolbar
-                                                imagePrefix="./"
-                                                selected={value}
+                                                imagePrefix="../"
+                                                selected={_value}
                                                 filterByType="images"
                                                 onSelect={(selected, isDoubleClick) => {
                                                     const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
                                                     if (selected.startsWith(projectPrefix)) {
                                                         selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                                                    } else if (selected.startsWith('/')) {
+                                                        selected = `..${selected}`;
+                                                    } else if (!selected.startsWith('.')) {
+                                                        selected = `../${selected}`;
                                                     }
                                                     change(selected);
                                                     isDoubleClick && setShowDialog(false);
