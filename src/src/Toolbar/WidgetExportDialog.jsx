@@ -7,12 +7,13 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 
 import IODialog from '../Components/IODialog';
 
-import 'ace-builds/webpack-resolver';
+// import 'ace-builds/webpack-resolver';
 
-import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-min-noconflict/mode-json';
+import 'ace-builds/src-min-noconflict/worker-json';
 import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-noconflict/theme-chrome';
+import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
+import 'ace-builds/src-min-noconflict/theme-chrome';
 
 const WidgetExportDialog = props => {
     const widgets = props.selectedWidgets.map(wid => {

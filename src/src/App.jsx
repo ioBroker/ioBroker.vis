@@ -162,9 +162,18 @@ class App extends GenericApp {
     constructor(props) {
         const extendedProps = { ...props };
         extendedProps.translations = {
+            en: require('./i18n/en'),
+            de: require('./i18n/de'),
+            ru: require('./i18n/ru'),
+            pt: require('./i18n/pt'),
+            nl: require('./i18n/nl'),
+            fr: require('./i18n/fr'),
+            it: require('./i18n/it'),
+            es: require('./i18n/es'),
+            pl: require('./i18n/pl'),
+            // uk: require('./i18n/uk'),
+            'zh-cn': require('./i18n/zh-cn'),
         };
-
-        console.log(extendedProps.translations);
 
         extendedProps.sentryDSN = window.sentryDSN;
 

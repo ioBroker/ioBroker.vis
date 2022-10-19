@@ -7,7 +7,6 @@
 'use strict';
 const fs         = require('fs');
 const rename     = require('gulp-rename');
-const replace    = require('gulp-replace');
 const del        = require('del');
 const cp         = require('child_process');
 
@@ -62,6 +61,13 @@ function init(gulp) {
     gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
     function build() {
+        // copy ace files into src/public/lib/js/ace
+        let ace = __dirname + '/src/node_modules/ace-builds/src-min-noconflict/';
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-css.js', fs.readFileSync(ace + 'worker-css.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-html.js', fs.readFileSync(ace + 'worker-html.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-javascript.js', fs.readFileSync(ace + 'worker-javascript.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-json.js', fs.readFileSync(ace + 'worker-json.js'));
+
         return new Promise((resolve, reject) => {
             const options = {
                 stdio: 'pipe',

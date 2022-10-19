@@ -21,7 +21,11 @@ const styles = () => ({
         minHeight: 36,
     },
     widgetTitle: {
-        textAlign: 'center', flex: 1, alignSelf: 'center', color: 'black',
+        textAlign: 'left',
+        marginLeft: 8,
+        flex: 1,
+        alignSelf: 'center',
+        color: 'black',
     },
     widgetImage: {
         // width: 20,

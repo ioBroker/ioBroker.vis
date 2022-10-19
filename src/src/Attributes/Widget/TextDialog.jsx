@@ -1,13 +1,14 @@
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
-import 'ace-builds/webpack-resolver';
-import 'ace-builds/src-noconflict/mode-text';
-import 'ace-builds/src-noconflict/mode-html';
+// import 'ace-builds/webpack-resolver';
+import 'ace-builds/src-min-noconflict/mode-text';
+import 'ace-builds/src-min-noconflict/mode-html';
+import 'ace-builds/src-min-noconflict/worker-html';
 import 'ace-builds/src-min-noconflict/ext-searchbox';
 import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-noconflict/theme-chrome';
+import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
+import 'ace-builds/src-min-noconflict/theme-chrome';
 import { useEffect, useState } from 'react';
 import IODialog from '../../Components/IODialog';
 

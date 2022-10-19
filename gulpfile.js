@@ -2,16 +2,7 @@
 
 const gulp       = require('gulp');
 const fs         = require('fs');
-const pkg        = require('./package.json');
-const iopackage  = require('./io-package.json');
 const gulpReact  = require('./gulpReact');
-/*const appName   = getAppName();
-
-function getAppName() {
-    const parts = __dirname.replace(/\\/g, '/').split('/');
-    return parts[parts.length - 1].split('.')[0].toLowerCase();
-}
-*/
 const fileName   = 'words.js';
 const languages  =  {
     en: {},
@@ -23,6 +14,7 @@ const languages  =  {
     it: {},
     es: {},
     pl: {},
+    uk: {},
     'zh-cn': {}
 };
 
