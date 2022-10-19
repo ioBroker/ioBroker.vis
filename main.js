@@ -13,14 +13,15 @@
 /* jslint node: true */
 'use strict';
 
-const adapterName    = require('./package.json').name.split('.').pop();
-const isBeta         = adapterName.includes('beta');
+const adapterName = require('./package.json').name.split('.').pop();
+const isBeta = adapterName.includes('beta');
 
-const utils          = require('@iobroker/adapter-core'); // Get common adapter utils
-const fs             = require('fs');
+const utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const fs = require('fs');
+const path = require('path');
 const syncWidgetSets = require('./lib/install.js');
-const https          = require('https');
-const jwt            = require('jsonwebtoken');
+const https = require('https');
+const jwt = require('jsonwebtoken');
 let adapter;
 
 function startAdapter(options) {
@@ -113,7 +114,8 @@ async function writeFile(fileName) {
 function upload() {
     return new Promise(resolve => {
         adapter.log.info(`Upload ${adapter.name} anew, while changes detected...`);
-        const file = utils.controllerDir + '/iobroker.js';
+
+        const file = path.join(utils.controllerDir, 'iobroker.js');
         const child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
         let count = 0;
         child.stdout.on('data', data => {
