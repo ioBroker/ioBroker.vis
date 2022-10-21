@@ -10,7 +10,11 @@ import * as serviceWorker from './serviceWorker';
 import packageJson from '../package.json';
 import theme from './theme';
 
-window.adapterName = 'vis';
+if (window.location.pathname.includes('beta')) {
+    window.adapterName = 'vis-2-beta';
+} else {
+    window.adapterName = 'vis';
+}
 const themeName = Utils.getThemeName();
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);

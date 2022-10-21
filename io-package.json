@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.13",
+        "version": "2.0.0",
         "news": {
+            "2.0.0": {
+                "en": "Completely new visualization, but compatible with previous version",
+                "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
+                "ru": "Полностью новая визуализация, но совместима с предыдущей версией",
+                "pt": "Completamente nova visualização, mas compatível com a versão anterior",
+                "nl": "Volledig nieuwe visualisatie, maar vergelijkbaar met vorige versie",
+                "fr": "Complètement nouvelle visualisation, mais compatible avec la version précédente",
+                "it": "Visualizzazione completamente nuova, ma compatibile con la versione precedente",
+                "es": "Visualización completamente nueva, pero compatible con la versión anterior",
+                "pl": "Ukończona jest nowa wizualna, ale kompatybilna z poprzednią wersją",
+                "uk": "Повністю нова візуалізація, але сумісна з попередньою версією",
+                "zh-cn": "完整的新的视觉,但与以前的版本兼容。"
+            },
             "1.4.13": {
                 "en": "The group attributes will be replaced recursively",
                 "de": "Die Gruppenattribute werden rekursiv ersetzt",

@@ -192,6 +192,8 @@ class App extends GenericApp {
             }
         };
 
+        this.adapterId = `${this.adapterName}.0`;
+
         // temporary disable translation warnings
         I18n.disableWarning(true);
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
@@ -335,7 +337,7 @@ class App extends GenericApp {
     loadProject = async projectName => {
         let file;
         try {
-            file = await this.socket.readFile('vis.0', `${projectName}/vis-views.json`);
+            file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
             if (typeof file === 'object') {
                 file = file.data;
             }
@@ -487,7 +489,7 @@ class App extends GenericApp {
     }
 
     refreshProjects = async reloadCurrentProject => {
-        const projects = await this.socket.readDir('vis.0', '');
+        const projects = await this.socket.readDir(this.adapterId, '');
         await this.setStateAsync({
             projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
             createFirstProjectDialog: !projects.length,
@@ -1128,9 +1130,9 @@ class App extends GenericApp {
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(JSON.stringify(this.state.project, null, 2));
-                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, data);
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, data);
             } else {
-                await this.socket.writeFile64('vis.0', `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
+                await this.socket.writeFile64(this.adapterId, `${this.state.projectName}/vis-views.json`, JSON.stringify(this.state.project, null, 2));
             }
 
             this.setState({ needSave: false });
@@ -1158,8 +1160,8 @@ class App extends GenericApp {
                     activeWidgets: {},
                 },
             };
-            await this.socket.writeFile64('vis.0', `${projectName}/vis-views.json`, JSON.stringify(project));
-            await this.socket.writeFile64('vis.0', `${projectName}/vis-user.css`, '');
+            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-views.json`, JSON.stringify(project));
+            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
             await this.refreshProjects();
             await this.loadProject(projectName);
         } catch (e) {
@@ -1169,8 +1171,8 @@ class App extends GenericApp {
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {
-            // const files = await this.socket.readDir('vis.0', fromProjectName);
-            await this.socket.rename('vis.0', fromProjectName, toProjectName);
+            // const files = await this.socket.readDir(this.adapterId, fromProjectName);
+            await this.socket.rename(this.adapterId, fromProjectName, toProjectName);
             await this.refreshProjects();
             if (this.state.projectName === fromProjectName) {
                 await this.loadProject(toProjectName);
@@ -1184,7 +1186,7 @@ class App extends GenericApp {
 
     deleteProject = async projectName => {
         try {
-            await this.socket.deleteFolder('vis.0', projectName);
+            await this.socket.deleteFolder(this.adapterId, projectName);
             await this.refreshProjects();
             if (this.state.projectName === projectName) {
                 await this.loadProject(this.state.projects[0]);
@@ -1580,6 +1582,7 @@ class App extends GenericApp {
                     window.localStorage.setItem('Vis.hideAttributes', 'true');
                     this.setState({ hideAttributes: true });
                 }}
+                adapterId={this.adapterId}
             />
         </div>;
     }
@@ -1629,6 +1632,7 @@ class App extends GenericApp {
             themeType={this.state.themeType}
             themeName={this.state.themeName}
             theme={this.state.theme}
+            adapterId={this.adapterId}
         />;
 
         if (this.state.runtime) {

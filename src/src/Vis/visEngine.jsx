@@ -494,7 +494,7 @@ class VisEngine extends React.Component {
     createConnection() {
         // props.socket
         return {
-            namespace: 'vis.0',
+            namespace: this.props.adapterId,
             logError: errorText => {
                 console.error(`Error: ${errorText}`);
                 this.props.socket.log(errorText, 'error');
@@ -1351,7 +1351,7 @@ ${this.scripts}
             if (this.props.visCommonCss) {
                 VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded || '');
             } else {
-                this.props.socket.readFile('vis', 'css/vis-common-user.css')
+                this.props.socket.readFile(this.props.adapterName, 'css/vis-common-user.css')
                     .then(file => {
                         if (file.type) {
                             file = file.data;
@@ -1480,6 +1480,7 @@ VisEngine.propTypes = {
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
+    adapterId: PropTypes.string.isRequired, // vis.0
 };
 
 export default VisEngine;

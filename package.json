@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "1.4.13",
+  "version": "2.0.0",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -34,8 +34,6 @@
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "gulp": "^4.0.2",
-    "del": "^6.1.1",
-    "gulp-rename": "^2.0.0",
     "iobroker.web": "*",
     "mocha": "^10.0.0",
     "chai": "^4.3.6"

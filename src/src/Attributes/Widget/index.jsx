@@ -162,7 +162,7 @@ const getFieldsBefore = () => [
     },
 ];
 
-const getSignals = count => {
+const getSignals = (count, adapterName) => {
     const result = {
         name: 'signals',
         fields: [
@@ -185,7 +185,7 @@ const getSignals = count => {
                 default: '==',
             },
             { name: `signals-val-${i}`, default: true },
-            { name: `signals-icon-${i}`, type: 'image', default: '/vis/signals/lowbattery.png' },
+            { name: `signals-icon-${i}`, type: 'image', default: adapterName + '/signals/lowbattery.png' },
             {
                 name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
             },
@@ -695,7 +695,7 @@ const Widget = props => {
         ),
         [props.project, props.selectedView, props.fonts],
     );
-    const fieldsSignals = useMemo(() => getSignals(signalsCount), [signalsCount]);
+    const fieldsSignals = useMemo(() => getSignals(signalsCount, props.adapterName), [signalsCount]);
     const customFields = fields;
     if (!fields) {
         return null;

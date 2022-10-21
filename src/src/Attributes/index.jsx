@@ -118,6 +118,8 @@ const Attributes = props => {
             {
                 selected === 'Widget' && !(props.widgetsLoaded && props.selectedView && props.selectedWidgets?.length) ?
                     null : <TabContent
+                        adapterId={props.adapterId}
+                        adapterName={props.adapterName}
                         key={selected}
                         {...props}
                         classes={{}}
@@ -142,6 +144,7 @@ Attributes.propTypes = {
     saveCssFile: PropTypes.func.isRequired,
     editMode: PropTypes.bool,
     onHide: PropTypes.func,
+    adapterId: PropTypes.string.isRequired,
 };
 
 export default withStyles(style)(Attributes);

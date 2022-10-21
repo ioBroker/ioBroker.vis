@@ -619,8 +619,12 @@ class VisCanWidget extends VisBaseWidget {
         const divIcon = window.document.createElement('img');
         divIcon.className = 'vis-signal-icon';
         let src = widgetData[`signals-icon-${index}`];
-        if (src && src.startsWith('/vis/')) {
-            src = src.substring(5);
+        if (src) {
+            if (src.startsWith('/vis/')) {
+                src = src.substring(5);
+            } else if (src.startsWith('/vis-2-beta/')) {
+                src = src.substring(12);
+            }
         }
         divIcon.src = src;
         divIcon.style.width = `${widgetData[`signals-icon-size-${index}`] || 32}px`;

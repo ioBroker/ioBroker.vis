@@ -3679,15 +3679,22 @@ class Vis {
             zoom = document.body.style.zoom;
         }
         if (zoom) {
-            this.$('iframe').each(function () {
-                if (this.contentWindow.document.body) {
-                    this.contentWindow.document.body.style.zoom = zoom;
-                }
-            }).unbind('onload').load(function () {
-                if (this.contentWindow.document.body) {
-                    this.contentWindow.document.body.style.zoom = zoom;
-                }
-            });
+            this.$('iframe')
+                // function is important here. let it be
+                // eslint-disable-next-line func-names
+                .each(function () {
+                    if (this.contentWindow.document.body) {
+                        this.contentWindow.document.body.style.zoom = zoom;
+                    }
+                })
+                .unbind('onload')
+                // function is important here. let it be
+                // eslint-disable-next-line func-names
+                .load(function () {
+                    if (this.contentWindow.document.body) {
+                        this.contentWindow.document.body.style.zoom = zoom;
+                    }
+                });
         }
     }
 

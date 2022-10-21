@@ -5,20 +5,16 @@
  *
  **/
 'use strict';
-const fs         = require('fs');
-const rename     = require('gulp-rename');
-const del        = require('del');
-const cp         = require('child_process');
+const fs   = require('fs');
+const path = require('path');
+const cp   = require('child_process');
 
 function init(gulp) {
-    gulp.task('0-clean', () => {
-        return del([
-            'src/build/**/*',
-            'www/**/*'
-        ]).then(() => del([
-            'src/build',
-            'www'
-        ]));
+    gulp.task('0-clean', done => {
+        delFolder(path.join(__dirname, 'src/build'));
+        delFolder(path.join(__dirname, 'beta'));
+        delFolder(path.join(__dirname, 'www'));
+        done();
     });
 
     function npmInstall() {
@@ -105,18 +101,9 @@ function init(gulp) {
     gulp.task('3-build-dep', gulp.series('2-npm', '3-build'));
 
     function copyFiles() {
-        return Promise.all([
-            gulp.src([
-                'src/build/**/*'
-            ])
-                .pipe(gulp.dest('www/')),
-
-            gulp.src([
-                'src/build/index.html',
-            ])
-                .pipe(rename('edit.html'))
-                .pipe(gulp.dest('www/')),
-        ]);
+        copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'));
+        fs.writeFileSync(path.join(__dirname, 'www/edit.html'), fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')));
+        return Promise.resolve();
     }
 
     gulp.task('5-copy', () => copyFiles());
@@ -133,6 +120,41 @@ function init(gulp) {
         }
     }
 
+    function copyFolder(source, target, ignore) {
+        !fs.existsSync(target) && fs.mkdirSync(target);
+
+        // Copy
+        if (fs.lstatSync(source).isDirectory()) {
+            const files = fs.readdirSync(source);
+            files.forEach(file => {
+                const curSource = path.join(source, file);
+                const curTarget = path.join(target, file);
+                if (ignore && ignore.includes(file)) {
+                    return;
+                }
+                if (fs.lstatSync(curSource).isDirectory()) {
+                    copyFolder(curSource, curTarget);
+                } else {
+                    fs.writeFileSync(curTarget, fs.readFileSync(curSource));
+                }
+            });
+        } else {
+            fs.writeFileSync(target, fs.readFileSync(source));
+        }
+    }
+
+    function delFolder(folder, keepFolder) {
+        if (fs.existsSync(folder)) {
+            if (fs.lstatSync(folder).isDirectory()) {
+                fs.readdirSync(folder).forEach(file =>
+                    delFolder(path.join(folder, file)));
+                !keepFolder && fs.rmdirSync(folder);
+            } else {
+                fs.unlinkSync(folder);
+            }
+        }
+    }
+
     gulp.task('6-patch', done => {
         patchFile(__dirname + '/www/index.html');
         patchFile(__dirname + '/www/edit.html');
@@ -144,6 +166,50 @@ function init(gulp) {
     gulp.task('6-patch-dep',  gulp.series('5-copy-dep', '6-patch'));
 
     gulp.task('buildReact', gulp.series('6-patch-dep'));
+
+    gulp.task('7-beta', async () => {
+        !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
+
+        copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'), ['i18n']);
+        copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
+        copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
+        copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'));
+        // delete all other widgets and let only
+        const baseWidgets = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
+        const files = fs.readdirSync(path.join(__dirname, 'beta/www/widgets'));
+        files.forEach(file => {
+            if (!baseWidgets.includes(file) && !baseWidgets.includes(file.replace('.html', ''))) {
+                delFolder(path.join(__dirname, 'beta/www/widgets', file));
+            }
+        });
+
+        fs.writeFileSync(path.join(__dirname, 'beta/io-package.json'), fs.readFileSync(path.join(__dirname, 'io-package.json')));
+        fs.writeFileSync(path.join(__dirname, 'beta/package.json'), fs.readFileSync(path.join(__dirname, 'package.json')));
+        fs.writeFileSync(path.join(__dirname, 'beta/LICENSE'), fs.readFileSync(path.join(__dirname, 'LICENSE')));
+        fs.writeFileSync(path.join(__dirname, 'beta/main.js'), fs.readFileSync(path.join(__dirname, 'main.js')));
+        fs.writeFileSync(path.join(__dirname, 'beta/README.md'), fs.readFileSync(path.join(__dirname, 'README.md')));
+        const ioPack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'io-package.json')));
+        const pack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'package.json')));
+        ioPack.common.name = 'vis-2-beta';
+        ioPack.common.welcomeScreen.link = 'vis-2-beta/index.html';
+        ioPack.common.welcomeScreen.name = 'vis 2 Runtime';
+        ioPack.common.welcomeScreen.img = 'vis-2-beta/img/favicon.png';
+        ioPack.common.welcomeScreenPro.link = 'vis-2-beta/edit.html';
+        ioPack.common.welcomeScreenPro.name = 'vis 2 Editor';
+        ioPack.common.welcomeScreenPro.img = 'vis-2-beta/img/faviconEdit.png';
+        pack.name = 'iobroker.vis-2-beta';
+        delete pack.scripts;
+        delete pack.devDependencies;
+        fs.writeFileSync(path.join(__dirname, 'beta', 'io-package.json'), JSON.stringify(ioPack, null, 2));
+        fs.writeFileSync(path.join(__dirname, 'beta', 'package.json'), JSON.stringify(pack, null, 2));
+
+        if (fs.existsSync(path.join(__dirname, '../ioBroker.vis-2-beta'))) {
+            delFolder(path.join(__dirname, '../ioBroker.vis-2-beta'), true);
+            copyFolder(path.join(__dirname, 'beta'), path.join(__dirname, '../ioBroker.vis-2-beta'));
+        }
+    });
+
+    gulp.task('beta', gulp.series('6-patch-dep', '7-beta'));
 }
 
 module.exports = init;

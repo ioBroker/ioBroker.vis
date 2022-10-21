@@ -36,7 +36,7 @@ const CSS = props => {
             setTimer: setGlobalCssTimer,
             value: globalCss,
             setValue: setGlobalCss,
-            directory: 'vis',
+            directory: props.adapterName,
             file: 'css/vis-common-user.css',
         },
         local: {
@@ -44,20 +44,20 @@ const CSS = props => {
             setTimer: setLocalCssTimer,
             value: localCss,
             setValue: setLocalCss,
-            directory: 'vis.0',
+            directory: props.adapterId,
             file: `${props.projectName}/vis-user.css`,
         },
     };
 
     useEffect(() => {
         const load = async () => {
-            const commonCss = await props.socket.readFile('vis', 'css/vis-common-user.css');
+            const commonCss = await props.socket.readFile(props.adapterId.split('.')[0], 'css/vis-common-user.css');
             if (commonCss.type) {
                 setGlobalCss(commonCss.data);
             } else {
                 setGlobalCss(commonCss);
             }
-            const userCss = await props.socket.readFile('vis.0', `${props.projectName}/vis-user.css`);
+            const userCss = await props.socket.readFile(props.adapterId, `${props.projectName}/vis-user.css`);
             if (commonCss.type) {
                 setLocalCss(userCss.data);
             } else {
@@ -143,6 +143,8 @@ CSS.propTypes = {
     socket: PropTypes.object,
     themeName: PropTypes.string,
     saveCssFile: PropTypes.func.isRequired,
+    adapterId: PropTypes.string.isRequired,
+    adapterName: PropTypes.string.isRequired,
 };
 
 export default CSS;

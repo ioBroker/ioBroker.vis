@@ -1,10 +1,10 @@
 'use strict';
 
-const gulp       = require('gulp');
-const fs         = require('fs');
-const gulpReact  = require('./gulpReact');
-const fileName   = 'words.js';
-const languages  =  {
+const gulp      = require('gulp');
+const fs        = require('fs');
+const gulpReact = require('./gulpReact');
+const fileName  = 'words.js';
+const languages =  {
     en: {},
     de: {},
     ru: {},

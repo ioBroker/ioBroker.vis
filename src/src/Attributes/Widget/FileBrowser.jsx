@@ -867,7 +867,7 @@ class FileBrowser extends Component {
         const Icon = expanded ? IconOpen : IconClosed;
         const padding = this.state.viewType === TABLE ? item.level * this.levelPadding : 0;
         const isUserData = item.name === USER_DATA;
-        const isSpecialData = isUserData || item.name === 'vis.0';
+        const isSpecialData = isUserData || item.name === 'vis.0' || item.name === 'vis-2-beta.0';
 
         return <div
             key={item.id}
@@ -1112,9 +1112,10 @@ class FileBrowser extends Component {
             </IconButton> : null}
 
             {this.state.viewType === TABLE &&
-            this.props.allowDelete &&
-            item.id !== 'vis.0/' &&
-            item.id !== USER_DATA
+             this.props.allowDelete &&
+             item.id !== 'vis.0/' &&
+             item.id !== 'vis-2-beta.0/' &&
+             item.id !== USER_DATA
                 ?
                 <IconButton
                     aria-label="delete"

@@ -352,7 +352,7 @@ async function collectExistingFilesToDelete(path) {
     let files;
     try {
         adapter.log.debug('Scanning ' + path);
-        files = await adapter.readDirAsync('vis', path);
+        files = await adapter.readDirAsync(adapterName, path);
     } catch {
         // ignore err
         files = [];
@@ -392,7 +392,7 @@ async function eraseFiles(files) {
         for (const file of files) {
             try {
                 // @ts-expect-error should be fixed with #1917
-                await adapter.unlinkAsync('vis', file);
+                await adapter.unlinkAsync(adapterName, file);
             } catch (err) {
                 adapter.log.error(`Cannot delete file "${file}": ${err}`);
             }
@@ -401,7 +401,7 @@ async function eraseFiles(files) {
 }
 
 async function upload(files) {
-    const uploadID = `system.adapter.vis.upload`;
+    const uploadID = `system.adapter.${adapterName}.upload`;
 
     await adapter.setForeignStateAsync(uploadID, { val: 0, ack: true });
 
@@ -431,7 +431,7 @@ async function upload(files) {
 
         try {
             const data = fs.readFileSync(file);
-            await adapter.writeFileAsync('vis', attName, data);
+            await adapter.writeFileAsync(adapterName, attName, data);
         } catch (e) {
             adapter.log.error(`Error: Cannot upload ${file}: ${e.message}`);
         }
@@ -486,15 +486,15 @@ async function uploadAdapter() {
     // Create "upload progress" object if not exists
     let obj;
     try {
-        obj = await adapter.getForeignObjectAsync(`system.adapter.vis.upload`);
+        obj = await adapter.getForeignObjectAsync(`system.adapter.${adapterName}.upload`);
     } catch {
         // ignore
     }
     if (!obj) {
-        await adapter.setForeignObjectAsync(`system.adapter.vis.upload`, {
+        await adapter.setForeignObjectAsync(`system.adapter.${adapterName}.upload`, {
             type: 'state',
             common: {
-                name: `vis.upload`,
+                name: `${adapterName}.upload`,
                 type: 'number',
                 role: 'indicator.state',
                 unit: '%',
@@ -509,21 +509,21 @@ async function uploadAdapter() {
         });
     }
 
-    await adapter.setForeignStateAsync(`system.adapter.vis.upload`, 0, true);
+    await adapter.setForeignStateAsync(`system.adapter.${adapterName}.upload`, 0, true);
 
     let result;
     try {
-        result = await adapter.getForeignObjectAsync('vis');
+        result = await adapter.getForeignObjectAsync(adapterName);
     } catch {
         // ignore
     }
     // Read all names with subtrees from local directory
     const files = walk(dir);
     if (!result) {
-        await adapter.setForeignObjectAsync('vis', {
+        await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
             common: {
-                name: 'vis',
+                name: adapterName,
                 type: 'www'
             },
             native: {}
@@ -538,6 +538,24 @@ async function uploadAdapter() {
     await upload(files);
 
     return adapter;
+}
+
+async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
+    let files;
+    try {
+        files = await adapter.readDirAsync(sourceId, sourcePath);
+    } catch (e) {
+        return;
+    }
+
+    for (let f = 0; f < files.length; f++) {
+        if (files[f].isDir) {
+            await copyFolder(sourceId, sourcePath + '/' + files[f].file, targetId, targetPath + '/' + files[f].file);
+        } else {
+            const data = await adapter.readFileAsync(sourceId, sourcePath + '/' + files[f].file);
+            await adapter.writeFileAsync(targetId, targetPath + '/' + files[f].file, data.file);
+        }
+    }
 }
 
 async function main() {
@@ -603,6 +621,34 @@ async function main() {
     if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
         await uploadAdapter();
     }
+
+    if (adapterName.includes('beta')) {
+        const visObj = await adapter.getForeignObjectAsync('vis-2-beta.0');
+        if (!visObj || visObj.type !== 'meta') {
+            await adapter.setForeignObjectAsync('vis-2-beta.0', {
+                type: 'meta',
+                common: {
+                    name: 'user files and images for vis',
+                    type: 'meta.user'
+                },
+                native: {}
+            });
+        }
+
+        // copy vis to vis-2-beta
+        let files;
+        try {
+            files = await adapter.readDirAsync('vis-2-beta.0', '');
+        } catch (e) {
+
+        }
+
+        if (!files || !files.length) {
+            // copy recursive all
+            await copyFolder('vis.0', '', 'vis-2-beta.0', '');
+        }
+    }
+
     adapter.stop();
 }
 
