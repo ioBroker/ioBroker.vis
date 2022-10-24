@@ -15,6 +15,23 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import {
+    DialogContent,
+    ListItemText,
+    ListSubheader,
+    MenuItem,
+    IconButton,
+    Dialog,
+    DialogTitle,
+} from '@mui/material';
+
+import EditIcon from '@mui/icons-material/Edit';
+import FileIcon from '@mui/icons-material/InsertDriveFile';
+import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import VisRxWidget from '../../visRxWidget';
 
 class BasicViewInWidget extends VisRxWidget {
@@ -32,6 +49,28 @@ class BasicViewInWidget extends VisRxWidget {
                             label: 'vis_2_widgets_basic_contains_view',
                             type: 'views',
                         },
+                        /*
+                        {
+                            name: 'test',
+                            label: 'vis_2_widgets_basic_test',
+                            type: 'custom',
+                            component: (
+                                field,
+                                data,
+                                onDataChange,
+                                // socket,
+                                // widgetID,
+                                // view,
+                                // project,
+                            ) => <TextField
+                                fullWidth
+                                value={data[field.name]}
+                                onChange={e => {
+                                    onDataChange({ [field.name]: e.target.value });
+                                }}
+                            />,
+                        },
+                        */
                     ],
                 },
             ],
@@ -48,6 +87,99 @@ class BasicViewInWidget extends VisRxWidget {
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
         return BasicViewInWidget.getWidgetInfo();
+    }
+
+    getViewOptions(project, options = [], parentId = null, level = 0) {
+        project.___settings.folders
+            .filter(folder => (folder.parentId || null) === parentId)
+            .forEach(folder => {
+                options.push({
+                    type: 'folder',
+                    folder,
+                    level: level + 1,
+                });
+
+                this.getViewOptions(project, options, folder.id, level + 1);
+            });
+
+        const keys = Object.keys(project)
+            .filter(view => (project[view].parentId || null) === parentId && !view.startsWith('__'));
+
+        keys.forEach(view => {
+            options.push({
+                type: 'view',
+                view,
+                level: level + 1,
+            });
+        });
+
+        return options;
+    }
+
+    renderViewSelector() {
+        const options = this.getViewOptions(this.props.views, [], null, 0, true)
+            .filter(option => option.type === 'folder' || option.view !== this.props.view);
+
+        return [
+            <IconButton
+                key="button"
+                className={this.props.editModeComponentClass}
+                onMouseDown={e => {
+                    console.log('Widget');
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(true);
+                    this.setState({ showViewSelector: true });
+                }}
+            >
+                <EditIcon />
+            </IconButton>,
+            this.state.showViewSelector ? <Dialog
+                key="dialog"
+                open={!0}
+                onClose={() =>
+                    this.setState({ showViewSelector: false }, () =>
+                        this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false))}
+            >
+                <DialogTitle>{I18n.t('vis_2_widgets_basic_contains_view')}</DialogTitle>
+                <DialogContent>
+                    {options.map((option, key) => (option.type === 'view' ?
+                        <MenuItem
+                            value={option.view}
+                            key={key.toString()}
+                            onClick={() =>
+                                this.setState({ showViewSelector: false }, () => {
+                                    this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false);
+                                    this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                                        wid: this.props.id,
+                                        view: this.props.view,
+                                        data: {
+                                            contains_view: option.view,
+                                        },
+                                    }]);
+                                })}
+                            style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}
+                        >
+                            <FileIcon style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                            <ListItemText primary={option.view} style={{ verticalAlign: 'middle' }} />
+                        </MenuItem>
+                        :
+                        <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}>
+                            <FolderOpenedIcon
+                                // className={this.props.classes.icon}
+                                style={{
+                                    verticalAlign: 'middle',
+                                    marginRight: 6,
+                                    marginTop: -3,
+                                    fontSize: 20,
+                                    color: '#00dc00',
+                                }}
+                            />
+                            <span style={{ fontSize: '1rem' }}>{option.folder.name}</span>
+                        </ListSubheader>))}
+                </DialogContent>
+            </Dialog> : null,
+        ];
     }
 
     renderWidgetBody(props) {
@@ -75,7 +207,13 @@ class BasicViewInWidget extends VisRxWidget {
 
         if (view === this.props.view) {
             return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-                Cannot use recursive views
+                {I18n.t('vis_2_widgets_basic_cannot_recursive')}
+            </div>;
+        }
+        if (!view) {
+            return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
+                {I18n.t('vis_2_widgets_basic_view_not_defined')}
+                {this.props.editMode ? this.renderViewSelector() : null}
             </div>;
         }
 
@@ -122,6 +260,7 @@ BasicViewInWidget.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
+    editModeComponentClass: PropTypes.string,
 };
 
 export default BasicViewInWidget;

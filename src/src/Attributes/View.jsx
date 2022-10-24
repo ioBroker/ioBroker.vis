@@ -14,12 +14,16 @@ import {
     Popper,
     Select,
     TextField,
-    Autocomplete, Slider, Input,
+    Autocomplete,
+    Slider,
+    Input,
+    Tooltip,
 } from '@mui/material';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import ClearIcon from '@mui/icons-material/Clear';
+import InfoIcon from '@mui/icons-material/Info';
 
 import {
     ColorPicker, Utils, I18n, IconPicker,
@@ -103,6 +107,10 @@ const styles = _theme => ({
     fieldContentSliderClear: {
         display: 'inline',
         width: 32,
+    },
+    fieldHelpText: {
+        float: 'right',
+        fontSize: 16,
     },
 });
 
@@ -192,6 +200,7 @@ const View = props => {
                         { name: 'flex', value: 'flex' },
                         { name: 'block', value: 'block' },
                     ],
+                    noTranslation: true,
                     title: 'For widgets with relative position',
                 },
                 { name: 'Comment', field: 'comment', notStyle: true },
@@ -204,11 +213,13 @@ const View = props => {
                     field: 'group',
                     notStyle: true,
                     type: 'multi-select',
+                    title: 'This view will be shown only to defined groups',
                     items: props.groups.map(group => ({
                         name: typeof group.common.name === 'string' ? group.common.name : group.common.name[I18n.getLanguage()],
                         /* eslint no-underscore-dangle: 0 */
                         value: group._id.split('.')[2],
                     })),
+                    noTranslation: true,
                 },
                 {
                     name: 'Theme',
@@ -216,6 +227,7 @@ const View = props => {
                     notStyle: true,
                     type: 'select',
                     items: theme,
+                    noTranslation: true,
                 },
                 {
                     name: 'If user not in group',
@@ -224,7 +236,7 @@ const View = props => {
                     type: 'select',
                     items: [
                         { name: 'Disabled', value: 'disabled' },
-                        { name: 'hide', value: 'hide' },
+                        { name: 'Hide', value: 'hide' },
                     ],
                 },
             ],
@@ -607,7 +619,7 @@ const View = props => {
                 }}
                 expandIcon={<ExpandMoreIcon />}
             >
-                {group.name}
+                {I18n.t(group.name)}
             </AccordionSummary>
             <AccordionDetails style={{ flexDirection: 'column', padding: 0, margin: 0 }}>
                 <table style={{ width: '100%' }}>
@@ -727,7 +739,7 @@ const View = props => {
                                             value={selectItem.value}
                                             key={selectItem.value}
                                         >
-                                            {field.itemModify ? field.itemModify(selectItem) : I18n.t(selectItem.name)}
+                                            {field.itemModify ? field.itemModify(selectItem) : (field.noTranslation ? selectItem.name : I18n.t(selectItem.name))}
                                         </MenuItem>)}
                                     </Select>;
                                 } else if (field.type === 'multi-select') {
@@ -749,7 +761,7 @@ const View = props => {
                                             key={selectItem.value}
                                         >
                                             <Checkbox checked={value.includes(selectItem.value)} />
-                                            <ListItemText primary={I18n.t(selectItem.name)} />
+                                            <ListItemText primary={field.noTranslation ? selectItem.name : I18n.t(selectItem.name)} />
                                         </MenuItem>)}
                                     </Select>;
                                 } else if (field.type === 'raw') {
@@ -883,8 +895,16 @@ const View = props => {
                                     />;
                                 }
 
+                                let helpText = null;
+                                if (field.title) {
+                                    helpText = <Tooltip title={I18n.t(field.title)}><InfoIcon className={props.classes.fieldHelpText} /></Tooltip>;
+                                }
+
                                 return <tr key={key2}>
-                                    <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>{I18n.t(field.name)}</td>
+                                    <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>
+                                        {I18n.t(field.name)}
+                                        {helpText}
+                                    </td>
                                     <td className={props.classes.fieldContent}>{result}</td>
                                 </tr>;
                             })

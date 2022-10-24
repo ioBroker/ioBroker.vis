@@ -65,6 +65,7 @@ class VisView extends React.Component {
         this.widgetsRefs = {};
         this.selectDiv = null;
         this.movement = null;
+        this.ignoreMouseEvents = false;
     }
 
     static collectInformation(socket) {
@@ -243,6 +244,10 @@ class VisView extends React.Component {
     }
 
     onMouseViewDown = this.props.runtime ? null : e => {
+        if (this.ignoreMouseEvents) {
+            return;
+        }
+        console.log('View down');
         if (e.button === 2) {
             return;
         }
@@ -421,6 +426,9 @@ class VisView extends React.Component {
     */
 
     onMouseViewMove = !this.props.runtime ? e => {
+        if (this.ignoreMouseEvents) {
+            return;
+        }
         if (!this.selectDiv && this.refView.current) {
             // create selectDiv
             this.selectDiv = window.document.createElement('div');
@@ -467,6 +475,9 @@ class VisView extends React.Component {
     } : null;
 
     onMouseViewUp = !this.props.runtime ? e => {
+        if (this.ignoreMouseEvents) {
+            return;
+        }
         e && e.stopPropagation();
         window.document.removeEventListener('mousemove', this.onMouseViewMove);
         window.document.removeEventListener('mouseup', this.onMouseViewUp);
@@ -484,6 +495,9 @@ class VisView extends React.Component {
     } : null;
 
     onMouseWidgetDown = this.props.runtime ? null : (e, wid, isRelative, isResize) => {
+        if (this.ignoreMouseEvents) {
+            return;
+        }
         if (this.nextClickIsSteal) {
             // send to App.js the stolen attribute
 
@@ -539,6 +553,15 @@ class VisView extends React.Component {
                 this.widgetsRefs[_wid].onCommand('startMove');
             }
         });
+    };
+
+    onIgnoreMouseEvents = ignore => {
+        this.ignoreMouseEvents = ignore;
+        if (ignore && this.movement) {
+            this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
+            window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
+            this.movement = null;
+        }
     };
 
     onMouseWidgetMove = !this.props.runtime ? e => {
@@ -853,16 +876,18 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode) {
+    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents) {
         const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
 
         const _props = {
             key: `${index}_${id}`,
             id,
             view: props.view,
-            views: props.views,
+            views: props.views, // project
             userGroups: props.userGroups,
             editMode: editMode === false ? false : props.editMode,
+            editModeComponentClass: props.editModeComponentClass,
+            ignoreMouseEvents: editMode === false || !props.editMode ? null : onIgnoreMouseEvents,
             user: props.user,
             allWidgets: props.allWidgets,
             socket: props.socket,
@@ -909,7 +934,7 @@ class VisView extends React.Component {
     }
 
     loadJqueryTheme(jQueryTheme) {
-        if (VisView.themeCache[jQueryTheme]) {
+        if (VisView.themeCache[jQueryTheme] && this.props.view) {
             let data = VisView.themeCache[jQueryTheme];
             const _view = `visview_${this.props.view.replace(/\s/g, '_')}`;
             data = data.replace('.ui-helper-hidden', `\n#${_view} .ui-helper-hidden`);
@@ -1421,6 +1446,8 @@ class VisView extends React.Component {
                     this.onMouseWidgetDown,
                     relativeWidgetOrder,
                     moveAllowed,
+                    undefined,
+                    this.onIgnoreMouseEvents,
                 ));
 
                 if (listRelativeWidgetsOrder.length) {
@@ -1437,6 +1464,8 @@ class VisView extends React.Component {
                             this.onMouseWidgetDown,
                             this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
                             moveAllowed,
+                            undefined,
+                            this.onIgnoreMouseEvents,
                         );
                         wColumns[column].push(w);
                     });
@@ -1469,7 +1498,7 @@ class VisView extends React.Component {
             height: '100%',
         };
 
-        if (this.state.loadedjQueryTheme !== this.getJQueryThemeName()) {
+        if (this.state.loadedjQueryTheme !== this.getJQueryThemeName() && this.props.view) {
             if (!this.loadingTheme) {
                 this.loadingTheme = true;
                 setTimeout(() => this.loadJqueryTheme(this.getJQueryThemeName()), this.state.loadedjQueryTheme ? 50 : 0);
@@ -1564,12 +1593,13 @@ class VisView extends React.Component {
 }
 
 VisView.propTypes = {
-    views: PropTypes.object.isRequired,
+    views: PropTypes.object.isRequired, // project
     view: PropTypes.string.isRequired,
     activeView: PropTypes.string.isRequired,
     can: PropTypes.object.isRequired,
     canStates: PropTypes.object.isRequired,
     editMode: PropTypes.bool,
+    editModeComponentClass: PropTypes.string,
     user: PropTypes.string,
     userGroups: PropTypes.object,
     allWidgets: PropTypes.object,

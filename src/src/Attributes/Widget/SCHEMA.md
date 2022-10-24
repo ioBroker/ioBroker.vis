@@ -183,7 +183,33 @@ onChange: async (field, data, changeData, socket) => {
   - `filters` - Filter selector. If some widgets have field `filter` set, whit field will collect all possible filters and represent it as auto-complete field.
   - `views` - Select view via auto-complete input.
   - `style` - Drop-down menu with all possible styles. ?
-  - `custom` - Not supported yet
+  - `custom` - Custom field editor. See [below](#custom-field-editor)
   - `text` - Input field with Edit dialog.
   - `html` - Input field with Edit dialog and parsing of HTML code
   - `json` - Input field with Edit dialog and parsing of JSON code
+
+### Custom field editor
+Example of custom field
+```
+{
+    name: 'customField',
+    label: 'vis_2_widgets_basic_custom',
+    type: 'custom',  // important
+    component: (     // important
+        field,       // field properties: {name, label, type, set, singleName, component,...}
+        data,        // widget data
+        onDataChange,// function to call, when data changed 
+        socket,      // socket object
+        widgetID,    // widget ID or widgets IDs. If selecteld more than one widget, it is array of IDs
+        view,        // view name
+        project      // project object: {VIEWS..., [view]: {widgets: {[widgetID]: {tpl, data, style}}, settings, parentId, rerender, filterList, activeWidgets}, __settings: {}}
+    ) => <TextField
+        fullWidth
+        value={data[field.name]}
+        onChange={e => {
+            onDataChange({ [field.name]: e.target.value }); // returns all changed field as object.
+            // If some propertiy is null, so it will be deleted from data
+        }}
+    />,
+}
+```

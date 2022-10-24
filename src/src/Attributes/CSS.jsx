@@ -51,24 +51,36 @@ const CSS = props => {
 
     useEffect(() => {
         const load = async () => {
-            const commonCss = await props.socket.readFile(props.adapterId.split('.')[0], 'css/vis-common-user.css');
-            if (commonCss.type) {
-                setGlobalCss(commonCss.data);
-            } else {
-                setGlobalCss(commonCss);
+            try {
+                const commonCss = await props.socket.readFile(props.adapterId.split('.')[0], 'css/vis-common-user.css');
+                if (commonCss.type) {
+                    setGlobalCss(commonCss.data);
+                } else {
+                    setGlobalCss(commonCss);
+                }
+            } catch (e) {
+                if (e !== 'Not exists') {
+                    console.warn(`Cannot loading global CSS: ${e}`);
+                }
             }
-            const userCss = await props.socket.readFile(props.adapterId, `${props.projectName}/vis-user.css`);
-            if (commonCss.type) {
-                setLocalCss(userCss.data);
-            } else {
-                setLocalCss(userCss);
+            try {
+                const userCss = await props.socket.readFile(props.adapterId, `${props.projectName}/vis-user.css`);
+                if (userCss.type) {
+                    setLocalCss(userCss.data);
+                } else {
+                    setLocalCss(userCss);
+                }
+            } catch (e) {
+                if (e !== 'Not exists') {
+                    console.warn(`Cannot load project CSS: ${e}`);
+                }
             }
             if (window.localStorage.getItem('CSS.type')) {
                 setType(window.localStorage.getItem('CSS.type'));
             }
         };
+
         load()
-            .then(() => {})
             .catch(e => console.error('Error loading CSS: ', e));
     }, []);
 
@@ -117,7 +129,7 @@ const CSS = props => {
                 }}
             >
                 <MenuItem value="global">{I18n.t('Global')}</MenuItem>
-                <MenuItem value="local">{I18n.t('Project')}</MenuItem>
+                <MenuItem value="local">{I18n.t('css_project')}</MenuItem>
             </Select>
             <IconButton onClick={() => setShowHelp(true)} size="small"><HelpOutline /></IconButton>
             {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}

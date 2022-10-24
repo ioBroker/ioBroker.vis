@@ -101,6 +101,7 @@ const getItem = (item, key, props, full) => {
             value={item.value ? item.value : value}
             onChange={_value => item.onChange(_value)}
             options={item.items}
+            themeType={props.themeType}
         />;
         /*
         return <FormControl variant="standard" key={key} style={{ margin: '0px 10px' }}>
@@ -170,7 +171,7 @@ const getItem = (item, key, props, full) => {
                 </ButtonBase>
             </div>
             :
-            <Tooltip key={key} title={item.name} classes={{ popper: props.classes.toolbarTooltip }}>
+            <Tooltip key={key} title={I18n.t(item.name)} classes={{ popper: props.classes.toolbarTooltip }}>
                 <div>
                     <IconButton
                         color={item.selected ? 'primary' : undefined}
@@ -215,7 +216,7 @@ const getItem = (item, key, props, full) => {
 };
 
 const ToolbarItems = props => {
-    let items = props.group.items;
+    let { name, items } = props.group;
 
     // flatten buttons
     if (props.toolbarHeight === 'veryNarrow') {
@@ -254,12 +255,13 @@ const ToolbarItems = props => {
                 })
             }
         </div>
-        {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>{props.group.name}</div> : null}
+        {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>{typeof name === 'string' ? I18n.t(name) : name}</div> : null}
     </div>;
 };
 
 ToolbarItems.propTypes = {
     classes: PropTypes.object,
+    themeType: PropTypes.string,
     group: PropTypes.object,
     last: PropTypes.bool,
     toolbarHeight: PropTypes.string,

@@ -122,6 +122,9 @@ const styles = theme => ({
         // left: 0,
         // zIndex: 10,
     },
+    editModeComponentClass: {
+        zIndex: 1002,
+    },
 });
 
 const ViewDrop = props => {
@@ -195,7 +198,7 @@ class App extends GenericApp {
         this.adapterId = `${this.adapterName}.0`;
 
         // temporary disable translation warnings
-        I18n.disableWarning(true);
+        // I18n.disableWarning(true);
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
     }
 
@@ -1232,27 +1235,34 @@ class App extends GenericApp {
         window.localStorage.setItem('showCode', JSON.stringify(!oldShowCode));
     };
 
-    onWidgetsChanged = (data, view, viewSettings) => {
+    onWidgetsChanged = (changedData, view, viewSettings) => {
         this.tempProject = this.tempProject || JSON.parse(JSON.stringify(this.state.project));
-        if (data) {
-            data.forEach(item => {
-                if (item.style) {
-                    const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
-                    if (item.style.noPxToPercent) {
-                        delete item.style.noPxToPercent;
-                        Object.assign(currentStyle, item.style);
-                    } else {
-                        const percentStyle = this.pxToPercent(currentStyle, item.style);
-                        Object.assign(currentStyle, percentStyle);
-                    }
-                    Object.keys(currentStyle).forEach(key => {
-                        if (currentStyle[key] === undefined || currentStyle[key] === null) {
-                            delete currentStyle[key];
-                        }
-                    });
+        changedData && changedData.forEach(item => {
+            if (item.style) {
+                const currentStyle = this.tempProject[item.view].widgets[item.wid].style;
+                if (item.style.noPxToPercent) {
+                    delete item.style.noPxToPercent;
+                    Object.assign(currentStyle, item.style);
+                } else {
+                    const percentStyle = this.pxToPercent(currentStyle, item.style);
+                    Object.assign(currentStyle, percentStyle);
                 }
-            });
-        }
+                Object.keys(currentStyle).forEach(key => {
+                    if (currentStyle[key] === undefined || currentStyle[key] === null) {
+                        delete currentStyle[key];
+                    }
+                });
+            }
+            if (item.data) {
+                const currentData = this.tempProject[item.view].widgets[item.wid].data;
+                Object.assign(currentData, item.data);
+                Object.keys(currentData).forEach(key => {
+                    if (currentData[key] === undefined || currentData[key] === null) {
+                        delete currentData[key];
+                    }
+                });
+            }
+        });
 
         // settings of view are changed
         if (view && viewSettings) {
@@ -1566,6 +1576,7 @@ class App extends GenericApp {
                 changeProject={this.changeProject}
                 openedViews={this.state.openedViews}
                 projectName={this.state.projectName}
+                themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
                 widgetsLoaded={this.state.widgetsLoaded}
                 socket={this.socket}
@@ -1633,6 +1644,7 @@ class App extends GenericApp {
             themeName={this.state.themeName}
             theme={this.state.theme}
             adapterId={this.adapterId}
+            editModeComponentClass={this.props.classes.editModeComponentClass}
         />;
 
         if (this.state.runtime) {

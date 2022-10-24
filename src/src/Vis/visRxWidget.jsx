@@ -354,6 +354,8 @@ VisRxWidget.propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     editMode: PropTypes.bool.isRequired,
     // eslint-disable-next-line react/no-unused-prop-types
+    editModeComponentClass: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
     runtime: PropTypes.bool,
     // eslint-disable-next-line react/no-unused-prop-types
     userGroups: PropTypes.object.isRequired,

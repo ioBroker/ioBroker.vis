@@ -1500,9 +1500,13 @@ class VisBaseWidget extends React.Component {
 
 VisBaseWidget.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired,
+    views: PropTypes.object.isRequired, // project
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
+    // eslint-disable-next-line react/no-unused-prop-types
+    editModeComponentClass: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
+    ignoreMouseEvents: PropTypes.func,
     runtime: PropTypes.bool,
     registerRef: PropTypes.func.isRequired,
     userGroups: PropTypes.object.isRequired,

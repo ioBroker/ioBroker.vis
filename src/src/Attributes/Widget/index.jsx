@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -133,6 +133,29 @@ const styles = theme => ({
     smallImage: {
         maxWidth: '100%',
         maxHeight: '100%',
+    },
+    widgetIcon: {
+        width: 40,
+        height: 40,
+        display: 'inline-block',
+        marginRight: 4,
+    },
+    icon: {
+        width: '100%',
+        height: '100%',
+        objectFit: 'contain',
+    },
+    coloredWidgetSet: {
+        padding: '0 3px',
+        borderRadius: 3,
+    },
+    widgetName: {
+        verticalAlign: 'top',
+        display: 'inline-block',
+    },
+    widgetType: {
+        verticalAlign: 'top',
+        display: 'inline-block',
     },
 });
 
@@ -766,12 +789,57 @@ const Widget = props => {
     if (props.selectedWidgets.length === 1) {
         const tpl = widgets[props.selectedWidgets[0]].tpl;
         const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
-        list = <div>
-            <span>{props.selectedWidgets[0]}</span>
-            <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 8 }}>
-                <span style={{ fontWeight: 'bold', marginRight: 4 }}>{widgetType?.set}</span>
+        let widgetLabel = widgetType?.title;
+        let widgetColor = widgetType?.setColor;
+        if (widgetType?.label) {
+            widgetLabel = I18n.t(widgetType.label);
+        }
+        let setLabel = widgetType?.set;
+        if (widgetType?.setLabel) {
+            setLabel = I18n.t(widgetType.setLabel);
+        } else if (setLabel) {
+            const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
+            if (widgetWithSetLabel) {
+                widgetColor = widgetWithSetLabel.setColor;
+                setLabel = I18n.t(widgetWithSetLabel.setLabel);
+            }
+        }
+
+        let widgetIcon = widgetType?.preview || '';
+        if (widgetIcon.startsWith('<img')) {
+            const prev = widgetIcon.match(/src="([^"]+)"/);
+            if (prev && prev[1]) {
+                widgetIcon = prev[1];
+            }
+        }
+        let widgetBackColor;
+        if (widgetColor) {
+            widgetBackColor = Utils.getInvertedColor(widgetColor, props.themeType, false);
+            if (widgetBackColor === '#DDD') {
+                widgetBackColor = '#FFF';
+            } else if (widgetBackColor === '#111') {
+                widgetBackColor = '#000';
+            }
+        }
+        list = <div style={{ lineHeight: widgetIcon ? '30px' : undefined }}>
+            {widgetIcon ? <div className={props.classes.widgetIcon}>
+                <img src={widgetIcon} className={props.classes.icon} alt={props.selectedWidgets[0]} />
+            </div> : null}
+            <span className={props.classes.widgetName}>{props.selectedWidgets[0]}</span>
+            <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 8 }} className={props.classes.widgetType}>
+                <span
+                    style={{
+                        fontWeight: 'bold',
+                        marginRight: 4,
+                        color: widgetColor,
+                        backgroundColor: widgetBackColor,
+                    }}
+                    className={widgetBackColor ? props.classes.coloredWidgetSet : undefined}
+                >
+                    {setLabel}
+                </span>
                 -
-                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? I18n.t('group') : widgetType?.title}</span>
+                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? I18n.t('group') : widgetLabel}</span>
             </span>
         </div>;
     } else {
@@ -902,7 +970,7 @@ const Widget = props => {
                                                 : <>
                                                     <td
                                                         className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}
-                                                        title={I18n.t(field.tooltip)}
+                                                        title={field.tooltip ? I18n.t(field.tooltip) : null}
                                                     >
                                                         { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
                                                         { field.title || (field.label && I18n.t(field.label)) ||
@@ -1016,6 +1084,7 @@ const WidgetContainer = props => {
 
 WidgetContainer.propTypes = {
     adapterName: PropTypes.string.isRequired,
+    themeType: PropTypes.string.isRequired,
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     cssClone: PropTypes.func,

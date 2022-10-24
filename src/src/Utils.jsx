@@ -294,6 +294,12 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     if (typeof group.fields[ii].hidden === 'function') {
                         field.hidden = group.fields[ii].hidden;
                     }
+                    if (typeof group.fields[ii].component === 'function') {
+                        field.component = group.fields[ii].component;
+                    }
+                    if (typeof group.fields[ii].onChange === 'function') {
+                        field.onChange = group.fields[ii].onChange;
+                    }
                     if (typeof group.fields[ii].disabled === 'function') {
                         field.disabled = group.fields[ii].disabled;
                     }

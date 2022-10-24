@@ -238,6 +238,7 @@ Toolbar.propTypes = {
     socket: PropTypes.object,
     toggleTheme: PropTypes.func,
     themeName: PropTypes.string,
+    themeType: PropTypes.string,
     editMode: PropTypes.bool,
     selectedGroup: PropTypes.string,
     setToolbarHeight: PropTypes.func,

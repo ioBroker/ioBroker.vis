@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import MenuIcon from '@mui/icons-material/Menu';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import withStyles from '@mui/styles/withStyles';
 import ViewsManage from './ViewsManage';
@@ -38,7 +38,7 @@ const View = props => {
         view = view || props.selectedView;
 
         const dialogDefaultName = {
-            add: 'New view',
+            add: I18n.t('New view'),
             rename: view,
             copy: `${view} ${I18n.t('Copy noun')}`,
         };
@@ -51,7 +51,9 @@ const View = props => {
 
     const toolbar = {
         name: <span className={props.classes.label}>
-            <span>{I18n.t('Views of ')}</span>
+            <span>
+                {`${I18n.t('Views of')} `}
+            </span>
             <span
                 className={props.classes.projectLabel}
                 onClick={() => props.setProjectsDialog(true)}
@@ -88,6 +90,7 @@ const View = props => {
             dialog={dialog}
             dialogView={dialogView}
             dialogName={dialogName}
+            noTranslation
             dialogParentId={dialogParentId}
             setDialog={setDialog}
             setDialogView={setDialogView}

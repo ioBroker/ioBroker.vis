@@ -18,7 +18,7 @@ import 'ace-builds/src-min-noconflict/theme-chrome';
 const ExportDialog = props => <IODialog
     open={props.open}
     onClose={props.onClose}
-    title={`${I18n.t('Export')} ${props.view}`}
+    title={I18n.t('Export "%s"', props.view)}
     closeTitle="Close"
     action={() => copy(JSON.stringify(props.project[props.view], null, 2))}
     actionTitle="Copy to clipboard"

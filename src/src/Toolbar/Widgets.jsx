@@ -20,7 +20,7 @@ import RedoIcon from '@mui/icons-material/Redo';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-import i18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
 import { getWidgetTypes } from '../Utils';
@@ -43,6 +43,8 @@ const Widgets = props => {
 
     const widgets = props.project[props.selectedView].widgets;
 
+    const widgetTypes = getWidgetTypes();
+
     const toolbar = {
         name: 'Widgets',
         items: [
@@ -53,11 +55,37 @@ const Widgets = props => {
                     widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
                     !widgets[widget].groupid)).map(widget => {
                     const tpl = widgets[widget].tpl;
-                    const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
+                    const widgetType = widgetTypes.find(w => w.name === tpl);
+                    let widgetLabel = widgetType?.title;
+                    let widgetColor = widgetType?.setColor;
+                    if (widgetType?.label) {
+                        widgetLabel = I18n.t(widgetType.label);
+                    }
+                    let setLabel = widgetType?.set;
+                    if (widgetType?.setLabel) {
+                        setLabel = I18n.t(widgetType.setLabel);
+                    } else if (setLabel) {
+                        const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
+                        if (widgetWithSetLabel) {
+                            widgetColor = widgetWithSetLabel.setColor;
+                            setLabel = I18n.t(widgetWithSetLabel.setLabel);
+                        }
+                    }
+
+                    let widgetIcon = widgetType?.preview || '';
+                    if (widgetIcon.startsWith('<img')) {
+                        const prev = widgetIcon.match(/src="([^"]+)"/);
+                        if (prev && prev[1]) {
+                            widgetIcon = prev[1];
+                        }
+                    }
+
                     return {
                         name: widget,
-                        subName: `(${widgetType?.set} - ${tpl === '_tplGroup' ? i18n.t('group') : widgetType?.title})`,
+                        subName: widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : '',
                         value: widget,
+                        color: widgetColor,
+                        icon: widgetIcon.startsWith('<') ? '' : widgetIcon,
                     };
                 }),
                 width: 240,
@@ -291,6 +319,7 @@ const Widgets = props => {
 
 Widgets.propTypes = {
     openedViews: PropTypes.array,
+    themeType: PropTypes.string,
     project: PropTypes.object,
     selectedView: PropTypes.string,
     selectedWidgets: PropTypes.array,

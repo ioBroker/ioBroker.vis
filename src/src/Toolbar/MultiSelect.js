@@ -7,6 +7,8 @@ import {
 import IconArrowDown from '@mui/icons-material/ArrowDropDown';
 import IconArrowUp from '@mui/icons-material/ArrowDropUp';
 
+import { Utils } from '@iobroker/adapter-react-v5';
+
 const styles = theme => ({
     navMain: {
         borderBottom: '1px solid transparent',
@@ -24,6 +26,9 @@ const styles = theme => ({
     textRoot: {
         margin: 0,
     },
+    menuItem: {
+        borderBottom: '1px dashed gray',
+    },
     primary: {
         width: '100%',
         overflow: 'hidden',
@@ -34,8 +39,28 @@ const styles = theme => ({
     secondary: {
         fontSize: 10,
         position: 'absolute',
-        bottom: 0,
+        bottom: -8,
         right: 20,
+    },
+    coloredSecondary: {
+        borderRadius: 3,
+        padding: '0 3px',
+        opacity: 0.7,
+    },
+    icon: {
+        width: 24,
+        height: 24,
+        objectFit: 'contain',
+    },
+    menuItemMainText: {
+        fontWeight: 'bold',
+        display: 'inline-block',
+        verticalAlign: 'top',
+    },
+    menuItemIcon: {
+        marginRight: 4,
+        display: 'inline-block',
+        height: 24,
     },
 });
 
@@ -53,16 +78,15 @@ class MultiSelect extends Component {
 
         let text;
         let subText = null;
+        let color;
+        let icon;
         if (value.length === 1) {
             const item = props.options.find(foundItem => foundItem.value === value[0]);
             if (item) {
                 text = item.name;
                 subText = item.subName;
-                /* return <div>
-                    <div style={{ }}>{item.name}</div>
-                    <div style={{ fontSize: 10, fontStyle: 'italic' }}>{item.subName}</div>
-                </div>;
-                */
+                color = item.color;
+                icon = item.icon ? <img src={item.icon} className={props.classes.icon} alt={item.name} /> : null;
             } else {
                 text = value[0];
             }
@@ -73,11 +97,20 @@ class MultiSelect extends Component {
             }).join(', ');
         }
 
+        let backColor;
+        if (color) {
+            backColor = Utils.getInvertedColor(color, props.themeType, false);
+            if (backColor === '#DDD') {
+                backColor = '#FFF';
+            } else if (backColor === '#111') {
+                backColor = '#000';
+            }
+        }
+
         const isNarrow = !props.label;
 
         return <FormControl variant="standard" style={{ margin: '0px 10px' }}>
             {props.label ? <InputLabel shrink>{props.label}</InputLabel> : null}
-
             <List
                 component="nav"
                 style={{
@@ -90,10 +123,22 @@ class MultiSelect extends Component {
                     onClick={e => this.setState({ elAnchor: e.currentTarget })}
                     classes={{ root: props.classes.listItemButton }}
                 >
+                    {icon ? <ListItemIcon style={{ minWidth: 28 }}>
+                        {icon}
+                    </ListItemIcon> : null}
                     <ListItemText
-                        classes={{ root: props.classes.listItemButton, primary: isNarrow ? props.classes.primary : undefined, secondary: props.classes.secondary }}
+                        classes={{
+                            root: props.classes.listItemButton,
+                            primary: isNarrow ? props.classes.primary : undefined,
+                            secondary: props.classes.secondary,
+                        }}
                         primary={text}
-                        secondary={subText}
+                        secondary={<span
+                            style={{ color, background: backColor, whiteSpace: 'nowrap' }}
+                            className={color ? props.classes.coloredSecondary : undefined}
+                        >
+                            {subText}
+                        </span>}
                     />
                     <ListItemIcon style={{ minWidth: 16 }}>{this.state.elAnchor ? <IconArrowUp /> : <IconArrowDown />}</ListItemIcon>
                 </ListItemButton>
@@ -103,33 +148,47 @@ class MultiSelect extends Component {
                 anchorEl={this.state.elAnchor}
                 onClose={() => this.setState({ elAnchor: null })}
             >
-                {props.options.map(selectItem => <MenuItem
-                    value={selectItem.value}
-                    key={selectItem.value}
+                {props.options.map(item => <MenuItem
+                    value={item.value}
+                    key={item.value}
+                    className={props.classes.menuItem}
                     onClick={() =>
                         this.setState({ elAnchor: null }, () =>
-                            props.onChange([selectItem.value]))}
+                            props.onChange([item.value]))}
                 >
                     <div style={{ display: 'flex' }}>
                         <div>
                             <Checkbox
-                                checked={props.value.includes(selectItem.value)}
+                                checked={props.value.includes(item.value)}
                                 onClick={e => {
                                     e.stopPropagation();
                                     e.preventDefault();
                                     const _value = [...value];
-                                    if (_value.includes(selectItem.value)) {
-                                        _value.splice(_value.indexOf(selectItem.value), 1);
+                                    if (_value.includes(item.value)) {
+                                        _value.splice(_value.indexOf(item.value), 1);
                                     } else {
-                                        _value.push(selectItem.value);
+                                        _value.push(item.value);
                                     }
                                     props.onChange(_value);
                                 }}
                             />
                         </div>
                         <div>
-                            <div style={{ fontWeight: 'bold' }}>{selectItem.name}</div>
-                            <div style={{ fontSize: 10, fontStyle: 'italic' }}>{selectItem.subName}</div>
+                            {item.icon ? <div className={props.classes.menuItemIcon}>
+                                <img src={item.icon} className={props.classes.icon} alt={item.name} />
+                            </div> : null}
+                            <div className={props.classes.menuItemMainText}>{item.name}</div>
+                            <div
+                                style={{
+                                    fontSize: 10,
+                                    fontStyle: 'italic',
+                                    color: item.color,
+                                    background: item.color ? Utils.getInvertedColor(item.color, props.themeType, false) : undefined,
+                                }}
+                                className={color ? props.classes.coloredSecondary : undefined}
+                            >
+                                {item.subName}
+                            </div>
                         </div>
                     </div>
                 </MenuItem>)}

@@ -63,6 +63,10 @@ function init(gulp) {
         fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-html.js', fs.readFileSync(ace + 'worker-html.js'));
         fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-javascript.js', fs.readFileSync(ace + 'worker-javascript.js'));
         fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-json.js', fs.readFileSync(ace + 'worker-json.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/css.js', fs.readFileSync(ace + 'snippets/css.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/html.js', fs.readFileSync(ace + 'snippets/html.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/javascript.js', fs.readFileSync(ace + 'snippets/javascript.js'));
+        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/json.js', fs.readFileSync(ace + 'snippets/json.js'));
 
         return new Promise((resolve, reject) => {
             const options = {

@@ -200,6 +200,9 @@ const WidgetField = props => {
 
     const cacheTimer = useRef(null);
 
+    let onChangeTimeout;
+    let changeCustomTimeout;
+
     const applyValue = newValues => {
         const project = JSON.parse(JSON.stringify(props.project));
         props.selectedWidgets.forEach((selectedWidget, i) => {
@@ -225,7 +228,11 @@ const WidgetField = props => {
                 field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
                     const _project = JSON.parse(JSON.stringify(props.project));
                     _project[props.selectedView].widgets[selectedWidget].data = newData;
-                    setTimeout(() => props.changeProject(_project), 100);
+                    onChangeTimeout && clearTimeout(onChangeTimeout);
+                    onChangeTimeout = setTimeout(() => {
+                        onChangeTimeout = null;
+                        props.changeProject(_project)
+                    }, 100);
                 }, props.socket);
             }
         });
@@ -240,7 +247,10 @@ const WidgetField = props => {
         } else {
             setCachedValue(changeValue);
             cacheTimer.current && clearTimeout(cacheTimer.current);
-            cacheTimer.current = setTimeout(() => applyValue(changeValue), 300);
+            cacheTimer.current = setTimeout(() => {
+                cacheTimer.current = null;
+                applyValue(changeValue)
+            }, 300);
         }
     };
 
@@ -609,9 +619,9 @@ const WidgetField = props => {
             }}
             fullWidth
         >
-            {options.map(selectItem => <MenuItem
+            {options.map((selectItem, i) => <MenuItem
                 value={typeof selectItem === 'object' ? selectItem.value : selectItem}
-                key={typeof selectItem === 'object' ? selectItem.value : selectItem}
+                key={`${typeof selectItem === 'object' ? selectItem.value : selectItem}_${i}`}
                 style={{ fontFamily: field.type === 'fontname' ? selectItem : null }}
             >
                 {selectItem.icon ? <ListItemIcon>
@@ -625,7 +635,7 @@ const WidgetField = props => {
                         :
                         (field.type === 'select' && !field.noTranslation ?
                             (typeof selectItem === 'object' ?
-                                <span style={selectItem.color ? { color: selectItem.color } : null}>{t(selectItem.label)}</span> : t(selectItem)
+                                <span style={selectItem.color ? { color: selectItem.color } : null}>{field.noTranslation ? selectItem.label : t(selectItem.label)}</span> : t(selectItem)
                             ) : (typeof selectItem === 'object' ?
                                 <span style={selectItem.color ? { color: selectItem.color } : null}>{selectItem.label}</span> : selectItem
                             ))}
@@ -661,12 +671,12 @@ const WidgetField = props => {
             {options.map((option, key) => (option.type === 'view' ?
                 <MenuItem
                     value={option.view}
-                    key={key}
+                    key={key.toString()}
                     style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}
                 >
                     <FileIcon style={{ verticalAlign: 'middle', marginRight: 4 }} />
                     <span style={{ verticalAlign: 'middle' }}>{field.multiple !== false ? <Checkbox checked={(value || []).includes(option.view)} /> : null}</span>
-                    <ListItemText primary={t(option.view)} style={{ verticalAlign: 'middle' }} />
+                    <ListItemText primary={option.view} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
                 <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}>
@@ -712,9 +722,9 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             fullWidth
         >
-            {props.groups.map(group => <MenuItem
+            {props.groups.map((group, i) => <MenuItem
                 value={group._id.split('.')[2]}
-                key={group._id.split('.')[2]}
+                key={`${group._id.split('.')[2]}_${i}`}
             >
                 <Checkbox
                     disabled={disabled}
@@ -854,9 +864,9 @@ const WidgetField = props => {
             </div>}
             fullWidth
         >
-            {Object.keys(stylesOptions).map(styleName => <MenuItem
+            {Object.keys(stylesOptions).map((styleName, i) => <MenuItem
                 value={styleName}
-                key={styleName}
+                key={`${styleName}_${i}`}
             >
                 <span className={stylesOptions[styleName].parentClass}>
                     <span className={`${props.classes.backgroundClassSquare} ${styleName}`} />
@@ -867,11 +877,40 @@ const WidgetField = props => {
     }
 
     if (field.type === 'custom') {
-        return <>
-            {field.type}
-            /
-            {value}
-        </>;
+        if (field.component) {
+            try {
+                return field.component(
+                    field,
+                    widget.data,
+                    newData => {
+                        const _project = JSON.parse(JSON.stringify(props.project));
+                        props.selectedWidgets.forEach(selectedWidget => {
+                            Object.keys(newData)
+                                .forEach(attr => {
+                                    if (newData[attr] === null) {
+                                        delete _project[props.selectedView].widgets[selectedWidget].data[attr];
+                                    } else {
+                                        _project[props.selectedView].widgets[selectedWidget].data[attr] = newData[attr];
+                                    }
+                                });
+                        });
+                        props.changeProject(_project);
+                    },
+                    props.socket,
+                    props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets,
+                    props.selectedView,
+                    props.project,
+                );
+            } catch (e) {
+                console.error(`Cannot render custom field ${field.name}: ${e}`);
+            }
+        } else {
+            return <>
+                {field.type}
+                /
+                {value}
+            </>;
+        }
     }
 
     if (field.type === 'instance') {

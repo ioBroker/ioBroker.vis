@@ -1214,7 +1214,7 @@ class VisEngine extends React.Component {
         // Inform other widgets, that do not support canJS
         this.onChangeCallbacks.forEach(item => {
             try {
-                item.callback(item.arg, id, state);
+                item.callback(item.arg, id, state.val, state.ack, state.ts);
             } catch (e) {
                 this.props.socket.log(`Error: can't update states object for ${id}(${e}): ${JSON.stringify(e.stack)}`, 'error');
             }
@@ -1404,6 +1404,7 @@ ${this.scripts}
                     activeView={this.props.activeView}
                     views={this.props.views}
                     editMode={this.props.editMode}
+                    editModeComponentClass={this.props.editModeComponentClass}
                     can={this.can}
                     canStates={this.canStates}
                     user={this.user}
@@ -1439,6 +1440,7 @@ ${this.scripts}
                     themeType={this.props.themeType}
                     themeName={this.props.themeName}
                     theme={this.props.theme}
+                    project={this.props.project}
                 />;
             }
 
@@ -1457,10 +1459,11 @@ ${this.scripts}
 
 VisEngine.propTypes = {
     socket: PropTypes.object.isRequired,
-    views: PropTypes.object.isRequired,
+    views: PropTypes.object.isRequired, // project
     activeView: PropTypes.string,
     lang: PropTypes.string.isRequired,
     editMode: PropTypes.bool,
+    editModeComponentClass: PropTypes.string,
     onLoaded: PropTypes.func,
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,

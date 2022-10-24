@@ -137,6 +137,7 @@ const Attributes = props => {
 
 Attributes.propTypes = {
     classes: PropTypes.object,
+    themeType: PropTypes.string,
     openedViews: PropTypes.array,
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

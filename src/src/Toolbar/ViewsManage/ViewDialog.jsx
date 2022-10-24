@@ -61,10 +61,10 @@ const ViewDialog = props => {
     };
 
     const dialogTitles = {
-        delete: `${I18n.t('Are you want to delete view ') + (props.dialogView || props.selectedView)}?`,
-        copy: `${I18n.t('Copy view ') + (props.dialogView || props.selectedView)}`,
-        rename: `${I18n.t('Rename view ') + (props.dialogView || props.selectedView)}`,
-        add: I18n.t('Add view '),
+        delete: I18n.t('Are you want to delete view "%s"?', props.dialogView || props.selectedView),
+        copy: I18n.t('Copy view "%s"', props.dialogView || props.selectedView),
+        rename: I18n.t('Rename view "%s"', props.dialogView || props.selectedView),
+        add: I18n.t('Add view'),
     };
 
     const dialogButtons = {
@@ -103,8 +103,13 @@ const ViewDialog = props => {
         }
     }
 
+    if (!props.dialog) {
+        return null;
+    }
+
     return <IODialog
         title={dialogTitles[props.dialog]}
+        noTranslation={props.noTranslation}
         actionTitle={dialogButtons[props.dialog]}
         open={!!props.dialog}
         onClose={() => {

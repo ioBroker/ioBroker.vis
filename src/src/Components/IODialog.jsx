@@ -12,7 +12,7 @@ const IODialog = props => <Dialog
     fullScreen={!!props.fullScreen}
     maxWidth={props.maxWidth || 'md'}
 >
-    <DialogTitle>{I18n.t(props.title)}</DialogTitle>
+    <DialogTitle>{props.noTranslation ? props.title : I18n.t(props.title)}</DialogTitle>
     <DialogContent onKeyUp={e => {
         if (props.action) {
             if (!props.actionDisabled && !props.keyboardDisabled) {
@@ -43,7 +43,7 @@ const IODialog = props => <Dialog
                 disabled={props.actionDisabled}
                 startIcon={props.ActionIcon ? <props.ActionIcon /> : undefined}
             >
-                {I18n.t(props.actionTitle)}
+                {props.noTranslation ? props.actionTitle : I18n.t(props.actionTitle)}
             </Button> : null }
         <Button
             variant="contained"
@@ -52,7 +52,7 @@ const IODialog = props => <Dialog
             disabled={props.closeDisabled}
             startIcon={<CloseIcon />}
         >
-            {I18n.t(props.closeTitle ? props.closeTitle : 'Cancel')}
+            {props.noTranslation && props.closeTitle ? props.closeTitle : I18n.t(props.closeTitle || 'Cancel')}
         </Button>
     </DialogActions>
 </Dialog>;
