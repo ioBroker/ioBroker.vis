@@ -11,6 +11,7 @@ import {
 
 import FileIcon from '@mui/icons-material/InsertDriveFile';
 import ClearIcon from '@mui/icons-material/Clear';
+import EditIcon from '@mui/icons-material/Edit';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import {
@@ -201,7 +202,6 @@ const WidgetField = props => {
     const cacheTimer = useRef(null);
 
     let onChangeTimeout;
-    let changeCustomTimeout;
 
     const applyValue = newValues => {
         const project = JSON.parse(JSON.stringify(props.project));
@@ -231,7 +231,7 @@ const WidgetField = props => {
                     onChangeTimeout && clearTimeout(onChangeTimeout);
                     onChangeTimeout = setTimeout(() => {
                         onChangeTimeout = null;
-                        props.changeProject(_project)
+                        props.changeProject(_project);
                     }, 100);
                 }, props.socket);
             }
@@ -249,7 +249,7 @@ const WidgetField = props => {
             cacheTimer.current && clearTimeout(cacheTimer.current);
             cacheTimer.current = setTimeout(() => {
                 cacheTimer.current = null;
-                applyValue(changeValue)
+                applyValue(changeValue);
             }, 300);
         }
     };
@@ -679,17 +679,8 @@ const WidgetField = props => {
                     <ListItemText primary={option.view} style={{ verticalAlign: 'middle' }} />
                 </MenuItem>
                 :
-                <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}>
-                    <FolderOpenedIcon
-                        className={props.classes.icon}
-                        style={{
-                            verticalAlign: 'middle',
-                            marginRight: 6,
-                            marginTop: -3,
-                            fontSize: 20,
-                            color: '#00dc00',
-                        }}
-                    />
+                <ListSubheader key={key} style={{ paddingLeft: option.level * 16 }} className={props.classes.listFolder}>
+                    <FolderOpenedIcon className={props.classes.iconFolder} />
                     <span style={{ fontSize: '1rem' }}>{option.folder.name}</span>
                 </ListSubheader>))}
         </Select>;
@@ -960,14 +951,20 @@ const WidgetField = props => {
                 placeholder={isDifferent ? t('different') : null}
                 variant="standard"
                 value={value}
-                multiline
+                multiline={!field.noButton}
                 fullWidth
                 error={!!error}
                 disabled={disabled}
                 helperText={typeof error === 'string' ? I18n.t(error) : null}
                 onChange={e => change(e.target.value)}
                 InputProps={{
-                    endAdornment: <Button disabled={disabled} size="small" onClick={() => setIdDialog(true)}>{I18n.t('Edit')}</Button>,
+                    endAdornment: field.noButton ? null : <Button
+                        disabled={disabled}
+                        size="small"
+                        onClick={() => setIdDialog(true)}
+                    >
+                        <EditIcon />
+                    </Button>,
                     classes: {
                         input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
                     },

@@ -249,6 +249,7 @@ const View = props => {
                     type: 'select',
                     items: background,
                     field: 'background_class',
+                    // eslint-disable-next-line react/no-unstable-nested-components
                     itemModify: item => <>
                         <span className={`${props.classes.backgroundClassSquare} ${item.value}`} />
                         {I18n.t(item.name)}

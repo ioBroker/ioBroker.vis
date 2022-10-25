@@ -51,23 +51,51 @@ export const getWidgetTypes = () => {
         // React widgets
         Object.values(VisView.widgets).forEach(widget => {
             const widgetInfo = widget.getWidgetInfo();
+            const i18nPrefix = widget.i18nPrefix || '';
 
             window.visWidgetTypes.push({
                 name: widgetInfo.id,
                 preview: widgetInfo.visPrev,
-                title: widgetInfo.visName,
+                title: widgetInfo.visName, // old style without translation
                 params: widgetInfo.visAttrs,
                 set: widgetInfo.visSet,
                 style: widgetInfo.visDefaultStyle,
-                label: widgetInfo.visWidgetLabel,
-                setLabel: widgetInfo.visSetLabel,
+                label: widgetInfo.visWidgetLabel ? i18nPrefix + widgetInfo.visWidgetLabel : undefined, // new style with translation
+                setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
                 setColor: widgetInfo.visSetColor,
                 color: widgetInfo.visWidgetColor,
                 resizable: widgetInfo.visResizable,
                 resizeLocked: widgetInfo.visResizeLocked,
                 draggable: widgetInfo.visDraggable,
                 adapter: widget.adapter || undefined,
+                i18nPrefix,
             });
+            if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
+                widgetInfo.visAttrs.forEach(group => {
+                    if (group.label && !group.label.startsWith(i18nPrefix)) {
+                        group.label = i18nPrefix + group.label;
+                    }
+                    if (group.fields) {
+                        group.fields.forEach(field => {
+                            if (field.label && !field.label.startsWith(i18nPrefix)) {
+                                field.label = i18nPrefix + field.label;
+                            }
+                            if (field.tooltip && !field.tooltip.startsWith(i18nPrefix)) {
+                                field.tooltip = i18nPrefix + field.tooltip;
+                            }
+                            if (field.options && !field.noTranslation && Array.isArray(field.options)) {
+                                field.options.forEach(option => {
+                                    if (typeof option === 'object') {
+                                        if (option.label && !option.label.startsWith(i18nPrefix)) {
+                                            option.label = i18nPrefix + option.label;
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         });
     }
 
@@ -80,7 +108,7 @@ const deepClone = obj => {
         if (obj[key] !== undefined) {
             if (Array.isArray(obj[key]) || typeof obj[key] === 'object') {
                 // If it is ReactJS object
-                if (obj.hasOwnProperty('$$typeof')) {
+                if (Object.hasOwn(obj, '$$typeof')) {
                     newObj[key] = obj[key];
                 } else {
                     newObj[key] = deepClone(obj[key]);

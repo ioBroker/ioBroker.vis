@@ -787,24 +787,7 @@ function getRemoteWidgets(socket) {
                                 if (!widgetsName) {
                                     widgetsName = visWidgetsCollection.name;
                                 }
-                                for (const componentKey in visWidgetsCollection.components) {
-                                    ((_componentKey, _visWidgetsCollection) => {
-                                        // const start = Date.now();
-
-                                        const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
-                                            .then(Component => {
-                                                count++;
-                                                // console.log(Component);
-                                                Component.default.adapter = dynamicWidgetInstance.common.name;
-                                                result.push(Component.default);
-                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
-                                            })
-                                            .catch(e => console.error(e));
-                                            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
-
-                                        promises.push(promise);
-                                    })(componentKey, visWidgetsCollection);
-                                }
+                                let i18nPrefix = false;
 
                                 if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === true) {
                                     // load i18n from files
@@ -838,6 +821,13 @@ function getRemoteWidgets(socket) {
                                     const i18nPromise = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
                                         .then(translations => {
                                             count++;
+
+                                            // add automatic prefix to all translations
+                                            if (translations.default.prefix === true) {
+                                                translations.default.prefix = `${dynamicWidgetInstance.common.name}_`;
+                                            }
+                                            i18nPrefix = translations.default.prefix;
+
                                             I18n.extendTranslations(translations.default);
                                             window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
                                         })
@@ -845,6 +835,28 @@ function getRemoteWidgets(socket) {
                                             console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
 
                                     promises.push(i18nPromise);
+                                }
+
+                                for (const componentKey in visWidgetsCollection.components) {
+                                    ((_componentKey, _visWidgetsCollection) => {
+                                        // const start = Date.now();
+
+                                        const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
+                                            .then(Component => {
+                                                count++;
+                                                // console.log(Component);
+                                                Component.default.adapter = dynamicWidgetInstance.common.name;
+                                                if (i18nPrefix) {
+                                                    Component.default.i18nPrefix = i18nPrefix;
+                                                }
+                                                result.push(Component.default);
+                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                            })
+                                            .catch(e => console.error(e));
+                                        // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
+
+                                        promises.push(promise);
+                                    })(componentKey, visWidgetsCollection);
                                 }
                             }
                         } catch (e) {

@@ -92,6 +92,7 @@ class VisView extends React.Component {
                                     }
                                 }
                             });
+
                             resolve(VisView.widgets);
                         }), 0);
             });
@@ -247,7 +248,6 @@ class VisView extends React.Component {
         if (this.ignoreMouseEvents) {
             return;
         }
-        console.log('View down');
         if (e.button === 2) {
             return;
         }

@@ -94,9 +94,7 @@ const Palette = props => {
     // console.log(widgetTypes);
 
     widgetTypes.forEach(widgetType => {
-        if (!widgetsList[widgetType.set]) {
-            widgetsList[widgetType.set] = {};
-        }
+        widgetsList[widgetType.set] = widgetsList[widgetType.set] || {};
         const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
         if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
             return;

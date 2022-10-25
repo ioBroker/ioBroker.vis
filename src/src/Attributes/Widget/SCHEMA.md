@@ -114,6 +114,7 @@ Group can have the following attributes:
 
 - `name`: [mandatory] Attribute name to be stored in data
 - `label`: [optional] Label to be displayed in the UI
+- `tooltip`: [optional] Tooltip of the label (small "i" symbol appears next to text)
 - `default`: [optional] default initial value
 - `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
    Example `!!data["oid" + index]` or `data.type !== "digital" && data.type !== "digital2"`.
@@ -143,6 +144,7 @@ onChange: async (field, data, changeData, socket) => {
     - `step` - [optional] step value
   - `password` - Input in form `****`
   - `image` - Image selector from ioBroker Database
+  - `icon` - 
   - `id` - Object ID
     - `filter` - [optional] Filter of objects (not JSON string, it is object), like:
       - `{common: {custom: true}}` - show only objects with some custom settings
@@ -185,8 +187,10 @@ onChange: async (field, data, changeData, socket) => {
   - `style` - Drop-down menu with all possible styles. ?
   - `custom` - Custom field editor. See [below](#custom-field-editor)
   - `text` - Input field with Edit dialog.
+    - `noButton` - [optional] if true, no edit button will be shown. Default is false. 
   - `html` - Input field with Edit dialog and parsing of HTML code
   - `json` - Input field with Edit dialog and parsing of JSON code
+  - `icon64` - Select from predefined material icons as base64 (svg) (not-implemented)
 
 ### Custom field editor
 Example of custom field

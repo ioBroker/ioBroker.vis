@@ -14,6 +14,9 @@
  */
 
 import PropTypes from 'prop-types';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import VisBaseWidget from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
@@ -61,6 +64,22 @@ class VisRxWidget extends VisBaseWidget {
             visible: true,
             disabled: false,
         };
+    }
+
+    static getI18nPrefix() {
+        return '';
+    }
+
+    static t(key, ...args) {
+        if (this.getI18nPrefix) {
+            return I18n.t(`${this.getI18nPrefix()}${key}`,  ...args);
+        }
+
+        return I18n.t(key);
+    }
+
+    static getLanguage() {
+        return I18n.getLanguage();
     }
 
     onCommand(command, options) {

@@ -216,7 +216,8 @@ const getItem = (item, key, props, full) => {
 };
 
 const ToolbarItems = props => {
-    let { name, items } = props.group;
+    let items = props.group.items;
+    const name = props.group.name;
 
     // flatten buttons
     if (props.toolbarHeight === 'veryNarrow') {
@@ -261,6 +262,7 @@ const ToolbarItems = props => {
 
 ToolbarItems.propTypes = {
     classes: PropTypes.object,
+    // eslint-disable-next-line react/no-unused-prop-types
     themeType: PropTypes.string,
     group: PropTypes.object,
     last: PropTypes.bool,

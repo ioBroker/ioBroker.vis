@@ -145,6 +145,17 @@ const styles = theme => ({
         height: '100%',
         objectFit: 'contain',
     },
+    iconFolder: {
+        verticalAlign: 'middle',
+        marginRight: 6,
+        marginTop: -3,
+        fontSize: 20,
+        color: '#00dc00',
+    },
+    listFolder: {
+        backgroundColor: 'inherit',
+        lineHeight: '36px',
+    },
     coloredWidgetSet: {
         padding: '0 3px',
         borderRadius: 3,
@@ -208,7 +219,7 @@ const getSignals = (count, adapterName) => {
                 default: '==',
             },
             { name: `signals-val-${i}`, default: true },
-            { name: `signals-icon-${i}`, type: 'image', default: adapterName + '/signals/lowbattery.png' },
+            { name: `signals-icon-${i}`, type: 'image', default: `${adapterName}/signals/lowbattery.png` },
             {
                 name: `signals-icon-size-${i}`, type: 'slider', options: { min: 1, max: 120, step: 1 }, default: 0,
             },

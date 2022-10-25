@@ -125,9 +125,9 @@ class BasicViewInWidget extends VisRxWidget {
                 key="button"
                 className={this.props.editModeComponentClass}
                 onMouseDown={e => {
-                    console.log('Widget');
                     e.stopPropagation();
                     e.preventDefault();
+                    // Say to view to ignore next clicks on view to hold the widget selection
                     this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(true);
                     this.setState({ showViewSelector: true });
                 }}
@@ -139,6 +139,7 @@ class BasicViewInWidget extends VisRxWidget {
                 open={!0}
                 onClose={() =>
                     this.setState({ showViewSelector: false }, () =>
+                        // Say to view to cancel ignoring clicks
                         this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false))}
             >
                 <DialogTitle>{I18n.t('vis_2_widgets_basic_contains_view')}</DialogTitle>
@@ -149,6 +150,7 @@ class BasicViewInWidget extends VisRxWidget {
                             key={key.toString()}
                             onClick={() =>
                                 this.setState({ showViewSelector: false }, () => {
+                                    // Say to view to cancel ignoring clicks
                                     this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false);
                                     this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
                                         wid: this.props.id,
@@ -164,7 +166,7 @@ class BasicViewInWidget extends VisRxWidget {
                             <ListItemText primary={option.view} style={{ verticalAlign: 'middle' }} />
                         </MenuItem>
                         :
-                        <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px' }}>
+                        <ListSubheader key={key} style={{ paddingLeft: option.level * 16, lineHeight: '36px', backgroundColor: 'inherit' }}>
                             <FolderOpenedIcon
                                 // className={this.props.classes.icon}
                                 style={{

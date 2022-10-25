@@ -16,6 +16,7 @@ module.exports = {
             '/widgets': 'http://localhost:8082/vis',
             '/widgets.html': 'http://localhost:8082/vis',
             '/web': 'http://localhost:8082',
+            '/state': 'http://localhost:8082',
         },
     },
     webpack: {

@@ -95,6 +95,7 @@ class VisEngine extends React.Component {
         window.systemLang = props.lang || window.systemLang || 'en';
 
         // modify jquery dialog to add it to view (originally dialog was added to body) (because of styles)
+        // eslint-disable-next-line func-names
         window.$.ui.dialog.prototype._appendTo = function () {
             const wid = this.options.wid;
             const view = Object.keys(props.views).find(v => props.views[v].widgets && props.views[v].widgets[wid]);
