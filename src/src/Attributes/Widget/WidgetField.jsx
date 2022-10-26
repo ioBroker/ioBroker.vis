@@ -15,7 +15,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import {
-    I18n, IconPicker, Utils, Icon, ColorPicker, SelectID, TextWithIcon,
+    I18n, IconPicker, Utils, Icon, TextWithIcon, ColorPicker, SelectID,
 } from '@iobroker/adapter-react-v5';
 
 import FileBrowser from './FileBrowser';
@@ -362,7 +362,7 @@ const WidgetField = props => {
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
                 types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] : null}
-                expertMode={field.filter === 'chart'}
+                expertMode={field.filter === 'chart' ? true : undefined}
                 customFilter={field.type === 'hid' || field.type === 'history' ?
                     { common: { custom: '_dataSources' } }
                     : (typeof field.filter === 'string' &&
@@ -944,15 +944,17 @@ const WidgetField = props => {
     }
 
     if (field.type === 'icon64') {
-        return <>
+        return <div style={{ textAlign: 'right', width: '100%' }}>
             <Button
-                variant={value ? 'outlined' : 'contained'}
+                variant={value ? 'outlined' : undefined}
+                color={value ? 'grey' : undefined}
                 onClick={() => setIdDialog(true)}
             >
                 {value ? <Icon src={value} style={{ width: 36, height: 36 }} /> : '...'}
             </Button>
             {idDialog &&
                 <MaterialIconSelector
+                    value={value}
                     onClose={icon => {
                         setIdDialog(false);
                         if (icon !== null) {
@@ -960,7 +962,7 @@ const WidgetField = props => {
                         }
                     }}
                 />}
-        </>;
+        </div>;
     }
 
     if (field.type === 'text' || field.type === 'html' || field.type === 'json') {

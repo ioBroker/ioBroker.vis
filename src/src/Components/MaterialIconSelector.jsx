@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@mui/styles';
-// import pako from 'pako';
 
 import {
     Button,
@@ -24,7 +23,7 @@ import {
     Delete as EraseIcon,
 } from '@mui/icons-material';
 
-import { I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 const styles = theme => ({
     iconName: {
@@ -38,13 +37,22 @@ const styles = theme => ({
         cursor: 'pointer',
         padding: 2,
         borderRadius: 2,
+        '&:hover': {
+            backgroundColor: theme.palette.secondary.main,
+        },
+        paddingLeft: '2px !important',
+        paddingTop: '2px !important',
     },
     icon: {
         width: 48,
         height: 48,
+        color: theme.palette.text.primary,
     },
     iconSelected: {
         backgroundColor: theme.palette.primary.main,
+        '&:hover': {
+            backgroundColor: theme.palette.primary.light,
+        },
     },
     typeName: {
         whiteSpace: 'nowrap',
@@ -219,7 +227,7 @@ class MaterialIconSelector extends Component {
                     </FormControl>
                 </div> : null}
                 <div style={{ width: 'calc(100% - 120px)', display: 'inline-block' }}>
-                    {this.state.iconType === 'knx-uf' ? <div style={{ paddingBottom: 10 }}>
+                    {this.state.iconType === 'knx-uf' ? <div style={{ paddingBottom: 20 }}>
                         {I18n.t('Source:')}
                         &nbsp;
                         <a
@@ -237,13 +245,13 @@ class MaterialIconSelector extends Component {
                                 <Grid
                                     item
                                     key={icon}
-                                    className={this.props.classes.iconDiv}
+                                    className={Utils.clsx(this.props.classes.iconDiv, this.state.selectedIcon === icon && this.props.classes.iconSelected)}
                                     onClick={() => this.setState({ selectedIcon: icon })}
+                                    onDoubleClick={() => this.setState({ selectedIcon: icon }, () => this.onSelect())}
                                 >
-                                    <img
+                                    <Icon
                                         src={this.list[this.state.iconType][icon]}
-                                        alt={icon}
-                                        className={Utils.clsx(this.props.classes.icon, this.state.selectedIcon === icon && this.props.classes.iconSelected)}
+                                        className={this.props.classes.icon}
                                     />
                                     <div className={this.props.classes.iconName}>{icon.replace(/_/g, ' ')}</div>
                                 </Grid>)}
@@ -252,6 +260,14 @@ class MaterialIconSelector extends Component {
                 </div>
             </DialogContent>
             <DialogActions>
+                {this.props.value ? <Button
+                    variant="outlined"
+                    color="grey"
+                    onClick={() => this.props.onClose('')}
+                    startIcon={<EraseIcon />}
+                >
+                    {I18n.t('Delete')}
+                </Button> : null}
                 <Button
                     variant="contained"
                     color="primary"
@@ -260,14 +276,6 @@ class MaterialIconSelector extends Component {
                     startIcon={<CheckIcon />}
                 >
                     {I18n.t('Select')}
-                </Button>
-                <Button
-                    variant="contained"
-                    color="grey"
-                    onClick={() => this.props.onClose('')}
-                    startIcon={<EraseIcon />}
-                >
-                    {I18n.t('Delete')}
                 </Button>
                 <Button
                     variant="contained"
@@ -282,7 +290,7 @@ class MaterialIconSelector extends Component {
     }
 }
 MaterialIconSelector.propTypes = {
-    icon: PropTypes.string, // current icon
+    value: PropTypes.string, // current icon
     filter: PropTypes.string, // filter for icon list
     iconType: PropTypes.string, // icon type (baseline, outlined, round, sharp, twotone)
     onClose: PropTypes.func.isRequired, // close dialog
