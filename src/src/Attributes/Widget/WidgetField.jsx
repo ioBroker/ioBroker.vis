@@ -21,6 +21,7 @@ import {
 import FileBrowser from './FileBrowser';
 import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
+import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
 function collectClasses() {
     const result = [];
@@ -932,16 +933,34 @@ const WidgetField = props => {
     }
 
     if (field.type === 'icon') {
-        if (field.type === 'icon') {
-            return <IconPicker
-                label="Icon"
-                t={I18n.t}
-                lang={I18n.getLanguage()}
-                value={value}
-                onChange={fileBlob => change(fileBlob)}
-                previewClassName={props.classes.iconPreview}
-            />;
-        }
+        return <IconPicker
+            label="Icon"
+            t={I18n.t}
+            lang={I18n.getLanguage()}
+            value={value}
+            onChange={fileBlob => change(fileBlob)}
+            previewClassName={props.classes.iconPreview}
+        />;
+    }
+
+    if (field.type === 'icon64') {
+        return <>
+            <Button
+                variant={value ? 'outlined' : 'contained'}
+                onClick={() => setIdDialog(true)}
+            >
+                {value ? <Icon src={value} style={{ width: 36, height: 36 }} /> : '...'}
+            </Button>
+            {idDialog &&
+                <MaterialIconSelector
+                    onClose={icon => {
+                        setIdDialog(false);
+                        if (icon !== null) {
+                            change(icon);
+                        }
+                    }}
+                />}
+        </>;
     }
 
     if (field.type === 'text' || field.type === 'html' || field.type === 'json') {

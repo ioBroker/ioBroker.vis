@@ -281,7 +281,7 @@
   "not defined": "не определено",
   "set_basic": "базовый",
   "text-shadow": "тень текста",
-  "value_string": "значение_строка",
+  "value_string": "Текстовая строка",
   "word-spacing": "межсловный интервал",
   "This view will be shown only to defined groups": "Эта страница будет отображаться только для определенных групп",
   "CSS Common": "CSS Основные",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "Скопировать в буфер обмена",
   "Narrow panel": "Узкая панель",
   "Ignored in edit mode": "Игнорируется в режиме редактирования",
-  "vis_2_widgets_basic_contains_view": "Страница"
+  "vis_2_widgets_basic_contains_view": "Страница",
+  "material_icons_result": "%s совпадающих результатов",
+  "material_icons_outline": "Обрисованные",
+  "material_icons_round": "Закруглённые",
+  "material_icons_sharp": "Заострённые",
+  "material_icons_baseline": "Заполненные",
+  "material_icons_twotone": "Двухцветные",
+  "Select": "Выбрать",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Размер значка в пикселях"
 }

@@ -281,7 +281,7 @@
   "not defined": "niet gedefinieerd",
   "set_basic": "basis",
   "text-shadow": "schaduw tekst",
-  "value_string": "value_string",
+  "value_string": "snaar",
   "word-spacing": "woordspatiëring",
   "This view will be shown only to defined groups": "Deze weergave wordt alleen getoond aan gedefinieerde groepen",
   "CSS Common": "CSS algemeen",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "Kopieer naar klembord",
   "Narrow panel": "smal paneel",
   "Ignored in edit mode": "Genegeerd in bewerkingsmodus",
-  "vis_2_widgets_basic_contains_view": "Gebruik weergave"
+  "vis_2_widgets_basic_contains_view": "Gebruik weergave",
+  "material_icons_result": "%s overeenkomende resultaten",
+  "material_icons_outline": "geschetst",
+  "material_icons_round": "Ronde",
+  "material_icons_sharp": "Scherp",
+  "material_icons_baseline": "Gevuld",
+  "material_icons_twotone": "Twee toon",
+  "Select": "Selecteer",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Pictogramgrootte in pixels"
 }

@@ -281,7 +281,7 @@
   "not defined": "Nie określono",
   "set_basic": "podstawowy",
   "text-shadow": "cień tekstu",
-  "value_string": "ciąg_wartości",
+  "value_string": "strunowy",
   "word-spacing": "odstępy między wyrazami",
   "This view will be shown only to defined groups": "Ten widok będzie widoczny tylko dla zdefiniowanych grup",
   "CSS Common": "CSS Wspólne",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "Skopiuj do schowka",
   "Narrow panel": "Wąski panel",
   "Ignored in edit mode": "Ignorowane w trybie edycji",
-  "vis_2_widgets_basic_contains_view": "Użyj widoku"
+  "vis_2_widgets_basic_contains_view": "Użyj widoku",
+  "material_icons_result": "%s pasujących wyników",
+  "material_icons_outline": "Przedstawione",
+  "material_icons_round": "Okrągły",
+  "material_icons_sharp": "Ostry",
+  "material_icons_baseline": "Wypełniony",
+  "material_icons_twotone": "Dwutonowy",
+  "Select": "Wybierz",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Rozmiar ikony w pikselach"
 }

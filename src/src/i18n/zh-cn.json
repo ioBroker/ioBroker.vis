@@ -281,7 +281,7 @@
   "not defined": "没有定义的",
   "set_basic": "基本的",
   "text-shadow": "文字阴影",
-  "value_string": "值字符串",
+  "value_string": "细绳",
   "word-spacing": "字间距",
   "This view will be shown only to defined groups": "此视图将仅显示给定义的组",
   "CSS Common": "CSS 通用",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "复制到剪贴板",
   "Narrow panel": "窄面板",
   "Ignored in edit mode": "在编辑模式下被忽略",
-  "vis_2_widgets_basic_contains_view": "使用视图"
+  "vis_2_widgets_basic_contains_view": "使用视图",
+  "material_icons_result": "%s 匹配结果",
+  "material_icons_outline": "概述",
+  "material_icons_round": "圆形的",
+  "material_icons_sharp": "锋利的",
+  "material_icons_baseline": "填充",
+  "material_icons_twotone": "双色",
+  "Select": "选择",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "图标大小（以像素为单位）"
 }

@@ -281,7 +281,7 @@
   "not defined": "не визначений",
   "set_basic": "базовый",
   "text-shadow": "текст-тінь",
-  "value_string": "рядок_значення",
+  "value_string": "рядок",
   "word-spacing": "міжсловний інтервал",
   "This view will be shown only to defined groups": "Це вікно буде показано лише визначеним групам",
   "CSS Common": "CSS Common",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "Копіювати в буфер обміну",
   "Narrow panel": "Вузька панель",
   "Ignored in edit mode": "Ігнорується в режимі редагування",
-  "vis_2_widgets_basic_contains_view": "Перегляд"
+  "vis_2_widgets_basic_contains_view": "Перегляд",
+  "material_icons_result": "%s відповідних результатів",
+  "material_icons_outline": "Окреслено",
+  "material_icons_round": "Круглий",
+  "material_icons_sharp": "Гострий",
+  "material_icons_baseline": "Заповнений",
+  "material_icons_twotone": "Двоколірний",
+  "Select": "Виберіть",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Розмір значка в пікселях"
 }

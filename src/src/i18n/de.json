@@ -281,7 +281,7 @@
   "not defined": "nicht definiert",
   "set_basic": "Basic",
   "text-shadow": "Text-Schatten",
-  "value_string": "value_string",
+  "value_string": "Zeichenfolge",
   "word-spacing": "Wortabstand",
   "This view will be shown only to defined groups": "Diese Seite wird nur definierten Gruppen angezeigt",
   "CSS Common": "CSS allgemein",
@@ -332,5 +332,14 @@
   "Copy to clipboard": "In die Zwischenablage kopieren",
   "Narrow panel": "Schmale Platte",
   "Ignored in edit mode": "Im Bearbeitungsmodus ignoriert",
-  "vis_2_widgets_basic_contains_view": "Seite"
+  "vis_2_widgets_basic_contains_view": "Seite",
+  "material_icons_result": "%s übereinstimmende Ergebnisse",
+  "material_icons_outline": "Umgerissen",
+  "material_icons_round": "Gerundet",
+  "material_icons_sharp": "Spitzige",
+  "material_icons_baseline": "Gefüllt",
+  "material_icons_twotone": "Zweifarbig",
+  "Select": "Auswählen",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Symbolgröße in Pixel"
 }

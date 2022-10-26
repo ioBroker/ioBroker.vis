@@ -36,7 +36,8 @@
     "gulp": "^4.0.2",
     "iobroker.web": "*",
     "mocha": "^10.0.0",
-    "chai": "^4.3.6"
+    "chai": "^4.3.6",
+    "unzipper": "^0.10.11"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
@@ -58,6 +59,7 @@
     "install-only": "npm install --ignore-scripts",
     "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
     "build": "node node_modules/gulp/bin/gulp.js",
+    "build-beta": "node node_modules/gulp/bin/gulp.js beta",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",

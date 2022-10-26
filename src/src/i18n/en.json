@@ -132,7 +132,7 @@
   "Widget": "Widget",
   "CSS": "CSS",
   "Scripts": "Scripts",
-  "value_string": "value_string",
+  "value_string": "String",
   "set_basic": "basic",
   "Palette": "Palette",
   "Expand all": "Expand all",
@@ -332,5 +332,14 @@
   "Browse objects": "Browse objects",
   "Copy to clipboard": "Copy to clipboard",
   "Narrow panel": "Narrow panel",
-  "Ignored in edit mode": "Ignored in edit mode"
+  "Ignored in edit mode": "Ignored in edit mode",
+  "material_icons_result": "%s matching results",
+  "material_icons_outline": "Outlined",
+  "material_icons_round": "Round",
+  "material_icons_sharp": "Sharp",
+  "material_icons_baseline": "Filled",
+  "material_icons_twotone": "Two-tone",
+  "Select": "Select",
+  "material_icons_knx-uf": "knx-uf",
+  "icon_size_in_pixels": "Icon size in pixels"
 }

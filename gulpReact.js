@@ -5,9 +5,11 @@
  *
  **/
 'use strict';
-const fs   = require('fs');
-const path = require('path');
-const cp   = require('child_process');
+const fs    = require('fs');
+const path  = require('path');
+const cp    = require('child_process');
+const axios = require('axios');
+const unzipper = require('unzipper');
 
 function init(gulp) {
     gulp.task('0-clean', done => {
@@ -56,6 +58,83 @@ function init(gulp) {
 
     gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
+    gulp.task('3-svg-icons', done => {
+        const svgPath = path.join(__dirname, 'src/node_modules/@material-icons/svg/');
+        const data = JSON.parse(fs.readFileSync(svgPath + 'data.json').toString('utf8'));
+        !fs.existsSync(__dirname + '/src/public/material-icons') && fs.mkdirSync(__dirname + '/src/public/material-icons');
+        fs.writeFileSync(__dirname + '/src/public/material-icons/index.json', JSON.stringify(data.icons));
+        const folders = fs.readdirSync(`${svgPath}svg`);
+        const result = {};
+        folders.forEach(folder => {
+            const files = fs.readdirSync(`${svgPath}svg/${folder}`);
+
+            files.forEach(file => {
+                result[file] = result[file] || {};
+                let data = fs.readFileSync(`${svgPath}svg/${folder}/${file}`).toString('utf8');
+                // add currentColor
+                data = data.replace(/<path /g, '<path fill="currentColor" ');
+                data = data.replace(/<circle /g, '<circle fill="currentColor" ');
+                if (data.includes('line')) {
+                    console.log(`"${file} in ${folder} has fill or stroke`);
+                }
+
+                result[file][folder] = Buffer.from(data).toString('base64');
+                // console.log(pako.inflate(Buffer.from(result[file][folder], 'base64'), {to: 'string'}));
+            });
+        });
+        Object.keys(result).forEach(file => {
+            fs.writeFileSync(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file]));
+        });
+
+        // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
+        if (!fs.existsSync(__dirname + '/knx-uf-iconset/master.zip')) {
+            axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'})
+                .then(async res => {
+                    !fs.existsSync(__dirname + '/knx-uf-iconset') && fs.mkdirSync(__dirname + '/knx-uf-iconset');
+                    fs.writeFileSync(__dirname + '/knx-uf-iconset/master.zip', res.data);
+
+                    const zip = fs.createReadStream(__dirname + '/knx-uf-iconset/master.zip').pipe(unzipper.Parse({forceStream: true}));
+                    for await (const entry of zip) {
+                        const fileName = entry.path;
+                        if (entry.type === 'File' && fileName.endsWith('.svg')) {
+                            entry.pipe(fs.createWriteStream(`${__dirname}/knx-uf-iconset/${path.basename(fileName)}`));
+                        } else {
+                            entry.autodrain();
+                        }
+                    }
+                    const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
+                    const result = {}
+                    for (let f = 0; f < files.length; f++) {
+                        let data = fs.readFileSync(`${__dirname}/knx-uf-iconset/${files[f]}`).toString('utf8');
+                        // add currentColor
+                        data = data.replace(/fill="#FFFFFF"/g, 'fill="currentColor"');
+                        data = data.replace(/stroke="#FFFFFF"/g, 'stroke="currentColor"');
+                        data = data.replace(/fill:#FFFFFF/g, 'fill:currentColor');
+                        data = data.replace(/stroke:#FFFFFF/g, 'stroke:currentColor');
+                        data = data.replace(/xmlns:xlink="http:\/\/www.w3.org\/1999\/xlink"\s?/g, '');
+                        data = data.replace(/<!DOCTYPE\s[^>]+>\s?/g, '');
+                        data = data.replace(/x="0px"\s?/g, '');
+                        data = data.replace(/y="0px"\s?/g, '');
+                        data = data.replace(/<!--[^>]+>/g, '');
+                        data = data.replace(/\s?xml:space="preserve"/g, '');
+                        data = data.replace(/\r\n/g, '\n');
+                        data = data.replace(/\n\n/g, '\n');
+                        data = data.replace(/\n\n/g, '\n');
+                        data = data.replace(/\sid="([^"]+)?"/g, '');
+                        data = data.replace(/<g>\n<\/g>\n?/g, '');
+                        data = data.replace(/<g>\n<\/g>\n?/g, '');
+
+                        result[files[f].replace('.svg', '')] = Buffer.from(data).toString('base64');
+                    }
+
+                    fs.writeFileSync(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
+                    done();
+                });
+        } else {
+            done();
+        }
+    });
+
     function build() {
         // copy ace files into src/public/lib/js/ace
         let ace = __dirname + '/src/node_modules/ace-builds/src-min-noconflict/';
@@ -100,9 +179,9 @@ function init(gulp) {
         });
     }
 
-    gulp.task('3-build', () => build());
+    gulp.task('4-build', () => build());
 
-    gulp.task('3-build-dep', gulp.series('2-npm', '3-build'));
+    gulp.task('4-build-dep', gulp.series('2-npm', '3-svg-icons', '4-build'));
 
     function copyFiles() {
         copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'));
@@ -110,9 +189,9 @@ function init(gulp) {
         return Promise.resolve();
     }
 
-    gulp.task('5-copy', () => copyFiles());
+    gulp.task('6-copy', () => copyFiles());
 
-    gulp.task('5-copy-dep', gulp.series('3-build-dep', '5-copy'));
+    gulp.task('6-copy-dep', gulp.series('4-build-dep', '6-copy'));
 
     function patchFile(htmlFile) {
         if (fs.existsSync(htmlFile)) {
@@ -159,7 +238,7 @@ function init(gulp) {
         }
     }
 
-    gulp.task('6-patch', done => {
+    gulp.task('7-patch', done => {
         patchFile(__dirname + '/www/index.html');
         patchFile(__dirname + '/www/edit.html');
         patchFile(__dirname + '/src/build/index.html');
@@ -167,11 +246,11 @@ function init(gulp) {
         done();
     });
 
-    gulp.task('6-patch-dep',  gulp.series('5-copy-dep', '6-patch'));
+    gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
 
-    gulp.task('buildReact', gulp.series('6-patch-dep'));
+    gulp.task('buildReact', gulp.series('7-patch-dep'));
 
-    gulp.task('7-beta', async () => {
+    gulp.task('8-beta', async () => {
         !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
 
         copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'), ['i18n']);
@@ -213,7 +292,7 @@ function init(gulp) {
         }
     });
 
-    gulp.task('beta', gulp.series('6-patch-dep', '7-beta'));
+    gulp.task('beta', gulp.series('7-patch-dep', '8-beta'));
 }
 
 module.exports = init;
