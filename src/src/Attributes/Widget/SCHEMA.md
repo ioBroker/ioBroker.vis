@@ -146,6 +146,7 @@ onChange: async (field, data, changeData, socket) => {
   - `image` - Image selector from ioBroker Database
   - `icon` - 
   - `id` - Object ID
+    - `noInit` - [optional] Do not write 'nothing_selected' into the field by creation
     - `filter` - [optional] Filter of objects (not JSON string, it is object), like:
       - `{common: {custom: true}}` - show only objects with some custom settings
       - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)

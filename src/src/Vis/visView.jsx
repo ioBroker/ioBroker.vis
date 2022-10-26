@@ -20,7 +20,7 @@ import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import { Utils } from '@iobroker/adapter-react-v5';
 
-import VisCanWidget from './visCanWidget';
+import VisBaseWidget from './visBaseWidget';
 import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
 import WIDGETS from './Widgets';
 import VisNavigation from './visNavigation';
@@ -877,7 +877,7 @@ class VisView extends React.Component {
     }
 
     static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents) {
-        const Widget = VisView.widgets[widget.tpl] || VisCanWidget;
+        const Widget = VisView.widgets[widget.tpl] || VisBaseWidget;
 
         const _props = {
             key: `${index}_${id}`,

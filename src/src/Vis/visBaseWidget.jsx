@@ -22,7 +22,7 @@ import ExpandIcon from '@mui/icons-material/Expand';
 import UpIcon from '@mui/icons-material/ArrowUpward';
 import DownIcon from '@mui/icons-material/ArrowDownward';
 
-import { Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import {
     addClass,
@@ -894,13 +894,17 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(props) {
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
         return <div
             style={{
                 width: '100%',
                 height: '100%',
                 overflow: 'hidden',
+                background: 'repeating-linear-gradient(45deg, #333, #333 10px, #666 10px, #666 20px)',
+                color: '#FFF',
             }}
         >
+            <div style={{ color: '#FF0000', paddingLeft: 10 }}>{I18n.t('Unknown widget type "%s"', widget.tpl)}</div>
             <pre>{ JSON.stringify(this.state.data, null, 2) }</pre>
         </div>;
     }

@@ -57,7 +57,7 @@ const Widgets = props => {
                     const tpl = widgets[widget].tpl;
                     const widgetType = widgetTypes.find(w => w.name === tpl);
                     let widgetLabel = widgetType?.title;
-                    let widgetColor = widgetType?.setColor;
+                    let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
                     if (widgetType?.label) {
                         widgetLabel = I18n.t(widgetType.label);
                     }
@@ -72,7 +72,7 @@ const Widgets = props => {
                         }
                     }
 
-                    let widgetIcon = widgetType?.preview || '';
+                    let widgetIcon = widgetType ? (widgetType.preview || '') : 'icon/question.svg';
                     if (widgetIcon.startsWith('<img')) {
                         const prev = widgetIcon.match(/src="([^"]+)"/);
                         if (prev && prev[1]) {
@@ -82,7 +82,7 @@ const Widgets = props => {
 
                     return {
                         name: widget,
-                        subName: widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : '',
+                        subName: widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl,
                         value: widget,
                         color: widgetColor,
                         icon: widgetIcon.startsWith('<') ? '' : widgetIcon,

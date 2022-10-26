@@ -619,7 +619,7 @@ class App extends GenericApp {
         fields.forEach(group => {
             if (group.fields) {
                 group.fields.forEach(field => {
-                    if (field.name.includes('oid') || field.type === 'id') {
+                    if (!field.noInit && (field.name.includes('oid') || field.type === 'id')) {
                         widgets[newKey].data[field.name] = 'nothing_selected';
                     }
                     if (field.default) {
