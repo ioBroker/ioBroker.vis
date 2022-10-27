@@ -33,11 +33,11 @@ import Palette from './Palette';
 import Toolbar from './Toolbar';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
-import VisView from './Vis/visView';
 import { registerWidgetsLoadIndicator } from './Vis/visUtils';
 import {
-    DndPreview, getWidgetTypes, isTouchDevice, parseAttributes,
+    DndPreview, isTouchDevice,
 } from './Utils';
+import VisWidgetsCatalog, { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 
 const generateClassName = createGenerateClassName({
@@ -466,7 +466,7 @@ class App extends GenericApp {
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.runtime) {
-            await VisView.collectInformation(this.socket);
+            await VisWidgetsCatalog.collectRxInformation(this.socket);
         }
 
         await this.refreshProjects();

@@ -337,7 +337,7 @@ function doLicense(license, uuid) {
 
 async function readAdaptersList() {
     const res = await adapter.getObjectViewAsync('system', 'instance', {});
-    return res.rows.filter(item => item.value.common.enabled)
+    return res.rows.filter(item => item.value.common.enabled || item.value.common.name.startsWith('vis-')) // some vis-xxx instances are disabled, but they cannot be activated from admin
         .map(item => item.value._id.replace('system.adapter.', '').replace(/\.\d+$/, '')).sort();
 }
 

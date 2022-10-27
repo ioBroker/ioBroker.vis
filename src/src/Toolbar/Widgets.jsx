@@ -23,7 +23,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
-import { getWidgetTypes } from '../Utils';
+import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 import WidgetImportDialog from './WidgetImportDialog';
 import WidgetExportDialog from './WidgetExportDialog';
 

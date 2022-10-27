@@ -20,7 +20,7 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
-import { getWidgetTypes } from '../Utils';
+import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
 
 const styles = theme => ({
     widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },

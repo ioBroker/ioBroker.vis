@@ -17,7 +17,7 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
-import { getWidgetTypes, parseAttributes } from '../../Utils';
+import { getWidgetTypes, parseAttributes } from '../../Vis/visWidgetsCatalog';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,

@@ -172,7 +172,9 @@ class MaterialIconSelector extends Component {
             <DialogTitle>
                 <span style={{ marginRight: 20 }}>
                     {this.state.iconType === 'knx-uf' ? 'KNX UF' : 'Material'}
-                    &nbsp;Icon Selector</span>
+                    &nbsp;
+                    Icon Selector
+                </span>
                 <TextField
                     value={this.state.filter}
                     InputProps={{

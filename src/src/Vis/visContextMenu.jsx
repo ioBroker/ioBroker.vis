@@ -20,7 +20,7 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import IOContextMenu from '../Components/IOContextMenu';
 import WidgetExportDialog from '../Toolbar/WidgetExportDialog';
 import WidgetImportDialog from '../Toolbar/WidgetImportDialog';
-import { getWidgetTypes } from '../Utils';
+import { getWidgetTypes } from './visWidgetsCatalog';
 
 const VisContextMenu = props => {
     const [exportDialog, setExportDialog] = useState(false);

@@ -21,9 +21,10 @@ import { StylesProvider, createGenerateClassName } from '@mui/styles';
 import { Utils } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from './visBaseWidget';
-import { addClass, getRemoteWidgets, parseDimension } from './visUtils';
-import WIDGETS from './Widgets';
+import VisCanWidget from './visCanWidget';
+import { addClass, parseDimension } from './visUtils';
 import VisNavigation from './visNavigation';
+import VisWidgetsCatalog from './visWidgetsCatalog';
 
 const generateClassNameEngine = createGenerateClassName({
     productionPrefix: 'vis',
@@ -40,12 +41,10 @@ class VisView extends React.Component {
 
     static themeCache = {};
 
-    static widgets = null;
-
     constructor(props) {
         super(props);
 
-        this.promiseToCollect = VisView.collectInformation(props.socket);
+        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.socket);
 
         this.state = {
             mounted: false,
@@ -66,39 +65,6 @@ class VisView extends React.Component {
         this.selectDiv = null;
         this.movement = null;
         this.ignoreMouseEvents = false;
-    }
-
-    static collectInformation(socket) {
-        if (!VisView.widgets) {
-            VisView.widgets = {};
-            return new Promise(resolve => {
-                setTimeout(() =>
-                    getRemoteWidgets(socket)
-                        .then(widgetSets => {
-                            const collectedWidgets = [...WIDGETS, ...widgetSets];
-                            collectedWidgets.forEach(Widget => {
-                                if (!Widget.getWidgetInfo) {
-                                    console.error(`Invalid widget without getWidgetInfo: ${Widget.constructor.name}`);
-                                } else {
-                                    const info = Widget.getWidgetInfo();
-                                    if (!info.visSet) {
-                                        console.error(`No visSet in info for "${Widget.constructor.name}"`);
-                                    }
-
-                                    if (!info.id) {
-                                        console.error(`No id in info for "${Widget.constructor.name}"`);
-                                    } else {
-                                        VisView.widgets[info.id] = Widget;
-                                    }
-                                }
-                            });
-
-                            resolve(VisView.widgets);
-                        }), 0);
-            });
-        }
-
-        return Promise.resolve(VisView.widgets);
     }
 
     componentDidMount() {
@@ -877,7 +843,7 @@ class VisView extends React.Component {
     }
 
     static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents) {
-        const Widget = VisView.widgets[widget.tpl] || VisBaseWidget;
+        const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
         const _props = {
             key: `${index}_${id}`,
