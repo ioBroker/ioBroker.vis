@@ -46,6 +46,10 @@ class VisWidgetsCatalog {
                                 }
                             });
 
+                            // init all widgets
+                            // eslint-disable-next-line no-use-before-define
+                            getWidgetTypes(socket);
+
                             resolve(VisWidgetsCatalog.rxWidgets);
                         }), 0);
             });

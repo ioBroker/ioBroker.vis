@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.1",
+        "version": "2.0.3",
         "news": {
-            "2.0.1": {
+            "2.0.3": {
                 "en": "Completely new visualization, but compatible with previous version",
                 "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
                 "ru": "Полностью новая визуализация, но совместима с предыдущей версией",
@@ -182,7 +182,8 @@
             "img": "vis/img/faviconEdit.png",
             "color": "#c8ffe1",
             "order": 1
-        }
+        },
+        "stopBeforeUpdate": true
     },
     "native": {
         "defaultFileMode": 1604,
