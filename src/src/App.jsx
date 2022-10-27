@@ -44,6 +44,11 @@ const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
 });
 
+const WIDGETS_LOADING_STEP_NOT_STARTED = 0;
+const WIDGETS_LOADING_STEP_HTML_LOADED = 1;
+const WIDGETS_LOADING_STEP_RX_LOADED = 1;
+const WIDGETS_LOADING_STEP_ALL_LOADED = 2;
+
 const styles = theme => ({
     block: {
         overflow: 'auto',
@@ -237,7 +242,7 @@ class App extends GenericApp {
             },
             showCode: window.localStorage.getItem('showCode') === 'true',
             editMode: true,
-            widgetsLoaded: false,
+            widgetsLoaded: WIDGETS_LOADING_STEP_NOT_STARTED,
             fonts: [],
             history: [],
             historyCursor: 0,
@@ -465,8 +470,9 @@ class App extends GenericApp {
 
     async onConnectionReady() {
         // preload all widgets first
-        if (this.state.runtime) {
+        if (this.state.widgetsLoaded === WIDGETS_LOADING_STEP_HTML_LOADED) {
             await VisWidgetsCatalog.collectRxInformation(this.socket);
+            await this.setStateAsync({ widgetsLoaded: WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
         await this.refreshProjects();
@@ -1497,10 +1503,10 @@ class App extends GenericApp {
                 this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
             )}
         >
-            {!this.state.widgetsLoaded ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
+            {this.state.widgetsLoaded !== WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
             <Palette
                 classes={{}}
-                widgetsLoaded={this.state.widgetsLoaded}
+                widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
                     this.setState({ hidePalette: true });
@@ -1578,7 +1584,7 @@ class App extends GenericApp {
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
-                widgetsLoaded={this.state.widgetsLoaded}
+                widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
                 socket={this.socket}
                 themeName={this.state.themeName}
                 fonts={this.state.fonts}
@@ -1596,6 +1602,15 @@ class App extends GenericApp {
                 adapterId={this.adapterId}
             />
         </div>;
+    }
+
+    async onWidgetsLoaded() {
+        let widgetsLoaded = WIDGETS_LOADING_STEP_HTML_LOADED;
+        if (this.socket.isConnected()) {
+            await VisWidgetsCatalog.collectRxInformation(this.socket);
+            widgetsLoaded = WIDGETS_LOADING_STEP_ALL_LOADED;
+        }
+        this.setState({ widgetsLoaded });
     }
 
     render() {
@@ -1618,6 +1633,7 @@ class App extends GenericApp {
 
         const visEngine = <VisEngine
             key={this.state.projectName}
+            widgetsLoaded={this.state.widgetsLoaded}
             activeView={this.state.selectedView || ''}
             editMode={!this.state.runtime && this.state.editMode}
             runtime={this.state.runtime}
@@ -1630,7 +1646,7 @@ class App extends GenericApp {
             instance={this.instance}
             selectedWidgets={this.state.selectedWidgets}
             setSelectedWidgets={this.setSelectedWidgets}
-            onLoaded={() => this.setState({ widgetsLoaded: true })}
+            onLoaded={() => this.onWidgetsLoaded()}
             selectedGroup={this.state.selectedGroup}
             setSelectedGroup={this.setSelectedGroup}
             onWidgetsChanged={this.onWidgetsChanged}
@@ -1715,7 +1731,7 @@ class App extends GenericApp {
                             undo={this.undo}
                             redo={this.redo}
                             deleteWidgets={this.deleteWidgets}
-                            widgetsLoaded={this.state.widgetsLoaded}
+                            widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
                             widgetsClipboard={this.state.widgetsClipboard}
                             cutWidgets={this.cutWidgets}
                             copyWidgets={this.copyWidgets}

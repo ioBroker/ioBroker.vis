@@ -981,14 +981,8 @@ class VisEngine extends React.Component {
             document.body.appendChild(div);
 
             await VisEngine.setInnerHTML(div, text);
-            // console.log('Loaded');
 
-            // Send react widgets to App only in edit mode
-            const arrayWidgets = [];
-            !this.props.runtime && Object.keys((await VisWidgetsCatalog.collectRxInformation(this.props.socket)))
-                .forEach(item => arrayWidgets.push(item));
-
-            this.props.onLoaded && this.props.onLoaded(arrayWidgets);
+            this.props.onLoaded && this.props.onLoaded();
         } catch (error) {
             console.error(`Cannot load widgets: ${error}`);
             console.error(`Cannot load widgets: ${JSON.stringify(error.stack)}`);
@@ -1387,7 +1381,7 @@ ${this.scripts}
     }
 
     render() {
-        if (!this.state.ready) {
+        if (!this.state.ready || this.props.widgetsLoaded < 2) {
             return null;
         }
 

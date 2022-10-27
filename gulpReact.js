@@ -102,6 +102,8 @@ function init(gulp) {
                             entry.autodrain();
                         }
                     }
+
+                    // prepare KNX-UF icons
                     const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
                     const result = {}
                     for (let f = 0; f < files.length; f++) {
