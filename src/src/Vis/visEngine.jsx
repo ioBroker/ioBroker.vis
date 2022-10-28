@@ -33,7 +33,6 @@ import './visWords';
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
 import { getUrlParameter } from './visUtils';
-import VisWidgetsCatalog from './visWidgetsCatalog';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {

@@ -118,7 +118,7 @@ export const getWidgetTypes = () => {
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
 
-            window.visWidgetTypes.push();
+            window.visWidgetTypes.push(widgetObj);
             if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
                 widgetInfo.visAttrs.forEach(group => {
                     if (group.label && !group.label.startsWith(i18nPrefix)) {

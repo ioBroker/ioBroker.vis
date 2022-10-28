@@ -361,12 +361,14 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.width = this.refService.current.style.height;
                 }
                 if (this.widDiv) {
                     this.widDiv.style.top = `${this.movement.top + y}px`;
                     this.widDiv.style.height = `${this.movement.height - y}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.width = this.widDiv.style.height;
                     }
                 }
@@ -374,21 +376,25 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.widDiv && (this.widDiv.style.height = `${this.movement.height + y}px`);
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.width = this.refService.current.style.height;
                 }
                 if (this.widDiv && this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.widDiv.style.width = this.widDiv.style.height;
                 }
             } else if (this.resize === 'left') {
                 this.refService.current.style.left = `${this.movement.left + x}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv) {
                     this.widDiv.style.left = `${this.movement.left + x}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.height = this.widDiv.style.width;
                     }
                 }
@@ -396,9 +402,11 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.width = `${this.movement.width + x}px`;
                 this.widDiv && (this.widDiv.style.width = `${this.movement.width + x}px`);
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv && this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.widDiv.style.height = this.widDiv.style.width;
                 }
             } else if (this.resize === 'top-left') {
@@ -407,6 +415,7 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.height = `${this.movement.height - y}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv) {
@@ -415,6 +424,7 @@ class VisBaseWidget extends React.Component {
                     this.widDiv.style.height = `${this.movement.height - y}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.height = this.widDiv.style.width;
                     }
                 }
@@ -423,6 +433,7 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.height = `${this.movement.height - y}px`;
                 this.refService.current.style.width = `${this.movement.width + x}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv) {
@@ -430,6 +441,7 @@ class VisBaseWidget extends React.Component {
                     this.widDiv.style.height = `${this.movement.height - y}px`;
                     this.widDiv.style.width = `${this.movement.width + x}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.height = this.widDiv.style.width;
                     }
                 }
@@ -438,6 +450,7 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.refService.current.style.width = `${this.movement.width - x}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv) {
@@ -445,6 +458,7 @@ class VisBaseWidget extends React.Component {
                     this.widDiv.style.height = `${this.movement.height + y}px`;
                     this.widDiv.style.width = `${this.movement.width - x}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.height = this.widDiv.style.width;
                     }
                 }
@@ -452,12 +466,14 @@ class VisBaseWidget extends React.Component {
                 this.refService.current.style.height = `${this.movement.height + y}px`;
                 this.refService.current.style.width = `${this.movement.width + x}px`;
                 if (this.resizeLocked) {
+                    // noinspection JSSuspiciousNameCombination
                     this.refService.current.style.height = this.refService.current.style.width;
                 }
                 if (this.widDiv) {
                     this.widDiv.style.height = `${this.movement.height + y}px`;
                     this.widDiv.style.width = `${this.movement.width + x}px`;
                     if (this.resizeLocked) {
+                        // noinspection JSSuspiciousNameCombination
                         this.widDiv.style.height = this.widDiv.style.width;
                     }
                 }

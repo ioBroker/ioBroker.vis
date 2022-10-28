@@ -46,7 +46,6 @@ const generateClassName = createGenerateClassName({
 
 const WIDGETS_LOADING_STEP_NOT_STARTED = 0;
 const WIDGETS_LOADING_STEP_HTML_LOADED = 1;
-const WIDGETS_LOADING_STEP_RX_LOADED = 1;
 const WIDGETS_LOADING_STEP_ALL_LOADED = 2;
 
 const styles = theme => ({
@@ -636,8 +635,12 @@ class App extends GenericApp {
             }
         });
 
+        // apply default style
         if (tplWidget.style) {
-            widgets[newKey].style = Object.assign(widgets[newKey].style, tplWidget.style);
+            Object.assign(widgets[newKey].style, tplWidget.style);
+            if (widgets[newKey].style.position === 'relative') {
+                widgets[newKey].style.width = '100%';
+            }
         }
 
         // Custom init of widgets

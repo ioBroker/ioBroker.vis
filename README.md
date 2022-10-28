@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.3 (2022-10-27)
+### 2.0.4 (2022-10-28)
 * (bluefox) Improved the error handling
 
 ### 2.0.0 (2022-10-21)
