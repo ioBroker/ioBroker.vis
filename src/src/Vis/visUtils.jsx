@@ -814,8 +814,21 @@ function getRemoteWidgets(socket) {
                                             I18n.extendTranslations(json, lang);
                                             window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
                                         })
-                                        .catch(error =>
-                                            console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`));
+                                        .catch(error => {
+                                            if (lang !== 'en') {
+                                                // try to load English
+                                                return fetch(`${i18nURL}/i18n/en.json`)
+                                                    .then(data => data.json())
+                                                    .then(json => {
+                                                        count++;
+                                                        I18n.extendTranslations(json, lang);
+                                                        window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                                    })
+                                                    .catch(_error => console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${_error}`));
+                                            }
+                                            console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${error}`);
+                                            return null;
+                                        });
                                     promises.push(i18nPromise);
                                 } else if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === 'component') {
                                     const i18nPromise = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
