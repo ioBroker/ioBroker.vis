@@ -341,5 +341,7 @@
   "material_icons_twotone": "Двухцветные",
   "Select": "Выбрать",
   "material_icons_knx-uf": "knx-uf",
-  "icon_size_in_pixels": "Размер значка в пикселях"
+  "icon_size_in_pixels": "Размер значка в пикселях",
+  "Unknown widget type \"%s\"": "Неизвестный тип виджета \"%s\"",
+  "attr_none": "none"
 }

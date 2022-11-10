@@ -656,7 +656,7 @@ const Widget = props => {
     }, [props.selectedWidgets, props.project, props.selectedView]);
 
     const {
-        widget, commonFields, commonGroups, selectedWidgetsFields,
+        widget, commonFields, commonGroups, selectedWidgetsFields, widgetType,
     } = fieldsData;
 
     let fields;
@@ -799,15 +799,15 @@ const Widget = props => {
     let list;
     if (props.selectedWidgets.length === 1) {
         const tpl = widgets[props.selectedWidgets[0]].tpl;
-        const widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
-        let widgetLabel = widgetType?.title;
-        let widgetColor = widgetType?.setColor;
-        if (widgetType?.label) {
-            widgetLabel = I18n.t(widgetType.label);
+        const _widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
+        let widgetLabel = _widgetType?.title;
+        let widgetColor = _widgetType?.setColor;
+        if (_widgetType?.label) {
+            widgetLabel = I18n.t(_widgetType.label);
         }
-        let setLabel = widgetType?.set;
-        if (widgetType?.setLabel) {
-            setLabel = I18n.t(widgetType.setLabel);
+        let setLabel = _widgetType?.set;
+        if (_widgetType?.setLabel) {
+            setLabel = I18n.t(_widgetType.setLabel);
         } else if (setLabel) {
             const widgetWithSetLabel = widgetTypes.find(w => w.set === setLabel && w.setLabel);
             if (widgetWithSetLabel) {
@@ -816,7 +816,7 @@ const Widget = props => {
             }
         }
 
-        let widgetIcon = widgetType?.preview || '';
+        let widgetIcon = _widgetType?.preview || '';
         if (widgetIcon.startsWith('<img')) {
             const prev = widgetIcon.match(/src="([^"]+)"/);
             if (prev && prev[1]) {
@@ -1020,6 +1020,7 @@ const Widget = props => {
                                                         <div className={props.classes.fieldInput}>
                                                             {accordionOpen[group.name] && group.hasValues ?
                                                                 <WidgetField
+                                                                    widgetType={widgetType}
                                                                     error={error}
                                                                     disabled={disabled}
                                                                     field={field}

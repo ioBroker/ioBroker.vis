@@ -341,5 +341,7 @@
   "material_icons_twotone": "Twee toon",
   "Select": "Selecteer",
   "material_icons_knx-uf": "knx-uf",
-  "icon_size_in_pixels": "Pictogramgrootte in pixels"
+  "icon_size_in_pixels": "Pictogramgrootte in pixels",
+  "Unknown widget type \"%s\"": "Onbekend widgettype \"%s\"",
+  "attr_none": "none"
 }

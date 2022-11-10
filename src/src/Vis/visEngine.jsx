@@ -382,7 +382,7 @@ class VisEngine extends React.Component {
                     this.onChangeCallbacks.push({ callback, arg, wid });
                 }
             },
-            unregisterOnChange(callback, arg, wid) {
+            unregisterOnChange: (callback, arg, wid) => {
                 !wid && console.warn('No widget ID for unregisterOnChange callback! Please fix');
 
                 const index = this.onChangeCallbacks.findIndex(item => item.callback === callback &&
@@ -393,7 +393,7 @@ class VisEngine extends React.Component {
                     this.onChangeCallbacks.splice(index, 1);
                 }
             },
-            generateInstance() {
+            generateInstance: () => {
                 let instance = (Math.random() * 4294967296).toString(16);
                 instance = `0000000${instance}`;
                 instance = instance.substring(instance.length - 8);
@@ -401,6 +401,95 @@ class VisEngine extends React.Component {
                 window.localStorage.setItem('visInstance', instance);
                 return this.instance;
             },
+            findByRoles: (stateId, roles) => {
+                if (typeof roles !== 'object') {
+                    roles = [roles];
+                } else {
+                    roles = JSON.parse(JSON.stringify(roles));
+                }
+                const result = {};
+                // try to detect other values
+
+                // Go through all channels of this device
+                const parts = stateId.split('.');
+                parts.pop(); // remove state
+                const channel = parts.join('.');
+                const reg = new RegExp(`^${channel.replace(/\./g, '\\.')}\\.`);
+
+                // channels
+                for (const id in this.vis.objects) {
+                    if (reg.test(id) &&
+                        this.vis.objects[id].common &&
+                        this.vis.objects[id].type === 'state') {
+                        for (let r = 0; r < roles.length; r++) {
+                            if (this.vis.objects[id].common.role === roles[r]) {
+                                result[roles[r]] = id;
+                                roles.splice(r, 1);
+                                break;
+                            } else
+                            if (!roles.length) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                // try to search in channels
+                if (roles.length) {
+                    parts.pop(); // remove channel
+                    const device = parts.join('.');
+                    const _reg = new RegExp(`^${device.replace(/\./g, '\\.')}\\.`);
+                    for (const id in this.vis.objects) {
+                        if (_reg.test(id) &&
+                            this.vis.objects[id].common &&
+                            this.vis.objects[id].type === 'state'
+                        ) {
+                            for (let r = 0; r < roles.length; r++) {
+                                if (this.vis.objects[id].common.role === roles[r]) {
+                                    result[roles[r]] = id;
+                                    roles.splice(r, 1);
+                                    break;
+                                }
+                            }
+                            if (!roles.length) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return result;
+            },
+            findByName: (stateId, objName) => {
+                // try to detect other values
+
+                // Go through all channels of this device
+                const parts = stateId.split('.');
+                parts.pop(); // remove state
+                const channel = parts.join('.');
+
+                // check same channel
+                const id = `${channel}.${objName}`;
+                if ((id in this.vis.objects) &&
+                    this.vis.objects[id].common &&
+                    this.vis.objects[id].type === 'state'
+                ) {
+                    return id;
+                }
+
+                // try to search in channels
+                parts.pop(); // remove channel
+                const device = parts.join('.');
+                const reg = new RegExp(`^${device.replace(/\./g, '\\.')}\\..*\\.${objName}`);
+                for (const _id in this.vis.objects) {
+                    if (reg.test(_id) &&
+                        this.vis.objects[_id].common &&
+                        this.vis.objects[_id].type === 'state'
+                    ) {
+                        return _id;
+                    }
+                }
+                return false;
+            },
+            hideShowAttr: widAttr => console.warn('hideShowAttr is deprecated: ', widAttr),
         };
     }
 

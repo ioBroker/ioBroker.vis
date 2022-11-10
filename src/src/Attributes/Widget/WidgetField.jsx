@@ -215,15 +215,19 @@ const WidgetField = props => {
 
             data[field.name] = value;
 
-            if (field.onChangeFunc) {
-                window.vis.binds[widget.widgetSet][field.onChangeFunc](
-                    selectedWidget,
-                    props.selectedView,
-                    value,
-                    field.name,
-                    props.isStyle,
-                    props.isStyle ? widget.style[field.name] : widget.data[field.name],
-                );
+            if (field.onChangeFunc && props.widgetType) {
+                try {
+                    window.vis.binds[props.widgetType.set][field.onChangeFunc](
+                        selectedWidget,
+                        props.selectedView,
+                        value,
+                        field.name,
+                        props.isStyle,
+                        props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                    );
+                } catch (e) {
+                    console.error(`Cannot call onChangeFunc: ${e}`);
+                }
             }
             if (field.onChange) {
                 field.onChange(field, JSON.parse(JSON.stringify(data)), newData => {
@@ -338,6 +342,29 @@ const WidgetField = props => {
             setObjectCache(null);
         }
 
+        // Find filter
+        let customFilter = null;
+        let filters = null;
+        if (idDialog && !disabled) {
+            if (field.type === 'hid' || field.type === 'history') {
+                customFilter = { common: { custom: '_dataSources' } };
+            } else if (
+                typeof field.filter === 'string' &&
+                field.filter !== 'chart' &&
+                field.filter !== 'channel' &&
+                field.filter !== 'device'
+            ) {
+                // detect role
+                if (field.filter.includes('.') || field.filter.startsWith('level') || field.filter.startsWith('value')) {
+                    filters = { role: field.filter };
+                } else {
+                    customFilter = { type: field.filter };
+                }
+            } else if (field.filter) {
+                customFilter = field.filter;
+            }
+        }
+
         return <>
             <TextField
                 variant="standard"
@@ -362,16 +389,9 @@ const WidgetField = props => {
                 onClose={() => setIdDialog(false)}
                 socket={props.socket}
                 types={field.filter === 'chart' || field.filter === 'channel' || field.filter === 'device' ? [field.filter] : null}
+                filters={filters}
                 expertMode={field.filter === 'chart' ? true : undefined}
-                customFilter={field.type === 'hid' || field.type === 'history' ?
-                    { common: { custom: '_dataSources' } }
-                    : (typeof field.filter === 'string' &&
-                    field.filter !== 'chart' &&
-                    field.filter !== 'channel' &&
-                    field.filter !== 'device' ?
-                        { type: field.filter }
-                        :
-                        (field.filter ? field.filter : null))}
+                customFilter={customFilter}
             /> : null}
         </>;
     }
@@ -587,7 +607,7 @@ const WidgetField = props => {
             options.unshift('');
             options = options.map(id => ({
                 value: id,
-                label: `${id || t('none')}${id ? ` (${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
+                label: `${id || t('attr_none')}${id ? ` (${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
             }));
         }
 
@@ -632,7 +652,7 @@ const WidgetField = props => {
                     (withIcons ? <ListItemIcon><div style={{ width: 24 }} /></ListItemIcon> : null)}
                 <ListItemText>
                     {selectItem === '' ?
-                        <i>{t('none')}</i>
+                        <i>{t('attr_none')}</i>
                         :
                         (field.type === 'select' && !field.noTranslation ?
                             (typeof selectItem === 'object' ?
@@ -1073,6 +1093,7 @@ WidgetField.propTypes = {
     widget: PropTypes.object.isRequired,
     error: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
     disabled: PropTypes.bool,
+    widgetType: PropTypes.object,
 };
 
 export default WidgetField;

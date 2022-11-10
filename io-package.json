@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.4",
+        "version": "2.0.5",
         "news": {
-            "2.0.4": {
+            "2.0.5": {
                 "en": "Completely new visualization, but compatible with previous version",
                 "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
                 "ru": "Полностью новая визуализация, но совместима с предыдущей версией",

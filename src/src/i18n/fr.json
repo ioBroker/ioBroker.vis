@@ -341,5 +341,7 @@
   "material_icons_twotone": "Deux tons",
   "Select": "Sélectionner",
   "material_icons_knx-uf": "knx-uf",
-  "icon_size_in_pixels": "Taille de l'icône en pixels"
+  "icon_size_in_pixels": "Taille de l'icône en pixels",
+  "Unknown widget type \"%s\"": "Type de widget inconnu \"%s\"",
+  "attr_none": "inherit"
 }

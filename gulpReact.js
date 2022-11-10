@@ -282,6 +282,7 @@ function init(gulp) {
         ioPack.common.welcomeScreenPro.link = 'vis-2-beta/edit.html';
         ioPack.common.welcomeScreenPro.name = 'vis 2 Editor';
         ioPack.common.welcomeScreenPro.img = 'vis-2-beta/img/faviconEdit.png';
+        ioPack.common.localLinks._default = '%web_protocol%://%ip%:%web_port%/vis-2-beta/edit.html';
         pack.name = 'iobroker.vis-2-beta';
         delete pack.scripts;
         delete pack.devDependencies;

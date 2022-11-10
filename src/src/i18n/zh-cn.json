@@ -341,5 +341,7 @@
   "material_icons_twotone": "双色",
   "Select": "选择",
   "material_icons_knx-uf": "knx-uf",
-  "icon_size_in_pixels": "图标大小（以像素为单位）"
+  "icon_size_in_pixels": "图标大小（以像素为单位）",
+  "Unknown widget type \"%s\"": "未知的小部件类型“%s”",
+  "attr_none": "none"
 }
