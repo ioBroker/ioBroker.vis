@@ -550,10 +550,10 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 
     for (let f = 0; f < files.length; f++) {
         if (files[f].isDir) {
-            await copyFolder(sourceId, sourcePath + '/' + files[f].file, targetId, targetPath + '/' + files[f].file);
+            await copyFolder(sourceId, `${sourcePath}/${files[f].file}`, targetId, `${targetPath}/${files[f].file}`);
         } else {
-            const data = await adapter.readFileAsync(sourceId, sourcePath + '/' + files[f].file);
-            await adapter.writeFileAsync(targetId, targetPath + '/' + files[f].file, data.file);
+            const data = await adapter.readFileAsync(sourceId, `${sourcePath}/${files[f].file}`);
+            await adapter.writeFileAsync(targetId, `${targetPath}/${files[f].file}`, data.file);
         }
     }
 }
@@ -562,6 +562,18 @@ async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
+            type: 'meta',
+            common: {
+                name: 'vis core files',
+                type: 'meta.user'
+            },
+            native: {}
+        });
+    }
+
+    const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
+    if (!visObjNS || visObjNS.type !== 'meta') {
+        await adapter.setForeignObjectAsync(adapter.namespace, {
             type: 'meta',
             common: {
                 name: 'user files and images for vis',

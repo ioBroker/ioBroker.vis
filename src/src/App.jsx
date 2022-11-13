@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import './App.scss';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { withStyles, StylesProvider, createGenerateClassName } from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
@@ -497,7 +496,14 @@ class App extends GenericApp {
     }
 
     refreshProjects = async reloadCurrentProject => {
-        const projects = await this.socket.readDir(this.adapterId, '');
+        let projects;
+
+        try {
+            projects = await this.socket.readDir(this.adapterId, '');
+        } catch (e) {
+            projects = [];
+        }
+
         await this.setStateAsync({
             projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
             createFirstProjectDialog: !projects.length,
@@ -1163,8 +1169,8 @@ class App extends GenericApp {
                 ___settings: {
                     folders: [],
                 },
-                DemoView: {
-                    name: 'DemoView',
+                default: {
+                    name: 'Default',
                     settings: {
                         style: {},
                     },
@@ -1176,8 +1182,10 @@ class App extends GenericApp {
             await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
             await this.refreshProjects();
             await this.loadProject(projectName);
+            // close dialog
+            this.setProjectsDialog(false);
         } catch (e) {
-            console.error(e);
+            window.alert(`Cannot create project: ${e.toString()}`);
         }
     };
 
@@ -1796,13 +1804,14 @@ class App extends GenericApp {
                             </DndProvider>
                         </div>
                     </div>
-                    <CreateFirstProjectDialog
-                        open={this.state.createFirstProjectDialog}
+                    {this.state.createFirstProjectDialog ? <CreateFirstProjectDialog
+                        open={!0}
                         onClose={() => this.setState({ createFirstProjectDialog: false })}
                         addProject={this.addProject}
-                    />
+                    /> : null}
                     {this.state.deleteWidgetsDialog ?
                         <ConfirmDialog
+                            fullWidth={false}
                             title={I18n.t('Delete widgets')}
                             text={I18n.t('Are you sure to delete widgets %s?', this.state.selectedWidgets.join(', '))}
                             ok={I18n.t('Delete')}

@@ -857,7 +857,7 @@ function getRemoteWidgets(socket) {
                                             .then(Component => {
                                                 count++;
                                                 // console.log(Component);
-                                                Component.default.adapter = dynamicWidgetInstance.common.name;
+                                                Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
                                                 if (i18nPrefix) {
                                                     Component.default.i18nPrefix = i18nPrefix;
                                                 }

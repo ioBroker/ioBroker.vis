@@ -145,6 +145,12 @@ const styles = theme => ({
         height: '100%',
         objectFit: 'contain',
     },
+    widgetImage: {
+        transform: 'scale(0.3)',
+        width: 30,
+        height: 30,
+        transformOrigin: '0 0',
+    },
     iconFolder: {
         verticalAlign: 'middle',
         marginRight: 6,
@@ -167,6 +173,12 @@ const styles = theme => ({
     widgetType: {
         verticalAlign: 'top',
         display: 'inline-block',
+        fontSize: 12,
+        fontStyle: 'italic',
+        marginLeft: 8,
+    },
+    widgetNameText: {
+        lineHeight: '20px',
     },
 });
 
@@ -823,6 +835,28 @@ const Widget = props => {
                 widgetIcon = prev[1];
             }
         }
+
+        let img;
+        if (_widgetType?.preview?.startsWith('<img')) {
+            const m = _widgetType?.preview.match(/src="([^"]+)"/) || _widgetType?.preview.match(/src='([^']+)'/);
+            if (m) {
+                img = <img src={m[1]} className={props.classes.icon} alt={props.selectedWidgets[0]} />;
+            }
+        } else if (_widgetType?.preview && (_widgetType?.preview.endsWith('.svg') || _widgetType?.preview.endsWith('.png') || _widgetType?.preview.endsWith('.jpg'))) {
+            img = <img src={_widgetType?.preview} className={props.classes.icon} alt={props.selectedWidgets[0]} />;
+        }
+
+        if (!img) {
+            img = <span
+                className={props.classes.widgetImage}
+                // eslint-disable-next-line react/no-danger
+                dangerouslySetInnerHTML={
+                    { __html: _widgetType?.preview }
+                }
+            />;
+        }
+
+
         let widgetBackColor;
         if (widgetColor) {
             widgetBackColor = Utils.getInvertedColor(widgetColor, props.themeType, false);
@@ -832,26 +866,22 @@ const Widget = props => {
                 widgetBackColor = '#000';
             }
         }
-        list = <div style={{ lineHeight: widgetIcon ? '30px' : undefined }}>
-            {widgetIcon ? <div className={props.classes.widgetIcon}>
-                <img src={widgetIcon} className={props.classes.icon} alt={props.selectedWidgets[0]} />
-            </div> : null}
-            <span className={props.classes.widgetName}>{props.selectedWidgets[0]}</span>
-            <span style={{ fontSize: 12, fontStyle: 'italic', marginLeft: 8 }} className={props.classes.widgetType}>
-                <span
+        list = <div style={{ lineHeight: widgetIcon ? '40px' : undefined }}>
+            {widgetIcon ? <div className={props.classes.widgetIcon}>{img}</div> : null}
+            <div className={props.classes.widgetName}>{props.selectedWidgets[0]}</div>
+            <div className={props.classes.widgetType}>
+                <div
                     style={{
                         fontWeight: 'bold',
-                        marginRight: 4,
                         color: widgetColor,
                         backgroundColor: widgetBackColor,
                     }}
-                    className={widgetBackColor ? props.classes.coloredWidgetSet : undefined}
+                    className={Utils.clsx(props.classes.widgetNameText, widgetBackColor && props.classes.coloredWidgetSet)}
                 >
                     {setLabel}
-                </span>
-                -
-                <span style={{ marginLeft: 4 }}>{tpl === '_tplGroup' ? I18n.t('group') : widgetLabel}</span>
-            </span>
+                </div>
+                <div className={props.classes.widgetNameText}>{tpl === '_tplGroup' ? I18n.t('group') : widgetLabel}</div>
+            </div>
         </div>;
     } else {
         list = props.selectedWidgets.join(', ');

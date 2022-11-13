@@ -28,12 +28,15 @@ const styles = () => ({
         color: 'black',
     },
     widgetImage: {
-        // width: 20,
-        zoom: 0.3,
+        transform: 'scale(0.3)',
+        width: 30,
+        height: 30,
+        transformOrigin: '0 0',
     },
     widgetImageWithSrc: {
         height: 32,
         width: 'auto',
+        borderRadius: 4,
     },
     widgetTooltip: {
         '& $widgetImage': {

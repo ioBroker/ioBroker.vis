@@ -45,7 +45,12 @@ const Tools = props => {
     return <>
         <ToolbarItems group={toolbar} last {...props} classes={{}} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
-        <ProjectsManage open={props.projectsDialog} onClose={() => props.setProjectsDialog(false)} {...props} classes={{}} />
+        <ProjectsManage
+            open={props.projectsDialog}
+            onClose={() => props.setProjectsDialog(false)}
+            {...props}
+            classes={{}}
+        />
         {
             objectsDialog ? <SelectID
                 ready

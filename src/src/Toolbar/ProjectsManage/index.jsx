@@ -10,11 +10,14 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BiImport, BiExport } from 'react-icons/bi';
+
+import { Utils } from '@iobroker/adapter-react-v5';
+
 import IODialog from '../../Components/IODialog';
 import ImportProjectDialog from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
 
-const styles = () => ({
+const styles = theme => ({
     projectBlock: {
         display: 'flex',
         alignItems: 'center',
@@ -27,7 +30,8 @@ const styles = () => ({
         width: 220,
     },
     dialog: {
-        minWidth: 200,
+        minWidth: 400,
+        minHeight: 300,
     },
     topBar: {
         flexDirection: 'row',
@@ -36,6 +40,20 @@ const styles = () => ({
     },
     tooltip: {
         pointerEvents: 'none',
+    },
+    button: {
+        margin: 4,
+    },
+    '@keyframes my-blink': {
+        '0%': {
+            backgroundColor: theme.palette.primary.light,
+        },
+        '50%': {
+            backgroundColor: theme.palette.secondary.main,
+        },
+    },
+    blink: {
+        animation: '$my-blink 3s infinite',
     },
 });
 
@@ -144,8 +162,8 @@ const ProjectsManage = props => {
         </MenuItem>
     </Menu>;
 
-    return <IODialog
-        open={props.open}
+    return props.open ? <IODialog
+        open={!0}
         onClose={props.onClose}
         title="Manage projects"
         closeTitle="Close"
@@ -154,12 +172,12 @@ const ProjectsManage = props => {
         <div className={props.classes.dialog}>
             <AppBar position="static" className={props.classes.topBar}>
                 <Tooltip title={I18n.t('Add')} size="small" classes={{ popper: props.classes.tooltip }}>
-                    <IconButton onClick={() => showDialog('add')} size="large">
+                    <IconButton onClick={() => showDialog('add')} size="small" className={Utils.clsx(props.classes.button, !props.projects.length && props.classes.blink)}>
                         <AddIcon />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
-                    <IconButton onClick={() => setImportDialog(true)} size="large" style={{ width: 48 }}>
+                    <IconButton onClick={() => setImportDialog(true)} size="small" style={{ width: 34 }} className={props.classes.button}>
                         <BiImport fontSize={20} />
                     </IconButton>
                 </Tooltip>
@@ -230,7 +248,7 @@ const ProjectsManage = props => {
             adapterName={props.adapterName}
             instance={props.instance}
         /> : null}
-    </IODialog>;
+    </IODialog> : null;
 };
 
 ProjectsManage.propTypes = {
