@@ -856,7 +856,6 @@ const Widget = props => {
             />;
         }
 
-
         let widgetBackColor;
         if (widgetColor) {
             widgetBackColor = Utils.getInvertedColor(widgetColor, props.themeType, false);

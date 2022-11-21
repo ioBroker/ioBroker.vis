@@ -133,6 +133,8 @@ const resolution = [
     { value: '1180x820', name: 'iPad Air - Landscape' },
     { value: '768x1024', name: 'iPad Mini - Portrait' },
     { value: '1024x768', name: 'iPad Mini - Landscape' },
+    { value: '1024x1366', name: 'iPad Pro - Portrait' },
+    { value: '1366x1024', name: 'iPad Pro - Landscape' },
     { value: '912x1368', name: 'Surface Pro 7 - Portrait' },
     { value: '1368x912', name: 'Surface Pro 7 - Landscape' },
     { value: '540x720', name: 'Surface Duo - Portrait' },

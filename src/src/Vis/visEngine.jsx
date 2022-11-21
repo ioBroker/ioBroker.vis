@@ -32,7 +32,7 @@ import './visWords';
 
 import VisView from './visView';
 import VisFormatUtils from './visFormatUtils';
-import { getUrlParameter } from './visUtils';
+import { getUrlParameter, extractBinding } from './visUtils';
 
 function _translateWord(text, lang, dictionary) {
     if (!text) {
@@ -490,6 +490,28 @@ class VisEngine extends React.Component {
                 return false;
             },
             hideShowAttr: widAttr => console.warn('hideShowAttr is deprecated: ', widAttr),
+            bindingsCache: {},
+            extractBinding: (format, doNotIgnoreEditMode) => {
+                if ((!doNotIgnoreEditMode && !!this.props.editMode) || !format) {
+                    return null;
+                }
+
+                if (this.vis.bindingsCache[format]) {
+                    return JSON.parse(JSON.stringify(this.vis.bindingsCache[format]));
+                }
+
+                const result = extractBinding(format);
+
+                // cache bindings
+                if (result) {
+                    this.vis.bindingsCache = this.vis.bindingsCache || {};
+                    this.vis.bindingsCache[format] = JSON.parse(JSON.stringify(result));
+                }
+
+                return result;
+            },
+            formatBinding: (format, view, wid, widget, widgetData, values) =>
+                this.formatUtils.formatBinding(format, view, wid, widget, widgetData, values),
         };
     }
 
@@ -589,6 +611,7 @@ class VisEngine extends React.Component {
                 console.error(`Error: ${errorText}`);
                 this.props.socket.log(errorText, 'error');
             },
+            getIsConnected: () => this.props.socket.isConnected(),
             getGroups: (groupName, useCache, cb) => {
                 if (typeof groupName === 'function') {
                     cb = groupName;
@@ -783,6 +806,30 @@ class VisEngine extends React.Component {
                     });
             },
             getHttp: (url, callback) => this.props.socket.getRawSocket().emit('httpGet', url, data => callback && callback(data)),
+            _socket: {
+                emit: (cmd, data, cb) => {
+                    let promise;
+                    if (cmd === 'getObject') {
+                        promise = this.props.socket.getObject(data)
+                            .then(obj => cb && cb(null, obj))
+                            .catch(error => cb && cb(error));
+                    } else if (cmd === 'getState') {
+                        promise = this.props.socket.getState(data)
+                            .then(obj => cb && cb(null, obj))
+                            .catch(error => cb && cb(error));
+                    } else if (cmd === 'getStates') {
+                        promise = this.props.socket.getStates(data)
+                            .then(obj => cb && cb(null, obj))
+                            .catch(error => cb && cb(error));
+                    }
+                    if (promise) {
+                        promise.then(obj => cb && cb(null, obj))
+                            .catch(error => cb && cb(error));
+                    } else {
+                        console.warn(`Unknown command in _socket.emit: ${cmd}`);
+                    }
+                },
+            },
         };
     }
 
@@ -1013,39 +1060,33 @@ class VisEngine extends React.Component {
     }
     */
 
-    static setInnerHTML(elm, html) {
+    static async setInnerHTML(elm, html) {
         elm.innerHTML = html;
-        const loadPromises = [];
-        Array.from(elm.querySelectorAll('script'))
-            .forEach(oldScript => {
-                const newScript = document.createElement('script');
-                let onLoad = false;
-                Array.from(oldScript.attributes)
-                    .forEach(attr => {
-                        try {
-                            newScript.setAttribute(attr.name, attr.value);
-                            if (attr.name === 'src') {
-                                onLoad = true;
-                            }
-                        } catch (error) {
-                            console.error(`WTF?? in ${attr.ownerElement.id}: ${error}`);
+        // we must load script one after another, to keep the order
+        const scripts = Array.from(elm.querySelectorAll('script'));
+        for (let s = 0; s < scripts.length; s++) {
+            const oldScript = scripts[s];
+            const newScript = document.createElement('script');
+            let onLoad = false;
+            Array.from(oldScript.attributes)
+                .forEach(attr => {
+                    try {
+                        newScript.setAttribute(attr.name, attr.value);
+                        if (attr.name === 'src') {
+                            onLoad = true;
                         }
-                    });
+                    } catch (error) {
+                        console.error(`WTF?? in ${attr.ownerElement.id}: ${error}`);
+                    }
+                });
 
-                if (onLoad) {
-                    const promise = new Promise(resolve => {
-                        newScript.onload = resolve;
-                    });
-                    loadPromises.push(promise);
-                }
+            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+            oldScript.parentNode.replaceChild(newScript, oldScript);
 
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                oldScript.parentNode.replaceChild(newScript, oldScript);
-            });
-
-        // console.log(loadPromises);
-
-        return Promise.all(loadPromises);
+            if (onLoad) {
+                await new Promise(resolve => (newScript.onload = resolve));
+            }
+        }
     }
 
     loadEditWords() {

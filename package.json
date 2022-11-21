@@ -35,9 +35,8 @@
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
-    "mocha": "^10.0.0",
-    "chai": "^4.3.6",
-    "unzipper": "^0.10.11"
+    "unzipper": "^0.10.11",
+    "@iobroker/legacy-testing": "^0.0.4"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
