@@ -1624,6 +1624,24 @@ class App extends GenericApp {
         this.setState({ widgetsLoaded });
     }
 
+    renderConfirmDialog() {
+        if (this.state.confirmDialog) {
+            return <ConfirmDialog
+                text={this.state.confirmDialog.message}
+                title={this.state.confirmDialog.title}
+                fullWidth={false}
+                ok={I18n.t('Ok')}
+                onClose={isYes => {
+                    const callback = this.state.confirmDialog.callback;
+                    this.setState({ confirmDialog: null }, () =>
+                        typeof callback === 'function' && callback(isYes));
+                }}
+            />;
+        }
+
+        return null;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1672,6 +1690,18 @@ class App extends GenericApp {
             theme={this.state.theme}
             adapterId={this.adapterId}
             editModeComponentClass={this.props.classes.editModeComponentClass}
+            onConfirmDialog={(message, title, icon, width, callback) => {
+                console.log(message);
+                this.setState({
+                    confirmDialog: {
+                        message,
+                        title,
+                        icon,
+                        width,
+                        callback,
+                    },
+                });
+            }}
         />;
 
         if (this.state.runtime) {
@@ -1684,6 +1714,7 @@ class App extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {!simulatePreload ? <VisRxWidget /> : null}
+                    {this.renderConfirmDialog()}
                     <Popper
                         open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                         style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}

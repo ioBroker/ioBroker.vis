@@ -165,6 +165,7 @@ class VisEngine extends React.Component {
         this.canStates = this.initCanObjects();
         this.vis = this.createLegacyVisObject();
 
+        window._   = this.vis._;
         window.vis = this.vis;
 
         this.formatUtils = new VisFormatUtils({ vis: this.vis });
@@ -276,6 +277,7 @@ class VisEngine extends React.Component {
 
     createLegacyVisObject() {
         return {
+            version: 2,
             states: this.canStates,
             objects: {},
             isTouch: this.isTouch,
@@ -512,6 +514,21 @@ class VisEngine extends React.Component {
             },
             formatBinding: (format, view, wid, widget, widgetData, values) =>
                 this.formatUtils.formatBinding(format, view, wid, widget, widgetData, values),
+            getViewOfWidget: id => {
+                // find view of this widget
+                for (const v in this.props.views) {
+                    if (v === '___settings') {
+                        continue;
+                    }
+                    if (this.props.views[v]?.widgets && this.props.views[v].widgets[id]) {
+                        return v;
+                    }
+                }
+                return null;
+            },
+            confirmMessage: (message, title, icon, width, callback) =>
+                this.props.onConfirmDialog(message, title, icon, width, callback),
+            config: {}, // storage of dialog positions and size
         };
     }
 
@@ -810,17 +827,11 @@ class VisEngine extends React.Component {
                 emit: (cmd, data, cb) => {
                     let promise;
                     if (cmd === 'getObject') {
-                        promise = this.props.socket.getObject(data)
-                            .then(obj => cb && cb(null, obj))
-                            .catch(error => cb && cb(error));
+                        promise = this.props.socket.getObject(data);
                     } else if (cmd === 'getState') {
-                        promise = this.props.socket.getState(data)
-                            .then(obj => cb && cb(null, obj))
-                            .catch(error => cb && cb(error));
+                        promise = this.props.socket.getState(data);
                     } else if (cmd === 'getStates') {
-                        promise = this.props.socket.getStates(data)
-                            .then(obj => cb && cb(null, obj))
-                            .catch(error => cb && cb(error));
+                        promise = this.props.socket.getStates(data);
                     }
                     if (promise) {
                         promise.then(obj => cb && cb(null, obj))

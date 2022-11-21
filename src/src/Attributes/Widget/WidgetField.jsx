@@ -197,10 +197,63 @@ const WidgetField = props => {
         disabled,
     } = props;
 
+    let customLegacyComponent = null;
+
+    if (field.type?.startsWith('custom,')) {
+        const options = field.type.split(',');
+        options.shift(); // remove custom
+        const funcs = options[0].split('.');
+        options.shift(); // remove function name
+        if (funcs[0] === 'vis') funcs.shift();
+        if (funcs[0] === 'binds') funcs.shift();
+        if (funcs.length === 1) {
+            if (typeof window.vis.binds[funcs[0]] === 'function') {
+                try {
+                    window._   = window.vis._; // for old widgets, else lodash overwrites it
+                    window.vis.activeWidgets = [...props.selectedWidgets];
+                    customLegacyComponent = window.vis.binds[funcs[0]](field.name, options);
+                } catch (e) {
+                    console.error(`vis.binds.${funcs.join('.')}: ${e}`);
+                }
+            } else {
+                console.log(`No function: vis.binds.${funcs.join('.')}`);
+            }
+        } else if (funcs.length === 2) {
+            if (window.vis.binds[funcs[0]] && typeof window.vis.binds[funcs[0]][funcs[1]] === 'function') {
+                try {
+                    window._   = window.vis._; // for old widgets, else lodash overwrites it
+                    window.vis.activeWidgets = [...props.selectedWidgets];
+                    customLegacyComponent = window.vis.binds[funcs[0]][funcs[1]](field.name, options);
+                } catch (e) {
+                    console.error(`vis.binds.${funcs.join('.')}: ${e}`);
+                }
+            } else {
+                console.log(`No function: vis.binds.${funcs.join('.')}`);
+            }
+        } else if (funcs.length === 3) {
+            if (window.vis.binds[funcs[0]] && window.vis.binds[funcs[0]][funcs[1]] && typeof window.vis.binds[funcs[0]][funcs[1]][funcs[2]] === 'function') {
+                try {
+                    window._   = window.vis._; // for old widgets, else lodash overwrites it
+                    window.vis.activeWidgets = [...props.selectedWidgets];
+                    customLegacyComponent = window.vis.binds[funcs[0]][funcs[1]][funcs[2]](field.name, options);
+                } catch (e) {
+                    console.error(`vis.binds.${funcs.join('.')}: ${e}`);
+                }
+            } else {
+                console.log(`No function: vis.binds.${funcs.join('.')}`);
+            }
+        } else if (!funcs.length) {
+            console.log('Function name is too short: vis.binds');
+        } else {
+            console.log(`Function name is too long: vis.binds.${funcs.join('.')}`);
+        }
+    }
+
     const [cachedValue, setCachedValue] = useState('');
     const [instances, setInstances] = useState([]);
 
     const cacheTimer = useRef(null);
+    const refCustom = useRef();
 
     let onChangeTimeout;
 
@@ -330,6 +383,19 @@ const WidgetField = props => {
             </Paper>
         </Fade>}
     </Popper> : null;
+
+    // part for customLegacyComponent
+    useEffect(() => {
+        if (customLegacyComponent && refCustom.current && typeof customLegacyComponent.init === 'function') {
+            customLegacyComponent.init.call(refCustom.current, field.name, propValue);
+        }
+    }, []);
+
+    if (customLegacyComponent) {
+        // console.log(customLegacyComponent.input);
+        // eslint-disable-next-line react/no-danger
+        return <div ref={refCustom} dangerouslySetInnerHTML={{ __html: customLegacyComponent.input }} />;
+    }
 
     if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
         if (value && (!objectCache || value !== objectCache._id)) {
