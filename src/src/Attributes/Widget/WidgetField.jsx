@@ -201,16 +201,18 @@ const WidgetField = props => {
 
     if (field.type?.startsWith('custom,')) {
         const options = field.type.split(',');
-        options.shift(); // remove custom
+        options.shift();
         const funcs = options[0].split('.');
-        options.shift(); // remove function name
         if (funcs[0] === 'vis') funcs.shift();
         if (funcs[0] === 'binds') funcs.shift();
+
+        window._   = window.vis._; // for old widgets, else lodash overwrites it
+        window.vis.activeWidgets = [...props.selectedWidgets];
+        window.vis.activeView = props.selectedView;
+
         if (funcs.length === 1) {
             if (typeof window.vis.binds[funcs[0]] === 'function') {
                 try {
-                    window._   = window.vis._; // for old widgets, else lodash overwrites it
-                    window.vis.activeWidgets = [...props.selectedWidgets];
                     customLegacyComponent = window.vis.binds[funcs[0]](field.name, options);
                 } catch (e) {
                     console.error(`vis.binds.${funcs.join('.')}: ${e}`);
@@ -221,8 +223,6 @@ const WidgetField = props => {
         } else if (funcs.length === 2) {
             if (window.vis.binds[funcs[0]] && typeof window.vis.binds[funcs[0]][funcs[1]] === 'function') {
                 try {
-                    window._   = window.vis._; // for old widgets, else lodash overwrites it
-                    window.vis.activeWidgets = [...props.selectedWidgets];
                     customLegacyComponent = window.vis.binds[funcs[0]][funcs[1]](field.name, options);
                 } catch (e) {
                     console.error(`vis.binds.${funcs.join('.')}: ${e}`);
@@ -233,8 +233,6 @@ const WidgetField = props => {
         } else if (funcs.length === 3) {
             if (window.vis.binds[funcs[0]] && window.vis.binds[funcs[0]][funcs[1]] && typeof window.vis.binds[funcs[0]][funcs[1]][funcs[2]] === 'function') {
                 try {
-                    window._   = window.vis._; // for old widgets, else lodash overwrites it
-                    window.vis.activeWidgets = [...props.selectedWidgets];
                     customLegacyComponent = window.vis.binds[funcs[0]][funcs[1]][funcs[2]](field.name, options);
                 } catch (e) {
                     console.error(`vis.binds.${funcs.join('.')}: ${e}`);

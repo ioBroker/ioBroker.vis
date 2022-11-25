@@ -30,6 +30,7 @@ import {
 import Attributes from './Attributes';
 import Palette from './Palette';
 import Toolbar from './Toolbar';
+import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import { registerWidgetsLoadIndicator } from './Vis/visUtils';
@@ -259,6 +260,8 @@ class App extends GenericApp {
             hidePalette: window.localStorage.getItem('Vis.hidePalette') === 'true',
             hideAttributes: window.localStorage.getItem('Vis.hideAttributes') === 'true',
             loadingProgress: { step: 0, total: 0 },
+            showCodeDialog: null,
+            confirmDialog: null,
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
@@ -1642,6 +1645,20 @@ class App extends GenericApp {
         return null;
     }
 
+    renderShowCodeDialog() {
+        if (this.state.showCodeDialog !== null) {
+            return <CodeDialog
+                themeType={this.state.themeType}
+                onClose={() => this.setState({ showCodeDialog: null })}
+                title={this.state.showCodeDialog.title}
+                code={this.state.showCodeDialog.code}
+                mode={this.state.showCodeDialog.mode}
+            />;
+        }
+
+        return null;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1702,6 +1719,7 @@ class App extends GenericApp {
                     },
                 });
             }}
+            onShowCode={(code, title, mode) => this.setState({ showCodeDialog: { code, title, mode } })}
         />;
 
         if (this.state.runtime) {
@@ -1714,7 +1732,6 @@ class App extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {!simulatePreload ? <VisRxWidget /> : null}
-                    {this.renderConfirmDialog()}
                     <Popper
                         open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                         style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
@@ -1857,6 +1874,8 @@ class App extends GenericApp {
                         />
                         : null}
                     {this.renderAlertDialog()}
+                    {this.renderConfirmDialog()}
+                    {this.renderShowCodeDialog()}
                     {/* <IODialog
                         title="Delete widgets"
                         open={this.state.deleteWidgetsDialog}
@@ -1872,5 +1891,6 @@ class App extends GenericApp {
         </StylesProvider>;
     }
 }
+
 
 export default withStyles(styles)(App);

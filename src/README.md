@@ -1,4 +1,5 @@
 ## Todo
+- Reload all vis instances by file subscribe (could be disabled by config)
 
 ### Palette
 - ✅ Show widgets in palette by group
@@ -26,10 +27,10 @@
 - ✅ Ctrl+A / Esc(Deselect all) / ...
 - ✅ If dimension is in % so after resize and move it should stay in %
 - ✅ Ask about not saved file (because of 1 sec delay)
+- Allow selection of background image and x-offset, y-offset, opacity, repeat, size
 
 ## groups edit
 - ✅ Check
-
 
 ### Widget
 - ✅By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`

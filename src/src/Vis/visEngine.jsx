@@ -286,9 +286,10 @@ class VisEngine extends React.Component {
             editMode: !!this.props.editMode,
             binds: {},
             views: this.props.views,
-            activeView: this.props.activeView,
+            activeView: this.props.selectedView,
             language: this.props.lang,
             user: '',
+            projectPrefix: this.props.projectName,
             _: translate,
             dateFormat: '',
             instance: window.localStorage.getItem('visInstance'),
@@ -528,7 +529,11 @@ class VisEngine extends React.Component {
             },
             confirmMessage: (message, title, icon, width, callback) =>
                 this.props.onConfirmDialog(message, title, icon, width, callback),
-            config: {}, // storage of dialog positions and size
+            config: {}, // storage of dialog positions and size (Deprecated)
+            showCode: (code, title, mode) => this.props.onShowCode(code, title, mode),
+            findCommonAttributes: (view, widgets) => {
+
+            }
         };
     }
 
@@ -1617,6 +1622,8 @@ VisEngine.propTypes = {
     themeType: PropTypes.string,
     themeName: PropTypes.string,
     theme: PropTypes.object,
+    onConfirmDialog: PropTypes.func,
+    onShowCode: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,
