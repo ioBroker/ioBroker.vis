@@ -1069,10 +1069,10 @@ const Widget = props => {
                     </AccordionDetails>
                 </Accordion>;
             })}
-            <IODialog
+            {clearGroup ? <IODialog
                 title="Are you sure"
                 onClose={() => setClearGroup(null)}
-                open={!!clearGroup}
+                open={!0}
                 action={() => {
                     const project = JSON.parse(JSON.stringify(props.project));
                     const group = clearGroup;
@@ -1087,7 +1087,7 @@ const Widget = props => {
                 actionTitle="Clear"
             >
                 {I18n.t('Fields of group will be cleaned')}
-            </IODialog>
+            </IODialog> : null}
             <Button
                 style={{ opacity: showWidgetCode ? 1 : 0 }}
                 onClick={() => {

@@ -333,6 +333,7 @@
   "Toggle widget hint (dark)": "Toggle widget hint (dark)",
   "Browse objects": "Browse objects",
   "Copy to clipboard": "Copy to clipboard",
+  "Copied to clipboard": "Copied to clipboard",
   "Narrow panel": "Narrow panel",
   "Ignored in edit mode": "Ignored in edit mode",
   "material_icons_result": "%s matching results",
@@ -345,5 +346,8 @@
   "material_icons_knx-uf": "knx-uf",
   "icon_size_in_pixels": "Icon size in pixels",
   "Unknown widget type \"%s\"": "Unknown widget type \"%s\"",
-  "attr_none": "none"
+  "attr_none": "none",
+  "Reload all browsers if project changed":  "Reload all browsers if project changed",
+  "reload": "reload",
+  "no_reload": "no reload"
 }

@@ -818,7 +818,7 @@ const View = props => {
                                         {urlPopper}
                                         {showDialog ? <IODialog
                                             title={I18n.t('Select file')}
-                                            open={showDialog}
+                                            open={!0}
                                             onClose={() => setShowDialog(false)}
                                         >
                                             <FileBrowser

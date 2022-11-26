@@ -31,7 +31,7 @@ import Attributes from './Attributes';
 import Palette from './Palette';
 import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
-import CreateFirstProjectDialog from './CreateFirstProjectDialog';
+import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import { registerWidgetsLoadIndicator } from './Vis/visUtils';
 import {
@@ -230,7 +230,7 @@ class App extends GenericApp {
             alertMessage: '',
             runtime,
             projectName: 'main',
-            viewsManage: false,
+            viewsManager: false,
             projectsDialog: false,
             createFirstProjectDialog: false,
             selectedWidgets: [],
@@ -343,6 +343,12 @@ class App extends GenericApp {
             .then(() => {});
     };
 
+    onProjectChange = (id, fileName, size) => {
+        if (fileName.endsWith('.json')) {
+            this.loadProject(this.state.projectName);
+        }
+    };
+
     loadProject = async projectName => {
         let file;
         try {
@@ -449,6 +455,17 @@ class App extends GenericApp {
 
         window.localStorage.setItem('projectName', projectName);
 
+        if (this.subscribedProject && (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)) {
+            this.subscribedProject = null;
+            this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
+        }
+
+        if (project.___settings.reloadOnEdit !== false) {
+            this.subscribedProject = projectName;
+            // subscribe on changes
+            this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
+        }
+
         await this.setStateAsync({
             visCommonCss: null,
             visUserCss: null,
@@ -516,9 +533,9 @@ class App extends GenericApp {
         }
     };
 
-    setViewsManage = newValue => this.setState({ viewsManage: newValue });
+    setViewsManager = isOpen => this.setState({ viewsManager: isOpen });
 
-    setProjectsDialog = newValue => this.setState({ projectsDialog: newValue });
+    setProjectsDialog = isOpen => this.setState({ projectsDialog: isOpen });
 
     loadSelectedWidgets(selectedView) {
         selectedView = selectedView || this.state.selectedView;
@@ -1230,7 +1247,7 @@ class App extends GenericApp {
         window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
         this.setState({ openedViews }, async () => {
             if (isActivate) {
-                this.setViewsManage(false);
+                this.setViewsManager(false);
                 await this.changeView(view);
             } else
             if (!openedViews.includes(this.state.selectedView)) {
@@ -1430,7 +1447,7 @@ class App extends GenericApp {
             </Tooltip> : null}
             <Tooltip title={I18n.t('Show view')}>
                 <div className={this.props.classes.tabButton}>
-                    <IconButton onClick={() => this.setViewsManage(true)} size="small" disabled={!!this.state.selectedGroup}>
+                    <IconButton onClick={() => this.setViewsManager(true)} size="small" disabled={!!this.state.selectedGroup}>
                         <AddIcon />
                     </IconButton>
                 </div>
@@ -1779,8 +1796,8 @@ class App extends GenericApp {
                             themeType={this.state.themeType}
                             toggleTheme={() => this.toggleTheme()}
                             refreshProjects={this.refreshProjects}
-                            viewsManage={this.state.viewsManage}
-                            setViewsManage={this.setViewsManage}
+                            viewsManager={this.state.viewsManager}
+                            setViewsManager={this.setViewsManager}
                             projectsDialog={this.state.projects && this.state.projects.length ? this.state.projectsDialog : !this.state.createFirstProjectDialog}
                             setProjectsDialog={this.setProjectsDialog}
                             selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
@@ -1876,16 +1893,6 @@ class App extends GenericApp {
                     {this.renderAlertDialog()}
                     {this.renderConfirmDialog()}
                     {this.renderShowCodeDialog()}
-                    {/* <IODialog
-                        title="Delete widgets"
-                        open={this.state.deleteWidgetsDialog}
-                        onClose={() => this.setState({ deleteWidgetsDialog: false })}
-                        actionTitle="Delete"
-                        actionColor="secondary"
-                        action={() => this.deleteWidgetsAction()}
-                    >
-                        {I18n.t(`Are you sure to delete widgets ${this.state.selectedWidgets.join(', ')}?`)}
-                    </IODialog> */}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

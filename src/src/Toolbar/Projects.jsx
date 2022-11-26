@@ -13,7 +13,7 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
-import ProjectsManage from './ProjectsManage';
+import ProjectsManager from './ProjectsManager';
 
 const styles = () => ({
     objectsDialog: {
@@ -45,12 +45,12 @@ const Tools = props => {
     return <>
         <ToolbarItems group={toolbar} last {...props} classes={{}} />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
-        <ProjectsManage
-            open={props.projectsDialog}
+        {props.projectsDialog ? <ProjectsManager
+            open={!0}
             onClose={() => props.setProjectsDialog(false)}
             {...props}
             classes={{}}
-        />
+        /> : null}
         {
             objectsDialog ? <SelectID
                 ready
@@ -74,6 +74,8 @@ const Tools = props => {
 
 Tools.propTypes = {
     socket: PropTypes.object,
+    projectsDialog: PropTypes.bool,
+    setProjectsDialog: PropTypes.func,
 };
 
 export default withStyles(styles)(Tools);

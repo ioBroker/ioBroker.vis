@@ -6,9 +6,9 @@ import {
 
 import CloseIcon from '@mui/icons-material/Close';
 
-const IODialog = props => <Dialog
+const IODialog = props => (props.open ? <Dialog
     onClose={props.closeDisabled ? null : props.onClose}
-    open={props.open}
+    open={!0}
     fullScreen={!!props.fullScreen}
     maxWidth={props.maxWidth || 'md'}
 >
@@ -55,7 +55,7 @@ const IODialog = props => <Dialog
             {props.noTranslation && props.closeTitle ? props.closeTitle : I18n.t(props.closeTitle || 'Cancel')}
         </Button>
     </DialogActions>
-</Dialog>;
+</Dialog> : null);
 
 IODialog.propTypes = {
     ActionIcon: PropTypes.any,

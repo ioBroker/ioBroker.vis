@@ -34,9 +34,24 @@ const Settings = props => {
     const [settings, setSettings] = useState({});
     const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
     /* eslint no-underscore-dangle: 0 */
-    useEffect(() => setSettings(props.project.___settings), [props.open]);
+    useEffect(() => {
+        const _settings = { ...props.project.___settings };
+        if (_settings.reloadOnEdit === undefined) {
+            _settings.reloadOnEdit = true;
+        }
+        setSettings(_settings);
+    }, [props.open]);
 
     const fields = [
+        {
+            type: 'select',
+            name: 'Reload all browsers if project changed',
+            field: 'reloadOnEdit',
+            items: [
+                { value: true, name: 'reload' },
+                { value: false, name: 'no_reload' },
+            ],
+        },
         {
             type: 'select',
             name: 'Reload if sleep longer than',
@@ -125,8 +140,8 @@ const Settings = props => {
         props.onClose();
     };
 
-    return <IODialog
-        open={props.open}
+    return props.open ? <IODialog
+        open={!0}
         onClose={props.onClose}
         title="Settings"
         ActionIcon={SaveIcon}
@@ -144,18 +159,18 @@ const Settings = props => {
                     setSettings(newSettings);
                 };
 
-                let result = null;
+                let result;
 
                 if (field.type === 'checkbox') {
                     result = <FormControlLabel
-                        control={<Checkbox checked={value} />}
+                        control={<Checkbox checked={!!value} />}
                         onChange={e => change(e.target.checked)}
                         label={I18n.t(field.name)}
                     />;
                 } else if (field.type === 'select') {
                     result = <FormControl variant="standard" fullWidth>
                         <InputLabel>{I18n.t(field.name)}</InputLabel>
-                        <Select variant="standard" value={value} onChange={e => change(e.target.value)}>
+                        <Select variant="standard" value={value || ''} onChange={e => change(e.target.value)}>
                             {field.items.map(selectItem => <MenuItem
                                 value={selectItem.value}
                                 key={selectItem.value}
@@ -167,13 +182,20 @@ const Settings = props => {
                 } else if (field.type === 'raw') {
                     result = field.Node;
                 } else {
-                    result = <TextField variant="standard" fullWidth value={value} onChange={e => change(e.target.value)} label={I18n.t(field.name)} type={field.type} />;
+                    result = <TextField
+                        variant="standard"
+                        fullWidth
+                        value={value || ''}
+                        onChange={e => change(e.target.value)}
+                        label={I18n.t(field.name)}
+                        type={field.type}
+                    />;
                 }
 
                 return <div key={key} className={props.classes.field}>{result}</div>;
             })}
         </div>
-    </IODialog>;
+    </IODialog> : null;
 };
 
 Settings.propTypes = {

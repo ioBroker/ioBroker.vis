@@ -1568,7 +1568,7 @@ class FileBrowser extends Component {
         if (this.state.deleteItem) {
             return <Dialog
                 key="deleteDialog"
-                open={true}
+                open={!0}
                 onClose={() => this.setState({ deleteItem: '' })}
                 aria-labelledby="form-dialog-title"
             >

@@ -9,10 +9,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import withStyles from '@mui/styles/withStyles';
-import ViewsManage from './ViewsManage';
+import ViewsManager from './ViewsManager';
 import ToolbarItems from './ToolbarItems';
 
-import ViewDialog from './ViewsManage/ViewDialog';
+import ViewDialog from './ViewsManager/ViewDialog';
 
 const styles = () => ({
     label: {
@@ -78,14 +78,14 @@ const View = props => {
                 ],
             ],
             {
-                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManage(true), disabled: !!props.selectedGroup,
+                type: 'icon-button', Icon: MenuIcon, name: 'Manage views', onClick: () => props.setViewsManager(true), disabled: !!props.selectedGroup,
             },
         ],
     };
 
     return <>
         <ToolbarItems group={toolbar} {...props} classes={{}} />
-        <ViewsManage open={props.viewsManage} onClose={() => props.setViewsManage(false)} showDialog={showDialog} {...props} classes={{}} />
+        <ViewsManager open={props.viewsManager} onClose={() => props.setViewsManager(false)} showDialog={showDialog} {...props} classes={{}} />
         <ViewDialog
             dialog={dialog}
             dialogView={dialogView}
@@ -105,8 +105,8 @@ const View = props => {
 View.propTypes = {
     projectName: PropTypes.string,
     selectedView: PropTypes.string,
-    setViewsManage: PropTypes.func,
-    viewsManage: PropTypes.bool,
+    setViewsManager: PropTypes.func,
+    viewsManager: PropTypes.bool,
     selectedGroup: PropTypes.string,
 };
 

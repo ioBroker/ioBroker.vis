@@ -101,8 +101,8 @@ const CSS = props => {
 
     return <div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Dialog
-                open={!!showHelp}
+            {showHelp ? <Dialog
+                open={!0}
                 maxWidth={props.maxWidth || 'md'}
             >
                 <DialogTitle>{I18n.t('Explanation')}</DialogTitle>
@@ -119,7 +119,7 @@ const CSS = props => {
                         {I18n.t('Ok')}
                     </Button>
                 </DialogActions>
-            </Dialog>
+            </Dialog> : null}
             <Select
                 variant="standard"
                 value={type}

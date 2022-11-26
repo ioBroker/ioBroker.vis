@@ -127,7 +127,7 @@ const Folder = props => {
                         const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.splice(foldersCollapsed.indexOf(props.folder.id), 1);
                         props.setFoldersCollapsed(foldersCollapsed);
-                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+                        window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
                     }}
                 />
                 : <FolderOpenedIcon
@@ -136,7 +136,7 @@ const Folder = props => {
                         const foldersCollapsed = JSON.parse(JSON.stringify(props.foldersCollapsed));
                         foldersCollapsed.push(props.folder.id);
                         props.setFoldersCollapsed(foldersCollapsed);
-                        window.localStorage.setItem('ViewsManage.foldersCollapsed', JSON.stringify(foldersCollapsed));
+                        window.localStorage.setItem('ViewsManager.foldersCollapsed', JSON.stringify(foldersCollapsed));
                     }}
                 />}
         </div>

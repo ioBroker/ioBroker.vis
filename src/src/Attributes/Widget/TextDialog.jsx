@@ -18,10 +18,10 @@ const TextDialog = props => {
         changeValue(props.value);
     }, [props.open]);
 
-    return <IODialog
+    return props.open ? <IODialog
         keyboardDisabled
         title={props.type === 'json' ? 'JSON edit' : (props.type === 'html' ? 'HTML edit' : 'Text edit')}
-        open={props.open}
+        open={!0}
         actionTitle="Save"
         action={() => props.onChange(value)}
         onClose={props.onClose}
@@ -40,7 +40,7 @@ const TextDialog = props => {
                 }}
             />
         </div>
-    </IODialog>;
+    </IODialog> : null;
 };
 
 TextDialog.propTypes = {

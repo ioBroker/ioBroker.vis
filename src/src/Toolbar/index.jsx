@@ -51,6 +51,10 @@ const styles = theme => ({
         alignItems: 'center',
         justifyContent: 'end',
     },
+    icon: {
+        width: 22,
+        height: 22,
+    },
     lightedPanel: theme.classes.lightedPanel,
     toolbar: theme.classes.toolbar,
     narrowToolbar: {
@@ -242,6 +246,8 @@ Toolbar.propTypes = {
     editMode: PropTypes.bool,
     selectedGroup: PropTypes.string,
     setToolbarHeight: PropTypes.func,
+    projectsDialog: PropTypes.bool,
+    setProjectsDialog: PropTypes.func,
     toolbarHeight: PropTypes.string,
 };
 

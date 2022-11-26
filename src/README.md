@@ -6,7 +6,7 @@
 - ✅ Allow for one widget to show the detailed information with screenshot (i18n): many texts (HTML) and one picture (on none)
 - ✅ Add widget from palette
 - ✅ Close all groups / open all groups
-- Take in count new react widget types => onLoaded([])
+- ✅ Take in count new react widget types => onLoaded([])
 
 ### View
 - ✅ Delete widget (With suppress dialog)

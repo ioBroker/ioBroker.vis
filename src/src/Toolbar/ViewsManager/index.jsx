@@ -56,7 +56,7 @@ const styles = theme => ({
     },
 });
 
-const ViewsManage = props => {
+const ViewsManager = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
@@ -69,8 +69,8 @@ const ViewsManage = props => {
 
     const [foldersCollapsed, setFoldersCollapsed] = useState([]);
     useEffect(() => {
-        if (window.localStorage.getItem('ViewsManage.foldersCollapsed')) {
-            setFoldersCollapsed(JSON.parse(window.localStorage.getItem('ViewsManage.foldersCollapsed')));
+        if (window.localStorage.getItem('ViewsManager.foldersCollapsed')) {
+            setFoldersCollapsed(JSON.parse(window.localStorage.getItem('ViewsManager.foldersCollapsed')));
         }
     }, []);
 
@@ -219,7 +219,7 @@ const ViewsManage = props => {
     </IODialog>;
 };
 
-ViewsManage.propTypes = {
+ViewsManager.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     name: PropTypes.string,
@@ -231,4 +231,4 @@ ViewsManage.propTypes = {
     toggleView: PropTypes.func,
 };
 
-export default withStyles(styles)(ViewsManage);
+export default withStyles(styles)(ViewsManager);

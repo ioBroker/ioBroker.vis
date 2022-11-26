@@ -509,7 +509,7 @@ const WidgetField = props => {
             {urlPopper}
             {idDialog ? <IODialog
                 title={t('Select file')}
-                open={idDialog}
+                open={!0}
                 onClose={() => setIdDialog(false)}
             >
                 <FileBrowser
@@ -1077,7 +1077,7 @@ const WidgetField = props => {
                 rows={2}
             />
             {idDialog ? <TextDialog
-                open={idDialog}
+                open={!0}
                 value={value}
                 onChange={newValue => change(newValue)}
                 onClose={() => setIdDialog(false)}
