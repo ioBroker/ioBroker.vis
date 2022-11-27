@@ -160,9 +160,8 @@ const Toolbar = props => {
 
     const currentUser = props.currentUser ?
         <div className={classes.rightBlock}>
-            <PersonIcon fontSize="small" />
-            <span style={{ paddingRight: 8 }}>
-                <Icon src={props.currentUser?.common?.icon || ''} className={classes.icon} />
+            {props.currentUser?.common?.icon ? <Icon src={props.currentUser?.common?.icon || ''} className={classes.icon} /> : <PersonIcon fontSize="small" />}
+            <span style={{ paddingRight: 8, marginLeft: 8 }}>
                 { Utils.getObjectNameFromObj(props.currentUser, lang) }
             </span>
             { props.socket.isSecure
