@@ -14,7 +14,7 @@
         "@sentry/browser": "^7.21.1",
         "@sentry/integrations": "^7.18.0",
         "ace-builds": "^1.12.5",
-        "copy-to-clipboard": "^3.3.2",
+        "copy-to-clipboard": "^3.3.3",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.0.3",
         "iobroker.type-detector": "^1.1.0",
