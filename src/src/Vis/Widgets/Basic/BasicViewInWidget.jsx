@@ -252,6 +252,7 @@ class BasicViewInWidget extends VisRxWidget {
                 editMode={false}
                 runtime={this.props.runtime}
                 visInWidget
+                buildLegacyStructures={this.props.buildLegacyStructures}
             />
         </div>;
     }

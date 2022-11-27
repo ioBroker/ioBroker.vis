@@ -41,6 +41,12 @@ class VisCanWidget extends VisBaseWidget {
         this.setupSubscriptions();
 
         this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
+
+        // legacy support
+        let widget = this.props.views[this.props.view].widgets[this.props.id];
+        if (widget.tpl.includes('materialdesign')) {
+            this.props.buildLegacyStructures();
+        }
     }
 
     setupSubscriptions() {
@@ -1219,6 +1225,7 @@ class VisCanWidget extends VisBaseWidget {
                 container={this.props.container}
                 editMode={false}
                 runtime={this.props.runtime}
+                buildLegacyStructures={this.props.buildLegacyStructures}
                 visInWidget
             />;
         }) : null;
@@ -1256,6 +1263,7 @@ VisCanWidget.propTypes = {
     mouseDownOnView: PropTypes.func,
     registerRef: PropTypes.func,
     onWidgetsChanged: PropTypes.func,
+    buildLegacyStructures: PropTypes.func,
     showWidgetNames: PropTypes.bool,
     editGroup: PropTypes.bool,
     VisView: PropTypes.any,

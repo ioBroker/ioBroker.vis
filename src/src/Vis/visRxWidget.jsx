@@ -46,6 +46,7 @@ class VisRxWidget extends VisBaseWidget {
 
         getUsedObjectIDsInWidget(props.views, props.view, props.id, this.linkContext);
 
+        // do not change it to lambda function as onStateChanged could be inherited.
         this.onStateChangedBind = this.onStateChanged.bind(this);
 
         // apply bindings and modifications

@@ -1,5 +1,5 @@
 ## Todo
-- Reload all vis instances by file subscribe (could be disabled by config)
+- ✅ Reload all vis instances by file subscribe (could be disabled by config)
 
 ### Palette
 - ✅ Show widgets in palette by group
@@ -27,13 +27,13 @@
 - ✅ Ctrl+A / Esc(Deselect all) / ...
 - ✅ If dimension is in % so after resize and move it should stay in %
 - ✅ Ask about not saved file (because of 1 sec delay)
-- Allow selection of background image and x-offset, y-offset, opacity, repeat, size
+- [ ] Allow selection of background image and x-offset, y-offset, opacity, repeat, size
 
 ## groups edit
 - ✅ Check
 
 ### Widget
-- ✅By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
+- ✅ By edit widget, if someone enters URL that starts with the same `http(s)://hostname:port/(vis/)data.html` ask to short to `(vis/)data.html`
 
 - [Gestures] (do not implement)
 - Last change by Rx
@@ -41,24 +41,24 @@
 
 ### Runtime
 #### Engine
-- Bindings in View settings
+- ✅ Bindings in View settings
 
 ### Toolbar
-- 3 Levels of visibility:
-    - opened full (as now)
-    - middle (without titles "Views of main", "Widgets", "Projects")
-    - narrow (only important buttons: add view, active widgets, align - only one line) and user/theme/mode on one line
+- ✅ 3 Levels of visibility:
+    - ✅ opened full (as now)
+    - ✅ middle (without titles "Views of main", "Widgets", "Projects")
+    - ✅ narrow (only important buttons: add view, active widgets, align - only one line) and user/theme/mode on one line
 
 ### use react-rnd
 - POC ?
 
 ### Backend by start
-- Collect enabled widgets and pack all of them into widgets.html
-- Do not copy widgetName.html into widgets folder
-- Remove unused widget folders
+- ✅ Collect enabled widgets and pack all of them into widgets.html
+- ✅ Do not copy widgetName.html into widgets folder
+- ✅ Remove unused widget folders
 
 ### Edit widgets
-- Old `onChangeFunc` should work
+- ✅ Old `onChangeFunc` should work
 
 ### Widgets
 All widgets from vis.1 must work in vis.2 or rewritten in react
@@ -67,14 +67,6 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - ...
 
 ### New widget set - material like
-- Group of relative widgets
-- Lamp
-- Window
-- Jalousie
-- Door
-- Slider
-- ...
-- Side menu with views
 - Add widgets from material adapter
 
 ### Wizard for new widget set

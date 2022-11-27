@@ -460,7 +460,7 @@ class App extends GenericApp {
             this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
         }
 
-        if (project.___settings.reloadOnEdit !== false) {
+        if (project.___settings.reloadOnEdit !== false && this.state.runtime) {
             this.subscribedProject = projectName;
             // subscribe on changes
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);

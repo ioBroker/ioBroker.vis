@@ -876,6 +876,7 @@ class VisView extends React.Component {
             widgetHint: props.widgetHint,
             relativeWidgetOrder,
             moveAllowed,
+            buildLegacyStructures: props.buildLegacyStructures,
             selectedGroup: props.selectedGroup,
             lang: props.lang,
             dateFormat: props.dateFormat,
@@ -1593,6 +1594,7 @@ VisView.propTypes = {
     theme: PropTypes.object,
     style: PropTypes.object,
     visInWidget: PropTypes.bool,
+    buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

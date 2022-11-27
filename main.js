@@ -560,6 +560,8 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 
 async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
+
+    // create vis meta object if not exists
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
@@ -571,6 +573,7 @@ async function main() {
         });
     }
 
+    // create vis.0 meta object if not exists
     const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
     if (!visObjNS || visObjNS.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapter.namespace, {
@@ -581,6 +584,15 @@ async function main() {
             },
             native: {}
         });
+    }
+
+    // repair chart view
+    const systemView = await adapter.getForeignObjectAsync('_design/system');
+    if (systemView && systemView.views && !systemView.views.chart) {
+        systemView.views.chart = {
+            map: 'function(doc) { if (doc.type === \'chart\') emit(doc._id, doc) }'
+        };
+        await adapter.setForeignObjectAsync(systemView._id, systemView);
     }
 
     // first check license

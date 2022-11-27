@@ -1553,6 +1553,7 @@ VisBaseWidget.propTypes = {
     selectedGroup: PropTypes.string,
     lang: PropTypes.string,
     dateFormat: PropTypes.string,
+    buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
 
     // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,
