@@ -258,10 +258,12 @@ const getFieldsAfter = (widget, widgets, fonts) => [
     {
         name: 'css_common',
         isStyle: true,
-        fields: [{ name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
+        fields: [
+            { name: 'position', type: 'nselect', options: ['', 'relative', 'sticky'] },
             { name: 'display', type: 'nselect', options: ['', 'inline-block'] },
             ...(['relative', 'sticky'].includes(widget.style.position) ? [] :
-                [{ name: 'left', type: 'dimension' },
+                [
+                    { name: 'left', type: 'dimension' },
                     { name: 'top', type: 'dimension' },
                 ]),
             { name: 'width', type: 'dimension' },
@@ -273,7 +275,8 @@ const getFieldsAfter = (widget, widgets, fonts) => [
             { name: 'overflow-y', type: 'nselect', options: ['', 'visible', 'hidden', 'scroll', 'auto', 'initial', 'inherit'] },
             { name: 'opacity' },
             { name: 'cursor', type: 'auto' },
-            { name: 'transform' }],
+            { name: 'transform' },
+        ],
     },
     {
         name: 'css_font_text',

@@ -23,6 +23,8 @@ import IODialog from '../../Components/IODialog';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
+const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
+
 function collectClasses() {
     const result = [];
     const sSheetList = document.styleSheets;
@@ -544,8 +546,17 @@ const WidgetField = props => {
     }
 
     if (field.type === 'dimension') {
-        const [, _value, _unit] = (value || '').toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
-        const unit = _unit || 'px';
+        const m = (value || '').toString().match(/^(-?[,.0-9]+)([a-z%]*)$/);
+        let customValue = !m;
+        let _value;
+        let unit;
+        if (m) {
+            _value = m[1];
+            unit = m[2] || 'px';
+            if (!window.isFinite(_value) || (m[2] && !POSSIBLE_UNITS.includes(m[2]))) {
+                customValue = true;
+            }
+        }
 
         return <TextField
             variant="standard"
@@ -556,7 +567,7 @@ const WidgetField = props => {
             disabled={disabled}
             InputProps={{
                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                endAdornment: !isDifferent ? <Button
+                endAdornment: !isDifferent && !customValue ? <Button
                     size="small"
                     disabled={disabled}
                     title={t('Convert %s to %s', unit, unit === '%' ? 'px' : '%')}
@@ -571,16 +582,8 @@ const WidgetField = props => {
                     {unit}
                 </Button> : null,
             }}
-            value={unit === '%' || unit === 'px' || unit === 'em' || unit === 'rem' || unit === 'vh' || unit === 'vmin' || unit === 'vmax' || unit === 'vw' ? _value : _value + unit}
-            onChange={e => {
-                if (!e.target.value) {
-                    change('');
-                } else {
-                    const [, newValue, _newUnit] = e.target.value.toString().match(/^(-?[,.0-9]+)(.*)$/) || ['', '', 'px'];
-                    const newUnit = _newUnit || unit;
-                    change(newValue + newUnit);
-                }
-            }}
+            value={value}
+            onChange={e => change(e.target.value)}
         />;
     }
 

@@ -1379,6 +1379,16 @@ class VisBaseWidget extends React.Component {
                 style.bottom = this.state.style.bottom;
             }
 
+            // convert string to number+'px'
+            ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
+                if (style[attr] !== undefined && typeof style[attr] === 'string') {
+                    // todo: evaluate bindings
+                    if (window.isFinite(style[attr])) {
+                        style[attr] = parseFloat(style[attr]);
+                    }
+                }
+            });
+
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
 
@@ -1386,8 +1396,7 @@ class VisBaseWidget extends React.Component {
                 if (this.props.moveAllowed &&
                     this.state.draggable !== false &&
                     !this.props.isRelative &&
-                    (!this.props.selectedGroup ||
-                    this.props.selectedGroup !== this.props.id)
+                    (!this.props.selectedGroup || this.props.selectedGroup !== this.props.id)
                 ) {
                     style.cursor = 'move';
                 } else {
@@ -1457,7 +1466,7 @@ class VisBaseWidget extends React.Component {
                     this.props.isRelative && this.state.resizable && 'vis-editmode-widget-name-long',
                 )}
             >
-                <span>{ this.props.id }</span>
+                <span>{this.props.id}</span>
                 <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
                 {this.props.isRelative && this.state.resizable ? <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
             </div>;
