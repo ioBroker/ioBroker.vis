@@ -26,7 +26,7 @@
   "dependencies": {
     "jsonwebtoken": "^8.5.1",
     "@iobroker/adapter-core": "^2.6.7",
-    "axios": "^0.27.2",
+    "axios": "^1.2.0",
     "mime": "^3.0.0"
   },
   "devDependencies": {
