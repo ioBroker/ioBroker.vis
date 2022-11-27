@@ -87,13 +87,13 @@ function init(gulp) {
         });
 
         // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
-        if (!fs.existsSync(__dirname + '/knx-uf-iconset/master.zip')) {
+        if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
             axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'})
                 .then(async res => {
-                    !fs.existsSync(__dirname + '/knx-uf-iconset') && fs.mkdirSync(__dirname + '/knx-uf-iconset');
-                    fs.writeFileSync(__dirname + '/knx-uf-iconset/master.zip', res.data);
+                    !fs.existsSync(`${__dirname}/knx-uf-iconset`) && fs.mkdirSync(`${__dirname}/knx-uf-iconset`);
+                    fs.writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
 
-                    const zip = fs.createReadStream(__dirname + '/knx-uf-iconset/master.zip').pipe(unzipper.Parse({forceStream: true}));
+                    const zip = fs.createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(unzipper.Parse({forceStream: true}));
                     for await (const entry of zip) {
                         const fileName = entry.path;
                         if (entry.type === 'File' && fileName.endsWith('.svg')) {

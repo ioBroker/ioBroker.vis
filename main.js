@@ -228,7 +228,7 @@ function checkLicense(license, uuid, originalError) {
         adapter.log.error(`Cannot check license: Expired on ${new Date(license.expires * 1000).toString()}`);
         return true;
     } else if (!license) {
-        adapter.log.error(`Cannot check license: License is empty${originalError ? ' and ' + originalError : ''}`);
+        adapter.log.error(`Cannot check license: License is empty${originalError ? ` and ${originalError}` : ''}`);
         return true;
     } else if (uuid.length !== 36) {
         if (license.invoice === 'free') {
