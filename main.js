@@ -255,7 +255,7 @@ function checkLicense(license, uuid, originalError) {
         }
         for (let s = 0; s < code.length; s++) {
             if (code[s] !== '\\u00' + t.charCodeAt(s).toString(16)) {
-                originalError && adapter.log.error('Cannot check license: ' + originalError);
+                originalError && adapter.log.error(`Cannot check license: ${originalError}`);
                 return true;
             }
         }

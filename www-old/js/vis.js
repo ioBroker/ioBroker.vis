@@ -277,7 +277,7 @@ var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/
 // var FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~\p{Ll}\p{Lu}\p{Nd}]+/gu; // it must be like this, but old browsers does not support Unicode
 
 var vis = {
-    version: '1.4.13',
+    version: '1.4.15',
     requiredServerVersion: '0.0.0',
 
     storageKeyViews:    'visViews',
@@ -3224,7 +3224,7 @@ var vis = {
     subscribeOidAtRuntime: function (oid, callback, force) {
         // if state value is an oid, and it is not subscribe then subscribe it at runtime, can happen if binding are used in oid attributes
         // the id with invalid contains characters not allowed in oid's
-        if (!FORBIDDEN_CHARS.test(oid) && (this.subscribing.active.indexOf(oid) === -1 || force) && oid.length < 400) {
+        if (!FORBIDDEN_CHARS.test(oid) && (this.subscribing.active.indexOf(oid) === -1 || force) && oid.length < 300) {
             if ((/^[^.]*\.\d*\..*|^[^.]*\.[^.]*\.[^.]*\.\d*\..*/).test(oid)) {
                 this.subscribing.active.push(oid);
 

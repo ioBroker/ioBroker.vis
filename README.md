@@ -213,6 +213,15 @@ Notice that these settings are valid only for reconnection and not for the first
 ### 2.0.0 (2022-10-21)
 * (bluefox) Completely new visualization, but compatible with previous version
 
+### 1.4.15 (2022-04-10)
+* (bluefox) Better check of the offline license
+
+### 1.4.14 (2022-03-31)
+* (bluefox) Corrected GUI bug
+
+### 1.4.13 (2022-03-22)
+* (pascal-hari) The group attributes will be replaced recursively
+
 ## License
  Copyright (c) 2013-2022 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
