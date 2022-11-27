@@ -12,7 +12,7 @@
         "@mui/material": "^5.10.13",
         "@mui/styles": "^5.10.10",
         "@sentry/browser": "^7.21.1",
-        "@sentry/integrations": "^7.18.0",
+        "@sentry/integrations": "^7.21.1",
         "ace-builds": "^1.12.5",
         "copy-to-clipboard": "^3.3.3",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
