@@ -8,21 +8,17 @@
  *      CC-NC-BY 4.0 License
  *
  */
-/* jshint -W097 */
-/* jshint strict: false */
-/* jslint node: true */
 'use strict';
 
-const adapterName = require('./package.json').name.split('.').pop();
-const isBeta = adapterName.includes('beta');
-
-const utils = require('@iobroker/adapter-core'); // Get common adapter utils
-const fs = require('fs');
-const path = require('path');
+const adapterName    = require('./package.json').name.split('.').pop();
+const utils          = require('@iobroker/adapter-core'); // Get common adapter utils
+const fs             = require('fs');
 const syncWidgetSets = require('./lib/install.js');
-const https = require('https');
-const jwt = require('jsonwebtoken');
+const https          = require('https');
+const jwt            = require('jsonwebtoken');
 let adapter;
+let isLicenseError = false;
+let lastProgressUpdate;
 
 function startAdapter(options) {
     options = options || {};
@@ -36,214 +32,78 @@ function startAdapter(options) {
     return adapter;
 }
 
-async function writeFile(fileName) {
-    const config = require(__dirname + '/www/js/config.js').config;
-    let index;
-    const srcFileNameParts = fileName.split('.');
-    const ext = srcFileNameParts.pop();
-    const srcFileName = srcFileNameParts.join('.') + '.src.' + ext;
-    if (fs.existsSync(__dirname + '/www/' + srcFileName)) {
-        index = fs.readFileSync(__dirname + '/www/' + srcFileName).toString();
-    } else {
-        index = fs.readFileSync(__dirname + '/www/' + fileName).toString();
-        fs.writeFileSync(__dirname + '/www/' + srcFileName, index);
-    }
-
-    // enable cache
-    index = index.replace('<!--html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html"--><html>',
-        '<html manifest="cache.manifest" xmlns="http://www.w3.org/1999/html">');
-
-    const begin = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - BEGIN ------------------------------------------- -->';
-    const end   = '<!-- ---------------------------------------  DO NOT EDIT INSIDE THIS LINE - END   ------------------------------------------- -->';
-    let bigInsert = '';
-    for (const w in config.widgetSets) {
-        if (!config.widgetSets.hasOwnProperty(w)) continue;
+async function generateWidgetsHtml(widgetSets) {
+    let text = '';
+    for (const w in widgetSets) {
+        if (!widgetSets.hasOwnProperty(w)) {
+            continue;
+        }
         let file;
         let name;
 
-        if (typeof config.widgetSets[w] === 'object') {
-            name = config.widgetSets[w].name + '.html';
+        if (typeof widgetSets[w] === 'object') {
+            name = widgetSets[w].name + '.html';
         } else {
-            name = config.widgetSets[w] + '.html';
+            name = widgetSets[w] + '.html';
         }
-        file = fs.readFileSync(__dirname + '/www/widgets/' + name);
+        file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
         // extract all css and js
 
-
-        bigInsert += '<!-- --------------' + name + '--- START -->\n' + file.toString() + '\n<!-- --------------' + name + '--- END -->\n';
+        text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
     }
-    let pos = index.indexOf(begin);
-    if (pos !== -1) {
-        const start = index.substring(0, pos + begin.length);
-        pos = index.indexOf(end);
-        if (pos !== -1) {
-            const _end = index.substring(pos);
-            index = start + '\n' + bigInsert + '\n' + _end;
 
-            /*index = minify(index, {
-                removeAttributeQuotes: true,
-                removeComments: true,
-                collapseInlineTagWhitespace: true,
-                collapseWhitespace: true,
-                decodeEntities: true,
-                minifyCSS: true,
-                minifyJS: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true
-            });*/
-            let data;
-            try {
-                data = await adapter.readFileAsync(adapterName, fileName);
-            } catch (err) {
-                // ignore
-            }
-            if (typeof data === 'object') {
-                data = data.file;
-            }
-            if (data && data !== index) {
-                fs.writeFileSync(__dirname + '/www/' + fileName, index);
-                await adapter.writeFileAsync(adapterName, fileName, index);
-                return true;
-            }
-        }
+    let data;
+    try {
+        data = await adapter.readFileAsync(adapterName, 'widgets.html');
+    } catch (err) {
+        // ignore
     }
+    if (typeof data === 'object') {
+        data = data.file;
+    }
+    if (data && data !== text) {
+        fs.writeFileSync(__dirname + '/www/widgets.html', text);
+        // upload file to DB
+        await adapter.writeFileAsync(adapterName, 'www/widgets.html', text);
+        return true;
+    } else if (!fs.existsSync(__dirname + '/www/widgets.html') || fs.readFileSync(__dirname + '/www/widgets.html').toString() !== text) {
+        fs.writeFileSync(__dirname + '/www/widgets.html', text);
+    }
+
     return false;
 }
 
-function upload() {
-    return new Promise(resolve => {
-        adapter.log.info(`Upload ${adapter.name} anew, while changes detected...`);
-
-        const file = path.join(utils.controllerDir, 'iobroker.js');
-        const child = require('child_process').spawn('node', [file, 'upload', adapter.name, 'widgets']);
-        let count = 0;
-        child.stdout.on('data', data => {
-            count++;
-            adapter.log.debug(data.toString().replace('\n', ''));
-            !(count % 100) && adapter.log.info(count + ' files uploaded...');
-        });
-
-        child.stderr.on('data', data =>
-            adapter.log.error(data.toString().replace('\n', '')));
-
-        child.on('exit', exitCode => {
-            adapter.log.info(`Uploaded. ${exitCode ? 'Exit - ' + exitCode : 0}`);
-            resolve(exitCode);
-        });
-    });
-}
-
-async function updateCacheManifest() {
-    adapter.log.info('Changes in index.html detected => update cache.manifest');
-    let data = fs.readFileSync(__dirname + '/www/cache.manifest').toString();
-    const build = data.match(/# dev build ([0-9]+)/);
-    data = data.replace(/# dev build [0-9]+/, '# dev build ' + (parseInt(build[1] || 0, 10) + 1));
-    fs.writeFileSync(__dirname + '/www/cache.manifest', data);
-
-    await adapter.writeFileAsync(adapterName, 'cache.manifest', data);
-}
-
-// Update index.html
-async function checkFiles(configChanged, isBeta) {
-    if (isBeta) {
-        return;
-    }
-    const indexChanged = await writeFile('index.html');
-    // Update edit.html
-    const editChanged = await writeFile('edit.html');
-    if (indexChanged || editChanged || configChanged) {
-        await updateCacheManifest();
-        await upload();
-    }
-}
-
-async function copyFiles(root, filesOrDirs) {
-    if (!filesOrDirs) {
-        try {
-            const filesOrDirs = await adapter.readDirAsync('vis.0', root);
-            await copyFiles(root, filesOrDirs || []);
-        } catch (err) {
-            adapter.log.warn(`Cannot read directory ${root}: ${err.message}`);
-        }
-    }
-
-    if (!filesOrDirs || !filesOrDirs.length) {
-        return;
-    }
-
-    for (let f = 0; f < filesOrDirs.length; f++) {
-        const task = filesOrDirs[f];
-        if (task.isDir) {
-            await copyFiles(root + task.file + '/');
-        } else {
-            try {
-                let data = await adapter.readFileAsync('vis.0', root + task.file);
-                if (typeof data === 'object') {
-                    data = data.file;
-                }
-                if (data || data === 0 || data === '') {
-                    await adapter.writeFileAsync(adapterName + '.0', root + task.file, data);
-                }
-            } catch (err) {
-                adapter.log.warn(`Cannot copy file vis.0/${root + task.file} to ${adapterName + '.0'}/${root + task.file}: ${err.message}`);
-            }
-        }
-    }
-}
-
-async function generatePages(isLicenseError) {
+async function generateConfigPage() {
     let changed = false;
 
-    if (!isBeta) {
-        changed = !!syncWidgetSets(false, isLicenseError);
+    const configJs = `window.isLicenseError = ${isLicenseError};`;
 
-        // upload config.js
-        let data = await adapter.readFileAsync(adapterName, 'js/config.js');
-        if (typeof data === 'object') {
-            data = data.file;
-        }
-        const config = fs.existsSync(__dirname + '/www/js/config.js') ? fs.readFileSync(__dirname + '/www/js/config.js').toString('utf8') : '';
-        data = data ? data.toString('utf8') : '';
-        if (!data || data !== config) {
-            changed = true;
-            adapter.log.info('config.js changed. Upload.');
-            await adapter.writeFileAsync(adapterName, 'js/config.js', config);
-        }
-    } else {
-        // try to read vis-beta.0/files
-        const dirs = await adapter.readDirAsync(adapterName + '.0', '/');
-        if (!dirs || !dirs.length) {
-            // copy all directories
-            await copyFiles('/', null);
-        }
+    // upload config.js
+    let currentConfigJs = '';
+    try {
+        currentConfigJs = await adapter.readFileAsync(adapterName, 'config.js');
+    } catch (err) {
+
     }
-
-    // create command variable
-    const obj = await adapter.getObjectAsync('control.command');
-    if (!obj) {
-        await adapter.setObjectAsync('control.command',
-        {
-                type: 'state',
-                common: {
-                    name: 'Command for vis',
-                    type: 'string',
-                    desc: 'Writing this variable akt as the trigger. Instance and data must be preset before \'command\' will be written. \'changedView\' will be signalled too',
-                    role: 'state',
-                    states: {
-                        alert: 'alert',
-                        changeView: 'changeView',
-                        refresh: 'refresh',
-                        reload: 'reload',
-                        dialog: 'dialog',
-                        popup: 'popup',
-                        playSound: 'playSound',
-                        changedView: 'changedView',
-                        tts: 'tts'
-                    }
-                },
-                native: {}
-            });
+    if (typeof currentConfigJs === 'object') {
+        currentConfigJs = currentConfigJs.file;
+    }
+    currentConfigJs = currentConfigJs ? currentConfigJs.toString('utf8') : '';
+    if (!currentConfigJs || currentConfigJs !== configJs) {
+        changed = true;
+        adapter.log.info('config.js changed. Upload.');
+        await adapter.writeFileAsync(adapterName, 'config.js', configJs);
+        fs.writeFileSync(__dirname + '/www/config.js', configJs);
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
+    } else if (!fs.existsSync(__dirname + '/www/config.js') || fs.readFileSync(__dirname + '/www/config.js').toString() !== configJs) {
+        fs.writeFileSync(__dirname + '/www/config.js', configJs);
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
+    }
+    if (!fs.existsSync(__dirname + '/www/js/config.js') || fs.readFileSync(__dirname + '/www/js/config.js').toString() !== configJs) {
+        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
     }
 
     // Create common user CSS file
@@ -262,17 +122,6 @@ async function generatePages(isLicenseError) {
     }
 
     return changed;
-}
-
-async function indicateError() {
-    let data = fs.readFileSync(__dirname + '/www/js/config.js').toString();
-    if (!data.includes('license: false,')) {
-        data = data.replace('const visConfig = {', 'const visConfig = {license: false,');
-        fs.writeFileSync(__dirname + '/www/js/config.js', data);
-
-        await adapter.writeFileAsync(adapterName, 'js/config.js', data);
-        await updateCacheManifest();
-    }
 }
 
 // delete this function as js.controller 4.0 will be mainstream
@@ -406,7 +255,7 @@ function checkLicense(license, uuid, originalError) {
         }
         for (let s = 0; s < code.length; s++) {
             if (code[s] !== '\\u00' + t.charCodeAt(s).toString(16)) {
-                originalError && adapter.log.error('Cannot check license: ' + originalError);
+                originalError && adapter.log.error(`Cannot check license: ${originalError}`);
                 return true;
             }
         }
@@ -465,10 +314,10 @@ function doLicense(license, uuid) {
                             }
                         } else {
                             adapter.log.info('vis license is OK.');
-                            resolve();
+                            resolve(false);
                         }
                     } else {
-                        await indicateError();
+                        isLicenseError = true
                         adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? data.result : 'unknown'}`);
                         resolve(true);
                     }
@@ -486,12 +335,248 @@ function doLicense(license, uuid) {
     })
 }
 
-async function main() {
-    let isLicenseError;
+async function readAdaptersList() {
+    const res = await adapter.getObjectViewAsync('system', 'instance', {});
+    return res.rows.filter(item => item.value.common.enabled || item.value.common.name.startsWith('vis-')) // some vis-xxx instances are disabled, but they cannot be activated from admin
+        .map(item => item.value._id.replace('system.adapter.', '').replace(/\.\d+$/, '')).sort();
+}
 
+/**
+ * Collect Files of an adapter specific directory from the iobroker storage
+ *
+ * @param path path in the adapter specific storage space
+ */
+async function collectExistingFilesToDelete(path) {
+    let _files = [];
+    let _dirs = [];
+    let files;
+    try {
+        adapter.log.debug('Scanning ' + path);
+        files = await adapter.readDirAsync(adapterName, path);
+    } catch {
+        // ignore err
+        files = [];
+    }
+
+    if (files && files.length) {
+        for (const file of files) {
+            if (file.file === '.' || file.file === '..') {
+                continue;
+            }
+            const newPath = path + file.file;
+            if (file.isDir) {
+                if (!_dirs.find(e => e.path === newPath)) {
+                    _dirs.push({ adapter, path: newPath });
+                }
+                try {
+                    const result = await collectExistingFilesToDelete(`${newPath}/`);
+                    if (result.filesToDelete) {
+                        _files = _files.concat(result.filesToDelete);
+                    }
+
+                    _dirs = _dirs.concat(result.dirs);
+                } catch (err) {
+                    adapter.log.warn(`Cannot delete folder "${adapter}${newPath}/": ${err.message}`);
+                }
+            } else if (!_files.find(e => e.path === newPath)) {
+                _files.push(newPath);
+            }
+        }
+    }
+
+    return { filesToDelete: _files, dirs: _dirs };
+}
+
+async function eraseFiles(files) {
+    if (files && files.length) {
+        for (const file of files) {
+            try {
+                // @ts-expect-error should be fixed with #1917
+                await adapter.unlinkAsync(adapterName, file);
+            } catch (err) {
+                adapter.log.error(`Cannot delete file "${file}": ${err}`);
+            }
+        }
+    }
+}
+
+async function upload(files) {
+    const uploadID = `system.adapter.${adapterName}.upload`;
+
+    await adapter.setForeignStateAsync(uploadID, { val: 0, ack: true });
+
+    for (let f = 0; f < files.length; f++) {
+        const file = files[f];
+
+        let attName = file.substring((__dirname + '/www/').length).replace(/\\/g, '/');
+        if (files.length - f > 100) {
+            (!f || !((files.length - f - 1) % 50)) &&
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+        } else if (files.length - f - 1 > 20) {
+            (!f || !((files.length - f - 1) % 10)) &&
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+        } else {
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+        }
+
+        // Update upload indicator
+        const now = Date.now();
+        if (!lastProgressUpdate || now - lastProgressUpdate > 1000) {
+            lastProgressUpdate = now;
+            await adapter.setForeignStateAsync(uploadID, {
+                val: Math.round((1000 * (files.length - f)) / files.length) / 10,
+                ack: true
+            });
+        }
+
+        try {
+            const data = fs.readFileSync(file);
+            await adapter.writeFileAsync(adapterName, attName, data);
+        } catch (e) {
+            adapter.log.error(`Error: Cannot upload ${file}: ${e.message}`);
+        }
+    }
+
+    // Set upload progress to 0;
+    if (files.length) {
+        await adapter.setForeignStateAsync(uploadID, { val: 0, ack: true });
+    }
+
+    return adapter;
+}
+
+// Read synchronous all files recursively from local directory
+function walk(dir, _results) {
+    const results = _results || [];
+    try {
+        if (fs.existsSync(dir)) {
+            const list = fs.readdirSync(dir);
+            list.map(file => {
+                const stat = fs.statSync(`${dir}/${file}`);
+                if (stat.isDirectory()) {
+                    walk(`${dir}/${file}`, results);
+                } else {
+                    if (!file.endsWith('.npmignore') &&
+                        !file.endsWith('.gitignore') &&
+                        !file.endsWith('.DS_Store') &&
+                        !file.endsWith('_socket/info.js')
+                    ) {
+                        results.push(`${dir}/${file}`);
+                    }
+                }
+            });
+        }
+    } catch (err) {
+        console.error(err);
+    }
+
+    return results;
+}
+
+/**
+ * Upload given adapter
+ */
+async function uploadAdapter() {
+    let dir = __dirname + '/www';
+
+    if (!fs.existsSync(dir)) {
+        return;
+    }
+
+    // Create "upload progress" object if not exists
+    let obj;
+    try {
+        obj = await adapter.getForeignObjectAsync(`system.adapter.${adapterName}.upload`);
+    } catch {
+        // ignore
+    }
+    if (!obj) {
+        await adapter.setForeignObjectAsync(`system.adapter.${adapterName}.upload`, {
+            type: 'state',
+            common: {
+                name: `${adapterName}.upload`,
+                type: 'number',
+                role: 'indicator.state',
+                unit: '%',
+                min: 0,
+                max: 100,
+                def: 0,
+                desc: 'Upload process indicator',
+                read: true,
+                write: false
+            },
+            native: {}
+        });
+    }
+
+    await adapter.setForeignStateAsync(`system.adapter.${adapterName}.upload`, 0, true);
+
+    let result;
+    try {
+        result = await adapter.getForeignObjectAsync(adapterName);
+    } catch {
+        // ignore
+    }
+    // Read all names with subtrees from local directory
+    const files = walk(dir);
+    if (!result) {
+        await adapter.setForeignObjectAsync(adapterName, {
+            type: 'meta',
+            common: {
+                name: adapterName,
+                type: 'www'
+            },
+            native: {}
+        });
+    }
+
+    const { filesToDelete } = await collectExistingFilesToDelete('/');
+    adapter.log.debug('Erasing files: ' + filesToDelete.length);
+    // delete old files, before upload of new
+    await eraseFiles(filesToDelete);
+
+    await upload(files);
+
+    return adapter;
+}
+
+async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
+    let files;
+    try {
+        files = await adapter.readDirAsync(sourceId, sourcePath);
+    } catch (e) {
+        return;
+    }
+
+    for (let f = 0; f < files.length; f++) {
+        if (files[f].isDir) {
+            await copyFolder(sourceId, `${sourcePath}/${files[f].file}`, targetId, `${targetPath}/${files[f].file}`);
+        } else {
+            const data = await adapter.readFileAsync(sourceId, `${sourcePath}/${files[f].file}`);
+            await adapter.writeFileAsync(targetId, `${targetPath}/${files[f].file}`, data.file);
+        }
+    }
+}
+
+async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
+
+    // create vis meta object if not exists
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
+            type: 'meta',
+            common: {
+                name: 'vis core files',
+                type: 'meta.user'
+            },
+            native: {}
+        });
+    }
+
+    // create vis.0 meta object if not exists
+    const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
+    if (!visObjNS || visObjNS.type !== 'meta') {
+        await adapter.setForeignObjectAsync(adapter.namespace, {
             type: 'meta',
             common: {
                 name: 'user files and images for vis',
@@ -501,17 +586,24 @@ async function main() {
         });
     }
 
+    // repair chart view
+    const systemView = await adapter.getForeignObjectAsync('_design/system');
+    if (systemView && systemView.views && !systemView.views.chart) {
+        systemView.views.chart = {
+            map: 'function(doc) { if (doc.type === \'chart\') emit(doc._id, doc) }'
+        };
+        await adapter.setForeignObjectAsync(systemView._id, systemView);
+    }
+
     // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
-        await indicateError();
+        isLicenseError = true
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-        isLicenseError = true;
     } else {
         const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
         if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
-            await indicateError();
+            isLicenseError = true
             adapter.log.error('UUID not found!');
-            isLicenseError = true;
         } else {
             let license = adapter.config.license;
             if (adapter.config.useLicenseManager) {
@@ -520,7 +612,6 @@ async function main() {
             }
 
             if (!license) {
-                await indicateError();
                 adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
                 isLicenseError = true;
             } else {
@@ -533,8 +624,55 @@ async function main() {
         }
     }
 
-    const filesChanged = await generatePages(isLicenseError);
-    await checkFiles(filesChanged, isBeta);
+    const configChanged = await generateConfigPage();
+    const enabledList = await readAdaptersList();
+
+    const {widgetSets, filesChanged} = syncWidgetSets(false, enabledList);
+    const widgetsChanged = await generateWidgetsHtml(widgetSets);
+
+    const indexHtml = fs.readFileSync(__dirname + '/www/index.html').toString('utf8');
+    let uploadedIndexHtml;
+    try {
+        uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');
+    } catch (err) {
+        // ignore
+    }
+    if (typeof uploadedIndexHtml === 'object') {
+        uploadedIndexHtml = uploadedIndexHtml.file;
+    }
+    uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
+
+    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
+        await uploadAdapter();
+    }
+
+    if (adapterName.includes('beta')) {
+        const visObj = await adapter.getForeignObjectAsync('vis-2-beta.0');
+        if (!visObj || visObj.type !== 'meta') {
+            await adapter.setForeignObjectAsync('vis-2-beta.0', {
+                type: 'meta',
+                common: {
+                    name: 'user files and images for vis',
+                    type: 'meta.user'
+                },
+                native: {}
+            });
+        }
+
+        // copy vis to vis-2-beta
+        let files;
+        try {
+            files = await adapter.readDirAsync('vis-2-beta.0', '');
+        } catch (e) {
+
+        }
+
+        if (!files || !files.length) {
+            // copy recursive all
+            await copyFolder('vis.0', '', 'vis-2-beta.0', '');
+        }
+    }
+
     adapter.stop();
 }
 

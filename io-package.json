@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.15",
+        "version": "2.0.8",
         "news": {
+            "2.0.8": {
+                "en": "Completely new visualization, but compatible with previous version",
+                "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",
+                "ru": "Полностью новая визуализация, но совместима с предыдущей версией",
+                "pt": "Completamente nova visualização, mas compatível com a versão anterior",
+                "nl": "Volledig nieuwe visualisatie, maar vergelijkbaar met vorige versie",
+                "fr": "Complètement nouvelle visualisation, mais compatible avec la version précédente",
+                "it": "Visualizzazione completamente nuova, ma compatibile con la versione precedente",
+                "es": "Visualización completamente nueva, pero compatible con la versión anterior",
+                "pl": "Ukończona jest nowa wizualna, ale kompatybilna z poprzednią wersją",
+                "uk": "Повністю нова візуалізація, але сумісна з попередньою версією",
+                "zh-cn": "完整的新的视觉,但与以前的版本兼容。"
+            },
             "1.4.15": {
                 "en": "Better check of the offline license",
                 "de": "Bessere Überprüfung der Offline-Lizenz",
@@ -169,7 +182,8 @@
             "img": "vis/img/faviconEdit.png",
             "color": "#c8ffe1",
             "order": 1
-        }
+        },
+        "stopBeforeUpdate": true
     },
     "native": {
         "defaultFileMode": 1604,
@@ -211,6 +225,7 @@
                 "name": "Command for vis",
                 "type": "string",
                 "desc": "Writing this variable act as the trigger. Instance and data must be preset before 'command' will be written. 'changedView' will be signalled too",
+                "role": "state",
                 "states": {
                     "alert": "alert",
                     "changeView": "changeView",

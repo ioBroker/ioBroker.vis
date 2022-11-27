@@ -1,20 +1,10 @@
 'use strict';
 
-const gulp       = require('gulp');
-const fs         = require('fs');
-const replace    = require('gulp-replace');
-const pkg        = require('./package.json');
-const iopackage  = require('./io-package.json');
-const version    = (pkg && pkg.version) ? pkg.version : iopackage.common.version;
-/*const appName   = getAppName();
-
-function getAppName() {
-    const parts = __dirname.replace(/\\/g, '/').split('/');
-    return parts[parts.length - 1].split('.')[0].toLowerCase();
-}
-*/
-const fileName = 'words.js';
-const languages  =  {
+const gulp      = require('gulp');
+const fs        = require('fs');
+const gulpReact = require('./gulpReact');
+const fileName  = 'words.js';
+const languages =  {
     en: {},
     de: {},
     ru: {},
@@ -24,9 +14,9 @@ const languages  =  {
     it: {},
     es: {},
     pl: {},
+    uk: {},
     'zh-cn': {}
 };
-const srcDir     = __dirname + '/';
 
 function lang2data(lang, isFlat) {
     let str = isFlat ? '' : '{\n';
@@ -233,7 +223,6 @@ function words2languagesFlat(src) {
         console.error('Cannot read or parse ' + fileName);
     }
 }
-
 function languagesFlat2words(src) {
     const dirs = fs.readdirSync(src + 'i18n/');
     const langs = {};
@@ -300,7 +289,6 @@ function languagesFlat2words(src) {
 
     writeWordJs(bigOne, src);
 }
-
 function languages2words(src) {
     const dirs = fs.readdirSync(src + 'i18n/');
     const langs = {};
@@ -368,25 +356,7 @@ function languages2words(src) {
     writeWordJs(bigOne, src);
 }
 
-gulp.task('wwwWords2languages', done => {
-    words2languages('./www/');
-    done();
-});
-
-gulp.task('wwwWords2languagesFlat', done => {
-    words2languagesFlat('./www/');
-    done();
-});
-
-gulp.task('wwwLanguagesFlat2words', done => {
-    languagesFlat2words('./www/');
-    done();
-});
-
-gulp.task('wwwLanguages2words', done => {
-    languages2words('./www/');
-    done();
-});
+gulpReact(gulp);
 
 gulp.task('adminWords2languages', done => {
     words2languages('./admin/');
@@ -408,92 +378,4 @@ gulp.task('adminLanguages2words', done => {
     done();
 });
 
-
-gulp.task('replacePkg', () =>
-    gulp.src([
-        srcDir + 'package.json',
-        srcDir + 'io-package.json'
-    ])
-    .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-    .pipe(gulp.dest(srcDir)));
-
-gulp.task('replaceVis', () =>
-    gulp.src([
-        srcDir + 'www/js/vis.js'
-    ])
-        .pipe(replace(/const version = *'[.0-9]*';/g, 'const version = "' + version + '";'))
-        .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-        .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
-        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
-        .pipe(replace(/ dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest( srcDir + '/www/js')));
-
-gulp.task('replaceHtml', () =>
-    gulp.src([
-        srcDir + 'www/cache.manifest',
-        srcDir + 'www/index.html',
-        srcDir + 'www/edit.html'
-    ])
-        .pipe(replace(/<!-- vis Version [.0-9]+ -->/g, '<!-- vis Version ' + version + ' -->'))
-        .pipe(replace(/const version = *'[.0-9]*';/g, 'const version = \'' + version + '\';'))
-        .pipe(replace(/"version": *"[.0-9]*",/g, '"version": "' + version + '",'))
-        .pipe(replace(/version: *"[.0-9]*",/g, 'version: "' + version + '",'))
-        .pipe(replace(/version: *'[.0-9]*',/g, 'version: \'' + version + '\','))
-        .pipe(replace(/# vis Version [.0-9]+/g, '# vis Version ' + version))
-        .pipe(replace(/# dev build [.0-9]+/g, '# dev build 0'))
-        .pipe(gulp.dest(srcDir + '/www')));
-
-gulp.task('updatePackages', done => {
-    iopackage.common.version = pkg.version;
-    iopackage.common.news = iopackage.common.news || {};
-    if (!iopackage.common.news[pkg.version]) {
-        const news = iopackage.common.news;
-        const newNews = {};
-
-        newNews[pkg.version] = {
-            'en': 'news',
-            'de': 'neues',
-            'ru': 'новое',
-            'pt': 'notícia',
-            'nl': 'nieuws',
-            'fr': 'nouvelles',
-            'it': 'notizia',
-            'es': 'Noticias',
-            'pl': 'Aktualności',
-            'zh-cn': '消息'
-        };
-        iopackage.common.news = Object.assign(newNews, news);
-    }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
-    done();
-});
-
-gulp.task('updateReadme', done => {
-    const readme = fs.readFileSync('README.md').toString();
-    const pos = readme.indexOf('## Changelog\n');
-    if (pos !== -1) {
-        const readmeStart = readme.substring(0, pos + '## Changelog\n'.length);
-        const readmeEnd   = readme.substring(pos + '## Changelog\n'.length);
-
-        if (readme.indexOf(version) === -1) {
-            const timestamp = new Date();
-            const date = timestamp.getFullYear() + '-' +
-                ('0' + (timestamp.getMonth() + 1).toString(10)).slice(-2) + '-' +
-                ('0' + (timestamp.getDate()).toString(10)).slice(-2);
-
-            let news = '';
-            if (iopackage.common.news && iopackage.common.news[pkg.version]) {
-                news += '* ' + iopackage.common.news[pkg.version].en;
-            }
-
-            fs.writeFileSync('README.md', readmeStart + '### ' + version + ' (' + date + ')\n' + (news ? news + '\n\n' : '\n') + readmeEnd);
-        }
-    }
-    done();
-});
-
-gulp.task('replace', gulp.series('replacePkg', 'replaceVis', 'replaceHtml'));
-
-gulp.task('default', gulp.series('updatePackages', 'updateReadme', 'replace'));
+gulp.task('default', gulp.series('buildReact'));

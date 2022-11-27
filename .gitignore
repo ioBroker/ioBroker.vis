@@ -7,6 +7,7 @@
 /lib/js
 /lib/css
 /www/_socket
+/knx-uf-iconset
 /cordova/www
 /cordova/platforms/android/assets/www
 /cordova/platforms/android/.gradle
@@ -33,3 +34,11 @@
 admin/i18n/*/flat.txt
 admin/i18n/flat.txt
 *.vis.code-workspace
+/beta
+
+/src/package-lock.json
+/src/node_modules
+src/build
+/.vscode
+/src/dist
+/www
