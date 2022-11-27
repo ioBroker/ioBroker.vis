@@ -113,7 +113,7 @@ const Settings = props => {
         {
             type: 'raw',
             Node: <>
-                <TextField variant="standard" label={I18n.t('Browser instance ID')} value={instance} onChange={e => setInstance(e.target.value)} />
+                <TextField variant="standard" label={I18n.t('Browser instance ID')} value={instance || ''} onChange={e => setInstance(e.target.value)} />
                 <Button
                     variant="contained"
                     color="grey"
