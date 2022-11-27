@@ -1050,6 +1050,7 @@ const Widget = props => {
                                                             {accordionOpen[group.name] && group.hasValues ?
                                                                 <WidgetField
                                                                     widgetType={widgetType}
+                                                                    themeType={props.themeType}
                                                                     error={error}
                                                                     disabled={disabled}
                                                                     field={field}

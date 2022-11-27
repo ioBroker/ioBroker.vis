@@ -28,8 +28,8 @@ const TextDialog = props => {
     >
         <div style={{ width: 800 }}>
             <AceEditor
-                mode={props.type}
-                theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
+                mode={props.type === 'text' ? 'html' : props.type}
+                theme={props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
                 width="100%"
                 value={value}
                 onChange={newValue => changeValue(newValue)}
@@ -47,7 +47,7 @@ TextDialog.propTypes = {
     onChange: PropTypes.func,
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    themeName: PropTypes.string,
+    themeType: PropTypes.string,
     type: PropTypes.string,
     value: PropTypes.string,
 };

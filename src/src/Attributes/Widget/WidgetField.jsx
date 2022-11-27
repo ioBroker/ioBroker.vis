@@ -1081,6 +1081,7 @@ const WidgetField = props => {
                 value={value}
                 onChange={newValue => change(newValue)}
                 onClose={() => setIdDialog(false)}
+                themeType={props.themeType}
                 type={field.type}
             /> : null}
         </>;
