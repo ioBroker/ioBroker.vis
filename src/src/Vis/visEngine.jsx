@@ -165,8 +165,11 @@ class VisEngine extends React.Component {
         this.canStates = this.initCanObjects();
         this.vis = this.createLegacyVisObject();
 
-        window._   = this.vis._;
+        window._   = this.vis._;               // legacy translation function
         window.vis = this.vis;
+        window.translateWord = _translateWord; // legacy translation function
+        window._setTimeout = (func, timeout, arg1, arg2, arg3, arg4, arg5, arg6) => setTimeout(() => func(arg1, arg2, arg3, arg4, arg5, arg6), timeout);
+        window._setInterval = (func, interval, arg1, arg2, arg3, arg4, arg5, arg6) => setInterval(() => func(arg1, arg2, arg3, arg4, arg5, arg6), interval);
 
         this.formatUtils = new VisFormatUtils({ vis: this.vis });
 
@@ -275,6 +278,33 @@ class VisEngine extends React.Component {
             .then(objects => this.vis.objects = objects);
     }
 
+    buildLegacyStructures = () => {
+        this.buildLegacySubscribing();
+        if (this.vis.binds.materialdesign?.helper?.subscribeStatesAtRuntime && !this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited) {
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = function (wid, widgetName, callback, debug) {
+
+            };
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited = true;
+        }
+    };
+
+    buildLegacySubscribing() {
+        // go through all views
+        this.vis.subscribing = {
+            activeViews: [],
+            byViews: {},
+            active: [],
+            IDs: [],
+        };
+
+        Object.keys(this.props.views).forEach(viewId => {
+            if (viewId !== '___settings') {
+                this.vis.subscribing.byViews[viewId] = [];
+                this.vis.subscribing.activeViews.push(viewId);
+            }
+        });
+    }
+
     createLegacyVisObject() {
         return {
             version: 2,
@@ -296,6 +326,12 @@ class VisEngine extends React.Component {
             loginRequired: false,
             viewsActiveFilter: this.viewsActiveFilter,
             onChangeCallbacks: this.onChangeCallbacks,
+            subscribing: {
+                activeViews: [],
+                byViews: {},
+                active: [],
+                IDs: [],
+            },
             conn: this.conn,
             updateContainers: () => {
                 const refViews = this.refViews;
@@ -533,7 +569,7 @@ class VisEngine extends React.Component {
             showCode: (code, title, mode) => this.props.onShowCode(code, title, mode),
             findCommonAttributes: (view, widgets) => {
 
-            }
+            },
         };
     }
 
@@ -1569,6 +1605,7 @@ ${this.scripts}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
                     setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
                     onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
+                    buildLegacyStructures={this.buildLegacyStructures}
                     selectedGroup={this.props.selectedGroup}
                     setSelectedGroup={this.props.setSelectedGroup}
                     timeInterval={this.state.timeInterval}
