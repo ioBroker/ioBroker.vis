@@ -29,7 +29,7 @@ const IODialog = props => (props.open ? <Dialog
         {props.children}
     </DialogContent>
     <DialogActions>
-        { props.dialogActions ? props.dialogActions : null}
+        { props.dialogActions || null}
         { props.actionTitle
             ? <Button
                 variant="contained"

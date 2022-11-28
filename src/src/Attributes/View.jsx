@@ -32,8 +32,7 @@ import {
 import './backgrounds.css';
 
 import { theme, background } from './ViewData';
-import IODialog from '../Components/IODialog';
-import FileBrowser from './Widget/FileBrowser';
+import SelectFileDialog from '../Components/SelectFile';
 
 const styles = _theme => ({
     backgroundClass: {
@@ -816,39 +815,32 @@ const View = props => {
                                             onChange={e => change(e.target.value)}
                                         />
                                         {urlPopper}
-                                        {showDialog ? <IODialog
+                                        {showDialog ? <SelectFileDialog
                                             title={I18n.t('Select file')}
-                                            open={!0}
                                             onClose={() => setShowDialog(false)}
-                                        >
-                                            <FileBrowser
-                                                ready
-                                                allowUpload
-                                                allowDownload
-                                                allowCreateFolder
-                                                allowDelete
-                                                allowView
-                                                showToolbar
-                                                imagePrefix="../"
-                                                selected={_value}
-                                                filterByType="images"
-                                                onSelect={(selected, isDoubleClick) => {
-                                                    const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
-                                                    if (selected.startsWith(projectPrefix)) {
-                                                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                                                    } else if (selected.startsWith('/')) {
-                                                        selected = `..${selected}`;
-                                                    } else if (!selected.startsWith('.')) {
-                                                        selected = `../${selected}`;
-                                                    }
-                                                    change(selected);
-                                                    isDoubleClick && setShowDialog(false);
-                                                }}
-                                                t={I18n.t}
-                                                lang={I18n.getLanguage()}
-                                                socket={props.socket}
-                                            />
-                                        </IODialog> : null}
+                                            allowUpload
+                                            allowDownload
+                                            allowCreateFolder
+                                            allowDelete
+                                            allowView
+                                            showToolbar
+                                            imagePrefix="../"
+                                            selected={_value}
+                                            filterByType="images"
+                                            onSelect={(selected, isDoubleClick) => {
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                                                if (selected.startsWith(projectPrefix)) {
+                                                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                                                } else if (selected.startsWith('/')) {
+                                                    selected = `..${selected}`;
+                                                } else if (!selected.startsWith('.')) {
+                                                    selected = `../${selected}`;
+                                                }
+                                                change(selected);
+                                                isDoubleClick && setShowDialog(false);
+                                            }}
+                                            socket={props.socket}
+                                        /> : null}
                                     </>;
                                 } else if (field.type === 'slider') {
                                     result = <div style={{ display: 'flex' }}>

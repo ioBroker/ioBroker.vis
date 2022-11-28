@@ -43,8 +43,8 @@ class VisCanWidget extends VisBaseWidget {
         this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
 
         // legacy support
-        let widget = this.props.views[this.props.view].widgets[this.props.id];
-        if (widget.tpl.includes('materialdesign')) {
+        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        if (widget?.tpl?.includes('materialdesign')) {
             this.props.buildLegacyStructures();
         }
     }

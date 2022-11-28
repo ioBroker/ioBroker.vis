@@ -42,12 +42,15 @@ async function generateWidgetsHtml(widgetSets) {
         let name;
 
         if (typeof widgetSets[w] === 'object') {
-            name = widgetSets[w].name + '.html';
+            name = `${widgetSets[w].name}.html`;
         } else {
-            name = widgetSets[w] + '.html';
+            name = `${widgetSets[w]}.html`;
         }
         file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
         // extract all css and js
+
+        // mark all script with data-widgetset attribute
+        file = file.toString().replace(/<script/g, `<script data-widgetset="${name.replace('.html', '')}"`);
 
         text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;
     }
@@ -630,7 +633,7 @@ async function main() {
     const {widgetSets, filesChanged} = syncWidgetSets(false, enabledList);
     const widgetsChanged = await generateWidgetsHtml(widgetSets);
 
-    const indexHtml = fs.readFileSync(__dirname + '/www/index.html').toString('utf8');
+    const indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
     let uploadedIndexHtml;
     try {
         uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');

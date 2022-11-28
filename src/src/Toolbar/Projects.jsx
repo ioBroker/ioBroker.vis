@@ -6,14 +6,15 @@ import copy from 'copy-to-clipboard';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListIcon from '@mui/icons-material/List';
+import FilesIcon from '@mui/icons-material/ContentCopy';
 
-import SelectID from '@iobroker/adapter-react-v5/Dialogs/SelectID';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { SelectID, I18n } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
+import SelectFileDialog from '../Components/SelectFile';
 
 const styles = () => ({
     objectsDialog: {
@@ -26,6 +27,7 @@ const styles = () => ({
 const Tools = props => {
     const [settingsDialog, setSettingsDialog] = useState(false);
     const [objectsDialog, setObjectsDialog] = useState(false);
+    const [filesDialog, setFilesDialog] = useState(false);
 
     const toolbar = {
         name: 'Projects',
@@ -38,6 +40,9 @@ const Tools = props => {
             },
             {
                 type: 'icon-button', Icon: ListIcon, name: 'Objects', onClick: () => setObjectsDialog(true),
+            },
+            {
+                type: 'icon-button', Icon: FilesIcon, name: 'Files', onClick: () => setFilesDialog(true),
             },
         ],
     };
@@ -66,7 +71,55 @@ const Tools = props => {
                     window.alert(I18n.t('Copied'));
                 }}
                 ok={I18n.t('Copy to clipboard')}
-                cancel={I18n.t('Close')}
+                cancel={I18n.t('ra_Close')}
+            /> : null
+        }
+        {
+            filesDialog ? <SelectFileDialog
+                title={I18n.t('Browse files')}
+                onClose={() => setFilesDialog(false)}
+                ready
+                allowUpload
+                allowDownload
+                allowCreateFolder
+                allowDelete
+                allowView
+                showToolbar
+                imagePrefix="../"
+                selected=""
+                filterByType="images"
+                showTypeSelector
+                onSelect={(selected, isDoubleClick) => {
+                    const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                    if (selected.startsWith(projectPrefix)) {
+                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                    } else if (selected.startsWith('/')) {
+                        selected = `..${selected}`;
+                    } else if (!selected.startsWith('.')) {
+                        selected = `../${selected}`;
+                    }
+                    if (isDoubleClick) {
+                        copy(selected);
+                        setFilesDialog(false);
+                        window.alert(I18n.t('ra_Copied %s', selected));
+                    }
+                }}
+                onOk={selected => {
+                    const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                    if (selected.startsWith(projectPrefix)) {
+                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                    } else if (selected.startsWith('/')) {
+                        selected = `..${selected}`;
+                    } else if (!selected.startsWith('.')) {
+                        selected = `../${selected}`;
+                    }
+                    copy(selected);
+                    setFilesDialog(false);
+                    window.alert(I18n.t('ra_Copied %s', selected));
+                }}
+                socket={props.socket}
+                ok={I18n.t('Copy to clipboard')}
+                cancel={I18n.t('ra_Close')}
             /> : null
         }
     </>;
@@ -76,6 +129,9 @@ Tools.propTypes = {
     socket: PropTypes.object,
     projectsDialog: PropTypes.bool,
     setProjectsDialog: PropTypes.func,
+    adapterName: PropTypes.string,
+    instance: PropTypes.string,
+    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(Tools);

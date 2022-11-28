@@ -343,7 +343,7 @@ class App extends GenericApp {
             .then(() => {});
     };
 
-    onProjectChange = (id, fileName, size) => {
+    onProjectChange = (id, fileName) => {
         if (fileName.endsWith('.json')) {
             this.loadProject(this.state.projectName);
         }
@@ -1898,6 +1898,5 @@ class App extends GenericApp {
         </StylesProvider>;
     }
 }
-
 
 export default withStyles(styles)(App);

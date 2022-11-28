@@ -248,6 +248,9 @@ Toolbar.propTypes = {
     projectsDialog: PropTypes.bool,
     setProjectsDialog: PropTypes.func,
     toolbarHeight: PropTypes.string,
+    adapterName: PropTypes.string,
+    instance: PropTypes.string,
+    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(Toolbar);

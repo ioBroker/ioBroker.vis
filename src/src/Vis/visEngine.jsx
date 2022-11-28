@@ -281,9 +281,7 @@ class VisEngine extends React.Component {
     buildLegacyStructures = () => {
         this.buildLegacySubscribing();
         if (this.vis.binds.materialdesign?.helper?.subscribeStatesAtRuntime && !this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited) {
-            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = function (wid, widgetName, callback, debug) {
-
-            };
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (/* wid, widgetName, callback, debug */) => {};
             this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited = true;
         }
     };
@@ -567,7 +565,7 @@ class VisEngine extends React.Component {
                 this.props.onConfirmDialog(message, title, icon, width, callback),
             config: {}, // storage of dialog positions and size (Deprecated)
             showCode: (code, title, mode) => this.props.onShowCode(code, title, mode),
-            findCommonAttributes: (view, widgets) => {
+            findCommonAttributes: (/* view, widgets */) => {
 
             },
         };
@@ -1112,33 +1110,64 @@ class VisEngine extends React.Component {
     }
     */
 
+    static async loadScriptsOfOneWidgetSet(widgetSet) {
+        for (let i = 0; i < widgetSet.length; i++) {
+            const { oldScript, newScript } = widgetSet[i];
+            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+            oldScript.parentNode.replaceChild(newScript, oldScript);
+
+            await new Promise(resolve => {
+                newScript.onload = resolve;
+            });
+        }
+    }
+
+    static loadedSources = [];
+
     static async setInnerHTML(elm, html) {
         elm.innerHTML = html;
         // we must load script one after another, to keep the order
         const scripts = Array.from(elm.querySelectorAll('script'));
+
+        // load all scripts of one widget set sequentially and all groups of scripts in parallel
+        const groups = {};
+
         for (let s = 0; s < scripts.length; s++) {
             const oldScript = scripts[s];
+            const src = oldScript.getAttribute('src');
+            if (src && VisEngine.loadedSources.includes(src)) {
+                continue;
+            }
+            VisEngine.loadedSources.push(src);
             const newScript = document.createElement('script');
-            let onLoad = false;
+
+            let widgetSet = 'default';
+
             Array.from(oldScript.attributes)
                 .forEach(attr => {
                     try {
-                        newScript.setAttribute(attr.name, attr.value);
-                        if (attr.name === 'src') {
-                            onLoad = true;
+                        if (attr.name === 'data-widgetset') {
+                            widgetSet = attr.value;
+                        } else {
+                            newScript.setAttribute(attr.name, attr.value);
                         }
                     } catch (error) {
                         console.error(`WTF?? in ${attr.ownerElement.id}: ${error}`);
                     }
                 });
 
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
-
-            if (onLoad) {
-                await new Promise(resolve => (newScript.onload = resolve));
+            if (src) {
+                groups[widgetSet] = groups[widgetSet] || [];
+                groups[widgetSet].push({ newScript, oldScript });
+            } else {
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
             }
         }
+
+        await Promise.all(Object.keys(groups)
+            .map(widgetSet =>
+                VisEngine.loadScriptsOfOneWidgetSet(groups[widgetSet])));
     }
 
     loadEditWords() {

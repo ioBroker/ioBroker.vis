@@ -1383,6 +1383,7 @@ class VisBaseWidget extends React.Component {
             ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
                 if (style[attr] !== undefined && typeof style[attr] === 'string') {
                     // todo: evaluate bindings
+                    // eslint-disable-next-line no-restricted-properties
                     if (window.isFinite(style[attr])) {
                         style[attr] = parseFloat(style[attr]);
                     }
@@ -1562,6 +1563,7 @@ VisBaseWidget.propTypes = {
     selectedGroup: PropTypes.string,
     lang: PropTypes.string,
     dateFormat: PropTypes.string,
+    // eslint-disable-next-line react/no-unused-prop-types
     buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
 
     // eslint-disable-next-line react/no-unused-prop-types

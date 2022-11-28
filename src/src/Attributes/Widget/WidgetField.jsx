@@ -18,8 +18,7 @@ import {
     I18n, IconPicker, Utils, Icon, TextWithIcon, ColorPicker, SelectID,
 } from '@iobroker/adapter-react-v5';
 
-import FileBrowser from './FileBrowser';
-import IODialog from '../../Components/IODialog';
+import SelectFileDialog from '../../Components/SelectFile';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 
@@ -509,39 +508,32 @@ const WidgetField = props => {
                 onChange={e => change(e.target.value)}
             />
             {urlPopper}
-            {idDialog ? <IODialog
+            {idDialog ? <SelectFileDialog
                 title={t('Select file')}
-                open={!0}
                 onClose={() => setIdDialog(false)}
-            >
-                <FileBrowser
-                    ready
-                    allowUpload
-                    allowDownload
-                    allowCreateFolder
-                    allowDelete
-                    allowView
-                    showToolbar
-                    imagePrefix="../"
-                    selected={_value}
-                    filterByType="images"
-                    onSelect={(selected, isDoubleClick) => {
-                        const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
-                        if (selected.startsWith(projectPrefix)) {
-                            selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
-                        } else if (selected.startsWith('/')) {
-                            selected = `..${selected}`;
-                        } else if (!selected.startsWith('.')) {
-                            selected = `../${selected}`;
-                        }
-                        change(selected);
-                        isDoubleClick && setIdDialog(false);
-                    }}
-                    t={t}
-                    lang={I18n.lang}
-                    socket={props.socket}
-                />
-            </IODialog> : null}
+                allowUpload
+                allowDownload
+                allowCreateFolder
+                allowDelete
+                allowView
+                showToolbar
+                imagePrefix="../"
+                selected={_value}
+                filterByType="images"
+                onSelect={(selected, isDoubleClick) => {
+                    const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
+                    if (selected.startsWith(projectPrefix)) {
+                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                    } else if (selected.startsWith('/')) {
+                        selected = `..${selected}`;
+                    } else if (!selected.startsWith('.')) {
+                        selected = `../${selected}`;
+                    }
+                    change(selected);
+                    isDoubleClick && setIdDialog(false);
+                }}
+                socket={props.socket}
+            /> : null}
         </>;
     }
 
@@ -553,6 +545,7 @@ const WidgetField = props => {
         if (m) {
             _value = m[1];
             unit = m[2] || 'px';
+            // eslint-disable-next-line no-restricted-properties
             if (!window.isFinite(_value) || (m[2] && !POSSIBLE_UNITS.includes(m[2]))) {
                 customValue = true;
             }
