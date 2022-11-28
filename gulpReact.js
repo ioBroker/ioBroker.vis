@@ -22,7 +22,7 @@ function init(gulp) {
     function npmInstall() {
         return new Promise((resolve, reject) => {
             // Install node modules
-            const cwd = __dirname.replace(/\\/g, '/') + '/src/';
+            const cwd = `${__dirname.replace(/\\/g, '/')}/src/`;
 
             const cmd = `npm install`;
             console.log(`"${cmd} in ${cwd}`);
@@ -38,7 +38,7 @@ function init(gulp) {
             child.on('exit', (code /* , signal */) => {
                 // code 1 is strange error that cannot be explained. Everything is installed but error :(
                 if (code && code !== 1) {
-                    reject('Cannot install: ' + code);
+                    reject(`Cannot install: ${code}`);
                 } else {
                     console.log(`"${cmd} in ${cwd} finished.`);
                     // command succeeded
@@ -49,7 +49,7 @@ function init(gulp) {
     }
 
     gulp.task('2-npm', () => {
-        if (fs.existsSync(__dirname + '/src/node_modules')) {
+        if (fs.existsSync(`${__dirname}/src/node_modules`)) {
             return Promise.resolve();
         } else {
             return npmInstall();
@@ -60,9 +60,9 @@ function init(gulp) {
 
     gulp.task('3-svg-icons', done => {
         const svgPath = path.join(__dirname, 'src/node_modules/@material-icons/svg/');
-        const data = JSON.parse(fs.readFileSync(svgPath + 'data.json').toString('utf8'));
-        !fs.existsSync(__dirname + '/src/public/material-icons') && fs.mkdirSync(__dirname + '/src/public/material-icons');
-        fs.writeFileSync(__dirname + '/src/public/material-icons/index.json', JSON.stringify(data.icons));
+        const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
+        !fs.existsSync(`${__dirname}/src/public/material-icons`) && fs.mkdirSync(`${__dirname}/src/public/material-icons`);
+        fs.writeFileSync(`${__dirname}/src/public/material-icons/index.json`, JSON.stringify(data.icons));
         const folders = fs.readdirSync(`${svgPath}svg`);
         const result = {};
         folders.forEach(folder => {
@@ -139,43 +139,43 @@ function init(gulp) {
 
     function build() {
         // copy ace files into src/public/lib/js/ace
-        let ace = __dirname + '/src/node_modules/ace-builds/src-min-noconflict/';
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-css.js', fs.readFileSync(ace + 'worker-css.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-html.js', fs.readFileSync(ace + 'worker-html.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-javascript.js', fs.readFileSync(ace + 'worker-javascript.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/worker-json.js', fs.readFileSync(ace + 'worker-json.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/css.js', fs.readFileSync(ace + 'snippets/css.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/html.js', fs.readFileSync(ace + 'snippets/html.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/javascript.js', fs.readFileSync(ace + 'snippets/javascript.js'));
-        fs.writeFileSync(__dirname + '/src/public/lib/js/ace/snippets/json.js', fs.readFileSync(ace + 'snippets/json.js'));
+        let ace = `${__dirname}/src/node_modules/ace-builds/src-min-noconflict/`;
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-css.js`, fs.readFileSync(`${ace}worker-css.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-html.js`, fs.readFileSync(`${ace}worker-html.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, fs.readFileSync(`${ace}worker-javascript.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-json.js`, fs.readFileSync(`${ace}worker-json.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, fs.readFileSync(`${ace}snippets/css.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, fs.readFileSync(`${ace}snippets/html.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
+        fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, fs.readFileSync(`${ace}snippets/json.js`));
 
         return new Promise((resolve, reject) => {
             const options = {
                 stdio: 'pipe',
-                cwd:   __dirname + '/src/'
+                cwd:   `${__dirname}/src/`
             };
 
-            const version = JSON.parse(fs.readFileSync(__dirname + '/package.json').toString('utf8')).version;
-            const data = JSON.parse(fs.readFileSync(__dirname + '/src/package.json').toString('utf8'));
+            const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
+            const data = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString('utf8'));
             data.version = version;
-            fs.writeFileSync(__dirname + '/src/package.json', JSON.stringify(data, null, 4));
+            fs.writeFileSync(`${__dirname}/src/package.json`, JSON.stringify(data, null, 4));
 
             console.log(options.cwd);
 
-            let script = __dirname + '/src/node_modules/@craco/craco/bin/craco.js';
+            let script = `${__dirname}/src/node_modules/@craco/craco/bin/craco.js`;
             if (!fs.existsSync(script)) {
-                script = __dirname + '/node_modules/@craco/craco/bin/craco.js';
+                script = `${__dirname}/node_modules/@craco/craco/bin/craco.js`;
             }
             if (!fs.existsSync(script)) {
-                console.error('Cannot find execution file: ' + script);
-                reject('Cannot find execution file: ' + script);
+                console.error(`Cannot find execution file: ${script}`);
+                reject(`Cannot find execution file: ${script}`);
             } else {
                 const child = cp.fork(script, ['build'], options);
                 child.stdout.on('data', data => console.log(data.toString()));
                 child.stderr.on('data', data => console.log(data.toString()));
                 child.on('close', code => {
                     console.log(`child process exited with code ${code}`);
-                    code ? reject('Exit code: ' + code) : resolve();
+                    code ? reject(`Exit code: ${code}`) : resolve();
                 });
             }
         });
@@ -241,10 +241,10 @@ function init(gulp) {
     }
 
     gulp.task('7-patch', done => {
-        patchFile(__dirname + '/www/index.html');
-        patchFile(__dirname + '/www/edit.html');
-        patchFile(__dirname + '/src/build/index.html');
-        patchFile(__dirname + '/src/build/edit.html');
+        patchFile(`${__dirname}/www/index.html`);
+        patchFile(`${__dirname}/www/edit.html`);
+        patchFile(`${__dirname}/src/build/index.html`);
+        patchFile(`${__dirname}/src/build/edit.html`);
         done();
     });
 

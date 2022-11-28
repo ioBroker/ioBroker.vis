@@ -820,6 +820,11 @@ const Widget = props => {
         if (_widgetType?.label) {
             widgetLabel = I18n.t(_widgetType.label);
         }
+        // remove legacy stuff
+        widgetLabel = widgetLabel.split('<br')[0];
+        widgetLabel = widgetLabel.split('<span')[0];
+        widgetLabel = widgetLabel.split('<div')[0];
+
         let setLabel = _widgetType?.set;
         if (_widgetType?.setLabel) {
             setLabel = I18n.t(_widgetType.setLabel);
@@ -1006,6 +1011,19 @@ const Widget = props => {
                                                 disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
                                             }
                                         }
+                                        let label = field.title || (field.label && I18n.t(field.label)) ||
+                                            (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : ''));
+
+                                        const labelStyle = {};
+                                        if (label.trim().startsWith('<b')) {
+                                            label = label.match(/<b>(.*?)<\/b>/)[1];
+                                            labelStyle.fontWeight = 'bold';
+                                            labelStyle.color = '#4dabf5';
+                                        }
+                                        if (label.trim().startsWith('<i')) {
+                                            label = label.match(/<i>(.*?)<\/i>/)[1];
+                                            labelStyle.fontStyle = 'italic';
+                                        }
 
                                         return <tr key={fieldIndex} className={props.classes.fieldRow}>
                                             {field.type === 'delimiter' ?
@@ -1014,10 +1032,10 @@ const Widget = props => {
                                                     <td
                                                         className={Utils.clsx(props.classes.fieldTitle, disabled && props.classes.fieldTitleDisabled, error && props.classes.fieldTitleError)}
                                                         title={field.tooltip ? I18n.t(field.tooltip) : null}
+                                                        style={labelStyle}
                                                     >
                                                         { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                        { field.title || (field.label && I18n.t(field.label)) ||
-                                                            (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '')) }
+                                                        { label }
                                                         { field.type === 'image' && !isDifferent[field.name] && widget && widget.data[field.name] ?
                                                             <div className={props.classes.smallImageDiv}>
                                                                 <img

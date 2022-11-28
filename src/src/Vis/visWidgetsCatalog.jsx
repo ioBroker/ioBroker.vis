@@ -218,14 +218,16 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                 const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
 
                 const repeats = match[2];
-
+                const [type, onChangeFunc] = match[4] ? match[4].substring(1).split('/') : [];
                 const field = {
                     name: match[1],
-                    default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined,
-                    type: match[4] ? match[4].substring(1).split('/')[0] : undefined,
-                    onChangeFunc: match[4] ? match[4].substring(1).split('/')[1] : undefined,
+                    default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined, // remove []
+                    type,
+                    onChangeFunc,
                 };
-
+                if (match[1] === 'iImgColorFalse') {
+                    console.log(field);
+                }
                 // special case for Object ID filter
                 if (field.onChangeFunc && field.onChangeFunc.startsWith('filterType')) {
                     field.filter = field.onChangeFunc.substring('filterType'.length).toLowerCase();

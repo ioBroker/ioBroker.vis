@@ -653,7 +653,7 @@ class App extends GenericApp {
                     if (!field.noInit && (field.name.includes('oid') || field.type === 'id')) {
                         widgets[newKey].data[field.name] = 'nothing_selected';
                     }
-                    if (field.default) {
+                    if (field.default !== undefined && field.default !== null) {
                         widgets[newKey].data[field.name] = field.default;
                         widgets[newKey].data[`g_${group.name}`] = true;
                     }

@@ -96,12 +96,16 @@ const Widget = props => {
         />;
     }
 
-    const label = props.widgetType.label ? I18n.t(props.widgetType.label) : window.vis._(props.widgetType.title);
+    let label = props.widgetType.label ? I18n.t(props.widgetType.label) : window.vis._(props.widgetType.title);
+    // remove legacy stuff
+    label = label.split('<br')[0];
+    label = label.split('<span')[0];
+    label = label.split('<div')[0];
 
     const result = <Tooltip
         title={<div className={props.classes.widgetTooltip}>
-            <div>{ img }</div>
-            { props.widgetType.help ? <div>{props.widgetType.help}</div> : null }
+            <div>{img}</div>
+            {props.widgetType.help ? <div>{props.widgetType.help}</div> : null}
         </div>}
         placement="right-end"
     >

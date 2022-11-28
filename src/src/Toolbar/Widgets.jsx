@@ -61,6 +61,12 @@ const Widgets = props => {
                     if (widgetType?.label) {
                         widgetLabel = I18n.t(widgetType.label);
                     }
+
+                    // remove legacy stuff
+                    widgetLabel = widgetLabel.split('<br')[0];
+                    widgetLabel = widgetLabel.split('<span')[0];
+                    widgetLabel = widgetLabel.split('<div')[0];
+
                     let setLabel = widgetType?.set;
                     if (widgetType?.setLabel) {
                         setLabel = I18n.t(widgetType.setLabel);
