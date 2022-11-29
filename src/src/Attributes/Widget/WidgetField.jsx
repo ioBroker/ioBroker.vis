@@ -538,6 +538,18 @@ const WidgetField = props => {
                     change(selected);
                     isDoubleClick && setIdDialog(false);
                 }}
+                onOk={selected => {
+                    const projectPrefix = `${adapterName}.${instance}/${projectName}/`;
+                    if (selected.startsWith(projectPrefix)) {
+                        selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                    } else if (selected.startsWith('/')) {
+                        selected = `..${selected}`;
+                    } else if (!selected.startsWith('.')) {
+                        selected = `../${selected}`;
+                    }
+                    change(selected);
+                    setIdDialog(false);
+                }}
                 socket={props.socket}
             /> : null}
         </>;

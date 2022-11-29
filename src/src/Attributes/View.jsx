@@ -927,6 +927,18 @@ const View = props => {
                                                 change(selected);
                                                 isDoubleClick && setShowDialog(false);
                                             }}
+                                            onOk={selected => {
+                                                const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
+                                                if (selected.startsWith(projectPrefix)) {
+                                                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                                                } else if (selected.startsWith('/')) {
+                                                    selected = `..${selected}`;
+                                                } else if (!selected.startsWith('.')) {
+                                                    selected = `../${selected}`;
+                                                }
+                                                change(selected);
+                                                setShowDialog(false);
+                                            }}
                                             socket={props.socket}
                                         /> : null}
                                     </>;
