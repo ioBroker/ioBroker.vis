@@ -226,7 +226,7 @@
             "type": "state",
             "common": {
                 "name": "Files were uploaded",
-                "type": "date",
+                "type": "number",
                 "role": "value.time"
             },
             "native": {}

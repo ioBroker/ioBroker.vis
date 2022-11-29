@@ -32,14 +32,30 @@ function startAdapter(options) {
         ready: main,
         objectChange: (id, obj) => {
             // if it is instance object
-            if (id.startsWith('system.adapter.vis-') && id.match(/\d+$/) && id !== 'system.adapter.vis-2-beta.0') {
-                if (!obj) {
-                    if (widgetInstances[obj.common.name]) {
-                        delete widgetInstances[obj.common.name];
+            if (id.startsWith('system.adapter.') &&
+                id.match(/\d+$/) &&
+                id !== 'system.adapter.vis-2-beta.0' &&
+                id !== 'system.adapter.vis.0'
+            ) {
+                if (obj && obj.type !== 'instance') {
+                    return;
+                }
+                id = id.substring('system.adapter.'.length).replace(/\.\d+$/, '');
+                if (!obj || !obj.common) {
+                    if (widgetInstances[id]) {
+                        delete widgetInstances[id];
                         buildHtmlPages();
                     }
-                } else if (!widgetInstances[obj.common.name] || widgetInstances[obj.common.name] < obj.common.version) {
-                    widgetInstances[obj.common.name] = obj.common.version;
+                } else
+                // Check if widgets folder exists
+                if (POSSIBLE_WIDGET_SETS_LOCATIONS.find(dir => fs.existsSync(`${dir}/iobroker.${id}/widgets/`))) {
+                    // still exists
+                    if (!widgetInstances[id] || widgetInstances[id] !== obj.common.version) {
+                        widgetInstances[id] = obj.common.version;
+                        buildHtmlPages();
+                    }
+                } else if (widgetInstances[id]) {
+                    delete widgetInstances[id];
                     buildHtmlPages();
                 }
             }
@@ -113,12 +129,12 @@ async function generateWidgetsHtml(widgetSets) {
         data = data.file;
     }
     if (data && data !== text) {
-        fs.writeFileSync(__dirname + '/www/widgets.html', text);
+        fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
         // upload file to DB
         await adapter.writeFileAsync(adapterName, 'www/widgets.html', text);
         return true;
-    } else if (!fs.existsSync(__dirname + '/www/widgets.html') || fs.readFileSync(__dirname + '/www/widgets.html').toString() !== text) {
-        fs.writeFileSync(__dirname + '/www/widgets.html', text);
+    } else if (!fs.existsSync(`${__dirname}/www/widgets.html`) || fs.readFileSync(`${__dirname}/www/widgets.html`).toString() !== text) {
+        fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
     }
 
     return false;
@@ -411,7 +427,13 @@ function collectWidgetSets(dir, sets) {
     return sets;
 }
 
-async function readAdaptersList(onlyLocal) {
+const POSSIBLE_WIDGET_SETS_LOCATIONS = [
+    path.normalize(`${__dirname}/../`),
+    path.normalize(`${__dirname}/node_modules/`),
+    path.normalize(`${__dirname}/../../`),
+];
+
+async function readAdaptersList() {
     const res = await adapter.getObjectViewAsync('system', 'instance', {});
 
     const instances = [];
@@ -424,11 +446,8 @@ async function readAdaptersList(onlyLocal) {
         });
     instances.sort();
 
-    let sets = collectWidgetSets(onlyLocal ? path.normalize(`${__dirname}/../node_modules/`) : path.normalize(`${__dirname}/../`));
-    if (!onlyLocal) {
-        collectWidgetSets(path.normalize(`${__dirname}/../../../../`), sets);
-    }
-
+    let sets = [];
+    POSSIBLE_WIDGET_SETS_LOCATIONS.forEach(dir => collectWidgetSets(dir, sets));
     sets = sets.filter(s => instances.includes(s.name.substring('iobroker.'.length)));
 
     return sets;
@@ -676,9 +695,9 @@ async function buildHtmlPages() {
 
     if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
         await uploadAdapter();
-        adapter.setStateAsync('info.uploaded', Date.now(), true);
+        await adapter.setStateAsync('info.uploaded', Date.now(), true);
     } else {
-        const state = adapter.getStateAsync('info.uploaded');
+        const state = await adapter.getStateAsync('info.uploaded');
         if (!state || !state.val) {
             adapter.setStateAsync('info.uploaded', Date.now(), true);
         }
@@ -789,6 +808,8 @@ async function main() {
     }
 
     await buildHtmlPages();
+
+    adapter.subscribeForeignObjects('system.adapter.*');
 }
 
 // If started as allInOne mode => return function to create instance
