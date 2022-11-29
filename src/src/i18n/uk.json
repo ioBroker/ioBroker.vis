@@ -343,5 +343,21 @@
   "material_icons_knx-uf": "knx-uf",
   "icon_size_in_pixels": "Розмір значка в пікселях",
   "Unknown widget type \"%s\"": "Невідомий тип віджета \"%s\"",
-  "attr_none": "none"
+  "attr_none": "none",
+  "Apply ALL navigation properties to all views": "Застосуйте ВСІ властивості навігації до всіх поданнях",
+  "Apply to all views": "Застосуйте цю властивість до всіх представлень",
+  "Copied to clipboard": "Скопійовано в буфер обміну",
+  "Detected new version of vis files. Reloading in 2 seconds...": "Виявлено нову версію файлів vis. Перезавантаження за 2 секунди...",
+  "Do not hide menu": "Не приховуйте меню повністю",
+  "Project was updated": "Проект оновлено",
+  "Project was updated by another browser instance. Do you want to reload it?": "Проект оновлено іншим екземпляром браузера. Ви хочете перезавантажити його?",
+  "Reload all browsers if project changed": "Перезавантажте всі браузери, якщо проект змінився",
+  "Reload now": "Перезавантажте зараз",
+  "Reloading": "Перезавантаження",
+  "Show background of button": "Фон кнопки «Показати».",
+  "apply_to_all": "Для усіх",
+  "iPad Pro - Landscape": "iPad Pro – ландшафт",
+  "iPad Pro - Portrait": "iPad Pro – портрет",
+  "no_reload": "без перезавантажень",
+  "reload": "перезавантажити"
 }

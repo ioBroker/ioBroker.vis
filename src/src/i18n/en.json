@@ -347,7 +347,7 @@
   "icon_size_in_pixels": "Icon size in pixels",
   "Unknown widget type \"%s\"": "Unknown widget type \"%s\"",
   "attr_none": "none",
-  "Reload all browsers if project changed":  "Reload all browsers if project changed",
+  "Reload all browsers if project changed": "Reload all browsers if project changed",
   "reload": "reload",
   "no_reload": "no reload",
   "Do not hide menu": "Do not hide menu completely",
@@ -356,5 +356,8 @@
   "Apply to all views": "Apply this property to all views",
   "Apply ALL navigation properties to all views": "Apply ALL navigation properties to all views",
   "Project was updated": "Project was updated",
-  "Project was updated by another browser instance. Do you want to reload it?": "Project was updated by another browser instance. Do you want to reload it?"
+  "Project was updated by another browser instance. Do you want to reload it?": "Project was updated by another browser instance. Do you want to reload it?",
+  "Detected new version of vis files. Reloading in 2 seconds...": "Detected new version of vis files. Reloading in 2 seconds...",
+  "Reloading": "Reloading",
+  "Reload now": "Reload now"
 }

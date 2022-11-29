@@ -16,20 +16,68 @@ const fs             = require('fs');
 const syncWidgetSets = require('./lib/install.js');
 const https          = require('https');
 const jwt            = require('jsonwebtoken');
+const path           = require('path');
+const cert           = fs.readFileSync(`${__dirname}/lib/cloudCert.crt`);
+
 let adapter;
-let isLicenseError = false;
+let isLicenseError   = false;
 let lastProgressUpdate;
+let widgetInstances  = {};
 
 function startAdapter(options) {
     options = options || {};
 
     Object.assign(options, {
         name: adapterName,
-        ready: () => main()
+        ready: main,
+        objectChange: (id, obj) => {
+            // if it is instance object
+            if (id.startsWith('system.adapter.vis-') && id.match(/\d+$/) && id !== 'system.adapter.vis-2-beta.0') {
+                if (!obj) {
+                    if (widgetInstances[obj.common.name]) {
+                        delete widgetInstances[obj.common.name];
+                        buildHtmlPages();
+                    }
+                } else if (!widgetInstances[obj.common.name] || widgetInstances[obj.common.name] < obj.common.version) {
+                    widgetInstances[obj.common.name] = obj.common.version;
+                    buildHtmlPages();
+                }
+            }
+        },
+        message: obj => processMessage(obj),
     });
 
     adapter = new utils.Adapter(options);
     return adapter;
+}
+
+async function processMessage(msg) {
+    if (msg && msg.command === 'checkLicense' && msg.message) {
+        const obj = await socket.getObject(`system.adapter.${msg.message}.0`)
+        if (!obj || !obj.native || !obj.native.license) {
+            console.log('[vis-2-widgets-jaeger-design] License not found');
+            obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'License not found'}, obj.callback);
+        } else {
+            try {
+                const decoded = jwt.verify(obj.native.license, cert);
+                if (decoded.name === `iobroker.${msg.message}` &&
+                    (!decoded.valid_till || decoded.valid_till === '0000-00-00 00:00:00' ||
+                        new Date(decoded.valid_till).getTime() > Date.now())
+                ) {
+                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: true}, obj.callback);
+                } else if (decoded.name !== 'ioBroker.vis-2-widgets-jaeger-design') {
+                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Provided license is for another product'}, obj.callback);
+                    adapter.log.error(`Provided license is for another product: ${decoded.name} and not for ${msg.message}`);
+                } else {
+                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Provided license is expired'}, obj.callback);
+                    console.error(`Provided license for ${msg.message} is expired: ${new Date(decoded.valid_till).toISOString()}`);
+                }
+            } catch (err) {
+                obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Cannot decode license'}, obj.callback);
+                adapter.log.error(`Cannot decode license for ${msg.message}: ${err.message}`);
+            }
+        }
+    }
 }
 
 async function generateWidgetsHtml(widgetSets) {
@@ -96,17 +144,17 @@ async function generateConfigPage() {
         changed = true;
         adapter.log.info('config.js changed. Upload.');
         await adapter.writeFileAsync(adapterName, 'config.js', configJs);
-        fs.writeFileSync(__dirname + '/www/config.js', configJs);
-        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
-        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
-    } else if (!fs.existsSync(__dirname + '/www/config.js') || fs.readFileSync(__dirname + '/www/config.js').toString() !== configJs) {
-        fs.writeFileSync(__dirname + '/www/config.js', configJs);
-        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
-        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
+        fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
+        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
+        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
+    } else if (!fs.existsSync(`${__dirname}/www/config.js`) || fs.readFileSync(`${__dirname}/www/config.js`).toString() !== configJs) {
+        fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
+        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(__dirname + '/www/js');
+        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
     }
-    if (!fs.existsSync(__dirname + '/www/js/config.js') || fs.readFileSync(__dirname + '/www/js/config.js').toString() !== configJs) {
-        !fs.existsSync(__dirname + '/www/js') && fs.mkdirSync(__dirname + '/www/js');
-        fs.writeFileSync(__dirname + '/www/js/config.js', configJs); // backwards compatibility with cloud
+    if (!fs.existsSync(`${__dirname}/www/js/config.js`) || fs.readFileSync(`${__dirname}/www/js/config.js`).toString() !== configJs) {
+        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
+        fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
     }
 
     // Create common user CSS file
@@ -147,7 +195,6 @@ async function getSuitableLicenses(all) {
 
             if (obj && obj.native && obj.native.licenses && obj.native.licenses.length) {
                 const now = Date.now();
-                const cert = fs.readFileSync(__dirname + '/lib/cloudCert.crt');
                 const version = adapter.pack.version.split('.')[0];
 
                 obj.native.licenses.forEach(license => {
@@ -338,10 +385,53 @@ function doLicense(license, uuid) {
     })
 }
 
-async function readAdaptersList() {
+function collectWidgetSets(dir, sets) {
+    let dirs = fs.readdirSync(dir);
+    dir = dir.replace(/\\/g, '/');
+    if (!dir.endsWith('/')) {
+        dir += '/';
+    }
+    sets = sets || [];
+    for (let d = 0; d < dirs.length; d++) {
+        if (dirs[d].toLowerCase().startsWith('iobroker.') &&
+            !sets.includes(dirs[d].substring('iobroker.'.length)) &&
+            fs.existsSync(`${dir}${dirs[d]}/widgets/`)
+        ) {
+            let pack;
+            try {
+                pack = JSON.parse(fs.readFileSync(`${dir}${dirs[d]}/io-package.json`).toString());
+            } catch (e) {
+                pack = null;
+                console.warn(`Cannot parse "${dir}${dirs[d]}/io-package.json": ${e}`);
+            }
+            sets.push({path: dir + dirs[d], name: dirs[d].toLowerCase(), pack});
+        }
+    }
+
+    return sets;
+}
+
+async function readAdaptersList(onlyLocal) {
     const res = await adapter.getObjectViewAsync('system', 'instance', {});
-    return res.rows.filter(item => item.value.common.enabled || item.value.common.name.startsWith('vis-')) // some vis-xxx instances are disabled, but they cannot be activated from admin
-        .map(item => item.value._id.replace('system.adapter.', '').replace(/\.\d+$/, '')).sort();
+
+    const instances = [];
+    res.rows
+        .forEach(item => {
+            const name = item.value._id.replace('system.adapter.', '').replace(/\.\d+$/, '');
+            if (!instances.includes(name)) {
+                instances.push(name);
+            }
+        });
+    instances.sort();
+
+    let sets = collectWidgetSets(onlyLocal ? path.normalize(`${__dirname}/../node_modules/`) : path.normalize(`${__dirname}/../`));
+    if (!onlyLocal) {
+        collectWidgetSets(path.normalize(`${__dirname}/../../../../`), sets);
+    }
+
+    sets = sets.filter(s => instances.includes(s.name.substring('iobroker.'.length)));
+
+    return sets;
 }
 
 /**
@@ -354,7 +444,7 @@ async function collectExistingFilesToDelete(path) {
     let _dirs = [];
     let files;
     try {
-        adapter.log.debug('Scanning ' + path);
+        adapter.log.debug(`Scanning ${path}`);
         files = await adapter.readDirAsync(adapterName, path);
     } catch {
         // ignore err
@@ -414,12 +504,12 @@ async function upload(files) {
         let attName = file.substring((__dirname + '/www/').length).replace(/\\/g, '/');
         if (files.length - f > 100) {
             (!f || !((files.length - f - 1) % 50)) &&
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
         } else if (files.length - f - 1 > 20) {
             (!f || !((files.length - f - 1) % 10)) &&
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
         } else {
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((__dirname + '/www/').length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
         }
 
         // Update upload indicator
@@ -561,6 +651,40 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
     }
 }
 
+async function buildHtmlPages() {
+    const configChanged = await generateConfigPage();
+    const enabledList = await readAdaptersList();
+
+    widgetInstances = {};
+    enabledList.forEach(adapter =>
+        widgetInstances[adapter.name.substring('iobroker.'.length)] = adapter.pack.common.version);
+
+    const {widgetSets, filesChanged} = syncWidgetSets(enabledList);
+    const widgetsChanged = await generateWidgetsHtml(widgetSets);
+
+    const indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
+    let uploadedIndexHtml;
+    try {
+        uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');
+    } catch (err) {
+        // ignore
+    }
+    if (typeof uploadedIndexHtml === 'object') {
+        uploadedIndexHtml = uploadedIndexHtml.file;
+    }
+    uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
+
+    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
+        await uploadAdapter();
+        adapter.setStateAsync('info.uploaded', Date.now(), true);
+    } else {
+        const state = adapter.getStateAsync('info.uploaded');
+        if (!state || !state.val) {
+            adapter.setStateAsync('info.uploaded', Date.now(), true);
+        }
+    }
+}
+
 async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
 
@@ -598,6 +722,16 @@ async function main() {
         await adapter.setForeignObjectAsync(systemView._id, systemView);
     }
 
+    // Change running mode to daemon
+    const instanceObj = await adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
+    if (instanceObj && instanceObj.common && instanceObj.common.mode !== 'daemon') {
+        instanceObj.common.mode = 'daemon';
+
+        await adapter.setForeignObjectAsync(instanceObj._id, instanceObj);
+        // restart will be done by controller
+        return;
+    }
+
     // first check license
     if (!adapter.config.useLicenseManager && (!adapter.config.license || typeof adapter.config.license !== 'string')) {
         isLicenseError = true
@@ -627,28 +761,6 @@ async function main() {
         }
     }
 
-    const configChanged = await generateConfigPage();
-    const enabledList = await readAdaptersList();
-
-    const {widgetSets, filesChanged} = syncWidgetSets(false, enabledList);
-    const widgetsChanged = await generateWidgetsHtml(widgetSets);
-
-    const indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
-    let uploadedIndexHtml;
-    try {
-        uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');
-    } catch (err) {
-        // ignore
-    }
-    if (typeof uploadedIndexHtml === 'object') {
-        uploadedIndexHtml = uploadedIndexHtml.file;
-    }
-    uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
-
-    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
-        await uploadAdapter();
-    }
-
     if (adapterName.includes('beta')) {
         const visObj = await adapter.getForeignObjectAsync('vis-2-beta.0');
         if (!visObj || visObj.type !== 'meta') {
@@ -676,7 +788,7 @@ async function main() {
         }
     }
 
-    adapter.stop();
+    await buildHtmlPages();
 }
 
 // If started as allInOne mode => return function to create instance

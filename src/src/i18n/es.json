@@ -343,5 +343,21 @@
   "material_icons_knx-uf": "knx-uf",
   "icon_size_in_pixels": "Tamaño del icono en píxeles",
   "Unknown widget type \"%s\"": "Tipo de widget desconocido \"%s\"",
-  "attr_none": "none"
+  "attr_none": "none",
+  "Apply ALL navigation properties to all views": "Aplicar TODAS las propiedades de navegación a todas las vistas",
+  "Apply to all views": "Aplicar esta propiedad a todas las vistas.",
+  "Copied to clipboard": "Copiado al portapapeles",
+  "Detected new version of vis files. Reloading in 2 seconds...": "Nueva versión detectada de archivos vis. Recargando en 2 segundos...",
+  "Do not hide menu": "No ocultar el menú por completo",
+  "Project was updated": "El proyecto fue actualizado",
+  "Project was updated by another browser instance. Do you want to reload it?": "El proyecto fue actualizado por otra instancia del navegador. ¿Quieres recargarlo?",
+  "Reload all browsers if project changed": "Vuelva a cargar todos los navegadores si el proyecto cambió",
+  "Reload now": "recargar ahora",
+  "Reloading": "recargando",
+  "Show background of button": "Fondo del botón Mostrar",
+  "apply_to_all": "Para todos",
+  "iPad Pro - Landscape": "iPad Pro - Paisaje",
+  "iPad Pro - Portrait": "iPad Pro - Retrato",
+  "no_reload": "no recarga",
+  "reload": "recargar"
 }

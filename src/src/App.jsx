@@ -25,6 +25,7 @@ import IconAttributes from '@mui/icons-material/ListAlt';
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
     i18n as I18n, Utils, Loader, Confirm as ConfirmDialog,
+    Message as MessageDialog,
 } from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
@@ -254,6 +255,7 @@ class App extends GenericApp {
             disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
             toolbarHeight: window.localStorage.getItem('Vis.toolbarForm') || 'full',
             deleteWidgetsDialog: false,
+            messageDialog: null,
             visCommonCss: null,
             visUserCss: null,
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
@@ -511,6 +513,37 @@ class App extends GenericApp {
         this.setState({ loadingProgress: { step, total } });
     };
 
+    onVisChanged() {
+        this.setState({
+            messageDialog: {
+                text: I18n.t('Detected new version of vis files. Reloading in 2 seconds...'),
+                title: I18n.t('Reloading'),
+                ok: I18n.t('Reload now'),
+                callback: () => {
+                    if (!this.state.runtime && this.changeTimer) {
+                        this.needRestart = true;
+                    } else {
+                        setTimeout(() =>
+                            window.location.reload(), 2000);
+                    }
+                },
+            },
+        });
+        if (!this.state.runtime && this.changeTimer) {
+            this.needRestart = true;
+        } else {
+            setTimeout(() =>
+                window.location.reload(), 2000);
+        }
+    }
+
+    onWidgetSetsChanged = (id, state) => {
+        if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
+            this.lastUploadedState = state.val;
+            this.onVisChanged();
+        }
+    };
+
     async onConnectionReady() {
         // preload all widgets first
         if (this.state.widgetsLoaded === WIDGETS_LOADING_STEP_HTML_LOADED) {
@@ -529,6 +562,17 @@ class App extends GenericApp {
                 ? JSON.parse(window.localStorage.getItem('Vis.splitSizes'))
                 : [20, 60, 20],
         });
+
+        // subscribe on info.uploaded
+        this.socket.subscribeState(`${this.adapterName}.${this.instance}.info.uploaded`, this.onWidgetSetsChanged);
+        const uploadedState = await this.socket.getState(`${this.adapterName}.${this.instance}.info.uploaded`);
+        if (uploadedState && uploadedState.val !== this.lastUploadedState) {
+            if (this.lastUploadedState) {
+                this.onVisChanged();
+            } else {
+                this.lastUploadedState = uploadedState.val;
+            }
+        }
 
         if (window.localStorage.getItem('projectName')) {
             await this.loadProject(window.localStorage.getItem('projectName'));
@@ -1746,6 +1790,18 @@ class App extends GenericApp {
             : null;
     }
 
+    renderMessageDialog() {
+        return this.state.messageDialog ? <MessageDialog
+            text={this.state.messageDialog.text}
+            title={this.state.messageDialog.title}
+            onClose={() => {
+                if (!this.state.messageDialog.noClose) {
+                    this.setState({ messageDialog: null });
+                }
+            }}
+        /> : null;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1945,6 +2001,7 @@ class App extends GenericApp {
                     {this.renderConfirmDialog()}
                     {this.renderShowCodeDialog()}
                     {this.renderShowProjectUpdateDialog()}
+                    {this.renderMessageDialog()}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

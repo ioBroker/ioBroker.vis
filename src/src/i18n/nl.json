@@ -343,5 +343,21 @@
   "material_icons_knx-uf": "knx-uf",
   "icon_size_in_pixels": "Pictogramgrootte in pixels",
   "Unknown widget type \"%s\"": "Onbekend widgettype \"%s\"",
-  "attr_none": "none"
+  "attr_none": "none",
+  "Apply ALL navigation properties to all views": "Pas ALLE navigatie-eigenschappen toe op alle weergaven",
+  "Apply to all views": "Pas deze eigenschap toe op alle weergaven",
+  "Copied to clipboard": "Gekopieerd naar het klembord",
+  "Detected new version of vis files. Reloading in 2 seconds...": "Nieuwe versie van vis-bestanden gedetecteerd. Herladen in 2 seconden...",
+  "Do not hide menu": "Verberg het menu niet volledig",
+  "Project was updated": "Project is bijgewerkt",
+  "Project was updated by another browser instance. Do you want to reload it?": "Project is bijgewerkt door een andere browserinstantie. Wil je hem herladen?",
+  "Reload all browsers if project changed": "Laad alle browsers opnieuw als het project is gewijzigd",
+  "Reload now": "Nu opnieuw laden",
+  "Reloading": "Herladen",
+  "Show background of button": "Achtergrond van knop Toon",
+  "apply_to_all": "Voor iedereen",
+  "iPad Pro - Landscape": "iPad Pro - Liggend",
+  "iPad Pro - Portrait": "iPad Pro - Portret",
+  "no_reload": "geen herladen",
+  "reload": "herladen"
 }

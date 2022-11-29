@@ -214,6 +214,24 @@
             "native": {}
         },
         {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "info"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.uploaded",
+            "type": "state",
+            "common": {
+                "name": "Files were uploaded",
+                "type": "date",
+                "role": "value.time"
+            },
+            "native": {}
+        },
+        {
             "_id": "control",
             "type": "channel",
             "common": {
