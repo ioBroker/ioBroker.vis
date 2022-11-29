@@ -217,8 +217,15 @@ function init(gulp) {
                 if (ignore && ignore.includes(file)) {
                     return;
                 }
+                if (ignore && ignore.find(pattern => pattern.startsWith('.') && file.endsWith(pattern))) {
+                    // check that file is smaller than 8MB
+                    if (fs.lstatSync(curSource).size > 8 * 1024 * 1024) {
+                        return;
+                    }
+                }
+
                 if (fs.lstatSync(curSource).isDirectory()) {
-                    copyFolder(curSource, curTarget);
+                    copyFolder(curSource, curTarget, ignore);
                 } else {
                     fs.writeFileSync(curTarget, fs.readFileSync(curSource));
                 }
@@ -258,7 +265,7 @@ function init(gulp) {
         copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'), ['i18n']);
         copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
         copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
-        copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'));
+        copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'), ['.map']);
         // delete all other widgets and let only
         const baseWidgets = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
         const files = fs.readdirSync(path.join(__dirname, 'beta/www/widgets'));
@@ -291,7 +298,7 @@ function init(gulp) {
 
         if (fs.existsSync(path.join(__dirname, '../ioBroker.vis-2-beta'))) {
             delFolder(path.join(__dirname, '../ioBroker.vis-2-beta'), true);
-            copyFolder(path.join(__dirname, 'beta'), path.join(__dirname, '../ioBroker.vis-2-beta'));
+            copyFolder(path.join(__dirname, 'beta'), path.join(__dirname, '../ioBroker.vis-2-beta'), ['.map']);
         }
     });
 
