@@ -249,7 +249,7 @@ Toolbar.propTypes = {
     setProjectsDialog: PropTypes.func,
     toolbarHeight: PropTypes.string,
     adapterName: PropTypes.string,
-    instance: PropTypes.string,
+    instance: PropTypes.number,
     projectName: PropTypes.string,
 };
 

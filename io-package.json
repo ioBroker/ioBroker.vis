@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.8",
+        "version": "2.0.9",
         "news": {
+            "2.0.8": {
+                "en": "Added the file browser",
+                "de": "Hinzugefügt die Datei Browser",
+                "ru": "Добавлен браузер файлов",
+                "pt": "Adicionado o navegador de arquivos",
+                "nl": "Voeg de bestanden browser toe",
+                "fr": "Posté le navigateur de fichier",
+                "it": "Aggiunto il file browser",
+                "es": "Añadido el navegador de archivos",
+                "pl": "Added przeglądarka plików",
+                "uk": "Додано браузер файлів",
+                "zh-cn": "增加档案"
+            },
             "2.0.8": {
                 "en": "Completely new visualization, but compatible with previous version",
                 "de": "Komplett neue Visualisierung, aber mit vorheriger Version kompatibel",

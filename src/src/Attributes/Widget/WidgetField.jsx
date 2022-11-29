@@ -15,10 +15,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import {
-    I18n, IconPicker, Utils, Icon, TextWithIcon, ColorPicker, SelectID,
+    I18n,
+    IconPicker,
+    Utils,
+    Icon,
+    TextWithIcon,
+    ColorPicker,
+    SelectID,
+    SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
-import SelectFileDialog from '../../Components/SelectFile';
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
 

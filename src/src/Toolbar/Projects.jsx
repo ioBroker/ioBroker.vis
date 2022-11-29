@@ -6,15 +6,14 @@ import copy from 'copy-to-clipboard';
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListIcon from '@mui/icons-material/List';
-import FilesIcon from '@mui/icons-material/ContentCopy';
+import FilesIcon from '@mui/icons-material/FileCopy';
 
-import { SelectID, I18n } from '@iobroker/adapter-react-v5';
+import { SelectID, I18n, SelectFile as SelectFileDialog } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
 
 import Settings from './Settings';
 import ProjectsManager from './ProjectsManager';
-import SelectFileDialog from '../Components/SelectFile';
 
 const styles = () => ({
     objectsDialog: {
@@ -87,7 +86,6 @@ const Tools = props => {
                 showToolbar
                 imagePrefix="../"
                 selected=""
-                filterByType="images"
                 showTypeSelector
                 onSelect={(selected, isDoubleClick) => {
                     const projectPrefix = `${props.adapterName}.${props.instance}/${props.projectName}/`;
@@ -130,7 +128,7 @@ Tools.propTypes = {
     projectsDialog: PropTypes.bool,
     setProjectsDialog: PropTypes.func,
     adapterName: PropTypes.string,
-    instance: PropTypes.string,
+    instance: PropTypes.number,
     projectName: PropTypes.string,
 };
 

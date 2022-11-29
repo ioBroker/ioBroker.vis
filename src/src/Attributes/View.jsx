@@ -26,13 +26,16 @@ import ClearIcon from '@mui/icons-material/Clear';
 import InfoIcon from '@mui/icons-material/Info';
 
 import {
-    ColorPicker, Utils, I18n, IconPicker,
+    ColorPicker,
+    Utils,
+    I18n,
+    IconPicker,
+    SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
 import './backgrounds.css';
 
 import { theme, background } from './ViewData';
-import SelectFileDialog from '../Components/SelectFile';
 
 const styles = _theme => ({
     backgroundClass: {
