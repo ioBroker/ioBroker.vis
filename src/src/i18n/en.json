@@ -349,5 +349,10 @@
   "attr_none": "none",
   "Reload all browsers if project changed":  "Reload all browsers if project changed",
   "reload": "reload",
-  "no_reload": "no reload"
+  "no_reload": "no reload",
+  "Do not hide menu": "Do not hide menu completely",
+  "Show background of button": "Background of show button",
+  "apply_to_all": "For all",
+  "Apply to all views": "Apply this property to all views",
+  "Apply ALL navigation properties to all views": "Apply ALL navigation properties to all views"
 }

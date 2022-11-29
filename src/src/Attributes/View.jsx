@@ -31,6 +31,7 @@ import {
     I18n,
     IconPicker,
     SelectFile as SelectFileDialog,
+    Confirm as ConfirmDialog,
 } from '@iobroker/adapter-react-v5';
 
 import './backgrounds.css';
@@ -171,6 +172,23 @@ const checkFunction = (funcText, settings) => {
     return false;
 };
 
+function isPropertySameInAllViews(project, field, selectedView, views) {
+    const value = project[selectedView].settings[field];
+    views = views || Object.keys(project).filter(v => v !== '___settings' && v !== selectedView);
+
+    if (!views.length) {
+        return true;
+    }
+
+    for (let v = 0; v < views.length; v++) {
+        if (project[views[v]].settings[field] !== value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 const View = props => {
     if (!props.project[props.selectedView]) {
         return null;
@@ -179,6 +197,7 @@ const View = props => {
     const [userResolution, setUserResolution] = useState(false);
     const [triggerAllOpened, setTriggerAllOpened] = useState(0);
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
+    const [showAllViewDialog, setShowAllViewDialog] = useState(null);
 
     const view = props.project[props.selectedView];
 
@@ -438,16 +457,16 @@ const View = props => {
             name: 'Navigation',
             fields: [
                 {
-                    type: 'checkbox', name: 'Show navigation', field: 'navigation', notStyle: true,
+                    type: 'checkbox', name: 'Show navigation', field: 'navigation', notStyle: true, applyToAll: true, groupApply: true,
                 },
                 {
                     type: 'text', name: 'Title', field: 'navigationTitle', notStyle: true, hidden: '!data.navigation',
                 },
                 {
-                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation',
+                    type: 'checkbox', name: 'Show app bar', field: 'navigationBar', notStyle: true, default: true, hidden: '!data.navigation', applyToAll: true,
                 },
                 {
-                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || !data.navigationBar',
+                    type: 'color', name: 'Bar color', field: 'navigationBarColor', notStyle: true, hidden: '!data.navigation || !data.navigationBar', applyToAll: true,
                 },
                 {
                     type: 'icon', name: 'Icon', field: 'navigationIcon', notStyle: true, hidden: '!data.navigation || data.navigationImage',
@@ -456,10 +475,13 @@ const View = props => {
                     type: 'image', name: 'Image', field: 'navigationImage', notStyle: true, hidden: '!data.navigation || data.navigationIcon',
                 },
                 {
-                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation',
+                    type: 'text', name: 'Menu header text', field: 'navigationHeaderText', notStyle: true, hidden: '!data.navigation', applyToAll: true,
                 },
                 {
-                    type: 'checkbox', name: 'Header for all views', field: 'navigationHeaderTextAll', notStyle: true, hidden: '!data.navigation || !data.navigationHeaderText',
+                    type: 'checkbox', name: 'Do not hide menu', field: 'navigationNoHide', notStyle: true, hidden: '!data.navigation', applyToAll: true,
+                },
+                {
+                    type: 'checkbox', name: 'Show background of button', field: 'navigationButtonBackground', notStyle: true, hidden: '!data.navigation || data.navigationNoHide', applyToAll: true,
                 },
             ],
         },
@@ -595,6 +617,69 @@ const View = props => {
     }
     if (props.isAllOpened !== allOpened) {
         setTimeout(() => props.setIsAllOpened(allOpened), 50);
+    }
+
+    const viewList = Object.keys(props.project).filter(v => v !== '___settings' && v !== props.selectedView);
+
+    let allViewDialog = null;
+    if (showAllViewDialog) {
+        const viewsToChange = [];
+        if (showAllViewDialog.groupApply) {
+            // find all fields with applyToAll flag and if any is not equal show button
+            for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
+                const field = showAllViewDialog.group.fields[f];
+                if (field.applyToAll && !field.groupApply) {
+                    viewList.forEach(_view => {
+                        if (props.project[_view].settings.navigation &&
+                            props.project[_view].settings[field.field] !== props.project[props.selectedView].settings[field.field] &&
+                            !viewsToChange.includes(props.project[_view].name || _view)
+                        ) {
+                            viewsToChange.push(props.project[_view].name || _view);
+                        }
+                    });
+                }
+            }
+        } else {
+            viewList.forEach(_view => {
+                if (props.project[_view].settings.navigation &&
+                    props.project[_view].settings[showAllViewDialog.field] !== props.project[props.selectedView].settings[showAllViewDialog.field]
+                ) {
+                    viewsToChange.push(props.project[_view].name || _view);
+                }
+            });
+        }
+
+        allViewDialog = <ConfirmDialog
+            title={I18n.t(showAllViewDialog.groupApply ? 'Apply ALL navigation properties to all views' : 'Apply to all views')}
+            text={I18n.t('Following views will be changed: %s', viewsToChange.join(', '))}
+            onClose={result => {
+                if (result) {
+                    const project = JSON.parse(JSON.stringify(props.project));
+                    if (showAllViewDialog.groupApply) {
+                        // find all fields with applyToAll flag and if any is not equal show button
+                        for (let f = 0; f < showAllViewDialog.group.fields.length; f++) {
+                            const field = showAllViewDialog.group.fields[f];
+                            if (field.applyToAll && !field.groupApply) {
+                                viewList.forEach(_view => {
+                                    if (project[_view].settings.navigation) {
+                                        project[_view].settings[field.field] = project[props.selectedView].settings[field.field];
+                                    }
+                                });
+                            }
+                        }
+                    } else {
+                        viewList.forEach(_view => {
+                            if (project[_view].settings.navigation) {
+                                project[_view].settings[showAllViewDialog.field] = project[props.selectedView].settings[showAllViewDialog.field];
+                            }
+                        });
+                    }
+
+                    props.changeProject(project);
+                }
+                setShowAllViewDialog(null);
+            }}
+        />;
     }
 
     return <div style={{ height: '100%', overflowY: 'auto' }}>
@@ -898,6 +983,45 @@ const View = props => {
                                     helpText = <Tooltip title={I18n.t(field.title)}><InfoIcon className={props.classes.fieldHelpText} /></Tooltip>;
                                 }
 
+                                if (field.applyToAll) {
+                                    if (field.groupApply) {
+                                        let isShow = false;
+                                        // find all fields with applyToAll flag and if any is not equal show button
+                                        for (let f = 0; f < group.fields.length; f++) {
+                                            if (group.fields[f].applyToAll &&
+                                                !group.fields[f].groupApply &&
+                                                !isPropertySameInAllViews(props.project, group.fields[f].field, props.selectedView, viewList)
+                                            ) {
+                                                isShow = true;
+                                                break;
+                                            }
+                                        }
+                                        if (isShow) {
+                                            result = <div style={{ display: 'flex', width: '100%' }}>
+                                                <div style={{ flex: 1, lineHeight: '36px', marginRight: 4 }}>
+                                                    {result}
+                                                </div>
+                                                <Tooltip title={I18n.t('Apply ALL navigation properties to all views')}>
+                                                    <Button variant="contained" onClick={() => setShowAllViewDialog({ ...field, group })}>
+                                                        {I18n.t('apply_to_all')}
+                                                    </Button>
+                                                </Tooltip>
+                                            </div>;
+                                        }
+                                    } else if (!isPropertySameInAllViews(props.project, field.field, props.selectedView, viewList)) {
+                                        result = <div style={{ display: 'flex', width: '100%' }}>
+                                            <div style={{ flex: 1, lineHeight: '36px', marginRight: 4 }}>
+                                                {result}
+                                            </div>
+                                            <Tooltip title={I18n.t('Apply to all views')}>
+                                                <Button variant="outlined" onClick={() => setShowAllViewDialog(field)}>
+                                                    {I18n.t('apply_to_all')}
+                                                </Button>
+                                            </Tooltip>
+                                        </div>;
+                                    }
+                                }
+
                                 return <tr key={key2}>
                                     <td className={props.classes.fieldTitle} title={!field.title ? null : I18n.t(field.title)}>
                                         {I18n.t(field.name)}
@@ -911,6 +1035,7 @@ const View = props => {
                 </table>
             </AccordionDetails>
         </Accordion>)}
+        {allViewDialog}
     </div>;
 };
 

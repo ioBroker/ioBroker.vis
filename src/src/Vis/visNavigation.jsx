@@ -176,7 +176,6 @@ const styles = theme => ({
 class VisNavigation extends React.Component {
     renderMenu(settings) {
         const items = [];
-        let navigationHeaderText = settings.navigationHeaderText;
 
         Object.keys(this.props.views).forEach(view => {
             if (view === '___settings') {
@@ -190,10 +189,8 @@ class VisNavigation extends React.Component {
                     icon: viewSettings.navigationIcon || viewSettings.navigationImage,
                     view,
                 };
+
                 items.push(item);
-                if (viewSettings.navigationHeaderTextAll) {
-                    navigationHeaderText = viewSettings.navigationHeaderText;
-                }
 
                 if (item.icon && item.icon.startsWith('_PRJ_NAME/')) {
                     item.icon = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${item.icon.substring(9)}`;  // "_PRJ_NAME".length = 9
@@ -217,7 +214,7 @@ class VisNavigation extends React.Component {
                     this.props.menuWidth === 'hidden' && this.props.classes.menuToolbarNarrow,
                 )}
             >
-                {navigationHeaderText || ''}
+                {settings.navigationHeaderText || ''}
             </div>
             <Divider />
             <div className={this.props.classes.menuList}>
@@ -335,16 +332,25 @@ class VisNavigation extends React.Component {
                             window.localStorage.setItem('vis.navOpened', 'narrow');
                             this.props.setMenuWidth('narrow');
                         } else if (this.props.menuWidth === 'narrow') {
-                            window.localStorage.setItem('vis.navOpened', 'hidden');
-                            this.props.setMenuWidth('hidden');
+                            if (!settings.navigationNoHide) {
+                                window.localStorage.setItem('vis.navOpened', 'hidden');
+                                this.props.setMenuWidth('hidden');
+                            } else {
+                                window.localStorage.setItem('vis.navOpened', 'full');
+                                this.props.setMenuWidth('full');
+                            }
                         } else {
                             window.localStorage.setItem('vis.navOpened', 'full');
                             this.props.setMenuWidth('full');
                         }
                     }}
+                    style={{
+                        backgroundColor: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.themeType === 'dark' ? 'white' : 'black') : 'inherit',
+                        color: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.themeType === 'dark' ? 'black' : 'white')  : 'inherit',
+                    }}
                 >
                     <ChevronLeftIcon
-                        className={this.props.menuWidth === 'hidden' ? this.props.classes.openMenuButtonIconHidden : ''}
+                        className={this.props.menuWidth === 'hidden' || (this.props.menuWidth === 'narrow' && settings.navigationNoHide) ? this.props.classes.openMenuButtonIconHidden : ''}
                         style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: this.props.themeType === 'dark' ? '#000' : '#FFF' } : null}
                     />
                 </IconButton>
