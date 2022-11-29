@@ -10,25 +10,24 @@ import 'ace-builds/src-min-noconflict/ext-language_tools';
 import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
 import 'ace-builds/src-min-noconflict/theme-chrome';
 
-const Scripts = props => <div>
-    <AceEditor
-        mode="javascript"
-        theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-        width="100%"
-        readOnly={!props.editMode}
-        value={props.project.___settings.scripts}
-        onChange={newValue => {
-            const project = JSON.parse(JSON.stringify(props.project));
-            project.___settings.scripts = newValue;
-            props.changeProject(project);
-        }}
-        setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: true,
-        }}
-    />
-</div>;
+const Scripts = props => <AceEditor
+    mode="javascript"
+    theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
+    width="100%"
+    height="100%"
+    readOnly={!props.editMode}
+    value={props.project.___settings.scripts}
+    onChange={newValue => {
+        const project = JSON.parse(JSON.stringify(props.project));
+        project.___settings.scripts = newValue;
+        props.changeProject(project);
+    }}
+    setOptions={{
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        enableSnippets: true,
+    }}
+/>;
 
 Scripts.propTypes = {
     changeProject: PropTypes.func,

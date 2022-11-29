@@ -99,7 +99,7 @@ const CSS = props => {
         value = value.data;
     }
 
-    return <div>
+    return <>
         <div style={{ display: 'flex', alignItems: 'center' }}>
             {showHelp ? <Dialog
                 open={!0}
@@ -141,13 +141,14 @@ const CSS = props => {
             value={value}
             onChange={newValue => save(newValue, type)}
             width="100%"
+            height="calc(100% - 34px)"
             setOptions={{
                 enableBasicAutocompletion: true,
                 enableLiveAutocompletion: true,
                 enableSnippets: true,
             }}
         />
-    </div>;
+    </>;
 };
 
 CSS.propTypes = {

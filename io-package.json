@@ -3,7 +3,7 @@
         "name": "vis",
         "version": "2.0.9",
         "news": {
-            "2.0.8": {
+            "2.0.9": {
                 "en": "Added the file browser",
                 "de": "Hinzugefügt die Datei Browser",
                 "ru": "Добавлен браузер файлов",
@@ -143,7 +143,7 @@
         "loglevel": "info",
         "icon": "vis.png",
         "enabled": true,
-        "mode": "once",
+        "mode": "daemon",
         "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
         "keywords": [
             "DashUI",
