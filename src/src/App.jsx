@@ -262,6 +262,7 @@ class App extends GenericApp {
             loadingProgress: { step: 0, total: 0 },
             showCodeDialog: null,
             confirmDialog: null,
+            showProjectUpdateDialog: false,
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
@@ -345,21 +346,39 @@ class App extends GenericApp {
 
     onProjectChange = (id, fileName) => {
         if (fileName.endsWith('.json')) {
-            this.loadProject(this.state.projectName);
+            // if runtime => just update project
+            if (this.state.runtime) {
+                this.loadProject(this.state.projectName);
+            } else if (fileName.endsWith(`${this.state.projectName}/vis-views.json`)) {
+                // compare last executed file with new one
+                this.socket.readFile(this.adapterId, fileName)
+                    .then(file => {
+                        if (!file || this.lastProjectJSONfile !== file.data) {
+                            this.setState({ showProjectUpdateDialog: true });
+                        }
+                    });
+            }
         }
     };
 
-    loadProject = async projectName => {
-        let file;
-        try {
-            file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
-            if (typeof file === 'object') {
-                file = file.data;
+    loadProject = async (projectName, file) => {
+        if (!file) {
+            try {
+                file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
+                if (typeof file === 'object') {
+                    file = file.data;
+                }
+            } catch (err) {
+                console.warn(`Cannot read project file vis-views.json: ${err}`);
+                file = '{}';
             }
-        } catch (err) {
-            console.warn(`Cannot read project file vis-views.json: ${err}`);
-            file = '{}';
         }
+
+        if (!this.state.runtime) {
+            // remember last loaded project file
+            this.lastProjectJSONfile = file;
+        }
+
         const project = JSON.parse(file);
         project.___settings = project.___settings || {};
         project.___settings.folders = project.___settings.folders || [];
@@ -460,7 +479,13 @@ class App extends GenericApp {
             this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
         }
 
-        if (project.___settings.reloadOnEdit !== false && this.state.runtime) {
+        if (this.state.runtime) {
+            if (project.___settings.reloadOnEdit !== false) {
+                this.subscribedProject = projectName;
+                // subscribe on changes
+                this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
+            }
+        } else {
             this.subscribedProject = projectName;
             // subscribe on changes
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
@@ -1165,6 +1190,7 @@ class App extends GenericApp {
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = setTimeout(async () => {
             this.savingTimer = null;
+            this.lastProjectJSONfile = JSON.stringify(this.state.project, null, 2);
             if ('TextEncoder' in window) {
                 const encoder = new TextEncoder();
                 const data = encoder.encode(JSON.stringify(this.state.project, null, 2));
@@ -1676,6 +1702,50 @@ class App extends GenericApp {
         return null;
     }
 
+    renderShowProjectUpdateDialog() {
+        if (!this.state.showProjectUpdateDialog) {
+            return null;
+        }
+        return <ConfirmDialog
+            text={I18n.t('Project was updated by another browser instance. Do you want to reload it?')}
+            title={I18n.t('Project was updated')}
+            fullWidth={false}
+            onClose={result =>
+                this.setState({ showProjectUpdateDialog: false }, () => {
+                    if (result) {
+                        this.loadProject(this.state.projectName);
+                    }
+                })}
+        />;
+    }
+
+    renderCreateFirstProjectDialog() {
+        return this.state.createFirstProjectDialog ? <CreateFirstProjectDialog
+            open={!0}
+            onClose={() => this.setState({ createFirstProjectDialog: false })}
+            addProject={this.addProject}
+        /> : null;
+    }
+
+    renderDeleteDialog() {
+        return this.state.deleteWidgetsDialog ?
+            <ConfirmDialog
+                fullWidth={false}
+                title={I18n.t('Delete widgets')}
+                text={I18n.t('Are you sure to delete widgets %s?', this.state.selectedWidgets.join(', '))}
+                ok={I18n.t('Delete')}
+                dialogName="deleteDialog"
+                suppressQuestionMinutes={5}
+                onClose={isYes => {
+                    if (isYes) {
+                        this.deleteWidgetsAction();
+                    }
+                    this.setState({ deleteWidgetsDialog: false });
+                }}
+            />
+            : null;
+    }
+
     render() {
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1869,30 +1939,12 @@ class App extends GenericApp {
                             </DndProvider>
                         </div>
                     </div>
-                    {this.state.createFirstProjectDialog ? <CreateFirstProjectDialog
-                        open={!0}
-                        onClose={() => this.setState({ createFirstProjectDialog: false })}
-                        addProject={this.addProject}
-                    /> : null}
-                    {this.state.deleteWidgetsDialog ?
-                        <ConfirmDialog
-                            fullWidth={false}
-                            title={I18n.t('Delete widgets')}
-                            text={I18n.t('Are you sure to delete widgets %s?', this.state.selectedWidgets.join(', '))}
-                            ok={I18n.t('Delete')}
-                            dialogName="deleteDialog"
-                            suppressQuestionMinutes={5}
-                            onClose={isYes => {
-                                if (isYes) {
-                                    this.deleteWidgetsAction();
-                                }
-                                this.setState({ deleteWidgetsDialog: false });
-                            }}
-                        />
-                        : null}
+                    {this.renderCreateFirstProjectDialog()}
+                    {this.renderDeleteDialog()}
                     {this.renderAlertDialog()}
                     {this.renderConfirmDialog()}
                     {this.renderShowCodeDialog()}
+                    {this.renderShowProjectUpdateDialog()}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

@@ -354,5 +354,7 @@
   "Show background of button": "Background of show button",
   "apply_to_all": "For all",
   "Apply to all views": "Apply this property to all views",
-  "Apply ALL navigation properties to all views": "Apply ALL navigation properties to all views"
+  "Apply ALL navigation properties to all views": "Apply ALL navigation properties to all views",
+  "Project was updated": "Project was updated",
+  "Project was updated by another browser instance. Do you want to reload it?": "Project was updated by another browser instance. Do you want to reload it?"
 }
