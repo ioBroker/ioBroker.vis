@@ -175,7 +175,7 @@
                         withCredentials: false
                     },
                     headers: {},
-                    success: function(data, status, request) {
+                    success: function (data, status, request) {
                         $('#check').removeClass('disabled');
                         var text = data ? data.result : 'error';
                         if (!data && data.error) {

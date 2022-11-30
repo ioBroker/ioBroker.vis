@@ -41,7 +41,7 @@ function startAdapter(options) {
                     return;
                 }
                 id = id.substring('system.adapter.'.length).replace(/\.\d+$/, '');
-                if (!obj || !obj.common) {
+                if (!obj || !obj.common || !obj.common.version) {
                     if (widgetInstances[id]) {
                         delete widgetInstances[id];
                         buildHtmlPages();
@@ -68,30 +68,14 @@ function startAdapter(options) {
 }
 
 async function processMessage(msg) {
-    if (msg && msg.command === 'checkLicense' && msg.message) {
-        const obj = await socket.getObject(`system.adapter.${msg.message}.0`)
-        if (!obj || !obj.native || !obj.native.license) {
+    if (msg && msg.command === 'checkLicense' && msg.message && msg.callback) {
+        const obj = await adapter.getForeignObjectAsync(`system.adapter.${msg.message}.0`);
+        if (!obj || !obj.native || (!obj.native.license && !obj.native.useLicenseManager)) {
             console.log('[vis-2-widgets-jaeger-design] License not found');
-            obj.callback && adapter.sendTo(obj.from, obj.command, {error: 'License not found'}, obj.callback);
+            adapter.sendTo(msg.from, msg.command, {error: 'License not found'}, msg.callback);
         } else {
-            try {
-                const decoded = jwt.verify(obj.native.license, cert);
-                if (decoded.name === `iobroker.${msg.message}` &&
-                    (!decoded.valid_till || decoded.valid_till === '0000-00-00 00:00:00' ||
-                        new Date(decoded.valid_till).getTime() > Date.now())
-                ) {
-                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: true}, obj.callback);
-                } else if (decoded.name !== 'ioBroker.vis-2-widgets-jaeger-design') {
-                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Provided license is for another product'}, obj.callback);
-                    adapter.log.error(`Provided license is for another product: ${decoded.name} and not for ${msg.message}`);
-                } else {
-                    obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Provided license is expired'}, obj.callback);
-                    console.error(`Provided license for ${msg.message} is expired: ${new Date(decoded.valid_till).toISOString()}`);
-                }
-            } catch (err) {
-                obj.callback && adapter.sendTo(obj.from, obj.command, {result: false, error: 'Cannot decode license'}, obj.callback);
-                adapter.log.error(`Cannot decode license for ${msg.message}: ${err.message}`);
-            }
+            const result = await checkL(obj.native.license, obj.native.useLicenseManager, msg.message);
+            adapter.sendTo(msg.from, msg.command, {result}, msg.callback);
         }
     }
 }
@@ -192,9 +176,9 @@ async function generateConfigPage() {
 }
 
 // delete this function as js.controller 4.0 will be mainstream
-async function getSuitableLicenses(all) {
+async function getSuitableLicenses(all, name) {
     if (adapter.getSuitableLicenses) {
-        return adapter.getSuitableLicenses(all);
+        return adapter.getSuitableLicenses(all, name);
     } else {
         const licenses = [];
         try {
@@ -223,7 +207,7 @@ async function getSuitableLicenses(all) {
                                 new Date(decoded.valid_till).getTime() > now)
                         ) {
                             if (
-                                decoded.name.startsWith('iobroker.' + this.name) &&
+                                decoded.name.startsWith(`iobroker.${name || adapterName}`) &&
                                 (all || !license.usedBy || license.usedBy === this.namespace)
                             ) {
                                 // Licenses for version ranges 0.x and 1.x are handled identically and are valid for both version ranges.
@@ -289,7 +273,7 @@ async function getSuitableLicenses(all) {
     }
 }
 
-function checkLicense(license, uuid, originalError) {
+function checkLicense(license, uuid, originalError, name) {
     if (license && license.expires * 1000 < new Date().getTime()) {
         adapter.log.error(`Cannot check license: Expired on ${new Date(license.expires * 1000).toString()}`);
         return true;
@@ -304,6 +288,10 @@ function checkLicense(license, uuid, originalError) {
             return false;
         }
     } else {
+        if (license.name !== name && license.name !== `iobroker.${name}`) {
+            adapter.log.error(`License is for other adapter "${license.name}". Expected "iobroker.${name}"`);
+            return true;
+        }
         const code = [];
         for (let i = 0; i < license.type.length; i++) {
             code.push('\\u00' + license.type.charCodeAt(i).toString(16));
@@ -330,17 +318,17 @@ function checkLicense(license, uuid, originalError) {
     }
 }
 
-function check(license, uuid, originalError) {
+function check(license, uuid, originalError, name) {
     try {
-        const decoded = jwt.verify(license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'));
-        return checkLicense(decoded, uuid, originalError);
+        const decoded = jwt.verify(license, fs.readFileSync(`${__dirname}/lib/cloudCert.crt`));
+        return checkLicense(decoded, uuid, originalError, name);
     } catch (err) {
-        adapter.log.error('Cannot check license: ' + originalError);
+        adapter.log.error(`Cannot check license: ${originalError}`);
         return true
     }
 }
 
-function doLicense(license, uuid) {
+function doLicense(license, uuid, name) {
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({json: license, uuid});
 
@@ -365,9 +353,13 @@ function doLicense(license, uuid) {
                 try {
                     const data = JSON.parse(result);
                     if (data.result === 'OK') {
+                        if (data.name !== `iobroker.${name}` && data.name !== name) {
+                            adapter.log.error(`License is for other adapter "${data.name}". Expected "iobroker.${name}"`);
+                            resolve(true);
+                        } else
                         if (uuid.length !== 36 && uuid.substring(0, 2) !== 'IO') {
                             try {
-                                const decoded = jwt.verify(license, fs.readFileSync(__dirname + '/lib/cloudCert.crt'));
+                                const decoded = jwt.verify(license, fs.readFileSync(`${__dirname}/lib/cloudCert.crt`));
                                 if (!decoded || decoded.invoice === 'free') {
                                     adapter.log.error('Cannot use free license with commercial device!');
                                     resolve(true);
@@ -375,7 +367,7 @@ function doLicense(license, uuid) {
                                     resolve(false);
                                 }
                             } catch (err) {
-                                adapter.log.error('Cannot check license: ' + err);
+                                adapter.log.error(`Cannot check license: ${err}`);
                                 resolve(true);
                             }
                         } else {
@@ -383,7 +375,6 @@ function doLicense(license, uuid) {
                             resolve(false);
                         }
                     } else {
-                        isLicenseError = true
                         adapter.log.error(`License is invalid! Nothing updated. Error: ${data ? data.result : 'unknown'}`);
                         resolve(true);
                     }
@@ -676,7 +667,7 @@ async function buildHtmlPages() {
 
     widgetInstances = {};
     enabledList.forEach(adapter =>
-        widgetInstances[adapter.name.substring('iobroker.'.length)] = adapter.pack.common.version);
+        widgetInstances[adapter.name.substring('iobroker.'.length)] = adapter.pack && adapter.pack.common && adapter.pack.common.version);
 
     const {widgetSets, filesChanged} = syncWidgetSets(enabledList);
     const widgetsChanged = await generateWidgetsHtml(widgetSets);
@@ -700,6 +691,30 @@ async function buildHtmlPages() {
         const state = await adapter.getStateAsync('info.uploaded');
         if (!state || !state.val) {
             adapter.setStateAsync('info.uploaded', Date.now(), true);
+        }
+    }
+}
+
+async function checkL(license, useLicenseManager, name) {
+    const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
+    if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
+        adapter.log.error('UUID not found!');
+        return false;
+    } else {
+        if (useLicenseManager) {
+            license = await getSuitableLicenses(true, name);
+            license = license[0] && license[0].json;
+        }
+
+        if (!license) {
+            adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
+            return false;
+        } else {
+            try {
+                return !await doLicense(license, uuidObj.native.uuid, name);
+            } catch (err) {
+                return check(license, uuidObj.native.uuid, err, name);
+            }
         }
     }
 }
@@ -756,28 +771,7 @@ async function main() {
         isLicenseError = true
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
     } else {
-        const uuidObj = await adapter.getForeignObjectAsync('system.meta.uuid');
-        if (!uuidObj || !uuidObj.native || !uuidObj.native.uuid) {
-            isLicenseError = true
-            adapter.log.error('UUID not found!');
-        } else {
-            let license = adapter.config.license;
-            if (adapter.config.useLicenseManager) {
-                license = await getSuitableLicenses();
-                license = license[0] && license[0].json;
-            }
-
-            if (!license) {
-                adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
-                isLicenseError = true;
-            } else {
-                try {
-                    isLicenseError = await doLicense(license, uuidObj.native.uuid);
-                } catch (err) {
-                    isLicenseError = check(license, uuidObj.native.uuid, err);
-                }
-            }
-        }
+        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, adapterName));
     }
 
     if (adapterName.includes('beta')) {
