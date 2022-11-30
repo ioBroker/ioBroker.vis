@@ -888,6 +888,7 @@ class VisView extends React.Component {
             setTimeInterval: props.setTimeInterval,
             timeStart: props.timeStart,
             setTimeStart: props.setTimeStart,
+            customSettings: props.customSettings,
             VisView,
         };
 
@@ -1595,6 +1596,7 @@ VisView.propTypes = {
     style: PropTypes.object,
     visInWidget: PropTypes.bool,
     buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
+    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

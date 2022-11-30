@@ -1567,6 +1567,9 @@ VisBaseWidget.propTypes = {
     buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
 
     // eslint-disable-next-line react/no-unused-prop-types
+    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets
+
+    // eslint-disable-next-line react/no-unused-prop-types
     editGroup: PropTypes.bool,
     // eslint-disable-next-line react/no-unused-prop-types
     setValue: PropTypes.func.isRequired,

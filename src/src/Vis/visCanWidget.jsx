@@ -1191,41 +1191,39 @@ class VisCanWidget extends VisBaseWidget {
             }
 
             return <VisView
-                ref={this.refViews[view]}
-                key={view}
-                view={view}
+                $$={this.props.$$}
                 activeView={view}
-                views={this.props.views}
+                adapterName={this.props.adapterName}
+                allWidgets={this.props.allWidgets}
+                buildLegacyStructures={this.props.buildLegacyStructures}
                 can={this.props.can}
                 canStates={this.props.canStates}
+                container={this.props.container}
+                customSettings={this.props.customSettings}
+                dateFormat={this.props.dateFormat}
+                editMode={false}
+                formatUtils={this.props.formatUtils}
+                instance={this.props.instance}
+                jQuery={this.props.jQuery}
+                key={view}
+                lang={this.props.lang}
+                linkContext={this.props.linkContext}
+                projectName={this.props.projectName}
+                ref={this.refViews[view]}
+                registerRef={this.props.registerRef}
+                runtime={this.props.runtime}
+                setValue={this.props.setValue}
+                showWidgetNames={this.props.showWidgetNames}
+                socket={this.props.socket}
+                systemConfig={this.props.systemConfig}
+                theme={this.props.theme}
+                themeName={this.props.themeName}
+                themeType={this.props.themeType}
                 user={this.props.user}
                 userGroups={this.props.userGroups}
-                allWidgets={this.props.allWidgets}
-                jQuery={this.props.jQuery}
-                $$={this.props.$$}
-                registerRef={this.props.registerRef}
-                adapterName={this.props.adapterName}
-                instance={this.props.instance}
-                projectName={this.props.projectName}
-                socket={this.props.socket}
+                view={view}
+                views={this.props.views}
                 viewsActiveFilter={this.props.viewsActiveFilter}
-                setValue={this.props.setValue}
-                linkContext={this.props.linkContext}
-                formatUtils={this.props.formatUtils}
-                selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
-                setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
-                onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
-                showWidgetNames={this.props.showWidgetNames}
-                dateFormat={this.props.dateFormat}
-                lang={this.props.lang}
-                themeType={this.props.themeType}
-                themeName={this.props.themeName}
-                theme={this.props.theme}
-                systemConfig={this.props.systemConfig}
-                container={this.props.container}
-                editMode={false}
-                runtime={this.props.runtime}
-                buildLegacyStructures={this.props.buildLegacyStructures}
                 visInWidget
             />;
         }) : null;
