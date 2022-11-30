@@ -34,8 +34,6 @@ import {
     Confirm as ConfirmDialog,
 } from '@iobroker/adapter-react-v5';
 
-import './backgrounds.css';
-
 import { theme, background } from './ViewData';
 
 const styles = _theme => ({

@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro - Paisagem",
   "iPad Pro - Portrait": "iPad Pro - Retrato",
   "no_reload": "sem recarga",
-  "reload": "recarregar"
+  "reload": "recarregar",
+  "not-specified": "não definido",
+  "Files": "arquivos"
 }

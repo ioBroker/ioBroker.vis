@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro - Liggend",
   "iPad Pro - Portrait": "iPad Pro - Portret",
   "no_reload": "geen herladen",
-  "reload": "herladen"
+  "reload": "herladen",
+  "not-specified": "niet gedefinieerd",
+  "Files": "Bestanden"
 }

@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro — poziomy",
   "iPad Pro - Portrait": "iPad Pro — Portret",
   "no_reload": "bez przeładowania",
-  "reload": "przeładować"
+  "reload": "przeładować",
+  "not-specified": "Nie określono",
+  "Files": "Akta"
 }

@@ -22,7 +22,7 @@ export const theme = [
 ];
 
 export const background = [
-    { value: '', name: 'none' },
+    { value: '', name: 'not-specified' },
     { value: 'fm-dark-background', name: 'Fm dark background' },
     { value: 'fm-light-background', name: 'Fm light background' },
     { value: 'no_background', name: 'No background' },

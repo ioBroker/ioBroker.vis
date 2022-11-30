@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro - Querformat",
   "iPad Pro - Portrait": "iPad Pro - Hochformat",
   "no_reload": "kein Neuladen",
-  "reload": "neu laden"
+  "reload": "neu laden",
+  "not-specified": "nicht definiert",
+  "Files": "Dateien"
 }

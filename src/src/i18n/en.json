@@ -359,5 +359,7 @@
   "Project was updated by another browser instance. Do you want to reload it?": "Project was updated by another browser instance. Do you want to reload it?",
   "Detected new version of vis files. Reloading in 2 seconds...": "Detected new version of vis files. Reloading in 2 seconds...",
   "Reloading": "Reloading",
-  "Reload now": "Reload now"
+  "Reload now": "Reload now",
+  "not-specified": "not defined",
+  "Files": "Files"
 }

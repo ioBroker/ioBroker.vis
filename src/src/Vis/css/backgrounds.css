@@ -1,13 +1,17 @@
 /* ------------------------ Backgrounds styles ---------------------------*/
+.vis-view.no_background {
+    background: none !important;
+}
+
 .hq-background-blue-marine-lines {
-    background-image: url(../img/back/oblique-line-bk.png);
+    background-image: url(../../img/back/oblique-line-bk.png);
     background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyYWRpYWxHcmFkaWVudCBpZD0iZyI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNDI4Q0JEIi8+PHN0b3Agb2Zmc2V0PSIwLjIiIHN0b3AtY29sb3I9IiMyNzYyODYiLz48c3RvcCBvZmZzZXQ9IjAuMzMiIHN0b3AtY29sb3I9IiMyMjRlNzIiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAzMjkiLz48L3JhZGlhbEdyYWRpZW50PjxyZWN0IHg9IjAlIiB5PSIwJSIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzAwMDMyOSIgLz48cmVjdCB4PSIwJSIgeT0iLTg5cHgiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjIxMC44MiUiIGZpbGw9InVybCgjZykiIC8+PC9zdmc+);
-    background-image: url(../img/back/oblique-line-bk.png), -webkit-gradient(radial, 50% 350, 0, 50% 350, 156, color-stop(0%, #428CBD), color-stop(20%, #276286), color-stop(33%, #224e72), color-stop(100%, #000329));
+    background-image: url(../../img/back/oblique-line-bk.png), -webkit-gradient(radial, 50% 350, 0, 50% 350, 156, color-stop(0%, #428CBD), color-stop(20%, #276286), color-stop(33%, #224e72), color-stop(100%, #000329));
     background-image: -webkit-radial-gradient(center 350px, 50% 105.41%, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
-    background-image: url(../img/back/oblique-line-bk.png), -moz-radial-gradient(center 350px, circle, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
-    background-image: url(../img/back/oblique-line-bk.png), -ms-radial-gradient(center 350px, circle, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
+    background-image: url(../../img/back/oblique-line-bk.png), -moz-radial-gradient(center 350px, circle, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
+    background-image: url(../../img/back/oblique-line-bk.png), -ms-radial-gradient(center 350px, circle, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
     background-image: -o-radial-gradient(center 350px, 50% 105.41%, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
-    background-image: url(../img/back/oblique-line-bk.png), radial-gradient(50% 105.41% at center 350px, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
+    background-image: url(../../img/back/oblique-line-bk.png), radial-gradient(50% 105.41% at center 350px, #428CBD 0, #276286 20%, #224e72 33%, #000329 100%);
 }
 
 .hq-background-blue-marine {
@@ -34,7 +38,7 @@
 .hq-background-gradient-box {
     margin: 0 0 16px 0;
     background-color: #e5edf6;
-    background-image: url(../img/back/box-radial.png);
+    background-image: url(../../img/back/box-radial.png);
     background-position: 0 0;
     background-repeat: no-repeat;
     border-top: 1px solid #c7d1dc;
@@ -520,5 +524,5 @@
 }
 
 .hq-background-blue-flowers {
-    background-image: url(../img/back/flowers.jpg);
+    background-image: url(../../img/back/flowers.jpg);
 }

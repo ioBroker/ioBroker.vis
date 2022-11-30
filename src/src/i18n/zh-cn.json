@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro - 横向",
   "iPad Pro - Portrait": "iPad Pro - 纵向",
   "no_reload": "没有重装",
-  "reload": "重新加载"
+  "reload": "重新加载",
+  "not-specified": "没有定义的",
+  "Files": "文件"
 }

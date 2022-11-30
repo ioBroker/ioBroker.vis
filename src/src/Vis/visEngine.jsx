@@ -20,12 +20,13 @@ import {
     Button, Dialog, DialogContent, DialogTitle, DialogActions,
 } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
+import { I18n } from '@iobroker/adapter-react-v5';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import AlertIcon from '@mui/icons-material/Warning';
 
 import './css/vis.css';
+import './css/backgrounds.css';
 // import './lib/can.custom.js';
 // import $$ from './lib/quo.standalone'; // Gestures library
 import './visWords';

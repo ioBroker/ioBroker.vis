@@ -359,5 +359,7 @@
   "iPad Pro - Landscape": "iPad Pro – ландшафт",
   "iPad Pro - Portrait": "iPad Pro – портрет",
   "no_reload": "без перезавантажень",
-  "reload": "перезавантажити"
+  "reload": "перезавантажити",
+  "not-specified": "не визначений",
+  "Files": "Файли"
 }
