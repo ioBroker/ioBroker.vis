@@ -297,30 +297,31 @@ class App extends GenericApp {
         if (!this.state.editMode) {
             return;
         }
+        const controlKey = e.ctrlKey || e.cmdKey;
         if (document.activeElement.tagName === 'BODY') {
-            if (e.ctrlKey && e.key === 'z' && this.state.historyCursor !== 0) {
+            if (controlKey && e.key === 'z' && this.state.historyCursor !== 0) {
                 e.preventDefault();
                 await this.undo();
             }
-            if (e.ctrlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
+            if (controlKey && e.key === 'y' && this.state.historyCursor !== this.state.history.length - 1) {
                 e.preventDefault();
                 await this.redo();
             }
             if (this.state.selectedWidgets.length) {
-                if (e.ctrlKey && e.key === 'c') {
+                if (controlKey && e.key === 'c') {
                     e.preventDefault();
                     await this.copyWidgets();
                 }
-                if (e.ctrlKey && e.key === 'x') {
+                if (controlKey && e.key === 'x') {
                     e.preventDefault();
                     await this.cutWidgets();
                 }
             }
-            if (e.ctrlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
+            if (controlKey && e.key === 'v' && Object.keys(this.state.widgetsClipboard.widgets).length) {
                 e.preventDefault();
                 await this.pasteWidgets();
             }
-            if (e.ctrlKey && e.key === 'a') {
+            if (controlKey && e.key === 'a') {
                 e.preventDefault();
                 if (this.state.selectedGroup) {
                     this.setSelectedWidgets(Object.keys(this.state.project[this.state.selectedView].widgets)
@@ -719,8 +720,8 @@ class App extends GenericApp {
         fields.forEach(group => {
             if (group.fields) {
                 group.fields.forEach(field => {
-                    if (!field.noInit && (field.name.includes('oid') || field.type === 'id')) {
-                        widgets[newKey].data[field.name] = 'nothing_selected';
+                    if (field.name === 'oid') {
+                        widgets[newKey].data.oid = 'nothing_selected';
                     }
                     if (field.default !== undefined && field.default !== null) {
                         widgets[newKey].data[field.name] = field.default;
