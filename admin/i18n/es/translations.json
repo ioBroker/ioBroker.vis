@@ -1,19 +1,6 @@
 {
-  "Check license": "Verificar licencia",
-  "License": "Clave de licencia",
-  "Service is offline. Please try later.": "El servicio está fuera de línea o no hay internet disponible. Por favor intente más tarde o verifique la conexión a internet.",
-  "instruction": "Para usar <b> vis </b>, debe obtener la clave de licencia correspondiente. <br> <b> vis </b> es gratuito para uso privado, pero para uso comercial tiene un precio. <br> Usted puede obtener la licencia en <a href='https://iobroker.net' target='_blank'>iobroker.net</a> después de un breve registro.",
-  "vis adapter settings": "vis configuración del adaptador",
-  "Serial number": "Número de serie",
-  "Copied": "Copiado",
-  "Copy to clipboard": "Copiar al portapapeles",
-  "offline license has no serial number (UUID)": "la licencia fuera de línea no tiene número de serie (UUID)",
-  "offline license must be linked to serial number (UUID)": "la licencia fuera de línea debe estar vinculada al número de serie (UUID)",
-  "serial number (UUID) not provided": "número de serie (UUID) no proporcionado",
-  "invalid": "inválido",
-  " serial number (UUID) in license is for other device": " el número de serie (UUID) en la licencia es para otro dispositivo",
-  "License does not exist.": "La licencia no existe.",
-  "Error:": "Error:",
-  "License:": "Licencia:",
-  "OK - offline check": "Aceptar: verificación fuera de línea"
+  "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "Aquí se requiere una licencia especial para vis-2-widgets-jaeger-design y no para iobroker.vis",
+  "License": "Licencia",
+  "Use license manager": "Usar administrador de licencias",
+  "instruction": "Para usar <b> vis </b>, debe obtener la clave de licencia correspondiente. <br> <b> vis </b> es gratuito para uso privado, pero para uso comercial tiene un precio. <br> Usted puede obtener la licencia en <a href='https://iobroker.net' target='_blank'>iobroker.net</a> después de un breve registro."
 }

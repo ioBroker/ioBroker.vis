@@ -1,0 +1,41 @@
+{
+  "type": "panel",
+  "i18n": true,
+  "items": {
+    "useLicenseManager": {
+      "type": "checkbox",
+      "label": "Use license manager",
+      "sm": 12
+    },
+    "license": {
+      "newLine": true,
+      "type": "text",
+      "minRows": 4,
+      "sm": 12,
+      "label": "License",
+      "hidden": "!!data.useLicenseManager",
+      "help": "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis"
+    },
+    "_uuid": {
+      "newLine": true,
+      "type": "uuid",
+      "sm": 12,
+      "md": 6,
+      "lg": 4
+    },
+    "_checkLicense": {
+      "newLine": true,
+      "type": "checkLicense",
+      "uuid": true,
+      "version": true
+    },
+    "_help": {
+      "newLine": true,
+      "type": "staticText",
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "text": "instruction"
+    }
+  }
+}

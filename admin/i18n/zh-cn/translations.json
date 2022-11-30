@@ -1,19 +1,6 @@
 {
-  "Check license": "请检查许可证",
-  "License": "注册码",
-  "Service is offline. Please try later.": "服务器离线或主机无法上网。请请检查网络连接, 稍后再试。",
-  "instruction": "如果要使用<b>vis</b>, 您必须获取它的注册码.<br><b>vis</b>对个人免费使用, 但是对商业项目有偿使用.<br>您可以在<a href='https://iobroker.net' target='_blank'>iobroker.net</a>网页上购买注册码。",
-  "vis adapter settings": "vis适配器设置",
-  "Serial number": "序列号",
-  "Copied": "已复制",
-  "Copy to clipboard": "复制到剪贴板",
-  "offline license has no serial number (UUID)": "离线许可证没有序列号 (UUID)",
-  "offline license must be linked to serial number (UUID)": "离线许可证必须链接到序列号 (UUID)",
-  "serial number (UUID) not provided": "未提供序列号 (UUID)",
-  "invalid": "无效的",
-  " serial number (UUID) in license is for other device": " 许可证中的序列号 (UUID) 用于其他设备",
-  "License does not exist.": "许可证不存在。",
-  "Error:": "错误：",
-  "License:": "执照：",
-  "OK - offline check": "OK - 离线检查"
+  "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "这是 vis-2-widgets-jaeger-design 需要的特殊许可证，而不是 iobroker.vis",
+  "License": "执照",
+  "Use license manager": "使用许可证管理器",
+  "instruction": "如果要使用<b>vis</b>, 您必须获取它的注册码.<br><b>vis</b>对个人免费使用, 但是对商业项目有偿使用.<br>您可以在<a href='https://iobroker.net' target='_blank'>iobroker.net</a>网页上购买注册码。"
 }

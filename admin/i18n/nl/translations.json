@@ -1,19 +1,6 @@
 {
-  "Check license": "Controleer licentie",
-  "License": "Licentiesleutel",
-  "Service is offline. Please try later.": "Service is offline of geen internet beschikbaar. Probeer het later opnieuw of controleer de internetverbinding.",
-  "instruction": "Als u <b> vis </b> wilt gebruiken, moet u hiervoor de licentiesleutel hebben. <br> <b> vis </b> is gratis voor privégebruik, maar voor commercieel gebruik heeft het een prijs. <br> You kan de licentie krijgen op <a href='https://iobroker.net' target='_blank'>iobroker.net</a> na een korte registratie.",
-  "vis adapter settings": "vis adapter instellingen",
-  "Serial number": "Serienummer",
-  "Copied": "gekopieerd",
-  "Copy to clipboard": "Kopieer naar klembord",
-  "offline license has no serial number (UUID)": "offline licentie heeft geen serienummer (UUID)",
-  "offline license must be linked to serial number (UUID)": "offline licentie moet gekoppeld zijn aan serienummer (UUID)",
-  "serial number (UUID) not provided": "serienummer (UUID) niet verstrekt",
-  "invalid": "ongeldig",
-  " serial number (UUID) in license is for other device": " serienummer (UUID) in licentie is voor ander apparaat",
-  "License does not exist.": "Licentie bestaat niet.",
-  "Error:": "Fout:",
-  "License:": "Vergunning:",
-  "OK - offline check": "OK - offline controle"
+  "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "Hier is een speciale licentie voor vis-2-widgets-jaeger-design vereist en niet voor iobroker.vis",
+  "License": "Licentie",
+  "Use license manager": "Gebruik licentiebeheer",
+  "instruction": "Als u <b> vis </b> wilt gebruiken, moet u hiervoor de licentiesleutel hebben. <br> <b> vis </b> is gratis voor privégebruik, maar voor commercieel gebruik heeft het een prijs. <br> You kan de licentie krijgen op <a href='https://iobroker.net' target='_blank'>iobroker.net</a> na een korte registratie."
 }
