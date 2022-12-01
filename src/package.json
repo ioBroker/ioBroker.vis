@@ -17,7 +17,7 @@
         "copy-to-clipboard": "^3.3.3",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.0.3",
-        "iobroker.type-detector": "^1.1.0",
+        "iobroker.type-detector": "^1.1.1",
         "jquery-ui": "^1.13.2",
         "moment": "^2.29.4",
         "mime": "^3.0.0",
