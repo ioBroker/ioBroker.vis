@@ -896,6 +896,7 @@ class VisCanWidget extends VisBaseWidget {
             }
 
             this.applyBindings(true, widgetData, widgetStyle);
+
             if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
                 widgetData.filterkey = widgetData.filterkey.split(',')
                     .map(f => f.trim())
@@ -972,7 +973,7 @@ class VisCanWidget extends VisBaseWidget {
 
         // try to apply bindings to every attribute
         this.props.allWidgets[wid] = {
-            style: widgetStyle,
+            style: new this.props.can.Map(widgetStyle),
             data: new this.props.can.Map(widgetData),
         };
 
@@ -997,7 +998,7 @@ class VisCanWidget extends VisBaseWidget {
                         data: this.props.allWidgets[wid].data,
                         viewDiv: this.props.view,
                         view: this.props.view,
-                        style: widgetStyle,
+                        style: this.props.allWidgets[wid].style,
                     };
 
                     if (widgetData?.oid) {
@@ -1039,15 +1040,15 @@ class VisCanWidget extends VisBaseWidget {
             this.widDiv = parentDiv.querySelector(`#${wid}`);
 
             if (this.widDiv) {
-                if (widgetStyle && !widgetData._no_style) {
+                if (this.props.allWidgets[wid].style && !widgetData._no_style) {
                     // fix position
-                    VisCanWidget.applyStyle(this.widDiv, widgetStyle);
+                    VisCanWidget.applyStyle(this.widDiv, this.props.allWidgets[wid].style);
                 }
 
-                this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
+                this.widDiv.style.position = isRelative ? (this.props.allWidgets[wid].style.position || 'relative') : 'absolute';
 
                 // by default, it is border-box
-                if (!widgetStyle['box-sizing']) {
+                if (!this.props.allWidgets[wid].style['box-sizing']) {
                     this.widDiv.style.boxSizing = 'border-box';
                 }
 

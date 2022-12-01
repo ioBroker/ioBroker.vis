@@ -849,7 +849,9 @@
                         oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
                         vis.setValue(oid2, ui.values[1]); //.toFixed(6));
                       } else if (oid) {
-                        if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                        if (options.inverted) {
+                            ui.value = (settings.max - ui.value) + settings.min;
+                        }
                         vis.setValue(oid, ui.value); //.toFixed(6));
                       }
                     }
@@ -866,7 +868,9 @@
                       oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
                       vis.setValue(oid2, ui.values[1]); //.toFixed(6));
                     } else if (oid) {
-                      if (options.inverted) ui.value = (settings.max - ui.value) + settings.min;
+                      if (options.inverted) {
+                          ui.value = (settings.max - ui.value) + settings.min;
+                      }
                       vis.setValue(oid, ui.value); //.toFixed(6));
                     }
                   }
@@ -884,7 +888,9 @@
             settings.max = parseFloat(settings.max);
             settings.value = parseFloat(settings.value);
 
-            if (settings.inverted) settings.value = (settings.max - settings.value) + settings.min;
+            if (settings.inverted) {
+                settings.value = (settings.max - settings.value) + settings.min;
+            }
 
             $this.slider(settings);
 

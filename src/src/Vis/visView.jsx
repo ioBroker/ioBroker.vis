@@ -453,8 +453,6 @@ class VisView extends React.Component {
         }
 
         // deselect widgets
-        this.movement.selectedWidgetsWithRectangle.forEach(id => this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect());
-
         this.props.setSelectedWidgets(this.movement.selectedWidgetsWithRectangle);
 
         this.movement = null;
@@ -537,13 +535,17 @@ class VisView extends React.Component {
         this.movement.moved = true;
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
+        console.log(this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
 
         const viewRect = this.refView.current.getBoundingClientRect();
 
         if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 2) {
-            this.movement.x -= Math.ceil(((this.movement.startWidget.left - viewRect.left + this.movement.x) % this.props.views[this.props.view].settings.gridSize));
-            this.movement.y -= Math.ceil(((this.movement.startWidget.top - viewRect.top + this.movement.y) % this.props.views[this.props.view].settings.gridSize));
+            const gridSize = parseInt(this.props.views[this.props.view].settings.gridSize, 10) || 10;
+            this.movement.x -= Math.ceil((this.movement.startWidget.left - viewRect.left + this.movement.x) % gridSize);
+            this.movement.y -= Math.ceil((this.movement.startWidget.top - viewRect.top + this.movement.y) % gridSize);
         }
+
+        console.log(this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
 
         if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 1) {
             const left = this.movement.startWidget.left + this.movement.x;
@@ -640,6 +642,7 @@ class VisView extends React.Component {
         window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
 
         if (this.movement.moved) {
+            console.log('AAA', this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
             this.props.selectedWidgets.forEach(wid => {
                 if (this.widgetsRefs[wid]?.onMove) {
                     this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true); // indicate end of movement

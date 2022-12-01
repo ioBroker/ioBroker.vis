@@ -84,7 +84,7 @@ const ProjectsManage = props => {
     };
 
     const getLiveHost = async () => {
-        const res = await props.socket.getObjectView('system.host.', 'system.host.\u9999', 'host');
+        const res = await props.socket.getObjectViewSystem('host', 'system.host.', 'system.host.\u9999');
         const hosts = Object.keys(res).map(id => `${id}.alive`);
         if (!hosts.length) {
             return null;

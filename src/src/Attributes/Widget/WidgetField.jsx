@@ -1036,6 +1036,7 @@ const WidgetField = props => {
             t={I18n.t}
             lang={I18n.getLanguage()}
             value={value}
+            disabled={disabled}
             onChange={fileBlob => change(fileBlob)}
             previewClassName={props.classes.iconPreview}
         />;

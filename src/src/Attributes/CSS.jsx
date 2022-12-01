@@ -53,8 +53,8 @@ const CSS = props => {
         const load = async () => {
             try {
                 const commonCss = await props.socket.readFile(props.adapterId.split('.')[0], 'css/vis-common-user.css');
-                if (commonCss.type) {
-                    setGlobalCss(commonCss.data);
+                if (commonCss.mimeType) {
+                    setGlobalCss(commonCss.file);
                 } else {
                     setGlobalCss(commonCss);
                 }
@@ -65,8 +65,8 @@ const CSS = props => {
             }
             try {
                 const userCss = await props.socket.readFile(props.adapterId, `${props.projectName}/vis-user.css`);
-                if (userCss.type) {
-                    setLocalCss(userCss.data);
+                if (userCss.mimeType) {
+                    setLocalCss(userCss.file);
                 } else {
                     setLocalCss(userCss);
                 }

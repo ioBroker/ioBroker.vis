@@ -4,7 +4,6 @@ import {
     Tooltip,
     Menu as DropMenu,
     MenuItem as DropMenuItem,
-    CircularProgress,
 } from '@mui/material';
 
 import withStyles from '@mui/styles/withStyles';
@@ -20,6 +19,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import HeightFullIcon from '@mui/icons-material/KeyboardArrowUp';
 import HeightNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import HeightVeryNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
+import SaveIcon from '@mui/icons-material/Save';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import ToggleThemeMenu from '@iobroker/adapter-react-v5/Components/ToggleThemeMenu';
@@ -66,6 +66,21 @@ const styles = theme => ({
     },
     heightButton: {
 
+    },
+    '@keyframes blink': {
+        '0%': {
+            opacity: 1,
+        },
+        '50%': {
+            opacity: 0,
+        },
+        '100%': {
+            opacity: 1,
+        },
+    },
+    saveIcon: {
+        animation: `blink 2000ms ${theme.transitions.easing.easeInOut}`,
+        color: theme.palette.primary.main,
     },
 });
 
@@ -210,7 +225,7 @@ const Toolbar = props => {
     return <div className={classes.lightedPanel}>
         <span className={classes.right}>
             <div className={classes.rightBlock}>
-                {props.needSave ? <CircularProgress size={20} /> : null}
+                {props.needSave ? <SaveIcon size={20} className={classes.saveIcon} /> : null}
                 {props.toolbarHeight === 'veryNarrow' ? currentUser : null}
                 {heightButton}
                 <ToggleThemeMenu

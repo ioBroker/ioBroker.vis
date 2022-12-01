@@ -736,43 +736,32 @@ class VisEngine extends React.Component {
                     .then(() => this.props.socket.getEnums(!useCache))
                     .then(enums => {
                         Object.assign(objects, enums);
-                        return new Promise((resolve, reject) => {
-                            this.props.socket.getRawSocket().emit(
-                                'getObjectView',
-                                'system',
-                                'instance',
-                                {
-                                    startkey: 'system.adapter.',
-                                    endkey: 'system.adapter.\u9999',
-                                },
-                                (err, res) => {
-                                    if (err) {
-                                        reject(err);
-                                    } else {
-                                        for (let i = 0; i < res.rows.length; i++) {
-                                            objects[res.rows[i].id] = res.rows[i].value;
-                                        }
+                        return this.props.socket.getObjectViewSystem(
+                            'instance',
+                            'system.adapter.',
+                            'system.adapter.\u9999',
+                        )
+                            .then(rows => {
+                                for (let i = 0; i < rows.length; i++) {
+                                    objects[rows[i]._id] = rows[i];
+                                }
 
-                                        const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
-                                        // find out default file mode
-                                        if (objects[instance]?.native?.defaultFileMode) {
-                                            this.defaultMode = objects[instance].native.defaultFileMode;
-                                        }
-                                        resolve();
-                                    }
-                                },
-                            );
-                        });
+                                const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
+                                // find out default file mode
+                                if (objects[instance]?.native?.defaultFileMode) {
+                                    this.defaultMode = objects[instance].native.defaultFileMode;
+                                }
+                            });
                     })
-                    .then(() => this.props.socket.getObjectView('', '\u9999', 'chart')
+                    .then(() => this.props.socket.getObjectViewSystem('chart', '', '\u9999')
                         .catch(() => null))
                     .then(charts => {
                         charts && Object.assign(objects, charts);
-                        return this.props.socket.getObjectView('', '\u9999', 'channel');
+                        return this.props.socket.getObjectViewSystem('channel', '', '\u9999');
                     })
                     .then(channels => {
                         Object.assign(objects, channels);
-                        return this.props.socket.getObjectView('', '\u9999', 'device');
+                        return this.props.socket.getObjectViewSystem('device', '', '\u9999');
                     })
                     .then(devices => {
                         Object.assign(objects, devices);
@@ -834,7 +823,7 @@ class VisEngine extends React.Component {
                 }
 
                 return this.props.socket.readFile(adapter, filename)
-                    .then(data => setTimeout(() => cb(null, data.data, filename, data.type), 0))
+                    .then(data => setTimeout(() => cb(null, data.file, filename, data.mimeType), 0))
                     .catch(error => cb(error));
             },
             getHistory: (id, options, cb) => {
@@ -1079,11 +1068,11 @@ class VisEngine extends React.Component {
             this.statesDebounce[id] = {
                 timeout: setTimeout(() => {
                     if (this.statesDebounce[id]) {
-                        if (this.statesDebounce[id].state) {
+                        if (this.statesDebounce[id].state !== null && this.statesDebounce[id].state !== undefined) {
                             this._setValue(id, this.statesDebounce[id].state);
-                        } else {
-                            delete this.statesDebounce[id];
                         }
+
+                        delete this.statesDebounce[id];
                     }
                 }, this.statesDebounceTime, id),
                 state: null,
@@ -1562,8 +1551,8 @@ ${this.scripts}
             } else {
                 this.props.socket.readFile(this.props.adapterName, 'css/vis-common-user.css')
                     .then(file => {
-                        if (file.type) {
-                            file = file.data;
+                        if (file.mimeType) {
+                            file = file.file;
                         }
                         this.visCommonCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_common_user', file || '');
@@ -1581,8 +1570,8 @@ ${this.scripts}
             } else {
                 this.props.socket.readFile(`${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
-                        if (file.type) {
-                            file = file.data;
+                        if (file.mimeType) {
+                            file = file.file;
                         }
                         this.visUserCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_user', file || '');

@@ -356,7 +356,7 @@ class App extends GenericApp {
                 // compare last executed file with new one
                 this.socket.readFile(this.adapterId, fileName)
                     .then(file => {
-                        if (!file || this.lastProjectJSONfile !== file.data) {
+                        if (!file || this.lastProjectJSONfile !== file.file) { // adapter-react-v5@4.x delivers file.file
                             this.setState({ showProjectUpdateDialog: true });
                         }
                     });
@@ -369,7 +369,7 @@ class App extends GenericApp {
             try {
                 file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
                 if (typeof file === 'object') {
-                    file = file.data;
+                    file = file.file; // adapter-react-v5@4.x delivers file.file
                 }
             } catch (err) {
                 console.warn(`Cannot read project file vis-views.json: ${err}`);
@@ -382,7 +382,18 @@ class App extends GenericApp {
             this.lastProjectJSONfile = file;
         }
 
-        const project = JSON.parse(file);
+        let project;
+        try {
+            project = JSON.parse(file);
+        } catch (e) {
+            window.alert('Cannot parse project file!');
+            project = {
+                'Cannot parse project file!': {
+                    widgets: {},
+                },
+            };
+        }
+
         project.___settings = project.___settings || {};
         project.___settings.folders = project.___settings.folders || [];
         let selectedView;

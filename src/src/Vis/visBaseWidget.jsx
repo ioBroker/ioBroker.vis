@@ -1382,10 +1382,25 @@ class VisBaseWidget extends React.Component {
             // convert string to number+'px'
             ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
                 if (style[attr] !== undefined && typeof style[attr] === 'string') {
-                    // todo: evaluate bindings
                     // eslint-disable-next-line no-restricted-properties
                     if (window.isFinite(style[attr])) {
                         style[attr] = parseFloat(style[attr]);
+                    } else if (style[attr].includes('{')) {
+                        // try to steal style by rxWidget
+                        if (this.state.rxStyle && this.state.rxStyle[attr] !== undefined) {
+                            if (!this.state.rxStyle[attr].includes('{')) {
+                                style[attr] = this.state.rxStyle[attr];
+                            }
+                        } else
+                        // try to steal style by canWidget
+                        if (this.props.allWidgets[this.props.id] &&
+                            this.props.allWidgets[this.props.id].style &&
+                            this.props.allWidgets[this.props.id].style[attr] !== undefined
+                        ) {
+                            if (!this.props.allWidgets[this.props.id].style[attr].includes('{')) {
+                                style[attr] = this.props.allWidgets[this.props.id].style[attr];
+                            }
+                        }
                     }
                 }
             });

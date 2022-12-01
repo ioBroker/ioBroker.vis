@@ -15,32 +15,32 @@
  */
 
 function replaceGroupAttr(inputStr, groupAttrList) {
-    var newString = inputStr;
-    var match = false;
-    var ms = inputStr.match(/(groupAttr\d+)+?/g);
+    let newString = inputStr;
+    let match = false;
+    const ms = inputStr.match(/(groupAttr\d+)+?/g);
     if (ms) {
         match = true;
         ms.forEach(function (m) {
             newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
         });
-        console.log('Replaced ' + inputStr + ' with ' + newString + ' (based on ' + ms + ')');
+        console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
     }
     return {doesMatch: match, newString: newString};
 }
 
 function getWidgetGroup(views, view, widget) {
-    var widgets = views[view].widgets;
-    var groupID = widgets[widget].groupid;
+    const widgets = views[view].widgets;
+    const groupID = widgets[widget].groupid;
     if (groupID) {
         return groupID;
     }
 
-    for (var w in widgets) {
+    for (const w in widgets) {
         if (!widgets.hasOwnProperty(w) || !widgets[w].data) {
             continue;
         }
-        var members = widgets[w].data.members;
-        if (members && members.indexOf(widget) !== -1) {
+        const members = widgets[w].data.members;
+        if (members && members.includes(widget)) {
             return w;
         }
     }
@@ -49,30 +49,34 @@ function getWidgetGroup(views, view, widget) {
 }
 
 function extractBinding(format) {
-    var oid = format.match(/{(.+?)}/g);
-    var result = null;
+    const oid = format.match(/{(.+?)}/g);
+    let result = null;
     if (oid) {
         if (oid.length > 50) {
-            console.warn('Too many bindings in one widget: ' + oid.length + '[max = 50]');
+            console.warn(`Too many bindings in one widget: ${oid.length}[max = 50]`);
         }
-        for (var p = 0; p < oid.length && p < 50; p++) {
-            var _oid = oid[p].substring(1, oid[p].length - 1);
-            if (_oid[0] === '{') continue;
+        for (let p = 0; p < oid.length && p < 50; p++) {
+            const _oid = oid[p].substring(1, oid[p].length - 1);
+            if (_oid[0] === '{') {
+                continue;
+            }
             // If first symbol '"' => it is JSON
-            if (_oid && _oid[0] === '"') continue;
-            var parts = _oid.split(';');
+            if (_oid && _oid[0] === '"') {
+                continue;
+            }
+            const parts = _oid.split(';');
             result = result || [];
-            var systemOid = parts[0].trim();
-            var visOid = systemOid;
+            let systemOid = parts[0].trim();
+            let visOid = systemOid;
 
-            var test1 = visOid.substring(visOid.length - 4);
-            var test2 = visOid.substring(visOid.length - 3);
+            let test1 = visOid.substring(visOid.length - 4);
+            let test2 = visOid.substring(visOid.length - 3);
 
             if (visOid && test1 !== '.val' && test2 !== '.ts' && test2 !== '.lc' && test1 !== '.ack') {
-                visOid = visOid + '.val';
+                visOid = `${visOid}.val`;
             }
 
-            var isSeconds = (test2 === '.ts' || test2 === '.lc');
+            const isSeconds = test2 === '.ts' || test2 === '.lc';
 
             test1 = systemOid.substring(systemOid.length - 4);
             test2 = systemOid.substring(systemOid.length - 3);
@@ -82,31 +86,31 @@ function extractBinding(format) {
             } else if (test2 === '.lc' || test2 === '.ts') {
                 systemOid = systemOid.substring(0, systemOid.length - 3);
             }
-            var operations = null;
-            var isEval = visOid.match(/^[\d\w_]+:\s?[-\d\w_.]+/) || (!visOid.length && parts.length > 0);//(visOid.indexOf(':') !== -1) && (visOid.indexOf('::') === -1);
+            let operations = null;
+            const isEval = visOid.match(/^[\w_]+:\s?[-\w_.]+/) || (!visOid.length && parts.length > 0); // (visOid.includes(':')) && !visOid.includes('::');
 
             if (isEval) {
-                var xx = visOid.split(':', 2);
-                var yy = systemOid.split(':', 2);
+                const xx = visOid.split(':', 2);
+                const yy = systemOid.split(':', 2);
                 visOid = xx[1];
                 systemOid = yy[1];
-                operations = operations || [];
+                operations = [];
                 operations.push({
                     op: 'eval',
                     arg: [{
                         name: xx[0],
-                        visOid: visOid,
-                        systemOid: systemOid
+                        visOid,
+                        systemOid
                     }]
                 });
             }
 
-            for (var u = 1; u < parts.length; u++) {
+            for (let u = 1; u < parts.length; u++) {
                 // eval construction
                 if (isEval) {
-                    if (parts[u].trim().match(/^[\d\w_]+:\s?[-.\d\w_]+$/)) {//parts[u].indexOf(':') !== -1 && parts[u].indexOf('::') === -1) {
-                        var _systemOid = parts[u].trim();
-                        var _visOid = _systemOid;
+                    if (parts[u].trim().match(/^[\w_]+:\s?[-.\w_]+$/)) {//parts[u].includes(':') && !parts[u].includes('::')) {
+                        let _systemOid = parts[u].trim();
+                        let _visOid = _systemOid;
 
                         test1 = _visOid.substring(_visOid.length - 4);
                         test2 = _visOid.substring(_visOid.length - 3);
@@ -123,8 +127,8 @@ function extractBinding(format) {
                         } else if (test2 === '.lc' || test2 === '.ts') {
                             _systemOid = _systemOid.substring(0, _systemOid.length - 3);
                         }
-                        var x1 = _visOid.split(':', 2);
-                        var y1 = _systemOid.split(':', 2);
+                        const x1 = _visOid.split(':', 2);
+                        const y1 = _systemOid.split(':', 2);
 
                         operations[0].arg.push({
                             name:      x1[0],
@@ -134,7 +138,7 @@ function extractBinding(format) {
                     } else {
                         parts[u] = parts[u].replace(/::/g, ':');
                         if (operations[0].formula) {
-                            var n = JSON.parse(JSON.stringify(operations[0]));
+                            const n = JSON.parse(JSON.stringify(operations[0]));
                             n.formula = parts[u];
                             operations.push(n);
                         } else {
@@ -142,7 +146,7 @@ function extractBinding(format) {
                         }
                     }
                 } else {
-                    var parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);
+                    const parse = parts[u].match(/([\w\s\/+*-]+)(\(.+\))?/);
                     if (parse && parse[1]) {
                         parse[1] = parse[1].trim();
                         // operators requires parameter
@@ -154,7 +158,7 @@ function extractBinding(format) {
                             parse[1] === 'min' ||
                             parse[1] === 'max') {
                             if (parse[2] === undefined) {
-                                console.log('Invalid format of format string: ' + format);
+                                console.log(`Invalid format of format string: ${format}`);
                                 parse[2] = null;
                             } else {
                                 parse[2] = (parse[2] || '').trim().replace(',', '.');
@@ -162,11 +166,11 @@ function extractBinding(format) {
                                 parse[2] = parseFloat(parse[2].trim());
 
                                 if (parse[2].toString() === 'NaN') {
-                                    console.log('Invalid format of format string: ' + format);
+                                    console.log(`Invalid format of format string: ${format}`);
                                     parse[2] = null;
                                 } else {
                                     operations = operations || [];
-                                    operations.push({op: parse[1], arg: parse[2]});
+                                    operations.push({ op: parse[1], arg: parse[2] });
                                 }
                             }
                         } else
@@ -175,7 +179,7 @@ function extractBinding(format) {
                             operations = operations || [];
                             parse[2] = (parse[2] || '').trim();
                             parse[2] = parse[2].substring(1, parse[2].length - 1);
-                            operations.push({op: parse[1], arg: parse[2]});
+                            operations.push({ op: parse[1], arg: parse[2] });
                         } else
                         // returns array[value]. e.g.: {id.ack;array(ack is false,ack is true)}
                         if (parse[1] === 'array') {
@@ -184,54 +188,54 @@ function extractBinding(format) {
                             param = param.substring(1, param.length - 1);
                             param = param.split(',');
                             if (Array.isArray(param)) {
-                                operations.push ({op: parse[1], arg: param}); //xxx
+                                operations.push ({ op: parse[1], arg: param }); //xxx
                             }
                         } else
                         // value formatting
                         if (parse[1] === 'value') {
                             operations = operations || [];
-                            var param = (parse[2] === undefined) ? '(2)' : (parse[2] || '');
+                            let param = parse[2] === undefined ? '(2)' : (parse[2] || '');
                             param = param.trim();
                             param = param.substring(1, param.length - 1);
-                            operations.push({op: parse[1], arg: param});
+                            operations.push({ op: parse[1], arg: param });
                         } else
                         // operators have optional parameter
                         if (parse[1] === 'pow' || parse[1] === 'round' || parse[1] === 'random') {
                             if (parse[2] === undefined) {
                                 operations = operations || [];
-                                operations.push({op: parse[1]});
+                                operations.push({ op: parse[1] });
                             } else {
                                 parse[2] = (parse[2] || '').trim().replace(',', '.');
                                 parse[2] = parse[2].substring(1, parse[2].length - 1);
                                 parse[2] = parseFloat(parse[2].trim());
 
                                 if (parse[2].toString() === 'NaN') {
-                                    console.log('Invalid format of format string: ' + format);
+                                    console.log(`Invalid format of format string: ${format}`);
                                     parse[2] = null;
                                 } else {
                                     operations = operations || [];
-                                    operations.push({op: parse[1], arg: parse[2]});
+                                    operations.push({ op: parse[1], arg: parse[2] });
                                 }
                             }
                         } else
                         // operators without parameter
                         {
                             operations = operations || [];
-                            operations.push({op: parse[1]});
+                            operations.push({ op: parse[1] });
                         }
                     } else {
-                        console.log('Invalid format ' + format);
+                        console.log(`Invalid format ${format}`);
                     }
                 }
             }
 
             result.push({
-                visOid: visOid,
-                systemOid: systemOid,
+                visOid,
+                systemOid,
                 token: oid[p],
-                operations: operations ? operations : undefined,
-                format: format,
-                isSeconds: isSeconds
+                operations: operations || undefined,
+                format,
+                isSeconds
             });
         }
     }
@@ -244,28 +248,32 @@ function getUsedObjectIDs(views, isByViews) {
         return null;
     }
 
-    var _views = isByViews ? {} : null;
-    var IDs         = [];
-    var visibility  = {};
-    var bindings    = {};
-    var lastChanges = {};
-    var signals     = {};
+    const _views      = isByViews ? {} : null;
+    const IDs         = [];
+    const visibility  = {};
+    const bindings    = {};
+    const lastChanges = {};
+    const signals     = {};
 
-    var view;
-    var id;
-    var sidd;
+    let view;
+    let id;
+    let sidd;
     for (view in views) {
-        if (!views.hasOwnProperty(view)) continue;
+        if (!views.hasOwnProperty(view) || view === '___settings') {
+            continue;
+        }
 
-        if (view === '___settings') continue;
-
-        if (_views) _views[view] = [];
+        if (_views) {
+            _views[view] = []; // TODO: Strange
+        }
 
         for (id in views[view].widgets) {
-            if (!views[view].widgets.hasOwnProperty(id)) continue;
+            if (!views[view].widgets.hasOwnProperty(id)) {
+                continue;
+            }
             // Check all attributes
-            var data  = views[view].widgets[id].data;
-            var style = views[view].widgets[id].style;
+            const data  = views[view].widgets[id].data;
+            const style = views[view].widgets[id].style;
 
             // fix error in naming
             if (views[view].widgets[id].groupped) {
@@ -348,8 +356,10 @@ function getUsedObjectIDs(views, isByViews) {
                 views[view].widgets[id].data.orientation = 'vertical';
             }
 
-            for (var attr in data) {
-                if (!data.hasOwnProperty(attr) || !attr) continue;
+            for (let attr in data) {
+                if (!data.hasOwnProperty(attr) || !attr) {
+                    continue;
+                }
                 /* TODO DO do not forget remove it after a while. Required for import from DashUI */
                 if (attr === 'state_id') {
                     data.state_oid = data[attr];
@@ -408,15 +418,19 @@ function getUsedObjectIDs(views, isByViews) {
                 }
 
                 if (typeof data[attr] === 'string') {
-                    var m;
-                    var oids = extractBinding(data[attr]);
+                    let m;
+                    const oids = extractBinding(data[attr]);
                     if (oids) {
-                        for (var t = 0; t < oids.length; t++) {
-                            var ssid = oids[t].systemOid;
+                        for (let t = 0; t < oids.length; t++) {
+                            let ssid = oids[t].systemOid;
                             if (ssid) {
-                                if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
-                                if (_views && _views[view].indexOf(ssid) === -1) _views[view].push(ssid);
-                                if (!bindings[ssid]) bindings[ssid] = [];
+                                if (!IDs.includes(ssid)) {
+                                    IDs.push(ssid);
+                                }
+                                if (_views && !_views[view].includes(ssid)) {
+                                    _views[view].push(ssid);
+                                }
+                                bindings[ssid] = bindings[ssid] || [];
                                 oids[t].type = 'data';
                                 oids[t].attr = attr;
                                 oids[t].view = view;
@@ -426,12 +440,18 @@ function getUsedObjectIDs(views, isByViews) {
                             }
 
                             if (oids[t].operations && oids[t].operations[0].arg instanceof Array) {
-                                for (var ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
+                                for (let ww = 0; ww < oids[t].operations[0].arg.length; ww++) {
                                     ssid = oids[t].operations[0].arg[ww].systemOid;
-                                    if (!ssid) continue;
-                                    if (IDs.indexOf(ssid) === -1) IDs.push(ssid);
-                                    if (_views && _views[view].indexOf(ssid) === -1) _views[view].push(ssid);
-                                    if (!bindings[ssid]) bindings[ssid] = [];
+                                    if (!ssid) {
+                                        continue;
+                                    }
+                                    if (!IDs.includes(ssid)) {
+                                        IDs.push(ssid);
+                                    }
+                                    if (_views && !_views[view].includes(ssid)) {
+                                        _views[view].push(ssid);
+                                    }
+                                    bindings[ssid] = bindings[ssid] || [];
                                     bindings[ssid].push(oids[t]);
                                 }
                             }
@@ -439,75 +459,71 @@ function getUsedObjectIDs(views, isByViews) {
                     } else
                     if (attr !== 'oidTrueValue' && attr !== 'oidFalseValue' && ((attr.match(/oid\d{0,2}$/) || attr.match(/^oid/) || attr.match(/^signals-oid-/) || attr === 'lc-oid') && data[attr])) {
                         if (data[attr] && data[attr] !== 'nothing_selected') {
-                            if (IDs.indexOf(data[attr]) === -1) {
+                            if (!IDs.includes(data[attr])) {
                                 IDs.push(data[attr]);
                             }
-                            if (_views && _views[view].indexOf(data[attr]) === -1) {
+                            if (_views && !_views[view].includes(data[attr])) {
                                 _views[view].push(data[attr]);
                             }
                         }
 
                         // Visibility binding
                         if (attr === 'visibility-oid' && data['visibility-oid']) {
-                            var vid = data['visibility-oid'];
-                            var vgroup = getWidgetGroup(views, view, id);
+                            let vid = data['visibility-oid'];
+                            const vgroup = getWidgetGroup(views, view, id);
                             if (vgroup) {
-                                var result1 = replaceGroupAttr(vid, views[view].widgets[vgroup].data);
+                                const result1 = replaceGroupAttr(vid, views[view].widgets[vgroup].data);
                                 if (result1.doesMatch) {
                                     vid = result1.newString;
                                 }
                             }
 
-                            if (!visibility[vid]) visibility[vid] = [];
+                            visibility[vid] = visibility[vid] || [];
                             visibility[vid].push({view: view, widget: id});
                         }
 
                         // Signal binding
                         if (attr.match(/^signals-oid-/) && data[attr]) {
-                            var sid = data[attr];
-                            var group = getWidgetGroup(views, view, id);
+                            let sid = data[attr];
+                            const group = getWidgetGroup(views, view, id);
                             if (group) {
-                                var result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
+                                const result2 = replaceGroupAttr(sid, views[view].widgets[group].data);
                                 if (result2.doesMatch) {
                                     sid = result2.newString;
                                 }
                             }
 
-                            if (!signals[sid]) {
-                                signals[sid] = [];
-                            }
+                            signals[sid] = signals[sid] || [];
                             signals[sid].push({
-                                view:   view,
+                                view,
                                 widget: id,
-                                index:  parseInt(attr.substring('signals-oid-'.length), 10)
+                                index: parseInt(attr.substring('signals-oid-'.length), 10)
                             });
                         }
                         if (attr === 'lc-oid') {
-                            var lcsid = data[attr];
-                            var ggroup = getWidgetGroup(views, view, id);
+                            let lcsid = data[attr];
+                            const ggroup = getWidgetGroup(views, view, id);
                             if (ggroup) {
-                                var result3 = replaceGroupAttr(lcsid, views[view].widgets[ggroup].data);
+                                const result3 = replaceGroupAttr(lcsid, views[view].widgets[ggroup].data);
                                 if (result3.doesMatch) {
                                     lcsid = result3.newString;
                                 }
                             }
 
-                            if (!lastChanges[lcsid]) {
-                                lastChanges[lcsid] = [];
-                            }
+                            lastChanges[lcsid] = lastChanges[lcsid] || [];
                             lastChanges[lcsid].push({
-                                view:   view,
+                                view,
                                 widget: id
                             });
                         }
                     } else
                     if ((m = attr.match(/^attrType(\d+)$/)) && data[attr] === 'id') {
-                        var _id = 'groupAttr' + m[1];
+                        const _id = `groupAttr${m[1]}`;
                         if (data[_id]) {
-                            if (IDs.indexOf(data[_id]) === -1) {
+                            if (!IDs.includes(data[_id])) {
                                 IDs.push(data[_id]);
                             }
-                            if (_views && _views[view].indexOf(data[_id]) === -1) {
+                            if (_views && !_views[view].includes(data[_id])) {
                                 _views[view].push(data[_id]);
                             }
                         }
@@ -517,17 +533,23 @@ function getUsedObjectIDs(views, isByViews) {
 
             // build bindings for styles
             if (style) {
-                for (var cssAttr in style) {
-                    if (!style.hasOwnProperty(cssAttr) || !cssAttr) continue;
+                for (const cssAttr in style) {
+                    if (!style.hasOwnProperty(cssAttr) || !cssAttr) {
+                        continue;
+                    }
                     if (typeof style[cssAttr] === 'string') {
-                        var objIDs = extractBinding(style[cssAttr]);
+                        const objIDs = extractBinding(style[cssAttr]);
                         if (objIDs) {
-                            for (var tt = 0; tt < objIDs.length; tt++) {
+                            for (let tt = 0; tt < objIDs.length; tt++) {
                                 sidd = objIDs[tt].systemOid;
                                 if (sidd) {
-                                    if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
-                                    if (_views && _views[view].indexOf(sidd) === -1) _views[view].push(sidd);
-                                    if (!bindings[sidd]) bindings[sidd] = [];
+                                    if (!IDs.includes(sidd)) {
+                                        IDs.push(sidd);
+                                    }
+                                    if (_views && !_views[view].includes(sidd)) {
+                                        _views[view].push(sidd);
+                                    }
+                                    bindings[sidd] = bindings[sidd] || [];
 
                                     objIDs[tt].type = 'style';
                                     objIDs[tt].attr = cssAttr;
@@ -538,12 +560,18 @@ function getUsedObjectIDs(views, isByViews) {
                                 }
 
                                 if (objIDs[tt].operations && objIDs[tt].operations[0].arg instanceof Array) {
-                                    for (var w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
+                                    for (let w = 0; w < objIDs[tt].operations[0].arg.length; w++) {
                                         sidd = objIDs[tt].operations[0].arg[w].systemOid;
-                                        if (!sidd) continue;
-                                        if (IDs.indexOf(sidd) === -1) IDs.push(sidd);
-                                        if (_views && _views[view].indexOf(sidd) === -1) _views[view].push(sidd);
-                                        if (!bindings[sidd]) bindings[sidd] = [];
+                                        if (!sidd) {
+                                            continue;
+                                        }
+                                        if (!IDs.includes(sidd)) {
+                                            IDs.push(sidd);
+                                        }
+                                        if (_views && !_views[view].includes(sidd)) {
+                                            _views[view].push(sidd);
+                                        }
+                                        bindings[sidd] = bindings[sidd] || [];
                                         bindings[sidd].push(objIDs[tt]);
                                     }
                                 }
@@ -556,30 +584,32 @@ function getUsedObjectIDs(views, isByViews) {
     }
 
     if (_views) {
-        var changed;
+        let changed;
         do {
             changed = false;
             // Check containers
             for (view in views) {
-                if (!views.hasOwnProperty(view)) continue;
-
-                if (view === '___settings') continue;
+                if (!views.hasOwnProperty(view) || view === '___settings') {
+                    continue;
+                }
 
                 for (id in views[view].widgets) {
-                    if (!views[view].widgets.hasOwnProperty(id)) continue;
+                    if (!views[view].widgets.hasOwnProperty(id)) {
+                        continue;
+                    }
 
                     // Add all OIDs from this view to parent
                     if (views[view].widgets[id].tpl === 'tplContainerView' && views[view].widgets[id].data.contains_view) {
-                        var ids = _views[views[view].widgets[id].data.contains_view];
+                        const ids = _views[views[view].widgets[id].data.contains_view];
                         if (ids) {
-                            for (var a = 0; a < ids.length; a++) {
-                                if (ids[a] && _views[view].indexOf(ids[a]) === -1) {
+                            for (let a = 0; a < ids.length; a++) {
+                                if (ids[a] && !_views[view].includes(ids[a])) {
                                     _views[view].push(ids[a]);
                                     changed = true;
                                 }
                             }
                         } else {
-                            console.warn('View does not exist: "' + views[view].widgets[id].data.contains_view + '"');
+                            console.warn(`View does not exist: "${views[view].widgets[id].data.contains_view}"`);
                         }
                     }
                 }
@@ -587,7 +617,7 @@ function getUsedObjectIDs(views, isByViews) {
         } while (changed);
     }
 
-    return {IDs: IDs, byViews: _views, visibility: visibility, bindings: bindings, lastChanges: lastChanges, signals: signals};
+    return { IDs, byViews: _views, visibility, bindings, lastChanges, signals };
 }
 
 if (typeof module !== 'undefined' && module.parent) {

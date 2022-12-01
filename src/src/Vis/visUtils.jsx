@@ -758,10 +758,10 @@ function registerWidgetsLoadIndicator(cb) {
 }
 
 function getRemoteWidgets(socket) {
-    return socket.getObjectView(
+    return socket.getObjectViewSystem(
+        'instance',
         'system.adapter.',
         'system.adapter.\u9999',
-        'instance',
     )
         .then(objects => {
             const result = [];

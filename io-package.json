@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.9",
+        "version": "2.0.10",
         "news": {
-            "2.0.9": {
+            "2.0.10": {
                 "en": "Added the file browser",
                 "de": "Hinzugefügt die Datei Browser",
                 "ru": "Добавлен браузер файлов",

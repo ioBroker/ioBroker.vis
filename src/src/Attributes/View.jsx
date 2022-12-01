@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
+import {
+    useEffect,
+    useRef,
+    useState,
+    useMemo,
+} from 'react';
 import withStyles from '@mui/styles/withStyles';
 
 import {
@@ -192,7 +197,6 @@ const View = props => {
         return null;
     }
 
-    const [userResolution, setUserResolution] = useState(false);
     const [triggerAllOpened, setTriggerAllOpened] = useState(0);
     const [triggerAllClosed, setTriggerAllClosed] = useState(0);
     const [showAllViewDialog, setShowAllViewDialog] = useState(null);
@@ -200,16 +204,13 @@ const View = props => {
     const view = props.project[props.selectedView];
 
     let resolutionSelect = `${view.settings.sizex}x${view.settings.sizey}`;
-    if (userResolution) {
-        resolutionSelect = 'user';
-    } else if (!(view.settings.sizex && view.settings.sizey)) {
+    if (view.settings.sizex === undefined && view.settings.sizey === undefined) {
         resolutionSelect = 'none';
-    } else if (!resolution.find(item => item.value === `${view.settings.sizex}x${view.settings.sizey}`)) {
+    } else if (!resolution.find(item => item.value === resolutionSelect)) {
         resolutionSelect = 'user';
-        setUserResolution(true);
     }
 
-    const fields = [
+    const fields = useMemo(() => ([
         {
             name: 'CSS Common',
             fields: [
@@ -283,16 +284,16 @@ const View = props => {
                 {
                     name: 'Use background', type: 'checkbox', field: 'useBackground', notStyle: true,
                 },
-                { name: 'background', field: 'background', hide: !view.settings.useBackground },
+                { name: 'background', field: 'background', hidden: '!data.useBackground' },
                 {
-                    name: '-color', type: 'color', field: 'background-color', hide: view.settings.useBackground,
+                    name: '-color', type: 'color', field: 'background-color', hidden: 'data.useBackground',
                 },
-                { name: '-image', field: 'background-image', hide: view.settings.useBackground },
+                { name: '-image', field: 'background-image', hidden: 'data.useBackground' },
                 {
                     name: '-repeat',
                     type: 'autocomplete',
                     field: 'background-repeat',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: [
                         'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit',
                     ],
@@ -301,35 +302,35 @@ const View = props => {
                     name: '-attachment',
                     field: 'background-attachment',
                     type: 'autocomplete',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
                 },
                 {
                     name: '-position',
                     field: 'background-position',
                     type: 'autocomplete',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
                 },
                 {
                     name: '-size',
                     field: 'background-size',
                     type: 'autocomplete',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: ['auto', 'cover', 'contain', 'initial', 'inherit'],
                 },
                 {
                     name: '-clip',
                     field: 'background-clip',
                     type: 'autocomplete',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
                 {
                     name: '-origin',
                     field: 'background-origin',
                     type: 'autocomplete',
-                    hide: view.settings.useBackground,
+                    hidden: 'data.useBackground',
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
             ],
@@ -373,7 +374,7 @@ const View = props => {
                     type: 'color',
                     name: 'Grid color',
                     field: 'snapColor',
-                    hide: view.settings.snapType !== 2,
+                    hidden: 'data.snapType !== 2',
                     notStyle: true,
                 },
                 {
@@ -381,7 +382,7 @@ const View = props => {
                     name: 'Grid size',
                     field: 'gridSize',
                     notStyle: true,
-                    hide: view.settings.snapType !== 2,
+                    hidden: 'data.snapType !== 2',
                 },
                 {
                     type: 'select',
@@ -391,16 +392,20 @@ const View = props => {
                     value: resolutionSelect,
                     onChange: e => {
                         const project = JSON.parse(JSON.stringify(props.project));
-                        const match = e.target.value.match(/^([0-9]+)x([0-9]+)$/);
                         if (e.target.value === 'none') {
-                            project[props.selectedView].settings.sizex = 0;
-                            project[props.selectedView].settings.sizey = 0;
-                            setUserResolution(false);
+                            delete project[props.selectedView].settings.sizex;
+                            delete project[props.selectedView].settings.sizey;
                         } else if (e.target.value === 'user') {
-                            setUserResolution(true);
+                            project[props.selectedView].settings.sizex = project[props.selectedView].settings.sizex || 0;
+                            project[props.selectedView].settings.sizey = project[props.selectedView].settings.sizey || 0;
+                            const _resolutionSelect = `${project[props.selectedView].settings.sizex}x${project[props.selectedView].settings.sizey}`;
+                            if (resolution.find(item => item.value === _resolutionSelect)) {
+                                project[props.selectedView].settings.sizex++;
+                            }
                         } else {
-                            [, project[props.selectedView].settings.sizex, project[props.selectedView].settings.sizey] = match;
-                            setUserResolution(false);
+                            const match = e.target.value.match(/^([0-9]+)x([0-9]+)$/);
+                            project[props.selectedView].settings.sizex = match[1];
+                            project[props.selectedView].settings.sizey = match[2];
                         }
                         props.changeProject(project);
                     },
@@ -408,13 +413,12 @@ const View = props => {
                 {
                     type: 'raw',
                     name: 'Width x height (px)',
-                    hide: !userResolution,
-                    Component:
-                    <span style={{ display: 'flex', alignItems: 'center' }}>
+                    hidden: 'data.sizex === undefined && data.sizey === undefined',
+                    Component: <span style={{ display: 'flex', alignItems: 'center' }}>
                         <TextField
                             variant="standard"
-                            value={view.settings.sizex}
-                            disabled={!props.editMode}
+                            value={view.settings.sizex === undefined ? '' : view.settings.sizex}
+                            disabled={!props.editMode || resolutionSelect !== 'user'}
                             InputProps={{
                                 classes: {
                                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -422,7 +426,7 @@ const View = props => {
                             }}
                             onChange={e => {
                                 const project = JSON.parse(JSON.stringify(props.project));
-                                project[props.selectedView].settings.sizex = e.target.value;
+                                project[props.selectedView].settings.sizex = parseInt(e.target.value, 10);
                                 props.changeProject(project);
                             }}
                         />
@@ -434,8 +438,8 @@ const View = props => {
                         />
                         <TextField
                             variant="standard"
-                            value={view.settings.sizey}
-                            disabled={!props.editMode}
+                            value={view.settings.sizey === undefined ? '' : view.settings.sizey}
+                            disabled={!props.editMode || resolutionSelect !== 'user'}
                             InputProps={{
                                 classes: {
                                     input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent),
@@ -443,7 +447,7 @@ const View = props => {
                             }}
                             onChange={e => {
                                 const project = JSON.parse(JSON.stringify(props.project));
-                                project[props.selectedView].settings.sizey = e.target.value;
+                                project[props.selectedView].settings.sizey = parseInt(e.target.value, 10);
                                 props.changeProject(project);
                             }}
                         />
@@ -579,7 +583,7 @@ const View = props => {
                 },
             ],
         },
-    ];
+    ]), [resolutionSelect, `${view.settings.sizex}x${view.settings.sizey}`]);
 
     const [accordionOpen, setAccordionOpen] = useState(
         window.localStorage.getItem('attributesView')
@@ -714,13 +718,13 @@ const View = props => {
                     <tbody>
                         {
                             group.fields.map((field, key2) => {
-                                if (field.hide) {
-                                    return null;
-                                }
                                 let error;
                                 let disabled = false;
                                 if (field.hidden) {
-                                    if (checkFunction(field.hidden, props.project[props.selectedView].settings)) {
+                                    if (field.hidden === true) {
+                                        return null;
+                                    }
+                                    if (field.hidden !== false && checkFunction(field.hidden, props.project[props.selectedView].settings)) {
                                         return null;
                                     }
                                 }
@@ -730,6 +734,8 @@ const View = props => {
                                 if (field.disabled) {
                                     if (field.disabled === true) {
                                         disabled = true;
+                                    } else if (field.disabled === false) {
+                                        disabled = false;
                                     } else {
                                         disabled = !!checkFunction(field.disabled, props.project[props.selectedView].settings);
                                     }
@@ -870,6 +876,7 @@ const View = props => {
                                         value={value}
                                         onChange={fileBlob => change(fileBlob)}
                                         previewClassName={props.classes.iconPreview}
+                                        disabled={!props.editMode || disabled}
                                         // icon={ImageIcon}
                                         // classes={props.classes}
                                     />;
@@ -889,10 +896,10 @@ const View = props => {
                                             fullWidth
                                             error={!!error}
                                             helperText={typeof error === 'string' ? I18n.t(error) : null}
-                                            disabled={disabled}
+                                            disabled={!props.editMode || disabled}
                                             InputProps={{
                                                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                                                endAdornment: <Button disabled={disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
+                                                endAdornment: <Button disabled={!props.editMode || disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
                                             }}
                                             ref={textRef}
                                             value={value}
@@ -957,7 +964,7 @@ const View = props => {
                                         <Input
                                             className={props.classes.fieldContentSliderInput}
                                             value={value}
-                                            disabled={disabled}
+                                            disabled={!props.editMode || disabled}
                                             size="small"
                                             onChange={e => change(parseFloat(e.target.value))}
                                             classes={{ input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) }}
@@ -968,7 +975,7 @@ const View = props => {
                                                 type: 'number',
                                             }}
                                         />
-                                        <IconButton onClick={() => change(null)}><ClearIcon /></IconButton>
+                                        <IconButton disabled={!props.editMode || disabled} onClick={() => change(null)}><ClearIcon /></IconButton>
                                     </div>;
                                 } else {
                                     result = <TextField
