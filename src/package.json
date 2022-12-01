@@ -13,7 +13,7 @@
         "@mui/styles": "^5.10.10",
         "@sentry/browser": "^7.21.1",
         "@sentry/integrations": "^7.21.1",
-        "ace-builds": "^1.12.5",
+        "ace-builds": "^1.13.1",
         "copy-to-clipboard": "^3.3.3",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.0.3",
