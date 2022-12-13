@@ -51,15 +51,14 @@ const View = props => {
 
     const toolbar = {
         name: <span className={props.classes.label}>
-            <span>
-                {`${I18n.t('Views of')} `}
-            </span>
-            <span
-                className={props.classes.projectLabel}
-                onClick={() => props.setProjectsDialog(true)}
-            >
-                {props.projectName}
-            </span>
+            <Tooltip title={I18n.t('Current project')}>
+                <span
+                    className={props.classes.projectLabel}
+                    onClick={() => props.setProjectsDialog(true)}
+                >
+                    {props.projectName}
+                </span>
+            </Tooltip>
         </span>,
         items: [
             {
