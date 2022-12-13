@@ -1270,7 +1270,9 @@ class VisView extends React.Component {
         // and wait for themes too
         if (this.state.mounted && this.state.themeCode && this.refView.current) {
             // save initial filter
-            this.props.viewsActiveFilter[this.props.view] = (this.props.views[this.props.view].settings.filterkey || '').split(',').map(f => f.trim()).filter(f => f);
+            if (!this.props.viewsActiveFilter?.[this.props.view]) {
+                this.props.viewsActiveFilter[this.props.view] = (this.props.views[this.props.view].settings.filterkey || '').split(',').map(f => f.trim()).filter(f => f);
+            }
             const widgets = this.props.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
