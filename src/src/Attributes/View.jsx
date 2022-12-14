@@ -267,6 +267,52 @@ const View = props => {
             name: 'CSS background (background-...)',
             fields: [
                 {
+                    name: 'Image',
+                    field: 'bg-image',
+                    type: 'image',
+                    hidden: 'data.useBackground || (data.style && (!!data.style.background_class || !!data.style["background-color"] || !!data.style["background-image"] || !!data.style["background-size"] || !!data.style["background-repeat"] || !!data.style["background-position"] || !!data.style["background-attachment"]))',
+                    notStyle: true,
+                },
+                {
+                    name: 'Position left',
+                    field: 'bg-position-x',
+                    type: 'slider',
+                    hidden: '!data["bg-image"]',
+                    notStyle: true,
+                    min: -100,
+                    max: 500,
+                },
+                {
+                    name: 'Position top',
+                    field: 'bg-position-y',
+                    type: 'slider',
+                    hidden: '!data["bg-image"]',
+                    notStyle: true,
+                    min: -100,
+                    max: 500,
+                },
+                {
+                    name: 'Width',
+                    field: 'bg-width',
+                    type: 'type',
+                    hidden: '!data["bg-image"]',
+                    notStyle: true,
+                },
+                {
+                    name: 'Height',
+                    field: 'bg-height',
+                    type: 'text',
+                    hidden: '!data["bg-image"]',
+                    notStyle: true,
+                },
+                {
+                    name: 'Color',
+                    field: 'bg-color',
+                    type: 'color',
+                    hidden: '!data["bg-image"]',
+                    notStyle: true,
+                },
+                {
                     name: 'Background class',
                     type: 'select',
                     items: background,
@@ -280,20 +326,25 @@ const View = props => {
                         <span className={`${props.classes.backgroundClassSquare} ${value}`} />
                         {I18n.t(background.find(item => item.value === value).name)}
                     </div>,
+                    hidden: '!!data["bg-image"]',
                 },
                 {
-                    name: 'Use background', type: 'checkbox', field: 'useBackground', notStyle: true,
+                    name: 'One parameter',
+                    type: 'checkbox',
+                    field: 'useBackground',
+                    notStyle: true,
+                    hidden: '!!data.background_class || !!data["bg-image"]',
                 },
-                { name: 'background', field: 'background', hidden: '!data.useBackground' },
+                { name: 'background', field: 'background', hidden: '!data.useBackground || !!data.background_class || !!data["bg-image"]'  },
                 {
-                    name: '-color', type: 'color', field: 'background-color', hidden: 'data.useBackground',
+                    name: '-color', type: 'color', field: 'background-color', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                 },
-                { name: '-image', field: 'background-image', hidden: 'data.useBackground' },
+                { name: '-image', field: 'background-image', hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]' },
                 {
                     name: '-repeat',
                     type: 'autocomplete',
                     field: 'background-repeat',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: [
                         'repeat', 'repeat-x', 'repeat-y', 'no-repeat', 'initial', 'inherit',
                     ],
@@ -302,35 +353,35 @@ const View = props => {
                     name: '-attachment',
                     field: 'background-attachment',
                     type: 'autocomplete',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: ['scroll', 'fixed', 'local', 'initial', 'inherit'],
                 },
                 {
                     name: '-position',
                     field: 'background-position',
                     type: 'autocomplete',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: ['left top', 'left center', 'left bottom', 'right top', 'right center', 'right bottom', 'center top', 'center center', 'center bottom', 'initial', 'inherit'],
                 },
                 {
                     name: '-size',
                     field: 'background-size',
                     type: 'autocomplete',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: ['auto', 'cover', 'contain', 'initial', 'inherit'],
                 },
                 {
                     name: '-clip',
                     field: 'background-clip',
                     type: 'autocomplete',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
                 {
                     name: '-origin',
                     field: 'background-origin',
                     type: 'autocomplete',
-                    hidden: 'data.useBackground',
+                    hidden: 'data.useBackground || !!data.background_class || !!data["bg-image"]',
                     items: ['border-box', 'padding-box', 'content-box', 'initial', 'inherit'],
                 },
             ],
@@ -899,7 +950,10 @@ const View = props => {
                                             disabled={!props.editMode || disabled}
                                             InputProps={{
                                                 classes: { input: Utils.clsx(props.classes.clearPadding, props.classes.fieldContent) },
-                                                endAdornment: <Button disabled={!props.editMode || disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
+                                                endAdornment: [
+                                                    value ? <IconButton key="clear" onClick={() => change('')} size="small"><ClearIcon /></IconButton> : null,
+                                                    <Button key="select" disabled={!props.editMode || disabled} size="small" onClick={() => setShowDialog(true)}>...</Button>,
+                                                ],
                                             }}
                                             ref={textRef}
                                             value={value}

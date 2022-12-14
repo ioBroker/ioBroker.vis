@@ -32,11 +32,12 @@ const styles = () => ({
 
 const View = props => {
     const [dialog, setDialog] = useState(null);
+    const [dialogCallback, setDialogCallback] = useState(null);
     const [dialogName, setDialogName] = useState('');
     const [dialogView, setDialogView] = useState(null);
     const [dialogParentId, setDialogParentId] = useState(null);
 
-    const showDialog = (type, view, parentId) => {
+    const showDialog = (type, view, parentId, cb) => {
         view = view || props.selectedView;
 
         const dialogDefaultName = {
@@ -49,6 +50,7 @@ const View = props => {
         setDialogView(view);
         setDialogParentId(parentId);
         setDialogName(dialogDefaultName[type]);
+        setDialogCallback(cb ? { cb } : null);
     };
 
     const toolbar = {
@@ -91,6 +93,7 @@ const View = props => {
             dialog={dialog}
             dialogView={dialogView}
             dialogName={dialogName}
+            dialogCallback={dialogCallback}
             noTranslation
             dialogParentId={dialogParentId}
             setDialog={setDialog}

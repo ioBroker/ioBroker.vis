@@ -147,7 +147,12 @@ const ViewsManager = props => {
                 <DndPreview />
                 <AppBar position="static" className={props.classes.topBar}>
                     <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
-                        <IconButton size="small" onClick={() => props.showDialog('add', props.name)}>
+                        <IconButton
+                            size="small"
+                            onClick={() => props.showDialog('add', props.name, null, newView => {
+                                newView && props.onClose();
+                            })}
+                        >
                             <AddIcon />
                         </IconButton>
                     </Tooltip>

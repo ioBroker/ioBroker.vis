@@ -65,6 +65,9 @@ class VisView extends React.Component {
         this.selectDiv = null;
         this.movement = null;
         this.ignoreMouseEvents = false;
+
+        // remember filter
+        this.oldFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
     }
 
     componentDidMount() {
@@ -812,6 +815,14 @@ class VisView extends React.Component {
     componentDidUpdate() {
         this.registerEditorHandlers();
         this.updateViewWidth();
+        // detect filter changes
+        if (!this.props.editMode) {
+            const newFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
+            if (this.oldFilter !== newFilter) {
+                this.oldFilter = newFilter;
+                this.changeFilter({ filter: JSON.parse(newFilter) });
+            }
+        }
     }
 
     static renderGitter(step, color) {
@@ -1485,7 +1496,7 @@ class VisView extends React.Component {
         settings.style && Object.keys(settings.style).forEach(attr => {
             if (attr === 'background_class') {
                 className = addClass(className, settings.style.background_class);
-            } else {
+            } else if (!settings['bg-image'] || !attr.startsWith('background')) {
                 const value = settings.style[attr];
                 // convert background-color => backgroundColor
                 attr = attr.replace(/(-\w)/g, text => text[1].toUpperCase());
@@ -1494,7 +1505,11 @@ class VisView extends React.Component {
         });
 
         if (!style.backgroundColor && !style.background) {
-            style.backgroundColor = this.props.themeType === 'dark' ? '#000' : '#fff';
+            if (this.props.customSettings?.viewStyle?.backgroundColor) {
+                style.backgroundColor = this.props.customSettings.viewStyle.backgroundColor;
+            } else {
+                style.backgroundColor = this.props.themeType === 'dark' ? '#000' : '#fff';
+            }
         }
         if (!style.color) {
             style.color = this.props.themeType === 'dark' ? '#fff' : '#000';
@@ -1512,8 +1527,41 @@ class VisView extends React.Component {
         if (this.props.views[this.props.view].settings.snapType === 2) {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
+
         if (this.props.style) {
             Object.assign(style, this.props.style);
+        }
+
+        // apply image
+        if (settings['bg-image']) {
+            style.backgroundImage = `url("../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
+            style.backgroundRepeat = 'no-repeat';
+            style.backgroundPosition = 'top left';
+            if (settings['bg-color']) {
+                style.backgroundColor = settings['bg-color'];
+            }
+            if (settings['bg-position-x']) {
+                // eslint-disable-next-line no-restricted-properties
+                style.backgroundPositionX = window.isFinite(settings['bg-position-x']) ? `${settings['bg-position-x']}px` : settings['bg-position-x'];
+            }
+            if (settings['bg-position-y']) {
+                // eslint-disable-next-line no-restricted-properties
+                style.backgroundPositionY = window.isFinite(settings['bg-position-y']) ? `${settings['bg-position-y']}px` : settings['bg-position-y'];
+            }
+            if (settings['bg-width'] && settings['bg-height']) {
+                // eslint-disable-next-line no-restricted-properties
+                const w = window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width'];
+                // eslint-disable-next-line no-restricted-properties
+                const h = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
+                style.backgroundSize = `${w} ${h}`;
+            } else if (settings['bg-width']) {
+                // eslint-disable-next-line no-restricted-properties
+                style.backgroundSize = `${window.isFinite(settings['bg-width']) ? `${settings['bg-width']}px` : settings['bg-width']} auto`;
+            } else if (settings['bg-height']) {
+                // eslint-disable-next-line no-restricted-properties
+                const w = window.isFinite(settings['bg-height']) ? `${settings['bg-height']}px` : settings['bg-height'];
+                style.backgroundSize = `auto ${w}`;
+            }
         }
 
         let renderedView = <div
@@ -1605,7 +1653,7 @@ VisView.propTypes = {
     style: PropTypes.object,
     visInWidget: PropTypes.bool,
     buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
-    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets
+    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets and views
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

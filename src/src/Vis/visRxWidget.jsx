@@ -62,7 +62,7 @@ class VisRxWidget extends VisBaseWidget {
             rxData: newState.rxData,
             rxStyle: newState.rxStyle,
             values: {},
-            visible: true,
+            visible: newState.visible,
             disabled: false,
         };
     }
@@ -136,6 +136,7 @@ class VisRxWidget extends VisBaseWidget {
             values: JSON.parse(JSON.stringify(this.state.values || {})),
             rxData: { ...this.state.data },
             rxStyle: { ...this.state.style },
+            editMode: this.props.editMode,
             applyBindings: false,
         };
 
