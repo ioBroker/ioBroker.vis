@@ -1011,8 +1011,16 @@ const Widget = props => {
                                                 disabled = !!checkFunction(field.disabled, props.project, props.selectedView, props.selectedWidgets, field.index);
                                             }
                                         }
-                                        let label = field.title || (field.label && I18n.t(field.label)) ||
-                                            (window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : ''));
+                                        let label;
+                                        if (field.label === '') {
+                                            label = '';
+                                        } else if (field.title) {
+                                            label = field.title;
+                                        } else if (field.label) {
+                                            label = I18n.t(field.label);
+                                        } else {
+                                            label = window.vis._(field.singleName || field.name) + (field.index !== undefined ? ` [${field.index}]` : '');
+                                        }
 
                                         const labelStyle = {};
                                         if (label.trim().startsWith('<b')) {

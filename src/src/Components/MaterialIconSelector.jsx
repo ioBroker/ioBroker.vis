@@ -291,6 +291,7 @@ class MaterialIconSelector extends Component {
         </Dialog>;
     }
 }
+
 MaterialIconSelector.propTypes = {
     value: PropTypes.string, // current icon
     filter: PropTypes.string, // filter for icon list
@@ -298,4 +299,6 @@ MaterialIconSelector.propTypes = {
     onClose: PropTypes.func.isRequired, // close dialog
 };
 
-export default withStyles(styles)(MaterialIconSelector);
+const _MaterialIconSelector = withStyles(styles)(MaterialIconSelector);
+window.VisMaterialIconSelector = _MaterialIconSelector;
+export default _MaterialIconSelector;

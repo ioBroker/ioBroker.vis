@@ -113,7 +113,7 @@ Group can have the following attributes:
 `visAttrs[x].fields` consist of input fields.
 
 - `name`: [mandatory] Attribute name to be stored in data
-- `label`: [optional] Label to be displayed in the UI
+- `label`: [optional] Label to be displayed in the UI. If you want to have empty label, set it to "".
 - `tooltip`: [optional] Tooltip of the label (small "i" symbol appears next to text)
 - `default`: [optional] default initial value
 - `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
@@ -191,7 +191,7 @@ onChange: async (field, data, changeData, socket) => {
     - `noButton` - [optional] if true, no edit button will be shown. Default is false. 
   - `html` - Input field with Edit dialog and parsing of HTML code
   - `json` - Input field with Edit dialog and parsing of JSON code
-  - `icon64` - Select from predefined material icons as base64 (svg) (not-implemented)
+  - `icon64` - Select from predefined material icons as base64 (svg)
 
 ### Custom field editor
 Example of custom field

@@ -106,7 +106,7 @@ export const getWidgetTypes = () => {
                 params: widgetInfo.visAttrs,
                 set: widgetInfo.visSet,
                 style: widgetInfo.visDefaultStyle,
-                label: widgetInfo.visWidgetLabel ? i18nPrefix + widgetInfo.visWidgetLabel : undefined, // new style with translation
+                label: widgetInfo.visWidgetLabel ? i18nPrefix + widgetInfo.visWidgetLabel : (widgetInfo.visWidgetLabel === '' ? '' : undefined), // new style with translation
                 setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
                 setColor: widgetInfo.visSetColor,
                 color: widgetInfo.visWidgetColor,
