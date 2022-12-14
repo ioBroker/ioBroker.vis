@@ -56,7 +56,7 @@ const Widgets = props => {
                     !widgets[widget].groupid)).map(widget => {
                     const tpl = widgets[widget].tpl;
                     const widgetType = widgetTypes.find(w => w.name === tpl);
-                    let widgetLabel = widgetType?.title;
+                    let widgetLabel = widgetType?.title || '';
                     let widgetColor = widgetType ? widgetType.setColor : '#FF0000';
                     if (widgetType?.label) {
                         widgetLabel = I18n.t(widgetType.label);
