@@ -27,7 +27,7 @@
 - ✅ Ctrl+A / Esc(Deselect all) / ...
 - ✅ If dimension is in % so after resize and move it should stay in %
 - ✅ Ask about not saved file (because of 1 sec delay)
-- [ ] Allow selection of background image and x-offset, y-offset, opacity, repeat, size
+- ✅ Allow selection of background image and x-offset, y-offset, opacity, repeat, size
 
 ## groups edit
 - ✅ Check
