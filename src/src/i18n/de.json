@@ -361,5 +361,6 @@
   "no_reload": "kein Neuladen",
   "reload": "neu laden",
   "not-specified": "nicht definiert",
-  "Files": "Dateien"
+  "Files": "Dateien",
+  "custom_icons": "Benutzerdefinierte Symbole"
 }

@@ -360,5 +360,7 @@
   "no_reload": "nessuna ricarica",
   "reload": "ricaricare",
   "not-specified": "non definito",
-  "Files": "File"
+  "Files": "File",
+  "custom_icons": "Icone personalizzate",
+  "Current project": "Progetto attuale"
 }

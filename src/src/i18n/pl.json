@@ -360,5 +360,7 @@
   "no_reload": "bez przeładowania",
   "reload": "przeładować",
   "not-specified": "Nie określono",
-  "Files": "Akta"
+  "Files": "Akta",
+  "custom_icons": "Niestandardowe ikony",
+  "Current project": "Bieżący projekt"
 }
