@@ -178,6 +178,8 @@ class MaterialIconSelector extends Component {
     }
 
     render() {
+        const iconStyle = this.props.customColor && this.state.iconType === 'customIcons' ? { color: this.props.customColor } : {};
+
         return <Dialog
             open={!0}
             maxWidth="lg"
@@ -216,7 +218,7 @@ class MaterialIconSelector extends Component {
                 />
             </DialogTitle>
             <DialogContent>
-                {!this.props.iconType ? <div style={{ width: 120, display: 'inline-block', verticalAlign: 'top' }}>
+                {!this.props.iconType ? <div style={{ width: 140, display: 'inline-block', verticalAlign: 'top' }}>
                     <FormControl>
                         <RadioGroup
                             value={this.state.iconType}
@@ -257,7 +259,7 @@ class MaterialIconSelector extends Component {
                         </RadioGroup>
                     </FormControl>
                 </div> : null}
-                <div style={{ width: 'calc(100% - 120px)', display: 'inline-block' }}>
+                <div style={{ width: 'calc(100% - 140px)', display: 'inline-block' }}>
                     {this.state.iconType === 'knx-uf' ? <div style={{ paddingBottom: 20 }}>
                         {I18n.t('Source:')}
                         &nbsp;
@@ -271,7 +273,14 @@ class MaterialIconSelector extends Component {
                         </a>
                     </div> : null}
                     {!this.state.loading && this.list[this.state.iconType] && this.list[this.state.iconType] !== true ? <div style={{ width: '100%' }}>
-                        <Grid container spacing={2}>
+                        <Grid
+                            container
+                            spacing={2}
+                            style={{
+                                width: '100%',
+                                paddingTop: 20,
+                            }}
+                        >
                             {this.state.filtered.map(icon =>
                                 <Grid
                                     item
@@ -283,6 +292,7 @@ class MaterialIconSelector extends Component {
                                     <Icon
                                         src={this.list[this.state.iconType][icon]}
                                         className={this.props.classes.icon}
+                                        style={iconStyle}
                                     />
                                     <div className={this.props.classes.iconName}>{icon.replace(/_/g, ' ')}</div>
                                 </Grid>)}
@@ -327,6 +337,7 @@ MaterialIconSelector.propTypes = {
     iconType: PropTypes.string, // icon type (baseline, outlined, round, sharp, twotone)
     onClose: PropTypes.func.isRequired, // close dialog
     customIcons: PropTypes.string, // path to additional icons file
+    customColor: PropTypes.string, // additional icons color
 };
 
 const _MaterialIconSelector = withStyles(styles)(MaterialIconSelector);
