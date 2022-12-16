@@ -1640,6 +1640,7 @@ ${this.scripts}
                     views={this.props.views}
                     viewsActiveFilter={this.viewsActiveFilter}
                     widgetHint={this.props.widgetHint}
+                    onIgnoreMouseEvents={this.props.onIgnoreMouseEvents}
                 />;
             }
 
@@ -1680,6 +1681,7 @@ VisEngine.propTypes = {
     theme: PropTypes.object,
     onConfirmDialog: PropTypes.func,
     onShowCode: PropTypes.func,
+    onIgnoreMouseEvents: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

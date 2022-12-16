@@ -524,6 +524,7 @@ class VisView extends React.Component {
 
     onIgnoreMouseEvents = ignore => {
         this.ignoreMouseEvents = ignore;
+        this.props.onIgnoreMouseEvents && this.props.onIgnoreMouseEvents(ignore);
         if (ignore && this.movement) {
             this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
             window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
@@ -1654,6 +1655,7 @@ VisView.propTypes = {
     visInWidget: PropTypes.bool,
     buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
     customSettings: PropTypes.object, // special custom object to pass custom settings to widgets and views
+    onIgnoreMouseEvents: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

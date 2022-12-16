@@ -207,6 +207,12 @@ class App extends GenericApp {
         registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
     }
 
+    onIgnoreMouseEvents = ignore => {
+        if (this.state.ignoreMouseEvents !== ignore) {
+            setTimeout(() => this.setState({ ignoreMouseEvents: ignore }), 100);
+        }
+    };
+
     setStateAsync(newState) {
         return new Promise(resolve => {
             this.setState(newState, () =>
@@ -265,6 +271,7 @@ class App extends GenericApp {
             showCodeDialog: null,
             confirmDialog: null,
             showProjectUpdateDialog: false,
+            ignoreMouseEvents: false,
         });
 
         window.addEventListener('hashchange', this.onHashChange, false);
@@ -1653,7 +1660,7 @@ class App extends GenericApp {
                         }}
                     >
                         <VisContextMenu
-                            disabled={!this.state.editMode}
+                            disabled={!this.state.editMode || this.state.ignoreMouseEvents}
                             selectedWidgets={this.state.selectedWidgets}
                             deleteWidgets={this.deleteWidgets}
                             setSelectedWidgets={this.setSelectedWidgets}
@@ -1862,6 +1869,7 @@ class App extends GenericApp {
             theme={this.state.theme}
             adapterId={this.adapterId}
             editModeComponentClass={this.props.classes.editModeComponentClass}
+            onIgnoreMouseEvents={this.onIgnoreMouseEvents}
             onConfirmDialog={(message, title, icon, width, callback) => {
                 console.log(message);
                 this.setState({
