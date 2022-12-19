@@ -89,7 +89,6 @@ const ThemeContainer = () => {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={getTheme()}>
                 <App
-                    socket={{ port: 8082 }}
                     onThemeChange={_theme => {
                         if (newTheme.palette.mode === 'dark') {
                             window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');
