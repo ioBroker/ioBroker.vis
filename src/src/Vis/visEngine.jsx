@@ -1575,7 +1575,8 @@ ${this.scripts}
                         }
                         this.visUserCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_user', file || '');
-                    });
+                    })
+                    .catch(e => console.warn(`User CSS "${this.props.projectName}/vis-user.css" not found: ${e}`));
             }
         }
     }

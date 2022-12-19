@@ -204,10 +204,9 @@ Example of custom field
         field,       // field properties: {name, label, type, set, singleName, component,...}
         data,        // widget data
         onDataChange,// function to call, when data changed 
-        socket,      // socket object
-        widgetID,    // widget ID or widgets IDs. If selecteld more than one widget, it is array of IDs
-        view,        // view name
-        project      // project object: {VIEWS..., [view]: {widgets: {[widgetID]: {tpl, data, style}}, settings, parentId, rerender, filterList, activeWidgets}, __settings: {}}
+        props,       // additional properties : {socket, projectName, instance, adapterName, selectedView, selectedWidgets, project, widgetID}
+                     // widgetID: widget ID or widgets IDs. If selecteld more than one widget, it is array of IDs
+                     // project object: {VIEWS..., [view]: {widgets: {[widgetID]: {tpl, data, style}}, settings, parentId, rerender, filterList, activeWidgets}, __settings: {}}
     ) => <TextField
         fullWidth
         value={data[field.name]}

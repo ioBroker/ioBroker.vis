@@ -986,10 +986,16 @@ const WidgetField = props => {
                         });
                         props.changeProject(_project);
                     },
-                    props.socket,
-                    props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets,
-                    props.selectedView,
-                    props.project,
+                    {
+                        projectName,
+                        instance,
+                        adapterName,
+                        socket: props.socket,
+                        selectedView: props.selectedView,
+                        selectedWidgets: props.selectedWidgets,
+                        selectedWidget: props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets,
+                        project: props.project,
+                    },
                 );
             } catch (e) {
                 console.error(`Cannot render custom field ${field.name}: ${e}`);
