@@ -157,6 +157,7 @@
         "icon": "vis.png",
         "enabled": true,
         "mode": "daemon",
+        "nogit": true,
         "extIcon": "https://raw.githubusercontent.com/iobroker/iobroker.vis/master/admin/vis.png",
         "keywords": [
             "DashUI",
