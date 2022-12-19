@@ -185,6 +185,9 @@ class App extends GenericApp {
 
         extendedProps.sentryDSN = window.sentryDSN;
 
+        if (window.location.port === '3000') {
+            extendedProps.socket = { port: '8082' };
+        }
         super(props, extendedProps);
 
         this.visEngineHandlers = {};

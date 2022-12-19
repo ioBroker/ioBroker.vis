@@ -815,7 +815,7 @@ const Widget = props => {
     if (props.selectedWidgets.length === 1) {
         const tpl = widgets[props.selectedWidgets[0]].tpl;
         const _widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
-        let widgetLabel = _widgetType?.title;
+        let widgetLabel = _widgetType?.title || '';
         let widgetColor = _widgetType?.setColor;
         if (_widgetType?.label) {
             widgetLabel = I18n.t(_widgetType.label);
