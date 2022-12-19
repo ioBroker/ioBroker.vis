@@ -806,16 +806,21 @@ class VisCanWidget extends VisBaseWidget {
                 widgetData || widgetContext.data,
             );
 
-            if (widgetContext) {
-                if (item.type === 'data') {
-                    if (widgetData) {
-                        widgetData.data[item.attr] = value;
-                    } else {
-                        // trigger observable
-                        widgetContext.data.attr(item.attr, value);
-                    }
-                } else if (item.type === 'style') {
+            if (item.type === 'data') {
+                if (widgetData) {
+                    widgetData[item.attr] = value;
+                } else if (widgetContext) {
+                    // trigger observable
+                    widgetContext.data.attr(item.attr, value);
+                }
+            } else if (item.type === 'style') {
+                if (widgetStyle) {
                     widgetStyle[item.attr] = value;
+                    // update style
+                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetStyle);
+                } else if (widgetContext) {
+                    // trigger observable
+                    widgetContext.style.attr(item.attr, value);
                     // update style
                     !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
                 }

@@ -225,9 +225,22 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     type,
                     onChangeFunc,
                 };
-                if (match[1] === 'iImgColorFalse') {
-                    console.log(field);
+
+                if (field.type) {
+                    field.type = field.type
+                        .replace(/§/g, ';')
+                        .replace(/~/g, '/')
+                        .replace(/\^/g, '"')
+                        .replace(/\^\^/g, '^');
                 }
+                if (field.default) {
+                    field.default = field.default
+                        .replace(/§/g, ';')
+                        .replace(/~/g, '/')
+                        .replace(/\^/g, '"')
+                        .replace(/\^\^/g, '^');
+                }
+
                 // special case for Object ID filter
                 if (field.onChangeFunc && field.onChangeFunc.startsWith('filterType')) {
                     field.filter = field.onChangeFunc.substring('filterType'.length).toLowerCase();
