@@ -1109,12 +1109,14 @@ class VisCanWidget extends VisBaseWidget {
 
                 if (this.refService.current) {
                     setTimeout(() => {
-                        this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
-                        this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
-                        // Move helper to actual widget
-                        if (isRelative) {
-                            this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
-                            this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                        if (this.refService.current && this.widDiv) {
+                            this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
+                            this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
+                            // Move helper to actual widget
+                            if (isRelative) {
+                                this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
+                                this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                            }
                         }
                     }, 50);
                 }
@@ -1127,9 +1129,9 @@ class VisCanWidget extends VisBaseWidget {
             this.props.registerRef(wid, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
-            this.props.socket.log.error(`can't render ${widget.tpl} ${wid} on "${this.props.view}": `);
+            this.props.socket.log(`can't render ${widget.tpl} ${wid} on "${this.props.view}": `, 'error');
             for (let l = 0; l < lines.length; l++) {
-                this.props.socket.log.error(`${l} - ${lines[l]}`);
+                this.props.socket.log(`${l} - ${lines[l]}`, 'error');
             }
         }
         cb && cb();
