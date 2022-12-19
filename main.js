@@ -771,7 +771,7 @@ async function main() {
         isLicenseError = true
         adapter.log.error('No license found for vis. Please get one on https://iobroker.net !');
     } else {
-        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, adapterName));
+        isLicenseError = !(await checkL(adapter.config.license, adapter.config.useLicenseManager, 'vis' || adapterName)); // TODO!!!
     }
 
     if (adapterName.includes('beta')) {
