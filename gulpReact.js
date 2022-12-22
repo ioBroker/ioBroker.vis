@@ -5,10 +5,10 @@
  *
  **/
 'use strict';
-const fs    = require('fs');
-const path  = require('path');
-const cp    = require('child_process');
-const axios = require('axios');
+const fs       = require('fs');
+const path     = require('path');
+const cp       = require('child_process');
+const axios    = require('axios');
 const unzipper = require('unzipper');
 
 function init(gulp) {
@@ -162,9 +162,9 @@ function init(gulp) {
 
             console.log(options.cwd);
 
-            let script = `${__dirname}/src/node_modules/@craco/craco/bin/craco.js`;
+            let script = `${__dirname}/src/node_modules/@craco/craco/dist/bin/craco.js`;
             if (!fs.existsSync(script)) {
-                script = `${__dirname}/node_modules/@craco/craco/bin/craco.js`;
+                script = `${__dirname}/node_modules/@craco/craco/dist/bin/craco.js`;
             }
             if (!fs.existsSync(script)) {
                 console.error(`Cannot find execution file: ${script}`);

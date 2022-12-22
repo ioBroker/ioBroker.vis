@@ -24,9 +24,9 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "@iobroker/adapter-core": "^2.6.7",
-    "axios": "^1.2.0",
+    "axios": "^0.27.2",
     "mime": "^3.0.0"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "gulp": "^4.0.2",
     "iobroker.web": "*",
     "unzipper": "^0.10.11",
-    "@iobroker/legacy-testing": "^0.0.4"
+    "@iobroker/legacy-testing": "^0.1.1"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"

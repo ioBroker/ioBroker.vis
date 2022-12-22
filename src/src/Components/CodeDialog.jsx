@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import copy from 'copy-to-clipboard';
 import AceEditor from 'react-ace';
 
 import 'ace-builds/src-min-noconflict/mode-html';
@@ -17,7 +16,7 @@ import {
 import IconCopy from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 
-import { I18n } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 class CodeDialog extends Component {
     render() {
@@ -46,7 +45,7 @@ class CodeDialog extends Component {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        copy(this.props.code);
+                        Utils.copyToClipboard(this.props.code);
                         window.alert(I18n.t('Copied to clipboard'));
                     }}
                     startIcon={<IconCopy />}

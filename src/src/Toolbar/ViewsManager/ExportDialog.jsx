@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import copy from 'copy-to-clipboard';
 import AceEditor from 'react-ace';
 
 import FileCopyIcon from '@mui/icons-material/FileCopy';
+
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
 
@@ -20,7 +20,7 @@ const ExportDialog = props => <IODialog
     onClose={props.onClose}
     title={I18n.t('Export "%s"', props.view)}
     closeTitle="Close"
-    action={() => copy(JSON.stringify(props.project[props.view], null, 2))}
+    action={() => Utils.copyToClipboard(JSON.stringify(props.project[props.view], null, 2))}
     actionTitle="Copy to clipboard"
     actionNoClose
     ActionIcon={FileCopyIcon}

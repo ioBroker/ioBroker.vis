@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import withStyles from '@mui/styles/withStyles';
-import copy from 'copy-to-clipboard';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ListIcon from '@mui/icons-material/List';
 import FilesIcon from '@mui/icons-material/FileCopy';
 
-import { SelectID, I18n, SelectFile as SelectFileDialog } from '@iobroker/adapter-react-v5';
+import {
+    SelectID, I18n, SelectFile as SelectFileDialog, Utils,
+} from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';
 
@@ -65,7 +66,7 @@ const Tools = props => {
                 notEditable={false}
                 statesOnly
                 onOk={selected => {
-                    copy(selected);
+                    Utils.copyToClipboard(selected);
                     setObjectsDialog(false);
                     window.alert(I18n.t('Copied'));
                 }}
@@ -97,7 +98,7 @@ const Tools = props => {
                         selected = `../${selected}`;
                     }
                     if (isDoubleClick) {
-                        copy(selected);
+                        Utils.copyToClipboard(selected);
                         setFilesDialog(false);
                         window.alert(I18n.t('ra_Copied %s', selected));
                     }
@@ -111,7 +112,7 @@ const Tools = props => {
                     } else if (!selected.startsWith('.')) {
                         selected = `../${selected}`;
                     }
-                    copy(selected);
+                    Utils.copyToClipboard(selected);
                     setFilesDialog(false);
                     window.alert(I18n.t('ra_Copied %s', selected));
                 }}

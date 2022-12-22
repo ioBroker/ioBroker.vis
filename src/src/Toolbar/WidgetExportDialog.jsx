@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import copy from 'copy-to-clipboard';
 import AceEditor from 'react-ace';
 
 import FileCopyIcon from '@mui/icons-material/FileCopy';
+
+import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../Components/IODialog';
 
@@ -70,7 +70,7 @@ const WidgetExportDialog = props => {
         title="Export widgets"
         closeTitle="Close"
         action={() => {
-            copy(JSON.stringify(widgets, null, 2));
+            Utils.copyToClipboard(JSON.stringify(widgets, null, 2));
             props.onClose();
             window.alert(I18n.t('Copied to clipboard'));
         }}

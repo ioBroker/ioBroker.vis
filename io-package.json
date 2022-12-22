@@ -176,7 +176,7 @@
         "license": "CC-BY-NC-4.0",
         "dependencies": [
             {
-                "web": ">=3.0.12"
+                "web": ">=5.4.0"
             },
             {
                 "js-controller": ">=2.0.0"
