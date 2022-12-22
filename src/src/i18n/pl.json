@@ -362,5 +362,7 @@
   "not-specified": "Nie określono",
   "Files": "Akta",
   "custom_icons": "Specjalny",
-  "Current project": "Bieżący projekt"
+  "Current project": "Bieżący projekt",
+  "Close all but current view": "Zamknij wszystkie oprócz bieżącego widoku",
+  "One parameter": "Jeden parametr"
 }

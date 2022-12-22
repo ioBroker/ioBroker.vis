@@ -362,5 +362,7 @@
   "reload": "перезагрузить",
   "not-specified": "не определено",
   "Files": "Файлы",
-  "custom_icons": "Спец."
+  "custom_icons": "Спец.",
+  "Close all but current view": "Закрыть все, кроме текущего вида",
+  "One parameter": "Один параметр"
 }

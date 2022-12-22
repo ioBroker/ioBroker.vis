@@ -362,5 +362,7 @@
   "not-specified": "не визначений",
   "Files": "Файли",
   "custom_icons": "Спеціальні",
-  "Current project": "Поточний проект"
+  "Current project": "Поточний проект",
+  "Close all but current view": "Закрити всі, крім поточного перегляду",
+  "One parameter": "Один параметр"
 }

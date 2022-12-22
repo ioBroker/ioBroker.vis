@@ -362,5 +362,7 @@
   "not-specified": "non défini",
   "Files": "Des dossiers",
   "custom_icons": "Spécial",
-  "Current project": "Projet en cours"
+  "Current project": "Projet en cours",
+  "Close all but current view": "Fermer tout sauf la vue actuelle",
+  "One parameter": "Un paramètre"
 }

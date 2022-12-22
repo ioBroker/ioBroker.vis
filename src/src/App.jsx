@@ -21,6 +21,7 @@ import PlayIcon from '@mui/icons-material/PlayArrow';
 import StopIcon from '@mui/icons-material/Stop';
 import IconPalette from '@mui/icons-material/Palette';
 import IconAttributes from '@mui/icons-material/ListAlt';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
@@ -127,6 +128,22 @@ const styles = theme => ({
     },
     editModeComponentClass: {
         zIndex: 1002,
+    },
+    '@keyframes colorBlink': {
+        '0%': {
+            color: '#FF0000',
+        },
+        '50%': {
+            color: theme.palette.text.primary,
+        },
+        '100%': {
+            color: '#FF0000',
+        },
+    },
+    iconBlink: {
+        animationName: '$colorBlink',
+        animationDuration: '1.5s',
+        animationIterationCount: 'infinite',
     },
 });
 
@@ -1509,6 +1526,9 @@ class App extends GenericApp {
     }
 
     renderTabs() {
+        const views = Object.keys(this.state.project)
+            .filter(view => !view.startsWith('__') && this.state.openedViews.includes(view));
+
         return <div className={this.props.classes.tabsContainer}>
             {this.state.hidePalette ? <Tooltip title={I18n.t('Show palette')}>
                 <div className={this.props.classes.tabButton}>
@@ -1538,7 +1558,7 @@ class App extends GenericApp {
             <Tooltip title={I18n.t('Show view')}>
                 <div className={this.props.classes.tabButton}>
                     <IconButton onClick={() => this.setViewsManager(true)} size="small" disabled={!!this.state.selectedGroup}>
-                        <AddIcon />
+                        <AddIcon className={views.length ? '' : this.props.classes.iconBlink} />
                     </IconButton>
                 </div>
             </Tooltip>
@@ -1550,43 +1570,40 @@ class App extends GenericApp {
                 scrollButtons="auto"
             >
                 {
-                    Object.keys(this.state.project)
-                        .filter(view => !view.startsWith('__'))
-                        .filter(view => this.state.openedViews.includes(view))
-                        .map(view => {
-                            const isGroupEdited = !!this.state.selectedGroup && view === this.state.selectedView;
+                    views.map(view => {
+                        const isGroupEdited = !!this.state.selectedGroup && view === this.state.selectedView;
 
-                            return <Tab
-                                component="span"
-                                disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
-                                label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
-                                    {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : view}
-                                    <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
-                                        <span>
-                                            <IconButton
-                                                size="small"
-                                                disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
-                                                onClick={e => {
-                                                    e.stopPropagation();
-                                                    if (isGroupEdited) {
-                                                        this.setState({ selectedGroup: null });
-                                                    } else {
-                                                        this.toggleView(view, false);
-                                                    }
-                                                }}
-                                            >
-                                                <CloseIcon fontSize="small" />
-                                            </IconButton>
-                                        </span>
-                                    </Tooltip>
-                                </span>}
-                                className={this.props.classes.viewTab}
-                                value={view}
-                                onClick={() => this.changeView(view)}
-                                key={view}
-                                // wrapped
-                            />;
-                        })
+                        return <Tab
+                            component="span"
+                            disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
+                            label={<span className={Utils.clsx(isGroupEdited && this.props.classes.groupEditTab, this.props.classes.tabsName)}>
+                                {isGroupEdited ? `${I18n.t('Group %s', this.state.selectedGroup)}` : view}
+                                <Tooltip title={isGroupEdited ? I18n.t('Close group editor') : I18n.t('Hide')}>
+                                    <span>
+                                        <IconButton
+                                            size="small"
+                                            disabled={!!this.state.selectedGroup && view !== this.state.selectedView}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                if (isGroupEdited) {
+                                                    this.setState({ selectedGroup: null });
+                                                } else {
+                                                    this.toggleView(view, false);
+                                                }
+                                            }}
+                                        >
+                                            <CloseIcon fontSize="small" />
+                                        </IconButton>
+                                    </span>
+                                </Tooltip>
+                            </span>}
+                            className={this.props.classes.viewTab}
+                            value={view}
+                            onClick={() => this.changeView(view)}
+                            key={view}
+                            // wrapped
+                        />;
+                    })
                 }
             </Tabs>
             <IconButton
@@ -1599,6 +1616,19 @@ class App extends GenericApp {
             >
                 {this.state.showCode ? <CodeOffIcon /> : <CodeIcon />}
             </IconButton>
+            {views.length > 1 ? <Tooltip title={I18n.t('Close all but current view')}>
+                <div className={this.props.classes.tabButton}>
+                    <IconButton
+                        size="small"
+                        onClick={() => {
+                            window.localStorage.setItem('openedViews', JSON.stringify([this.state.selectedView]));
+                            this.setState({ openedViews: [this.state.selectedView] });
+                        }}
+                    >
+                        <ClearAllIcon />
+                    </IconButton>
+                </div>
+            </Tooltip> : null}
             {this.state.hideAttributes ? <Tooltip title={I18n.t('Show palette')}>
                 <div className={this.props.classes.tabButton}>
                     <IconButton

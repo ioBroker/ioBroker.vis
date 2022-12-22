@@ -362,5 +362,7 @@
   "not-specified": "没有定义的",
   "Files": "文件",
   "custom_icons": "特别的",
-  "Current project": "当前的项目"
+  "Current project": "当前的项目",
+  "Close all but current view": "关闭除当前视图之外的所有视图",
+  "One parameter": "一个参数"
 }

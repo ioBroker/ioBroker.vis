@@ -362,5 +362,7 @@
   "not-specified": "niet gedefinieerd",
   "Files": "Bestanden",
   "custom_icons": "Speciaal",
-  "Current project": "Huidige project"
+  "Current project": "Huidige project",
+  "Close all but current view": "Sluit alles behalve de huidige weergave",
+  "One parameter": "Eén parameter"
 }

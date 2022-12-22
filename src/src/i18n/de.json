@@ -362,5 +362,7 @@
   "reload": "neu laden",
   "not-specified": "nicht definiert",
   "Files": "Dateien",
-  "custom_icons": "Special"
+  "custom_icons": "Special",
+  "Close all but current view": "Schließen Sie alle außer der aktuellen Ansicht",
+  "One parameter": "Ein Parameter"
 }
