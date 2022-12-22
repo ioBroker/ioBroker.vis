@@ -145,8 +145,8 @@ const ViewsManager = props => {
         <div className={props.classes.dialog}>
             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                 <DndPreview />
-                <AppBar position="static" className={props.classes.topBar}>
-                    <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode ? <AppBar position="static" className={props.classes.topBar}>
+                    {props.editMode ? <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton
                             size="small"
                             onClick={() => props.showDialog('add', props.name, null, newView => {
@@ -155,13 +155,13 @@ const ViewsManager = props => {
                         >
                             <AddIcon />
                         </IconButton>
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
+                    </Tooltip> : null}
+                    {props.editMode ? <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton onClick={() => setImportDialog('')} size="small">
                             <BiImport />
                         </IconButton>
-                    </Tooltip>
-                    <Tooltip title={I18n.t('Add folder')} classes={{ popper: props.classes.tooltip }}>
+                    </Tooltip> : null}
+                    {props.editMode ? <Tooltip title={I18n.t('Add folder')} classes={{ popper: props.classes.tooltip }}>
                         <IconButton
                             size="small"
                             onClick={() => {
@@ -172,8 +172,8 @@ const ViewsManager = props => {
                         >
                             <CreateNewFolderIcon />
                         </IconButton>
-                    </Tooltip>
-                </AppBar>
+                    </Tooltip> : null}
+                </AppBar> : null}
                 <div style={{
                     width: '100%',
                     borderStyle: 'dashed',
@@ -234,6 +234,7 @@ ViewsManager.propTypes = {
     showDialog: PropTypes.func,
     themeName: PropTypes.string,
     toggleView: PropTypes.func,
+    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(ViewsManager);

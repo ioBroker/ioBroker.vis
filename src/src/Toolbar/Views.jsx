@@ -30,7 +30,7 @@ const styles = () => ({
     },
 });
 
-const View = props => {
+const Views = props => {
     const [dialog, setDialog] = useState(null);
     const [dialogCallback, setDialogCallback] = useState(null);
     const [dialogName, setDialogName] = useState('');
@@ -66,17 +66,17 @@ const View = props => {
         </span>,
         items: [
             {
-                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'), disabled: !!props.selectedGroup,
+                type: 'icon-button', Icon: AddIcon, name: 'Add new view', onClick: () => showDialog('add'), disabled: !!props.selectedGroup || !props.editMode,
             },
             [
                 [
                     {
-                        type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'), disabled: !!props.selectedGroup,
+                        type: 'icon-button', Icon: EditIcon, name: 'Rename view', onClick: () => showDialog('rename'), disabled: !!props.selectedGroup || !props.editMode,
                     },
                 ],
                 [
                     {
-                        type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'), disabled: !!props.selectedGroup,
+                        type: 'icon-button', Icon: DeleteIcon, name: 'Delete actual view', onClick: () => showDialog('delete'), disabled: !!props.selectedGroup || !props.editMode,
                     },
                 ],
             ],
@@ -106,12 +106,13 @@ const View = props => {
     </>;
 };
 
-View.propTypes = {
+Views.propTypes = {
     projectName: PropTypes.string,
     selectedView: PropTypes.string,
     setViewsManager: PropTypes.func,
     viewsManager: PropTypes.bool,
     selectedGroup: PropTypes.string,
+    editMode: PropTypes.bool,
 };
 
-export default withStyles(styles)(View);
+export default withStyles(styles)(Views);

@@ -101,31 +101,31 @@ const View = props => {
             </Tooltip>
             <span onClick={selectView} className={props.classes.name}>{props.name}</span>
             <span className={props.classes.viewManageButtonActions}>
-                <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode ? <Tooltip title={I18n.t('Import')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.setImportDialog(props.name)} size="small">
                         <BiImport />
                     </IconButton>
-                </Tooltip>
+                </Tooltip> : null}
                 <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.setExportDialog(props.name)} size="small">
                         <BiExport />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
+                {props.editMode ? <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('rename', props.name)} size="small">
                         <EditIcon />
                     </IconButton>
-                </Tooltip>
-                <Tooltip title={I18n.t('Copy')} classes={{ popper: props.classes.tooltip }}>
+                </Tooltip> : null}
+                {props.editMode ? <Tooltip title={I18n.t('Copy')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('copy', props.name)} size="small">
                         <FileCopyIcon />
                     </IconButton>
-                </Tooltip>
-                <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
+                </Tooltip> : null}
+                {props.editMode ? <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
                     <IconButton onClick={() => props.showDialog('delete', props.name)} size="small">
                         <DeleteIcon />
                     </IconButton>
-                </Tooltip>
+                </Tooltip> : null}
             </span>
         </div>
     </div>;
@@ -143,6 +143,7 @@ View.propTypes = {
     toggleView: PropTypes.func,
     setIsDragging: PropTypes.func,
     isDragging: PropTypes.string,
+    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(View);

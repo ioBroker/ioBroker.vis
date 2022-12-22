@@ -35,9 +35,7 @@ import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
 import VisEngine from './Vis/visEngine';
 import { registerWidgetsLoadIndicator } from './Vis/visUtils';
-import {
-    DndPreview, isTouchDevice,
-} from './Utils';
+import { DndPreview, isTouchDevice } from './Utils';
 import VisWidgetsCatalog, { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 

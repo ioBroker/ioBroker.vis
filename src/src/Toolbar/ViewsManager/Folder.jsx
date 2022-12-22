@@ -142,7 +142,7 @@ const Folder = props => {
         </div>
         <span className={props.classes.folderName}>{props.folder.name}</span>
         <span className={props.classes.viewManageButtonActions}>
-            <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
+            {props.editMode ? <Tooltip title={I18n.t('Add view')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -151,8 +151,8 @@ const Folder = props => {
                 >
                     <AddIcon />
                 </IconButton>
-            </Tooltip>
-            <Tooltip title={I18n.t('Add sub-folder')} classes={{ popper: props.classes.tooltip }}>
+            </Tooltip> : null}
+            {props.editMode ? <Tooltip title={I18n.t('Add sub-folder')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -163,8 +163,8 @@ const Folder = props => {
                 >
                     <CreateNewFolderClosedIcon />
                 </IconButton>
-            </Tooltip>
-            <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
+            </Tooltip> : null}
+            {props.editMode ? <Tooltip title={I18n.t('Rename')} classes={{ popper: props.classes.tooltip }}>
                 <IconButton
                     size="small"
                     onClick={() => {
@@ -175,8 +175,8 @@ const Folder = props => {
                 >
                     <EditIcon />
                 </IconButton>
-            </Tooltip>
-            <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
+            </Tooltip> : null}
+            {props.editMode ? <Tooltip title={I18n.t('Delete')} classes={{ popper: props.classes.tooltip }}>
                 <span>
                     <IconButton
                         size="small"
@@ -190,7 +190,7 @@ const Folder = props => {
                         <DeleteIcon />
                     </IconButton>
                 </span>
-            </Tooltip>
+            </Tooltip> : null}
         </span>
     </div>;
 };
@@ -206,6 +206,7 @@ Folder.propTypes = {
     setFolderDialogParentId: PropTypes.func,
     setIsDragging: PropTypes.func,
     isDragging: PropTypes.string,
+    editMode: PropTypes.bool,
 };
 
 export default withStyles(styles)(Folder);
