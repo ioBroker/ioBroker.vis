@@ -203,6 +203,10 @@ class App extends GenericApp {
         if (window.location.port === '3000') {
             extendedProps.socket = { port: '8082' };
         }
+        if (window.socketUrl && window.socketUrl.startsWith(':')) {
+            window.socketUrl = `${window.location.protocol}//${window.location.hostname}${window.socketUrl}`;
+        }
+
         super(props, extendedProps);
 
         this.visEngineHandlers = {};
