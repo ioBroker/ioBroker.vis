@@ -604,7 +604,8 @@ class VisView extends React.Component {
         const viewRect = this.refView.current.getBoundingClientRect();
 
         Object.keys(this.widgetsRefs).forEach(wid => {
-            if (!this.props.selectedWidgets.includes(wid) && (!this.props.views[this.props.view].widgets[wid].grouped || this.props.selectedGroup)) {
+            const widgets = this.props.views[this.props.view].widgets;
+            if (!this.props.selectedWidgets.includes(wid) && widgets[wid] && (!widgets[wid].grouped || this.props.selectedGroup)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 horizontals.push(Math.round(boundingRect.top));
                 horizontals.push(Math.round(boundingRect.bottom));
@@ -616,8 +617,9 @@ class VisView extends React.Component {
         const selectedHorizontals = [];
         const selectedVerticals = [];
         this.props.selectedWidgets.forEach(wid => {
+            const widgets = this.props.views[this.props.view].widgets;
             // check if not in group
-            if (!this.props.views[this.props.view].widgets[wid].grouped || this.props.selectedGroup) {
+            if (widgets[wid] && (!widgets[wid].grouped || this.props.selectedGroup)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 selectedHorizontals.push(Math.round(boundingRect.top));
                 selectedHorizontals.push(Math.round(boundingRect.bottom));
