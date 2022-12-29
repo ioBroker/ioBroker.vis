@@ -44,7 +44,7 @@ class VisCanWidget extends VisBaseWidget {
 
         // legacy support
         const widget = this.props.views[this.props.view].widgets[this.props.id];
-        if (widget?.tpl?.includes('materialdesign')) {
+        if (widget?.tpl?.includes('materialdesign') && this.props.buildLegacyStructures) {
             this.props.buildLegacyStructures();
         }
     }
