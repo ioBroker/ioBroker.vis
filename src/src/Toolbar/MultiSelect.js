@@ -129,7 +129,7 @@ class MultiSelect extends Component {
                     <ListItemText
                         classes={{
                             root: props.classes.listItemButton,
-                            primary: isNarrow ? props.classes.primary : undefined,
+                            primary: props.classes.primary,
                             secondary: props.classes.secondary,
                         }}
                         primary={text}
