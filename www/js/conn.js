@@ -200,6 +200,11 @@ var servConn = {
             this._autoSubscribe = autoSubscribe;
         }
 
+        // Correct "port only" url given from web adapter:
+        if (window.socketUrl && window.socketUrl[0] === ':') {
+            window.socketUrl = window.location.protocol + '//' + window.location.hostname + window.socketUrl;
+        }
+
         // To start vis as local use one of:
         // - start vis from directory with name local, e.g. c:/blbla/local/ioBroker.vis/www/index.html
         // - do not create "_socket/info.js" file in "www" directory
