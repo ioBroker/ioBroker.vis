@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "1.4.15",
+        "version": "1.4.16",
         "news": {
+            "1.4.16": {
+                "en": "Corrected connection with \"only port\" URLs",
+                "de": "Korrigierte Verbindung mit \"nur Port\" URLs",
+                "ru": "Исправлена связь с URL-адресами \"только порт\"",
+                "pt": "Conexão correta com URLs \"apenas portas\"",
+                "nl": "Quality over Quantity (QoQ) Releases Vertaling:",
+                "fr": "Connexion corrigée avec des URLs \"uniquement port\"",
+                "it": "Collegamento corretto con URL \"solo porta\"",
+                "es": "Conexión corregida con URLs \"sólo puerto\"",
+                "pl": "Poprawne połączenie z „only port” URL",
+                "uk": "Виправлено підключення з URL-адресами \"тільки порт\"",
+                "zh-cn": "与“港口”URLs联系"
+            },
             "1.4.15": {
                 "en": "Better check of the offline license",
                 "de": "Bessere Überprüfung der Offline-Lizenz",
@@ -74,18 +87,6 @@
                 "es": "Se agregó soporte para js-controller 4.x",
                 "pl": "Dodano wsparcie dla js-controller 4.x",
                 "zh-cn": "添加了对 js-controller 4.x 的支持"
-            },
-            "1.4.7": {
-                "en": "Fixed subscribeOidAtRuntime if called with invalid IDs\nAdded support of license manager",
-                "de": "AbonnierenOidAtRuntime behoben, wenn mit ungültigen IDs aufgerufen\nUnterstützung des Lizenzmanagers hinzugefügt",
-                "ru": "Исправлена ошибка subscribeOidAtRuntime при вызове с недопустимыми идентификаторами\nДобавлена поддержка менеджера лицензий.",
-                "pt": "SubscribeOidAtRuntime corrigido se chamado com IDs inválidos\nAdicionado suporte de gerenciador de licença",
-                "nl": "Vaste subscribeOidAtRuntime indien aangeroepen met ongeldige ID's\nOndersteuning van licentiemanager toegevoegd",
-                "fr": "Abonnement fixeOidAtRuntime si appelé avec des identifiants invalides\nAjout de la prise en charge du gestionnaire de licence",
-                "it": "Risolto il problema con subscribeOidAtRuntime se chiamato con ID non validi\nAggiunto il supporto del gestore delle licenze",
-                "es": "SubscribeOidAtRuntime fijo si se llama con ID no válidos\nSoporte agregado del administrador de licencias",
-                "pl": "Naprawiono subscribeOidAtRuntime w przypadku wywołania z nieprawidłowymi identyfikatorami\nDodano obsługę menedżera licencji",
-                "zh-cn": "如果使用无效 ID 调用，则修复了 subscribeOidAtRuntime\n添加了许可证管理器的支持"
             }
         },
         "title": "Visualisation",

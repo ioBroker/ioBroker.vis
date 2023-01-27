@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.4.16 (2023-01-27)
 * (bluefox) Corrected connection with "only port" URLs
 
 ### 1.4.15 (2022-04-10)
