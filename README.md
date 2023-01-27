@@ -543,7 +543,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2022 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
+ Copyright (c) 2013-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
  
  Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
  
