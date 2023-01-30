@@ -3139,7 +3139,7 @@ var vis = {
                 if (id.indexOf('local_') === 0) {
                     // if it is a local variable, we have to initiate this
                     obj = {
-                        val: this.getUrlParameter(id),              // using url parameter to set initial value of local variable
+                        val: (u = this.getUrlParameter(id)) !== '' ? u : (t = vis.locals && vis.locals[id]) !== undefined ? t : '' , // using url parameter to set initial value of local variable. If not found, using script code for init
                         ts: Date.now(),
                         lc: Date.now(),
                         ack: false,
