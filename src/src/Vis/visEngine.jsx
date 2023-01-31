@@ -202,6 +202,30 @@ class VisEngine extends React.Component {
             .then(() => this.setState({ ready: true }));
     }
 
+    static getCurrentPath() {
+        const path = window.location.hash.replace('#', '').split('/').map(p => decodeURIComponent(p));
+        return {
+            view: path.shift(),
+            path,
+        };
+    }
+
+    static buildPath(view, path) {
+        if (path && typeof path === 'string') {
+            if (path.includes('/')) {
+                path = path.split('/');
+            } else {
+                path = [path];
+            }
+        }
+
+        if (path && path.length) {
+            return `#${encodeURIComponent(view)}/${path.map(p => encodeURIComponent(p)).join('/')}`;
+        }
+
+        return `#${encodeURIComponent(view)}`;
+    }
+
     setTimeInterval = timeInterval => {
         this.setState({ timeInterval });
         window.localStorage.setItem('timeInterval', JSON.stringify(timeInterval));
@@ -383,8 +407,18 @@ class VisEngine extends React.Component {
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
-                window.location.hash = `#${encodeURIComponent(view)}`;
+                window.location.hash = VisEngine.buildPath(view);
                 cb && cb(viewDiv, view);
+            },
+            getCurrentPath() {
+                return VisEngine.getCurrentPath();
+            },
+            navigateInView(path) {
+                const currentPath = VisEngine.getCurrentPath();
+                const newHash = VisEngine.buildPath(currentPath.view, path);
+                if (window.location.hash !== newHash) {
+                    window.location.hash = newHash;
+                }
             },
             onWakeUp: (cb, wid) => {
                 if (!wid) {
@@ -1620,6 +1654,7 @@ ${this.scripts}
                     project={this.props.project}
                     projectName={this.props.projectName}
                     registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
+                    runtime={this.props.runtime}
                     selectedGroup={this.props.selectedGroup}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
                     setSelectedGroup={this.props.setSelectedGroup}

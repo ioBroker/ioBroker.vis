@@ -678,15 +678,34 @@ const WidgetField = props => {
         }
 
         if (field.type === 'widget') {
-            options = Object.keys(props.project[props.selectedView].widgets);
-            if (field.tpl) {
-                options = options.filter(id => props.project[props.selectedView].widgets[id].tpl === field.tpl);
+            // take widgets from all views
+            if (field.all) {
+                options = [];
+                Object.keys(props.project).forEach(view =>
+                    props.project[view].widgets && Object.keys(props.project[view].widgets)
+                        .forEach(wid => options.push({
+                            wid,
+                            view,
+                            tpl: props.project[view].widgets[wid].tpl,
+                            name: props.project[view].widgets[wid].name,
+                        })));
+            } else {
+                options = Object.keys(props.project[props.selectedView].widgets)
+                    .map(wid => ({
+                        wid,
+                        view: props.selectedView,
+                        tpl: props.project[props.selectedView].widgets[wid].tpl,
+                        name: props.project[props.selectedView].widgets[wid].name,
+                    }));
             }
-            options.unshift('');
-            options = options.map(id => ({
-                value: id,
-                label: `${id || t('attr_none')}${id ? ` (${props.project[props.selectedView].widgets[id].name || props.project[props.selectedView].widgets[id].tpl})` : ''}`,
+            if (field.tpl) {
+                options = options.filter(item => item.tpl === field.tpl);
+            }
+            options = options.map(item => ({
+                value: item.wid,
+                label: `${field.all ? `${item.view} / ` : ''}${item.wid} (${item.name || item.tpl})`,
             }));
+            options.unshift({ id: '', label: t('attr_none') });
         }
 
         const withIcons = !!options.find(item => item && item.icon);

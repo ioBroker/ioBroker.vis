@@ -722,7 +722,7 @@ async function checkL(license, useLicenseManager, name) {
 async function main() {
     const visObj = await adapter.getForeignObjectAsync(adapterName);
 
-    // create vis meta object if not exists
+    // create vis "meta" object if not exists
     if (!visObj || visObj.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapterName, {
             type: 'meta',
@@ -734,7 +734,7 @@ async function main() {
         });
     }
 
-    // create vis.0 meta object if not exists
+    // create vis.0 "meta" object if not exists
     const visObjNS = await adapter.getForeignObjectAsync(adapter.namespace);
     if (!visObjNS || visObjNS.type !== 'meta') {
         await adapter.setForeignObjectAsync(adapter.namespace, {
@@ -758,8 +758,9 @@ async function main() {
 
     // Change running mode to daemon
     const instanceObj = await adapter.getForeignObjectAsync(`system.adapter.${adapter.namespace}`);
-    if (instanceObj && instanceObj.common && instanceObj.common.mode !== 'daemon') {
+    if (instanceObj && instanceObj.common && (instanceObj.common.mode !== 'daemon' || !instanceObj.common.messagebox)) {
         instanceObj.common.mode = 'daemon';
+        instanceObj.common.messagebox = true;
 
         await adapter.setForeignObjectAsync(instanceObj._id, instanceObj);
         // restart will be done by controller

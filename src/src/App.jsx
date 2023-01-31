@@ -372,7 +372,8 @@ class App extends GenericApp {
     };
 
     onHashChange = () => {
-        this.changeView(decodeURIComponent(window.location.hash.slice(1)))
+        const currentPath = VisEngine.getCurrentPath();
+        this.changeView(currentPath.view)
             .then(() => {});
     };
 
@@ -615,10 +616,18 @@ class App extends GenericApp {
             }
         }
 
-        if (window.localStorage.getItem('projectName')) {
-            await this.loadProject(window.localStorage.getItem('projectName'));
-        } else if (this.state.projects.includes('main')) {
-            await this.loadProject('main');
+        // read project name from URL
+        let projectName = window.location.search.replace('?', '');
+        if (projectName) {
+            projectName = decodeURIComponent(projectName.split('&')[0]).split('/')[0];
+            if (projectName.includes('=')) {
+                projectName = '';
+            }
+        }
+        projectName = projectName || window.localStorage.getItem('projectName') || 'main';
+
+        if (projectName && this.state.projects.includes(projectName)) {
+            await this.loadProject(projectName);
         } else {
             // take first project
             await this.loadProject(this.state.projects[0]);
@@ -664,6 +673,10 @@ class App extends GenericApp {
     }
 
     changeView = async selectedView => {
+        if (selectedView === this.state.selectedView) {
+            return;
+        }
+
         let selectedWidgets = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
         ) || '[]') || [];
@@ -688,8 +701,11 @@ class App extends GenericApp {
 
         window.localStorage.setItem('selectedView', selectedView);
 
-        if (window.location.hash !== `#${selectedView}`) {
-            window.location.hash = selectedView;
+        const currentPath = VisEngine.getCurrentPath();
+        const newPath = VisEngine.buildPath(selectedView, currentPath.path);
+
+        if (window.location.hash !== newPath) {
+            window.location.hash = newPath;
         }
 
         await this.setStateAsync(newState);

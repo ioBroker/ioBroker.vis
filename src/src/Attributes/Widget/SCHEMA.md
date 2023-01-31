@@ -177,6 +177,7 @@ onChange: async (field, data, changeData, socket) => {
   - `effect` - Effect selector. One of `['','show','blind', 'bounce', 'clip', 'drop', 'explode', 'fade', 'fold', 'highlight', 'puff', 'pulsate', 'scale', 'shake', 'size', 'slide']`. It used for old jQuery widgets.
   - `widget` - Widget ID selector. It could have additional settings:
     - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`
+    - `all` - [optional] if true, all widgets of all views will be shown, not only from the current view. Default is false.
   - `select-views` - Select view via drop-down menu with folders.
     - `multiple` - [optional] if false, only one view can be selected. Default is true. 
   - `groups` - Select user group
