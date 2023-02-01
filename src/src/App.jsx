@@ -426,13 +426,19 @@ class App extends GenericApp {
 
         project.___settings = project.___settings || {};
         project.___settings.folders = project.___settings.folders || [];
-        let selectedView;
-        if (decodeURIComponent(window.location.hash.slice(1)).length) {
-            selectedView = decodeURIComponent(window.location.hash.slice(1));
-        } else if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-            selectedView = window.localStorage.getItem('selectedView');
-        } else {
-            selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+
+        // take selected view from hash
+        const currentPath = VisEngine.getCurrentPath();
+        let selectedView = currentPath.view;
+        if (!selectedView || !project[selectedView]) {
+            // take from local storage
+            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
+                selectedView = window.localStorage.getItem('selectedView');
+            }
+            // take first view
+            if (!selectedView || !project[selectedView]) {
+                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
+            }
         }
         let openedViews;
         if (window.localStorage.getItem('openedViews')) {
