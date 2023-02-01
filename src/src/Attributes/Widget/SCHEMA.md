@@ -213,7 +213,7 @@ Example of custom field
         value={data[field.name]}
         onChange={e => {
             onDataChange({ [field.name]: e.target.value }); // returns all changed field as object.
-            // If some propertiy is null, so it will be deleted from data
+            // If some property is null, so it will be deleted from data
         }}
     />,
 }
