@@ -13,7 +13,7 @@
         "@mui/styles": "^5.11.2",
         "@sentry/browser": "^7.28.1",
         "@sentry/integrations": "^7.28.1",
-        "ace-builds": "^1.14.0",
+        "ace-builds": "^1.15.0",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.1.0",
         "iobroker.type-detector": "^1.1.1",
