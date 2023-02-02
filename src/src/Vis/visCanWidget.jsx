@@ -1126,12 +1126,25 @@ class VisCanWidget extends VisBaseWidget {
                 console.log('Div not jet rendered');
             }
 
-            this.props.registerRef(wid, this.widDiv || null, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
+            // called only in edit mode
+            this.props.registerRef && this.props.registerRef(
+                wid,
+                this.widDiv || null,
+                this.refService,
+                this.onMove,
+                this.onResize,
+                this.onTempSelect,
+                this.onCommandBound,
+            );
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
-            this.props.socket.log(`can't render ${widget.tpl} ${wid} on "${this.props.view}": `, 'error');
+            const error = `can't render ${widget.tpl} ${wid} on "${this.props.view}": `;
+            this.props.socket.log(error, 'error');
+            console.error(error);
             for (let l = 0; l < lines.length; l++) {
-                this.props.socket.log(`${l} - ${lines[l]}`, 'error');
+                const line = `${l} - ${lines[l]}`;
+                this.props.socket.log(line, 'error');
+                console.error(line);
             }
         }
         cb && cb();

@@ -391,8 +391,8 @@
                         var $this = this;
                         vis.renderView(cview, cview, false, function (_view) {
                             $('#visview_' + _view)
-                                    .appendTo($this)
-                                    .show();
+                                .appendTo($this)
+                                .show();
                         });
                     });
 
@@ -586,14 +586,14 @@
             }, options);
 
             $this.addClass('ui-widget ui-button ui-corner-all ui-state-default')
-                    .css({
-                        font:       'inherit',
-                        //'color' :   'inherit',
-                        'text-align': 'left',
-                        outline:    'none',
-                        cursor:     'text',
-                        height:     '95%'
-                    });
+                .css({
+                    font:       'inherit',
+                    //'color' :   'inherit',
+                    'text-align': 'left',
+                    outline:    'none',
+                    cursor:     'text',
+                    height:     '95%'
+                });
 
             if (!vis.editMode) $this.datepicker(datepickerOptions);
 
@@ -648,14 +648,14 @@
                 pickerTimeFormat: timeFormat
             }, options);
             $this.addClass('ui-state-default')
-                    .css({
-                        font:       'inherit',
-                        //color:    'inherit',
-                        'text-align': 'left',
-                        outline:    'none',
-                        cursor:     'text',
-                        height:     '95%'
-                    });
+                .css({
+                    font:       'inherit',
+                    //color:    'inherit',
+                    'text-align': 'left',
+                    outline:    'none',
+                    cursor:     'text',
+                    height:     '95%'
+                });
             // Store options
             $this[0].__options = options;
 
@@ -722,16 +722,16 @@
             if (!noJsStyle) $this.prev().button();
 
             $this.prev().addClass('ui-state-default')
-                    .css({
-                        font:            'inherit',
-                        'padding-left':  5,
-                        'padding-right': 5,
-                        //'color' :   'inherit',
-                        'text-align':   'left',
-                        outline:        'none',
-                        cursor:         'text',
-                        height:         '95%'
-                    });
+                .css({
+                    font:            'inherit',
+                    'padding-left':  5,
+                    'padding-right': 5,
+                    //'color' :   'inherit',
+                    'text-align':   'left',
+                    outline:        'none',
+                    cursor:         'text',
+                    height:         '95%'
+                });
 
             function onChange(e, newVal) {
                 if (!asString && digits && digits !== '') {
@@ -765,14 +765,36 @@
                     multiple:         false,
                     header:           false,
                     noneSelectedText: false,
-                    selectedList:     1
-                }, options)).change(function () {
-                    var val = $this.val();
-                    if (parseFloat(val).toString() == val) val = parseFloat(val);
-                    if (val === 'true')  val = true;
-                    if (val === 'false') val = false;
-                    if (!vis.editMode) vis.setValue(oid, val);
-                });
+                    selectedList:     1,
+                    appendTo:         window.document.getElementById('visview_' + options.view),
+                    open: function() {
+                        // changes for vis.2
+                        // find opened menu
+                        var menus = window.document.getElementsByClassName('ui-multiselect-menu');
+                        for (let i = 0; i < menus.length; i++) {
+                            if (menus[i].style.display !== 'none') {
+                                var wid = window.document.getElementById(options.wid);
+                                menus[i].style.top = (wid.offsetTop + wid.offsetHeight) + 'px';
+                                menus[i].style.left = wid.offsetLeft + 'px';
+                                break;
+                            }
+                        }
+                    },
+                }, options))
+                    .on('change', function () {
+                        var val = $this.val();
+                        if (parseFloat(val).toString() == val) val = parseFloat(val);
+                        if (val === 'true')  val = true;
+                        if (val === 'false') val = false;
+                        !vis.editMode && vis.setValue(oid, val);
+                    });
+                // changes for vis.2
+                // move it to vis-container as it has the right style for that
+                var nodes = window.document.querySelectorAll('body > .ui-multiselect-menu');
+                for (var i = 0; i < nodes.length; i++) {
+                    var view = window.document.getElementById('visview_' + options.view);
+                    view && view.appendChild(nodes[i]);
+                }
             } else {
                 $this.change(function () {
                     var val = $this.val();
@@ -839,41 +861,41 @@
                 value:  parseFloat(vis.states.attr(oid + '.val')),
                 slide:  function (e, ui) {
                     if (options.submitmethod !== 'stop') {
-                      // Slider -> Observable
-                      if (oid2) {
-                        if (options.inverted) {
-                          ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-                          ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-                        }
+                        // Slider -> Observable
+                        if (oid2) {
+                            if (options.inverted) {
+                                ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                                ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                            }
 
-                        oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
-                        vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                      } else if (oid) {
-                        if (options.inverted) {
-                            ui.value = (settings.max - ui.value) + settings.min;
+                            oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                            vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                        } else if (oid) {
+                            if (options.inverted) {
+                                ui.value = (settings.max - ui.value) + settings.min;
+                            }
+                            vis.setValue(oid, ui.value); //.toFixed(6));
                         }
-                        vis.setValue(oid, ui.value); //.toFixed(6));
-                      }
                     }
 
                 },
                 stop: function (e, ui) {
-                  if (options.submitmethod === 'stop') {
-                    if (oid2) {
-                      if (options.inverted) {
-                        ui.values[0] = (settings.max - ui.values[0]) + settings.min;
-                        ui.values[1] = (settings.max - ui.values[1]) + settings.min;
-                      }
+                    if (options.submitmethod === 'stop') {
+                        if (oid2) {
+                            if (options.inverted) {
+                                ui.values[0] = (settings.max - ui.values[0]) + settings.min;
+                                ui.values[1] = (settings.max - ui.values[1]) + settings.min;
+                            }
 
-                      oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
-                      vis.setValue(oid2, ui.values[1]); //.toFixed(6));
-                    } else if (oid) {
-                      if (options.inverted) {
-                          ui.value = (settings.max - ui.value) + settings.min;
-                      }
-                      vis.setValue(oid, ui.value); //.toFixed(6));
+                            oid && vis.setValue(oid, ui.values[0]); //.toFixed(6));
+                            vis.setValue(oid2, ui.values[1]); //.toFixed(6));
+                        } else if (oid) {
+                            if (options.inverted) {
+                                ui.value = (settings.max - ui.value) + settings.min;
+                            }
+                            vis.setValue(oid, ui.value); //.toFixed(6));
+                        }
                     }
-                  }
                 }
             }, options);
 
@@ -1192,7 +1214,7 @@
             }
             if (oid) {
                 vis.states.bind(oid, onChange);
-                    // remember all ids, that bound
+                // remember all ids, that bound
                 $this.parent()
                     .data('bound', [oid])
                     // remember bind handler
@@ -1288,15 +1310,15 @@
                     if (data._data.Password === $inputPass.val()) {
                         $('#NavPwDialog').remove();
                         vis.changeView(data.attr('nav_view'), data.attr('nav_view'), {
-                                    effect: data.attr('hide_effect'),
-                                    options: {},
-                                    duration: data.attr('hide_duration')
-                                }, {
-                                    effect: data.attr('show_effect'),
-                                    options: {},
-                                    duration: data.attr('show_duration')
-                                },
-                                data.attr('sync'));
+                                effect: data.attr('hide_effect'),
+                                options: {},
+                                duration: data.attr('hide_duration')
+                            }, {
+                                effect: data.attr('show_effect'),
+                                options: {},
+                                duration: data.attr('show_duration')
+                            },
+                            data.attr('sync'));
                     } else {
                         $inputPass.val('');
                         var bg = $inputPass.data('bg');
@@ -1840,7 +1862,7 @@
         data-vis-attrs="oid;values[0§1§2]/text;texts[OFF§ON§AUTO]/text;height[100]/slider,15,500,1;open/checkbox;no_style/checkbox">
     <div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" >
         <div class="vis-widget-body" >
-            <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-view="<%= this.view %>" <%= (el) -> setTimeout(function (el_) { vis.binds.jqueryui.multiselect(el_, {height: (data.height || 220)}, data.open)}, 250, el); %> >
+            <select id="<%= this.data.attr('wid') %>_multiselect" data-no-style="<%= this.data.attr('no_style') %>" data-oid="<%= this.data.attr('oid') %>" data-view="<%= this.view %>" <%= (el) -> setTimeout(function (el_, view, wid) { vis.binds.jqueryui.multiselect(el_, {height: data.height || 220, view: view, wid: wid}, data.open)}, 250, el, this.view, this.data.attr('wid')); %> >
             <%
 				var values = (data.attr('values') ? data.attr('values').split(';') : []);
 				var texts  = (data.attr('texts')  ? data.attr('texts').split(';')  : []);

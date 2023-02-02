@@ -248,7 +248,9 @@ class VisView extends React.Component {
     };
 
     onViewDoubleClick = () => {
-        if (this.props.selectedWidgets.length === 1 &&
+        if (this.props.editMode &&
+            this.props.selectedWidgets &&
+            this.props.selectedWidgets.length === 1 &&
             this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
             this.props.setSelectedGroup(this.props.selectedWidgets[0]);
         }
@@ -1527,7 +1529,7 @@ class VisView extends React.Component {
         }
 
         let gridDiv = null;
-        if (this.props.views[this.props.view].settings.snapType === 2) {
+        if (this.props.views[this.props.view].settings.snapType === 2 && this.props.editMode) {
             gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
         }
 
@@ -1572,7 +1574,7 @@ class VisView extends React.Component {
             ref={this.refView}
             id={`visview_${this.props.view.replace(/\s/g, '_')}`}
             onMouseDown={!this.props.runtime ? e => this.props.editMode && this.onMouseViewDown(e) : undefined}
-            onDoubleClick={e => this.onViewDoubleClick(e)}
+            onDoubleClick={this.props.runtime ? e => this.props.editMode && this.onViewDoubleClick(e) : undefined}
             style={style}
         >
             <style>{this.state.themeCode}</style>

@@ -92,7 +92,7 @@ class VisBaseWidget extends React.Component {
     }
 
     componentDidMount() {
-        // register service ref by view for resize and move
+        // register service ref by view for resize and move only in edit mode
         this.props.registerRef && this.props.registerRef(this.props.id, this.uuid, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
     }
 
@@ -100,7 +100,7 @@ class VisBaseWidget extends React.Component {
         this.updateInterval && clearInterval(this.updateInterval);
         this.updateInterval = null;
 
-        // delete service ref from view
+        // delete service ref from view only in edit mode
         this.props.registerRef && this.props.registerRef(this.props.id, this.uuid);
         if (this.shadowDiv) {
             this.shadowDiv.remove();

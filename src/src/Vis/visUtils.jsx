@@ -31,21 +31,11 @@ function replaceGroupAttr(inputStr, groupAttrList) {
 
 function getWidgetGroup(views, view, widget) {
     const widgets = views[view].widgets;
-    if (widgets[widget]?.groupid) {
+    if (widgets[widget]?.groupid && widgets[widgets[widget].groupid]) {
         return views[view].widgets[widget].groupid;
     }
 
-    for (const w in widgets) {
-        if (!Object.prototype.hasOwnProperty.call(widgets, w)) {
-            continue;
-        }
-        const members = widgets[w].data?.members;
-        if (members?.includes(widget)) {
-            return w;
-        }
-    }
-
-    return null;
+    return Object.keys(widgets).find(w => widgets[w].data?.members?.includes(widget));
 }
 
 function extractBinding(format) {
@@ -344,6 +334,32 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
     if (widget.grouped) {
         widget.groupid = widget.groupid || getWidgetGroup(views, view, wid);
 
+        if (!views[view].widgets[widget.groupid]) {
+            widget.groupid = getWidgetGroup(views, view, wid);
+            if (!widget.groupid) {
+                // create fictive group
+                let groupNum = 1;
+                let gId = `g${groupNum.toString().padStart(5, '0')}`;
+                while (views[view].widgets[gId]) {
+                    groupNum++;
+                    gId = `g${groupNum.toString().padStart(5, '0')}`;
+                }
+                views[view].widgets[gId] = {
+                    tpl: '_tplGroup',
+                    data: {
+                        members: [wid],
+                    },
+                    style: {
+                        top: '100px',
+                        left: '100px',
+                        width: '200px',
+                        height: '200px',
+                    },
+                    widgetSet: null,
+                };
+            }
+        }
+
         const parentWidgetData = views[view].widgets[widget.groupid]?.data;
         if (parentWidgetData) {
             const aCount = parseInt(parentWidgetData.attrCount, 10);
@@ -500,9 +516,13 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
                     if (widget.grouped) {
                         const vGroup = getWidgetGroup(views, view, wid);
                         if (vGroup) {
-                            const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
-                            if (result1.doesMatch) {
-                                vid = result1.newString;
+                            if (views[view].widgets[vGroup]) {
+                                const result1 = replaceGroupAttr(vid, views[view].widgets[vGroup].data);
+                                if (result1.doesMatch) {
+                                    vid = result1.newString;
+                                }
+                            } else {
+                                console.warn(`Invalid group: ${vGroup} in ${view} / ${wid}`);
                             }
                         }
                     }

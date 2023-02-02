@@ -603,6 +603,10 @@ class VisEngine extends React.Component {
             findCommonAttributes: (/* view, widgets */) => {
 
             },
+            bindWidgetClick: () => {
+                // used in vis.1
+                // do nothing, as it is not required in react
+            },
         };
     }
 
