@@ -728,10 +728,14 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
                 if (typeof __webpack_share_scopes__ === 'undefined') {
                     // use default share scope object passed in manually
                     await window[remote].init(shareScope.default);
-                } else {
-                    // otherwise, init share scope as usual
+                } else
+                // otherwise, init share scope as usual
+                if (window[remote].init) {
                     // eslint-disable-next-line camelcase,no-undef
                     await window[remote].init(__webpack_share_scopes__[shareScope]);
+                } else {
+                    reject(new Error(`Remote init function not found for ${remote} from ${remoteFallbackUrl}`));
+                    return;
                 }
                 // mark remote as initialized
                 window[remote].__initialized = true;

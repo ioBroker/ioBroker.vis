@@ -343,7 +343,12 @@ const WidgetField = props => {
             } else {
                 props.socket.getAdapterInstances(field.adapter || '')
                     .then(_instances => {
-                        const inst = _instances.map(obj => obj._id.replace('system.adapter.', ''));
+                        const inst = _instances.map(obj => ({
+                            id: obj._id.replace('system.adapter.', ''),
+                            idShort: obj._id.split('.').pop(),
+                            name: obj.common.name,
+                            icon: obj.common.icon,
+                        }));
                         setInstances(inst);
                     });
             }
@@ -1048,7 +1053,7 @@ const WidgetField = props => {
                 key={_instance.id}
             >
                 <ListItemIcon>
-                    <img src={`./${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
+                    <img src={`../${_instance.name}.admin/${_instance.icon}`} width="24" height="24" alt={_instance.name} />
                 </ListItemIcon>
                 <ListItemText>{field.isShort ? _instance.idShort : _instance.id}</ListItemText>
             </MenuItem>)}
