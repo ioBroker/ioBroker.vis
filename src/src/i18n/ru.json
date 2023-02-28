@@ -364,5 +364,6 @@
   "Files": "Файлы",
   "custom_icons": "Спец.",
   "Close all but current view": "Закрыть все, кроме текущего вида",
-  "One parameter": "Один параметр"
+  "One parameter": "Один параметр",
+  "Width x height (px)": "Ширина х высота (px)"
 }

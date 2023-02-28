@@ -207,8 +207,8 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.17 (2022-12-19)
-* (bluefox) Corrected error with connection
+### 2.0.18 (2023-02-28)
+* (bluefox) Corrected errors
 
 ### 2.0.10 (2022-12-01)
 * (bluefox) Added the file browser

@@ -364,5 +364,6 @@
   "custom_icons": "Specjalny",
   "Current project": "Bieżący projekt",
   "Close all but current view": "Zamknij wszystkie oprócz bieżącego widoku",
-  "One parameter": "Jeden parametr"
+  "One parameter": "Jeden parametr",
+  "Width x height (px)": "Szerokość x wysokość (px)"
 }

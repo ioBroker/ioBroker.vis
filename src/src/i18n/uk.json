@@ -364,5 +364,6 @@
   "custom_icons": "Спеціальні",
   "Current project": "Поточний проект",
   "Close all but current view": "Закрити всі, крім поточного перегляду",
-  "One parameter": "Один параметр"
+  "One parameter": "Один параметр",
+  "Width x height (px)": "Ширина х висота (px)"
 }

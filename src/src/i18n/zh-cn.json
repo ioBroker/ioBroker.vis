@@ -364,5 +364,6 @@
   "custom_icons": "特别的",
   "Current project": "当前的项目",
   "Close all but current view": "关闭除当前视图之外的所有视图",
-  "One parameter": "一个参数"
+  "One parameter": "一个参数",
+  "Width x height (px)": "宽度 x 高度（像素）"
 }

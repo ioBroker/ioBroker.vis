@@ -1183,7 +1183,7 @@ class VisCanWidget extends VisBaseWidget {
             } else {
                 this.widDiv.style.zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10).toString();
             }
-            props.style.zIndex = 800 + zIndex;
+            props.style.zIndex = /*800 + */zIndex;
 
             // restore visibility
             if (this.filterDisplay !== undefined) {

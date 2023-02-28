@@ -477,7 +477,7 @@ const View = props => {
                             }}
                             onChange={e => {
                                 const project = JSON.parse(JSON.stringify(props.project));
-                                project[props.selectedView].settings.sizex = parseInt(e.target.value, 10);
+                                project[props.selectedView].settings.sizex = e.target.value;
                                 props.changeProject(project);
                             }}
                         />
@@ -498,7 +498,7 @@ const View = props => {
                             }}
                             onChange={e => {
                                 const project = JSON.parse(JSON.stringify(props.project));
-                                project[props.selectedView].settings.sizey = parseInt(e.target.value, 10);
+                                project[props.selectedView].settings.sizey = e.target.value;
                                 props.changeProject(project);
                             }}
                         />

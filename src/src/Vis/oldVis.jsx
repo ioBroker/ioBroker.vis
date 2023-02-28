@@ -3163,7 +3163,7 @@ class Vis {
         for (let i = 0; i < views.length; i++) {
             if (Math.abs(this.views[views[i]].settings.sizey - h) < difference) {
                 result = views[i];
-                difference = Math.abs(this.views[views[i]].settings.sizey - h);
+                difference = Math.abs(parseInt(this.views[views[i]].settings.sizey, 10) - h);
             }
         }
 
@@ -3178,10 +3178,10 @@ class Vis {
                 }
                 if (this.views[view_].settings && this.views[view_].settings.useAsDefault
                     // If difference less than 20%
-                    && this.views[view_].settings.sizey && Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey)) < difference
+                    && parseInt(this.views[view_].settings.sizey, 10) && Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10)) < difference
                 ) {
                     result = view_;
-                    difference = Math.abs(ratio - (this.views[view_].settings.sizex / this.views[view_].settings.sizey));
+                    difference = Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10));
                 }
             }
         }

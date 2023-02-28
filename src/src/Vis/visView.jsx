@@ -1106,11 +1106,10 @@ class VisView extends React.Component {
     };
 
     renderScreenSize() {
-        if (!this.props.editMode ||
-            !this.props.view ||
-            !this.props.views[this.props.view].settings.sizex ||
-            !this.props.views[this.props.view].settings.sizey
-        ) {
+        const ww = parseInt(this.props.views[this.props.view].settings.sizex, 10);
+        const hh = parseInt(this.props.views[this.props.view].settings.sizey, 10);
+
+        if (!this.props.editMode || !this.props.view || !ww || !hh) {
             return null;
         }
         return [
@@ -1119,8 +1118,8 @@ class VisView extends React.Component {
                 style={{
                     top: 0,
                     left: 0,
-                    width: `${this.props.views[this.props.view].settings.sizex}px`,
-                    height: `${this.props.views[this.props.view].settings.sizey}px`,
+                    width: `${ww}px`,
+                    height: `${hh}px`,
                     position: 'absolute',
                     borderTopWidth: 0,
                     borderLeftWidth: 0,
@@ -1139,8 +1138,8 @@ class VisView extends React.Component {
                 style={{
                     top: 0,
                     left: 0,
-                    width: `${parseInt(this.props.views[this.props.view].settings.sizex) + 1}px`,
-                    height: `${parseInt(this.props.views[this.props.view].settings.sizey, 10) + 1}px`,
+                    width: `${ww + 1}px`,
+                    height: `${hh + 1}px`,
                     position: 'absolute',
                     borderTopWidth: 0,
                     borderLeftWidth: 0,

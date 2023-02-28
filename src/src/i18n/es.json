@@ -364,5 +364,6 @@
   "custom_icons": "Especial",
   "Current project": "Proyecto actual",
   "Close all but current view": "Cerrar todo menos la vista actual",
-  "One parameter": "Un parámetro"
+  "One parameter": "Un parámetro",
+  "Width x height (px)": "Ancho x alto (px)"
 }

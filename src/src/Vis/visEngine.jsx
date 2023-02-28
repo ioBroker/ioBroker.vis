@@ -952,18 +952,22 @@ class VisEngine extends React.Component {
         Object.keys(this.props.views).forEach(view => {
             if (view !== '___settings' &&
                 this.props.views[view].settings &&
-                this.props.views[view].settings.useAsDefault &&
+                this.props.views[view].settings.useAsDefault) {
+                const ww = parseInt(this.props.views[view].settings.sizex, 10);
                 // If difference less than 20%
-                Math.abs(this.props.views[view].settings.sizex - w) / this.props.views[view].settings.sizex < 0.2
-            ) {
-                views.push(view);
+                if (Math.abs(ww - w) / ww < 0.2) {
+                    views.push(view);
+                }
             }
         });
 
         views.forEach(view => {
-            if (Math.abs(this.props.views[view].settings.sizey - h) < difference) {
-                result = view;
-                difference = Math.abs(this.props.views[view].settings.sizey - h);
+            if (view !== '___settings' && this.props.views[view].settings) {
+                const hh = parseInt(this.props.views[view].settings.sizey, 10);
+                if (Math.abs(hh - h) < difference) {
+                    result = view;
+                    difference = Math.abs(hh - h);
+                }
             }
         });
 
@@ -974,13 +978,15 @@ class VisEngine extends React.Component {
 
             Object.keys(this.props.views).forEach(view => {
                 if (view !== '___settings' &&
-                    this.props.views[view].settings?.useAsDefault &&
+                    this.props.views[view].settings?.useAsDefault) {
+                    const ww = parseInt(this.props.views[view].settings.sizex, 10);
+                    const hh = parseInt(this.props.views[view].settings.sizey, 10);
+
                     // If difference less than 20%
-                    this.props.views[view].settings.sizey &&
-                    Math.abs(ratio - (this.props.views[view].settings.sizex / this.props.views[view].settings.sizey)) < difference
-                ) {
-                    result = view;
-                    difference = Math.abs(ratio - (this.props.views[view].settings.sizex / this.props.views[view].settings.sizey));
+                    if (hh && Math.abs(ratio - (ww / hh)) < difference) {
+                        result = view;
+                        difference = Math.abs(ratio - (ww / hh));
+                    }
                 }
             });
         }

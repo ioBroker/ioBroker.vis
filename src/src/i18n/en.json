@@ -364,5 +364,6 @@
   "Files": "Files",
   "custom_icons": "Special",
   "Close all but current view": "Close all but current view",
-  "One parameter": "One parameter"
+  "One parameter": "One parameter",
+  "Width x height (px)": "Width x height (px)"
 }
