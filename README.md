@@ -27,7 +27,7 @@ Additionally, you need a license to use the adapter. The following license editi
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
 But there is another option how to bind *any* attribute of widget to some ObjectID. 
 
-Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
+Just write into attribute `{object.id}` and it will be bound (not in edit mode) to this object's value. 
 If you use the special format, you can even make some simple operations with it, e.g. multiplying or formatting.
 Patten has the following format:
 
@@ -543,13 +543,13 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) change security settings
 
 ## License
- Copyright (c) 2013-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
- 
- Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
- 
- Creative Common Attribution-NonCommercial (CC BY-NC)
+Copyright (c) 2013-2023 bluefox, https://github.com/GermanBluefox <dogafox@gmail.com>,
 
- http://creativecommons.org/licenses/by-nc/4.0/
+Copyright (c) 2013-2014 hobbyquaker, https://github.com/hobbyquaker <hobbyquaker@gmail.com>,
+
+Creative Common Attribution-NonCommercial (CC BY-NC)
+
+http://creativecommons.org/licenses/by-nc/4.0/
 
 ![CC BY-NC License](https://github.com/GermanBluefox/DashUI/raw/master/images/cc-nc-by.png)
 
