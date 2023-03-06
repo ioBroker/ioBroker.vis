@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.18",
+        "version": "2.0.19",
         "news": {
-            "2.0.18": {
+            "2.0.19": {
                 "en": "Corrected error with connection",
                 "de": "Fehler behoben mit Verbindung",
                 "ru": "Исправлена ошибка с подключением",
@@ -193,7 +193,7 @@
         "tier": 3,
         "noConfig": false,
         "adminUI": {
-            "config": "materialize"
+            "config": "json"
         },
         "compact": true,
         "materialize": true,

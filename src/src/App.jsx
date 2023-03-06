@@ -1,17 +1,15 @@
 import React, { useRef } from 'react';
+import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { withStyles, StylesProvider, createGenerateClassName } from '@mui/styles';
 import { DndProvider, useDrop } from 'react-dnd';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
-import { VisRxWidget } from '@iobroker/vis-2-widgets-react-dev';
 
 import {
-    IconButton, Paper, Popper, Tab, Tabs, Tooltip, Snackbar, LinearProgress,
+    IconButton, Paper, Popper, Tab, Tabs, Tooltip, LinearProgress,
 } from '@mui/material';
-
-// import html2canvas from 'html2canvas';
 
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,9 +21,11 @@ import IconPalette from '@mui/icons-material/Palette';
 import IconAttributes from '@mui/icons-material/ListAlt';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 
-import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
-    i18n as I18n, Utils, Loader, Confirm as ConfirmDialog,
+    i18n as I18n,
+    Utils,
+    Loader,
+    Confirm as ConfirmDialog,
     Message as MessageDialog,
 } from '@iobroker/adapter-react-v5';
 
@@ -34,19 +34,14 @@ import Palette from './Palette';
 import Toolbar from './Toolbar';
 import CodeDialog from './Components/CodeDialog';
 import CreateFirstProjectDialog from './Components/CreateFirstProjectDialog';
-import VisEngine from './Vis/visEngine';
-import { registerWidgetsLoadIndicator } from './Vis/visUtils';
 import { DndPreview, isTouchDevice } from './Utils';
-import VisWidgetsCatalog, { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
+import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
+import Runtime from './Runtime';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
 });
-
-const WIDGETS_LOADING_STEP_NOT_STARTED = 0;
-const WIDGETS_LOADING_STEP_HTML_LOADED = 1;
-const WIDGETS_LOADING_STEP_ALL_LOADED = 2;
 
 const styles = theme => ({
     block: {
@@ -104,15 +99,6 @@ const styles = theme => ({
     viewTab: {
         padding: '6px 12px',
         ...theme.classes.viewTab,
-    },
-    alert_info: {
-
-    },
-    alert_error: {
-        backgroundColor: '#f44336',
-    },
-    alert_success: {
-        backgroundColor: '#4caf50',
     },
     buttonShowAttributes: {
         position: 'absolute',
@@ -181,69 +167,17 @@ const ViewDrop = props => {
     </div>;
 };
 
-class App extends GenericApp {
-    constructor(props) {
-        const extendedProps = { ...props };
-        extendedProps.translations = {
-            en: require('./i18n/en'),
-            de: require('./i18n/de'),
-            ru: require('./i18n/ru'),
-            pt: require('./i18n/pt'),
-            nl: require('./i18n/nl'),
-            fr: require('./i18n/fr'),
-            it: require('./i18n/it'),
-            es: require('./i18n/es'),
-            pl: require('./i18n/pl'),
-            uk: require('./i18n/uk'),
-            'zh-cn': require('./i18n/zh-cn'),
-        };
-
-        extendedProps.sentryDSN = window.sentryDSN;
-
-        if (window.location.port === '3000') {
-            extendedProps.socket = { port: '8082' };
-        }
-        if (window.socketUrl && window.socketUrl.startsWith(':')) {
-            window.socketUrl = `${window.location.protocol}//${window.location.hostname}${window.socketUrl}`;
-        }
-
-        super(props, extendedProps);
-
-        this.visEngineHandlers = {};
-
-        this.alert = window.alert;
-        window.alert = message => {
-            if (message && message.toString().toLowerCase().includes('error')) {
-                console.error(message);
-                this.showAlert(message.toString(), 'error');
-            } else {
-                console.log(message);
-                this.showAlert(message.toString(), 'info');
-            }
-        };
-
-        this.adapterId = `${this.adapterName}.0`;
-
-        // temporary disable translation warnings
-        // I18n.disableWarning(true);
-        registerWidgetsLoadIndicator(this.setWidgetsLoadingProgress);
-    }
-
+class App extends Runtime {
     onIgnoreMouseEvents = ignore => {
         if (this.state.ignoreMouseEvents !== ignore) {
             setTimeout(() => this.setState({ ignoreMouseEvents: ignore }), 100);
         }
     };
 
-    setStateAsync(newState) {
-        return new Promise(resolve => {
-            this.setState(newState, () =>
-                resolve());
-        });
-    }
+    // eslint-disable-next-line class-methods-use-this
+    initState(newState) {
+        // this function will be called from Runtime
 
-    componentDidMount() {
-        super.componentDidMount();
         let runtime = false;
 
         if (window.location.search.includes('runtime') || !window.location.pathname.endsWith('edit.html')) {
@@ -253,16 +187,11 @@ class App extends GenericApp {
             runtime = false;
         }
 
-        this.setState({
-            alert: false,
-            alertType: 'info',
-            alertMessage: '',
+        Object.assign(newState, {
             runtime,
-            projectName: 'main',
             viewsManager: false,
             projectsDialog: false,
             createFirstProjectDialog: false,
-            selectedWidgets: [],
             align: {
                 alignType: null,
                 alignIndex: 0,
@@ -270,22 +199,17 @@ class App extends GenericApp {
             },
             showCode: window.localStorage.getItem('showCode') === 'true',
             editMode: true,
-            widgetsLoaded: WIDGETS_LOADING_STEP_NOT_STARTED,
-            fonts: [],
             history: [],
             historyCursor: 0,
             widgetsClipboard: {
                 type: null,
                 widgets: {},
             },
-            // clipboardImages: [],
             lockDragging: JSON.parse(window.localStorage.getItem('lockDragging')),
             disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
             toolbarHeight: window.localStorage.getItem('Vis.toolbarForm') || 'full',
             deleteWidgetsDialog: false,
             messageDialog: null,
-            visCommonCss: null,
-            visUserCss: null,
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
             hidePalette: window.localStorage.getItem('Vis.hidePalette') === 'true',
             hideAttributes: window.localStorage.getItem('Vis.hideAttributes') === 'true',
@@ -295,21 +219,20 @@ class App extends GenericApp {
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
         });
+    }
 
-        window.addEventListener('hashchange', this.onHashChange, false);
+    componentDidMount() {
+        super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
     }
 
     componentWillUnmount() {
-        // eslint-disable-next-line no-unused-expressions
         this.savingTimer && clearTimeout(this.savingTimer);
         this.savingTimer = null;
         super.componentWillUnmount();
-        window.removeEventListener('hashchange', this.onHashChange, false);
         window.removeEventListener('keydown', this.onKeyDown, false);
         window.removeEventListener('beforeunload', this.onBeforeUnload, false);
-        window.alert = this.alert;
     }
 
     onBeforeUnload = e => {
@@ -371,219 +294,10 @@ class App extends GenericApp {
         }
     };
 
-    onHashChange = () => {
-        const currentPath = VisEngine.getCurrentPath();
-        this.changeView(currentPath.view)
-            .then(() => {});
-    };
-
-    onProjectChange = (id, fileName) => {
-        if (fileName.endsWith('.json')) {
-            // if runtime => just update project
-            if (this.state.runtime) {
-                this.loadProject(this.state.projectName);
-            } else if (fileName.endsWith(`${this.state.projectName}/vis-views.json`)) {
-                // compare last executed file with new one
-                this.socket.readFile(this.adapterId, fileName)
-                    .then(file => {
-                        if (!file || this.lastProjectJSONfile !== file.file) { // adapter-react-v5@4.x delivers file.file
-                            this.setState({ showProjectUpdateDialog: true });
-                        }
-                    });
-            }
-        }
-    };
-
-    loadProject = async (projectName, file) => {
-        if (!file) {
-            try {
-                file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
-                if (typeof file === 'object') {
-                    file = file.file; // adapter-react-v5@4.x delivers file.file
-                }
-            } catch (err) {
-                console.warn(`Cannot read project file vis-views.json: ${err}`);
-                file = '{}';
-            }
-        }
-
-        if (!this.state.runtime) {
-            // remember last loaded project file
-            this.lastProjectJSONfile = file;
-        }
-
-        let project;
-        try {
-            project = JSON.parse(file);
-        } catch (e) {
-            window.alert('Cannot parse project file!');
-            project = {
-                'Cannot parse project file!': {
-                    widgets: {},
-                },
-            };
-        }
-
-        project.___settings = project.___settings || {};
-        project.___settings.folders = project.___settings.folders || [];
-
-        // take selected view from hash
-        const currentPath = VisEngine.getCurrentPath();
-        let selectedView = currentPath.view;
-        if (!selectedView || !project[selectedView]) {
-            // take from local storage
-            if (Object.keys(project).includes(window.localStorage.getItem('selectedView'))) {
-                selectedView = window.localStorage.getItem('selectedView');
-            }
-            // take first view
-            if (!selectedView || !project[selectedView]) {
-                selectedView = Object.keys(project).find(view => !view.startsWith('__')) || '';
-            }
-        }
-        let openedViews;
-        if (window.localStorage.getItem('openedViews')) {
-            openedViews = JSON.parse(window.localStorage.getItem('openedViews'));
-        } else {
-            openedViews = [selectedView];
-        }
-
-        const len = openedViews.length;
-
-        // fix project
-        Object.keys(project).forEach(view => {
-            if (project[view].widgets) {
-                Object.keys(project[view].widgets).forEach(wid => {
-                    if (!project[view].widgets[wid]) {
-                        delete project[view].widgets[wid];
-                        return;
-                    }
-                    if (!project[view].widgets[wid].data) {
-                        project[view].widgets[wid].data = {};
-                    }
-                    if (!project[view].widgets[wid].style) {
-                        project[view].widgets[wid].style = {};
-                    }
-
-                    if (project[view].widgets[wid].data.members && !Array.isArray(project[view].widgets[wid].data.members)) {
-                        project[view].widgets[wid].data.members = [];
-                    }
-
-                    if (project[view].widgets[wid].data.members) {
-                        project[view].widgets[wid].data.members.forEach((_wid, i) =>
-                            project[view].widgets[wid].data.members[i] = _wid.replace(/\s/g, '_'));
-                    }
-
-                    if (wid.includes(' ')) {
-                        const newWid = wid.replace(/\s/g, '_');
-                        const widget = project[view].widgets[wid];
-                        delete project[view].widgets[wid];
-                        project[view].widgets[newWid] = widget;
-                    }
-                    // If widget is not unique, change its name
-                    if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                        const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
-                        console.log(`Rename widget ${wid} to ${_newWid}`);
-                        const widget = project[view].widgets[wid];
-                        delete project[view].widgets[wid];
-                        project[view].widgets[_newWid] = widget;
-                    }
-                });
-            }
-        });
-
-        let changed = false;
-        for (let i = len - 1; i >= 0; i--) {
-            if (!project[openedViews[i]]) {
-                openedViews.splice(i, 1);
-                changed = true;
-            }
-        }
-
-        if (!openedViews.length) {
-            const view = Object.keys(project).find(_view => _view !== '___settings');
-            if (view) {
-                openedViews[0] = view;
-                changed = true;
-            }
-        }
-        if (changed) {
-            window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
-        }
-
-        // check that selectedView and openedViews exist
-        if (!project[selectedView]) {
-            selectedView = openedViews[0] || '';
-            window.localStorage.setItem('selectedView', selectedView);
-        } else
-        if (openedViews && !openedViews.includes(selectedView)) {
-            selectedView = openedViews[0];
-            window.localStorage.setItem('selectedView', selectedView);
-        }
-
-        const groups = await this.socket.getGroups();
-
-        window.localStorage.setItem('projectName', projectName);
-
-        if (this.subscribedProject && (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)) {
-            this.subscribedProject = null;
-            this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
-        }
-
-        if (this.state.runtime) {
-            if (project.___settings.reloadOnEdit !== false) {
-                this.subscribedProject = projectName;
-                // subscribe on changes
-                this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
-            }
-        } else {
-            this.subscribedProject = projectName;
-            // subscribe on changes
-            this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
-        }
-
-        await this.setStateAsync({
-            visCommonCss: null,
-            visUserCss: null,
-            project,
-            history: [project],
-            historyCursor: 0,
-            visProject: project,
-            openedViews,
-            projectName,
-            groups,
-        });
-
-        await this.changeView(selectedView);
-    };
-
     setWidgetsLoadingProgress = (step, total) => {
         // console.log('setWidgetsLoadingProgress', step, total);
         this.setState({ loadingProgress: { step, total } });
     };
-
-    onVisChanged() {
-        this.setState({
-            messageDialog: {
-                text: I18n.t('Detected new version of vis files. Reloading in 2 seconds...'),
-                title: I18n.t('Reloading'),
-                ok: I18n.t('Reload now'),
-                callback: () => {
-                    if (!this.state.runtime && this.changeTimer) {
-                        this.needRestart = true;
-                    } else {
-                        setTimeout(() =>
-                            window.location.reload(), 2000);
-                    }
-                },
-            },
-        });
-        if (!this.state.runtime && this.changeTimer) {
-            this.needRestart = true;
-        } else {
-            setTimeout(() =>
-                window.location.reload(), 2000);
-        }
-    }
 
     onWidgetSetsChanged = (id, state) => {
         if (state && this.lastUploadedState && state.val !== this.lastUploadedState) {
@@ -591,54 +305,6 @@ class App extends GenericApp {
             this.onVisChanged();
         }
     };
-
-    async onConnectionReady() {
-        // preload all widgets first
-        if (this.state.widgetsLoaded === WIDGETS_LOADING_STEP_HTML_LOADED) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket);
-            await this.setStateAsync({ widgetsLoaded: WIDGETS_LOADING_STEP_ALL_LOADED });
-        }
-
-        await this.refreshProjects();
-
-        const user = await this.socket.getCurrentUser();
-        const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
-        await this.setStateAsync({
-            currentUser,
-            selectedView: '',
-            splitSizes: window.localStorage.getItem('Vis.splitSizes')
-                ? JSON.parse(window.localStorage.getItem('Vis.splitSizes'))
-                : [20, 60, 20],
-        });
-
-        // subscribe on info.uploaded
-        this.socket.subscribeState(`${this.adapterName}.${this.instance}.info.uploaded`, this.onWidgetSetsChanged);
-        const uploadedState = await this.socket.getState(`${this.adapterName}.${this.instance}.info.uploaded`);
-        if (uploadedState && uploadedState.val !== this.lastUploadedState) {
-            if (this.lastUploadedState) {
-                this.onVisChanged();
-            } else {
-                this.lastUploadedState = uploadedState.val;
-            }
-        }
-
-        // read project name from URL
-        let projectName = window.location.search.replace('?', '');
-        if (projectName) {
-            projectName = decodeURIComponent(projectName.split('&')[0]).split('/')[0];
-            if (projectName.includes('=')) {
-                projectName = '';
-            }
-        }
-        projectName = projectName || window.localStorage.getItem('projectName') || 'main';
-
-        if (projectName && this.state.projects.includes(projectName)) {
-            await this.loadProject(projectName);
-        } else {
-            // take first project
-            await this.loadProject(this.state.projects[0]);
-        }
-    }
 
     refreshProjects = async reloadCurrentProject => {
         let projects;
@@ -677,45 +343,6 @@ class App extends GenericApp {
 
         return selectedWidgets;
     }
-
-    changeView = async selectedView => {
-        if (selectedView === this.state.selectedView) {
-            return;
-        }
-
-        let selectedWidgets = JSON.parse(window.localStorage.getItem(
-            `${this.state.projectName}.${selectedView}.widgets`,
-        ) || '[]') || [];
-
-        // Check that all selectedWidgets exist
-        for (let i = selectedWidgets.length - 1; i >= 0; i--) {
-            if (!this.state.project[selectedView] || !this.state.project[selectedView].widgets || !this.state.project[selectedView].widgets[selectedWidgets[i]]) {
-                selectedWidgets = selectedWidgets.splice(i, 1);
-            }
-        }
-
-        const newState = {
-            selectedView,
-            selectedWidgets,
-        };
-
-        if (!this.state.openedViews || !this.state.openedViews.includes(selectedView)) {
-            const openedViews = this.state.openedViews ? [...this.state.openedViews] : [];
-            openedViews.push(selectedView);
-            newState.openedViews = openedViews;
-        }
-
-        window.localStorage.setItem('selectedView', selectedView);
-
-        const currentPath = VisEngine.getCurrentPath();
-        const newPath = VisEngine.buildPath(selectedView, currentPath.path);
-
-        if (window.location.hash !== newPath) {
-            window.location.hash = newPath;
-        }
-
-        await this.setStateAsync(newState);
-    };
 
     getNewWidgetIdNumber = (isGroup, project) => {
         const widgets = [];
@@ -853,11 +480,11 @@ class App extends GenericApp {
     };
 
     cutWidgets = async () => {
-        this.cutCopyWidgets('cut');
+        await this.cutCopyWidgets('cut');
     };
 
     copyWidgets = async () => {
-        this.cutCopyWidgets('copy');
+        await this.cutCopyWidgets('copy');
     };
 
     cutCopyWidgets = async type => {
@@ -1464,15 +1091,27 @@ class App extends GenericApp {
         }, 200);
     };
 
-    onFontsUpdate = fonts => {
-        this.setState({ fonts });
-    };
+    onFontsUpdate = fonts => this.setState({ fonts });
 
     cssClone = (attr, cb) => {
         if (this.visEngineHandlers[this.state.selectedView] && this.visEngineHandlers[this.state.selectedView].onStealStyle) {
             this.visEngineHandlers[this.state.selectedView].onStealStyle(attr, cb);
         } else {
             cb && cb(attr, null); // cancel selection
+        }
+    };
+
+    registerCallback = (name, view, cb) => {
+        // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
+
+        if (cb) {
+            this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
+            this.visEngineHandlers[view][name] = cb;
+        } else if (this.visEngineHandlers[view]) {
+            delete this.visEngineHandlers[view][name];
+            if (!Object.keys(this.visEngineHandlers[view]).length) {
+                delete this.visEngineHandlers[view];
+            }
         }
     };
 
@@ -1500,20 +1139,6 @@ class App extends GenericApp {
         // cb && cb(wids, attr, null); // cancel selection
     };
 
-    registerCallback = (name, view, cb) => {
-        // console.log(`${!cb ? 'Unr' : 'R'}egister handler for ${view}: ${name}`);
-
-        if (cb) {
-            this.visEngineHandlers[view] = this.visEngineHandlers[view] || {};
-            this.visEngineHandlers[view][name] = cb;
-        } else if (this.visEngineHandlers[view]) {
-            delete this.visEngineHandlers[view][name];
-            if (!Object.keys(this.visEngineHandlers[view]).length) {
-                delete this.visEngineHandlers[view];
-            }
-        }
-    };
-
     saveCssFile = (directory, fileName, data) => {
         if (fileName.endsWith('vis-common-user.css')) {
             this.setState({ visCommonCss: data });
@@ -1524,31 +1149,13 @@ class App extends GenericApp {
         this.socket.writeFile64(directory, fileName, data);
     };
 
-    showAlert(message, type) {
-        if (type !== 'error' && type !== 'warning' && type !== 'info' && type !== 'success') {
-            type = 'info';
-        }
-
-        this.setState({
-            alert: true,
-            alertType: type,
-            alertMessage: message,
-        });
+    showConfirmDialog(confirmDialog) {
+        console.log(confirmDialog.message);
+        this.setState({ confirmDialog });
     }
 
-    renderAlertDialog() {
-        return <Snackbar
-            className={this.props.classes[`alert_${this.state.alertType}`]}
-            open={this.state.alert}
-            autoHideDuration={6000}
-            onClose={reason => {
-                if (reason === 'clickaway') {
-                    return;
-                }
-                this.setState({ alert: false });
-            }}
-            message={this.state.alertMessage}
-        />;
+    showCodeDialog(codeDialog) {
+        this.setState({ showCodeDialog: codeDialog });
     }
 
     renderTabs() {
@@ -1680,10 +1287,10 @@ class App extends GenericApp {
                 this.state.toolbarHeight === 'veryNarrow' && this.props.classes.blockVeryNarrow,
             )}
         >
-            {this.state.widgetsLoaded !== WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
+            {this.state.widgetsLoaded !== Runtime.WIDGETS_LOADING_STEP_ALL_LOADED ? <LinearProgress variant="indeterminate" value={(this.state.loadingProgress.step / this.state.loadingProgress.total) * 100} /> : null}
             <Palette
                 classes={{}}
-                widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
+                widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 onHide={() => {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
                     this.setState({ hidePalette: true });
@@ -1692,7 +1299,9 @@ class App extends GenericApp {
         </div>;
     }
 
-    renderWorkspace(visEngine) {
+    renderWorkspace() {
+        const visEngine = this.getVisEngine();
+
         return <div key="engine">
             {this.renderTabs()}
             <div
@@ -1761,7 +1370,7 @@ class App extends GenericApp {
                 projectName={this.state.projectName}
                 themeType={this.state.themeType}
                 selectedWidgets={this.state.editMode ? this.state.selectedWidgets : []}
-                widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
+                widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                 socket={this.socket}
                 themeName={this.state.themeName}
                 fonts={this.state.fonts}
@@ -1779,15 +1388,6 @@ class App extends GenericApp {
                 adapterId={this.adapterId}
             />
         </div>;
-    }
-
-    async onWidgetsLoaded() {
-        let widgetsLoaded = WIDGETS_LOADING_STEP_HTML_LOADED;
-        if (this.socket.isConnected()) {
-            await VisWidgetsCatalog.collectRxInformation(this.socket);
-            widgetsLoaded = WIDGETS_LOADING_STEP_ALL_LOADED;
-        }
-        this.setState({ widgetsLoaded });
     }
 
     renderConfirmDialog() {
@@ -1896,62 +1496,9 @@ class App extends GenericApp {
             }
         }
 
-        const visEngine = <VisEngine
-            key={this.state.projectName}
-            widgetsLoaded={this.state.widgetsLoaded}
-            activeView={this.state.selectedView || ''}
-            editMode={!this.state.runtime && this.state.editMode}
-            runtime={this.state.runtime}
-            socket={this.socket}
-            visCommonCss={this.state.visCommonCss}
-            visUserCss={this.state.visUserCss}
-            lang={this.socket.systemLang}
-            views={this.state.visProject}
-            adapterName={this.adapterName}
-            instance={this.instance}
-            selectedWidgets={this.state.selectedWidgets}
-            setSelectedWidgets={this.setSelectedWidgets}
-            onLoaded={() => this.onWidgetsLoaded()}
-            selectedGroup={this.state.selectedGroup}
-            setSelectedGroup={this.setSelectedGroup}
-            onWidgetsChanged={this.onWidgetsChanged}
-            projectName={this.state.projectName}
-            lockDragging={this.state.lockDragging}
-            disableInteraction={this.state.disableInteraction}
-            widgetHint={this.state.widgetHint}
-            onFontsUpdate={this.state.runtime ? null : this.onFontsUpdate}
-            registerEditorCallback={this.state.runtime ? null : this.registerCallback}
-            themeType={this.state.themeType}
-            themeName={this.state.themeName}
-            theme={this.state.theme}
-            adapterId={this.adapterId}
-            editModeComponentClass={this.props.classes.editModeComponentClass}
-            onIgnoreMouseEvents={this.onIgnoreMouseEvents}
-            onConfirmDialog={(message, title, icon, width, callback) => {
-                console.log(message);
-                this.setState({
-                    confirmDialog: {
-                        message,
-                        title,
-                        icon,
-                        width,
-                        callback,
-                    },
-                });
-            }}
-            onShowCode={(code, title, mode) => this.setState({ showCodeDialog: { code, title, mode } })}
-        />;
-
-        if (this.state.runtime) {
-            return visEngine;
-        }
-
-        const simulatePreload = true;
-
         return <StylesProvider generateClassName={generateClassName}>
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
-                    {!simulatePreload ? <VisRxWidget /> : null}
                     <Popper
                         open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                         style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
@@ -1968,12 +1515,6 @@ class App extends GenericApp {
                             title={I18n.t('Click to close')}
                             onClick={() => this.setState({ widgetsClipboard: { widgets: {}, type: '' } })}
                         >
-                            {/* {this.state.clipboardImages.map((clipboardImage, key) => <img
-                                style={{ padding: 4 }}
-                                key={key}
-                                src={clipboardImage}
-                                alt=""
-                            />)} */}
                             {Object.keys(this.state.widgetsClipboard.widgets).join(', ')}
                         </Paper>
                     </Popper>
@@ -2010,7 +1551,7 @@ class App extends GenericApp {
                             undo={this.undo}
                             redo={this.redo}
                             deleteWidgets={this.deleteWidgets}
-                            widgetsLoaded={this.state.widgetsLoaded === WIDGETS_LOADING_STEP_ALL_LOADED}
+                            widgetsLoaded={this.state.widgetsLoaded === Runtime.WIDGETS_LOADING_STEP_ALL_LOADED}
                             widgetsClipboard={this.state.widgetsClipboard}
                             cutWidgets={this.cutWidgets}
                             copyWidgets={this.copyWidgets}
@@ -2035,11 +1576,12 @@ class App extends GenericApp {
                                 window.localStorage.setItem('Vis.toolbarForm', value);
                                 this.setState({ toolbarHeight: value });
                             }}
+                            version={this.props.version}
                         />
                         <div style={{ position: 'relative' }}>
                             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                                 <DndPreview />
-                                {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace(visEngine) : null}
+                                {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace() : null}
                                 <ReactSplit
                                     direction={SplitDirection.Horizontal}
                                     initialSizes={this.state.hidePalette && !this.state.hideAttributes ? [this.state.splitSizes[0] + this.state.splitSizes[1], this.state.splitSizes[2]] : (
@@ -2066,7 +1608,7 @@ class App extends GenericApp {
                                     gutterClassName={this.state.themeName === 'dark' ? 'Dark visGutter' : 'Light visGutter'}
                                 >
                                     {!this.state.hidePalette ? this.renderPalette() : null}
-                                    {this.renderWorkspace(visEngine)}
+                                    {this.renderWorkspace()}
                                     {!this.state.hideAttributes ? this.renderAttributes() : null}
                                 </ReactSplit>
                             </DndProvider>
@@ -2084,5 +1626,10 @@ class App extends GenericApp {
         </StylesProvider>;
     }
 }
+
+App.propTypes = {
+    onThemeChange: PropTypes.func,
+    version: PropTypes.string,
+};
 
 export default withStyles(styles)(App);

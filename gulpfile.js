@@ -1,385 +1,314 @@
 'use strict';
 
-const gulp      = require('gulp');
-const fs        = require('fs');
-const gulpReact = require('./gulpReact');
-const fileName  = 'words.js';
-const languages =  {
-    en: {},
-    de: {},
-    ru: {},
-    pt: {},
-    nl: {},
-    fr: {},
-    it: {},
-    es: {},
-    pl: {},
-    uk: {},
-    'zh-cn': {}
-};
+const gulp     = require('gulp');
+const fs       = require('fs');
+const path     = require('path');
+const cp       = require('child_process');
+const axios    = require('axios');
+const unzipper = require('unzipper');
 
-function lang2data(lang, isFlat) {
-    let str = isFlat ? '' : '{\n';
-    let count = 0;
-    for (const w in lang) {
-        if (lang.hasOwnProperty(w)) {
-            count++;
-            if (isFlat) {
-                str += (lang[w] === '' ? (isFlat[w] || w) : lang[w]) + '\n';
+function deleteFoldersRecursive(path, exceptions) {
+    if (fs.existsSync(path)) {
+        const stat = fs.statSync(path);
+        if (stat.isDirectory()) {
+            const files = fs.readdirSync(path);
+            for (const file of files) {
+                const curPath = `${path}/${file}`;
+                if (exceptions && exceptions.find(e => curPath.endsWith(e))) {
+                    continue;
+                }
+
+                const stat = fs.statSync(curPath);
+                if (stat.isDirectory()) {
+                    deleteFoldersRecursive(curPath);
+                    fs.rmdirSync(curPath);
+                } else {
+                    fs.unlinkSync(curPath);
+                }
+            }
+        } else {
+            fs.unlinkSync(path);
+        }
+    }
+}
+
+gulp.task('0-clean', done => {
+    deleteFoldersRecursive(`${__dirname}/src/build`);
+    deleteFoldersRecursive(`${__dirname}/www`);
+    deleteFoldersRecursive(`${__dirname}/beta`);
+    done();
+});
+
+function npmInstall() {
+    return new Promise((resolve, reject) => {
+        // Install node modules
+        const cwd = `${__dirname.replace(/\\/g, '/')}/src/`;
+
+        const cmd = `npm install`;
+        console.log(`"${cmd} in ${cwd}`);
+
+        // System call used for update of js-controller itself,
+        // because during installation npm packet will be deleted too, but some files must be loaded even during the install process.
+        const child = cp.exec(cmd, {cwd});
+
+        child.stderr.pipe(process.stderr);
+        child.stdout.pipe(process.stdout);
+
+        child.on('exit', (code /* , signal */) => {
+            // code 1 is strange error that cannot be explained. Everything is installed but error :(
+            if (code && code !== 1) {
+                reject(`Cannot install: ${code}`);
             } else {
-                const key = `  "${w.replace(/"/g, '\\"')}": `;
-                str += `${key}"${lang[w].replace(/"/g, '\\"')}",\n`;
+                console.log(`"${cmd} in ${cwd} finished.`);
+                // command succeeded
+                resolve();
             }
-        }
-    }
-    if (!count) {
-        return isFlat ? '' : '{\n}';
-    }
-    if (isFlat) {
-        return str;
-    }
-
-    return str.substring(0, str.length - 2) + '\n}';
+        });
+    });
 }
 
-function readWordJs(src) {
-    try {
-        let words;
-        if (fs.existsSync(`${src}js/${fileName}`)) {
-            words = fs.readFileSync(`${src}js/${fileName}`).toString();
-        } else {
-            words = fs.readFileSync(src + fileName).toString();
-        }
-        words = words.replace(/\\x0A/g, '<br/>');
-
-        const lines = words.split(/\r\n|\r|\n/g);
-        let i = 0;
-        while (!lines[i].includes('$.extend(systemDictionary,') && !lines[i].includes('systemDictionary =')) {
-            i++;
-        }
-        lines.splice(0, i);
-
-        // remove last empty lines
-        i = lines.length - 1;
-        while (!lines[i]) {
-            i--;
-        }
-        if (i < lines.length - 1) {
-            lines.splice(i + 1);
-        }
-
-        lines[0] = lines[0].replace('$.extend(systemDictionary, ', '');
-        lines[0] = lines[0].replace('systemDictionary = {', '{');
-        lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/}\);$/, '}');
-        lines[lines.length - 1] = lines[lines.length - 1].trim().replace(/};$/, '}');
-        words = lines.join('\n');
-        const resultFunc = new Function(`return ${words};`);
-
-        return resultFunc();
-    } catch (e) {
-        return null;
-    }
-}
-function padRight(text, totalLength) {
-    return text + (text.length < totalLength ? new Array(totalLength - text.length).join(' ') : '');
-}
-function writeWordJs(data, src) {
-    let text =
-        '/**\n' +
-        ' *  ioBroker.vis\n' +
-        ' *  https://github.com/ioBroker/ioBroker.vis\n' +
-        ' *\n' +
-        ' *  Copyright (c) 2013-2018 bluefox https://github.com/GermanBluefox, hobbyquaker https://github.com/hobbyquaker\n' +
-        ' *  Creative Common Attribution-NonCommercial (CC BY-NC)\n' +
-        ' *\n' +
-        ' *  http://creativecommons.org/licenses/by-nc/4.0/\n' +
-        ' *\n' +
-        ' * Short content:\n' +
-        ' * Licensees may copy, distribute, display and perform the work and make derivative works based on it only if they give the author or licensor the credits in the manner specified by these.\n' +
-        ' * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.\n' +
-        ' * (Free for non-commercial use).\n' +
-        ' */\n' +
-        '/* jshint browser:true */\n' +
-        '/* jshint -W097 */// jshint strict:false\n' +
-        '/* global $ */\n' +
-        '/* global systemDictionary */\n' +
-        '\n' +
-        '// DO NOT EDIT THIS FILE!!! IT WILL BE AUTOMATICALLY GENERATED FROM src/i18n\n';
-    text += '/*global systemDictionary:true */\n';
-    text += '\'use strict\';\n\n';
-    text += '$.extend(systemDictionary, {\n';
-    for (const word in data) {
-        if (data.hasOwnProperty(word)) {
-            text += '    ' + padRight('"' + word.replace(/"/g, '\\"') + '": {', 50);
-            let line = '';
-            for (const lang in data[word]) {
-                if (data[word].hasOwnProperty(lang)) {
-                    line += '"' + lang + '": "' + padRight(data[word][lang].replace(/"/g, '\\"') + '",', 50) + ' ';
-                }
-            }
-            if (line) {
-                line = line.trim();
-                line = line.substring(0, line.length - 1);
-            }
-            text += line + '},\n';
-        }
-    }
-    text += '});';
-    if (fs.existsSync(`${src}js/${fileName}`)) {
-        fs.writeFileSync(`${src}js/${fileName}`, text);
+gulp.task('2-npm', () => {
+    if (fs.existsSync(`${__dirname}/src/node_modules`)) {
+        return Promise.resolve();
     } else {
-        fs.writeFileSync(`${src}${fileName}`, text);
+        return npmInstall();
     }
-}
+});
 
-const EMPTY = '';
+gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
 
-function words2languages(src) {
-    const langs = Object.assign({}, languages);
-    const data = readWordJs(src);
-    if (data) {
-        for (const word in data) {
-            if (data.hasOwnProperty(word)) {
-                for (const lang in data[word]) {
-                    if (data[word].hasOwnProperty(lang)) {
-                        if (!langs[lang]) {
-                            console.error(`No data for ${lang} and ${word}`);
-                        }
-                        langs[lang][word] = data[word][lang];
-                        //  pre-fill all other languages
-                        for (const j in langs) {
-                            if (langs.hasOwnProperty(j)) {
-                                langs[j][word] = langs[j][word] || EMPTY;
-                            }
-                        }
+gulp.task('3-svg-icons', done => {
+    const svgPath = path.join(__dirname, 'src/node_modules/@material-icons/svg/');
+    const data = JSON.parse(fs.readFileSync(`${svgPath}data.json`).toString('utf8'));
+    !fs.existsSync(`${__dirname}/src/public/material-icons`) && fs.mkdirSync(`${__dirname}/src/public/material-icons`);
+    fs.writeFileSync(`${__dirname}/src/public/material-icons/index.json`, JSON.stringify(data.icons));
+    const folders = fs.readdirSync(`${svgPath}svg`);
+    const result = {};
+    folders.forEach(folder => {
+        const files = fs.readdirSync(`${svgPath}svg/${folder}`);
+
+        files.forEach(file => {
+            result[file] = result[file] || {};
+            let data = fs.readFileSync(`${svgPath}svg/${folder}/${file}`).toString('utf8');
+            // add currentColor
+            data = data.replace(/<path /g, '<path fill="currentColor" ');
+            data = data.replace(/<circle /g, '<circle fill="currentColor" ');
+            if (data.includes('line')) {
+                console.log(`"${file} in ${folder} has fill or stroke`);
+            }
+
+            result[file][folder] = Buffer.from(data).toString('base64');
+            // console.log(pako.inflate(Buffer.from(result[file][folder], 'base64'), {to: 'string'}));
+        });
+    });
+    Object.keys(result).forEach(file => {
+        fs.writeFileSync(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file]));
+    });
+
+    // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
+    if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
+        axios('https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip', {responseType: 'arraybuffer'})
+            .then(async res => {
+                !fs.existsSync(`${__dirname}/knx-uf-iconset`) && fs.mkdirSync(`${__dirname}/knx-uf-iconset`);
+                fs.writeFileSync(`${__dirname}/knx-uf-iconset/master.zip`, res.data);
+
+                const zip = fs.createReadStream(`${__dirname}/knx-uf-iconset/master.zip`).pipe(unzipper.Parse({forceStream: true}));
+                for await (const entry of zip) {
+                    const fileName = entry.path;
+                    if (entry.type === 'File' && fileName.endsWith('.svg')) {
+                        entry.pipe(fs.createWriteStream(`${__dirname}/knx-uf-iconset/${path.basename(fileName)}`));
+                    } else {
+                        entry.autodrain();
                     }
                 }
-            }
-        }
-        if (!fs.existsSync(`${src}i18n/`)) {
-            fs.mkdirSync(`${src}i18n/`);
-        }
-        for (const l in langs) {
-            if (!langs.hasOwnProperty(l)) continue;
-            const keys = Object.keys(langs[l]);
-            //keys.sort();
-            const obj = {};
-            for (let k = 0; k < keys.length; k++) {
-                obj[keys[k]] = langs[l][keys[k]];
-            }
-            if (!fs.existsSync(`${src}i18n/${l}`)) {
-                fs.mkdirSync(`${src}i18n/${l}`);
-            }
 
-            fs.writeFileSync(`${src}i18n/${l}/translations.json`, lang2data(obj));
-        }
-    } else {
-        console.error(`Cannot read or parse ${fileName}`);
-    }
-}
-function words2languagesFlat(src) {
-    const langs = Object.assign({}, languages);
-    const data = readWordJs(src);
-    if (data) {
-        for (const word in data) {
-            if (data.hasOwnProperty(word)) {
-                for (const lang in data[word]) {
-                    if (data[word].hasOwnProperty(lang)) {
-                        if (!langs[lang]) {
-                            console.error(`No data for ${lang} and ${word}`);
-                        }
-                        langs[lang][word] = data[word][lang];
-                        //  pre-fill all other languages
-                        for (const j in langs) {
-                            if (langs.hasOwnProperty(j)) {
-                                langs[j][word] = (langs[j][word] || EMPTY).replace(/\\x0A/g, '<br\\/>');
-                            }
-                        }
-                    }
+                // prepare KNX-UF icons
+                const files = fs.readdirSync(`${__dirname}/knx-uf-iconset/`).filter(file => file.endsWith('.svg'));
+                const result = {}
+                for (let f = 0; f < files.length; f++) {
+                    let data = fs.readFileSync(`${__dirname}/knx-uf-iconset/${files[f]}`).toString('utf8');
+                    // add currentColor
+                    data = data.replace(/fill="#FFFFFF"/g, 'fill="currentColor"');
+                    data = data.replace(/stroke="#FFFFFF"/g, 'stroke="currentColor"');
+                    data = data.replace(/fill:#FFFFFF/g, 'fill:currentColor');
+                    data = data.replace(/stroke:#FFFFFF/g, 'stroke:currentColor');
+                    data = data.replace(/xmlns:xlink="http:\/\/www.w3.org\/1999\/xlink"\s?/g, '');
+                    data = data.replace(/<!DOCTYPE\s[^>]+>\s?/g, '');
+                    data = data.replace(/x="0px"\s?/g, '');
+                    data = data.replace(/y="0px"\s?/g, '');
+                    data = data.replace(/<!--[^>]+>/g, '');
+                    data = data.replace(/\s?xml:space="preserve"/g, '');
+                    data = data.replace(/\r\n/g, '\n');
+                    data = data.replace(/\n\n/g, '\n');
+                    data = data.replace(/\n\n/g, '\n');
+                    data = data.replace(/\sid="([^"]+)?"/g, '');
+                    data = data.replace(/<g>\n<\/g>\n?/g, '');
+                    data = data.replace(/<g>\n<\/g>\n?/g, '');
+
+                    result[files[f].replace('.svg', '')] = Buffer.from(data).toString('base64');
                 }
-            }
-        }
-        const keys = Object.keys(langs.en);
-        // keys.sort();
-        for (const l in langs) {
-            if (!langs.hasOwnProperty(l)) continue;
-            const obj = {};
-            for (let k = 0; k < keys.length; k++) {
-                obj[keys[k]] = langs[l][keys[k]];
-            }
-            langs[l] = obj;
-        }
-        if (!fs.existsSync(`${src}i18n/`)) {
-            fs.mkdirSync(`${src}i18n/`);
-        }
-        for (const ll in langs) {
-            if (!langs.hasOwnProperty(ll)) continue;
-            if (!fs.existsSync(`${src}i18n/${ll}`)) {
-                fs.mkdirSync(`${src}i18n/${ll}`);
-            }
 
-            fs.writeFileSync(`${src}i18n/${ll}/flat.txt`, lang2data(langs[ll], langs.en));
-        }
-        fs.writeFileSync(`${src}i18n/flat.txt`, keys.join('\n'));
+                fs.writeFileSync(`${__dirname}/src/public/material-icons/knx-uf.json`, JSON.stringify(result));
+                done();
+            });
     } else {
-        console.error(`Cannot read or parse ${fileName}`);
+        done();
     }
-}
-function languagesFlat2words(src) {
-    const dirs = fs.readdirSync(src + 'i18n/');
-    const langs = {};
-    const bigOne = {};
-    const order = Object.keys(languages);
-    dirs.sort(function (a, b) {
-        const posA = order.indexOf(a);
-        const posB = order.indexOf(b);
-        if (posA === -1 && posB === -1) {
-            if (a > b) return 1;
-            if (a < b) return -1;
-            return 0;
-        } else if (posA === -1) {
-            return -1;
-        } else if (posB === -1) {
-            return 1;
+});
+
+function build() {
+    // copy ace files into src/public/lib/js/ace
+    let ace = `${__dirname}/src/node_modules/ace-builds/src-min-noconflict/`;
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-css.js`, fs.readFileSync(`${ace}worker-css.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-html.js`, fs.readFileSync(`${ace}worker-html.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, fs.readFileSync(`${ace}worker-javascript.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-json.js`, fs.readFileSync(`${ace}worker-json.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, fs.readFileSync(`${ace}snippets/css.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, fs.readFileSync(`${ace}snippets/html.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, fs.readFileSync(`${ace}snippets/json.js`));
+
+    return new Promise((resolve, reject) => {
+        const options = {
+            stdio: 'pipe',
+            cwd:   `${__dirname}/src/`
+        };
+
+        const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
+        const data = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString('utf8'));
+        data.version = version;
+        fs.writeFileSync(`${__dirname}/src/package.json`, JSON.stringify(data, null, 4));
+
+        console.log(options.cwd);
+
+        let script = `${__dirname}/src/node_modules/@craco/craco/dist/bin/craco.js`;
+        if (!fs.existsSync(script)) {
+            script = `${__dirname}/node_modules/@craco/craco/dist/bin/craco.js`;
+        }
+        if (!fs.existsSync(script)) {
+            console.error(`Cannot find execution file: ${script}`);
+            reject(`Cannot find execution file: ${script}`);
         } else {
-            if (posA > posB) return 1;
-            if (posA < posB) return -1;
-            return 0;
+            const child = cp.fork(script, ['build'], options);
+            child.stdout.on('data', data => console.log(data.toString()));
+            child.stderr.on('data', data => console.log(data.toString()));
+            child.on('close', code => {
+                console.log(`child process exited with code ${code}`);
+                code ? reject(`Exit code: ${code}`) : resolve();
+            });
         }
     });
-    const keys = fs.readFileSync(`${src}i18n/flat.txt`).toString().split('\n');
-
-    for (let l = 0; l < dirs.length; l++) {
-        if (dirs[l] === 'flat.txt') {
-            continue;
-        }
-        const lang = dirs[l];
-        const values = fs.readFileSync(`${src}i18n/${lang}/flat.txt`).toString().split('\n');
-        langs[lang] = {};
-        keys.forEach((word, i) => langs[lang][word] = values[i]);
-
-        const words = langs[lang];
-        for (const word in words) {
-            if (words.hasOwnProperty(word)) {
-                bigOne[word] = bigOne[word] || {};
-                if (words[word] !== EMPTY) {
-                    bigOne[word][lang] = words[word].replace(/<br\/>/g, '\\x0A');
-                }
-            }
-        }
-    }
-    // read actual words.js
-    const aWords = readWordJs();
-
-    const temporaryIgnore = ['pt', 'fr', 'nl', 'flat.txt'];
-    if (aWords) {
-        // Merge words together
-        for (const w in aWords) {
-            if (aWords.hasOwnProperty(w)) {
-                if (!bigOne[w]) {
-                    console.warn(`Take from actual words.js: ${w}`);
-                    bigOne[w] = aWords[w]
-                }
-                dirs.forEach(function (lang) {
-                    if (temporaryIgnore.indexOf(lang) !== -1) return;
-                    if (!bigOne[w][lang]) {
-                        console.warn(`Missing "${lang}": ${w}`);
-                    }
-                });
-            }
-        }
-
-    }
-
-    writeWordJs(bigOne, src);
 }
-function languages2words(src) {
-    const dirs = fs.readdirSync(src + 'i18n/');
-    const langs = {};
-    const bigOne = {};
-    const order = Object.keys(languages);
-    dirs.sort(function (a, b) {
-        const posA = order.indexOf(a);
-        const posB = order.indexOf(b);
-        if (posA === -1 && posB === -1) {
-            if (a > b) return 1;
-            if (a < b) return -1;
-            return 0;
-        } else if (posA === -1) {
-            return -1;
-        } else if (posB === -1) {
-            return 1;
-        } else {
-            if (posA > posB) return 1;
-            if (posA < posB) return -1;
-            return 0;
+
+gulp.task('4-build', () => build());
+
+gulp.task('4-build-dep', gulp.series('2-npm', '3-svg-icons', '4-build'));
+
+function copyFiles() {
+    copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'));
+    fs.writeFileSync(path.join(__dirname, 'www/edit.html'), fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')));
+    return Promise.resolve();
+}
+
+gulp.task('6-copy', () => copyFiles());
+
+gulp.task('6-copy-dep', gulp.series('4-build-dep', '6-copy'));
+
+function patchFile(htmlFile) {
+    if (fs.existsSync(htmlFile)) {
+        let code = fs.readFileSync(htmlFile).toString('utf8');
+        code = code.replace(/<script>const script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
+        code = code.replace(/<script>var script=document[^<]+<\/script>/, `<script type="text/javascript" onerror="setTimeout(function(){window.location.reload()}, 5000)" src="../../lib/js/socket.io.js"></script>`);
+
+        fs.writeFileSync(htmlFile, code);
+    }
+}
+
+function copyFolder(source, target, ignore) {
+    !fs.existsSync(target) && fs.mkdirSync(target);
+
+    // Copy
+    if (fs.lstatSync(source).isDirectory()) {
+        const files = fs.readdirSync(source);
+        files.forEach(file => {
+            const curSource = path.join(source, file);
+            const curTarget = path.join(target, file);
+            if (ignore && ignore.includes(file)) {
+                return;
+            }
+            if (ignore && ignore.find(pattern => pattern.startsWith('.') && file.endsWith(pattern))) {
+                // check that file is smaller than 8MB
+                if (fs.lstatSync(curSource).size > 8 * 1024 * 1024) {
+                    return;
+                }
+            }
+
+            if (fs.lstatSync(curSource).isDirectory()) {
+                copyFolder(curSource, curTarget, ignore);
+            } else {
+                fs.writeFileSync(curTarget, fs.readFileSync(curSource));
+            }
+        });
+    } else {
+        fs.writeFileSync(target, fs.readFileSync(source));
+    }
+}
+
+gulp.task('7-patch', done => {
+    patchFile(`${__dirname}/www/index.html`);
+    patchFile(`${__dirname}/www/edit.html`);
+    patchFile(`${__dirname}/src/build/index.html`);
+    patchFile(`${__dirname}/src/build/edit.html`);
+    done();
+});
+
+gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
+
+gulp.task('buildReact', gulp.series('7-patch-dep'));
+
+gulp.task('8-beta', async () => {
+    !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
+
+    copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'), ['i18n']);
+    copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
+    copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
+    copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'), ['.map']);
+    // delete all other widgets and let only
+    const baseWidgets = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
+    const files = fs.readdirSync(path.join(__dirname, 'beta/www/widgets'));
+    files.forEach(file => {
+        if (!baseWidgets.includes(file) && !baseWidgets.includes(file.replace('.html', ''))) {
+            deleteFoldersRecursive(`${__dirname}/beta/www/widgets/${file}`);
         }
     });
-    for (let l = 0; l < dirs.length; l++) {
-        if (dirs[l] === 'flat.txt') continue;
-        const lang = dirs[l];
-        langs[lang] = fs.readFileSync(`${src}i18n/${lang}/translations.json`).toString();
-        try {
-            langs[lang] = JSON.parse(langs[lang]);
-        } catch (e) {
-            console.error(`Cannot parse ${src}i18n/${lang}/translations.json: ${e}`);
-        }
-        const words = langs[lang];
-        for (const word in words) {
-            if (words.hasOwnProperty(word)) {
-                bigOne[word] = bigOne[word] || {};
-                if (words[word] !== EMPTY) {
-                    bigOne[word][lang] = words[word].replace(/<br\/>/g, '\\x0A');
-                }
-            }
-        }
+
+    fs.writeFileSync(path.join(__dirname, 'beta/io-package.json'), fs.readFileSync(path.join(__dirname, 'io-package.json')));
+    fs.writeFileSync(path.join(__dirname, 'beta/package.json'), fs.readFileSync(path.join(__dirname, 'package.json')));
+    fs.writeFileSync(path.join(__dirname, 'beta/LICENSE'), fs.readFileSync(path.join(__dirname, 'LICENSE')));
+    fs.writeFileSync(path.join(__dirname, 'beta/main.js'), fs.readFileSync(path.join(__dirname, 'main.js')));
+    fs.writeFileSync(path.join(__dirname, 'beta/README.md'), fs.readFileSync(path.join(__dirname, 'README.md')));
+    const ioPack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'io-package.json')));
+    const pack = JSON.parse(fs.readFileSync(path.join(__dirname, 'beta', 'package.json')));
+    ioPack.common.name = 'vis-2-beta';
+    ioPack.common.welcomeScreen.link = 'vis-2-beta/index.html';
+    ioPack.common.welcomeScreen.name = 'vis 2 Runtime';
+    ioPack.common.welcomeScreen.img = 'vis-2-beta/img/favicon.png';
+    ioPack.common.welcomeScreenPro.link = 'vis-2-beta/edit.html';
+    ioPack.common.welcomeScreenPro.name = 'vis 2 Editor';
+    ioPack.common.welcomeScreenPro.img = 'vis-2-beta/img/faviconEdit.png';
+    ioPack.common.localLinks._default = '%web_protocol%://%ip%:%web_port%/vis-2-beta/edit.html';
+    pack.name = 'iobroker.vis-2-beta';
+    delete pack.scripts;
+    delete pack.devDependencies;
+    fs.writeFileSync(path.join(__dirname, 'beta', 'io-package.json'), JSON.stringify(ioPack, null, 2));
+    fs.writeFileSync(path.join(__dirname, 'beta', 'package.json'), JSON.stringify(pack, null, 2));
+
+    if (fs.existsSync(path.join(__dirname, '../ioBroker.vis-2-beta'))) {
+        deleteFoldersRecursive(`${__dirname}/../ioBroker.vis-2-beta`);
+        copyFolder(path.join(__dirname, 'beta'), path.join(__dirname, '../ioBroker.vis-2-beta'), ['.map']);
     }
-    // read actual words.js
-    const aWords = readWordJs();
-
-    const temporaryIgnore = ['pt', 'fr', 'nl', 'it', 'es', 'pl'];
-    if (aWords) {
-        // Merge words together
-        for (const w in aWords) {
-            if (aWords.hasOwnProperty(w)) {
-                if (!bigOne[w]) {
-                    console.warn(`Take from actual words.js: ${w}`);
-                    bigOne[w] = aWords[w]
-                }
-                dirs.forEach(function (lang) {
-                    if (temporaryIgnore.indexOf(lang) !== -1) return;
-                    if (!bigOne[w][lang]) {
-                        console.warn(`Missing "${lang}": ${w}`);
-                    }
-                });
-            }
-        }
-
-    }
-
-    writeWordJs(bigOne, src);
-}
-
-gulpReact(gulp);
-
-gulp.task('adminWords2languages', done => {
-    words2languages('./admin/');
-    done();
 });
 
-gulp.task('adminWords2languagesFlat', done => {
-    words2languagesFlat('./admin/');
-    done();
-});
-
-gulp.task('adminLanguagesFlat2words', done => {
-    languagesFlat2words('./admin/');
-    done();
-});
-
-gulp.task('adminLanguages2words', done => {
-    languages2words('./admin/');
-    done();
-});
+gulp.task('beta', gulp.series('7-patch-dep', '8-beta'));
 
 gulp.task('default', gulp.series('buildReact'));

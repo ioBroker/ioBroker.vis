@@ -107,7 +107,7 @@ Group can have the following attributes:
 - `indexFrom`: [optional] start index of iterator
 - `indexTo`: [optional] if `indexFrom` is defined, `indexTo` is required and could be a number or a name of attribute in same widget.
 - `fields`: Array of fields. See next chapter
-- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
+- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index, style) => boolean`.
 
 ## Fields
 `visAttrs[x].fields` consist of input fields.
@@ -116,7 +116,7 @@ Group can have the following attributes:
 - `label`: [optional] Label to be displayed in the UI. If you want to have empty label, set it to "".
 - `tooltip`: [optional] Tooltip of the label (small "i" symbol appears next to text)
 - `default`: [optional] default initial value
-- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index) => boolean`.
+- `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index, style) => boolean`.
    Example `!!data["oid" + index]` or `data.type !== "digital" && data.type !== "digital2"`.
 - `disabled`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`. You can set it permanently to `true`.
 - `error`: [optional] JS code to calculate the error state of the attribute. Syntax is the same as `hidden`, but you may return string instead of boolean.

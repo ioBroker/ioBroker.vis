@@ -2,5 +2,7 @@
   "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "Hier is een speciale licentie voor vis-2-widgets-jaeger-design vereist en niet voor iobroker.vis",
   "License": "Licentie",
   "Use license manager": "Gebruik licentiebeheer",
-  "instruction": "Als u <b> vis </b> wilt gebruiken, moet u hiervoor de licentiesleutel hebben. <br> <b> vis </b> is gratis voor privégebruik, maar voor commercieel gebruik heeft het een prijs. <br> You kan de licentie krijgen op <a href='https://iobroker.net' target='_blank'>iobroker.net</a> na een korte registratie."
+  "instruction": "Als u <b> vis </b> wilt gebruiken, moet u hiervoor de licentiesleutel hebben. <br> <b> vis </b> is gratis voor privégebruik, maar voor commercieel gebruik heeft het een prijs. <br> You kan de licentie krijgen op <a href='https://iobroker.net' target='_blank'>iobroker.net</a> na een korte registratie.",
+  "Suitable license found": "Geschikte licentie gevonden",
+  "Force pages rebuild": "Forceer opnieuw opbouwen van pagina's"
 }

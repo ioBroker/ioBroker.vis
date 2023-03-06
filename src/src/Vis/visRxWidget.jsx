@@ -356,6 +356,7 @@ class VisRxWidget extends VisBaseWidget {
             </CardContent>
         </Card>;
     }
+
     renderWidgetBody(props) {
         props.id = this.props.id;
 

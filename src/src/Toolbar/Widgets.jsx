@@ -331,6 +331,7 @@ Widgets.propTypes = {
     selectedWidgets: PropTypes.array,
     setSelectedWidgets: PropTypes.func,
     selectedGroup: PropTypes.string,
+    version: PropTypes.string,
 };
 
 export default Widgets;

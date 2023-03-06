@@ -417,12 +417,13 @@ const checkFunction = (funcText, project, selectedView, selectedWidgets, index) 
             _func = funcText;
         } else {
             // eslint-disable-next-line no-new-func
-            _func = new Function('data', 'index', `return ${funcText}`);
+            _func = new Function('data', 'index', 'style', `return ${funcText}`);
         }
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {
             const data = project[selectedView].widgets[selectedWidgets].data;
-            isHidden[i] = _func(data, index);
+            const style = project[selectedView].widgets[selectedWidgets].style;
+            isHidden[i] = _func(data, index, style);
         }
         let _isHdn = isHidden[0];
         if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {

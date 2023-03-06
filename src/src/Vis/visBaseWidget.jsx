@@ -811,7 +811,7 @@ class VisBaseWidget extends React.Component {
     // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData) {
         const vf = this.props.viewsActiveFilter[this.props.view];
-        if (widgetData?.filterkey && vf?.length) {
+        if (widgetData?.filterkey && vf?.length && !this.props.editMode) {
             if (vf[0] === '$') {
                 return true;
             }

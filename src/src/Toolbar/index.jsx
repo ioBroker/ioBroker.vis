@@ -266,6 +266,7 @@ Toolbar.propTypes = {
     adapterName: PropTypes.string,
     instance: PropTypes.number,
     projectName: PropTypes.string,
+    version: PropTypes.string,
 };
 
 export default withStyles(styles)(Toolbar);

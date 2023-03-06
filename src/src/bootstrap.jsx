@@ -89,6 +89,7 @@ const ThemeContainer = () => {
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={getTheme()}>
                 <App
+                    version={packageJson.version}
                     onThemeChange={_theme => {
                         if (newTheme.palette.mode === 'dark') {
                             window.document.body.className = modifyClasses(window.document.body.className, 'body-dark', 'body-light');

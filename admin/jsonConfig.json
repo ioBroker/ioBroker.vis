@@ -36,6 +36,12 @@
       "md": 6,
       "lg": 4,
       "text": "instruction"
+    },
+    "forceBuild": {
+      "newLine": true,
+      "type": "checkbox",
+      "label": "Force pages rebuild",
+      "sm": 12
     }
   }
 }

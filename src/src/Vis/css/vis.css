@@ -100,11 +100,6 @@ body, html {
     z-index: 1001;
 }
 
-.vis-editmode-selected.vis-editmode-overlay {
-    /* background-color: green; */
-    z-index: 1001;
-}
-
 .vis-editmode-selected.vis-editmode-selected-background.vis-editmode-overlay {
     background-color: green;
 }

@@ -460,6 +460,7 @@ const WidgetField = props => {
                 {objectCache ? (typeof objectCache.common.name === 'object' ? objectCache.common.name[I18n.lang] : objectCache.common.name) : null}
             </div>
             {idDialog && !disabled ? <SelectID
+                imagePrefix="../.."
                 selected={value}
                 onOk={selected => change(selected)}
                 onClose={() => setIdDialog(false)}

@@ -48,7 +48,7 @@ const Tools = props => {
     };
 
     return <>
-        <ToolbarItems group={toolbar} last {...props} classes={{}} />
+        <ToolbarItems group={toolbar} last {...props} classes={{}} showVersion />
         <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
         {props.projectsDialog ? <ProjectsManager
             open={!0}
@@ -58,6 +58,7 @@ const Tools = props => {
         /> : null}
         {
             objectsDialog ? <SelectID
+                imagePrefix="../.."
                 ready
                 onClose={() => setObjectsDialog(false)}
                 socket={props.socket}

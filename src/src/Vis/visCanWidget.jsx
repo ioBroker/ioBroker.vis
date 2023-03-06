@@ -1176,14 +1176,18 @@ class VisCanWidget extends VisBaseWidget {
         }
 
         if (this.widDiv && this.state.editMode) {
-            const zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10);
+            const zIndexProp = this.props.allWidgets[this.props.id].style['z-index'];
+            const zIndex = parseInt((zIndexProp || 0), 10);
             if (this.state.selected) {
                 // move widget to foreground
                 this.widDiv.style.zIndex = 500 + zIndex;
-            } else {
-                this.widDiv.style.zIndex = parseInt((this.props.allWidgets[this.props.id].style['z-index'] || 0), 10).toString();
+            } else if (zIndexProp !== undefined) {
+                this.widDiv.style.zIndex = parseInt((zIndexProp || 0), 10).toString();
             }
-            props.style.zIndex = /*800 + */zIndex;
+
+            if (zIndexProp) {
+                props.style.zIndex = zIndex; // + 800
+            }
 
             // restore visibility
             if (this.filterDisplay !== undefined) {

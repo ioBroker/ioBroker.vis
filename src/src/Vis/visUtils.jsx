@@ -881,15 +881,19 @@ function getRemoteWidgets(socket) {
                                             .then(Component => {
                                                 count++;
                                                 // console.log(Component);
-                                                Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
-                                                if (i18nPrefix) {
-                                                    Component.default.i18nPrefix = i18nPrefix;
+                                                if (Component.default) {
+                                                    Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
+                                                    if (i18nPrefix) {
+                                                        Component.default.i18nPrefix = i18nPrefix;
+                                                    }
+                                                    result.push(Component.default);
+                                                } else {
+                                                    console.error(`Cannot load widget ${dynamicWidgetInstance._id}`);
                                                 }
-                                                result.push(Component.default);
                                                 window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
                                             })
                                             .catch(e => {
-                                                console.error(e);
+                                                console.error(`Cannot load widget ${dynamicWidgetInstance._id}: `, e);
                                             });
                                         // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 

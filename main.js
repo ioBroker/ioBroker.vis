@@ -2,7 +2,7 @@
  *
  *      iobroker vis Adapter
  *
- *      Copyright (c) 2014-2022, bluefox
+ *      Copyright (c) 2014-2023, bluefox
  *      Copyright (c) 2014, hobbyquaker
  *
  *      CC-NC-BY 4.0 License
@@ -80,7 +80,7 @@ async function processMessage(msg) {
     }
 }
 
-async function generateWidgetsHtml(widgetSets) {
+async function generateWidgetsHtml(widgetSets, forceBuild) {
     let text = '';
     for (const w in widgetSets) {
         if (!widgetSets.hasOwnProperty(w)) {
@@ -112,7 +112,7 @@ async function generateWidgetsHtml(widgetSets) {
     if (typeof data === 'object') {
         data = data.file;
     }
-    if (data && data !== text) {
+    if (data && (data !== text || forceBuild)) {
         fs.writeFileSync(`${__dirname}/www/widgets.html`, text);
         // upload file to DB
         await adapter.writeFileAsync(adapterName, 'www/widgets.html', text);
@@ -124,8 +124,8 @@ async function generateWidgetsHtml(widgetSets) {
     return false;
 }
 
-async function generateConfigPage() {
-    let changed = false;
+async function generateConfigPage(forceBuild) {
+    let changed = forceBuild || false;
 
     const configJs = `window.isLicenseError = ${isLicenseError};`;
 
@@ -140,7 +140,7 @@ async function generateConfigPage() {
         currentConfigJs = currentConfigJs.file;
     }
     currentConfigJs = currentConfigJs ? currentConfigJs.toString('utf8') : '';
-    if (!currentConfigJs || currentConfigJs !== configJs) {
+    if (!currentConfigJs || currentConfigJs !== configJs || forceBuild) {
         changed = true;
         adapter.log.info('config.js changed. Upload.');
         await adapter.writeFileAsync(adapterName, 'config.js', configJs);
@@ -149,7 +149,7 @@ async function generateConfigPage() {
         fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
     } else if (!fs.existsSync(`${__dirname}/www/config.js`) || fs.readFileSync(`${__dirname}/www/config.js`).toString() !== configJs) {
         fs.writeFileSync(`${__dirname}/www/config.js`, configJs);
-        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(__dirname + '/www/js');
+        !fs.existsSync(`${__dirname}/www/js`) && fs.mkdirSync(`${__dirname}/www/js`);
         fs.writeFileSync(`${__dirname}/www/js/config.js`, configJs); // backwards compatibility with cloud
     }
     if (!fs.existsSync(`${__dirname}/www/js/config.js`) || fs.readFileSync(`${__dirname}/www/js/config.js`).toString() !== configJs) {
@@ -661,16 +661,16 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
     }
 }
 
-async function buildHtmlPages() {
-    const configChanged = await generateConfigPage();
+async function buildHtmlPages(forceBuild) {
+    const configChanged = await generateConfigPage(forceBuild);
     const enabledList = await readAdaptersList();
 
     widgetInstances = {};
     enabledList.forEach(adapter =>
         widgetInstances[adapter.name.substring('iobroker.'.length)] = adapter.pack && adapter.pack.common && adapter.pack.common.version);
 
-    const {widgetSets, filesChanged} = syncWidgetSets(enabledList);
-    const widgetsChanged = await generateWidgetsHtml(widgetSets);
+    const {widgetSets, filesChanged} = syncWidgetSets(enabledList, forceBuild);
+    const widgetsChanged = await generateWidgetsHtml(widgetSets, forceBuild);
 
     const indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
     let uploadedIndexHtml;
@@ -684,7 +684,7 @@ async function buildHtmlPages() {
     }
     uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
 
-    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml) {
+    if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml || forceBuild) {
         await uploadAdapter();
         await adapter.setStateAsync('info.uploaded', Date.now(), true);
     } else {
@@ -802,9 +802,14 @@ async function main() {
         }
     }
 
-    await buildHtmlPages();
+    await buildHtmlPages(adapter.config.forceBuild);
 
-    adapter.subscribeForeignObjects('system.adapter.*');
+    if (adapter.config.forceBuild) {
+        adapter.log.warn('Force build done! Restarting...');
+        await adapter.extendForeignObjectAsync(`system.adapter.${adapter.namespace}`, {native: {forceBuild: false}});
+    } else {
+        adapter.subscribeForeignObjects('system.adapter.*');
+    }
 }
 
 // If started as allInOne mode => return function to create instance

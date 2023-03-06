@@ -2,5 +2,7 @@
   "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "Тут потрібна спеціальна ліцензія для vis-2-widgets-jaeger-design, а не для iobroker.vis",
   "License": "Ліцензія",
   "Use license manager": "Використовуйте менеджер ліцензій",
-  "instruction": "Щоб використовувати <b>vis</b>, ви повинні отримати для нього ліцензійний ключ.<br><b>vis</b> безкоштовний для приватного використання, але для комерційного використання він має плату.<br>Ви можна отримати ліцензію на <a href='https://iobroker.net' target='_blank'>iobroker.net</a> після короткої реєстрації."
+  "instruction": "Щоб використовувати <b>vis</b>, ви повинні отримати для нього ліцензійний ключ.<br><b>vis</b> безкоштовний для приватного використання, але для комерційного використання він має плату.<br>Ви можна отримати ліцензію на <a href='https://iobroker.net' target='_blank'>iobroker.net</a> після короткої реєстрації.",
+  "Suitable license found": "Знайдено відповідну ліцензію",
+  "Force pages rebuild": "Примусово перебудувати сторінки"
 }
