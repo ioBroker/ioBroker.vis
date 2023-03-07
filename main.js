@@ -393,12 +393,15 @@ function doLicense(license, uuid, name) {
 }
 
 function collectWidgetSets(dir, sets) {
+    sets = sets || [];
+    if (!fs.existsSync(dir)) {
+        return sets;
+    }
     let dirs = fs.readdirSync(dir);
     dir = dir.replace(/\\/g, '/');
     if (!dir.endsWith('/')) {
         dir += '/';
     }
-    sets = sets || [];
     for (let d = 0; d < dirs.length; d++) {
         if (dirs[d].toLowerCase().startsWith('iobroker.') &&
             !sets.includes(dirs[d].substring('iobroker.'.length)) &&
