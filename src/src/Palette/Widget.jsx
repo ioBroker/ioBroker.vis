@@ -15,7 +15,7 @@ const styles = () => ({
         borderWidth: 1,
         borderRadius: 8,
         backgroundColor: 'orange',
-        width: 240,
+        width: '100%',
         display: 'inline-flex',
         margin: 4,
         minHeight: 36,

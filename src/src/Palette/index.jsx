@@ -46,7 +46,7 @@ const styles = theme => ({
     },
     groupSummary: {
         '&&&&&&': {
-            marginTop: 20,
+            marginTop: 10,
             borderRadius: 4,
             padding: 2,
         },
@@ -70,7 +70,13 @@ const styles = theme => ({
     groupIcon: {
         width: 20,
         height: 20,
-        marginRight: 4,
+        marginRight: 8,
+    },
+    version: {
+        fontSize: 10,
+        opacity: 0.7,
+        fontStyle: 'italic',
+        textAlign: 'left',
     },
 });
 
@@ -94,28 +100,34 @@ const Palette = props => {
     // console.log(widgetTypes);
 
     widgetTypes.forEach(widgetType => {
-        widgetsList[widgetType.set] = widgetsList[widgetType.set] || {};
+        const widgetTypeName = widgetType.set;
+        widgetsList[widgetTypeName] = widgetsList[widgetTypeName] || {};
         const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
         if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
             return;
         }
         if (widgetType.setLabel) {
-            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
-            widgetSetProps[widgetType.set].label = I18n.t(widgetType.setLabel);
+            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+            widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
         }
         if (widgetType.setColor) {
-            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
-            widgetSetProps[widgetType.set].color = widgetType.setColor;
+            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+            widgetSetProps[widgetTypeName].color = widgetType.setColor;
         }
         if (widgetType.adapter) {
-            widgetSetProps[widgetType.set] = widgetSetProps[widgetType.set] || {};
+            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
             if (window.location.port === '3000') {
-                widgetSetProps[widgetType.set].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
             } else {
-                widgetSetProps[widgetType.set].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
             }
         }
-        widgetsList[widgetType.set][widgetType.name] = widgetType;
+
+        if (widgetType.version) {
+            widgetSetProps[widgetTypeName].version = widgetType.version;
+        }
+
+        widgetsList[widgetTypeName][widgetType.name] = widgetType;
     });
     if (filter) {
         Object.keys(widgetsList).forEach(widgetType => {
@@ -209,8 +221,11 @@ const Palette = props => {
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         classes={{
-                            root: Utils.clsx(props.classes.clearPadding, accordionOpen[category]
-                                ? props.classes.groupSummaryExpanded : props.classes.groupSummary, props.classes.lightedPanel),
+                            root: Utils.clsx(
+                                props.classes.clearPadding,
+                                accordionOpen[category] ? props.classes.groupSummaryExpanded : props.classes.groupSummary,
+                                props.classes.lightedPanel,
+                            ),
                             content: props.classes.clearPadding,
                             expandIcon: props.classes.clearPadding,
                         }}
@@ -220,12 +235,14 @@ const Palette = props => {
                             :
                             null}
                         {widgetSetProps[category]?.label ?
-                            (widgetSetProps[category].label.startsWith('Vis 2') ?
-                                widgetSetProps[category].label : `Vis 2 - ${widgetSetProps[category].label}`)
+                            (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
+                                widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
                             :
                             category}
                     </AccordionSummary>
                     <AccordionDetails>
+                        {widgetSetProps[category]?.version ?
+                            <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
                         <div>
                             {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
                                 (widgetTypeName === '_tplGroup' ? null : <Widget

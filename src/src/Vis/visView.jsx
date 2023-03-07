@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2023 bluefox https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -1130,6 +1130,7 @@ class VisView extends React.Component {
                     borderColor: 'black',
                     zIndex: 1000,
                     pointerEvents: 'none',
+                    userSelect: 'none',
                     opacity: 0.7,
                 }}
             ></div>,
@@ -1150,6 +1151,7 @@ class VisView extends React.Component {
                     borderColor: 'white',
                     zIndex: 1000,
                     pointerEvents: 'none',
+                    userSelect: 'none',
                     opacity: 0.7,
                 }}
             ></div>,
@@ -1584,6 +1586,7 @@ class VisView extends React.Component {
                     key={key}
                     style={{
                         pointerEvents: 'none',
+                        userSelect: 'none',
                         position: 'absolute',
                         width: ruler.type === 'horizontal' ? '100%' : 10,
                         height: ruler.type === 'horizontal' ? 10 : '100%',

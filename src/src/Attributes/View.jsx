@@ -87,7 +87,7 @@ const styles = _theme => ({
     },
     groupSummary: {
         '&&&&&&': {
-            marginTop: 20,
+            marginTop: 10,
             borderRadius: '4px',
             padding: '2px',
         },

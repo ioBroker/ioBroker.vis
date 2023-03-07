@@ -114,6 +114,7 @@ export const getWidgetTypes = () => {
                 resizeLocked: widgetInfo.visResizeLocked,
                 draggable: widgetInfo.visDraggable,
                 adapter: widget.adapter || undefined,
+                version: widget.version || undefined,
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);

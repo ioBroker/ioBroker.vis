@@ -2,7 +2,7 @@
  *  ioBroker.vis
  *  https://github.com/ioBroker/ioBroker.vis
  *
- *  Copyright (c) 2022 bluefox https://github.com/GermanBluefox,
+ *  Copyright (c) 2022-2023 bluefox https://github.com/GermanBluefox,
  *  Creative Common Attribution-NonCommercial (CC BY-NC)
  *
  *  http://creativecommons.org/licenses/by-nc/4.0/
@@ -883,6 +883,7 @@ function getRemoteWidgets(socket) {
                                                 // console.log(Component);
                                                 if (Component.default) {
                                                     Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
+                                                    Component.default.version = dynamicWidgetInstance.common.version;
                                                     if (i18nPrefix) {
                                                         Component.default.i18nPrefix = i18nPrefix;
                                                     }
