@@ -13,8 +13,7 @@
       "minRows": 4,
       "sm": 12,
       "label": "License",
-      "hidden": "!!data.useLicenseManager",
-      "help": "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis"
+      "hidden": "!!data.useLicenseManager"
     },
     "_uuid": {
       "newLine": true,

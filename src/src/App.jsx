@@ -176,6 +176,8 @@ class App extends Runtime {
 
     // eslint-disable-next-line class-methods-use-this
     initState(newState) {
+        this.visEngineHandlers = {};
+
         // this function will be called from Runtime
 
         let runtime = false;

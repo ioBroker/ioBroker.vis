@@ -44,7 +44,6 @@
   "main": "main.js",
   "files": [
     "admin/",
-    "!admin/i18n/",
     "img/",
     "lib/",
     "www/",

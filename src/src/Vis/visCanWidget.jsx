@@ -21,7 +21,54 @@ import {
     getUsedObjectIDsInWidget,
 } from './visUtils';
 import VisBaseWidget from './visBaseWidget';
-import { analyzeDraggableResizable } from '../Utils';
+
+const analyzeDraggableResizable = (el, result, widgetStyle) => {
+    result = result || {};
+    result.resizable = true;
+    result.draggable = true;
+
+    if (el && el.dataset) {
+        let resizableOptions = el.dataset.visResizable;
+        if (resizableOptions) {
+            try {
+                resizableOptions = JSON.parse(resizableOptions);
+            } catch (error) {
+                console.error(`Cannot parse resizable options by ${el.getAttribute('id')}: ${resizableOptions}`);
+                resizableOptions = null;
+            }
+            if (resizableOptions) {
+                if (resizableOptions.disabled !== undefined) {
+                    result.resizable = !resizableOptions.disabled;
+                }
+                if (resizableOptions.handles !== undefined) {
+                    result.resizeHandles = resizableOptions.handles.split(',').map(h => h.trim());
+                }
+            }
+            if (widgetStyle && !result.resizable && (!widgetStyle.width || !widgetStyle.height)) {
+                result.virtualHeight = el.clientHeight;
+                result.virtualWidth = el.clientWidth;
+            }
+        }
+
+        let draggableOptions = el.dataset.visDraggable;
+        if (draggableOptions) {
+            try {
+                draggableOptions = JSON.parse(draggableOptions);
+            } catch (error) {
+                console.error(`Cannot parse draggable options by ${el.getAttribute('id')}: ${draggableOptions}`);
+                draggableOptions = null;
+            }
+            if (draggableOptions) {
+                if (draggableOptions.disabled !== undefined) {
+                    result.draggable = !draggableOptions.disabled;
+                }
+            }
+        }
+
+        result.hideHelper = el.dataset.visHideHelper === 'true';
+    }
+    return result;
+};
 
 class VisCanWidget extends VisBaseWidget {
     constructor(props) {

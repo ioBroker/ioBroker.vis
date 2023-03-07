@@ -32,6 +32,118 @@ function deleteFoldersRecursive(path, exceptions) {
     }
 }
 
+function buildRuntime() {
+    return new Promise((resolve, reject) => {
+        const options = {
+            stdio: 'pipe',
+            cwd:   `${__dirname}/runtime/`
+        };
+
+        const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
+        const data = JSON.parse(fs.readFileSync(`${__dirname}/runtime/package.json`).toString('utf8'));
+        if (data.version !== version) {
+            data.version = version;
+            fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(data, null, 4));
+        }
+
+        console.log(options.cwd);
+
+        let script = `${__dirname}/runtime/node_modules/@craco/craco/dist/bin/craco.js`;
+        if (!fs.existsSync(script)) {
+            script = `${__dirname}/node_modules/@craco/craco/dist/bin/craco.js`;
+        }
+        if (!fs.existsSync(script)) {
+            console.error(`Cannot find execution file: ${script}`);
+            reject(`Cannot find execution file: ${script}`);
+        } else {
+            const child = cp.fork(script, ['build'], options);
+            child.stdout.on('data', data => console.log(data.toString()));
+            child.stderr.on('data', data => console.log(data.toString()));
+            child.on('close', code => {
+                console.log(`child process exited with code ${code}`);
+                code ? reject(`Exit code: ${code}`) : resolve();
+            });
+        }
+    });
+}
+
+gulp.task('runtime-0-clean', done => {
+    deleteFoldersRecursive(`${__dirname}/runtime`, ['node_modules', 'package-lock.json']);
+    done();
+});
+
+gulp.task('runtime-1-copy-src', done => {
+    !fs.existsSync(`${__dirname}/runtime`) && fs.mkdirSync(`${__dirname}/runtime`);
+    !fs.existsSync(`${__dirname}/runtime/src`) && fs.mkdirSync(`${__dirname}/runtime/src`);
+    !fs.existsSync(`${__dirname}/runtime/src/Vis`) && fs.mkdirSync(`${__dirname}/runtime/src/Vis`);
+    !fs.existsSync(`${__dirname}/runtime/src/i18n`) && fs.mkdirSync(`${__dirname}/runtime/src/i18n`);
+    !fs.existsSync(`${__dirname}/runtime/public`) && fs.mkdirSync(`${__dirname}/runtime/public`);
+    copyFolder(`${__dirname}/src/public`, `${__dirname}/runtime/public`, ['ace', 'visEditWords.js']);
+    let text = fs.readFileSync(`${__dirname}/runtime/public/index.html`).toString('utf-8');
+    let runtimeText = text.replace('<title>Editor.vis</title>', '<title>ioBroker.vis</title>');
+    runtimeText = runtimeText.replace('faviconEdit.ico', 'favicon.ico');
+    if (runtimeText !== text) {
+        fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
+    }
+
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`);
+    copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
+    const pack = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString());
+    delete pack.dependencies['@devbookhq/splitter'];
+    delete pack.dependencies['ace-builds'];
+    delete pack.dependencies['iobroker.type-detector'];
+    delete pack.dependencies['mui-nested-menu'];
+    delete pack.dependencies['react-ace'];
+    delete pack.dependencies['react-dnd'];
+    delete pack.dependencies['react-dnd-html5-backend'];
+    delete pack.dependencies['react-dnd-preview'];
+    delete pack.dependencies['react-dnd-touch-backend'];
+    delete pack.dependencies['react-dropzone'];
+
+    fs.writeFileSync(`${__dirname}/runtime/package.json`, JSON.stringify(pack, null, 2));
+    fs.writeFileSync(`${__dirname}/runtime/craco.config.js`, fs.readFileSync(`${__dirname}/src/craco.config.js`));
+    fs.writeFileSync(`${__dirname}/runtime/modulefederation.config.js`, fs.readFileSync(`${__dirname}/src/modulefederation.config.js`));
+    fs.writeFileSync(`${__dirname}/runtime/src/App.jsx`, fs.readFileSync(`${__dirname}/src/src/Runtime.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/serviceWorker.jsx`, fs.readFileSync(`${__dirname}/src/src/serviceWorker.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/index.jsx`, fs.readFileSync(`${__dirname}/src/src/index.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/theme.jsx`, fs.readFileSync(`${__dirname}/src/src/theme.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/bootstrap.jsx`, fs.readFileSync(`${__dirname}/src/src/bootstrap.jsx`));
+    fs.writeFileSync(`${__dirname}/runtime/src/index.css`, fs.readFileSync(`${__dirname}/src/src/index.css`));
+    copyFolder(`${__dirname}/src/src/i18nRuntime`, `${__dirname}/runtime/src/i18n`);
+    done();
+});
+
+gulp.task('runtime-2-npm', () => {
+    if (fs.existsSync(`${__dirname}/runtime/package-lock.json`)) {
+        return Promise.resolve();
+    } else {
+        return npmInstall(`${__dirname}/runtime`);
+    }
+});
+
+gulp.task('runtime-2-npm-dep', gulp.series('runtime-0-clean', 'runtime-1-copy-src', 'runtime-2-npm'));
+
+gulp.task('runtime-4-build', () => buildRuntime());
+
+gulp.task('runtime-4-build-dep', gulp.series('runtime-2-npm-dep', 'runtime-4-build'));
+
+function copyRuntimeFiles() {
+    copyFolder(path.join(__dirname, 'runtime/build'), path.join(__dirname, 'www'), ['asset-manifest.json']);
+    return Promise.resolve();
+}
+
+gulp.task('runtime-6-copy', () => copyRuntimeFiles());
+
+gulp.task('runtime-6-copy-dep', gulp.series('runtime-4-build-dep', 'runtime-6-copy'));
+
+gulp.task('runtime-7-patch', done => {
+    patchFile(`${__dirname}/www/index.html`);
+    patchFile(`${__dirname}/runtime/build/index.html`);
+    done();
+});
+
+gulp.task('runtime-7-patch-dep',  gulp.series('runtime-6-copy-dep', 'runtime-7-patch'));
+
 gulp.task('0-clean', done => {
     deleteFoldersRecursive(`${__dirname}/src/build`);
     deleteFoldersRecursive(`${__dirname}/www`);
@@ -39,10 +151,21 @@ gulp.task('0-clean', done => {
     done();
 });
 
-function npmInstall() {
+gulp.task('2-npm', () => {
+    if (fs.existsSync(`${__dirname}/src/package-lock.json`)) {
+        return Promise.resolve();
+    } else {
+        return npmInstall();
+    }
+});
+
+gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
+
+function npmInstall(dir) {
+    dir = dir || `${__dirname}/src/`;
     return new Promise((resolve, reject) => {
         // Install node modules
-        const cwd = `${__dirname.replace(/\\/g, '/')}/src/`;
+        const cwd = dir.replace(/\\/g, '/');
 
         const cmd = `npm install`;
         console.log(`"${cmd} in ${cwd}`);
@@ -101,9 +224,8 @@ gulp.task('3-svg-icons', done => {
             // console.log(pako.inflate(Buffer.from(result[file][folder], 'base64'), {to: 'string'}));
         });
     });
-    Object.keys(result).forEach(file => {
-        fs.writeFileSync(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file]));
-    });
+    Object.keys(result).forEach(file =>
+        fs.writeFileSync(`${__dirname}/src/public/material-icons/${file.replace('.svg', '')}.json`, JSON.stringify(result[file])));
 
     // prepare https://github.com/OpenAutomationProject/knx-uf-iconset/archive/refs/heads/master.zip
     if (!fs.existsSync(`${__dirname}/knx-uf-iconset/master.zip`)) {
@@ -205,7 +327,7 @@ gulp.task('4-build', () => build());
 gulp.task('4-build-dep', gulp.series('2-npm', '3-svg-icons', '4-build'));
 
 function copyFiles() {
-    copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'));
+    copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'), ['index.html']);
     fs.writeFileSync(path.join(__dirname, 'www/edit.html'), fs.readFileSync(path.join(__dirname, 'src', 'build', 'index.html')));
     return Promise.resolve();
 }
@@ -231,8 +353,8 @@ function copyFolder(source, target, ignore) {
     if (fs.lstatSync(source).isDirectory()) {
         const files = fs.readdirSync(source);
         files.forEach(file => {
-            const curSource = path.join(source, file);
-            const curTarget = path.join(target, file);
+            const curSource = path.join(source, file).replace(/\\/g, '/');
+            const curTarget = path.join(target, file).replace(/\\/g, '/');
             if (ignore && ignore.includes(file)) {
                 return;
             }
@@ -255,7 +377,6 @@ function copyFolder(source, target, ignore) {
 }
 
 gulp.task('7-patch', done => {
-    patchFile(`${__dirname}/www/index.html`);
     patchFile(`${__dirname}/www/edit.html`);
     patchFile(`${__dirname}/src/build/index.html`);
     patchFile(`${__dirname}/src/build/edit.html`);
@@ -264,12 +385,12 @@ gulp.task('7-patch', done => {
 
 gulp.task('7-patch-dep',  gulp.series('6-copy-dep', '7-patch'));
 
-gulp.task('buildReact', gulp.series('7-patch-dep'));
+gulp.task('buildReact', gulp.series('7-patch-dep', 'runtime-7-patch-dep'));
 
 gulp.task('8-beta', async () => {
     !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
 
-    copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'), ['i18n']);
+    copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'));
     copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
     copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
     copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'), ['.map']);
@@ -309,6 +430,6 @@ gulp.task('8-beta', async () => {
     }
 });
 
-gulp.task('beta', gulp.series('7-patch-dep', '8-beta'));
+gulp.task('beta', gulp.series('buildReact', '8-beta'));
 
 gulp.task('default', gulp.series('buildReact'));

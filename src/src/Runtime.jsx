@@ -53,7 +53,9 @@ class Runtime extends GenericApp {
 
         super(props, extendedProps);
 
-        this.visEngineHandlers = {};
+        // do not control this state
+        this.socket.setStateToIgnore('nothing_selected');
+
 
         this.alert = window.alert;
         window.alert = message => {

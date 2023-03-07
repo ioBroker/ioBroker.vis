@@ -1,7 +1,6 @@
 {
   "Use license manager": "Use license manager",
   "License": "License",
-  "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis": "Here is special license for vis-2-widgets-jaeger-design required and not for iobroker.vis",
   "instruction": "To use <b>vis</b>, you must get the license key for it.<br><b>vis</b> is free for private use, but for commercial use it has a price.<br>You can get the license on <a href='https://iobroker.net' target='_blank'>iobroker.net</a> after short registration.",
   "Force pages rebuild": "Force pages rebuild",
   "Suitable license found": "Suitable license found"

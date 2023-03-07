@@ -1,13 +1,13 @@
 {
     "name": "vis-admin",
-    "version": "2.0.18",
+    "version": "2.0.19",
     "private": true,
     "dependencies": {
         "@devbookhq/splitter": "^1.4.0",
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@iobroker/adapter-react-v5": "^4.0.14",
-        "@iobroker/vis-2-widgets-react-dev": "^0.3.14",
+        "@iobroker/vis-2-widgets-react-dev": "^0.3.15",
         "@mui/icons-material": "^5.11.11",
         "@mui/material": "^5.11.12",
         "@mui/styles": "^5.11.12",

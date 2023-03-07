@@ -76,6 +76,13 @@ class VisRxWidget extends VisBaseWidget {
         return '';
     }
 
+    static getText(text) {
+        if (typeof text === 'object') {
+            return text[I18n.getLanguage()] || text.en;
+        }
+        return text;
+    }
+
     static t(key, ...args) {
         if (this.getI18nPrefix) {
             return I18n.t(`${this.getI18nPrefix()}${key}`,  ...args);
@@ -317,12 +324,15 @@ class VisRxWidget extends VisBaseWidget {
         return value === undefined || value === null ? '' : value.toString();
     }
 
-    wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick) {
-        return <Card
+    wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick, components) {
+        const MyCard = components.Card || Card;
+        const MyCardContent = components.CardContent || CardContent;
+
+        return <MyCard
             style={{ width: 'calc(100% - 8px)', height: 'calc(100% - 8px)', margin: 4 }}
             onClick={onCardClick}
         >
-            <CardContent
+            <MyCardContent
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -353,8 +363,8 @@ class VisRxWidget extends VisBaseWidget {
                     {addToHeader || null}
                 </div> : (addToHeader || null)}
                 {content}
-            </CardContent>
-        </Card>;
+            </MyCardContent>
+        </MyCard>;
     }
 
     renderWidgetBody(props) {
