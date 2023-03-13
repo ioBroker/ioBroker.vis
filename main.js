@@ -124,10 +124,39 @@ async function generateWidgetsHtml(widgetSets, forceBuild) {
     return false;
 }
 
-async function generateConfigPage(forceBuild) {
+async function generateConfigPage(forceBuild, enabledList) {
     let changed = forceBuild || false;
 
-    const configJs = `window.isLicenseError = ${isLicenseError};`;
+    // for back compatibility with vis.1 on cloud
+    const widgetSets = [
+        'basic',
+        'jqplot',
+        {
+            name: 'jqui',
+            depends: ['basic']
+        },
+        'swipe',
+        'tabs'
+    ];
+    enabledList.forEach(obj => {
+        const name = obj.name.replace('iobroker.', '').replace('vis-', '');
+        if (!obj.pack.common.visWidgets && !widgetSets.includes(name) && !name.startsWith('2-')) {
+            widgetSets.push(name);
+        }
+    });
+
+    const configJs =
+`window.isLicenseError = ${isLicenseError};
+// for back compatibility with vis.1 on cloud
+window.visConfig = {
+    "widgetSets": ${JSON.stringify(widgetSets)}
+};
+if (typeof exports !== 'undefined') {
+    exports.config = visConfig;
+} else {
+    window.visConfig.language = window.navigator.userLanguage || window.navigator.language;
+}
+`;
 
     // upload config.js
     let currentConfigJs = '';
@@ -665,8 +694,8 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 }
 
 async function buildHtmlPages(forceBuild) {
-    const configChanged = await generateConfigPage(forceBuild);
     const enabledList = await readAdaptersList();
+    const configChanged = await generateConfigPage(forceBuild, enabledList);
 
     widgetInstances = {};
     enabledList.forEach(adapter =>
