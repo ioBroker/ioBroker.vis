@@ -1,3 +1,15 @@
 {
-
+  "Select project": "选择项目",
+  "Create new project": "创建新项目",
+  "Cancel": "取消",
+  "Message": "信息",
+  "Ok": "好的",
+  "Received user command: %s": "收到用户命令：%s",
+  "Unknown widget type \"%s\"": "未知的小部件类型“%s”",
+  "vis_2_widgets_basic_cannot_recursive": "不能使用递归视图",
+  "vis_2_widgets_basic_contains_view": "使用视图",
+  "vis_2_widgets_basic_view_in_widget": "在小部件中查看",
+  "vis_2_widgets_basic_view_not_defined": "查看未定义",
+  "Project name": "项目名",
+  "Project \"%s\" does not exist": "项目“%s”不存在"
 }

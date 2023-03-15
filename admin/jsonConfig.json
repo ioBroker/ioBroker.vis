@@ -36,6 +36,12 @@
       "lg": 4,
       "text": "instruction"
     },
+    "doNotShowProjectDialog": {
+        "newLine": true,
+        "type": "checkbox",
+        "label": "Do not show project dialog if URL is wrong",
+        "sm": 12
+    },
     "forceBuild": {
       "newLine": true,
       "type": "checkbox",

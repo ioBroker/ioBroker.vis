@@ -131,17 +131,29 @@ async function generateConfigPage(forceBuild, enabledList) {
     const widgetSets = [
         'basic',
         'jqplot',
-        {
-            name: 'jqui',
-            depends: ['basic']
-        },
+        'jqui',
         'swipe',
         'tabs'
     ];
+    // collect vis-1 widgets
     enabledList.forEach(obj => {
-        const name = obj.name.replace('iobroker.', '').replace('vis-', '');
-        if (!obj.pack.common.visWidgets && !widgetSets.includes(name) && !name.startsWith('2-')) {
-            widgetSets.push(name);
+        if (!obj.pack.common.visWidgets) {
+            // find folder in widgets
+            let path = `${__dirname}/../node_modules/${obj.name}/widgets`;
+            if (!fs.existsSync(path)) {
+                path = `${__dirname}/../${obj.name}/widgets`;
+                if (!fs.existsSync(path)) {
+                    path = null;
+                }
+            }
+            if (path) {
+                fs.readdirSync(path).forEach(file => {
+                    if (file.match(/\.html$/)) {
+                        const folderName = file.replace('.html', '');
+                        !widgetSets.includes(folderName) && widgetSets.push(folderName);
+                    }
+                });
+            }
         }
     });
 

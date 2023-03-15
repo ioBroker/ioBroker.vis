@@ -1,3 +1,15 @@
 {
-
+  "Select project": "Selecteer project",
+  "Create new project": "Maak een nieuw project aan",
+  "Cancel": "Annuleren",
+  "Message": "Bericht",
+  "Ok": "OK",
+  "Received user command: %s": "Gebruikersopdracht ontvangen: %s",
+  "Unknown widget type \"%s\"": "Onbekend widgettype \"%s\"",
+  "vis_2_widgets_basic_cannot_recursive": "Kan geen recursieve weergaven gebruiken",
+  "vis_2_widgets_basic_contains_view": "Gebruik weergave",
+  "vis_2_widgets_basic_view_in_widget": "Bekijk in widget",
+  "vis_2_widgets_basic_view_not_defined": "Uitzicht niet gedefinieerd",
+  "Project name": "Naam van het project",
+  "Project \"%s\" does not exist": "Project \"%s\" bestaat niet"
 }

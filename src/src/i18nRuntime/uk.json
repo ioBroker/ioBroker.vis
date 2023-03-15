@@ -1,3 +1,15 @@
 {
-
+  "Select project": "Виберіть проект",
+  "Create new project": "Створити новий проект",
+  "Cancel": "Скасувати",
+  "Message": "повідомлення",
+  "Ok": "В порядку",
+  "Received user command: %s": "Отримано команду користувача: %s",
+  "Unknown widget type \"%s\"": "Невідомий тип віджета \"%s\"",
+  "vis_2_widgets_basic_cannot_recursive": "Не можна використовувати рекурсивні перегляди",
+  "vis_2_widgets_basic_contains_view": "Використовуйте перегляд",
+  "vis_2_widgets_basic_view_in_widget": "Переглянути у віджеті",
+  "vis_2_widgets_basic_view_not_defined": "Перегляд не визначено",
+  "Project name": "Назва проекту",
+  "Project \"%s\" does not exist": "Проект \"%s\" не існує"
 }

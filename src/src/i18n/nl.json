@@ -365,5 +365,11 @@
   "Current project": "Huidige project",
   "Close all but current view": "Sluit alles behalve de huidige weergave",
   "One parameter": "Eén parameter",
-  "Width x height (px)": "Breedte x hoogte (px)"
+  "Width x height (px)": "Breedte x hoogte (px)",
+  "Message": "Bericht",
+  "Received user command: %s": "Gebruikersopdracht ontvangen: %s",
+  "Select project": "Selecteer project",
+  "Create new project": "Maak een nieuw project aan",
+  "Project name": "Naam van het project",
+  "Project \"%s\" does not exist": "Project \"%s\" bestaat niet"
 }

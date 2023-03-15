@@ -216,7 +216,8 @@
     "native": {
         "defaultFileMode": 1604,
         "license": "",
-        "useLicenseManager": 0
+        "useLicenseManager": 0,
+        "doNotShowProjectDialog": false
     },
     "instanceObjects": [
         {

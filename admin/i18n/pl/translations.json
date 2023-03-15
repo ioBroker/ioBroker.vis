@@ -3,5 +3,6 @@
   "Use license manager": "Użyj menedżera licencji",
   "instruction": "Aby użyć <b> vis </b>, musisz uzyskać klucz licencyjny. <B> vis </b> jest bezpłatny do użytku prywatnego, ale do celów komercyjnych ma swoją cenę. może uzyskać licencję na <a href='https://iobroker.net' target='_blank'>iobroker.net</a> po krótkiej rejestracji.",
   "Suitable license found": "Znaleziono odpowiednią licencję",
-  "Force pages rebuild": "Wymuś przebudowę stron"
+  "Force pages rebuild": "Wymuś przebudowę stron",
+  "Do not show project dialog if URL is wrong": "Nie pokazuj okna dialogowego projektu, jeśli adres URL jest nieprawidłowy"
 }

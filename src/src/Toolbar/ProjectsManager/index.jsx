@@ -187,10 +187,7 @@ const ProjectsManage = props => {
                     fullWidth
                     className={props.classes.projectButton}
                     color={projectName === props.projectName ? 'primary' : 'grey'}
-                    onClick={() => {
-                        props.loadProject(projectName);
-                        props.onClose();
-                    }}
+                    onClick={() => window.location.href = `?${projectName}`}
                 >
                     {projectName}
                 </Button>

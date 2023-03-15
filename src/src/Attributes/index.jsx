@@ -96,7 +96,7 @@ const Attributes = props => {
         </Typography>
         <Tabs
             className={props.classes.viewTabs}
-            value={selected}
+            value={selected || 'View'}
             variant="scrollable"
             scrollButtons="auto"
         >

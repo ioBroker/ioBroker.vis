@@ -607,6 +607,22 @@ class VisEngine extends React.Component {
                 // used in vis.1
                 // do nothing, as it is not required in react
             },
+            preloadImages: srcs => {
+                // preload images
+                this.preloadImagesCacheImgs = this.preloadImagesCacheImgs || [];
+                this.preloadImagesCacheSrcs = this.preloadImagesCacheSrcs || [];
+                if (!Array.isArray(srcs)) {
+                    srcs = [srcs];
+                }
+                for (let i = 0; i < srcs.length; i++) {
+                    if (!this.preloadImagesCacheSrcs.includes(srcs[i])) {
+                        const img = new Image();
+                        img.src = srcs[i];
+                        this.preloadImagesCacheImgs.push(img);
+                        this.preloadImagesCacheSrcs.push(srcs[i]);
+                    }
+                }
+            },
         };
     }
 

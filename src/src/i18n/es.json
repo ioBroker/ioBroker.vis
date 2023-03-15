@@ -365,5 +365,11 @@
   "Current project": "Proyecto actual",
   "Close all but current view": "Cerrar todo menos la vista actual",
   "One parameter": "Un parámetro",
-  "Width x height (px)": "Ancho x alto (px)"
+  "Width x height (px)": "Ancho x alto (px)",
+  "Message": "Mensaje",
+  "Received user command: %s": "Comando de usuario recibido: %s",
+  "Select project": "Seleccionar proyecto",
+  "Create new project": "Crear nuevo proyecto",
+  "Project name": "Nombre del proyecto",
+  "Project \"%s\" does not exist": "El proyecto \"%s\" no existe"
 }

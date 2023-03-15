@@ -365,5 +365,11 @@
   "Current project": "当前的项目",
   "Close all but current view": "关闭除当前视图之外的所有视图",
   "One parameter": "一个参数",
-  "Width x height (px)": "宽度 x 高度（像素）"
+  "Width x height (px)": "宽度 x 高度（像素）",
+  "Message": "信息",
+  "Received user command: %s": "收到用户命令：%s",
+  "Select project": "选择项目",
+  "Create new project": "创建新项目",
+  "Project name": "项目名",
+  "Project \"%s\" does not exist": "项目“%s”不存在"
 }

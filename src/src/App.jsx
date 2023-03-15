@@ -945,32 +945,6 @@ class App extends Runtime {
         await this.setStateAsync(newState);
     };
 
-    addProject = async projectName => {
-        try {
-            const project = {
-                ___settings: {
-                    folders: [],
-                },
-                default: {
-                    name: 'Default',
-                    settings: {
-                        style: {},
-                    },
-                    widgets: {},
-                    activeWidgets: {},
-                },
-            };
-            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-views.json`, JSON.stringify(project));
-            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
-            await this.refreshProjects();
-            await this.loadProject(projectName);
-            // close dialog
-            this.setProjectsDialog(false);
-        } catch (e) {
-            window.alert(`Cannot create project: ${e.toString()}`);
-        }
-    };
-
     renameProject = async (fromProjectName, toProjectName) => {
         try {
             // const files = await this.socket.readDir(this.adapterId, fromProjectName);
@@ -1198,7 +1172,7 @@ class App extends Runtime {
                 </div>
             </Tooltip>
             <Tabs
-                value={this.state.selectedView}
+                value={this.state.selectedView === 'null' || this.state.selectedView === 'undefined' || !this.state.selectedView ? views[0] || '' : this.state.selectedView}
                 style={{ width: `calc(100% - ${68 + (!this.state.showCode ? 40 : 0) + (this.state.hidePalette ? 40 : 0) + (this.state.hideAttributes ? 40 : 0)}px)` }}
                 className={this.props.classes.viewTabs}
                 variant="scrollable"
@@ -1481,6 +1455,26 @@ class App extends Runtime {
     }
 
     render() {
+        if (this.state.projectDoesNotExist) {
+            return <StylesProvider generateClassName={generateClassName}>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={this.state.theme}>
+                        {this.renderProjectDoesNotExist()}
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </StylesProvider>;
+        }
+
+        if (this.state.showProjectsDialog) {
+            return <StylesProvider generateClassName={generateClassName}>
+                <StyledEngineProvider injectFirst>
+                    <ThemeProvider theme={this.state.theme}>
+                        {this.showSmallProjectsDialog()}
+                    </ThemeProvider>
+                </StyledEngineProvider>
+            </StylesProvider>;
+        }
+
         if (!this.state.loaded || !this.state.project || !this.state.groups) {
             return <StylesProvider generateClassName={generateClassName}>
                 <StyledEngineProvider injectFirst>

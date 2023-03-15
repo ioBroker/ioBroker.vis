@@ -365,5 +365,11 @@
   "custom_icons": "Special",
   "Close all but current view": "Close all but current view",
   "One parameter": "One parameter",
-  "Width x height (px)": "Width x height (px)"
+  "Width x height (px)": "Width x height (px)",
+  "Message": "Message",
+  "Received user command: %s": "Received user command: %s",
+  "Select project": "Select project",
+  "Create new project": "Create new project",
+  "Project name": "Project name",
+  "Project \"%s\" does not exist": "Project \"%s\" does not exist"
 }

@@ -1,4 +1,5 @@
 export const theme = [
+    { value: '', name: 'default' },
     { value: 'black-tie', name: 'black-tie' },
     { value: 'blitzer', name: 'blitzer' },
     { value: 'cupertino', name: 'cupertino' },

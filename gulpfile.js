@@ -289,6 +289,32 @@ function build() {
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, fs.readFileSync(`${ace}snippets/html.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, fs.readFileSync(`${ace}snippets/json.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ext-searchbox.js`, fs.readFileSync(`${ace}ext-searchbox.js`));
+
+    // synchronise i18n: copy all new words from runtime into src
+    const langsRuntime = {
+        en: require('./src/src/i18nRuntime/en.json'),
+    };
+    const langsEditor = {
+        en: require('./src/src/i18n/en.json'),
+    };
+    Object.keys(langsRuntime.en).forEach(key => {
+        if (!langsEditor.en[key]) {
+            // load all languages
+            if (!langsEditor.de) {
+                fs.readdirSync(`${__dirname}/src/src/i18nRuntime`).forEach(file => {
+                    langsRuntime[file.replace('.json', '')] = require(`./src/src/i18nRuntime/${file}`);
+                    langsEditor[file.replace('.json', '')] = require(`./src/src/i18n/${file}`);
+                });
+            }
+            Object.keys(langsEditor).forEach(lang => langsEditor[lang][key] = langsRuntime[lang][key]);
+        }
+    });
+
+    if (langsEditor.de) {
+        Object.keys(langsEditor).forEach(lang =>
+            fs.writeFileSync(`${__dirname}/src/src/i18n/${lang}.json`, JSON.stringify(langsEditor[lang], null, 2)));
+    }
 
     return new Promise((resolve, reject) => {
         const options = {

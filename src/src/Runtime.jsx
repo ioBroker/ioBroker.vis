@@ -3,8 +3,22 @@ import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import {
+    DialogContent,
+    DialogTitle,
+    LinearProgress,
     Snackbar,
+    ListItemButton,
+    Dialog,
+    ListItemText,
+    MenuList,
+    Paper,
+    DialogActions,
+    TextField,
+    Button,
 } from '@mui/material';
+
+import IconAdd from '@mui/icons-material/Add';
+import IconClose from '@mui/icons-material/Close';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import {
@@ -56,7 +70,6 @@ class Runtime extends GenericApp {
         // do not control this state
         this.socket.setStateToIgnore('nothing_selected');
 
-
         this.alert = window.alert;
         window.alert = message => {
             if (message && message.toString().toLowerCase().includes('error')) {
@@ -97,6 +110,11 @@ class Runtime extends GenericApp {
             fonts: [],
             visCommonCss: null,
             visUserCss: null,
+            showProjectsDialog: false,
+            showNewProjectDialog: false,
+            newProjectName: '',
+            projects: null,
+            projectDoesNotExist: false,
         };
 
         if (this.initState) {
@@ -150,6 +168,19 @@ class Runtime extends GenericApp {
                 console.warn(`Cannot read project file vis-views.json: ${err}`);
                 file = '{}';
             }
+        }
+
+        if (!file || file === '{}') {
+            // read if show projects dialog allowed
+            const obj = await this.socket.getObject(`system.adapter.${this.adapterName}.${this.instance}`);
+            if (this.state.runtime && obj.native.doNotShowProjectDialog) {
+                this.setState({ projectDoesNotExist: true });
+            } else {
+                !this.state.projects && (await this.refreshProjects());
+                // show project dialog
+                this.setState({ showProjectsDialog: true });
+            }
+            return;
         }
 
         if (!this.state.runtime) {
@@ -377,8 +408,15 @@ class Runtime extends GenericApp {
         if (!this.state.projects || this.state.projects.includes(projectName)) {
             await this.loadProject(projectName);
         } else {
-            // take first project
-            await this.loadProject(this.state.projects[0]);
+            // read if show projects dialog allowed
+            const obj = this.state.runtime && (await this.socket.getObject(`system.adapter.${this.adapterName}.${this.instance}`));
+            if (this.state.runtime && obj.native.doNotShowProjectDialog) {
+                this.setState({ projectDoesNotExist: true });
+            } else {
+                !this.state.projects && (await this.refreshProjects());
+                // show project dialog
+                this.setState({ showProjectsDialog: true });
+            }
         }
     }
 
@@ -462,7 +500,141 @@ class Runtime extends GenericApp {
         this.setState({ widgetsLoaded });
     }
 
+    addProject = async (projectName, doNotLoad) => {
+        try {
+            const project = {
+                ___settings: {
+                    folders: [],
+                },
+                default: {
+                    name: 'Default',
+                    settings: {
+                        style: {},
+                    },
+                    widgets: {},
+                    activeWidgets: {},
+                },
+            };
+            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-views.json`, JSON.stringify(project));
+            await this.socket.writeFile64(this.adapterId, `${projectName}/vis-user.css`, '');
+            if (!doNotLoad) {
+                await this.refreshProjects();
+                await this.loadProject(projectName);
+                // close dialog
+                this.setState({ projectsDialog: false });
+            }
+        } catch (e) {
+            window.alert(`Cannot create project: ${e.toString()}`);
+        }
+    };
+
+    showCreateNewProjectDialog() {
+        if (!this.state.showNewProjectDialog) {
+            return null;
+        }
+        return <Dialog
+            open={!0}
+            onClose={() => this.setState({ showNewProjectDialog: false })}
+        >
+            <DialogTitle>{I18n.t('Create new project')}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    variant="standard"
+                    label={I18n.t('Project name')}
+                    autoFocus
+                    fullWidth
+                    onKeyDown={e =>
+                        e.keyCode === 13 &&
+                        this.state.newProjectName &&
+                        !this.state.projects.includes(this.state.newProjectName) &&
+                        this.addProject(this.state.newProjectName)
+                    }
+                    value={this.state.newProjectName}
+                    onChange={e => this.setState({ newProjectName: e.target.value })}
+                    margin="dense"
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    variant="contained"
+                    default
+                    color="primary"
+                    disabled={!this.state.newProjectName || this.state.projects.includes(this.state.newProjectName)}
+                    onClick={async () => {
+                        await this.addProject(this.state.newProjectName, true);
+                        window.location.href = `?${this.state.newProjectName}`;
+                    }}
+                    startIcon={<IconAdd />}
+                >
+                    {I18n.t('Create')}
+                </Button>
+                <Button
+                    variant="contained"
+                    default
+                    color="primary"
+                    onClick={() => this.setState({ showNewProjectDialog: false })}
+                    startIcon={<IconClose />}
+                >
+                    {I18n.t('Cancel')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
+    showSmallProjectsDialog() {
+        return <Dialog
+            open={!0}
+            onClose={() => {}} // do nothing
+        >
+            <DialogTitle>{I18n.t('Select project')}</DialogTitle>
+            <DialogContent>
+                {!this.state.projects ? <LinearProgress /> : <Paper sx={{ width: 320, maxWidth: '100%' }}>
+                    <MenuList>
+                        {this.state.projects.map(project =>
+                            <ListItemButton key={project} onClick={() => window.location.href = `?${project}`}>
+                                <ListItemText>{project}</ListItemText>
+                            </ListItemButton>)}
+                        <ListItemButton
+                            onClick={() => this.setState({ showNewProjectDialog: true })}
+                            style={{ backgroundColor: '#112233', color: '#ffffff' }}
+                        >
+                            <ListItemText>{I18n.t('Create new project')}</ListItemText>
+                        </ListItemButton>
+                    </MenuList>
+                </Paper>}
+            </DialogContent>
+            {this.showCreateNewProjectDialog()}
+        </Dialog>;
+    }
+
+    renderProjectDoesNotExist() {
+        return <div
+            style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 36,
+                color: '#982828',
+            }}
+        >
+            {I18n.t('Project "%s" does not exist', this.state.projectName)}
+        </div>;
+    }
+
     getVisEngine() {
+        if (this.state.projectDoesNotExist) {
+            return this.renderProjectDoesNotExist();
+        }
+
+        if (this.state.showProjectsDialog) {
+            return this.showSmallProjectsDialog();
+        }
+
         return <VisEngine
             key={this.state.projectName}
             widgetsLoaded={this.state.widgetsLoaded}
