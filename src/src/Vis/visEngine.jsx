@@ -1210,8 +1210,12 @@ class VisEngine extends React.Component {
                 groups[widgetSet] = groups[widgetSet] || [];
                 groups[widgetSet].push({ newScript, oldScript });
             } else {
-                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                oldScript.parentNode.replaceChild(newScript, oldScript);
+                try {
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                } catch (error) {
+                    console.error(`Cannot set inner HTML of ${oldScript.text?.substring(0, 500)}: ${error}`);
+                }
             }
         }
 

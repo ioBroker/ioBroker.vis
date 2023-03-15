@@ -67,6 +67,16 @@ export const getWidgetTypes = () => {
         // Old CanJS widgets
         window.visWidgetTypes = Array.from(document.querySelectorAll('script[type="text/ejs"]'))
             .map(script => {
+                const name = script.attributes.id.value;
+                // only if RX widget with the same name not found
+                let info;
+                if (VisWidgetsCatalog.rxWidgets[name] && VisWidgetsCatalog.rxWidgets[name].getWidgetInfo) {
+                    info = VisWidgetsCatalog.rxWidgets[name].getWidgetInfo();
+                    if (info?.visAttrs && typeof info.visAttrs !== 'string') {
+                        return null;
+                    }
+                }
+
                 const widgetSet = script.attributes['data-vis-set'] ? script.attributes['data-vis-set'].value : 'basic';
                 const color = script.attributes['data-vis-color']?.value;
                 window.visSets[widgetSet] = window.visSets[widgetSet] || {};
@@ -76,23 +86,27 @@ export const getWidgetTypes = () => {
                     window.visSets[widgetSet].color = DEFAULT_SET_COLORS[widgetSet];
                 }
                 const widgetObj = {
-                    name: script.attributes.id.value,
-                    title: script.attributes['data-vis-name']?.value,
-                    preview: script.attributes['data-vis-prev']?.value,
+                    name,
+                    title: info?.visName || script.attributes['data-vis-name']?.value,
+                    label: info?.visWidgetLabel ? info.visWidgetLabel : (info?.visWidgetLabel === '' ? '' : undefined), // new style with translation
+                    preview: info?.visPrev || script.attributes['data-vis-prev']?.value,
                     help: script.attributes['data-vis-help']?.value,
-                    set: widgetSet,
+                    set: info?.visSet || widgetSet,
                     imageHTML: script.attributes['data-vis-prev'] ? script.attributes['data-vis-prev'].value : '',
                     init: script.attributes['data-vis-init']?.value,
-                    params: Object.values(script.attributes)
+                    color: info?.visWidgetColor || undefined,
+                    params: info?.visAttrs || Object.values(script.attributes)
                         .filter(attribute => attribute.name.startsWith('data-vis-attrs'))
                         .map(attribute => attribute.value)
                         .join(''),
+                    setLabel: info?.visSetLabel || undefined,
+                    setColor: info?.visSetColor || undefined,
                 };
 
                 VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
 
                 return widgetObj;
-            });
+            }).filter(w => w);
 
         // React widgets
         Object.values(VisWidgetsCatalog.rxWidgets).forEach(widget => {

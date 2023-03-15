@@ -411,6 +411,46 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
+    getWidgetView(view) {
+        const VisView = this.props.VisView;
+
+        return <VisView
+            $$={this.props.$$}
+            activeView={view}
+            adapterName={this.props.adapterName}
+            allWidgets={this.props.allWidgets}
+            buildLegacyStructures={this.props.buildLegacyStructures}
+            can={this.props.can}
+            canStates={this.props.canStates}
+            container={this.props.container}
+            customSettings={this.props.customSettings}
+            dateFormat={this.props.dateFormat}
+            editMode={false}
+            formatUtils={this.props.formatUtils}
+            instance={this.props.instance}
+            jQuery={this.props.jQuery}
+            key={`${this.props.id}_${view}`}
+            lang={this.props.lang}
+            linkContext={this.props.linkContext}
+            projectName={this.props.projectName}
+            registerRef={this.props.registerRef}
+            runtime={this.props.runtime}
+            setValue={this.props.setValue}
+            showWidgetNames={this.props.showWidgetNames}
+            socket={this.props.socket}
+            systemConfig={this.props.systemConfig}
+            theme={this.props.theme}
+            themeName={this.props.themeName}
+            themeType={this.props.themeType}
+            user={this.props.user}
+            userGroups={this.props.userGroups}
+            view={view}
+            views={this.props.views}
+            viewsActiveFilter={this.props.viewsActiveFilter}
+            visInWidget
+        />;
+    }
+
     render() {
         if (!this.state.visible && !this.state.editMode) {
             return null;

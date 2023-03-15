@@ -203,8 +203,6 @@ class BasicViewInWidget extends VisRxWidget {
             </div>
         </div>
          */
-        const VisView = this.props.VisView;
-
         const view = this.state.rxData.contains_view;
 
         if (view === this.props.view) {
@@ -220,48 +218,15 @@ class BasicViewInWidget extends VisRxWidget {
         }
 
         return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-            { this.state.editMode ? <div className="editmode-helper" /> : null}
-            <VisView
-                $$={this.props.$$}
-                activeView={view}
-                adapterName={this.props.adapterName}
-                allWidgets={this.props.allWidgets}
-                buildLegacyStructures={this.props.buildLegacyStructures}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                container={this.props.container}
-                customSettings={this.props.customSettings}
-                dateFormat={this.props.dateFormat}
-                editMode={false}
-                formatUtils={this.props.formatUtils}
-                instance={this.props.instance}
-                jQuery={this.props.jQuery}
-                key={`${this.props.id}_${view}`}
-                lang={this.props.lang}
-                linkContext={this.props.linkContext}
-                projectName={this.props.projectName}
-                registerRef={this.props.registerRef}
-                runtime={this.props.runtime}
-                setValue={this.props.setValue}
-                showWidgetNames={this.props.showWidgetNames}
-                socket={this.props.socket}
-                systemConfig={this.props.systemConfig}
-                theme={this.props.theme}
-                themeName={this.props.themeName}
-                themeType={this.props.themeType}
-                user={this.props.user}
-                userGroups={this.props.userGroups}
-                view={view}
-                views={this.props.views}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                visInWidget
-            />
+            {this.state.editMode ? <div className="editmode-helper" /> : null}
+            {super.getWidgetView(view)}
         </div>;
     }
 }
 
 BasicViewInWidget.propTypes = {
     id: PropTypes.string.isRequired,
+    VisView: PropTypes.any.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,

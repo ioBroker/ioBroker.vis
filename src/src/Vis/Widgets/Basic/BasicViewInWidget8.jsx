@@ -16,6 +16,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import VisRxWidget from '../../visRxWidget';
 
 class BasicViewInWidget8 extends VisRxWidget {
@@ -82,57 +84,22 @@ class BasicViewInWidget8 extends VisRxWidget {
             <div class="vis-view-container" data-oid="<%= data.attr('oid') %>" data-vis-contains="<%= vis.binds.stateful.value(viewArr, data.attr('oid')) %>" <%= (el) -> vis.binds.stateful.view(el, viewArr, data.attr('persistent'), data.attr('notIfInvisible')) %> />
         </div>
          */
-        const VisView = this.props.VisView;
-
         if (view === this.props.view) {
             return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-                Cannot use recursive views
+                {I18n.t('vis_2_widgets_basic_cannot_recursive')}
             </div>;
         }
 
         return <div className="vis-widget-body" style={{ overflow: 'hidden', position: 'absolute' }}>
-            { this.state.editMode ? <div className="editmode-helper" /> : null}
-            <VisView
-                $$={this.props.$$}
-                activeView={view}
-                adapterName={this.props.adapterName}
-                allWidgets={this.props.allWidgets}
-                buildLegacyStructures={this.props.buildLegacyStructures}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                container={this.props.container}
-                customSettings={this.props.customSettings}
-                dateFormat={this.props.dateFormat}
-                editMode={false}
-                formatUtils={this.props.formatUtils}
-                instance={this.props.instance}
-                jQuery={this.props.jQuery}
-                key={`${this.props.id}_${view}`}
-                lang={this.props.lang}
-                linkContext={this.props.linkContext}
-                projectName={this.props.projectName}
-                registerRef={this.props.registerRef}
-                runtime={this.props.runtime}
-                setValue={this.props.setValue}
-                showWidgetNames={this.props.showWidgetNames}
-                socket={this.props.socket}
-                systemConfig={this.props.systemConfig}
-                theme={this.props.theme}
-                themeName={this.props.themeName}
-                themeType={this.props.themeType}
-                user={this.props.user}
-                userGroups={this.props.userGroups}
-                view={view}
-                views={this.props.views}
-                viewsActiveFilter={this.props.viewsActiveFilter}
-                visInWidget
-            />
+            {this.state.editMode ? <div className="editmode-helper" /> : null}
+            {super.getWidgetView(view)}
         </div>;
     }
 }
 
 BasicViewInWidget8.propTypes = {
     id: PropTypes.string.isRequired,
+    VisView: PropTypes.any.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
