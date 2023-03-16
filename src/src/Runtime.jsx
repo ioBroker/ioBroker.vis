@@ -674,6 +674,7 @@ class Runtime extends GenericApp {
                 callback,
             })}
             onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
+            currentUser={this.state.currentUser}
         />;
     }
 

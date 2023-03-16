@@ -29,8 +29,8 @@ const IODialog = props => (props.open ? <Dialog
         {props.children}
     </DialogContent>
     <DialogActions>
-        { props.dialogActions || null}
-        { props.actionTitle
+        {props.dialogActions || null}
+        {props.actionTitle
             ? <Button
                 variant="contained"
                 onClick={() => {
@@ -44,7 +44,7 @@ const IODialog = props => (props.open ? <Dialog
                 startIcon={props.ActionIcon ? <props.ActionIcon /> : undefined}
             >
                 {props.noTranslation ? props.actionTitle : I18n.t(props.actionTitle)}
-            </Button> : null }
+            </Button> : null}
         <Button
             variant="contained"
             color="grey"
@@ -74,6 +74,7 @@ IODialog.propTypes = {
     title: PropTypes.string,
     fullScreen: PropTypes.bool,
     maxWidth: PropTypes.string,
+    noTranslation: PropTypes.bool,
 };
 
 export default IODialog;

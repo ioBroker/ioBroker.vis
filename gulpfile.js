@@ -415,6 +415,7 @@ gulp.task('buildReact', gulp.series('7-patch-dep', 'runtime-7-patch-dep'));
 
 gulp.task('8-beta', async () => {
     !fs.existsSync(path.join(__dirname, 'beta')) && fs.mkdirSync(path.join(__dirname, 'beta'));
+    deleteFoldersRecursive(path.join(__dirname, 'beta/www'));
 
     copyFolder(path.join(__dirname, 'admin'), path.join(__dirname, 'beta/admin'));
     copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));

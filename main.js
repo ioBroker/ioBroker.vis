@@ -537,6 +537,9 @@ async function collectExistingFilesToDelete(path) {
 async function eraseFiles(files) {
     if (files && files.length) {
         for (const file of files) {
+            if (file === '/index.html' || file === '/edit.html') {
+                continue;
+            }
             try {
                 // @ts-expect-error should be fixed with #1917
                 await adapter.unlinkAsync(adapterName, file);
@@ -552,18 +555,24 @@ async function upload(files) {
 
     await adapter.setForeignStateAsync(uploadID, { val: 0, ack: true });
 
+    const wwwLen = (`${__dirname}/www/`).length;
+
     for (let f = 0; f < files.length; f++) {
         const file = files[f];
 
-        let attName = file.substring((__dirname + '/www/').length).replace(/\\/g, '/');
+        let attName = file.substring(wwwLen).replace(/\\/g, '/');
+        if (attName === 'index.html' || attName === 'edit.html') {
+            continue;
+        }
+        // write upload status into log
         if (files.length - f > 100) {
             (!f || !((files.length - f - 1) % 50)) &&
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring(wwwLen)} ${attName}`);
         } else if (files.length - f - 1 > 20) {
             (!f || !((files.length - f - 1) % 10)) &&
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring(wwwLen)} ${attName}`);
         } else {
-            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring((`${__dirname}/www/`).length)} ${attName}`);
+            adapter.log.debug(`upload [${files.length - f - 1}] ${file.substring(wwwLen)} ${attName}`);
         }
 
         // Update upload indicator
@@ -572,7 +581,7 @@ async function upload(files) {
             lastProgressUpdate = now;
             await adapter.setForeignStateAsync(uploadID, {
                 val: Math.round((1000 * (files.length - f)) / files.length) / 10,
-                ack: true
+                ack: true,
             });
         }
 
@@ -624,7 +633,7 @@ function walk(dir, _results) {
  * Upload given adapter
  */
 async function uploadAdapter() {
-    let dir = __dirname + '/www';
+    let dir = `${__dirname}/www`;
 
     if (!fs.existsSync(dir)) {
         return;
@@ -650,9 +659,9 @@ async function uploadAdapter() {
                 def: 0,
                 desc: 'Upload process indicator',
                 read: true,
-                write: false
+                write: false,
             },
-            native: {}
+            native: {},
         });
     }
 
@@ -671,19 +680,26 @@ async function uploadAdapter() {
             type: 'meta',
             common: {
                 name: adapterName,
-                type: 'www'
+                type: 'www',
             },
-            native: {}
+            native: {},
         });
     }
 
     const { filesToDelete } = await collectExistingFilesToDelete('/');
-    adapter.log.debug('Erasing files: ' + filesToDelete.length);
+    adapter.log.debug(`Erasing files: ${filesToDelete.length}`);
+
+    // write temp index.html and edit.html
+    await adapter.writeFileAsync(adapterName, 'index.html', fs.readFileSync(`${__dirname}/lib/updating.html`).toString('utf8'));
+    await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/lib/updating.html`).toString('utf8'));
+
     // delete old files, before upload of new
     await eraseFiles(filesToDelete);
-
     await upload(files);
 
+    // restore normal files
+    await adapter.writeFileAsync(adapterName, 'index.html', fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8'));
+    await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/www/edit.html`).toString('utf8'));
     return adapter;
 }
 

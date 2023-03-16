@@ -623,6 +623,30 @@ class VisEngine extends React.Component {
                     }
                 }
             },
+            updateStates: data => {
+                data && Object.keys(data).forEach(id => {
+                    let state = data[id];
+
+                    if (id.startsWith('local_')) {
+                        // if it is a local variable, we have to initiate this
+                        state = {
+                            val: getUrlParameter(id), // using url parameter to set initial value of local variable
+                            ts: Date.now(),
+                            lc: Date.now(),
+                            ack: false,
+                            from: `system.adapter.${this.props.adapterName}.${this.props.instance}`,
+                            user: this.props.currentUser ? this.props.currentUser._id : 'system.user.admin',
+                            q: 0,
+                        };
+                    }
+
+                    if (!state) {
+                        return;
+                    }
+
+                    this.setValue(id, state);
+                });
+            },
         };
     }
 
@@ -1753,6 +1777,7 @@ VisEngine.propTypes = {
     instance: PropTypes.number.isRequired,
     projectName: PropTypes.string.isRequired,
     adapterId: PropTypes.string.isRequired, // vis.0
+    currentUser: PropTypes.object,
 };
 
 export default VisEngine;

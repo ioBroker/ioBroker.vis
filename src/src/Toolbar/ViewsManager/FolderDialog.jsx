@@ -83,6 +83,7 @@ const FolderDialog = props => {
 
     return <IODialog
         title={dialogTitles[props.dialog]}
+        noTranslation
         actionTitle={dialogButtons[props.dialog]}
         open={!!props.dialog}
         onClose={() => {
