@@ -92,7 +92,7 @@
   "Aluminium2": "铝2",
   "Are you sure": "你确定吗",
   "Are you sure to delete widgets %s?": "您确定要删除小部件 %s 吗？",
-  "Are you want to delete view \"%s\"?": "您要删除视图“%s”吗？",
+  "Do you want to delete view \"%s\"?": "您要删除视图“%s”吗？",
   "Attributes": "属性",
   "Available for all": "可供所有人使用",
   "Background class": "背景类",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "图标大小",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "颜色",
   "Rename folder \"%s\"": "重命名文件夹“%s”",
-  "Are you want to delete folder \"%s\"": "您要删除文件夹“%s”吗",
+  "Do you want to delete folder \"%s\"": "您要删除文件夹“%s”吗",
   "Drop the files here ...": "把文件放在这里...",
   "Import project": "导入项目",
   "Project already exists": "项目已经存在",
@@ -395,5 +395,8 @@
   "Open it?": "打开它？",
   "Open": "打开",
   "Ignore": "忽略",
-  "group": "团体"
+  "group": "团体",
+  "Add project": "添加项目",
+  "Do you want to delete project \"%s\"?": "您要删除项目“%s”吗？",
+  "Rename project \"%s\"": "重命名项目“%s”"
 }

@@ -64,7 +64,7 @@ const ViewDialog = props => {
     };
 
     const dialogTitles = {
-        delete: I18n.t('Are you want to delete view "%s"?', props.dialogView || props.selectedView),
+        delete: I18n.t('Do you want to delete view "%s"?', props.dialogView || props.selectedView),
         copy: I18n.t('Copy view "%s"', props.dialogView || props.selectedView),
         rename: I18n.t('Rename view "%s"', props.dialogView || props.selectedView),
         add: I18n.t('Add view'),

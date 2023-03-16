@@ -92,7 +92,7 @@
   "Aluminium2": "Алюминий2",
   "Are you sure": "Ты уверен",
   "Are you sure to delete widgets %s?": "Вы уверены, что хотите удалить виджеты %s?",
-  "Are you want to delete view \"%s\"?": "Вы хотите удалить страницу \"%s\"?",
+  "Do you want to delete view \"%s\"?": "Вы хотите удалить страницу \"%s\"?",
   "Attributes": "Свойства",
   "Available for all": "Доступно для всех",
   "Background class": "Фоновый класс",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Размер значка",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "Цвет",
   "Rename folder \"%s\"": "Переименовать папку \"%s\"",
-  "Are you want to delete folder \"%s\"": "Вы хотите удалить папку \"%s\"",
+  "Do you want to delete folder \"%s\"": "Вы хотите удалить папку \"%s\"",
   "Drop the files here ...": "Закинь файлы сюда...",
   "Import project": "Импорт проекта",
   "Project already exists": "Проект уже существует",
@@ -395,5 +395,8 @@
   "Open it?": "Открой это?",
   "Open": "Открыть",
   "Ignore": "Игнорировать",
-  "group": "Группа"
+  "group": "Группа",
+  "Add project": "Добавить проект",
+  "Do you want to delete project \"%s\"?": "Вы хотите удалить проект \"%s\"?",
+  "Rename project \"%s\"": "Переименовать проект \"%s\""
 }

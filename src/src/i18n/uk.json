@@ -92,7 +92,7 @@
   "Aluminium2": "Алюміній2",
   "Are you sure": "Ти впевнений",
   "Are you sure to delete widgets %s?": "Ви впевнені, що хочете видалити віджети %s?",
-  "Are you want to delete view \"%s\"?": "Ви бажаєте видалити перегляд \"%s\"?",
+  "Do you want to delete view \"%s\"?": "Ви бажаєте видалити перегляд \"%s\"?",
   "Attributes": "Атрибути",
   "Available for all": "Доступно для всіх",
   "Background class": "Фоновий клас",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Розмір значка",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "колір",
   "Rename folder \"%s\"": "Перейменувати папку \"%s\"",
-  "Are you want to delete folder \"%s\"": "Ви бажаєте видалити папку \"%s\"",
+  "Do you want to delete folder \"%s\"": "Ви бажаєте видалити папку \"%s\"",
   "Drop the files here ...": "Перекиньте файли сюди...",
   "Import project": "Імпорт проекту",
   "Project already exists": "Проект вже існує",
@@ -395,5 +395,8 @@
   "Open it?": "Відкрий це?",
   "Open": "ВІДЧИНЕНО",
   "Ignore": "Ігнорувати",
-  "group": "Група"
+  "group": "Група",
+  "Add project": "Додати проект",
+  "Do you want to delete project \"%s\"?": "Ви бажаєте видалити проект \"%s\"?",
+  "Rename project \"%s\"": "Перейменувати проект \"%s\""
 }

@@ -92,7 +92,7 @@
   "Aluminium2": "Aluminium2",
   "Are you sure": "Weet je het zeker",
   "Are you sure to delete widgets %s?": "Weet je zeker dat je widgets %s wilt verwijderen?",
-  "Are you want to delete view \"%s\"?": "Wilt u weergave \"%s\" verwijderen?",
+  "Do you want to delete view \"%s\"?": "Wilt u weergave \"%s\" verwijderen?",
   "Attributes": "attributen",
   "Available for all": "Beschikbaar voor iedereen",
   "Background class": "Achtergrondklas",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Pictogram grootte",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "Kleur",
   "Rename folder \"%s\"": "Hernoem map \"%s\"",
-  "Are you want to delete folder \"%s\"": "Wilt u map \"%s\" verwijderen",
+  "Do you want to delete folder \"%s\"": "Wilt u map \"%s\" verwijderen",
   "Drop the files here ...": "Zet de bestanden hier neer...",
   "Import project": "Project importeren",
   "Project already exists": "Project bestaat al",
@@ -395,5 +395,8 @@
   "Open it?": "Open het?",
   "Open": "Open",
   "Ignore": "Negeren",
-  "group": "Groep"
+  "group": "Groep",
+  "Add project": "Project toevoegen",
+  "Do you want to delete project \"%s\"?": "Wilt u project \"%s\" verwijderen?",
+  "Rename project \"%s\"": "Hernoem project \"%s\""
 }

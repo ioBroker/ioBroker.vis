@@ -92,7 +92,7 @@
   "Aluminium2": "Aluminium2",
   "Are you sure": "Jesteś pewny",
   "Are you sure to delete widgets %s?": "Czy na pewno chcesz usunąć widżety %s?",
-  "Are you want to delete view \"%s\"?": "Czy chcesz usunąć widok „%s”?",
+  "Do you want to delete view \"%s\"?": "Czy chcesz usunąć widok „%s”?",
   "Attributes": "Atrybuty",
   "Available for all": "Dostępne dla wszystkich",
   "Background class": "Klasa podstawowa",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Rozmiar ikony",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "Kolor",
   "Rename folder \"%s\"": "Zmień nazwę folderu \"%s\"",
-  "Are you want to delete folder \"%s\"": "Czy chcesz usunąć folder \"%s\"",
+  "Do you want to delete folder \"%s\"": "Czy chcesz usunąć folder \"%s\"",
   "Drop the files here ...": "Upuść pliki tutaj...",
   "Import project": "Importuj projekt",
   "Project already exists": "Projekt już istnieje",
@@ -395,5 +395,8 @@
   "Open it?": "Otwórz to?",
   "Open": "otwarty",
   "Ignore": "Ignorować",
-  "group": "Grupa"
+  "group": "Grupa",
+  "Add project": "Dodaj projekt",
+  "Do you want to delete project \"%s\"?": "Czy chcesz usunąć projekt „%s”?",
+  "Rename project \"%s\"": "Zmień nazwę projektu „%s”"
 }

@@ -543,12 +543,12 @@ class Runtime extends GenericApp {
                     label={I18n.t('Project name')}
                     autoFocus
                     fullWidth
-                    onKeyDown={e =>
-                        e.keyCode === 13 &&
-                        this.state.newProjectName &&
-                        !this.state.projects.includes(this.state.newProjectName) &&
-                        this.addProject(this.state.newProjectName)
-                    }
+                    onKeyDown={async e => {
+                        if (e.keyCode === 13 && this.state.newProjectName && !this.state.projects.includes(this.state.newProjectName)) {
+                            await this.addProject(this.state.newProjectName);
+                            window.location.href = `?${this.state.newProjectName}`;
+                        }
+                    }}
                     value={this.state.newProjectName}
                     onChange={e => this.setState({ newProjectName: e.target.value })}
                     margin="dense"
@@ -571,7 +571,7 @@ class Runtime extends GenericApp {
                 <Button
                     variant="contained"
                     default
-                    color="primary"
+                    color="grey"
                     onClick={() => this.setState({ showNewProjectDialog: false })}
                     startIcon={<IconClose />}
                 >

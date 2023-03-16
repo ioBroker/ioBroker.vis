@@ -20,9 +20,9 @@ const ProjectDialog = props => {
     }
 
     const dialogTitles = {
-        delete: `${I18n.t('Are you want to delete project ') + props.dialogProject}?`,
-        rename: `${I18n.t('Rename project ') + props.dialogProject}`,
-        add: I18n.t('Add project '),
+        delete: I18n.t('Do you want to delete project "%s"?', props.dialogProject),
+        rename: I18n.t('Rename project "%s"', props.dialogProject),
+        add: I18n.t('Add project'),
     };
 
     const dialogButtons = {
@@ -31,17 +31,11 @@ const ProjectDialog = props => {
         add: I18n.t('Add'),
     };
 
-    const addProject = () => {
-        props.addProject(props.dialogName);
-    };
+    const addProject = () => props.addProject(props.dialogName);
 
-    const deleteProject = () => {
-        props.deleteProject(props.dialogProject);
-    };
+    const deleteProject = () => props.deleteProject(props.dialogProject);
 
-    const renameProject = () => {
-        props.renameProject(props.dialogProject, props.dialogName);
-    };
+    const renameProject = () => props.renameProject(props.dialogProject, props.dialogName);
 
     const dialogActions = {
         delete: deleteProject,
@@ -70,6 +64,7 @@ const ProjectDialog = props => {
     return <IODialog
         title={dialogTitles[props.dialog]}
         actionTitle={dialogButtons[props.dialog]}
+        noTranslation
         open={!!props.dialog}
         onClose={() => {
             props.setDialog(null);

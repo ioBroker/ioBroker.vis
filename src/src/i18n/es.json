@@ -92,7 +92,7 @@
   "Aluminium2": "Aluminio2",
   "Are you sure": "Está seguro",
   "Are you sure to delete widgets %s?": "¿Estás seguro de eliminar los widgets %s?",
-  "Are you want to delete view \"%s\"?": "¿Desea eliminar la vista \"%s\"?",
+  "Do you want to delete view \"%s\"?": "¿Desea eliminar la vista \"%s\"?",
   "Attributes": "Atributos",
   "Available for all": "Disponible para todos",
   "Background class": "Clase de fondo",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Tamaño de ícono",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "Color",
   "Rename folder \"%s\"": "Cambiar el nombre de la carpeta \"%s\"",
-  "Are you want to delete folder \"%s\"": "¿Desea eliminar la carpeta \"%s\"?",
+  "Do you want to delete folder \"%s\"": "¿Desea eliminar la carpeta \"%s\"?",
   "Drop the files here ...": "Suelta los archivos aquí...",
   "Import project": "Importar proyecto",
   "Project already exists": "Proyecto ya existe",
@@ -395,5 +395,8 @@
   "Open it?": "¿Abrelo?",
   "Open": "Abierto",
   "Ignore": "Ignorar",
-  "group": "Grupo"
+  "group": "Grupo",
+  "Add project": "Agregar proyecto",
+  "Do you want to delete project \"%s\"?": "¿Desea eliminar el proyecto \"%s\"?",
+  "Rename project \"%s\"": "Renombrar proyecto \"%s\""
 }

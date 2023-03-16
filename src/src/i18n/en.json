@@ -75,7 +75,7 @@
   "Import": "Import",
   "Manage views": "Views",
   "Close": "Close",
-  "Are you want to delete view \"%s\"?": "Are you want to delete view \"%s\"?",
+  "Do you want to delete view \"%s\"?": "Do you want to delete view \"%s\"?",
   "Copy view \"%s\"": "Copy view \"%s\"",
   "Rename view \"%s\"": "Rename view \"%s\"",
   "Add view": "Add view",
@@ -387,7 +387,7 @@
   "vis_2_widgets_widgets_tabs_tab_icon_size": "Icon size",
   "vis_2_widgets_widgets_tabs_tab_icon_color": "Color",
   "Rename folder \"%s\"": "Rename folder \"%s\"",
-  "Are you want to delete folder \"%s\"": "Are you want to delete folder \"%s\"",
+  "Do you want to delete folder \"%s\"": "Do you want to delete folder \"%s\"",
   "Drop the files here ...": "Drop the files here ...",
   "Import project": "Import project",
   "Project already exists": "Project already exists",
@@ -395,5 +395,8 @@
   "Open it?": "Open it?",
   "Open": "Open",
   "Ignore": "Ignore",
-  "group": "Group"
+  "group": "Group",
+  "Add project": "Add project",
+  "Do you want to delete project \"%s\"?": "Do you want to delete project \"%s\"?",
+  "Rename project \"%s\"": "Rename project \"%s\""
 }

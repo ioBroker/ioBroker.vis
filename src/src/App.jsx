@@ -949,9 +949,10 @@ class App extends Runtime {
         try {
             // const files = await this.socket.readDir(this.adapterId, fromProjectName);
             await this.socket.rename(this.adapterId, fromProjectName, toProjectName);
-            await this.refreshProjects();
             if (this.state.projectName === fromProjectName) {
-                await this.loadProject(toProjectName);
+                window.location.href = `?${toProjectName}${window.location.hash || ''}`;
+            } else {
+                await this.refreshProjects();
             }
         } catch (e) {
             // eslint-disable-next-line no-alert
