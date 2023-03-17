@@ -1,5 +1,4 @@
 {
-  "Select project": "Selecteer project",
   "Create new project": "Maak een nieuw project aan",
   "Cancel": "Annuleren",
   "Message": "Bericht",
@@ -11,5 +10,8 @@
   "vis_2_widgets_basic_view_in_widget": "Bekijk in widget",
   "vis_2_widgets_basic_view_not_defined": "Uitzicht niet gedefinieerd",
   "Project name": "Naam van het project",
-  "Project \"%s\" does not exist": "Project \"%s\" bestaat niet"
+  "Project \"%s\" does not exist": "Project \"%s\" bestaat niet",
+  "Select vis project": "Selecteer \"vis\"-project",
+  "Create or import new \"vis\" project": "Maak of importeer een nieuw \"vis\"-project",
+  "welcome_message": "Er is nog geen enkel project."
 }

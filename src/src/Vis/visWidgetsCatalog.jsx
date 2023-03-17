@@ -123,6 +123,7 @@ export const getWidgetTypes = () => {
                 label: widgetInfo.visWidgetLabel ? i18nPrefix + widgetInfo.visWidgetLabel : (widgetInfo.visWidgetLabel === '' ? '' : undefined), // new style with translation
                 setLabel: widgetInfo.visSetLabel ? i18nPrefix + widgetInfo.visSetLabel : undefined, // new style with translation
                 setColor: widgetInfo.visSetColor,
+                setIcon: widgetInfo.visSetIcon,
                 color: widgetInfo.visWidgetColor,
                 resizable: widgetInfo.visResizable,
                 resizeLocked: widgetInfo.visResizeLocked,

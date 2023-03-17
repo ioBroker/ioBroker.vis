@@ -1671,6 +1671,10 @@ ${this.scripts}
 
     render() {
         if (!this.state.ready || this.props.widgetsLoaded < 2) {
+            if (this.props.renderAlertDialog && this.props.runtime) {
+                return this.props.renderAlertDialog();
+            }
+
             return null;
         }
 
@@ -1741,6 +1745,10 @@ ${this.scripts}
             views.push(<audio ref={this.refSound} key="__audio_145" id="external_sound" autoPlay muted></audio>);
         }
 
+        if (this.props.renderAlertDialog && this.props.runtime) {
+            views.push(this.renderAlertDialog());
+        }
+
         views.push(this.renderMessageDialog());
 
         return views;
@@ -1778,6 +1786,7 @@ VisEngine.propTypes = {
     projectName: PropTypes.string.isRequired,
     adapterId: PropTypes.string.isRequired, // vis.0
     currentUser: PropTypes.object,
+    renderAlertDialog: PropTypes.func,
 };
 
 export default VisEngine;

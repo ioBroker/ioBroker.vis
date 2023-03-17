@@ -29,6 +29,7 @@ class TabsSliderTabs extends VisRxWidget {
             visName: 'SliderTabs',
             visPrev: 'widgets/tabs/img/Prev_SliderTabs.png',
             visWidgetLabel: 'vis_2_widgets_widgets_tabs_label',  // Label of widget
+            visSetIcon: 'widgets/tabs/img/Prev_SliderTabs.png',  // Icon of widget set
             visAttrs: [
                 {
                     name: 'common',

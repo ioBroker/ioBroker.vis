@@ -398,5 +398,8 @@
   "group": "Groupe",
   "Add project": "Ajouter un projet",
   "Do you want to delete project \"%s\"?": "Voulez-vous supprimer le projet \"%s\" ?",
-  "Rename project \"%s\"": "Renommer le projet \"%s\""
+  "Rename project \"%s\"": "Renommer le projet \"%s\"",
+  "Select vis project": "Sélectionnez le projet \"vis\"",
+  "Create or import new \"vis\" project": "Créer ou importer un nouveau projet \"vis\"",
+  "welcome_message": "Aucun projet n'existe encore."
 }

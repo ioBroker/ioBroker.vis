@@ -15,15 +15,16 @@ import {
     DialogActions,
     TextField,
     Button,
+    ListItemIcon,
 } from '@mui/material';
 
 import IconAdd from '@mui/icons-material/Add';
 import IconClose from '@mui/icons-material/Close';
+import IconDocument from '@mui/icons-material/FileCopy';
+import { BiImport } from 'react-icons/bi';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import {
-    i18n as I18n, Loader,
-} from '@iobroker/adapter-react-v5';
+import { I18n, Loader } from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
 import { registerWidgetsLoadIndicator } from './Vis/visUtils';
@@ -112,6 +113,7 @@ class Runtime extends GenericApp {
             visUserCss: null,
             showProjectsDialog: false,
             showNewProjectDialog: false,
+            showImportDialogDialog: false,
             newProjectName: '',
             projects: null,
             projectDoesNotExist: false,
@@ -473,23 +475,22 @@ class Runtime extends GenericApp {
         });
     }
 
-    renderAlertDialog() {
-        return <Snackbar
-            style={this.state.alertType === 'error' ?
-                { backgroundColor: '#f44336' } :
-                (this.state.alertType === 'success' ?
-                    { backgroundColor: '#4caf50' } : undefined)}
-            open={this.state.alert}
-            autoHideDuration={6000}
-            onClose={reason => {
-                if (reason === 'clickaway') {
-                    return;
-                }
-                this.setState({ alert: false });
-            }}
-            message={this.state.alertMessage}
-        />;
-    }
+    renderAlertDialog = () => <Snackbar
+        style={this.state.alertType === 'error' ?
+            { backgroundColor: '#f44336' } :
+            (this.state.alertType === 'success' ?
+                { backgroundColor: '#4caf50' } : undefined)}
+        open={this.state.alert}
+        autoHideDuration={6000}
+        onClick={() => this.setState({ alert: false })}
+        onClose={reason => {
+            if (reason === 'clickaway') {
+                return;
+            }
+            this.setState({ alert: false });
+        }}
+        message={this.state.alertMessage}
+    />;
 
     async onWidgetsLoaded() {
         let widgetsLoaded = Runtime.WIDGETS_LOADING_STEP_HTML_LOADED;
@@ -546,7 +547,7 @@ class Runtime extends GenericApp {
                     onKeyDown={async e => {
                         if (e.keyCode === 13 && this.state.newProjectName && !this.state.projects.includes(this.state.newProjectName)) {
                             await this.addProject(this.state.newProjectName);
-                            window.location.href = `?${this.state.newProjectName}`;
+                            window.location.href = `edit.html?${this.state.newProjectName}`;
                         }
                     }}
                     value={this.state.newProjectName}
@@ -562,7 +563,7 @@ class Runtime extends GenericApp {
                     disabled={!this.state.newProjectName || this.state.projects.includes(this.state.newProjectName)}
                     onClick={async () => {
                         await this.addProject(this.state.newProjectName, true);
-                        window.location.href = `?${this.state.newProjectName}`;
+                        window.location.href = `edit.html?${this.state.newProjectName}`;
                     }}
                     startIcon={<IconAdd />}
                 >
@@ -586,24 +587,45 @@ class Runtime extends GenericApp {
             open={!0}
             onClose={() => {}} // do nothing
         >
-            <DialogTitle>{I18n.t('Select project')}</DialogTitle>
+            <DialogTitle>
+                <img
+                    src={this.props.runtime ? './favicon.ico' : './faviconEdit.ico'}
+                    alt="vis"
+                    style={{ width: 24, marginRight: 10, marginTop: 4 }}
+                />
+                {!this.state.projects.length ? I18n.t('Create or import new "vis" project') : I18n.t('Select vis project')}
+            </DialogTitle>
             <DialogContent>
                 {!this.state.projects ? <LinearProgress /> : <Paper sx={{ width: 320, maxWidth: '100%' }}>
+                    {!this.state.projects.length ? <div style={{ width: '100%', fontSize: 20 }}>
+                        {I18n.t('welcome_message')}
+                    </div> : null}
                     <MenuList>
                         {this.state.projects.map(project =>
                             <ListItemButton key={project} onClick={() => window.location.href = `?${project}`}>
+                                <ListItemIcon><IconDocument /></ListItemIcon>
                                 <ListItemText>{project}</ListItemText>
                             </ListItemButton>)}
                         <ListItemButton
-                            onClick={() => this.setState({ showNewProjectDialog: true })}
+                            onClick={() => this.setState({ showNewProjectDialog: true, newProjectName: this.state.projects.length ? '' : 'main' })}
                             style={{ backgroundColor: '#112233', color: '#ffffff' }}
                         >
+                            <ListItemIcon><IconAdd /></ListItemIcon>
                             <ListItemText>{I18n.t('Create new project')}</ListItemText>
                         </ListItemButton>
+                        {this.renderImportProjectDialog ? <ListItemButton
+                            onClick={() => this.setState({ showImportDialog: true })}
+                            style={{ backgroundColor: '#112233', color: '#4b9ed3' }}
+                        >
+                            <ListItemIcon><BiImport fontSize={20} /></ListItemIcon>
+                            <ListItemText>{I18n.t('Import project')}</ListItemText>
+                        </ListItemButton> : null}
                     </MenuList>
                 </Paper>}
             </DialogContent>
             {this.showCreateNewProjectDialog()}
+            {this.renderImportProjectDialog ? this.renderImportProjectDialog() : null}
+            {this.renderAlertDialog()}
         </Dialog>;
     }
 
@@ -675,6 +697,7 @@ class Runtime extends GenericApp {
             })}
             onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
             currentUser={this.state.currentUser}
+            renderAlertDialog={this.renderAlertDialog}
         />;
     }
 

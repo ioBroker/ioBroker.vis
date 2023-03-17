@@ -38,6 +38,7 @@ import { DndPreview, isTouchDevice } from './Utils';
 import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 import Runtime from './Runtime';
+import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
@@ -1453,6 +1454,27 @@ class App extends Runtime {
                 }
             }}
         /> : null;
+    }
+
+    renderImportProjectDialog() {
+        if (!this.state.showImportDialog) {
+            return null;
+        }
+        return <ImportProjectDialog
+            projects={this.state.projects}
+            themeType={this.state.themeType}
+            onClose={(created, newProjectName) => {
+                this.setState({ showImportDialog: false });
+                if (newProjectName) {
+                    window.location.href = `edit.html?${newProjectName}`;
+                }
+            }}
+            openNewProjectOnCreate
+            projectName={this.state.projectName}
+            socket={this.socket}
+            adapterName={this.adapterName}
+            instance={this.instance}
+        />;
     }
 
     render() {

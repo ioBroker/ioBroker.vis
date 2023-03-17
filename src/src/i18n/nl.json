@@ -398,5 +398,8 @@
   "group": "Groep",
   "Add project": "Project toevoegen",
   "Do you want to delete project \"%s\"?": "Wilt u project \"%s\" verwijderen?",
-  "Rename project \"%s\"": "Hernoem project \"%s\""
+  "Rename project \"%s\"": "Hernoem project \"%s\"",
+  "Select vis project": "Selecteer \"vis\"-project",
+  "Create or import new \"vis\" project": "Maak of importeer een nieuw \"vis\"-project",
+  "welcome_message": "Er is nog geen enkel project."
 }

@@ -29,8 +29,6 @@ import {
     removeClass,
 } from './visUtils';
 
-const RESIZERS_OPACITY = 0.9;
-
 class VisBaseWidget extends React.Component {
     static FORBIDDEN_CHARS = /[^._\-/ :!#$%&()+=@^{}|~]+/g; // from https://github.com/ioBroker/ioBroker.js-controller/blob/master/packages/common/lib/common/tools.js
 
@@ -356,7 +354,10 @@ class VisBaseWidget extends React.Component {
                     height: rect.height,
                 };
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = 0.3);
+                resizers.forEach(item => {
+                    item._storedOpacity = item.style.opacity;
+                    item.style.opacity = 0.3;
+                });
             } else if (this.resize === 'top') {
                 this.refService.current.style.top = `${this.movement.top + y}px`;
                 this.refService.current.style.height = `${this.movement.height - y}px`;
@@ -482,7 +483,12 @@ class VisBaseWidget extends React.Component {
             // end of resize
             if (save) {
                 const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-                resizers.forEach(item => item.style.opacity = RESIZERS_OPACITY);
+                resizers.forEach(item => {
+                    if (item._storedOpacity !== undefined) {
+                        item.style.opacity = item._storedOpacity;
+                        delete item._storedOpacity;
+                    }
+                });
                 this.resize = false;
                 this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
                     wid: this.props.id,
@@ -623,9 +629,6 @@ class VisBaseWidget extends React.Component {
     }
 
     getResizeHandlers() {
-        if (!this.state.resizable) {
-            return null;
-        }
         const thickness = 0.4;
         const shift = 0.3;
         const square = 0.4;
@@ -639,158 +642,129 @@ class VisBaseWidget extends React.Component {
         const widgetWidth100 = this.props.views[this.props.view].widgets[this.props.id].style.width === '100%';
         const widgetHeight100 = this.props.views[this.props.view].widgets[this.props.id].style.height === '100%';
 
-        const background = 'transparent';
-        const color = '#00F';
+        const color = '#00F'; // it is so, to be able to change color in web storm
         const border = `0.1em dashed ${color}`;
+        const borderDisabled = '0.1em dashed #888';
 
-        let resizeHandlers = this.state.resizeHandles;
+        let resizeHandlers = this.state.resizable ? this.state.resizeHandles : [];
 
-        if (this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
+        if (this.state.resizable && this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
             resizeHandlers = ['s', 'e', 'se'];
         }
 
-        return [
-            // top
-            !this.props.isRelative && resizeHandlers.includes('n') ? <div
-                key="top"
+        const RESIZERS_OPACITY = 0.9;
+        const RESIZERS_OPACITY_DISABLED = 0.5;
+
+        const controllable = {
+            top: !this.props.isRelative && resizeHandlers.includes('n'),
+            bottom: !widgetHeight100 && resizeHandlers.includes('s'),
+            left: !this.props.isRelative && resizeHandlers.includes('w'),
+            right: !widgetWidth100 && resizeHandlers.includes('e'),
+            'top-left': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('nw'),
+            'top-right': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('ne'),
+            'bottom-left': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('sw'),
+            'bottom-right': !widgetHeight100 && !widgetWidth100 && resizeHandlers.includes('se'),
+        };
+
+        const handlers = {
+            top: {
+                top: offsetEm,
+                height: thicknessEm,
+                left: controllable['top-left'] ? shiftEm : 0,
+                right: controllable['top-right'] ? shiftEm : 0,
+                cursor: 'ns-resize',
+                background: 'transparent',
+                opacity: controllable.top ? RESIZERS_OPACITY : RESIZERS_OPACITY_DISABLED,
+                borderTop: controllable.top ? border : borderDisabled,
+            },
+            bottom: {
+                bottom: offsetEm,
+                height: thicknessEm,
+                left:  controllable['bottom-left'] ? shiftEm : 0,
+                right:  controllable['bottom-right'] ? shiftEm : 0,
+                cursor: 'ns-resize',
+                background: 'transparent',
+                opacity: controllable.bottom ? RESIZERS_OPACITY : RESIZERS_OPACITY_DISABLED,
+                borderBottom: controllable.bottom ? border : borderDisabled,
+            },
+            left: {
+                top: controllable['top-left'] ? shiftEm : 0,
+                bottom: controllable['bottom-left'] ? shiftEm : 0,
+                left: offsetEm,
+                width: thicknessEm,
+                cursor: 'ew-resize',
+                background: 'transparent',
+                opacity: controllable.left ? RESIZERS_OPACITY : RESIZERS_OPACITY_DISABLED,
+                borderLeft: controllable.left ? border : borderDisabled,
+            },
+            right: {
+                top: controllable['top-right'] ? shiftEm : 0,
+                bottom: controllable['bottom-right'] ? shiftEm : 0,
+                right: offsetEm,
+                width: thicknessEm,
+                cursor: 'ew-resize',
+                background: 'transparent',
+                opacity: controllable.right ? RESIZERS_OPACITY : RESIZERS_OPACITY_DISABLED,
+                borderRight: controllable.right ? border : borderDisabled,
+            },
+            'top-left': {
+                top: squareShift,
+                height: squareWidthHeight,
+                left: squareShift,
+                width: squareWidthHeight,
+                cursor: 'nwse-resize',
+                background: color,
+                opacity: RESIZERS_OPACITY,
+            },
+            'top-right': {
+                top: squareShift,
+                height: squareWidthHeight,
+                right: squareShift,
+                width: squareWidthHeight,
+                cursor: 'nesw-resize',
+                background: color,
+                opacity: RESIZERS_OPACITY,
+            },
+            'bottom-left': {
+                bottom: squareShift,
+                height: squareWidthHeight,
+                left: squareShift,
+                width: squareWidthHeight,
+                cursor: 'nesw-resize',
+                background: color,
+                opacity: RESIZERS_OPACITY,
+            },
+            'bottom-right': {
+                bottom: squareShift,
+                height: squareWidthHeight,
+                right: squareShift,
+                width: squareWidthHeight,
+                cursor: 'nwse-resize',
+                background: color,
+                opacity: RESIZERS_OPACITY,
+            },
+        };
+
+        const style = {
+            position: 'absolute',
+            zIndex: 1001,
+        };
+
+        return Object.keys(handlers).map(key => {
+            if (!controllable[key]) {
+                if (key.includes('-')) {
+                    return null;
+                }
+                handlers[key].cursor = 'default';
+            }
+
+            return <div
+                key={key}
                 className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: offsetEm,
-                    height: thicknessEm,
-                    left: shiftEm,
-                    right: shiftEm,
-                    cursor: 'ns-resize',
-                    zIndex: 1001,
-                    background,
-                    opacity: RESIZERS_OPACITY,
-                    borderTop: border,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top')}
-            /> : null,
-            // bottom
-            !widgetHeight100 && resizeHandlers.includes('s') ? <div
-                key="bottom"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: offsetEm,
-                    height: thicknessEm,
-                    left:  shiftEm,
-                    right:  shiftEm,
-                    cursor: 'ns-resize',
-                    zIndex: 1001,
-                    background,
-                    opacity: RESIZERS_OPACITY,
-                    borderBottom: border,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom')}
-            /> : null,
-            // left
-            !this.props.isRelative && resizeHandlers.includes('w') ? <div
-                key="left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: shiftEm,
-                    bottom: shiftEm,
-                    left: offsetEm,
-                    width: thicknessEm,
-                    cursor: 'ew-resize',
-                    zIndex: 1001,
-                    background,
-                    opacity: RESIZERS_OPACITY,
-                    borderLeft: border,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'left')}
-            /> : null,
-            // right
-            !widgetWidth100 && resizeHandlers.includes('e') ? <div
-                key="right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: shiftEm,
-                    bottom: shiftEm,
-                    right: offsetEm,
-                    width: thicknessEm,
-                    cursor: 'ew-resize',
-                    zIndex: 1001,
-                    background,
-                    opacity: RESIZERS_OPACITY,
-                    borderRight: border,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'right')}
-            /> : null,
-            // top left
-            !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('nw') ? <div
-                key="top-left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: squareShift,
-                    height: squareWidthHeight,
-                    left: squareShift,
-                    width: squareWidthHeight,
-                    cursor: 'nwse-resize',
-                    zIndex: 1001,
-                    background: color,
-                    opacity: RESIZERS_OPACITY,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top-left')}
-            /> : null,
-            // top right
-            !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('ne') ? <div
-                key="top-right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    top: squareShift,
-                    height: squareWidthHeight,
-                    right: squareShift,
-                    width: squareWidthHeight,
-                    cursor: 'nesw-resize',
-                    zIndex: 1001,
-                    background: color,
-                    opacity: RESIZERS_OPACITY,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'top-right')}
-            /> : null,
-            // bottom left
-            !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('sw') ? <div
-                key="bottom-left"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: squareShift,
-                    height: squareWidthHeight,
-                    left: squareShift,
-                    width: squareWidthHeight,
-                    cursor: 'nesw-resize',
-                    zIndex: 1001,
-                    background: color,
-                    opacity: RESIZERS_OPACITY,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom-left')}
-            /> : null,
-            // bottom right
-            !widgetHeight100 && !widgetWidth100 && resizeHandlers.includes('se') ? <div
-                key="bottom-right"
-                className="vis-editmode-resizer"
-                style={{
-                    position: 'absolute',
-                    bottom: squareShift,
-                    height: squareWidthHeight,
-                    right: squareShift,
-                    width: squareWidthHeight,
-                    cursor: 'nwse-resize',
-                    zIndex: 1001,
-                    background: color,
-                    opacity: RESIZERS_OPACITY,
-                }}
-                onMouseDown={e => this.onResizeStart(e, 'bottom-right')}
-            /> : null,
-        ];
+                style={Object.assign(handlers[key], style)}
+                onMouseDown={handlers[key].opacity === RESIZERS_OPACITY ? e => this.onResizeStart(e, key) : undefined}
+            />;
+        });
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods

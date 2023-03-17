@@ -1,5 +1,4 @@
 {
-  "Select project": "Projekt auswählen",
   "Create new project": "Neues Projekt erstellen",
   "Cancel": "Stornieren",
   "Message": "Nachricht",
@@ -11,5 +10,8 @@
   "vis_2_widgets_basic_view_in_widget": "Im Widget anzeigen",
   "vis_2_widgets_basic_view_not_defined": "Ansicht nicht definiert",
   "Project name": "Projektname",
-  "Project \"%s\" does not exist": "Projekt „%s“ existiert nicht"
+  "Project \"%s\" does not exist": "Projekt „%s“ existiert nicht",
+  "Select vis project": "Das Projekt „vis“ wählen",
+  "Create or import new \"vis\" project": "Erstellen oder importieren Sie ein neues \"vis\"-Projekt",
+  "welcome_message": "Es existiert noch kein Projekt."
 }

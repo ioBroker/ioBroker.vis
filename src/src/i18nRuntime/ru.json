@@ -1,5 +1,4 @@
 {
-  "Select project": "Выберите проект",
   "Create new project": "Создать новый проект",
   "Cancel": "Отмена",
   "Message": "Сообщение",
@@ -11,5 +10,8 @@
   "vis_2_widgets_basic_view_in_widget": "Посмотреть в виджете",
   "vis_2_widgets_basic_view_not_defined": "Вид не определен",
   "Project name": "Название проекта",
-  "Project \"%s\" does not exist": "Проект \"%s\" не существует"
+  "Project \"%s\" does not exist": "Проект \"%s\" не существует",
+  "Select vis project": "Выберите проект \"vis\"",
+  "Create or import new \"vis\" project": "Создать или импортировать новый проект \"vis\"",
+  "welcome_message": "Ни одного проекта пока не существует."
 }

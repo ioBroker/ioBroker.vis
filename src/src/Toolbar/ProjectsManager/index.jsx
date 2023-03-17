@@ -10,11 +10,12 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BiImport, BiExport } from 'react-icons/bi';
+import IconDocument from '@mui/icons-material/FileCopy';
 
 import { Utils } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
-import ImportProjectDialog from './ImportProjectDialog';
+import ImportProjectDialog, { getLiveHost } from './ImportProjectDialog';
 import ProjectDialog from './ProjectDialog';
 
 const styles = theme => ({
@@ -83,24 +84,8 @@ const ProjectsManage = props => {
         setDialogName(dialogDefaultName[type]);
     };
 
-    const getLiveHost = async () => {
-        const res = await props.socket.getObjectViewSystem('host', 'system.host.', 'system.host.\u9999');
-        const hosts = Object.keys(res).map(id => `${id}.alive`);
-        if (!hosts.length) {
-            return null;
-        }
-        const states = await props.socket.getForeignStates(hosts);
-        for (const h in states) {
-            if (states[h].val) {
-                return h.substring(0, h.length - '.alive'.length);
-            }
-        }
-
-        return null;
-    };
-
     const exportProject = async (projectName, isAnonymize) => {
-        const host = await getLiveHost();
+        const host = await getLiveHost(props.socket);
 
         if (!host) {
             window.alert(I18n.t('No live hosts found!'));
@@ -188,6 +173,7 @@ const ProjectsManage = props => {
                     className={props.classes.projectButton}
                     color={projectName === props.projectName ? 'primary' : 'grey'}
                     onClick={() => window.location.href = `?${projectName}`}
+                    startIcon={<IconDocument />}
                 >
                     {projectName}
                 </Button>
@@ -228,19 +214,19 @@ const ProjectsManage = props => {
             classes={{}}
         /> : null}
         {importDialog ? <ImportProjectDialog
-            open
             projects={props.projects}
             themeType={props.themeType}
-            onClose={closeAll => {
+            onClose={(created, newProjectName) => {
                 setImportDialog(false);
-                if (closeAll) {
+                if (created && props.projectName !== newProjectName) {
+                    window.location = `?${newProjectName}`;
+                } else if (created) {
                     props.onClose();
                 }
             }}
             projectName={props.projectName}
             socket={props.socket}
             refreshProjects={props.refreshProjects}
-            getLiveHost={getLiveHost}
             loadProject={props.loadProject}
             adapterName={props.adapterName}
             instance={props.instance}

@@ -8,8 +8,10 @@
   "vis_2_widgets_basic_cannot_recursive": "Cannot use recursive views",
   "vis_2_widgets_basic_view_not_defined": "View not defined",
   "vis_2_widgets_basic_view_in_widget": "View in widget",
-  "Select project": "Select project",
   "Create new project": "Create new project",
   "Project name": "Project name",
-  "Project \"%s\" does not exist": "Project \"%s\" does not exist"
+  "Project \"%s\" does not exist": "Project \"%s\" does not exist",
+  "Select vis project": "Select \"vis\" project",
+  "Create or import new \"vis\" project": "Create or import new \"vis\" project",
+  "welcome_message": "No one project yet exists."
 }

@@ -1,29 +1,38 @@
 import PropTypes from 'prop-types';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
     TextField,
 } from '@mui/material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import ConfirmDialog from '@iobroker/adapter-react-v5/Dialogs/Confirm';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import { BiImport } from 'react-icons/bi';
+
+import { I18n, Confirm as ConfirmDialog, Utils } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../../Components/IODialog';
+
+export const getLiveHost = async socket => {
+    const res = await socket.getObjectViewSystem('host', 'system.host.', 'system.host.\u9999');
+    const hosts = Object.keys(res).map(id => `${id}.alive`);
+    if (!hosts.length) {
+        return null;
+    }
+    const states = await socket.getForeignStates(hosts);
+    for (const h in states) {
+        if (states[h]?.val) {
+            return h.substring(0, h.length - '.alive'.length);
+        }
+    }
+
+    return null;
+};
 
 const ImportProjectDialog = props => {
     const [files, setFiles] = useState(null);
     const [projectName, setProjectName] = useState('');
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [askOpenProject, setAskOpenProject] = useState(false);
-
-    useEffect(() => {
-        setFiles(null);
-        setProjectName('');
-        if (props.open) {
-            props.refreshProjects();
-        }
-    }, [props.open]);
+    const [working, setWorking] = useState(false);
 
     const onDrop = useCallback(acceptedFiles => {
         setFiles(acceptedFiles);
@@ -42,29 +51,43 @@ const ImportProjectDialog = props => {
             return false;
         }
 
+        setWorking(true);
+
         const reader = new FileReader();
 
         reader.onload = async evt => {
-            const host = await props.getLiveHost();
+            const host = await getLiveHost(props.socket);
             if (!host) {
                 window.alert(I18n.t('No live hosts found!'));
                 return;
             }
+
+            let timeout = setTimeout(() => {
+                timeout = null;
+                setWorking(false);
+                window.alert(I18n.t('Cannot upload project: timeout'));
+            }, 40000);
 
             props.socket.getRawSocket().emit('sendToHost', host, 'writeDirAsZip', {
                 id: `${props.adapterName}.${props.instance}`,
                 name: projectName || 'main',
                 data: evt.target.result.split(',')[1],
             }, async result => {
+                setWorking(false);
+                timeout && clearTimeout(timeout);
+                timeout = null;
                 if (result.error) {
                     window.alert(I18n.t('Cannot upload project: %s', result.error));
-                } else {
-                    await props.refreshProjects(props.projectName === projectName);
-                    if (props.projectName !== projectName) {
-                        setAskOpenProject(true);
+                } else if (props.projectName !== projectName || props.openNewProjectOnCreate) {
+                    if (props.openNewProjectOnCreate) {
+                        props.onClose(true, projectName); // open new project immediately
                     } else {
-                        props.onClose(true);
+                        await props.refreshProjects(false);
+                        setAskOpenProject(true);
                     }
+                } else {
+                    await props.refreshProjects(true);
+                    props.onClose(true, projectName);
                 }
             });
         };
@@ -89,9 +112,7 @@ const ImportProjectDialog = props => {
         cancel={I18n.t('Cancel')}
         onClose={isYes => {
             setShowConfirmation(false);
-            if (isYes) {
-                importProject();
-            }
+            isYes && importProject();
         }}
     /> : null;
 
@@ -102,22 +123,21 @@ const ImportProjectDialog = props => {
         cancel={I18n.t('Ignore')}
         onClose={isYes => {
             setAskOpenProject(false);
-
-            if (isYes) {
-                props.loadProject(projectName);
-            }
-            props.onClose(isYes);
+            isYes && props.loadProject(projectName);
+            props.onClose(isYes, projectName);
         }}
     /> : null;
 
     return <IODialog
         title="Import project"
-        open={props.open}
-        onClose={props.onClose}
+        open={!0}
+        onClose={() => props.onClose()}
         actionNoClose
         action={importProject}
         actionTitle="Import"
-        actionDisabled={!projectName?.length || !files?.length}
+        ActionIcon={BiImport}
+        actionDisabled={!projectName?.length || !files?.length || working}
+        closeDisabled={working}
     >
         <div
             {...getRootProps()}
@@ -125,15 +145,16 @@ const ImportProjectDialog = props => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: 200,
+                width: '100%',
                 height: 200,
                 borderRadius: 4,
+                boxSizing: 'border-box',
                 borderStyle: 'dashed',
                 borderWidth: 1,
                 borderColor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit',
             }}
         >
-            <input {...getInputProps()} />
+            {working ? null : <input {...getInputProps()} />}
             <p style={{ textAlign: 'center', olor: isDragActive ? (props.themeType === 'dark' ? 'lightgreen' : 'green') : 'inherit' }}>
                 {files && files.length ? <>
                     <span>{files[0].name}</span>
@@ -145,11 +166,14 @@ const ImportProjectDialog = props => {
                 </> : I18n.t('Drop the files here ...')}
             </p>
         </div>
-        <div>
+        <div style={{ marginTop: 10 }}>
             <TextField
                 variant="standard"
+                fullWidth
+                disabled={working}
                 label={I18n.t('Project name')}
                 helperText={props.projects.includes(projectName) ? I18n.t('Project already exists') : ''}
+                error={props.projects.includes(projectName)}
                 value={projectName}
                 onChange={e => setProjectName(e.target.value.replace(/[^\da-zA-Z\-_.]/, ''))}
             />
@@ -161,15 +185,14 @@ const ImportProjectDialog = props => {
 
 ImportProjectDialog.propTypes = {
     onClose: PropTypes.func,
-    open: PropTypes.bool,
     projectName: PropTypes.string,
     refreshProjects: PropTypes.func,
     socket: PropTypes.object,
     themeType: PropTypes.string,
-    getLiveHost: PropTypes.func,
     loadProject: PropTypes.func,
     adapterName: PropTypes.string,
     instance: PropTypes.number,
+    openNewProjectOnCreate: PropTypes.bool,
 };
 
 export default ImportProjectDialog;

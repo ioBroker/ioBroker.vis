@@ -398,5 +398,8 @@
   "group": "团体",
   "Add project": "添加项目",
   "Do you want to delete project \"%s\"?": "您要删除项目“%s”吗？",
-  "Rename project \"%s\"": "重命名项目“%s”"
+  "Rename project \"%s\"": "重命名项目“%s”",
+  "Select vis project": "选择“vis”项目",
+  "Create or import new \"vis\" project": "创建或导入新的“vis”项目",
+  "welcome_message": "目前还没有一个项目存在。"
 }

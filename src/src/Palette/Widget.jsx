@@ -34,7 +34,8 @@ const styles = () => ({
         transformOrigin: '0 0',
     },
     widgetImageWithSrc: {
-        height: 32,
+        maxWidth: 60,
+        maxHeight: 32,
         width: 'auto',
         borderRadius: 4,
     },

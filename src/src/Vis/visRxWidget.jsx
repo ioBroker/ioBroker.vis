@@ -411,8 +411,9 @@ class VisRxWidget extends VisBaseWidget {
         }
     }
 
-    getWidgetView(view) {
+    getWidgetView(view, props) {
         const VisView = this.props.VisView;
+        props = props || {};
 
         return <VisView
             $$={this.props.$$}
@@ -448,6 +449,7 @@ class VisRxWidget extends VisBaseWidget {
             views={this.props.views}
             viewsActiveFilter={this.props.viewsActiveFilter}
             visInWidget
+            {...props}
         />;
     }
 

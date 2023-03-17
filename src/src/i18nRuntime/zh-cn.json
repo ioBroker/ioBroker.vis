@@ -1,5 +1,4 @@
 {
-  "Select project": "选择项目",
   "Create new project": "创建新项目",
   "Cancel": "取消",
   "Message": "信息",
@@ -11,5 +10,8 @@
   "vis_2_widgets_basic_view_in_widget": "在小部件中查看",
   "vis_2_widgets_basic_view_not_defined": "查看未定义",
   "Project name": "项目名",
-  "Project \"%s\" does not exist": "项目“%s”不存在"
+  "Project \"%s\" does not exist": "项目“%s”不存在",
+  "Select vis project": "选择“vis”项目",
+  "Create or import new \"vis\" project": "创建或导入新的“vis”项目",
+  "welcome_message": "目前还没有一个项目存在。"
 }

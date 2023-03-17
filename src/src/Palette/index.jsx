@@ -114,7 +114,11 @@ const Palette = props => {
             widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
             widgetSetProps[widgetTypeName].color = widgetType.setColor;
         }
-        if (widgetType.adapter) {
+        if (widgetType.setIcon) {
+            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+            widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
+        } else
+        if (widgetType.adapter && !widgetSetProps[widgetTypeName]?.icon) {
             widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
             if (window.location.port === '3000') {
                 widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;

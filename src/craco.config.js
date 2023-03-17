@@ -9,6 +9,7 @@ module.exports = {
     ],
     devServer: {
         proxy: {
+            '/_socket': 'http://localhost:8082',
             '/vis.0': 'http://localhost:8082',
             '/adapter': 'http://localhost:8082',
             '/habpanel': 'http://localhost:8082',
