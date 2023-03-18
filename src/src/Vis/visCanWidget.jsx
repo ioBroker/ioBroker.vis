@@ -384,7 +384,7 @@ class VisCanWidget extends VisBaseWidget {
     updateVisibility() {
         if (this.widDiv && !this.state.editMode) {
             const widgetData = this.props.allWidgets[this.props.id].data;
-            if (this.isWidgetHidden(widgetData, this.props.canStates) || this.isWidgetFilteredOut(widgetData)) {
+            if (VisBaseWidget.isWidgetHidden(widgetData, this.props.canStates, this.props.id) || this.isWidgetFilteredOut(widgetData)) {
                 this.widDiv._storedDisplay = this.widDiv.style.display;
                 this.widDiv.style.display = 'none';
 
@@ -1173,7 +1173,6 @@ class VisCanWidget extends VisBaseWidget {
                 console.log('Div not jet rendered');
             }
 
-            // called only in edit mode
             this.props.registerRef && this.props.registerRef(
                 wid,
                 this.widDiv || null,

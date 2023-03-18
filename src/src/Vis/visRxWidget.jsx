@@ -266,11 +266,11 @@ class VisRxWidget extends VisBaseWidget {
             if (!this.isWidgetFilteredOut(newState.rxData)) {
                 if (stateId) {
                     if (this.linkContext.visibility[stateId]) {
-                        return !this.isWidgetHidden(newState.rxData, newState.values);
+                        return !VisBaseWidget.isWidgetHidden(newState.rxData, newState.values, this.props.id);
                     }
                 } else {
                     // check if visible
-                    return !this.isWidgetHidden(newState.rxData, newState.values);
+                    return !VisBaseWidget.isWidgetHidden(newState.rxData, newState.values, this.props.id);
                 }
             } else {
                 return false;

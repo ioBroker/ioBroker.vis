@@ -168,6 +168,7 @@ class VisBaseWidget extends React.Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        let newState = null; // No change to state by default
         const widget = props.views[props.view].widgets[props.id];
         const gap = widget.style.position === 'relative' ?
             (Number.isFinite(props.views[props.view].settings.rowGap) ? parseFloat(props.views[props.view].settings.rowGap) : 0) : 0;
@@ -198,30 +199,34 @@ class VisBaseWidget extends React.Component {
             // replace all _PRJ_NAME with vis.0/name
             VisBaseWidget.replacePRJ_NAME(data, style, props);
 
-            return {
-                style,
-                data,
-                gap,
-                applyBindings: { top: widget.style.top, left: widget.style.left },
-            };
+            newState = {};
+            newState.style = style;
+            newState.data = data;
+            newState.gap = gap;
+            newState.applyBindings = { top: widget.style.top, left: widget.style.left };
         }
 
         if (props.editMode !== state.editMode) {
-            return { editMode: props.editMode, applyBindings: true };
+            newState = newState || {};
+            newState.editMode = props.editMode;
+            newState.applyBindings = true;
         }
 
         if (props.widgetHint !== state.widgetHint) {
-            return { widgetHint: props.widgetHint };
+            newState = newState || {};
+            newState.widgetHint = props.widgetHint;
         }
 
         const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
         const selectedOne = selected && props.selectedWidgets.length === 1;
 
         if (selected !== state.selected || selectedOne !== state.selectedOne) {
-            return { selected, selectedOne };
+            newState = newState || {};
+            newState.selected = selected;
+            newState.selectedOne = selectedOne;
         }
 
-        return null; // No change to state
+        return newState;
     }
 
     static removeFromArray(items, IDs, view, widget) {
@@ -782,10 +787,9 @@ class VisBaseWidget extends React.Component {
         });
     }
 
-    // eslint-disable-next-line react/no-unused-class-component-methods
-    isWidgetFilteredOut(widgetData) {
-        const vf = this.props.viewsActiveFilter[this.props.view];
-        if (widgetData?.filterkey && vf?.length && !this.props.editMode) {
+    static isWidgetFilteredOutStatic(viewsActiveFilter, widgetData, view, editMode) {
+        const vf = viewsActiveFilter[view];
+        if (!editMode && widgetData?.filterkey && vf?.length) {
             if (vf[0] === '$') {
                 return true;
             }
@@ -807,7 +811,12 @@ class VisBaseWidget extends React.Component {
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
-    isWidgetHidden(widgetData, states) {
+    isWidgetFilteredOut(widgetData) {
+        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
+    }
+
+    // eslint-disable-next-line react/no-unused-class-component-methods
+    static isWidgetHidden(widgetData, states, id) {
         const oid = widgetData['visibility-oid'];
         const condition = widgetData['visibility-cond'];
 
@@ -878,7 +887,7 @@ class VisBaseWidget extends React.Component {
                 case 'not exist':
                     return val !== 'null';
                 default:
-                    console.log(`[${this.props.id}] Unknown visibility condition: ${condition}`);
+                    console.log(`[${id}] Unknown visibility condition: ${condition}`);
                     return false;
             }
         } else {

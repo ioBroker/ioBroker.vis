@@ -193,7 +193,7 @@ function isPropertySameInAllViews(project, field, selectedView, views) {
 }
 
 const View = props => {
-    if (!props.project[props.selectedView]) {
+    if (!props.project || !props.project[props.selectedView]) {
         return null;
     }
 

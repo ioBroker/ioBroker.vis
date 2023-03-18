@@ -1508,6 +1508,10 @@ class App extends Runtime {
             </StylesProvider>;
         }
 
+        if (this.state.runtime) {
+            return this.getVisEngine();
+        }
+
         for (const i in this.state.selectedWidgets) {
             if (!this.state.project[this.state.selectedView]?.widgets[this.state.selectedWidgets[i]]) {
                 this.setSelectedWidgets([]);

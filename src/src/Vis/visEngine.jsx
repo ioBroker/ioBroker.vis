@@ -1746,7 +1746,7 @@ ${this.scripts}
         }
 
         if (this.props.renderAlertDialog && this.props.runtime) {
-            views.push(this.renderAlertDialog());
+            views.push(this.props.renderAlertDialog());
         }
 
         views.push(this.renderMessageDialog());
