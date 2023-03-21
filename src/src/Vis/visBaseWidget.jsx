@@ -188,7 +188,7 @@ class VisBaseWidget extends React.Component {
             });
             _data = JSON.parse(_data);
             Object.keys(_data).forEach(attr => {
-                if (_data[attr] !== widget.data[attr]) {
+                if (JSON.stringify(_data[attr]) !== JSON.stringify(widget.data[attr])) {
                     console.log(`[${Date.now()}] Rerender because of data.${attr}: ${_data[attr]} !== ${widget.data[attr]}`);
                 }
             });

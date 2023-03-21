@@ -259,6 +259,12 @@ class VisView extends React.Component {
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
+            if (!this.props.views[this.props.view].widgets[id]) {
+                // orphaned widget
+                id !== 'fakeId' && console.warn(`Orphaned widget ${id} found!`);
+                return null;
+            }
+
             if (this.props.views[this.props.view].widgets[id].groupid && !this.props.selectedGroup) {
                 return null;
             }
