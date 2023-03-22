@@ -350,7 +350,7 @@ function build() {
 
 gulp.task('4-build', () => build());
 
-gulp.task('4-build-dep', gulp.series('2-npm', '3-svg-icons', '4-build'));
+gulp.task('4-build-dep', gulp.series('2-npm-dep', '3-svg-icons', '4-build'));
 
 function copyFiles() {
     copyFolder(path.join(__dirname, 'src/build'), path.join(__dirname, 'www'), ['index.html']);
@@ -421,7 +421,7 @@ gulp.task('8-beta', async () => {
     copyFolder(path.join(__dirname, 'img'), path.join(__dirname, 'beta/img'));
     copyFolder(path.join(__dirname, 'lib'), path.join(__dirname, 'beta/lib'));
     copyFolder(path.join(__dirname, 'www'), path.join(__dirname, 'beta/www'), ['.map']);
-    // delete all other widgets and let only
+    // delete all other widgets and let only basics
     const baseWidgets = ['basic', 'jqplot', 'jqui', 'swipe', 'tabs'];
     const files = fs.readdirSync(path.join(__dirname, 'beta/www/widgets'));
     files.forEach(file => {
