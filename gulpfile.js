@@ -114,11 +114,7 @@ gulp.task('runtime-1-copy-src', done => {
 });
 
 gulp.task('runtime-2-npm', () => {
-    if (fs.existsSync(`${__dirname}/runtime/package-lock.json`)) {
-        return Promise.resolve();
-    } else {
-        return npmInstall(`${__dirname}/runtime`);
-    }
+    return npmInstall(`${__dirname}/runtime`);
 });
 
 gulp.task('runtime-2-npm-dep', gulp.series('runtime-0-clean', 'runtime-1-copy-src', 'runtime-2-npm'));

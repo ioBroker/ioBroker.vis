@@ -87,6 +87,32 @@ function translate(text, arg1, arg2, arg3) {
     return text;
 }
 
+function readFile(socket, id, fileName, withType) {
+    return socket.readFile(id, fileName)
+        .then(file => {
+            let mimeType = '';
+            if (typeof file === 'object') {
+                if (withType) {
+                    if (file.mimeType) {
+                        mimeType = file.mimeType;
+                    } else if (file.type) {
+                        mimeType = file.type;
+                    }
+                }
+
+                if (file.file) {
+                    file = file.file; // adapter-react-v5@4.x delivers file.file
+                } else if (file.data) {
+                    file = file.data; // LegacyConnection delivers file.data
+                }
+            }
+            if (withType) {
+                return { file, mimeType };
+            }
+            return file;
+        });
+}
+
 class VisEngine extends React.Component {
     constructor(props) {
         super(props);
@@ -900,7 +926,7 @@ class VisEngine extends React.Component {
                     filename = p.join('/');
                 }
 
-                return this.props.socket.readFile(adapter, filename)
+                return readFile(this.props.socket, adapter, filename, true)
                     .then(data => setTimeout(() => cb(null, data.file, filename, data.mimeType), 0))
                     .catch(error => cb(error));
             },
@@ -1637,11 +1663,8 @@ ${this.scripts}
             if (this.props.visCommonCss) {
                 VisEngine.applyUserStyles('vis_common_user', this.visCommonCssLoaded || '');
             } else {
-                this.props.socket.readFile(this.props.adapterName, 'css/vis-common-user.css')
+                readFile(this.props.socket, this.props.adapterName, 'css/vis-common-user.css')
                     .then(file => {
-                        if (file.mimeType) {
-                            file = file.file;
-                        }
                         this.visCommonCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_common_user', file || '');
                     })
@@ -1656,11 +1679,8 @@ ${this.scripts}
             if (this.props.visUserCss) {
                 VisEngine.applyUserStyles('vis_user', this.visUserCssLoaded || '');
             } else {
-                this.props.socket.readFile(`${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
+                readFile(this.props.socket ,`${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
-                        if (file.mimeType) {
-                            file = file.file;
-                        }
                         this.visUserCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_user', file || '');
                     })

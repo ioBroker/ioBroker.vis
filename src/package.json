@@ -1,19 +1,19 @@
 {
     "name": "vis-admin",
-    "version": "2.0.22",
+    "version": "2.0.23",
     "private": true,
     "dependencies": {
         "@devbookhq/splitter": "^1.4.0",
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
-        "@iobroker/adapter-react-v5": "^4.0.18",
-        "@iobroker/vis-2-widgets-react-dev": "^0.3.15",
+        "@iobroker/adapter-react-v5": "^4.0.22",
+        "@iobroker/vis-2-widgets-react-dev": "^0.3.19",
         "@mui/icons-material": "^5.11.11",
-        "@mui/material": "^5.11.13",
+        "@mui/material": "^5.11.14",
         "@mui/styles": "^5.11.13",
-        "@sentry/browser": "^7.43.0",
-        "@sentry/integrations": "^7.43.0",
-        "ace-builds": "^1.15.3",
+        "@sentry/browser": "^7.45.0",
+        "@sentry/integrations": "^7.45.0",
+        "ace-builds": "^1.16.0",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-only-warn": "^1.1.0",
         "iobroker.type-detector": "^1.1.1",
@@ -43,7 +43,7 @@
         "eslint-plugin-jsx-a11y": "^6.7.1",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "sass": "^1.59.3"
+        "sass": "^1.60.0"
     },
     "scripts": {
         "start": "craco start",

@@ -710,6 +710,32 @@ function getUrlParameter(attr) {
     return '';
 }
 
+function readFile(socket, id, fileName, withType) {
+    return socket.readFile(id, fileName)
+        .then(file => {
+            let mimeType = '';
+            if (typeof file === 'object') {
+                if (withType) {
+                    if (file.mimeType) {
+                        mimeType = file.mimeType;
+                    } else if (file.type) {
+                        mimeType = file.type;
+                    }
+                }
+
+                if (file.file) {
+                    file = file.file; // adapter-react-v5@4.x delivers file.file
+                } else if (file.data) {
+                    file = file.data; // LegacyConnection delivers file.data
+                }
+            }
+            if (withType) {
+                return { file, mimeType };
+            }
+            return file;
+        });
+}
+
 const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
     window[`_promise_${remote}`] = window[`_promise_${remote}`] || new Promise((resolve, reject) => {
         // check if remote exists on window
@@ -986,4 +1012,5 @@ export {
     removeClass,
     getRemoteWidgets,
     registerWidgetsLoadIndicator,
+    readFile,
 };

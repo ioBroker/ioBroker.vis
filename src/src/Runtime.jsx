@@ -24,10 +24,10 @@ import IconDocument from '@mui/icons-material/FileCopy';
 import { BiImport } from 'react-icons/bi';
 
 import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
-import { I18n, Loader } from '@iobroker/adapter-react-v5';
+import { I18n, Loader, LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
-import { registerWidgetsLoadIndicator } from './Vis/visUtils';
+import { readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 const generateClassName = createGenerateClassName({
@@ -57,6 +57,7 @@ class Runtime extends GenericApp {
             'zh-cn': require('./i18n/zh-cn'),
         };
 
+        extendedProps.Connection = LegacyConnection;
         extendedProps.sentryDSN = window.sentryDSN;
 
         if (window.location.port === '3000') {
@@ -149,9 +150,9 @@ class Runtime extends GenericApp {
                 this.loadProject(this.state.projectName);
             } else if (fileName.endsWith(`${this.state.projectName}/vis-views.json`)) {
                 // compare last executed file with new one
-                this.socket.readFile(this.adapterId, fileName)
+                readFile(this.socket, this.adapterId, fileName)
                     .then(file => {
-                        if (!file || this.lastProjectJSONfile !== file.file) { // adapter-react-v5@4.x delivers file.file
+                        if (!file || this.lastProjectJSONfile !== file) { // adapter-react-v5@4.x delivers file.file
                             this.setState({ showProjectUpdateDialog: true });
                         }
                     });
@@ -162,10 +163,7 @@ class Runtime extends GenericApp {
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
-                file = await this.socket.readFile(this.adapterId, `${projectName}/vis-views.json`);
-                if (typeof file === 'object') {
-                    file = file.file; // adapter-react-v5@4.x delivers file.file
-                }
+                file = await readFile(this.socket, this.adapterId, `${projectName}/vis-views.json`);
             } catch (err) {
                 console.warn(`Cannot read project file vis-views.json: ${err}`);
                 file = '{}';
@@ -403,11 +401,12 @@ class Runtime extends GenericApp {
         }
         projectName = projectName || window.localStorage.getItem('projectName') || 'main';
 
+        let projects = this.state.projects;
         if (!this.state.runtime) {
-            await this.refreshProjects();
+            projects = await this.refreshProjects();
         }
 
-        if (!this.state.projects || this.state.projects.includes(projectName)) {
+        if (!projects || projects.includes(projectName)) {
             await this.loadProject(projectName);
         } else {
             // read if show projects dialog allowed
@@ -415,7 +414,7 @@ class Runtime extends GenericApp {
             if (this.state.runtime && obj.native.doNotShowProjectDialog) {
                 this.setState({ projectDoesNotExist: true });
             } else {
-                !this.state.projects && (await this.refreshProjects());
+                !projects && (await this.refreshProjects());
                 // show project dialog
                 this.setState({ showProjectsDialog: true });
             }

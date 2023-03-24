@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
@@ -14,8 +15,9 @@ import {
 
 import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import { useEffect, useState } from 'react';
+import { I18n } from '@iobroker/adapter-react-v5';
+
+import { readFile } from '../Vis/visUtils';
 
 // eslint-disable-next-line no-undef
 ace.config.set('basePath', 'lib/js/ace');
@@ -52,24 +54,16 @@ const CSS = props => {
     useEffect(() => {
         const load = async () => {
             try {
-                const commonCss = await props.socket.readFile(props.adapterId.split('.')[0], 'css/vis-common-user.css');
-                if (commonCss.mimeType) {
-                    setGlobalCss(commonCss.file);
-                } else {
-                    setGlobalCss(commonCss);
-                }
+                const commonCss = await readFile(props.socket, props.adapterId.split('.')[0], 'css/vis-common-user.css');
+                setGlobalCss(commonCss);
             } catch (e) {
                 if (e !== 'Not exists') {
                     console.warn(`Cannot loading global CSS: ${e}`);
                 }
             }
             try {
-                const userCss = await props.socket.readFile(props.adapterId, `${props.projectName}/vis-user.css`);
-                if (userCss.mimeType) {
-                    setLocalCss(userCss.file);
-                } else {
-                    setLocalCss(userCss);
-                }
+                const userCss = await readFile(props.socket, props.adapterId, `${props.projectName}/vis-user.css`);
+                setLocalCss(userCss);
             } catch (e) {
                 if (e !== 'Not exists') {
                     console.warn(`Cannot load project CSS: ${e}`);
