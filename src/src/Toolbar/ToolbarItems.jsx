@@ -49,11 +49,6 @@ const styles = theme => ({
     toolbarTooltip: {
         pointerEvents: 'none',
     },
-    version: {
-        fontStyle: 'italic',
-        marginLeft: 10,
-        opacity: 0.7,
-    },
 });
 
 const getItem = (item, key, props, full) => {
@@ -263,10 +258,6 @@ const ToolbarItems = props => {
         </div>
         {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>
             <span>{typeof name === 'string' ? I18n.t(name) : name}</span>
-            {props.showVersion && props.version ? <span className={props.classes.version}>
-                v
-                {props.version}
-            </span> : null}
         </div> : null}
     </div>;
 };
@@ -278,8 +269,6 @@ ToolbarItems.propTypes = {
     group: PropTypes.object,
     last: PropTypes.bool,
     toolbarHeight: PropTypes.string,
-    version: PropTypes.string,
-    showVersion: PropTypes.bool,
 };
 
 export default withStyles(styles)(ToolbarItems);

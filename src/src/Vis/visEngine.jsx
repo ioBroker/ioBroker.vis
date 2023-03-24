@@ -1439,11 +1439,18 @@ class VisEngine extends React.Component {
                 return;
             }
 
+            // ignore too old commands
+            if (state.ts && Date.now() - state.ts > 5000) {
+                return;
+            }
+
+            // if command is a JSON string
             if (state.val &&
                 typeof state.val === 'string' &&
                 state.val[0] === '{' &&
                 state.val[state.val.length - 1] === '}'
             ) {
+                // try to parse it
                 try {
                     state.val = JSON.parse(state.val);
                 } catch (e) {
@@ -1468,11 +1475,25 @@ class VisEngine extends React.Component {
         }
 
         if (id === this.idControlData) {
+            if (state.ack) {
+                return;
+            }
+            // ignore too old commands
+            if (state.ts && Date.now() - state.ts > 5000) {
+                return;
+            }
             this._cmdData = state.val;
             return;
         }
 
         if (id === this.idControlInstance) {
+            if (state.ack) {
+                return;
+            }
+            // ignore too old commands
+            if (state.ts && Date.now() - state.ts > 5000) {
+                return;
+            }
             this._cmdInstance = state.val;
             return;
         }
@@ -1679,7 +1700,7 @@ ${this.scripts}
             if (this.props.visUserCss) {
                 VisEngine.applyUserStyles('vis_user', this.visUserCssLoaded || '');
             } else {
-                readFile(this.props.socket ,`${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
+                readFile(this.props.socket, `${this.props.adapterName}.${this.props.instance}`, `${this.props.projectName}/vis-user.css`)
                     .then(file => {
                         this.visUserCssLoaded = file || true;
                         VisEngine.applyUserStyles('vis_user', file || '');

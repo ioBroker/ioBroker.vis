@@ -82,6 +82,13 @@ const styles = theme => ({
         animation: `blink 2000ms ${theme.transitions.easing.easeInOut}`,
         color: theme.palette.primary.main,
     },
+    version: {
+        fontStyle: 'italic',
+        marginRight: 10,
+        opacity: 0.7,
+        fontSize: 10,
+        textAlign: 'right',
+    },
 });
 
 const Toolbar = props => {
@@ -240,6 +247,10 @@ const Toolbar = props => {
                 {dropMenu}
             </div>
             {props.toolbarHeight !== 'veryNarrow' ? currentUser : null}
+            {props.toolbarHeight === 'full' && props.version ? <span className={props.classes.version}>
+                v
+                {props.version}
+            </span> : null}
         </span>
         <div className={Utils.clsx(classes.toolbar, props.toolbarHeight !== 'full' && classes.narrowToolbar)} style={{ alignItems: 'initial' }}>
             <Views {...props} classes={{}} toolbarHeight={props.toolbarHeight} />

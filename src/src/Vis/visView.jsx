@@ -891,7 +891,7 @@ class VisView extends React.Component {
             onWidgetsChanged: props.onWidgetsChanged,
             projectName: props.projectName,
             refParent,
-            registerRef: /* props.runtime ? null : */registerRef, // because of filter commands it must be avaialble in runtime
+            registerRef, // because of filter commands it must be available in runtime (props.runtime ? null : registerRef)
             relativeWidgetOrder,
             runtime: props.runtime,
             selectedGroup: props.selectedGroup,
