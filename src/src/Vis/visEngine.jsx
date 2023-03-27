@@ -673,6 +673,34 @@ class VisEngine extends React.Component {
                     this.setValue(id, state);
                 });
             },
+            getHistory: (id, options, cb) => {
+                options = options || {};
+                options.timeout = options.timeout || 2000;
+
+                let timeout = setTimeout(() => {
+                    timeout = null;
+                    cb('timeout');
+                }, options.timeout);
+
+                this.props.socket.getHistory(id, options)
+                    .then(result => {
+                        if (timeout) {
+                            clearTimeout(timeout);
+                            timeout = null;
+                        }
+                        cb(null, result);
+                    })
+                    .catch(error => {
+                        if (timeout) {
+                            clearTimeout(timeout);
+                            timeout = null;
+                        }
+                        cb(error);
+                    });
+            },
+            getHttp: (url, callback) =>
+                this.props.socket.getRawSocket().emit('httpGet', url, data =>
+                    callback && callback(data)),
         };
     }
 
