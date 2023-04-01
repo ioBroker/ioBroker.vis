@@ -11,7 +11,7 @@
         "@mui/icons-material": "^5.11.11",
         "@mui/material": "^5.11.14",
         "@mui/styles": "^5.11.13",
-        "@sentry/browser": "^7.45.0",
+        "@sentry/browser": "^7.46.0",
         "@sentry/integrations": "^7.45.0",
         "ace-builds": "^1.16.0",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
