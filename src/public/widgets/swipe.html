@@ -1,38 +1,3 @@
-<style>
-    .roundabout-holder {
-        list-style: none;
-        position: absolute;
-        left:100px;
-        top:10px;
-        right: 0;
-        margin: 0;
-        overflow: visible;
-        height: calc(100% - 20px);
-        width: calc(100% - 200px);
-    }
-
-    .roundabout-moveable-item {
-        text-align: center;
-    }
-
-    .li_carousel {
-        background-color: rgba(0, 0, 0, 0);
-        text-align: center;
-        position: relative;
-    }
-
-    .carousel_blocking {
-        position: relative;
-        z-index: 149;
-        width: 100%;
-        height: 100%;
-    }
-
-    .roundabout-in-focus{
-        z-index: 1000;
-    }
-</style>
-
 <script type="text/javascript">
     if (vis.editMode) {
         // Add words for basic widgets
@@ -52,7 +17,7 @@
             "Swipe Navigation":     {"en": "Swipe Navigation",  "de": "Swipe Navigation",   "ru": "Swipe навигация"}
         });
     }
-    
+
     vis.binds.swipe = {
         loadedSwipe: false,
         loadedRound: false,
@@ -71,29 +36,8 @@
                 });
             }
         },
-        loadRoundScripts: function (cb) {
-            if (vis.binds.swipe.loadedRound) {
-                cb && cb();
-            } else {
-                vis.binds.swipe.loadedRound = true;
-                $.ajax({
-                    url: 'widgets/swipe/js/jquery.roundabout.min.js',
-                    dataType: 'script',
-                    success: function () {
-                        jQuery.ajax({
-                            url: 'widgets/swipe/js/jquery.roundabout-shapes.js',
-                            dataType: 'script',
-                            success: function () {
-                                cb && cb();
-                            },
-                            async: false
-                        });
-                    },
-                    async: false
-                });
-            }
-        },
         swipeNav: function (wid, view, data, style) {
+            console.log('SWIPE ' + wid);
             var $div = $('#' + wid);
             // if nothing found => wait
             if (!$div.length) {
@@ -102,19 +46,17 @@
                 }, 100);
                 return;
             }
-            
+
             if (vis.editMode) {
                 $div.show()
                     .find('.translate-it')
                         .each(function () {
                             $(this).html(_($(this).text()));
                         });
-            }
-
-            var $view = $('#visview_' + view);
-
-            if (!vis.editMode) {
+            } else {
+                $div.hide();
                 vis.binds.swipe.loadSwipeScripts(function () {
+                    var $view = $('#visview_' + view);
                     $view.swipe({
                         swipeLeft: function () {
                             vis.changeView(data['left_nav_view'], data['left_nav_view'], {
@@ -144,113 +86,21 @@
                 });
             }
         },
-        applyCarousel: function ($div, childView) {
-            var $childView = $div.find('#visview_' + childView);
-            var count = $div.data('count');
-            count = count || 0;
-
-            if (!$childView.length) {
-                count++;
-                if (count > 20) {
-                    return;
-                }
-                $div.data('count', count);
-                setTimeout(function () {
-                    vis.binds.swipe.applyCarousel($div, childView);
-                }, 100);
-                return;
-            }
-            var $all = $div.find('.vis-widget');
-            $all.each(function () {
-                var $id = $(this);
-                var id = $id.attr('id');
-                var idOldPos = $id.position();
-
-                var $idAndChilds = $childView.children('[id^=' + id + ']');
-
-                if ($idAndChilds.length === 1) {
-                    $id.css({top: 0, left: 0});
-
-                    $idAndChilds.wrapAll('<li id="li_' + id + '" class="li_carousel" ></li>');
-                    $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
-                } else {
-                    $idAndChilds.wrapAll('<div id="wrap_' + id + '" style="position: absolute; height: 50px; width: 50px; left: ' + (idOldPos.left * -1) + 'px; top:' + (idOldPos.top * -1) + 'px"></div>');
-                    $('#wrap_' + id).wrap('<li id="li_' + id + '" class="li_carousel"></li>');
-                    $('#li_' + id).css({height: $id.css('height'), width: $id.css('width')});
-                }
-            });
-
-            $childView.children('.li_carousel').append('<div class="carousel_blocking"></div>');
-            $childView.children('.li_carousel').wrapAll('<ul class="parent_carousel"></ul>');
-
-            $childView.find('.parent_carousel')
-                .bind('ready', function () {
-                    var child = $('.roundabout-in-focus').children();
-                    $(child[1]).removeClass('carousel_blocking');
-                })
-                .roundabout({
-                    clickToFocus: true,
-                    enableDrag: true,
-                    dragFactor: 2,
-                    minZ: 1,
-                    maxZ: 100,
-                    tilt: -4,
-                    minOpacity: 0.2,
-                    minScale: 1,
-                    childSelector: '.li_carousel',
-                    triggerFocusEvents: true,
-                    triggerBlurEvents: true
-                });
-
-            $childView.find('.li_carousel')
-                .bind('focus', function () {
-                    var child = $(this).children();
-                    $(child[1]).removeClass('carousel_blocking');
-                    $(this).removeClass('roundabout-moveable-item')
-                })
-                .bind('blur', function () {
-                    var child = $(this).children();
-                    $(child[1]).addClass('carousel_blocking');
-                    $(this).addClass('roundabout-moveable-item')
-                });
-        },
-        carousel: function (wid, view, data, style) {
-            var $div = $('#' + wid);
-            var childView = data.contains_view;
-            
-            // if nothing found => wait
-            if (!$div.length) {
-                setTimeout(function () {
-                    vis.binds.swipe.carousel(wid, view, data, style);
-                }, 100);
-                return;
-            }
-
-            if (view === data.contains_view) {
-                $div.find('.vis-widget-body').attr('data-vis-contains', '');
-                $div.html('<div style="color: red">' + _('Cannot show itself') + '</div>');
-                return;
-            }
-
-            if (vis.editMode) return;
-
-            vis.binds.swipe.loadRoundScripts(function () {
-                vis.binds.swipe.applyCarousel($div, childView);
-            });
-        }
     };
 </script>
 
 <script id="tplSwipe"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Swipe.png"></img>'
         data-vis-name="swipe Navigation"
-        data-vis-attrs="duration;"
-        data-vis-attrs0="group.left;left_nav_view;left_in_effect[slide];left_in_eff_opt[right];left_out_effect[slide];left_out_eff_opt[left];"
-        data-vis-attrs1="group.right;right_nav_view;right_in_effect[slide];right_in_eff_opt[left];right_out_effect[slide];right_out_eff_opt[right];">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="display: none; width: 160px; height: 64px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.swipe.swipeNav(this.data.wid, this.view, this.data, this.style) %>>
+        data-vis-attrs="left_nav_view;right_nav_view;"
+        data-vis-disabled-attrs2="duration;"
+        data-vis-disabled-attrs3="left_in_effect[slide];left_in_eff_opt[right];left_out_effect[slide];left_out_eff_opt[left];"
+        data-vis-disabled-attrs4="right_in_effect[slide];right_in_eff_opt[left];right_out_effect[slide];right_out_eff_opt[right];"
+>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="display: none; width: 160px; height: 82px; background-color: #333; color: #eee; border: 2px dashed red; opacity:0.8;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.swipe.swipeNav(this.data.wid, this.view, this.data, this.style) %>>
         <div class="vis-widget-body">
             <div style="font-weight: bold" class="translate-it">Swipe Navigation</div>
             <table>
@@ -261,18 +111,14 @@
     </div>
 </script>
 
-
-<script id="tplCarousel" 
+<script id="tplCarousel"
         type="text/ejs"
-        class="vis-tpl" 
+        class="vis-tpl"
         data-vis-set="swipe"
         data-vis-prev='<img src="widgets/swipe/img/Prev_Carousel.png"></img>'
         data-vis-name="Carousel"
         data-vis-attrs="contains_view/views">
-    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 300px; height: 100px;" id="<%= this.data.attr('wid') %>" <%= (el) -> vis.binds.swipe.carousel(this.data.wid, this.view, this.data, this.style) %>>
-        <% if (vis.editMode) { %>
-            <div class="editmode-helper" />
-        <% } %>
-        <div data-vis-contains="<%= this.data.attr('contains_view') %>" class="vis-widget-body vis-view-container"></div>
+    <div class="vis-widget <%== this.data.attr('class') %>" style="width: 300px; height: 100px;" id="<%= this.data.attr('wid') %>">
+        Does not work in vis-2.0
     </div>
 </script>
