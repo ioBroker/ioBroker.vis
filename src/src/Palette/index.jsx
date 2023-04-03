@@ -103,9 +103,10 @@ const Palette = props => {
         const widgetTypeName = widgetType.set;
         widgetsList[widgetTypeName] = widgetsList[widgetTypeName] || {};
         const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
-        if (filter && !title.toLowerCase().includes(filter.toLowerCase())) {
+        if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
             return;
         }
+
         if (widgetType.setLabel) {
             widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
             widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
@@ -133,6 +134,7 @@ const Palette = props => {
 
         widgetsList[widgetTypeName][widgetType.name] = widgetType;
     });
+
     if (filter) {
         Object.keys(widgetsList).forEach(widgetType => {
             if (!Object.keys(widgetsList[widgetType]).length) {

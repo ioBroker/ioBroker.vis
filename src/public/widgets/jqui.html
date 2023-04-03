@@ -1644,9 +1644,10 @@
         data-vis-attrs0="autoFocus/checkbox;"
 >
     <div class="vis-widget <%== this.data.attr('class') %>" style="width:275px;height:44px;" id="<%= this.data.attr('wid') %>" data-no-style="<%= this.data.attr('no_style') %>" >
-        <div class="vis-widget-body">
+        <div class="vis-widget-body" style="display: flex; gap: 3px; align-items: center;">
             <label for="<%= this.data.attr('wid') %>_input"><%= ((this.data.attr('label') === undefined || this.data.attr('label') === null) ? '' : this.data.attr('label')) %></label>
             <input
+                style="flex-grow: 1"
                 type="text"
                 name="<%= this.data.attr('wid') %>_input"
                 id="<%= this.data.attr('wid') %>_input"

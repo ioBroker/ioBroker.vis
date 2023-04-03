@@ -1715,7 +1715,9 @@ var vis = {
                     style:   widget.style
                 });
                 if ($widget.length) {
-                    if ($widget.parent().attr('id') !== $view.attr('id')) $widget.appendTo($view);
+                    if ($widget.parent().attr('id') !== $view.attr('id')) {
+                        $widget.appendTo($view);
+                    }
                     $widget.replaceWith(canWidget);
                     // shift widget to group if required
                 } else {

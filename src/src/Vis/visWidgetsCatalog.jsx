@@ -101,6 +101,7 @@ export const getWidgetTypes = () => {
                         .join(''),
                     setLabel: info?.visSetLabel || undefined,
                     setColor: info?.visSetColor || undefined,
+                    hidden: script.attributes['data-vis-no-palette']?.value === 'true',
                 };
 
                 VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
@@ -130,6 +131,7 @@ export const getWidgetTypes = () => {
                 draggable: widgetInfo.visDraggable,
                 adapter: widget.adapter || undefined,
                 version: widget.version || undefined,
+                hidden: widget.visHidden,
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);

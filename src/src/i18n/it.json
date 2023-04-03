@@ -401,5 +401,6 @@
   "Rename project \"%s\"": "Rinomina il progetto \"%s\"",
   "Select vis project": "Seleziona il progetto \"vis\".",
   "Create or import new \"vis\" project": "Crea o importa un nuovo progetto \"vis\".",
-  "welcome_message": "Non esiste ancora un progetto."
+  "welcome_message": "Non esiste ancora un progetto.",
+  "Browse files": "Sfoglia i file"
 }
