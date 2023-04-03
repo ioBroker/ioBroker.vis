@@ -421,8 +421,8 @@ const checkFunction = (funcText, project, selectedView, selectedWidgets, index) 
         }
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {
-            const data = project[selectedView].widgets[selectedWidgets].data;
-            const style = project[selectedView].widgets[selectedWidgets].style;
+            const data = project[selectedView].widgets[selectedWidgets[i]].data;
+            const style = project[selectedView].widgets[selectedWidgets[i]].style;
             isHidden[i] = _func(data, index, style);
         }
         let _isHdn = isHidden[0];
