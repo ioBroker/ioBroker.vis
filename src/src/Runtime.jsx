@@ -475,6 +475,7 @@ class Runtime extends GenericApp {
     }
 
     renderAlertDialog = () => <Snackbar
+        key="__snackbar_134__"
         style={this.state.alertType === 'error' ?
             { backgroundColor: '#f44336' } :
             (this.state.alertType === 'success' ?

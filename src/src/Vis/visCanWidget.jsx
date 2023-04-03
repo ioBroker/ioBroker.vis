@@ -1058,6 +1058,15 @@ class VisCanWidget extends VisBaseWidget {
                     }
                     const widgetFragment = this.props.can.view(widget.tpl, options);
 
+                    // replace all script in the widget
+                    const scripts = Array.from(widgetFragment.querySelectorAll('script'));
+                    for (let i = 0; i < scripts.length; i++) {
+                        const script = scripts[i];
+                        const newScript = document.createElement('script');
+                        newScript.innerHTML = script.innerHTML;
+                        script.parentNode.replaceChild(newScript, script);
+                    }
+
                     if (isRelative) {
                         // add widget according to the relativeWidgetOrder
                         const pos = this.props.relativeWidgetOrder.indexOf(wid);

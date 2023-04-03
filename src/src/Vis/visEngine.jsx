@@ -1757,7 +1757,7 @@ ${this.scripts}
 
         const views = Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
-                // return <div id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
+                // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
                     $$={window.$$}
                     activeView={this.props.activeView}
