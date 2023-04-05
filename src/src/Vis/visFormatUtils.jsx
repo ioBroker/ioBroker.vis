@@ -111,6 +111,89 @@ class VisFormatUtils {
         return result;
     }
 
+    static _put(ss, dateObj, result) {
+        let v = '';
+
+        switch (ss) {
+            case 'YYYY':
+            case 'JJJJ':
+            case 'ГГГГ':
+            case 'YY':
+            case 'JJ':
+            case 'ГГ':
+                v = dateObj.getFullYear();
+                if (ss.length === 2) {
+                    v %= 100;
+                }
+                break;
+            case 'MM':
+            case 'M':
+            case 'ММ':
+            case 'М':
+                v = dateObj.getMonth() + 1;
+                if ((v < 10) && (ss.length === 2)) {
+                    v = `0${v}`;
+                }
+                break;
+            case 'DD':
+            case 'TT':
+            case 'D':
+            case 'T':
+            case 'ДД':
+            case 'Д':
+                v = dateObj.getDate();
+                if (v < 10 && ss.length === 2) {
+                    v = `0${v}`;
+                }
+                break;
+            case 'hh':
+            case 'SS':
+            case 'h':
+            case 'S':
+            case 'чч':
+            case 'ч':
+                v = dateObj.getHours();
+                if (v < 10 && ss.length === 2) {
+                    v = `0${v}`;
+                }
+                break;
+            case 'mm':
+            case 'm':
+            case 'мм':
+            case 'м':
+                v = dateObj.getMinutes();
+                if (v < 10 && ss.length === 2) {
+                    v = `0${v}`;
+                }
+                break;
+            case 'ss':
+            case 's':
+            case 'cc':
+            case 'c':
+                v = dateObj.getSeconds();
+                if (v < 10 && ss.length === 2) {
+                    v = `0${v}`;
+                }
+                v = v.toString();
+                break;
+            case 'sss':
+            case 'ссс':
+                v = dateObj.getMilliseconds();
+                if (v < 10) {
+                    v = `00${v}`;
+                } else if (v < 100) {
+                    v = `0${v}`;
+                }
+                v = v.toString();
+                break;
+            default:
+                break;
+        }
+
+        result += v;
+        return result;
+    }
+
     formatDate(dateObj, isDuration, _format) {
         // copied from js-controller/lib/adapter.js
         if ((typeof isDuration === 'string' && isDuration.toLowerCase() === 'duration') || isDuration === true) {
@@ -125,7 +208,9 @@ class VisFormatUtils {
             return '';
         }
         const type = typeof dateObj;
-        if (type === 'string') dateObj = new Date(dateObj);
+        if (type === 'string') {
+            dateObj = new Date(dateObj);
+        }
 
         if (type !== 'object') {
             const j = parseInt(dateObj, 10);
@@ -150,87 +235,16 @@ class VisFormatUtils {
         let s = '';
         let result = '';
 
-        function put(ss) {
-            let v = '';
-
-            switch (ss) {
-                case 'YYYY':
-                case 'JJJJ':
-                case 'ГГГГ':
-                case 'YY':
-                case 'JJ':
-                case 'ГГ':
-                    v = dateObj.getFullYear();
-                    if (ss.length === 2) v %= 100;
-                    break;
-                case 'MM':
-                case 'M':
-                case 'ММ':
-                case 'М':
-                    v = dateObj.getMonth() + 1;
-                    if ((v < 10) && (ss.length === 2)) v = `0${v}`;
-                    break;
-                case 'DD':
-                case 'TT':
-                case 'D':
-                case 'T':
-                case 'ДД':
-                case 'Д':
-                    v = dateObj.getDate();
-                    if (v < 10 && ss.length === 2) v = `0${v}`;
-                    break;
-                case 'hh':
-                case 'SS':
-                case 'h':
-                case 'S':
-                case 'чч':
-                case 'ч':
-                    v = dateObj.getHours();
-                    if (v < 10 && ss.length === 2) v = `0${v}`;
-                    break;
-                case 'mm':
-                case 'm':
-                case 'мм':
-                case 'м':
-                    v = dateObj.getMinutes();
-                    if (v < 10 && ss.length === 2) v = `0${v}`;
-                    break;
-                case 'ss':
-                case 's':
-                case 'cc':
-                case 'c':
-                    v = dateObj.getSeconds();
-                    if (v < 10 && ss.length === 2) v = `0${v}`;
-                    v = v.toString();
-                    break;
-                case 'sss':
-                case 'ссс':
-                    v = dateObj.getMilliseconds();
-                    if (v < 10) {
-                        v = `00${v}`;
-                    } else if (v < 100) {
-                        v = `0${v}`;
-                    }
-                    v = v.toString();
-                    break;
-                default:
-                    break;
-            }
-
-            result += v;
-            return result;
-        }
-
         for (let i = 0; i < format.length; i++) {
             if (validFormatChars.includes(format[i])) {
                 s += format[i];
             } else {
-                put(s);
+                VisFormatUtils._put(s, dateObj, result);
                 s = '';
                 result += format[i];
             }
         }
-        put(s);
+        VisFormatUtils._put(s, dateObj, result);
         return result;
     }
 

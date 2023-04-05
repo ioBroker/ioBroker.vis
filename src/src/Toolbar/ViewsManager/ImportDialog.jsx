@@ -1,13 +1,4 @@
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
-
-// import 'ace-builds/webpack-resolver';
-
-import 'ace-builds/src-min-noconflict/mode-json';
-import 'ace-builds/src-min-noconflict/worker-json';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
 
 import { useEffect, useRef, useState } from 'react';
 
@@ -16,6 +7,7 @@ import { TextField } from '@mui/material';
 import I18n from '@iobroker/adapter-react-v5/i18n';
 
 import IODialog from '../../Components/IODialog';
+import CustomAceEditor from '../../Components/CustomAceEditor';
 import { useFocus } from '../../Utils';
 
 const ImportDialog = props => {
@@ -52,6 +44,7 @@ const ImportDialog = props => {
             });
         }
     }, [editor.current]);
+
     return <IODialog
         open={props.open}
         onClose={props.onClose}
@@ -61,23 +54,19 @@ const ImportDialog = props => {
         action={() => props.importViewAction(view, data)}
         actionDisabled={!view.length || !!errors.length}
     >
+        <CustomAceEditor
+            type="json"
+            theme={props.themeType}
+            ref={node => {
+                editor.current = node;
+                inputField.current = node;
+            }}
+            value={data}
+            onChange={newValue => setData(newValue)}
+            height={200}
+        />
         <div>
-            <AceEditor
-                mode="json"
-                theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-                ref={node => {
-                    editor.current = node;
-                    inputField.current = node;
-                }}
-                value={data}
-                onChange={newValue => {
-                    setData(newValue);
-                }}
-                height="200px"
-            />
-        </div>
-        <div>
-            <TextField variant="standard" label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
+            <TextField variant="standard" fullWidth label={I18n.t('View name')} value={view} onChange={e => setView(e.target.value)} />
         </div>
     </IODialog>;
 };

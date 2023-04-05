@@ -402,5 +402,13 @@
   "Select vis project": "Select \"vis\" project",
   "Create or import new \"vis\" project": "Create or import new \"vis\" project",
   "welcome_message": "No one project yet exists.",
-  "Browse files": "Browse files"
+  "Browse files": "Browse files",
+  "Text edit": "Text edit",
+  "ace_All": "All",
+  "ace_Search for": "Search for",
+  "ace_RegExp Search": "RegExp Search",
+  "ace_CaseSensitive Search": "CaseSensitive Search",
+  "ace_Whole Word Search": "Whole Word Search",
+  "ace_Search In Selection": "Search In Selection",
+  "ace_Toggle Replace mode": "Toggle Replace mode"
 }

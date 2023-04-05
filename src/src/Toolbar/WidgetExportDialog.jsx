@@ -1,19 +1,11 @@
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
 
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 
 import { Utils, I18n } from '@iobroker/adapter-react-v5';
 
 import IODialog from '../Components/IODialog';
-
-// import 'ace-builds/webpack-resolver';
-
-import 'ace-builds/src-min-noconflict/mode-json';
-import 'ace-builds/src-min-noconflict/worker-json';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
+import CustomAceEditor from '../Components/CustomAceEditor';
 
 const WidgetExportDialog = props => {
     const widgets = props.selectedWidgets.map(wid => {
@@ -78,11 +70,11 @@ const WidgetExportDialog = props => {
         actionNoClose
         ActionIcon={FileCopyIcon}
     >
-        <AceEditor
-            mode="json"
-            theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
+        <CustomAceEditor
+            type="json"
+            themeType={props.themeType}
             value={JSON.stringify(widgets, null, 2)}
-            height="200px"
+            height={200}
         />
     </IODialog>;
 };
@@ -90,7 +82,7 @@ const WidgetExportDialog = props => {
 WidgetExportDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
-    themeName: PropTypes.string,
+    themeType: PropTypes.string,
     widgets: PropTypes.object,
     selectedWidgets: PropTypes.array,
 };

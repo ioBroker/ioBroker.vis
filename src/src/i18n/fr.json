@@ -402,5 +402,13 @@
   "Select vis project": "Sélectionnez le projet \"vis\"",
   "Create or import new \"vis\" project": "Créer ou importer un nouveau projet \"vis\"",
   "welcome_message": "Aucun projet n'existe encore.",
-  "Browse files": "Parcourir les fichiers"
+  "Browse files": "Parcourir les fichiers",
+  "Text edit": "Modification de texte",
+  "ace_All": "Tous",
+  "ace_Search for": "Rechercher",
+  "ace_RegExp Search": "Recherche RegExp",
+  "ace_CaseSensitive Search": "Recherche sensible à la casse",
+  "ace_Whole Word Search": "Recherche par mot entier",
+  "ace_Search In Selection": "Rechercher dans la sélection",
+  "ace_Toggle Replace mode": "Basculer le mode Remplacer"
 }

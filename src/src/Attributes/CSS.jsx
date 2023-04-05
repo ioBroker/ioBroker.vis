@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
-
-import 'ace-builds/src-min-noconflict/mode-css';
-import 'ace-builds/src-min-noconflict/worker-css';
-import 'ace-builds/src-min-noconflict/ext-searchbox';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
 
 import {
     MenuItem, Select, Dialog, DialogTitle, Button, DialogContent, DialogActions, IconButton, CircularProgress,
@@ -18,9 +10,7 @@ import { HelpOutline, Check as CheckIcon } from '@mui/icons-material';
 import { I18n } from '@iobroker/adapter-react-v5';
 
 import { readFile } from '../Vis/visUtils';
-
-// eslint-disable-next-line no-undef
-ace.config.set('basePath', 'lib/js/ace');
+import CustomAceEditor from '../Components/CustomAceEditor';
 
 const CSS = props => {
     const [type, setType] = useState('global');
@@ -128,7 +118,17 @@ const CSS = props => {
             <IconButton onClick={() => setShowHelp(true)} size="small"><HelpOutline /></IconButton>
             {globalCssTimer || localCssTimer ? <CircularProgress size={20} /> : null}
         </div>
-        <AceEditor
+        <CustomAceEditor
+            type="css"
+            themeType={props.themeType}
+            readOnly={!props.editMode}
+            value={value}
+            onChange={newValue => save(newValue, type)}
+            width="100%"
+            focus
+            height="calc(100% - 34px)"
+        />
+        {/*<AceEditor
             mode="css"
             theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
             readOnly={!props.editMode}
@@ -136,12 +136,11 @@ const CSS = props => {
             onChange={newValue => save(newValue, type)}
             width="100%"
             height="calc(100% - 34px)"
-            setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
-                enableSnippets: true,
-            }}
-        />
+            highlightActiveLine
+            enableBasicAutocompletion
+            enableLiveAutocompletion
+            enableSnippets
+        />*/}
     </>;
 };
 

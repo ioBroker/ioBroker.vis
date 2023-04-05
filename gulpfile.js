@@ -277,15 +277,28 @@ gulp.task('3-svg-icons', done => {
 function build() {
     // copy ace files into src/public/lib/js/ace
     let ace = `${__dirname}/src/node_modules/ace-builds/src-min-noconflict/`;
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-css.js`, fs.readFileSync(`${ace}worker-css.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-html.js`, fs.readFileSync(`${ace}worker-html.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, fs.readFileSync(`${ace}worker-javascript.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-json.js`, fs.readFileSync(`${ace}worker-json.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, fs.readFileSync(`${ace}snippets/css.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-html.js`, fs.readFileSync(`${ace}mode-html.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/html.js`, fs.readFileSync(`${ace}snippets/html.js`));
-    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
+
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-css.js`, fs.readFileSync(`${ace}worker-css.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-css.js`, fs.readFileSync(`${ace}mode-css.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/css.js`, fs.readFileSync(`${ace}snippets/css.js`));
+
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-json.js`, fs.readFileSync(`${ace}mode-json.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-json.js`, fs.readFileSync(`${ace}worker-json.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/json.js`, fs.readFileSync(`${ace}snippets/json.js`));
+
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/mode-javascript.js`, fs.readFileSync(`${ace}mode-javascript.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/worker-javascript.js`, fs.readFileSync(`${ace}worker-javascript.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/snippets/javascript.js`, fs.readFileSync(`${ace}snippets/javascript.js`));
+
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ext-language_tools.js`, fs.readFileSync(`${ace}ext-language_tools.js`));
     fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ext-searchbox.js`, fs.readFileSync(`${ace}ext-searchbox.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/theme-clouds_midnight.js`, fs.readFileSync(`${ace}theme-clouds_midnight.js`));
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/theme-chrome.js`, fs.readFileSync(`${ace}theme-chrome.js`));
+
+    fs.writeFileSync(`${__dirname}/src/public/lib/js/ace/ace.js`, fs.readFileSync(`${ace}ace.js`));
 
     // synchronise i18n: copy all new words from runtime into src
     const langsRuntime = {

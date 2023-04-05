@@ -1,17 +1,11 @@
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 
-// import 'ace-builds/webpack-resolver';
-
-import 'ace-builds/src-min-noconflict/mode-json';
-import 'ace-builds/src-min-noconflict/worker-json';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
-
 import { useEffect, useRef, useState } from 'react';
 import IODialog from '../Components/IODialog';
+import CustomAceEditor from '../Components/CustomAceEditor';
 import { useFocus } from '../Utils';
+
 
 const WidgetImportDialog = props => {
     const [data, setData] = useState('');
@@ -90,21 +84,17 @@ const WidgetImportDialog = props => {
         }}
         actionDisabled={!!errors.length}
     >
-        <div>
-            <AceEditor
-                mode="json"
-                theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-                ref={node => {
-                    editor.current = node;
-                    inputField.current = node;
-                }}
-                value={data}
-                onChange={newValue => {
-                    setData(newValue);
-                }}
-                height="200px"
-            />
-        </div>
+        <CustomAceEditor
+            type="json"
+            themeType={props.themeType}
+            ref={node => {
+                editor.current = node;
+                inputField.current = node;
+            }}
+            value={data}
+            onChange={newValue => setData(newValue)}
+            height={200}
+        />
     </IODialog>;
 };
 
@@ -113,7 +103,7 @@ WidgetImportDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     project: PropTypes.object,
-    themeName: PropTypes.string,
+    themeType: PropTypes.string,
     selectedView: PropTypes.string,
 };
 export default WidgetImportDialog;

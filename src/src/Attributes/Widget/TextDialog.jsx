@@ -1,19 +1,12 @@
-import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
-
-// import 'ace-builds/webpack-resolver';
-import 'ace-builds/src-min-noconflict/mode-text';
-import 'ace-builds/src-min-noconflict/mode-html';
-import 'ace-builds/src-min-noconflict/worker-html';
-import 'ace-builds/src-min-noconflict/ext-searchbox';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
+
 import IODialog from '../../Components/IODialog';
+import CustomAceEditor from '../../Components/CustomAceEditor';
 
 const TextDialog = props => {
     const [value, changeValue] = useState('');
+
     useEffect(() => {
         changeValue(props.value);
     }, [props.open]);
@@ -25,21 +18,17 @@ const TextDialog = props => {
         actionTitle="Save"
         action={() => props.onChange(value)}
         onClose={props.onClose}
+        minWidth={800}
+        actionDisabled={value === props.value}
     >
-        <div style={{ width: 800 }}>
-            <AceEditor
-                mode={props.type === 'text' ? 'html' : props.type}
-                theme={props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
-                width="100%"
-                value={value}
-                onChange={newValue => changeValue(newValue)}
-                setOptions={{
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    enableSnippets: true,
-                }}
-            />
-        </div>
+        <CustomAceEditor
+            type={props.type}
+            themeType={props.themeType}
+            value={value}
+            focus
+            height={400}
+            onChange={newValue => changeValue(newValue)}
+        />
     </IODialog> : null;
 };
 

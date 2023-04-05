@@ -13,18 +13,20 @@ const IODialog = props => (props.open ? <Dialog
     maxWidth={props.maxWidth || 'md'}
 >
     <DialogTitle>{props.noTranslation ? props.title : I18n.t(props.title)}</DialogTitle>
-    <DialogContent onKeyUp={e => {
-        if (props.action) {
-            if (!props.actionDisabled && !props.keyboardDisabled) {
-                if (e.keyCode === 13) {
-                    props.action();
-                    if (!props.actionNoClose) {
-                        props.onClose();
+    <DialogContent
+        style={{ minWidth: props.minWidth || undefined }}
+        onKeyUp={e => {
+            if (props.action) {
+                if (!props.actionDisabled && !props.keyboardDisabled) {
+                    if (e.keyCode === 13) {
+                        props.action();
+                        if (!props.actionNoClose) {
+                            props.onClose();
+                        }
                     }
                 }
             }
-        }
-    }}
+        }}
     >
         {props.children}
     </DialogContent>
@@ -74,6 +76,7 @@ IODialog.propTypes = {
     title: PropTypes.string,
     fullScreen: PropTypes.bool,
     maxWidth: PropTypes.string,
+    minWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     noTranslation: PropTypes.bool,
 };
 

@@ -402,5 +402,13 @@
   "Select vis project": "选择“vis”项目",
   "Create or import new \"vis\" project": "创建或导入新的“vis”项目",
   "welcome_message": "目前还没有一个项目存在。",
-  "Browse files": "浏览文件"
+  "Browse files": "浏览文件",
+  "Text edit": "文本编辑",
+  "ace_All": "全部",
+  "ace_Search for": "搜索",
+  "ace_RegExp Search": "正则表达式搜索",
+  "ace_CaseSensitive Search": "区分大小写搜索",
+  "ace_Whole Word Search": "全词搜索",
+  "ace_Search In Selection": "在选择中搜索",
+  "ace_Toggle Replace mode": "切换替换模式"
 }

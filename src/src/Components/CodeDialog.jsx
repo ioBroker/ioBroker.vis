@@ -1,13 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
-
-import 'ace-builds/src-min-noconflict/mode-html';
-import 'ace-builds/src-min-noconflict/worker-html';
-import 'ace-builds/src-min-noconflict/ext-searchbox';
-import 'ace-builds/src-min-noconflict/ext-language_tools';
-import 'ace-builds/src-min-noconflict/theme-clouds_midnight';
-import 'ace-builds/src-min-noconflict/theme-chrome';
 
 import {
     Dialog, Button, DialogActions, DialogContent, DialogTitle,
@@ -17,6 +9,8 @@ import IconCopy from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
+
+import CustomAceEditor from './CustomAceEditor';
 
 class CodeDialog extends Component {
     render() {
@@ -28,17 +22,11 @@ class CodeDialog extends Component {
         >
             <DialogTitle>{this.props.title || I18n.t('Code')}</DialogTitle>
             <DialogContent>
-                <AceEditor
-                    mode={this.props.mode || 'html'}
-                    theme={this.props.themeType === 'dark' ? 'clouds_midnight' : 'chrome'}
+                <CustomAceEditor
+                    type={this.props.mode || 'html'}
+                    themeType={this.props.themeType}
                     readOnly
                     value={this.props.code}
-                    width="100%"
-                    setOptions={{
-                        enableBasicAutocompletion: true,
-                        enableLiveAutocompletion: true,
-                        enableSnippets: true,
-                    }}
                 />
             </DialogContent>
             <DialogActions>

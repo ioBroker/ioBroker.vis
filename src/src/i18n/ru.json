@@ -402,5 +402,13 @@
   "Select vis project": "Выберите проект \"vis\"",
   "Create or import new \"vis\" project": "Создать или импортировать новый проект \"vis\"",
   "welcome_message": "Ни одного проекта пока не существует.",
-  "Browse files": "Просмотр файлов"
+  "Browse files": "Просмотр файлов",
+  "Text edit": "Редактировать текст",
+  "ace_All": "Все",
+  "ace_Search for": "Искать",
+  "ace_RegExp Search": "Поиск по регулярному выражению",
+  "ace_CaseSensitive Search": "Поиск с учетом регистра",
+  "ace_Whole Word Search": "Поиск всего слова",
+  "ace_Search In Selection": "Искать в выборе",
+  "ace_Toggle Replace mode": "Переключить режим замены"
 }

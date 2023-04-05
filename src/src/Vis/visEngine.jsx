@@ -701,6 +701,7 @@ class VisEngine extends React.Component {
             getHttp: (url, callback) =>
                 this.props.socket.getRawSocket().emit('httpGet', url, data =>
                     callback && callback(data)),
+            formatDate: (dateObj, isDuration, _format) => this.formatUtils.formatDate(dateObj, isDuration, _format),
         };
     }
 
