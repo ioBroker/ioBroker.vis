@@ -822,24 +822,23 @@ function getRemoteWidgets(socket) {
             const promises = [];
             for (let i = 0; i < dynamicWidgetInstances.length; i++) {
                 const dynamicWidgetInstance = dynamicWidgetInstances[i];
-                for (const widgetKey in dynamicWidgetInstance.common.visWidgets) {
-                    if (widgetKey === 'i18n') {
+                for (const widgetSetName in dynamicWidgetInstance.common.visWidgets) {
+                    if (widgetSetName === 'i18n') {
                         // ignore
+                        console.warn(`common.visWidgets.i18n is deprecated. Use common.visWidgets.${widgetSetName}.i18n instead.`);
                     } else {
-                        const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetKey];
-                        if (!visWidgetsCollection.url.startsWith('http')) {
+                        const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetSetName];
+                        if (!visWidgetsCollection.url?.startsWith('http')) {
                             visWidgetsCollection.url = `./widgets/${visWidgetsCollection.url}`;
                         }
 
                         try {
                             if (visWidgetsCollection.components) {
-                                let widgetsName;
-                                if (!widgetsName) {
-                                    widgetsName = visWidgetsCollection.name;
-                                }
                                 let i18nPrefix = false;
 
-                                if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === true) {
+                                // 1. Load language file ------------------
+                                // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
+                                if (visWidgetsCollection.url && (visWidgetsCollection.i18n === true || dynamicWidgetInstance.common.visWidgets.i18n === true)) {
                                     // load i18n from files
                                     const pos = visWidgetsCollection.url.lastIndexOf('/');
                                     let i18nURL;
@@ -849,13 +848,6 @@ function getRemoteWidgets(socket) {
                                         i18nURL = visWidgetsCollection.url;
                                     }
                                     const lang = I18n.getLanguage();
-                                    /*
-                                    let file = `${i18nURL}/i18n/${lang}.json`;
-
-                                    if (window.location.port === '3000' && file.startsWith('http')) {
-                                        file = file.replace('/i18n/', `/widgets/${dynamicWidgetInstances[instanceKey]._id.replace('system.adapter.', '').replace(/\.\d*$/, '')}/i18n/`).replace('4173', '3000');
-                                    }
-                                    */
 
                                     const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
                                         .then(data => data.json())
@@ -880,7 +872,9 @@ function getRemoteWidgets(socket) {
                                             return null;
                                         });
                                     promises.push(i18nPromise);
-                                } else if (visWidgetsCollection.url && dynamicWidgetInstance.common.visWidgets.i18n === 'component') {
+                                } else
+                                // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
+                                if (visWidgetsCollection.url && (visWidgetsCollection.i18n === 'component' || dynamicWidgetInstance.common.visWidgets.i18n === 'component')) {
                                     const i18nPromise = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
                                         .then(translations => {
                                             count++;
@@ -898,34 +892,42 @@ function getRemoteWidgets(socket) {
                                             console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
 
                                     promises.push(i18nPromise);
+                                } else
+                                if (visWidgetsCollection.i18n && typeof visWidgetsCollection.i18n === 'object') {
+                                    try {
+                                        I18n.extendTranslations(visWidgetsCollection.i18n);
+                                    } catch (error) {
+                                        console.error(`Cannot import i18n: ${error}`);
+                                    }
                                 }
 
-                                for (const componentKey in visWidgetsCollection.components) {
-                                    ((_componentKey, _visWidgetsCollection) => {
-                                        // const start = Date.now();
-                                        const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
-                                            .then(Component => {
-                                                count++;
-                                                // console.log(Component);
-                                                if (Component.default) {
-                                                    Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
-                                                    Component.default.version = dynamicWidgetInstance.common.version;
-                                                    if (i18nPrefix) {
-                                                        Component.default.i18nPrefix = i18nPrefix;
+                                // 2. Load all components ------------------
+                                if (visWidgetsCollection.components) {
+                                    for (const componentKey in visWidgetsCollection.components) {
+                                        ((_componentKey, _visWidgetsCollection) => {
+                                            // const start = Date.now();
+                                            const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
+                                                .then(Component => {
+                                                    count++;
+                                                    // console.log(Component);
+                                                    if (Component.default) {
+                                                        Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
+                                                        Component.default.version = dynamicWidgetInstance.common.version;
+                                                        if (i18nPrefix) {
+                                                            Component.default.i18nPrefix = i18nPrefix;
+                                                        }
+                                                        result.push(Component.default);
+                                                    } else {
+                                                        console.error(`Cannot load widget ${dynamicWidgetInstance._id}`);
                                                     }
-                                                    result.push(Component.default);
-                                                } else {
-                                                    console.error(`Cannot load widget ${dynamicWidgetInstance._id}`);
-                                                }
-                                                window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
-                                            })
-                                            .catch(e => {
-                                                console.error(`Cannot load widget ${dynamicWidgetInstance._id}: `, e);
-                                            });
-                                        // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
+                                                    window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                                })
+                                                .catch(e => console.error(`Cannot load widget ${dynamicWidgetInstance._id}: `, e));
+                                            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 
-                                        promises.push(promise);
-                                    })(componentKey, visWidgetsCollection);
+                                            promises.push(promise);
+                                        })(componentKey, visWidgetsCollection);
+                                    }
                                 }
                             }
                         } catch (e) {
@@ -934,6 +936,7 @@ function getRemoteWidgets(socket) {
                     }
                 }
 
+                // deprecated
                 if (dynamicWidgetInstance.common.visWidgets?.i18n && typeof dynamicWidgetInstance.common.visWidgets?.i18n === 'object') {
                     try {
                         I18n.extendTranslations(dynamicWidgetInstance.common.visWidgets.i18n);
