@@ -1332,6 +1332,16 @@ class VisBaseWidget extends React.Component {
         }]);
     }
 
+    static correctStylePxValue(value) {
+        if (typeof value === 'string') {
+            // eslint-disable-next-line no-restricted-properties
+            if (window.isFinite(value)) {
+                return parseFloat(value);
+            }
+        }
+
+        return value;
+    }
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
@@ -1348,49 +1358,23 @@ class VisBaseWidget extends React.Component {
 
         if (this.state.editMode && !(widget.groupid && !this.props.selectedGroup)) {
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'top')) {
-                style.top = this.state.style.top;
+                style.top = VisBaseWidget.correctStylePxValue(this.state.style.top);
             }
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'left')) {
-                style.left = this.state.style.left;
+                style.left = VisBaseWidget.correctStylePxValue(this.state.style.left);
             }
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'width')) {
-                style.width = this.state.style.width;
+                style.width = VisBaseWidget.correctStylePxValue(this.state.style.width);
             }
             if (Object.prototype.hasOwnProperty.call(this.state.style, 'height')) {
-                style.height = this.state.style.height;
+                style.height = VisBaseWidget.correctStylePxValue(this.state.style.height);
             }
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'right')) {
-                style.right = this.state.style.right;
+                style.right = VisBaseWidget.correctStylePxValue(this.state.style.right);
             }
             if (!this.props.isRelative && Object.prototype.hasOwnProperty.call(this.state.style, 'bottom')) {
-                style.bottom = this.state.style.bottom;
+                style.bottom = VisBaseWidget.correctStylePxValue(this.state.style.bottom);
             }
-
-            // convert string to number+'px'
-            ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
-                if (style[attr] !== undefined && typeof style[attr] === 'string') {
-                    // eslint-disable-next-line no-restricted-properties
-                    if (window.isFinite(style[attr])) {
-                        style[attr] = parseFloat(style[attr]);
-                    } else if (style[attr].includes('{')) {
-                        // try to steal style by rxWidget
-                        if (this.state.rxStyle && this.state.rxStyle[attr] !== undefined) {
-                            if (!this.state.rxStyle[attr].includes('{')) {
-                                style[attr] = this.state.rxStyle[attr];
-                            }
-                        } else
-                        // try to steal style by canWidget
-                        if (this.props.allWidgets[this.props.id] &&
-                            this.props.allWidgets[this.props.id].style &&
-                            this.props.allWidgets[this.props.id].style[attr] !== undefined
-                        ) {
-                            if (!this.props.allWidgets[this.props.id].style[attr].includes('{')) {
-                                style[attr] = this.props.allWidgets[this.props.id].style[attr];
-                            }
-                        }
-                    }
-                }
-            });
 
             style.position = this.props.isRelative ? 'relative' : 'absolute';
             style.userSelect = 'none';
@@ -1440,6 +1424,32 @@ class VisBaseWidget extends React.Component {
             style.top = style.top || 0;
             style.left = style.left || 0;
         }
+
+        // convert string to number+'px'
+        ['top', 'left', 'width', 'height', 'right', 'bottom'].forEach(attr => {
+            if (style[attr] !== undefined && typeof style[attr] === 'string') {
+                // eslint-disable-next-line no-restricted-properties
+                if (window.isFinite(style[attr])) {
+                    style[attr] = parseFloat(style[attr]);
+                } else if (style[attr].includes('{')) {
+                    // try to steal style by rxWidget
+                    if (this.state.rxStyle && this.state.rxStyle[attr] !== undefined) {
+                        if (!this.state.rxStyle[attr].includes('{')) {
+                            style[attr] = VisBaseWidget.correctStylePxValue(this.state.rxStyle[attr]);
+                        }
+                    } else
+                        // try to steal style by canWidget
+                    if (this.props.allWidgets[this.props.id] &&
+                        this.props.allWidgets[this.props.id].style &&
+                        this.props.allWidgets[this.props.id].style[attr] !== undefined
+                    ) {
+                        if (!this.props.allWidgets[this.props.id].style[attr].includes('{')) {
+                            style[attr] = VisBaseWidget.correctStylePxValue(this.props.allWidgets[this.props.id].style[attr]);
+                        }
+                    }
+                }
+            }
+        });
 
         classNames = addClass(classNames, 'vis-editmode-overlay');
 
@@ -1511,21 +1521,21 @@ class VisBaseWidget extends React.Component {
             />;
 
         if (this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
-            props.style.borderBottom = '1px dotted #888';
-            props.style.borderRight = '1px dotted #888';
+            style.borderBottom = '1px dotted #888';
+            style.borderRight = '1px dotted #888';
         }
 
         return <div
             id={props.id}
             className={props.className}
             ref={this.refService}
-            style={props.style}
+            style={style}
         >
-            { widgetName }
-            { widgetMoveButtons }
-            { overlay }
-            { this.state.editMode && this.state.selectedOne ? this.getResizeHandlers() : null }
-            { rxWidget }
+            {widgetName}
+            {widgetMoveButtons}
+            {overlay}
+            {this.state.editMode && this.state.selectedOne ? this.getResizeHandlers() : null}
+            {rxWidget}
         </div>;
     }
 }
