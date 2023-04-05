@@ -50,7 +50,8 @@ const Widgets = props => {
         items: [
             {
                 type: 'multiselect',
-                name: 'Active widget(s)',
+                name: I18n.t('Active widget(s) from %s', Object.keys(widgets).length),
+                doNotTranslateName: true,
                 items: Object.keys(widgets).filter(widget => (props.selectedGroup ?
                     widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
                     !widgets[widget].groupid)).map(widget => {
@@ -115,7 +116,9 @@ const Widgets = props => {
                     onClick: () => props.cloneWidgets(),
                 },
             ]],
+
             { type: 'divider' },
+
             [[
                 {
                     type: 'icon-button',

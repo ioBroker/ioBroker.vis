@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import I18n from '@iobroker/adapter-react-v5/i18n';
 import {
-    AppBar, Button, IconButton, Tooltip, Menu, MenuItem,
+    AppBar, Button, IconButton, Tooltip, Menu, MenuItem, CircularProgress,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 
@@ -64,6 +64,7 @@ const ProjectsManage = props => {
     const [dialogProject, setDialogProject] = useState(null);
     const [showExportDialog, setShowExportDialog] = useState(null);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [working, setWorking] = useState(false);
 
     const [importDialog, setImportDialog] = useState(false);
 
@@ -85,9 +86,11 @@ const ProjectsManage = props => {
     };
 
     const exportProject = async (projectName, isAnonymize) => {
+        setWorking(projectName);
         const host = await getLiveHost(props.socket);
 
         if (!host) {
+            setWorking(false);
             window.alert(I18n.t('No live hosts found!'));
             return;
         }
@@ -101,6 +104,7 @@ const ProjectsManage = props => {
             },
         }, data => {
             if (data.error) {
+                setWorking(false);
                 window.alert(data.error);
             } else {
                 const d = new Date();
@@ -115,6 +119,7 @@ const ProjectsManage = props => {
                     m = `0${m}`;
                 }
                 date += `-${m}-`;
+                setWorking(false);
                 window.$('body').append(`<a id="zip_download" href="data: application/zip;base64,${data.data}" download="${date}${projectName}.zip"></a>`);
                 document.getElementById('zip_download').click();
                 document.getElementById('zip_download').remove();
@@ -152,7 +157,7 @@ const ProjectsManage = props => {
         onClose={props.onClose}
         title="Manage projects"
         closeTitle="Close"
-        closeDisabled={!props.projects.length}
+        closeDisabled={!props.projects.length || working}
     >
         <div className={props.classes.dialog}>
             <AppBar position="static" className={props.classes.topBar}>
@@ -179,25 +184,34 @@ const ProjectsManage = props => {
                 </Button>
                 <span className={props.classes.viewManageButtonActions}>
                     <Tooltip title={I18n.t('Export')} classes={{ popper: props.classes.tooltip }}>
-                        <IconButton
-                            onClick={event => {
-                                setAnchorEl(event.currentTarget);
-                                setShowExportDialog(projectName);
-                            }}
-                            size="small"
-                        >
-                            <BiExport fontSize="20" />
-                        </IconButton>
+                        {working === projectName ? <CircularProgress size={22} /> :
+                            <IconButton
+                                onClick={event => {
+                                    setAnchorEl(event.currentTarget);
+                                    setShowExportDialog(projectName);
+                                }}
+                                size="small"
+                            >
+                                <BiExport fontSize="20" />
+                            </IconButton>}
                     </Tooltip>
                     <Tooltip title={I18n.t('Edit')} classes={{ popper: props.classes.tooltip }}>
-                        <IconButton size="small" onClick={() => showDialog('rename', projectName)}>
-                            <EditIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton
+                                size="small"
+                                onClick={() => showDialog('rename', projectName)}
+                                disabled={working}
+                            >
+                                <EditIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                     <Tooltip title={I18n.t('Delete')} onClick={() => showDialog('delete', projectName)} classes={{ popper: props.classes.tooltip }}>
-                        <IconButton size="small">
-                            <DeleteIcon />
-                        </IconButton>
+                        <span>
+                            <IconButton size="small" disabled={working}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </span>
                     </Tooltip>
                 </span>
             </div>)}

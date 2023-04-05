@@ -150,6 +150,7 @@ const getItem = (item, key, props, full) => {
             label={I18n.t(item.name)}
         />;
     }
+
     if (item.type === 'icon-button') {
         return props.toolbarHeight !== 'veryNarrow' && full ?
             <div key={key} style={{ textAlign: 'center' }}>
@@ -186,9 +187,11 @@ const getItem = (item, key, props, full) => {
                 </div>
             </Tooltip>;
     }
+
     if (item.type === 'text') {
         return <span key={key} className={props.classes.text}>{`${I18n.t(item.text)}:`}</span>;
     }
+
     if (item.type === 'button') {
         return <Button
             key={key}
@@ -200,9 +203,11 @@ const getItem = (item, key, props, full) => {
             {I18n.t(item.name)}
         </Button>;
     }
+
     if (item.type === 'divider') {
         return <Divider key={key} orientation="vertical" flexItem style={{ margin: '0px 10px' }} />;
     }
+
     return <TextField
         variant="standard"
         key={key}
@@ -218,6 +223,7 @@ const getItem = (item, key, props, full) => {
 const ToolbarItems = props => {
     let items = props.group.items;
     const name = props.group.name;
+    const doNotTranslateName = props.group.doNotTranslateName;
 
     // flatten buttons
     if (props.toolbarHeight === 'veryNarrow') {
@@ -257,7 +263,7 @@ const ToolbarItems = props => {
             }
         </div>
         {props.toolbarHeight === 'full' ? <div className={props.classes.toolbarLabel}>
-            <span>{typeof name === 'string' ? I18n.t(name) : name}</span>
+            <span>{typeof name === 'string' ? (doNotTranslateName ? name : I18n.t(name)) : name}</span>
         </div> : null}
     </div>;
 };

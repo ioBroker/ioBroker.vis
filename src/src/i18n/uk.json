@@ -291,7 +291,6 @@
   "Responsive settings": "Чуйні налаштування",
   "Projects": "Проекти",
   "Widgets": "Віджети",
-  "Active widget(s)": "Активні віджети",
   "Add new view": "Новий вигляд",
   "Objects": "Об'єкти",
   "Hide panel names": "Приховати назви панелей",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Пошук з урахуванням регістру",
   "ace_Whole Word Search": "Пошук усього слова",
   "ace_Search In Selection": "Пошук у вибраному",
-  "ace_Toggle Replace mode": "Перемкнути режим заміни"
+  "ace_Toggle Replace mode": "Перемкнути режим заміни",
+  "Active widget(s) from %s": "Активні віджети від %s"
 }

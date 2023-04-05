@@ -295,7 +295,6 @@
   "Responsive settings": "Responsive settings",
   "Projects": "Projects",
   "Widgets": "Widgets",
-  "Active widget(s)": "Active widget(s)",
   "Add new view": "Add new view",
   "Objects": "Objects",
   "Hide panel names": "Hide panel names",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "CaseSensitive Search",
   "ace_Whole Word Search": "Whole Word Search",
   "ace_Search In Selection": "Search In Selection",
-  "ace_Toggle Replace mode": "Toggle Replace mode"
+  "ace_Toggle Replace mode": "Toggle Replace mode",
+  "Active widget(s) from %s": "Active widget(s) from %s"
 }

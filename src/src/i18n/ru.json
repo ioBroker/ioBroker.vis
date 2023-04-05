@@ -292,7 +292,6 @@
   "Responsive settings": "Адаптивные настройки",
   "Projects": "Проекты",
   "Widgets": "Виджеты",
-  "Active widget(s)": "Активные виджеты",
   "Add new view": "Новая страница",
   "Objects": "Объекты",
   "Hide panel names": "Скрыть названия панелей",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Поиск с учетом регистра",
   "ace_Whole Word Search": "Поиск всего слова",
   "ace_Search In Selection": "Искать в выборе",
-  "ace_Toggle Replace mode": "Переключить режим замены"
+  "ace_Toggle Replace mode": "Переключить режим замены",
+  "Active widget(s) from %s": "Активные виджеты от %s"
 }

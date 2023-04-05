@@ -291,7 +291,6 @@
   "Responsive settings": "响应式设置",
   "Projects": "项目",
   "Widgets": "小部件",
-  "Active widget(s)": "活动小部件",
   "Add new view": "添加新视图",
   "Objects": "对象",
   "Hide panel names": "隐藏面板名称",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "区分大小写搜索",
   "ace_Whole Word Search": "全词搜索",
   "ace_Search In Selection": "在选择中搜索",
-  "ace_Toggle Replace mode": "切换替换模式"
+  "ace_Toggle Replace mode": "切换替换模式",
+  "Active widget(s) from %s": "来自 %s 的活动小部件"
 }

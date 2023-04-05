@@ -292,7 +292,6 @@
   "Responsive settings": "Responsive Einstellungen",
   "Projects": "Projekte",
   "Widgets": "Widgets",
-  "Active widget(s)": "Aktive Widgets",
   "Add new view": "Neue Seite",
   "Objects": "Objekte",
   "Hide panel names": "Bedienfeldnamen ausblenden",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Suche nach Groß- und Kleinschreibung",
   "ace_Whole Word Search": "Suche nach ganzen Wörtern",
   "ace_Search In Selection": "In Auswahl suchen",
-  "ace_Toggle Replace mode": "Ersetzungsmodus wechseln "
+  "ace_Toggle Replace mode": "Ersetzungsmodus wechseln ",
+  "Active widget(s) from %s": "Aktive(s) Widget(s) von %s"
 }

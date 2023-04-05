@@ -291,7 +291,6 @@
   "Responsive settings": "Responsieve instellingen",
   "Projects": "Projecten",
   "Widgets": "Widgets",
-  "Active widget(s)": "Actieve widget(s)",
   "Add new view": "Nieuwe weergave",
   "Objects": "Voorwerpen",
   "Hide panel names": "Paneelnamen verbergen",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Hoofdlettergevoelig zoeken",
   "ace_Whole Word Search": "Zoeken op hele woorden",
   "ace_Search In Selection": "Zoeken in selectie",
-  "ace_Toggle Replace mode": "Schakel de vervangingsmodus in"
+  "ace_Toggle Replace mode": "Schakel de vervangingsmodus in",
+  "Active widget(s) from %s": "Actieve widget(s) van %s"
 }

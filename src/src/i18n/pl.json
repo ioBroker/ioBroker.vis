@@ -291,7 +291,6 @@
   "Responsive settings": "Ustawienia responsywne",
   "Projects": "Projektowanie",
   "Widgets": "Widżety",
-  "Active widget(s)": "Aktywne widżety",
   "Add new view": "Nowy widok",
   "Objects": "Obiekty",
   "Hide panel names": "Ukryj nazwy paneli",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Wyszukiwanie z uwzględnieniem wielkości liter",
   "ace_Whole Word Search": "Wyszukiwanie całego słowa",
   "ace_Search In Selection": "Szukaj w zaznaczeniu",
-  "ace_Toggle Replace mode": "Przełącz tryb zastępowania"
+  "ace_Toggle Replace mode": "Przełącz tryb zastępowania",
+  "Active widget(s) from %s": "Aktywne widżety z %s"
 }

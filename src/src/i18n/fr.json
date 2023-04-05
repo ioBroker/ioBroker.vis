@@ -291,7 +291,6 @@
   "Responsive settings": "Paramètres réactifs",
   "Projects": "Projets",
   "Widgets": "Widget",
-  "Active widget(s)": "Widget(s) actif(s)",
   "Add new view": "Nouvelle vue",
   "Objects": "Objets",
   "Hide panel names": "Masquer les noms des panneaux",
@@ -410,5 +409,6 @@
   "ace_CaseSensitive Search": "Recherche sensible à la casse",
   "ace_Whole Word Search": "Recherche par mot entier",
   "ace_Search In Selection": "Rechercher dans la sélection",
-  "ace_Toggle Replace mode": "Basculer le mode Remplacer"
+  "ace_Toggle Replace mode": "Basculer le mode Remplacer",
+  "Active widget(s) from %s": "Widget(s) actif(s) de %s"
 }
