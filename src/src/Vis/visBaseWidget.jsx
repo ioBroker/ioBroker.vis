@@ -37,12 +37,12 @@ class VisBaseWidget extends React.Component {
 
         this.uuid = `${Date.now()}.${Math.round(Math.random() * 1000000)}`;
 
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = props.context.views[props.view].widgets[props.id];
         this.refService = React.createRef();
         this.resize = false;
         this.widDiv = null;
 
-        const selected = this.props.editMode && this.props.selectedWidgets && this.props.selectedWidgets.includes(this.props.id);
+        const selected = props.editMode && props.selectedWidgets?.includes(props.id);
 
         const data = JSON.parse(JSON.stringify(widget.data || {}));
         const style = JSON.parse(JSON.stringify(widget.style || {}));
@@ -58,14 +58,15 @@ class VisBaseWidget extends React.Component {
             selectedOne: selected && this.props.selectedWidgets.length === 1,
             resizable: true,
             resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
-            widgetHint: this.props.widgetHint,
-            gap: style.position === 'relative' ? (Number.isFinite(props.views[props.view].settings.rowGap) ? parseFloat(props.views[props.view].settings.rowGap) : 0) : 0,
+            widgetHint: props.context.widgetHint,
+            gap: style.position === 'relative' ? (Number.isFinite(props.context.views[props.view].settings.rowGap) ? parseFloat(props.context.views[props.view].settings.rowGap) : 0) : 0,
         };
 
         this.onCommandBound = this.onCommand.bind(this);
     }
 
     static replacePRJ_NAME(data, style, props) {
+        const context = props.context;
         if (data) {
             delete data._originalData;
             Object.keys(data).forEach(attr => {
@@ -74,7 +75,7 @@ class VisBaseWidget extends React.Component {
                         data._originalData = JSON.stringify(data);
                     }
                     // "_PRJ_NAME".length = 9
-                    data[attr] = `../${props.adapterName}.${props.instance}/${props.projectName}${data[attr].substring(9)}`;
+                    data[attr] = `../${context.adapterName}.${context.instance}/${context.projectName}${data[attr].substring(9)}`;
                 }
             });
         }
@@ -84,7 +85,7 @@ class VisBaseWidget extends React.Component {
                 if (!style._originalData) {
                     style._originalData = JSON.stringify(style);
                 }
-                style['background-image'] = `../${props.adapterName}.${props.instance}/${props.projectName}${style['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
+                style['background-image'] = `../${context.adapterName}.${context.instance}/${context.projectName}${style['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
             }
         }
     }
@@ -168,10 +169,11 @@ class VisBaseWidget extends React.Component {
     }
 
     static getDerivedStateFromProps(props, state) {
+        const context = props.context;
         let newState = null; // No change to state by default
-        const widget = props.views[props.view].widgets[props.id];
+        const widget = context.views[props.view].widgets[props.id];
         const gap = widget.style.position === 'relative' ?
-            (Number.isFinite(props.views[props.view].settings.rowGap) ? parseFloat(props.views[props.view].settings.rowGap) : 0) : 0;
+            (Number.isFinite(context.views[props.view].settings.rowGap) ? parseFloat(context.views[props.view].settings.rowGap) : 0) : 0;
 
         let _style = state.style._originalData ? state.style._originalData : JSON.stringify(state.style);
         let _data = state.data._originalData ? state.data._originalData : JSON.stringify(state.data);
@@ -212,9 +214,9 @@ class VisBaseWidget extends React.Component {
             newState.applyBindings = true;
         }
 
-        if (props.widgetHint !== state.widgetHint) {
+        if (props.context.widgetHint !== state.widgetHint) {
             newState = newState || {};
-            newState.widgetHint = props.widgetHint;
+            newState.context.widgetHint = props.widgetHint;
         }
 
         const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
@@ -286,7 +288,7 @@ class VisBaseWidget extends React.Component {
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
             return;
         }
-        if (this.props.views[this.props.view].widgets[this.props.id].data.locked) {
+        if (this.props.context.views[this.props.view].widgets[this.props.id].data.locked) {
             return;
         }
         if (!this.props.selectedWidgets.includes(this.props.id)) {
@@ -295,16 +297,16 @@ class VisBaseWidget extends React.Component {
                 const pos = this.props.selectedWidgets.indexOf(this.props.id);
                 if (pos === -1) {
                     const selectedWidgets = [...this.props.selectedWidgets, this.props.id];
-                    this.props.setSelectedWidgets(selectedWidgets);
+                    this.props.context.setSelectedWidgets(selectedWidgets);
                 } else {
                     const selectedWidgets = [...this.props.selectedWidgets];
                     selectedWidgets.splice(pos, 1);
-                    this.props.setSelectedWidgets(selectedWidgets);
+                    this.props.context.setSelectedWidgets(selectedWidgets);
                 }
             } else {
                 this.lastClick = Date.now();
                 // set select
-                this.props.setSelectedWidgets([this.props.id]);
+                this.props.context.setSelectedWidgets([this.props.id]);
             }
         } else if (this.props.moveAllowed && this.state.draggable !== false && !this.props.isRelative) {
             // User can drag only objects of the same type
@@ -346,6 +348,10 @@ class VisBaseWidget extends React.Component {
     }
 
     onMove = (x, y, save, calculateRelativeWidgetPosition) => {
+        if (!this.props.editMode) {
+            return;
+        }
+
         if (this.resize) {
             if (this.state.resizable === false) {
                 return;
@@ -497,7 +503,7 @@ class VisBaseWidget extends React.Component {
                     }
                 });
                 this.resize = false;
-                this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                this.props.onWidgetsChanged([{
                     wid: this.props.id,
                     view: this.props.view,
                     style: {
@@ -581,7 +587,7 @@ class VisBaseWidget extends React.Component {
                     this.shadowDiv.remove();
                     this.shadowDiv = null;
 
-                    this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                    this.props.onWidgetsChanged([{
                         wid: this.props.id,
                         view: this.props.view,
                         style: {
@@ -590,7 +596,7 @@ class VisBaseWidget extends React.Component {
                         },
                     }], this.props.view, { order: this.movement.order });
                 } else {
-                    this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                    this.props.onWidgetsChanged([{
                         wid: this.props.id,
                         view: this.props.view,
                         style: {
@@ -646,10 +652,10 @@ class VisBaseWidget extends React.Component {
         const thicknessEm = `${thickness}em`;
         const offsetEm = `${shift - thickness}em`;
 
-        const widgetWidth100 = this.props.views[this.props.view].widgets[this.props.id].style.width === '100%';
-        const widgetHeight100 = this.props.views[this.props.view].widgets[this.props.id].style.height === '100%';
+        const widgetWidth100 = this.props.context.views[this.props.view].widgets[this.props.id].style.width === '100%';
+        const widgetHeight100 = this.props.context.views[this.props.view].widgets[this.props.id].style.height === '100%';
 
-        const color = '#00F'; // it is so, to be able to change color in web storm
+        const color = '#014488'; // it is so, to be able to change color in web storm
         const border = `0.1em dashed ${color}`;
         const borderDisabled = '0.1em dashed #888';
 
@@ -662,14 +668,16 @@ class VisBaseWidget extends React.Component {
         const RESIZERS_OPACITY = 0.9;
         const RESIZERS_OPACITY_DISABLED = 0.5;
 
+        const isRelative = this.props.isRelative;
+
         const controllable = {
-            top: !this.props.isRelative && resizeHandlers.includes('n'),
+            top: !isRelative && resizeHandlers.includes('n'),
             bottom: !widgetHeight100 && resizeHandlers.includes('s'),
-            left: !this.props.isRelative && resizeHandlers.includes('w'),
+            left: !isRelative && resizeHandlers.includes('w'),
             right: !widgetWidth100 && resizeHandlers.includes('e'),
-            'top-left': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('nw'),
-            'top-right': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('ne'),
-            'bottom-left': !widgetHeight100 && !widgetWidth100 && !this.props.isRelative && resizeHandlers.includes('sw'),
+            'top-left': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('nw'),
+            'top-right': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('ne'),
+            'bottom-left': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('sw'),
             'bottom-right': !widgetHeight100 && !widgetWidth100 && resizeHandlers.includes('se'),
         };
 
@@ -784,7 +792,7 @@ class VisBaseWidget extends React.Component {
         }
 
         return !!userGroups.find(groupId => {
-            const group = this.props.userGroups[`system.group.${groupId}`];
+            const group = this.props.context.userGroups[`system.group.${groupId}`];
             return group?.common?.members?.length && group.common.members.includes(`system.user.${user}`);
         });
     }
@@ -814,7 +822,7 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData) {
-        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
+        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.context.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -899,7 +907,7 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(props) {
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
         return <div
             style={{
                 width: '100%',
@@ -918,6 +926,9 @@ class VisBaseWidget extends React.Component {
     changeOrder(e, dir) {
         e.stopPropagation();
         e.preventDefault();
+        if (!this.props.editMode) {
+            return;
+        }
 
         const order = [...this.props.relativeWidgetOrder];
 
@@ -956,7 +967,7 @@ class VisBaseWidget extends React.Component {
         let singular;
         let plural;
         let special24;
-        if (this.props.lang === 'de') {
+        if (this.props.context.lang === 'de') {
             if (type === 'seconds') {
                 singular = 'Sekunde';
                 plural   = 'Sekunden';
@@ -971,7 +982,7 @@ class VisBaseWidget extends React.Component {
                 plural   = 'Tagen';
             }
         } else
-        if (this.props.lang === 'ru') {
+        if (this.props.context.lang === 'ru') {
             if (type === 'seconds') {
                 singular  = 'секунду';
                 plural    = 'секунд';
@@ -1004,14 +1015,14 @@ class VisBaseWidget extends React.Component {
         }
 
         if (value === 1) {
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 if (type === 'days') {
                     return `einem ${singular}`;
                 }
                 return `einer ${singular}`;
             }
 
-            if (this.props.lang === 'ru') {
+            if (this.props.context.lang === 'ru') {
                 if (type === 'days' || type === 'hours') {
                     return `один ${singular}`;
                 }
@@ -1021,11 +1032,11 @@ class VisBaseWidget extends React.Component {
             return `one ${singular}`;
         }
 
-        if (this.props.lang === 'de') {
+        if (this.props.context.lang === 'de') {
             return `${value} ${plural}`;
         }
 
-        if (this.props.lang === 'ru') {
+        if (this.props.context.lang === 'ru') {
             const d = value % 10;
             if (d === 1 && value !== 11) {
                 return `${value} ${singular}`;
@@ -1048,9 +1059,9 @@ class VisBaseWidget extends React.Component {
         diff = Math.round(diff / 1000);
         let text;
         if (diff <= 60) {
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 text = `vor ${this.formatIntervalHelper(diff, 'seconds')}`;
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text = `${this.formatIntervalHelper(diff, 'seconds')} назад`;
             } else {
                 text = `${this.formatIntervalHelper(diff, 'seconds')} ago`;
@@ -1059,9 +1070,9 @@ class VisBaseWidget extends React.Component {
             const m = Math.floor(diff / 60);
             const s = diff - m * 60;
             text = '';
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 text = `vor ${this.formatIntervalHelper(m, 'minutes')}`;
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text = this.formatIntervalHelper(m, 'minutes');
             } else {
                 text = this.formatIntervalHelper(m, 'minutes');
@@ -1069,18 +1080,18 @@ class VisBaseWidget extends React.Component {
 
             if (m < 5) {
                 // add seconds
-                if (this.props.lang === 'de') {
+                if (this.props.context.lang === 'de') {
                     text += ` und ${this.formatIntervalHelper(s, 'seconds')}`;
-                } else if (this.props.lang === 'ru') {
+                } else if (this.props.context.lang === 'ru') {
                     text += ` и ${this.formatIntervalHelper(s, 'seconds')}`;
                 } else {
                     text += ` and ${this.formatIntervalHelper(s, 'seconds')}`;
                 }
             }
 
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 // nothing
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text += ' назад';
             } else {
                 text += ' ago';
@@ -1089,9 +1100,9 @@ class VisBaseWidget extends React.Component {
             const h = Math.floor(diff / 3600);
             const m = Math.floor((diff - h * 3600) / 60);
             text = '';
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 text = `vor ${this.formatIntervalHelper(h, 'hours')}`;
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text = this.formatIntervalHelper(h, 'hours');
             } else {
                 text = this.formatIntervalHelper(h, 'hours');
@@ -1099,18 +1110,18 @@ class VisBaseWidget extends React.Component {
 
             if (h < 10) {
                 // add seconds
-                if (this.props.lang === 'de') {
+                if (this.props.context.lang === 'de') {
                     text += ` und ${this.formatIntervalHelper(m, 'minutes')}`;
-                } else if (this.props.lang === 'ru') {
+                } else if (this.props.context.lang === 'ru') {
                     text += ` и ${this.formatIntervalHelper(m, 'minutes')}`;
                 } else {
                     text += ` and ${this.formatIntervalHelper(m, 'minutes')}`;
                 }
             }
 
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 // nothing
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text += ' назад';
             } else {
                 text += ' ago';
@@ -1119,9 +1130,9 @@ class VisBaseWidget extends React.Component {
             const d = Math.floor(diff / (3600 * 24));
             const h = Math.floor((diff - d * (3600 * 24)) / 3600);
             text = '';
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 text = `vor ${this.formatIntervalHelper(d, 'days')}`;
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text = this.formatIntervalHelper(d, 'days');
             } else {
                 text = this.formatIntervalHelper(d, 'days');
@@ -1129,18 +1140,18 @@ class VisBaseWidget extends React.Component {
 
             if (d < 3) {
                 // add seconds
-                if (this.props.lang === 'de') {
+                if (this.props.context.lang === 'de') {
                     text += ` und ${this.formatIntervalHelper(h, 'hours')}`;
-                } else if (this.props.lang === 'ru') {
+                } else if (this.props.context.lang === 'ru') {
                     text += ` и ${this.formatIntervalHelper(h, 'hours')}`;
                 } else {
                     text += ` and ${this.formatIntervalHelper(h, 'hours')}`;
                 }
             }
 
-            if (this.props.lang === 'de') {
+            if (this.props.context.lang === 'de') {
                 // nothing
-            } else if (this.props.lang === 'ru') {
+            } else if (this.props.context.lang === 'ru') {
                 text += ' назад';
             } else {
                 text += ' ago';
@@ -1170,10 +1181,10 @@ class VisBaseWidget extends React.Component {
         }
 
         if (format === 'auto') {
-            format = `${this.props.dateFormat || 'DD.MM.YYYY'} hh:mm:ss`;
+            format = `${this.props.context.dateFormat || 'DD.MM.YYYY'} hh:mm:ss`;
         }
 
-        format = format || this.props.dateFormat || 'DD.MM.YYYY';
+        format = format || this.props.context.dateFormat || 'DD.MM.YYYY';
 
         if (!dateObj) {
             return '';
@@ -1304,9 +1315,10 @@ class VisBaseWidget extends React.Component {
     onToggleRelative(e) {
         e.stopPropagation();
         e.preventDefault();
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
 
-        this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
+
+        this.props.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
@@ -1321,9 +1333,9 @@ class VisBaseWidget extends React.Component {
     onToggleWidth(e) {
         e.stopPropagation();
         e.preventDefault();
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
 
-        this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+        this.props.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
@@ -1346,7 +1358,7 @@ class VisBaseWidget extends React.Component {
     }
 
     render() {
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
             console.error(`EMPTY Widget: ${this.props.id}`);
             return null;
@@ -1394,7 +1406,7 @@ class VisBaseWidget extends React.Component {
                 }
             } else if (widget.data?.locked) {
                 style.cursor = 'default';
-            } else {
+            } else if (this.props.selectedGroup !== this.props.id) {
                 style.cursor = 'pointer';
             }
 
@@ -1404,8 +1416,8 @@ class VisBaseWidget extends React.Component {
             }
         }
 
-        if (style.position === 'relative' && Number.isFinite(this.props.views[this.props.view].settings.rowGap)) {
-            style.marginBottom = parseFloat(this.props.views[this.props.view].settings.rowGap);
+        if (style.position === 'relative' && Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+            style.marginBottom = parseFloat(this.props.context.views[this.props.view].settings.rowGap);
         }
 
         const props = {
@@ -1442,12 +1454,12 @@ class VisBaseWidget extends React.Component {
                         }
                     } else
                     // try to steal style by canWidget
-                    if (this.props.allWidgets[this.props.id] &&
-                        this.props.allWidgets[this.props.id].style &&
-                        this.props.allWidgets[this.props.id].style[attr] !== undefined
+                    if (this.props.context.allWidgets[this.props.id] &&
+                        this.props.context.allWidgets[this.props.id].style &&
+                        this.props.context.allWidgets[this.props.id].style[attr] !== undefined
                     ) {
-                        if (!this.props.allWidgets[this.props.id].style[attr].includes('{')) {
-                            style[attr] = VisBaseWidget.correctStylePxValue(this.props.allWidgets[this.props.id].style[attr]);
+                        if (!this.props.context.allWidgets[this.props.id].style[attr].includes('{')) {
+                            style[attr] = VisBaseWidget.correctStylePxValue(this.props.context.allWidgets[this.props.id].style[attr]);
                         }
                     }
                 }
@@ -1463,7 +1475,7 @@ class VisBaseWidget extends React.Component {
             this.state.editMode &&
             (!widget.groupid || this.props.selectedGroup) &&
             this.props.selectedGroup !== this.props.id &&
-            this.props.showWidgetNames !== false
+            this.props.context.showWidgetNames !== false
         ) {
             // show widget name on widget body
             const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
@@ -1493,7 +1505,7 @@ class VisBaseWidget extends React.Component {
                 let showDown = pos !== this.props.relativeWidgetOrder.length - 1;
                 if (showDown && this.props.selectedGroup) {
                     // Check if the next widget is relative
-                    const widget__ = this.props.views[this.props.view].widgets[this.props.relativeWidgetOrder[pos + 1]];
+                    const widget__ = this.props.context.views[this.props.view].widgets[this.props.relativeWidgetOrder[pos + 1]];
                     if (widget__.style.position === 'absolute') {
                         showDown = false;
                     }
@@ -1514,18 +1526,40 @@ class VisBaseWidget extends React.Component {
             style.overflow = 'visible';
         }
 
-        const overlay = this.state.hideHelper ||
-            this.props.runtime ||
-            !this.state.editMode ||
-            (widget.groupid && !this.props.selectedGroup) ||
-            widget.data.locked ? null : <div
-                className={classNames}
-                onMouseDown={e => this.props.setSelectedWidgets && this.onMouseDown(e)}
-            />;
+        const overlay =
+            !this.state.hideHelper &&                        // if helper does not hidden
+            this.state.editMode &&                           // if edit mode
+            !widget.data.locked &&                           // if not locked
+            (!widget.groupid || this.props.selectedGroup) && // if not in group or in the edit group mode
+            (this.props.selectedGroup !== this.props.id) ?   // and it does not the edited group itself
+                <div
+                    className={classNames}
+                    onMouseDown={e => this.props.context.setSelectedWidgets && this.onMouseDown(e)}
+                /> : null;
 
-        if (this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
+        let groupInstructions = null;
+        // Show border of the group if in group edit mode
+        if (this.props.selectedGroup === this.props.id) {
             style.borderBottom = '1px dotted #888';
             style.borderRight = '1px dotted #888';
+            groupInstructions = <div
+                style={{
+                    position: 'absolute',
+                    bottom: -24,
+                    left: 0,
+                    fontSize: 10,
+                    fontStyle: 'italic',
+                    opacity: 0.5,
+                    width: 350,
+                    cursor: 'pointer',
+                }}
+                onClick={e => {
+                    e.stopPropagation();
+                    this.props.context.setSelectedWidgets([this.props.id]);
+                }}
+            >
+                {I18n.t('You can change group size, by selecting it in the drop down widget selector or by clicking on this text')}
+            </div>;
         }
 
         return <div
@@ -1539,64 +1573,21 @@ class VisBaseWidget extends React.Component {
             {overlay}
             {this.state.editMode && this.state.selectedOne ? this.getResizeHandlers() : null}
             {rxWidget}
+            {groupInstructions}
         </div>;
     }
 }
 
 VisBaseWidget.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired, // project
-    view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    editModeComponentClass: PropTypes.string,
-    // eslint-disable-next-line react/no-unused-prop-types
-    ignoreMouseEvents: PropTypes.func,
-    runtime: PropTypes.bool,
-    registerRef: PropTypes.func.isRequired,
-    userGroups: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    user: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    allWidgets: PropTypes.object.isRequired,
+    view: PropTypes.string.isRequired,
     isRelative: PropTypes.bool,
-    viewsActiveFilter: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    linkContext: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    formatUtils: PropTypes.object,
     selectedWidgets: PropTypes.array,
-    setSelectedWidgets: PropTypes.func,
-    mouseDownOnView: PropTypes.func,
-    onWidgetsChanged: PropTypes.func,
-    showWidgetNames: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    VisView: PropTypes.any,
     relativeWidgetOrder: PropTypes.array,
     moveAllowed: PropTypes.bool,
-    widgetHint: PropTypes.string,
     selectedGroup: PropTypes.string,
-    lang: PropTypes.string,
-    dateFormat: PropTypes.string,
-    // eslint-disable-next-line react/no-unused-prop-types
-    buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
-
-    // eslint-disable-next-line react/no-unused-prop-types
-    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets
-
-    // eslint-disable-next-line react/no-unused-prop-types
-    editGroup: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    setValue: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    socket: PropTypes.object.isRequired,
-
-    // eslint-disable-next-line react/no-unused-prop-types
-    adapterName: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    instance: PropTypes.number.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    projectName: PropTypes.string.isRequired,
+    context: PropTypes.object.isRequired,
 };
 
 export default VisBaseWidget;

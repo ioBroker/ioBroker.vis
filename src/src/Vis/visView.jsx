@@ -44,7 +44,7 @@ class VisView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.socket);
+        this.promiseToCollect = VisWidgetsCatalog.collectRxInformation(props.context.socket);
 
         this.state = {
             mounted: false,
@@ -67,7 +67,7 @@ class VisView extends React.Component {
         this.ignoreMouseEvents = false;
 
         // remember filter
-        this.oldFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
+        this.oldFilter = JSON.stringify((props.context.viewsActiveFilter && props.context.viewsActiveFilter[this.props.view]) || []);
     }
 
     componentDidMount() {
@@ -75,7 +75,7 @@ class VisView extends React.Component {
 
         this.promiseToCollect
             .then(() => {
-                this.props.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
+                this.props.context.linkContext.registerViewRef(this.props.view, this.refView, this.onCommand);
 
                 this.loadJqueryTheme(this.getJQueryThemeName())
                     .then(() => this.setState({ mounted: true }, () =>
@@ -84,7 +84,7 @@ class VisView extends React.Component {
     }
 
     componentWillUnmount() {
-        this.props.linkContext.unregisterViewRef(this.props.view, this.refView);
+        this.props.context.linkContext.unregisterViewRef(this.props.view, this.refView);
 
         if (this.refView.current && this.refView.current._originalParent) {
             this.refView.current._originalParent.appendChild(this.refView.current);
@@ -114,7 +114,7 @@ class VisView extends React.Component {
         }
 
         if (command === 'collectFilters') {
-            const widgets = this.props.views[this.props.view].widgets;
+            const widgets = this.props.context.views[this.props.view].widgets;
             const filterList = [];
 
             Object.keys(widgets).forEach(wid => {
@@ -145,7 +145,7 @@ class VisView extends React.Component {
             options.filter = options.filter.split(',').map(f => f.trim()).filter(f => f);
         }
 
-        this.props.viewsActiveFilter[this.props.view] = options.filter;
+        this.props.context.viewsActiveFilter[this.props.view] = options.filter;
 
         // inform every widget about changed filter
         Object.keys(this.widgetsRefs).forEach(wid =>
@@ -213,7 +213,7 @@ class VisView extends React.Component {
         }
     }
 
-    mouseDownOnView = this.props.runtime ? null : e => {
+    mouseDownLocal = this.props.context.runtime ? null : e => {
         if (this.ignoreMouseEvents) {
             return;
         }
@@ -227,7 +227,7 @@ class VisView extends React.Component {
             return;
         }
 
-        this.props.setSelectedWidgets([]);
+        this.props.context.setSelectedWidgets([]);
 
         window.document.addEventListener('mousemove', this.onMouseViewMove);
         window.document.addEventListener('mouseup', this.onMouseViewUp);
@@ -251,21 +251,21 @@ class VisView extends React.Component {
         if (this.props.editMode &&
             this.props.selectedWidgets &&
             this.props.selectedWidgets.length === 1 &&
-            this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
-            this.props.setSelectedGroup(this.props.selectedWidgets[0]);
+            this.props.context.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup') {
+            this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
         }
     };
 
     getWidgetsInRect(rect, simpleMode) {
         // take actual position
         const widgets = Object.keys(this.widgetsRefs).filter(id => {
-            if (!this.props.views[this.props.view].widgets[id]) {
+            if (!this.props.context.views[this.props.view].widgets[id]) {
                 // orphaned widget
                 id !== 'fakeId' && console.warn(`Orphaned widget ${id} found!`);
                 return null;
             }
 
-            if (this.props.views[this.props.view].widgets[id].groupid && !this.props.selectedGroup) {
+            if (this.props.context.views[this.props.view].widgets[id].groupid && !this.props.selectedGroup) {
                 return null;
             }
             const widDiv = this.widgetsRefs[id].widDiv || this.widgetsRefs[id].refService.current;
@@ -402,7 +402,7 @@ class VisView extends React.Component {
     };
     */
 
-    onMouseViewMove = !this.props.runtime ? e => {
+    onMouseViewMove = !this.props.context.runtime ? e => {
         if (this.ignoreMouseEvents) {
             return;
         }
@@ -442,16 +442,16 @@ class VisView extends React.Component {
             // select
             widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) &&
              this.widgetsRefs[id] &&
-              !this.props.views[this.props.view].widgets[id].data.locked &&
+              !this.props.context.views[this.props.view].widgets[id].data.locked &&
                this.widgetsRefs[id].onTempSelect(true) &&
                this.props.selectedGroup !== id);
             // deselect
             this.movement.selectedWidgetsWithRectangle.forEach(id => !widgets.includes(id) && this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect(false));
-            this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !this.props.views[this.props.view].widgets[widget].data.locked);
+            this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !this.props.context.views[this.props.view].widgets[widget].data.locked);
         }
     } : null;
 
-    onMouseViewUp = !this.props.runtime ? e => {
+    onMouseViewUp = !this.props.context.runtime ? e => {
         if (this.ignoreMouseEvents) {
             return;
         }
@@ -464,12 +464,13 @@ class VisView extends React.Component {
         }
 
         // deselect widgets
-        this.props.setSelectedWidgets(this.movement.selectedWidgetsWithRectangle);
+        this.props.context.setSelectedWidgets(this.movement.selectedWidgetsWithRectangle);
 
         this.movement = null;
     } : null;
 
-    onMouseWidgetDown = this.props.runtime ? null : (e, wid, isRelative, isResize, isDoubleClick) => {
+    // Called from Widget
+    mouseDownOnView = this.props.context.runtime ? null : (e, wid, isRelative, isResize, isDoubleClick) => {
         if (this.ignoreMouseEvents) {
             return;
         }
@@ -485,9 +486,9 @@ class VisView extends React.Component {
             return;
         }
 
-        if (this.props.disableInteraction || this.props.lockDragging ||
+        if (this.props.context.disableInteraction || this.props.context.lockDragging ||
             this.props.selectedWidgets
-                .map(selectedWidget => this.props.views[this.props.view].widgets[selectedWidget])
+                .map(selectedWidget => this.props.context.views[this.props.view].widgets[selectedWidget])
                 .find(widget => widget.data.locked)
         ) {
             return;
@@ -497,9 +498,9 @@ class VisView extends React.Component {
         if ((this.lastClick && Date.now() - this.lastClick < 250) || isDoubleClick) {
             this.lastClick = Date.now();
             if (this.props.selectedWidgets.length === 1 &&
-                this.props.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
+                this.props.context.views[this.props.view].widgets[this.props.selectedWidgets[0]].tpl === '_tplGroup'
             ) {
-                this.props.setSelectedGroup(this.props.selectedWidgets[0]);
+                this.props.context.setSelectedGroup(this.props.selectedWidgets[0]);
             }
             return;
         }
@@ -543,17 +544,21 @@ class VisView extends React.Component {
         });
     };
 
-    onIgnoreMouseEvents = ignore => {
-        this.ignoreMouseEvents = ignore;
-        this.props.onIgnoreMouseEvents && this.props.onIgnoreMouseEvents(ignore);
-        if (ignore && this.movement) {
-            this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
-            window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
-            this.movement = null;
+    ignoreMouseEvents = ignore => {
+        if (this.props.editMode) {
+            this.ignoreMouseEvents = ignore;
+
+            this.props.ignoreMouseEvents(ignore);
+
+            if (ignore && this.movement) {
+                this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
+                window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
+                this.movement = null;
+            }
         }
     };
 
-    onMouseWidgetMove = !this.props.runtime ? e => {
+    onMouseWidgetMove = !this.props.context.runtime ? e => {
         if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize) {
             return;
         }
@@ -564,15 +569,15 @@ class VisView extends React.Component {
 
         const viewRect = this.refView.current.getBoundingClientRect();
 
-        if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 2) {
-            const gridSize = parseInt(this.props.views[this.props.view].settings.gridSize, 10) || 10;
+        if (!this.movement.isResize && this.props.context.views[this.props.view].settings.snapType === 2) {
+            const gridSize = parseInt(this.props.context.views[this.props.view].settings.gridSize, 10) || 10;
             this.movement.x -= Math.ceil((this.movement.startWidget.left - viewRect.left + this.movement.x) % gridSize);
             this.movement.y -= Math.ceil((this.movement.startWidget.top - viewRect.top + this.movement.y) % gridSize);
         }
 
         // console.log(this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
 
-        if (!this.movement.isResize && this.props.views[this.props.view].settings.snapType === 1) {
+        if (!this.movement.isResize && this.props.context.views[this.props.view].settings.snapType === 1) {
             const left = this.movement.startWidget.left + this.movement.x;
             const right = this.movement.startWidget.right + this.movement.x;
             const top = this.movement.startWidget.top + this.movement.y;
@@ -625,7 +630,7 @@ class VisView extends React.Component {
         const viewRect = this.refView.current.getBoundingClientRect();
 
         Object.keys(this.widgetsRefs).forEach(wid => {
-            const widgets = this.props.views[this.props.view].widgets;
+            const widgets = this.props.context.views[this.props.view].widgets;
             if (!this.props.selectedWidgets.includes(wid) && widgets[wid] && (!widgets[wid].grouped || this.props.selectedGroup)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
                 horizontals.push(Math.round(boundingRect.top));
@@ -638,7 +643,7 @@ class VisView extends React.Component {
         const selectedHorizontals = [];
         const selectedVerticals = [];
         this.props.selectedWidgets.forEach(wid => {
-            const widgets = this.props.views[this.props.view].widgets;
+            const widgets = this.props.context.views[this.props.view].widgets;
             // check if not in group
             if (widgets[wid] && (!widgets[wid].grouped || this.props.selectedGroup)) {
                 const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
@@ -663,7 +668,7 @@ class VisView extends React.Component {
         this.setState({ rulers });
     };
 
-    onMouseWidgetUp = !this.props.runtime ? e => {
+    onMouseWidgetUp = !this.props.context.runtime ? e => {
         e && e.stopPropagation();
         this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
         window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
@@ -701,7 +706,7 @@ class VisView extends React.Component {
         let left = ref.offsetLeft - viewLeft;
         // May be bug?
         if (!left && !top) {
-            const style = this.props.views[this.props.view].widgets[widget].style;
+            const style = this.props.context.views[this.props.view].widgets[widget].style;
             left = parseInt(style?.left || '0', 10) + parseInt(ref.offsetLeft, 10);
             top  = parseInt(style?.top  || '0', 10) + parseInt(ref.offsetTop, 10);
             left = left || 0;
@@ -809,21 +814,21 @@ class VisView extends React.Component {
     };
 
     registerEditorHandlers(unregister) {
-        if (this.props.registerEditorCallback) {
+        if (this.props.context.registerEditorCallback) {
             if (!unregister && this.props.activeView === this.props.view) {
                 if (!this.regsiterDone) {
                     this.regsiterDone = true;
-                    this.props.registerEditorCallback('onStealStyle', this.props.view, this.onStealStyle);
-                    this.props.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
-                    this.props.registerEditorCallback('pxToPercent', this.props.view, this.pxToPercent);
-                    this.props.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
+                    this.props.context.registerEditorCallback('onStealStyle', this.props.view, this.onStealStyle);
+                    this.props.context.registerEditorCallback('onPxToPercent', this.props.view, this.onPxToPercent);
+                    this.props.context.registerEditorCallback('pxToPercent', this.props.view, this.pxToPercent);
+                    this.props.context.registerEditorCallback('onPercentToPx', this.props.view, this.onPercentToPx);
                 }
             } else {
                 this.regsiterDone = false;
-                this.props.registerEditorCallback('onStealStyle', this.props.view);
-                this.props.registerEditorCallback('onPxToPercent', this.props.view);
-                this.props.registerEditorCallback('pxToPercent', this.props.view);
-                this.props.registerEditorCallback('onPercentToPx', this.props.view);
+                this.props.context.registerEditorCallback('onStealStyle', this.props.view);
+                this.props.context.registerEditorCallback('onPxToPercent', this.props.view);
+                this.props.context.registerEditorCallback('pxToPercent', this.props.view);
+                this.props.context.registerEditorCallback('onPercentToPx', this.props.view);
             }
         }
     }
@@ -841,7 +846,7 @@ class VisView extends React.Component {
         this.updateViewWidth();
         // detect filter changes
         if (!this.props.editMode) {
-            const newFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
+            const newFilter = JSON.stringify((this.props.context.viewsActiveFilter && this.props.context.viewsActiveFilter[this.props.view]) || []);
             if (this.oldFilter !== newFilter) {
                 this.oldFilter = newFilter;
                 this.changeFilter({ filter: JSON.parse(newFilter) });
@@ -880,83 +885,22 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(options) {
-        // props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder,
-        // moveAllowed, editMode, onIgnoreMouseEvents, multiView
+    static getOneWidget(index, widget, options) {
+        // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
+        // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
+
         const {
-            props, // common
-            index,
+            context, // common
             id,
-            widget,
-            registerRef, // common
-            isRelative,
-            refParent,
-            onMouseWidgetDown, // common
-            relativeWidgetOrder,
-            moveAllowed, // common
-            editMode, // common
-            onIgnoreMouseEvents, // common
-            multiView,
         } = options;
 
         const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
-        const _props = {
-            adapterName: props.adapterName, // common
-            allWidgets: props.allWidgets, // common
-            buildLegacyStructures: props.buildLegacyStructures, // common
-            customSettings: props.customSettings, // common
-            dateFormat: props.dateFormat, // common
-            editMode: editMode === false ? false : props.editMode, // common
-            editModeComponentClass: props.editModeComponentClass, // common
-            formatUtils: props.formatUtils, // common
-            id,
-            ignoreMouseEvents: editMode === false || !props.editMode ? null : onIgnoreMouseEvents, // common
-            instance: props.instance, // common
-            isRelative,
-            key: `${index}_${id}`,
-            lang: props.lang, // common
-            linkContext: props.linkContext, // common
-            mouseDownOnView: onMouseWidgetDown, // common
-            moveAllowed: multiView ? false : moveAllowed, // common
-            onWidgetsChanged: multiView ? null : props.onWidgetsChanged, // common
-            projectName: props.projectName, // common
-            refParent, // common
-            registerRef, // because of filter commands it must be available in runtime (props.runtime ? null : registerRef)
-            relativeWidgetOrder,
-            runtime: props.runtime, // common
-
-            selectedGroup: multiView ? null : props.selectedGroup,
-            selectedWidgets: multiView ? null : this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
-            setSelectedWidgets: multiView ? null : props.setSelectedWidgets,
-
-            setTimeInterval: props.setTimeInterval, // common
-            setTimeStart: props.setTimeStart, // common
-            setValue: props.setValue, // common
-            showWidgetNames: props.showWidgetNames, // common
-            socket: props.socket, // common
-            systemConfig: props.systemConfig, // common
-            theme: props.theme, // common
-            themeName: props.themeName, // common
-            themeType: props.themeType, // common
-            timeInterval: props.timeInterval, // common
-            timeStart: props.timeStart, // common
-            user: props.user, // common
-            userGroups: props.userGroups, // common
-            view: props.view, // common
-            views: props.views, // project // common
-            viewsActiveFilter: props.viewsActiveFilter, // common
-            widgetHint: props.widgetHint, // common
-            VisView, // common
-        };
-
-        // we must add it because of view in the widget
-        _props.can = props.can; // common
-        _props.canStates = props.canStates; // common
-        _props.jQuery = props.jQuery; // common
-        _props.$$ = props.$$; // common
-
-        return <Widget {..._props} />;
+        return <Widget
+            {...context} // Todo: migrate ALL widgets on context
+            key={`${index}_${id}`}
+            {...options}
+        />;
     }
 
     loadJqueryTheme(jQueryTheme) {
@@ -990,7 +934,7 @@ class VisView extends React.Component {
     }
 
     getJQueryThemeName() {
-        const settings = this.props.view && this.props.views && this.props.views[this.props.view] && this.props.views[this.props.view].settings;
+        const settings = this.props.view && this.props.context.views && this.props.context.views[this.props.view]?.settings;
 
         return settings?.theme || 'redmond';
     }
@@ -1018,7 +962,7 @@ class VisView extends React.Component {
             };
             this.props.selectedWidgets.forEach(_wid => {
                 if (this.widgetsRefs[_wid]?.onMove) {
-                    this.widgetsRefs[_wid].onMove(); // indicate start of movement
+                    this.widgetsRefs[_wid].onMove(); // indicate the start of movement
                 }
             });
 
@@ -1145,8 +1089,8 @@ class VisView extends React.Component {
     };
 
     renderScreenSize() {
-        const ww = parseInt(this.props.views[this.props.view].settings.sizex, 10);
-        const hh = parseInt(this.props.views[this.props.view].settings.sizey, 10);
+        const ww = parseInt(this.props.context.views[this.props.view].settings.sizex, 10);
+        const hh = parseInt(this.props.context.views[this.props.view].settings.sizey, 10);
 
         if (!this.props.editMode || !this.props.view || !ww || !hh) {
             return null;
@@ -1200,7 +1144,7 @@ class VisView extends React.Component {
     getRelativeStyle(settings, groupId) {
         const relativeStyle = {};
         if (groupId) {
-            const groupWidgetStyle = this.props.views[this.props.view].widgets[groupId].style;
+            const groupWidgetStyle = this.props.context.views[this.props.view].widgets[groupId].style;
             relativeStyle.width = groupWidgetStyle?.width || '100%';
             relativeStyle.height = groupWidgetStyle?.height || '100%';
         } else {
@@ -1286,16 +1230,11 @@ class VisView extends React.Component {
 
     renderNavigation(content) {
         return <VisNavigation
-            socket={this.props.socket}
+            context={this.props.context}
             activeView={this.props.activeView}
-            views={this.props.views}
             view={this.props.view}
             editMode={this.props.editMode}
-            themeType={this.props.themeType}
             menuWidth={this.state.menuWidth}
-            adapterName={this.props.adapterName}
-            instance={this.props.instance}
-            projectName={this.props.projectName}
             setMenuWidth={menuWidth => {
                 window.localStorage.setItem('vis.menuWidth', menuWidth);
                 this.setState({ menuWidth });
@@ -1311,10 +1250,10 @@ class VisView extends React.Component {
         let rxAbsoluteWidgets = [];
         let rxRelativeWidgets = [];
 
-        if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
+        if (!this.props.context.views || !this.props.view || !this.props.context.views[this.props.view]) {
             return null;
         }
-        const settings = this.props.views[this.props.view].settings;
+        const settings = this.props.context.views[this.props.view].settings;
 
         if (this.props.view === this.props.activeView && this.props.editMode && !this.keysHandlerInstalled) {
             this.installKeyHandlers();
@@ -1326,26 +1265,26 @@ class VisView extends React.Component {
         // and wait for themes too
         if (this.state.mounted && this.state.themeCode && this.refView.current) {
             // save initial filter
-            if (!this.props.viewsActiveFilter?.[this.props.view]) {
-                this.props.viewsActiveFilter[this.props.view] = (this.props.views[this.props.view].settings.filterkey || '')
+            if (!this.props.context.viewsActiveFilter?.[this.props.view]) {
+                this.props.context.viewsActiveFilter[this.props.view] = (this.props.context.views[this.props.view].settings.filterkey || '')
                     .split(',')
                     .map(f => f.trim())
                     .filter(f => f);
             }
 
-            const widgets = this.props.views[this.props.view].widgets;
+            const widgets = this.props.context.views[this.props.view].widgets;
             let moveAllowed = true;
             if (widgets) {
                 const relativeWidgetOrder = this.props.selectedGroup ?
-                    this.props.views[this.props.view].widgets[this.props.selectedGroup].data.members
+                    this.props.context.views[this.props.view].widgets[this.props.selectedGroup].data.members
                     :
-                    (this.props.views[this.props.view].settings?.order || []);
+                    (this.props.context.views[this.props.view].settings?.order || []);
 
                 // by group editing first relative, then absolute
                 if (this.props.selectedGroup) {
                     relativeWidgetOrder.sort((a, b) => {
-                        const widgetA = this.props.views[this.props.view].widgets[a];
-                        const widgetB = this.props.views[this.props.view].widgets[b];
+                        const widgetA = this.props.context.views[this.props.view].widgets[a];
+                        const widgetB = this.props.context.views[this.props.view].widgets[b];
                         const isRelativeA = widgetA.style && (
                             widgetA.style.position === 'relative' ||
                             widgetA.style.position === 'static'   ||
@@ -1372,7 +1311,7 @@ class VisView extends React.Component {
 
                 if (this.props.editMode && this.props.selectedWidgets?.length) {
                     this.props.selectedWidgets.forEach(id => {
-                        const widget = this.props.views[this.props.view].widgets[id];
+                        const widget = this.props.context.views[this.props.view].widgets[id];
                         if (!widget || (widget.groupid && !this.props.selectedGroup)) {
                             return;
                         }
@@ -1402,15 +1341,15 @@ class VisView extends React.Component {
                 const listRelativeWidgetsOrder = [];
                 const listAbsoluteWidgetsOrder = [];
 
-                // calculate order of relative widgets
+                // calculate the order of relative widgets
                 Object.keys(widgets).forEach(id => {
-                    const widget = this.props.views[this.props.view].widgets[id];
+                    const widget = this.props.context.views[this.props.view].widgets[id];
                     // Ignore grouped widgets in non-group-edit mode. They will be rendered in BasicGroup
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
                         return;
                     }
 
-                    // if group edit => ignore all widgets from other groups
+                    // if group edition, ignore all widgets from other groups
                     if (this.props.selectedGroup &&
                         id !== this.props.selectedGroup &&
                         widget.groupid !== this.props.selectedGroup
@@ -1439,11 +1378,11 @@ class VisView extends React.Component {
                 });
 
                 // Go through shared (multi-views) widgets and add them to absolute
-                if (this.props.views[this.props.view].__multiViews) {
-                    Object.keys(this.props.views[this.props.view].__multiViews).forEach(id => {
-                        const sharedView = this.props.views[this.props.view].__multiViews[id];
+                if (this.props.context.views[this.props.view].__multiViews) {
+                    Object.keys(this.props.context.views[this.props.view].__multiViews).forEach(id => {
+                        const sharedView = this.props.context.views[this.props.view].__multiViews[id];
                         const sharedId = `${id}_${sharedView}`;
-                        if (this.props.views[sharedView]?.widgets[id]) {
+                        if (this.props.context.views[sharedView]?.widgets[id]) {
                             if (!listAbsoluteWidgetsOrder.includes(sharedId)) {
                                 listAbsoluteWidgetsOrder.push(sharedId);
                             }
@@ -1455,7 +1394,7 @@ class VisView extends React.Component {
 
                 if (!this.props.selectedGroup) {
                     for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
-                        if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
+                        if (!this.props.context.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
                             relativeWidgetOrder.splice(t, 1);
                         }
                     }
@@ -1483,6 +1422,8 @@ class VisView extends React.Component {
                     wColumns[w] = [];
                 }
 
+                const view = this.props.view;
+
                 rxAbsoluteWidgets = listAbsoluteWidgetsOrder.map((id, index) => {
                     let widget;
                     let multiView = false;
@@ -1490,46 +1431,46 @@ class VisView extends React.Component {
                         // it is a multi-view widget
                         const parts = id.split('_');
                         multiView = true;
-                        widget = this.props.views[parts[1]].widgets[parts[0]];
+                        widget = this.props.context.views[parts[1]].widgets[parts[0]];
                     } else {
-                        widget = this.props.views[this.props.view].widgets[id];
+                        widget = this.props.context.views[view].widgets[id];
                     }
-                    return VisView.getOneWidget({
-                        props: this.props,
-                        index,
+                    return VisView.getOneWidget(index, widget, {
+                        context: this.props.context,
+                        editMode: multiView ? false : this.props.editMode,
                         id,
-                        widget,
-                        registerRef: this.registerRef,
                         isRelative: false,
-                        refParent: this.refView,
-                        onMouseWidgetDown: this.onMouseWidgetDown,
-                        relativeWidgetOrder,
+                        mouseDownOnView: this.mouseDownOnView,
                         moveAllowed,
-                        editMode: undefined,
-                        onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                         multiView,
+                        ignoreMouseEvents: this.ignoreMouseEvents,
+                        refParent: this.refView,
+                        registerRef: this.registerRef,
+                        relativeWidgetOrder,
+                        selectedGroup: this.props.selectedGroup,
+                        selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
+                        view,
                     });
                 });
 
                 if (listRelativeWidgetsOrder.length) {
-                    // TODO create context for all widgets with common properties
-                    // it could be: registerRef, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents
                     listRelativeWidgetsOrder.forEach((id, index) => {
                         const column = columns <= 1 ? 0 : index % columns;
-                        const w = VisView.getOneWidget({
-                            index,
+                        const w = VisView.getOneWidget(index, this.props.context.views[view].widgets[id], {
+                            // custom attributes
+                            context: this.props.context,
+                            editMode: this.props.editMode, // relative widget cannot be multi-view
                             id,
-                            widget: this.props.views[this.props.view].widgets[id],
-                            // common attributes
-                            props: this.props,
-                            registerRef: this.registerRef,
                             isRelative: true,
-                            refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
-                            onMouseWidgetDown: this.onMouseWidgetDown,
-                            relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
+                            mouseDownOnView: this.mouseDownOnView,
                             moveAllowed,
-                            editMode: undefined,
-                            onIgnoreMouseEvents: this.onIgnoreMouseEvents,
+                            ignoreMouseEvents: this.ignoreMouseEvents,
+                            refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
+                            registerRef: this.registerRef,
+                            relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
+                            selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
+                            selectedGroup: this.props.selectedGroup,
+                            view,
                         });
                         wColumns[column].push(w);
                     });
@@ -1581,27 +1522,27 @@ class VisView extends React.Component {
         });
 
         if (!style.backgroundColor && !style.background) {
-            if (this.props.customSettings?.viewStyle?.backgroundColor) {
-                style.backgroundColor = this.props.customSettings.viewStyle.backgroundColor;
+            if (this.props.context.customSettings?.viewStyle?.backgroundColor) {
+                style.backgroundColor = this.props.context.customSettings.viewStyle.backgroundColor;
             } else {
-                style.backgroundColor = this.props.themeType === 'dark' ? '#000' : '#fff';
+                style.backgroundColor = this.props.context.themeType === 'dark' ? '#000' : '#fff';
             }
         }
         if (!style.color) {
-            style.color = this.props.themeType === 'dark' ? '#fff' : '#000';
+            style.color = this.props.context.themeType === 'dark' ? '#fff' : '#000';
         }
 
         if (this.props.view !== this.props.activeView) {
             style.display = 'none';
         }
 
-        if (this.props.container) {
+        if (this.props.context.container) {
             style.overflow = 'hidden';
         }
 
         let gridDiv = null;
-        if (this.props.views[this.props.view].settings.snapType === 2 && this.props.editMode) {
-            gridDiv = VisView.renderGitter(this.props.views[this.props.view].settings.gridSize, this.props.views[this.props.view].settings.snapColor);
+        if (this.props.context.views[this.props.view].settings.snapType === 2 && this.props.editMode) {
+            gridDiv = VisView.renderGitter(this.props.context.views[this.props.view].settings.gridSize, this.props.context.views[this.props.view].settings.snapColor);
         }
 
         if (this.props.style) {
@@ -1610,7 +1551,7 @@ class VisView extends React.Component {
 
         // apply image
         if (settings['bg-image']) {
-            style.backgroundImage = `url("../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
+            style.backgroundImage = `url("../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${settings['bg-image'].substring(9)}")`;  // "_PRJ_NAME".length = 9
             style.backgroundRepeat = 'no-repeat';
             style.backgroundPosition = 'top left';
             if (settings['bg-color']) {
@@ -1644,8 +1585,8 @@ class VisView extends React.Component {
             className={className}
             ref={this.refView}
             id={`visview_${this.props.view.replace(/\s/g, '_')}`}
-            onMouseDown={!this.props.runtime ? e => this.props.editMode && this.mouseDownOnView(e) : undefined}
-            onDoubleClick={this.props.runtime ? e => this.props.editMode && this.doubleClickOnView(e) : undefined}
+            onMouseDown={!this.props.context.runtime ? e => this.props.editMode && this.mouseDownLocal(e) : undefined}
+            onDoubleClick={this.props.context.runtime ? e => this.props.editMode && this.doubleClickOnView(e) : undefined}
             style={style}
         >
             <style>{this.state.themeCode}</style>
@@ -1669,7 +1610,7 @@ class VisView extends React.Component {
                         top: ruler.type === 'horizontal' ? ruler.value : 0,
                         zIndex: 1000,
                     }}
-                ></div>)}
+                />)}
             {rxRelativeWidgets ? <div
                 ref={this.refRelativeView}
                 style={this.getRelativeStyle(settings, this.props.selectedGroup)}
@@ -1686,7 +1627,7 @@ class VisView extends React.Component {
 
         return <StylesProvider generateClassName={generateClassNameEngine}>
             <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={this.props.theme}>
+                <ThemeProvider theme={this.props.context.theme}>
                     {renderedView}
                 </ThemeProvider>
             </StyledEngineProvider>
@@ -1695,46 +1636,14 @@ class VisView extends React.Component {
 }
 
 VisView.propTypes = {
-    $$: PropTypes.func, // Gestures library
+    context: PropTypes.object.isRequired,
     activeView: PropTypes.string.isRequired,
-    adapterName: PropTypes.string.isRequired,
-    allWidgets: PropTypes.object,
-    buildLegacyStructures: PropTypes.func, // build legacy structures for old widgets
-    can: PropTypes.object.isRequired,
-    canStates: PropTypes.object.isRequired,
-    container: PropTypes.bool,
-    customSettings: PropTypes.object, // special custom object to pass custom settings to widgets and views
-    dateFormat: PropTypes.string.isRequired,
     editMode: PropTypes.bool,
-    editModeComponentClass: PropTypes.string,
-    formatUtils: PropTypes.object,
-    instance: PropTypes.number.isRequired,
-    jQuery: PropTypes.func,
-    lang: PropTypes.string,
-    linkContext: PropTypes.object,
-    onIgnoreMouseEvents: PropTypes.func,
-    onWidgetsChanged: PropTypes.func,
-    projectName: PropTypes.string.isRequired,
-    registerEditorCallback: PropTypes.func,
-    runtime: PropTypes.bool,
+    selectedGroup: PropTypes.string,
     selectedWidgets: PropTypes.array,
-    setSelectedGroup: PropTypes.func,
-    setSelectedWidgets: PropTypes.func,
-    setValue: PropTypes.func,
-    showWidgetNames: PropTypes.bool,
-    socket: PropTypes.object,
     style: PropTypes.object,
-    systemConfig: PropTypes.object,
-    theme: PropTypes.object,
-    themeName: PropTypes.string,
-    themeType: PropTypes.string,
-    user: PropTypes.string,
-    userGroups: PropTypes.object,
     view: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired, // project
-    viewsActiveFilter: PropTypes.object,
     visInWidget: PropTypes.bool,
-    widgetHint: PropTypes.string,
 };
 
 export default VisView;

@@ -53,8 +53,14 @@ class BasicGroup extends VisRxWidget {
     }
 
     renderWidgetBody(props) {
+        // do not render anything if some group is editing
+        if (this.props.selectedGroup) {
+            return null;
+        }
+
+        const context = this.props.context;
         super.renderWidgetBody(props);
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = context.views[this.props.view].widgets[this.props.id];
 
         if (this.props.id === this.props.selectedGroup) {
             props.style.overflow = 'visible';
@@ -67,8 +73,8 @@ class BasicGroup extends VisRxWidget {
         if (groupWidgets?.length && this.state.mounted) {
             // first relative, then absolute
             groupWidgets.sort((a, b) => {
-                const widgetA = this.props.views[this.props.view].widgets[a];
-                const widgetB = this.props.views[this.props.view].widgets[b];
+                const widgetA = context.views[this.props.view].widgets[a];
+                const widgetB = context.views[this.props.view].widgets[b];
                 const isRelativeA = widgetA.style && (
                     widgetA.style.position === 'relative' ||
                     widgetA.style.position === 'static'   ||
@@ -89,13 +95,11 @@ class BasicGroup extends VisRxWidget {
             });
 
             rxGroupWidgets = groupWidgets.map((id, index) => {
-                const _widget = this.props.views[this.props.view].widgets[id];
+                const _widget = context.views[this.props.view].widgets[id];
                 if (!_widget) {
                     return null;
                 }
-                if (this.props.selectedGroup) {
-                    return null;
-                }
+
                 const isRelative = _widget.style && (
                     _widget.style.position === 'relative' ||
                     _widget.style.position === 'static' ||
@@ -103,13 +107,14 @@ class BasicGroup extends VisRxWidget {
                 );
 
                 // use the same container for relative and absolute widgets (props.refService)
-                return this.props.VisView.getOneWidget({
-                    props: this.props,
+                return this.props.context.VisView.getOneWidget(index, _widget, {
+                    context: this.props.context,
+                    editMode: false,
                     index,
                     id,
-                    widget: _widget,
-                    registerRef: this.props.registerRef,
+                    view: this.props.view,
                     isRelative,
+                    registerRef: this.props.registerRef,
                     refParent: props.refService,
                     relativeWidgetOrder: groupWidgets,
                 });
@@ -122,8 +127,7 @@ class BasicGroup extends VisRxWidget {
 
 BasicGroup.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired,
-    view: PropTypes.string.isRequired,
+    context: PropTypes.object.isRequired,
     editMode: PropTypes.bool.isRequired,
 };
 

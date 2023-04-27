@@ -49,7 +49,7 @@ class VisRxWidget extends VisBaseWidget {
             widgetAttrInfo,
         };
 
-        getUsedObjectIDsInWidget(props.views, props.view, props.id, this.linkContext);
+        getUsedObjectIDsInWidget(props.context.views, props.view, props.id, this.linkContext);
 
         // do not change it to lambda function as onStateChanged could be inherited.
         this.onStateChangedBind = this.onStateChanged.bind(this);
@@ -80,6 +80,7 @@ class VisRxWidget extends VisBaseWidget {
         if (typeof text === 'object') {
             return text[I18n.getLanguage()] || text.en;
         }
+
         return text;
     }
 
@@ -170,7 +171,7 @@ class VisRxWidget extends VisBaseWidget {
             this.newState.rxData.filterkey = this.newState.rxData.filterkey.split(/[;,]+/).map(f => f.trim()).filter(f => f);
         }
 
-        if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
+        if (userGroups && userGroups.length && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
             if (this.newState.rxData['visibility-groups-action'] === 'disabled') {
                 this.newState.disabled = true;
             } else {
@@ -208,11 +209,11 @@ class VisRxWidget extends VisBaseWidget {
 
     applyBinding(stateId, newState) {
         this.linkContext.bindings[stateId] && this.linkContext.bindings[stateId].forEach(item => {
-            const value = this.props.formatUtils.formatBinding(
+            const value = this.props.context.formatUtils.formatBinding(
                 item.format,
                 item.view,
                 this.props.id,
-                this.props.views[item.view].widgets[this.props.id],
+                this.props.context.views[item.view].widgets[this.props.id],
                 newState.rxData,
                 newState.values,
             );
@@ -228,7 +229,7 @@ class VisRxWidget extends VisBaseWidget {
     async componentDidMount() {
         super.componentDidMount();
         for (let i = 0; i < this.linkContext.IDs.length; i++) {
-            await this.props.socket.subscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
+            await this.props.context.socket.subscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
         }
     }
 
@@ -255,7 +256,7 @@ class VisRxWidget extends VisBaseWidget {
 
     async componentWillUnmount() {
         for (let i = 0; i < this.linkContext.IDs.length; i++) {
-            await this.props.socket.unsubscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
+            await this.props.context.socket.unsubscribeState(this.linkContext.IDs[i], this.onStateChangedBind);
         }
         super.componentWillUnmount();
     }
@@ -290,18 +291,26 @@ class VisRxWidget extends VisBaseWidget {
             signals: {},
             widgetAttrInfo: this.linkContext.widgetAttrInfo,
         };
-        // extract bindings anew as data or style were changes
-        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, this.linkContext);
+
+        const context = this.props.context;
+
+        // extract bindings anew as data or style was changes
+        getUsedObjectIDsInWidget(
+            context.views,
+            this.props.view,
+            this.props.id,
+            this.linkContext,
+        );
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.linkContext.IDs.includes(id));
         for (let i = 0; i < unsubscribe.length; i++) {
-            await this.props.socket.unsubscribeState(unsubscribe[i], this.onStateChangedBind);
+            await context.socket.unsubscribeState(unsubscribe[i], this.onStateChangedBind);
         }
 
         const subscribe = this.linkContext.IDs.filter(id => !oldIDs.includes(id));
         for (let i = 0; i < subscribe.length; i++) {
-            await this.props.socket.subscribeState(subscribe[i], this.onStateChangedBind);
+            await context.socket.subscribeState(subscribe[i], this.onStateChangedBind);
         }
 
         this.onStateChanged();
@@ -314,10 +323,8 @@ class VisRxWidget extends VisBaseWidget {
             } else {
                 value = Math.round(value * 100) / 100;
             }
-            if (this.props.systemConfig?.common) {
-                if (this.props.systemConfig.common.isFloatComma) {
-                    value = value.toString().replace('.', ',');
-                }
+            if (this.props.context.systemConfig?.common?.isFloatComma) {
+                value = value.toString().replace('.', ',');
             }
         }
 
@@ -412,42 +419,17 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     getWidgetView(view, props) {
-        const VisView = this.props.VisView;
+        const context = this.props.context;
+        const VisView = context.VisView;
         props = props || {};
 
         return <VisView
-            $$={this.props.$$}
+            context={this.props.context}
             activeView={view}
-            adapterName={this.props.adapterName}
-            allWidgets={this.props.allWidgets}
-            buildLegacyStructures={this.props.buildLegacyStructures}
-            can={this.props.can}
-            canStates={this.props.canStates}
-            container={this.props.container}
-            customSettings={this.props.customSettings}
-            dateFormat={this.props.dateFormat}
             editMode={false}
-            formatUtils={this.props.formatUtils}
-            instance={this.props.instance}
-            jQuery={this.props.jQuery}
             key={`${this.props.id}_${view}`}
-            lang={this.props.lang}
-            linkContext={this.props.linkContext}
-            projectName={this.props.projectName}
             registerRef={this.props.registerRef}
-            runtime={this.props.runtime}
-            setValue={this.props.setValue}
-            showWidgetNames={this.props.showWidgetNames}
-            socket={this.props.socket}
-            systemConfig={this.props.systemConfig}
-            theme={this.props.theme}
-            themeName={this.props.themeName}
-            themeType={this.props.themeType}
-            user={this.props.user}
-            userGroups={this.props.userGroups}
             view={view}
-            views={this.props.views}
-            viewsActiveFilter={this.props.viewsActiveFilter}
             visInWidget
             {...props}
         />;
@@ -478,67 +460,15 @@ class VisRxWidget extends VisBaseWidget {
 VisRxWidget.propTypes = {
     // eslint-disable-next-line react/no-unused-prop-types
     id: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    views: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
+    context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    can: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    canStates: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
     editMode: PropTypes.bool.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    editModeComponentClass: PropTypes.string,
-    // eslint-disable-next-line react/no-unused-prop-types
-    runtime: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    userGroups: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    user: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    allWidgets: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    jQuery: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    socket: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
     isRelative: PropTypes.bool,
     // eslint-disable-next-line react/no-unused-prop-types
-    viewsActiveFilter: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    setValue: PropTypes.func.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    $$: PropTypes.func, // Gestures library
-    // eslint-disable-next-line react/no-unused-prop-types
     refParent: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    linkContext: PropTypes.object.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    formatUtils: PropTypes.object,
-    // eslint-disable-next-line react/no-unused-prop-types
-    selectedWidgets: PropTypes.array,
-    // eslint-disable-next-line react/no-unused-prop-types
-    setSelectedWidgets: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    mouseDownOnView: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
     registerRef: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
-    onWidgetsChanged: PropTypes.func,
-    // eslint-disable-next-line react/no-unused-prop-types
-    showWidgetNames: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    editGroup: PropTypes.bool,
-    // eslint-disable-next-line react/no-unused-prop-types
-    VisView: PropTypes.any,
-
-    // eslint-disable-next-line react/no-unused-prop-types
-    adapterName: PropTypes.string.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    instance: PropTypes.number.isRequired,
-    // eslint-disable-next-line react/no-unused-prop-types
-    projectName: PropTypes.string.isRequired,
+    selectedWidgets: PropTypes.array,
 };
 
 export default VisRxWidget;

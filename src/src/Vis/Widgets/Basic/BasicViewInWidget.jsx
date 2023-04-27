@@ -117,18 +117,18 @@ class BasicViewInWidget extends VisRxWidget {
     }
 
     renderViewSelector() {
-        const options = this.getViewOptions(this.props.views, [], null, 0, true)
+        const options = this.getViewOptions(this.props.context.views, [], null, 0, true)
             .filter(option => option.type === 'folder' || option.view !== this.props.view);
 
         return [
             <IconButton
                 key="button"
-                className={this.props.editModeComponentClass}
+                className={this.props.context.editModeComponentClass}
                 onMouseDown={e => {
                     e.stopPropagation();
                     e.preventDefault();
                     // Say to view to ignore next clicks on view to hold the widget selection
-                    this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(true);
+                    this.props.ignoreMouseEvents(true);
                     this.setState({ showViewSelector: true });
                 }}
             >
@@ -140,7 +140,7 @@ class BasicViewInWidget extends VisRxWidget {
                 onClose={() =>
                     this.setState({ showViewSelector: false }, () =>
                         // Say to view to cancel ignoring clicks
-                        this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false))}
+                        this.props.ignoreMouseEvents(false))}
             >
                 <DialogTitle>{I18n.t('vis_2_widgets_basic_contains_view')}</DialogTitle>
                 <DialogContent>
@@ -151,8 +151,8 @@ class BasicViewInWidget extends VisRxWidget {
                             onClick={() =>
                                 this.setState({ showViewSelector: false }, () => {
                                     // Say to view to cancel ignoring clicks
-                                    this.props.ignoreMouseEvents && this.props.ignoreMouseEvents(false);
-                                    this.props.onWidgetsChanged && this.props.onWidgetsChanged([{
+                                    this.props.ignoreMouseEvents(false);
+                                    this.props.onWidgetsChanged([{
                                         wid: this.props.id,
                                         view: this.props.view,
                                         data: {

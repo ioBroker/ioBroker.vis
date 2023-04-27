@@ -177,11 +177,11 @@ class VisNavigation extends React.Component {
     renderMenu(settings) {
         const items = [];
 
-        Object.keys(this.props.views).forEach(view => {
+        Object.keys(this.props.context.views).forEach(view => {
             if (view === '___settings') {
                 return;
             }
-            const viewSettings = this.props.views[view].settings;
+            const viewSettings = this.props.context.views[view].settings;
             if (viewSettings.navigation) {
                 const item = {
                     text: viewSettings.navigationTitle || view,
@@ -193,7 +193,7 @@ class VisNavigation extends React.Component {
                 items.push(item);
 
                 if (item.icon && item.icon.startsWith('_PRJ_NAME/')) {
-                    item.icon = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${item.icon.substring(9)}`;  // "_PRJ_NAME".length = 9
+                    item.icon = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${item.icon.substring(9)}`;  // "_PRJ_NAME".length = 9
                 }
             }
         });
@@ -295,7 +295,7 @@ class VisNavigation extends React.Component {
         if (settings.navigationBarColor) {
             style = {
                 backgroundColor: settings.navigationBarColor,
-                color: Utils.getInvertedColor(settings.navigationBarColor, this.props.themeType, true),
+                color: Utils.getInvertedColor(settings.navigationBarColor, this.props.context.themeType, true),
             };
         }
 
@@ -311,10 +311,10 @@ class VisNavigation extends React.Component {
     }
 
     render() {
-        if (!this.props.views || !this.props.view || !this.props.views[this.props.view]) {
+        if (!this.props.context.views || !this.props.context.views[this.props.view]) {
             return null;
         }
-        const settings = this.props.views[this.props.view].settings;
+        const settings = this.props.context.views[this.props.view].settings;
 
         return <div className={this.props.classes.root}>
             <div
@@ -345,13 +345,13 @@ class VisNavigation extends React.Component {
                         }
                     }}
                     style={{
-                        backgroundColor: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.themeType === 'dark' ? 'white' : 'black') : 'inherit',
-                        color: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.themeType === 'dark' ? 'black' : 'white')  : 'inherit',
+                        backgroundColor: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.context.themeType === 'dark' ? 'white' : 'black') : 'inherit',
+                        color: this.props.menuWidth === 'hidden' && settings.navigationButtonBackground ? (this.props.context.themeType === 'dark' ? 'black' : 'white')  : 'inherit',
                     }}
                 >
                     <ChevronLeftIcon
                         className={this.props.menuWidth === 'hidden' || (this.props.menuWidth === 'narrow' && settings.navigationNoHide) ? this.props.classes.openMenuButtonIconHidden : ''}
-                        style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: this.props.themeType === 'dark' ? '#000' : '#FFF' } : null}
+                        style={settings.navigationBar && this.props.menuWidth === 'hidden' ? { color: this.props.context.themeType === 'dark' ? '#000' : '#FFF' } : null}
                     />
                 </IconButton>
             </div>
@@ -374,17 +374,12 @@ class VisNavigation extends React.Component {
 }
 
 VisNavigation.propTypes = {
+    context: PropTypes.object,
     view: PropTypes.string,
     activeView: PropTypes.string,
     editMode: PropTypes.bool,
-    views: PropTypes.object,
-    themeType: PropTypes.string,
     menuWidth: PropTypes.string,
     setMenuWidth: PropTypes.func,
-
-    adapterName: PropTypes.string,
-    instance: PropTypes.number,
-    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(VisNavigation);

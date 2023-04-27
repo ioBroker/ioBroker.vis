@@ -1756,55 +1756,60 @@ ${this.scripts}
         this.updateCommonCss();
         this.updateUserCss();
 
+        this.context = {
+            $$: window.$$,
+            VisView,
+            adapterName: this.props.adapterName,
+            allWidgets: this.allWidgets,
+            buildLegacyStructures: this.buildLegacyStructures,
+            can: this.can,
+            canStates: this.canStates,
+            customSettings: this.props.customSettings,
+            dateFormat: this.vis.dateFormat,
+            editModeComponentClass: this.props.editModeComponentClass,
+            formatUtils: this.formatUtils,
+            instance: this.props.instance,
+            jQuery: window.jQuery,
+            lang: this.props.lang,
+            linkContext: this.linkContext,
+            lockDragging: this.props.lockDragging,
+            onWidgetsChanged: this.props.runtime ? null : this.props.onWidgetsChanged,
+            projectName: this.props.projectName,
+            runtime: this.props.runtime,
+            setTimeInterval: this.setTimeInterval,
+            setTimeStart: this.setTimeStart,
+            setValue: this.setValue,
+            showWidgetNames: this.props.showWidgetNames,
+            socket: this.props.socket,
+            systemConfig: this.systemConfig,
+            theme: this.props.theme,
+            themeName: this.props.themeName,
+            themeType: this.props.themeType,
+            timeInterval: this.state.timeInterval,
+            timeStart: this.state.timeStart,
+            user: this.user,
+            userGroups: this.userGroups,
+            views: this.props.views, // project
+            viewsActiveFilter: this.viewsActiveFilter,
+            widgetHint: this.props.widgetHint,
+            registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
+            setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
+            setSelectedWidgets: this.props.runtime ? null : this.props.setSelectedWidgets,
+            ignoreMouseEvents: this.props.runtime ? null : this.props.ignoreMouseEvents,
+            disableInteraction: this.props.disableInteraction,
+        };
+
         const views = Object.keys(this.props.views).map(view => {
             if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
                 // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
-                    $$={window.$$}
+                    context={this.context}
                     activeView={this.props.activeView}
-                    adapterName={this.props.adapterName}
-                    allWidgets={this.allWidgets}
-                    buildLegacyStructures={this.buildLegacyStructures}
-                    can={this.can}
-                    canStates={this.canStates}
-                    dateFormat={this.vis.dateFormat}
-                    disableInteraction={this.props.disableInteraction}
                     editMode={this.props.editMode}
-                    editModeComponentClass={this.props.editModeComponentClass}
-                    formatUtils={this.formatUtils}
-                    instance={this.props.instance}
-                    jQuery={window.jQuery}
                     key={view}
-                    lang={this.props.lang}
-                    linkContext={this.linkContext}
-                    lockDragging={this.props.lockDragging}
-                    onWidgetsChanged={this.props.runtime ? null : this.props.onWidgetsChanged}
-                    project={this.props.project}
-                    projectName={this.props.projectName}
-                    registerEditorCallback={this.props.runtime ? null : this.props.registerEditorCallback}
-                    runtime={this.props.runtime}
-                    selectedGroup={this.props.selectedGroup}
+                    selectedGroup={this.props.runtime ? null : this.props.selectedGroup}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}
-                    setSelectedGroup={this.props.setSelectedGroup}
-                    setSelectedWidgets={this.props.runtime ? null : this.props.setSelectedWidgets}
-                    setTimeInterval={this.setTimeInterval}
-                    setTimeStart={this.setTimeStart}
-                    setValue={this.setValue}
-                    showWidgetNames={this.props.showWidgetNames}
-                    socket={this.props.socket}
-                    systemConfig={this.systemConfig}
-                    theme={this.props.theme}
-                    themeName={this.props.themeName}
-                    themeType={this.props.themeType}
-                    timeInterval={this.state.timeInterval}
-                    timeStart={this.state.timeStart}
-                    user={this.user}
-                    userGroups={this.userGroups}
                     view={view}
-                    views={this.props.views}
-                    viewsActiveFilter={this.viewsActiveFilter}
-                    widgetHint={this.props.widgetHint}
-                    onIgnoreMouseEvents={this.props.onIgnoreMouseEvents}
                 />;
             }
 
@@ -1849,7 +1854,7 @@ VisEngine.propTypes = {
     theme: PropTypes.object,
     onConfirmDialog: PropTypes.func,
     onShowCode: PropTypes.func,
-    onIgnoreMouseEvents: PropTypes.func,
+    ignoreMouseEvents: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

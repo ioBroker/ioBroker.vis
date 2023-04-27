@@ -87,12 +87,12 @@ class VisCanWidget extends VisBaseWidget {
 
         this.setupSubscriptions();
 
-        this.props.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
+        this.props.context.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
 
         // legacy support
-        const widget = this.props.views[this.props.view].widgets[this.props.id];
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
         if (widget?.tpl?.includes('materialdesign') && this.props.buildLegacyStructures) {
-            this.props.buildLegacyStructures();
+            this.props.context.buildLegacyStructures();
         }
     }
 
@@ -103,19 +103,19 @@ class VisCanWidget extends VisBaseWidget {
         const linkContext = {
             IDs: [],
             bindings: this.bindings,
-            visibility: this.props.linkContext.visibility,
-            lastChanges: this.props.linkContext.lastChanges,
-            signals: this.props.linkContext.signals,
+            visibility: this.props.context.linkContext.visibility,
+            lastChanges: this.props.context.linkContext.lastChanges,
+            signals: this.props.context.linkContext.signals,
         };
 
-        getUsedObjectIDsInWidget(this.props.views, this.props.view, this.props.id, linkContext);
+        getUsedObjectIDsInWidget(this.props.context.views, this.props.view, this.props.id, linkContext);
 
         this.IDs = linkContext.IDs;
 
         // merge bindings
         Object.keys(this.bindings).forEach(id => {
-            this.props.linkContext.bindings[id] = this.props.linkContext.bindings[id] || [];
-            this.bindings[id].forEach(item => this.props.linkContext.bindings[id].push(item));
+            this.props.context.linkContext.bindings[id] = this.props.context.linkContext.bindings[id] || [];
+            this.bindings[id].forEach(item => this.props.context.linkContext.bindings[id].push(item));
         });
 
         // free mem
@@ -125,7 +125,7 @@ class VisCanWidget extends VisBaseWidget {
     componentDidMount() {
         super.componentDidMount();
 
-        this.props.linkContext.subscribe(this.IDs);
+        this.props.context.linkContext.subscribe(this.IDs);
 
         if (!this.widDiv) {
             // link could be a ref or direct a div (e.g. by groups)
@@ -134,7 +134,7 @@ class VisCanWidget extends VisBaseWidget {
                 const newState = { mounted: true };
 
                 // try to read resize handlers
-                analyzeDraggableResizable(this.widDiv, newState, this.props.allWidgets[this.props.id].style);
+                analyzeDraggableResizable(this.widDiv, newState, this.props.context.allWidgets[this.props.id].style);
 
                 this.setState(newState);
             });
@@ -144,24 +144,24 @@ class VisCanWidget extends VisBaseWidget {
     componentWillUnmount() {
         super.componentWillUnmount();
 
-        if (this.props.linkContext) {
-            if (this.props.linkContext && this.props.linkContext.unregisterChangeHandler) {
-                this.props.linkContext.unregisterChangeHandler(this.props.id, this.changeHandler);
+        if (this.props.context.linkContext) {
+            if (this.props.context.linkContext && this.props.context.linkContext.unregisterChangeHandler) {
+                this.props.context.linkContext.unregisterChangeHandler(this.props.id, this.changeHandler);
             }
         }
 
         this.bindings = {};
 
-        if (this.props.linkContext) {
-            if (this.props.linkContext.unsubscribe) {
-                this.props.linkContext.unsubscribe(this.IDs);
+        if (this.props.context.linkContext) {
+            if (this.props.context.linkContext.unsubscribe) {
+                this.props.context.linkContext.unsubscribe(this.IDs);
             }
 
             // remove all bindings from prop.linkContexts
-            VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, this.props.id);
-            VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.context.linkContext.visibility, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.context.linkContext.lastChanges, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.context.linkContext.signals, this.IDs, this.props.view, this.props.id);
+            VisBaseWidget.removeFromArray(this.props.context.linkContext.bindings, this.IDs, this.props.view, this.props.id);
         }
 
         this.destroy();
@@ -192,6 +192,8 @@ class VisCanWidget extends VisBaseWidget {
                     }
                     if (value) {
                         el.style[attr] = value;
+                    } else if (el.style[attr]) { // delete style
+                        el.style[attr] = '';
                     }
                 }
             });
@@ -244,7 +246,7 @@ class VisCanWidget extends VisBaseWidget {
                     }
                 } else if (options.filter[0] === '$') {
                     // hide all
-                    if (this.props.allWidgets[this.props.id]?.data?.filterkey) {
+                    if (this.props.context.allWidgets[this.props.id]?.data?.filterkey) {
                         this.filterDisplay = this.widDiv.style.display;
                         this.widDiv.style.display = 'none';
                         if (this.widDiv._customHandlers?.onHide) {
@@ -252,7 +254,7 @@ class VisCanWidget extends VisBaseWidget {
                         }
                     }
                 } else {
-                    const wFilters = this.props.allWidgets[this.props.id]?.data.filterkey;
+                    const wFilters = this.props.context.allWidgets[this.props.id]?.data.filterkey;
 
                     if (wFilters) {
                         // we cannot use "find", as it is "can" observable
@@ -279,7 +281,7 @@ class VisCanWidget extends VisBaseWidget {
                     }
                 }
             } else if (command === 'collectFilters') {
-                return this.props.allWidgets[this.props.id]?.data?.filterkey;
+                return this.props.context.allWidgets[this.props.id]?.data?.filterkey;
             }
         }
 
@@ -313,13 +315,13 @@ class VisCanWidget extends VisBaseWidget {
     destroy = update => {
         // !update && console.log('destroy ' + this.props.id);
         // destroy map
-        if (this.props.allWidgets[this.props.id]) {
-            delete this.props.allWidgets[this.props.id];
+        if (this.props.context.allWidgets[this.props.id]) {
+            delete this.props.context.allWidgets[this.props.id];
         }
 
         // do not destroy groups by update
         if (this.widDiv && (!update || !this.props.id.startsWith('g'))) {
-            const $wid = this.props.jQuery(this.widDiv);
+            const $wid = this.props.context.jQuery(this.widDiv);
             const destroy = $wid.data('destroy');
 
             if (typeof destroy === 'function') {
@@ -337,8 +339,8 @@ class VisCanWidget extends VisBaseWidget {
         // console.log(`[${this.props.id}] update widget because of "${type}" "${stateId}": ${JSON.stringify(state)}`);
         if (this.widDiv) {
             if (type === 'style') {
-                // apply style from this.props.allWidgets.style
-                VisCanWidget.applyStyle(this.widDiv, this.props.allWidgets[this.props.id].style);
+                // apply style from this.props.context.allWidgets.style
+                VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[this.props.id].style);
             } else if (type === 'signal') {
                 this.updateSignal(item);
             } else if (type === 'visibility') {
@@ -366,11 +368,11 @@ class VisCanWidget extends VisBaseWidget {
 
     updateLastChange() {
         if (this.widDiv) {
-            const widgetData = this.props.allWidgets[this.props.id].data;
+            const widgetData = this.props.context.allWidgets[this.props.id].data;
             const lcDiv = this.widDiv.querySelector('.vis-last-change');
             if (lcDiv) {
                 lcDiv.innerHTML = window.vis.binds.basic.formatDate(
-                    this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
+                    this.props.context.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
                     widgetData['lc-format'],
                     widgetData['lc-is-interval'],
                     widgetData['lc-is-moment'],
@@ -383,8 +385,8 @@ class VisCanWidget extends VisBaseWidget {
 
     updateVisibility() {
         if (this.widDiv && !this.state.editMode) {
-            const widgetData = this.props.allWidgets[this.props.id].data;
-            if (VisBaseWidget.isWidgetHidden(widgetData, this.props.canStates, this.props.id) || this.isWidgetFilteredOut(widgetData)) {
+            const widgetData = this.props.context.allWidgets[this.props.id].data;
+            if (VisBaseWidget.isWidgetHidden(widgetData, this.props.context.canStates, this.props.id) || this.isWidgetFilteredOut(widgetData)) {
                 this.widDiv._storedDisplay = this.widDiv.style.display;
                 this.widDiv.style.display = 'none';
 
@@ -411,8 +413,8 @@ class VisCanWidget extends VisBaseWidget {
     addGestures(widgetData) {
         // gestures
         const gestures = ['swipeRight', 'swipeLeft', 'swipeUp', 'swipeDown', 'rotateLeft', 'rotateRight', 'pinchIn', 'pinchOut', 'swiping', 'rotating', 'pinching'];
-        const $$wid = this.props.$$(`#${this.props.id}`);
-        const $wid = this.props.jQuery(this.widDiv);
+        const $$wid = this.props.context.$$(`#${this.props.id}`);
+        const $wid = this.props.context.jQuery(this.widDiv);
         const offsetX = parseInt(widgetData['gestures-offsetX']) || 0;
         const offsetY = parseInt(widgetData['gestures-offsetY']) || 0;
 
@@ -426,7 +428,7 @@ class VisCanWidget extends VisBaseWidget {
                 const min = parseFloat(widgetData[`gestures-${gesture}-minimum`]) || 0;
 
                 let newVal = null;
-                let valState = this.props.canStates.attr(`${oid}.val`);
+                let valState = this.props.context.canStates.attr(`${oid}.val`);
                 let $indicator;
                 if (valState !== undefined && valState !== null) {
                     $wid.on('touchmove', evt => evt.preventDefault());
@@ -440,7 +442,7 @@ class VisCanWidget extends VisBaseWidget {
                     });
 
                     $$wid[gesture](data => {
-                        valState = this.props.canStates.attr(`${oid}.val`);
+                        valState = this.props.context.canStates.attr(`${oid}.val`);
 
                         if (val === 'toggle') {
                             if (valState === true) {
@@ -489,7 +491,7 @@ class VisCanWidget extends VisBaseWidget {
 
                                 this.$(document).on('mouseup.gesture touchend.gesture', () => {
                                     if (newVal !== null) {
-                                        this.props.setValue(oid, newVal);
+                                        this.props.context.setValue(oid, newVal);
                                         newVal = null;
                                     }
                                     $indicator.trigger('gestureUpdate', { val: null });
@@ -562,7 +564,7 @@ class VisCanWidget extends VisBaseWidget {
                         } else {
                             newVal = val;
                         }
-                        this.props.setValue(oid, newVal);
+                        this.props.context.setValue(oid, newVal);
                         newVal = null;
                     });
                 }
@@ -571,7 +573,7 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     isSignalVisible(index, widgetData) {
-        widgetData = widgetData || this.props.allWidgets[this.props.id].data;
+        widgetData = widgetData || this.props.context.allWidgets[this.props.id].data;
 
         if (this.state.editMode) {
             return !widgetData[`signals-hide-edit-${index}`];
@@ -580,7 +582,7 @@ class VisCanWidget extends VisBaseWidget {
         const oid = widgetData[`signals-oid-${index}`];
 
         if (oid) {
-            let val = this.props.canStates.attr(`${oid}.val`);
+            let val = this.props.context.canStates.attr(`${oid}.val`);
 
             const condition = widgetData[`signals-cond-${index}`];
             let value = widgetData[`signals-val-${index}`];
@@ -655,7 +657,7 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     addSignalIcon(widgetData, index) {
-        widgetData = widgetData || this.props.allWidgets[this.props.id].data;
+        widgetData = widgetData || this.props.context.allWidgets[this.props.id].data;
 
         // <div class="vis-signal ${data[`signals-blink-${index}`] ? 'vis-signals-blink' : ''} ${data[`signals-text-class-${index}`] || ''} " data-index="${index}" style="display: ${display}; pointer-events: none; position: absolute; z-index: 10; top: ${data[`signals-vert-${index}`] || 0}%; left: ${data[`signals-horz-${index}`] || 0}%">
         const divSignal = window.document.createElement('div');
@@ -770,7 +772,7 @@ class VisCanWidget extends VisBaseWidget {
         // `<div class="vis-last-change" data-type="${data['lc-type']}" data-format="${data['lc-format']}" data-interval="${data['lc-is-interval']}">${this.binds.basic.formatDate(this.states.attr(`${data['lc-oid']}.${data['lc-type'] === 'last-change' ? 'lc' : 'ts'}`), data['lc-format'], data['lc-is-interval'], data['lc-is-moment'])}</div>`
         divLastChange.className = 'vis-last-change';
         divLastChange.innerHTML = this.formatDate(
-            this.props.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
+            this.props.context.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
             widgetData['lc-format'],
             widgetData['lc-is-interval'],
             widgetData['lc-is-moment'],
@@ -799,36 +801,36 @@ class VisCanWidget extends VisBaseWidget {
                 };
 
                 // on runtime load oid, check if oid needs to be subscribed
-                Object.keys(this.props.linkContext.visibility).forEach(id => {
-                    const widgetIndex = this.props.linkContext.visibility[id].findIndex(x => x.widget === obj.widget);
+                Object.keys(this.props.context.linkContext.visibility).forEach(id => {
+                    const widgetIndex = this.props.context.linkContext.visibility[id].findIndex(x => x.widget === obj.widget);
 
                     // remove or add widget to existing oid's in visibility list
                     if (widgetIndex >= 0 && id !== oid) {
-                        // widget exists in visibility list
-                        this.props.linkContext.visibility[id].splice(widgetIndex, 1);
+                        // widget exists in the visibility list
+                        this.props.context.linkContext.visibility[id].splice(widgetIndex, 1);
                     } else if (widgetIndex < 0 && id === oid) {
-                        // widget not exists in visibility list
-                        this.props.linkContext.visibility[id].push(obj);
+                        // widget does not exists in the visibility list
+                        this.props.context.linkContext.visibility[id].push(obj);
                     }
                 });
 
-                if (!this.props.linkContext.visibility[oid]) {
-                    // oid not exist in visibility list -> add oid and widget to visibility list
-                    this.props.linkContext.visibility[oid] = [obj];
+                if (!this.props.context.linkContext.visibility[oid]) {
+                    // oid not exist in visibility list -> add oid and widget to the visibility list
+                    this.props.context.linkContext.visibility[oid] = [obj];
                 }
 
-                // on runtime load oid, check if oid need subscribe
+                // on runtime load oid, check if oid does need to be subscribed
                 if (!this.state.editMode) {
                     if (this.IDs.includes(oid)) {
                         this.updateVisibility();
                     } else {
                         this.IDs.push(oid);
-                        const val = this.props.canStates.attr(`${oid}.val`);
+                        const val = this.props.context.canStates.attr(`${oid}.val`);
                         if (val !== undefined) {
                             this.updateVisibility();
                         }
 
-                        this.props.linkContext.subscribe([oid]);
+                        this.props.context.linkContext.subscribe([oid]);
                     }
                 }
             }
@@ -842,14 +844,14 @@ class VisCanWidget extends VisBaseWidget {
 
     applyBinding(stateId, doNotApplyStyles, widgetData, widgetStyle) {
         this.bindings[stateId].forEach(item => {
-            const widgetContext = this.props.allWidgets[this.props.id];
+            const widgetContext = this.props.context.allWidgets[this.props.id];
             widgetStyle = widgetStyle || widgetContext.style;
 
-            const value = this.props.formatUtils.formatBinding(
+            const value = this.props.context.formatUtils.formatBinding(
                 item.format,
                 item.view,
                 this.props.id,
-                this.props.views[item.view].widgets[this.props.id],
+                this.props.context.views[item.view].widgets[this.props.id],
                 widgetData || widgetContext.data,
             );
 
@@ -899,7 +901,7 @@ class VisCanWidget extends VisBaseWidget {
         }
 
         const wid = this.props.id;
-        let widget = this.props.views[this.props.view].widgets[wid];
+        let widget = this.props.context.views[this.props.view].widgets[wid];
         if (!widget || typeof widget !== 'object') {
             return;
         }
@@ -907,7 +909,7 @@ class VisCanWidget extends VisBaseWidget {
         // replace groupAttrX in groups
         if (widget?.groupid) {
             // this widget belongs to group
-            const parentWidgetData = this.props.views[this.props.view].widgets[widget.groupid].data;
+            const parentWidgetData = this.props.context.views[this.props.view].widgets[widget.groupid].data;
             const aCount = parseInt(parentWidgetData.attrCount, 10);
 
             if (aCount && widget.data) {
@@ -940,11 +942,11 @@ class VisCanWidget extends VisBaseWidget {
                     (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && widgetData[attr].startsWith('_PRJ_NAME')
                 ) {
                     // "_PRJ_NAME".length = 9
-                    widgetData[attr] = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetData[attr].substring(9)}`;
+                    widgetData[attr] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetData[attr].substring(9)}`;
                 }
             });
             if (widgetStyle['background-image'] && widgetStyle['background-image'].startsWith('_PRJ_NAME')) {
-                widgetStyle['background-image'] = `../${this.props.adapterName}.${this.props.instance}/${this.props.projectName}${widgetStyle['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
+                widgetStyle['background-image'] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetStyle['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
             }
 
             this.applyBindings(true, widgetData, widgetStyle);
@@ -965,8 +967,8 @@ class VisCanWidget extends VisBaseWidget {
             if (isRelative) {
                 delete widgetStyle.top;
                 delete widgetStyle.left;
-                if (Number.isFinite(this.props.views[this.props.view].settings.rowGap)) {
-                    widgetStyle['margin-bottom'] = `${parseFloat(this.props.views[this.props.view].settings.rowGap)}px`;
+                if (Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+                    widgetStyle['margin-bottom'] = `${parseFloat(this.props.context.views[this.props.view].settings.rowGap)}px`;
                 }
             }
         } catch (e) {
@@ -1005,35 +1007,35 @@ class VisCanWidget extends VisBaseWidget {
         const oldIDs = this.IDs;
 
         // remove all bindings from prop.linkContexts
-        VisBaseWidget.removeFromArray(this.props.linkContext.visibility, this.IDs, this.props.view, wid);
-        VisBaseWidget.removeFromArray(this.props.linkContext.lastChanges, this.IDs, this.props.view, wid);
-        VisBaseWidget.removeFromArray(this.props.linkContext.signals, this.IDs, this.props.view, wid);
-        VisBaseWidget.removeFromArray(this.props.linkContext.bindings, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.context.linkContext.visibility, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.context.linkContext.lastChanges, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.context.linkContext.signals, this.IDs, this.props.view, wid);
+        VisBaseWidget.removeFromArray(this.props.context.linkContext.bindings, this.IDs, this.props.view, wid);
 
         this.setupSubscriptions();
 
         // subscribe on some new IDs and remove old IDs
         const unsubscribe = oldIDs.filter(id => !this.IDs.includes(id));
         if (unsubscribe.length) {
-            this.props.linkContext.unsubscribe(unsubscribe);
+            this.props.context.linkContext.unsubscribe(unsubscribe);
         }
 
         const subscribe = this.IDs.filter(id => !oldIDs.includes(id));
         if (subscribe.length) {
-            this.props.linkContext.subscribe(subscribe);
+            this.props.context.linkContext.subscribe(subscribe);
         }
 
         // try to apply bindings to every attribute
-        this.props.allWidgets[wid] = {
-            style: new this.props.can.Map(widgetStyle),
-            data: new this.props.can.Map(widgetData),
+        this.props.context.allWidgets[wid] = {
+            style: new this.props.context.can.Map(widgetStyle),
+            data: new this.props.context.can.Map(widgetData),
         };
 
         // Add to the global array of widgets
         let userGroups = widgetData['visibility-groups'];
         if (!this.state.editMode && userGroups?.length) {
             if (widgetData['visibility-groups-action'] === 'hide') {
-                if (!this.isUserMemberOfGroup(this.props.user, userGroups)) {
+                if (!this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
                     return;
                 }
                 userGroups = null; // mark as processed
@@ -1047,18 +1049,18 @@ class VisCanWidget extends VisBaseWidget {
             if (widget.tpl) {
                 if (!this.widDiv || !update || !widget?.data?.members.length) {
                     const options = {
-                        data: this.props.allWidgets[wid].data,
+                        data: this.props.context.allWidgets[wid].data,
                         viewDiv: this.props.view,
                         view: this.props.view,
-                        style: this.props.allWidgets[wid].style,
+                        style: this.props.context.allWidgets[wid].style,
                     };
 
                     if (widgetData?.oid) {
-                        options.val = this.props.canStates.attr(`${widgetData.oid}.val`);
+                        options.val = this.props.context.canStates.attr(`${widgetData.oid}.val`);
                     }
-                    const widgetFragment = this.props.can.view(widget.tpl, options);
+                    const widgetFragment = this.props.context.can.view(widget.tpl, options);
 
-                    // replace all script in the widget
+                    // replace all scripts in the widget
                     const scripts = Array.from(widgetFragment.querySelectorAll('script'));
                     for (let i = 0; i < scripts.length; i++) {
                         const script = scripts[i];
@@ -1101,15 +1103,15 @@ class VisCanWidget extends VisBaseWidget {
             this.widDiv = parentDiv.querySelector(`#${wid}`);
 
             if (this.widDiv) {
-                if (this.props.allWidgets[wid].style && !widgetData._no_style) {
+                if (this.props.context.allWidgets[wid].style && !widgetData._no_style) {
                     // fix position
-                    VisCanWidget.applyStyle(this.widDiv, this.props.allWidgets[wid].style);
+                    VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[wid].style);
                 }
 
-                this.widDiv.style.position = isRelative ? (this.props.allWidgets[wid].style.position || 'relative') : 'absolute';
+                this.widDiv.style.position = isRelative ? (this.props.context.allWidgets[wid].style.position || 'relative') : 'absolute';
 
                 // by default, it is border-box
-                if (!this.props.allWidgets[wid].style['box-sizing']) {
+                if (!this.props.context.allWidgets[wid].style['box-sizing']) {
                     this.widDiv.style.boxSizing = 'border-box';
                 }
 
@@ -1129,11 +1131,11 @@ class VisCanWidget extends VisBaseWidget {
                     this.updateVisibility();
 
                     // Processing of gestures
-                    if (this.props.$$) {
+                    if (this.props.context.$$) {
                         this.addGestures(widgetData);
                     }
                 } else {
-                    const newState = analyzeDraggableResizable(this.widDiv, null, this.props.allWidgets[this.props.id].style);
+                    const newState = analyzeDraggableResizable(this.widDiv, null, this.props.context.allWidgets[this.props.id].style);
 
                     if (this.state.resizable !== newState.resizable ||
                         this.state.hideHelper !== newState.hideHelper ||
@@ -1159,7 +1161,7 @@ class VisCanWidget extends VisBaseWidget {
                     this.addChart(widgetData);
                 }
 
-                if (userGroups && widget.data['visibility-groups-action'] === 'disabled' && !this.isUserMemberOfGroup(this.props.user, userGroups)) {
+                if (userGroups && widget.data['visibility-groups-action'] === 'disabled' && !this.isUserMemberOfGroup(this.props.context.user, userGroups)) {
                     this.widDiv.className = addClass(this.widDiv.className, 'vis-user-disabled');
                 }
 
@@ -1194,11 +1196,11 @@ class VisCanWidget extends VisBaseWidget {
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
             const error = `can't render ${widget.tpl} ${wid} on "${this.props.view}": `;
-            this.props.socket.log(error, 'error');
+            this.props.context.socket.log(error, 'error');
             console.error(error);
             for (let l = 0; l < lines.length; l++) {
                 const line = `${l} - ${lines[l]}`;
-                this.props.socket.log(line, 'error');
+                this.props.context.socket.log(line, 'error');
                 console.error(line);
             }
         }
@@ -1231,7 +1233,7 @@ class VisCanWidget extends VisBaseWidget {
         }
 
         if (this.widDiv && this.state.editMode) {
-            const zIndexProp = this.props.allWidgets[this.props.id].style['z-index'];
+            const zIndexProp = this.props.context.allWidgets[this.props.id].style['z-index'];
             const zIndex = parseInt((zIndexProp || 0), 10);
             if (this.state.selected) {
                 // move widget to foreground
@@ -1259,9 +1261,10 @@ class VisCanWidget extends VisBaseWidget {
 
         // this code is used only to represent containers, but sometime all of them should be rewritten in React
         const legacyViewContainers = this.state.legacyViewContainers.length ? this.state.legacyViewContainers.map(view => {
-            const VisView = this.props.VisView;
+            const context = this.props.context;
+            const VisView = context.VisView;
             this.refViews[view] = this.refViews[view] || React.createRef();
-            const otherRef = this.props.linkContext.getViewRef(view);
+            const otherRef = context.linkContext.getViewRef(view);
             if (otherRef && otherRef !== this.refViews[view]) {
                 console.log('View is not rendered as used somewhere else!');
                 return null;
@@ -1273,39 +1276,39 @@ class VisCanWidget extends VisBaseWidget {
             }
 
             return <VisView
-                $$={this.props.$$}
+                $$={context.$$}
                 activeView={view}
-                adapterName={this.props.adapterName}
-                allWidgets={this.props.allWidgets}
-                buildLegacyStructures={this.props.buildLegacyStructures}
-                can={this.props.can}
-                canStates={this.props.canStates}
-                container={this.props.container}
-                customSettings={this.props.customSettings}
-                dateFormat={this.props.dateFormat}
+                adapterName={context.adapterName}
+                allWidgets={context.allWidgets}
+                buildLegacyStructures={context.buildLegacyStructures}
+                can={context.can}
+                canStates={context.canStates}
+                container={context.container}
+                customSettings={context.customSettings}
+                dateFormat={context.dateFormat}
                 editMode={false}
-                formatUtils={this.props.formatUtils}
-                instance={this.props.instance}
-                jQuery={this.props.jQuery}
+                formatUtils={context.formatUtils}
+                instance={context.instance}
+                jQuery={context.jQuery}
                 key={view}
-                lang={this.props.lang}
-                linkContext={this.props.linkContext}
-                projectName={this.props.projectName}
+                lang={context.lang}
+                linkContext={context.linkContext}
+                projectName={context.projectName}
                 ref={this.refViews[view]}
-                registerRef={this.props.registerRef}
-                runtime={this.props.runtime}
-                setValue={this.props.setValue}
-                showWidgetNames={this.props.showWidgetNames}
-                socket={this.props.socket}
-                systemConfig={this.props.systemConfig}
-                theme={this.props.theme}
-                themeName={this.props.themeName}
-                themeType={this.props.themeType}
-                user={this.props.user}
-                userGroups={this.props.userGroups}
+                registerRef={props.registerRef}
+                runtime={context.runtime}
+                setValue={context.setValue}
+                showWidgetNames={context.showWidgetNames}
+                socket={context.socket}
+                systemConfig={context.systemConfig}
+                theme={context.theme}
+                themeName={context.themeName}
+                themeType={context.themeType}
+                user={context.user}
+                userGroups={context.userGroups}
                 view={view}
-                views={this.props.views}
-                viewsActiveFilter={this.props.viewsActiveFilter}
+                views={context.views}
+                viewsActiveFilter={context.viewsActiveFilter}
                 visInWidget
             />;
         }) : null;
@@ -1320,38 +1323,12 @@ class VisCanWidget extends VisBaseWidget {
 
 VisCanWidget.propTypes = {
     id: PropTypes.string.isRequired,
-    views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
-    can: PropTypes.object.isRequired,
-    canStates: PropTypes.object.isRequired,
-    editMode: PropTypes.bool.isRequired,
-    runtime: PropTypes.bool,
-    userGroups: PropTypes.object.isRequired,
-    user: PropTypes.string.isRequired,
-    allWidgets: PropTypes.object.isRequired,
-    jQuery: PropTypes.func.isRequired,
-    socket: PropTypes.object.isRequired,
+    editMode: PropTypes.bool,
     isRelative: PropTypes.bool,
-    viewsActiveFilter: PropTypes.object.isRequired,
-    setValue: PropTypes.func.isRequired,
-    $$: PropTypes.func, // Gestures library
     refParent: PropTypes.object.isRequired,
-    linkContext: PropTypes.object.isRequired,
-    formatUtils: PropTypes.object,
     selectedWidgets: PropTypes.array,
-    setSelectedWidgets: PropTypes.func,
-    mouseDownOnView: PropTypes.func,
-    registerRef: PropTypes.func,
-    onWidgetsChanged: PropTypes.func,
-    buildLegacyStructures: PropTypes.func,
-    showWidgetNames: PropTypes.bool,
-    editGroup: PropTypes.bool,
-    VisView: PropTypes.any,
     relativeWidgetOrder: PropTypes.array,
-
-    adapterName: PropTypes.string.isRequired,
-    instance: PropTypes.number.isRequired,
-    projectName: PropTypes.string.isRequired,
 };
 
 export default VisCanWidget;
