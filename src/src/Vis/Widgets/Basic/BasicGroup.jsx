@@ -37,6 +37,7 @@ class BasicGroup extends VisRxWidget {
                         }],
                     },
                 ],
+                // todo: implement autodetect of attributes
             }],
         };
     }
@@ -101,20 +102,17 @@ class BasicGroup extends VisRxWidget {
                     _widget.style.position === 'sticky'
                 );
 
-                // use same container for relative and absolute widgets (props.refService)
-                return this.props.VisView.getOneWidget(
-                    this.props,
+                // use the same container for relative and absolute widgets (props.refService)
+                return this.props.VisView.getOneWidget({
+                    props: this.props,
                     index,
                     id,
-                    _widget,
-                    this.props.registerRef,
+                    widget: _widget,
+                    registerRef: this.props.registerRef,
                     isRelative,
-                    props.refService,
-                    null,
-                    groupWidgets,
-                    false,
-                    false,
-                );
+                    refParent: props.refService,
+                    relativeWidgetOrder: groupWidgets,
+                });
             });
         }
 

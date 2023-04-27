@@ -302,12 +302,14 @@ class VisBaseWidget extends React.Component {
                     this.props.setSelectedWidgets(selectedWidgets);
                 }
             } else {
+                this.lastClick = Date.now();
                 // set select
                 this.props.setSelectedWidgets([this.props.id]);
             }
         } else if (this.props.moveAllowed && this.state.draggable !== false && !this.props.isRelative) {
             // User can drag only objects of the same type
-            this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
+            this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, false, Date.now() - this.lastClick < 300);
+            this.lastClick = Date.now();
         }
     }
 
@@ -1342,6 +1344,7 @@ class VisBaseWidget extends React.Component {
 
         return value;
     }
+
     render() {
         const widget = this.props.views[this.props.view].widgets[this.props.id];
         if (!widget || typeof widget !== 'object') {
@@ -1438,7 +1441,7 @@ class VisBaseWidget extends React.Component {
                             style[attr] = VisBaseWidget.correctStylePxValue(this.state.rxStyle[attr]);
                         }
                     } else
-                        // try to steal style by canWidget
+                    // try to steal style by canWidget
                     if (this.props.allWidgets[this.props.id] &&
                         this.props.allWidgets[this.props.id].style &&
                         this.props.allWidgets[this.props.id].style[attr] !== undefined
@@ -1465,7 +1468,7 @@ class VisBaseWidget extends React.Component {
             // show widget name on widget body
             const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
 
-            // come again when ref is filled
+            // come again when the ref is filled
             if (!this.refService.current) {
                 setTimeout(() => this.forceUpdate(), 50);
             }
