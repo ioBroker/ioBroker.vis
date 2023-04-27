@@ -41,6 +41,9 @@ const styles = theme => ({
     tooltip: {
         pointerEvents: 'none',
     },
+    visibleView: {
+        color: theme.palette.primary.main,
+    },
 });
 
 const View = props => {
@@ -96,7 +99,7 @@ const View = props => {
                     onClick={() => props.toggleView(props.name, !props.openedViews.includes(props.name))}
                     className={props.isDragging === props.name ? props.classes.dragging : (props.isDragging ? props.classes.noDrop : '')}
                 >
-                    {props.openedViews.includes(props.name) ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                    {props.openedViews.includes(props.name) ? <VisibilityIcon className={props.classes.visibleView} /> : <VisibilityOffIcon />}
                 </IconButton>
             </Tooltip>
             <span onClick={selectView} className={props.classes.name}>{props.name}</span>

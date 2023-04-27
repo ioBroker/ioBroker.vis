@@ -66,6 +66,13 @@ All widgets from vis.1 must work in vis.2 or rewritten in react
 - bars
 - ...
 
+### Custom editor
+- [ ] Custom component must understand that it receives Promise back and must wait for it
+
+### User groups
+- [ ] Add icons and colors
+- [ ] Check if view or widget is visible for user
+
 ### New widget set - material like
 - Add widgets from material adapter
 

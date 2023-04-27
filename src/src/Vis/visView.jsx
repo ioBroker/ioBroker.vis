@@ -867,7 +867,7 @@ class VisView extends React.Component {
         />;
     }
 
-    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents) {
+    static getOneWidget(props, index, id, widget, registerRef, isRelative, refParent, onMouseWidgetDown, relativeWidgetOrder, moveAllowed, editMode, onIgnoreMouseEvents, multiView) {
         const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
         const _props = {
@@ -887,16 +887,16 @@ class VisView extends React.Component {
             lang: props.lang,
             linkContext: props.linkContext,
             mouseDownOnView: onMouseWidgetDown,
-            moveAllowed,
-            onWidgetsChanged: props.onWidgetsChanged,
+            moveAllowed: multiView ? false : moveAllowed,
+            onWidgetsChanged: multiView ? null : props.onWidgetsChanged,
             projectName: props.projectName,
             refParent,
             registerRef, // because of filter commands it must be available in runtime (props.runtime ? null : registerRef)
             relativeWidgetOrder,
             runtime: props.runtime,
-            selectedGroup: props.selectedGroup,
-            selectedWidgets: this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
-            setSelectedWidgets: props.setSelectedWidgets,
+            selectedGroup: multiView ? null : props.selectedGroup,
+            selectedWidgets: multiView ? null : this.movement?.selectedWidgetsWithRectangle || props.selectedWidgets,
+            setSelectedWidgets: multiView ? null : props.setSelectedWidgets,
             setTimeInterval: props.setTimeInterval,
             setTimeStart: props.setTimeStart,
             setValue: props.setValue,
@@ -1405,6 +1405,21 @@ class VisView extends React.Component {
                     }
                 });
 
+                // Go through shared (multi-views) widgets and add them to absolute
+                if (this.props.views[this.props.view].__multiViews) {
+                    Object.keys(this.props.views[this.props.view].__multiViews).forEach(id => {
+                        const sharedView = this.props.views[this.props.view].__multiViews[id];
+                        const sharedId = `${id}_${sharedView}`;
+                        if (this.props.views[sharedView]?.widgets[id]) {
+                            if (!listAbsoluteWidgetsOrder.includes(sharedId)) {
+                                listAbsoluteWidgetsOrder.push(sharedId);
+                            }
+                        } else {
+                            console.warn(`Unknown shared widget ${sharedId} in view ${this.props.view}`);
+                        }
+                    });
+                }
+
                 if (!this.props.selectedGroup) {
                     for (let t = relativeWidgetOrder.length - 1; t >= 0; t--) {
                         if (!this.props.views[this.props.view].widgets[relativeWidgetOrder[t]]) {
@@ -1435,20 +1450,33 @@ class VisView extends React.Component {
                     wColumns[w] = [];
                 }
 
-                rxAbsoluteWidgets = listAbsoluteWidgetsOrder.map((id, index) => VisView.getOneWidget(
-                    this.props,
-                    index,
-                    id,
-                    this.props.views[this.props.view].widgets[id],
-                    this.registerRef,
-                    false,
-                    this.refView,
-                    this.onMouseWidgetDown,
-                    relativeWidgetOrder,
-                    moveAllowed,
-                    undefined,
-                    this.onIgnoreMouseEvents,
-                ));
+                rxAbsoluteWidgets = listAbsoluteWidgetsOrder.map((id, index) => {
+                    let widget;
+                    let multiView = false;
+                    if (id.includes('_')) {
+                        // it is multi-view widget
+                        const parts = id.split('_');
+                        multiView = true;
+                        widget = this.props.views[parts[1]].widgets[parts[0]];
+                    } else {
+                        widget = this.props.views[this.props.view].widgets[id];
+                    }
+                    return VisView.getOneWidget(
+                        this.props,
+                        index,
+                        id,
+                        widget,
+                        this.registerRef,
+                        false,
+                        this.refView,
+                        this.onMouseWidgetDown,
+                        relativeWidgetOrder,
+                        moveAllowed,
+                        undefined,
+                        this.onIgnoreMouseEvents,
+                        multiView,
+                    );
+                });
 
                 if (listRelativeWidgetsOrder.length) {
                     listRelativeWidgetsOrder.forEach((id, index) => {
@@ -1585,7 +1613,7 @@ class VisView extends React.Component {
             style={style}
         >
             <style>{this.state.themeCode}</style>
-            { gridDiv }
+            {gridDiv}
             {this.renderScreenSize()}
             {this.state.rulers.map((ruler, key) =>
                 <div
@@ -1611,9 +1639,9 @@ class VisView extends React.Component {
                 style={this.getRelativeStyle(settings, this.props.selectedGroup)}
                 className="vis-relative-view"
             >
-                { rxRelativeWidgets }
+                {rxRelativeWidgets}
             </div> : null}
-            { rxAbsoluteWidgets }
+            {rxAbsoluteWidgets}
         </div>;
 
         if (settings.navigation && !this.props.visInWidget) {

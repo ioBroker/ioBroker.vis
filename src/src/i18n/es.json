@@ -410,5 +410,6 @@
   "ace_Whole Word Search": "Búsqueda de palabras completas",
   "ace_Search In Selection": "Buscar en selección",
   "ace_Toggle Replace mode": "Alternar modo de reemplazo",
-  "Active widget(s) from %s": "Widget(s) activo(s) de %s"
+  "Active widget(s) from %s": "Widget(s) activo(s) de %s",
+  "multi-views": "Mostrar en Vistas"
 }

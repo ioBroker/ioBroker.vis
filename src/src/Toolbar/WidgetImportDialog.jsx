@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types';
-import AceEditor from 'react-ace';
 
 import { useEffect, useRef, useState } from 'react';
 import IODialog from '../Components/IODialog';
 import CustomAceEditor from '../Components/CustomAceEditor';
 import { useFocus } from '../Utils';
-
 
 const WidgetImportDialog = props => {
     const [data, setData] = useState('');

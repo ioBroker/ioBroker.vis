@@ -17,13 +17,22 @@ import { i18n as I18n } from '@iobroker/adapter-react-v5';
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
     let match = false;
-    const ms = inputStr.match(/(groupAttr\d+)+?/g);
+    // old style: groupAttr0, groupAttr1, groupAttr2, ...
+    let ms = inputStr.match(/(groupAttr\d+)+?/g);
     if (ms) {
         match = true;
         ms.forEach(m =>
             newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]));
+    }
 
-        // console.log(`Replaced ${inputStr} with ${newString} (based on ${ms})`);
+    // new style: {html}, {myAttr}, ...
+    ms = inputStr.match(/\{([-_a-zA-Z\d]+)+?}/g);
+    if (ms) {
+        match = true;
+        ms.forEach(m => {
+            const attr = m.substring(1, m.length - 1);
+            newString = newString.replace(m, groupAttrList[attr]);
+        });
     }
 
     return { doesMatch: match, newString };

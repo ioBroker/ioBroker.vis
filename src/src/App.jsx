@@ -916,7 +916,11 @@ class App extends Runtime {
     }
 
     changeProject = async (project, isHistory) => {
+        // remove all special structures
+        this.unsyncMultipleWidgets(project);
+
         const newState = { project, needSave: true };
+
         if (!isHistory) {
             // do not save history too often
             this.saveHistory(project);
@@ -942,9 +946,45 @@ class App extends Runtime {
             }
         }, 1000);
 
+        this.syncMultipleWidgets(project);
+
         newState.visProject = project;
         await this.setStateAsync(newState);
     };
+
+    unsyncMultipleWidgets(project) {
+        project = project || this.state.visProject;
+        Object.keys(project).forEach(view => {
+            if (view === '___settings') {
+                return;
+            }
+            if (project[view].__multiViews) {
+                delete project[view].__multiViews;
+            }
+        });
+    }
+
+    syncMultipleWidgets(project) {
+        project = project || this.state.visProject;
+        Object.keys(project).forEach(view => {
+            if (view === '___settings') {
+                return;
+            }
+            const oView = project[view];
+            Object.keys(oView.widgets).forEach(widgetId => {
+                const oWidget = oView.widgets[widgetId];
+                if (oWidget.data && oWidget.data['multi-views']) {
+                    const views = oWidget.data['multi-views'].split(',');
+                    views.forEach(viewId => {
+                        if (viewId !== view && project[viewId]) {
+                            project[viewId].__multiViews = project[viewId].__multiViews || {};
+                            project[viewId].__multiViews[widgetId] = view;
+                        }
+                    });
+                }
+            });
+        });
+    }
 
     renameProject = async (fromProjectName, toProjectName) => {
         try {

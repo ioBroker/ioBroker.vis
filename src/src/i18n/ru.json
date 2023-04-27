@@ -410,5 +410,6 @@
   "ace_Whole Word Search": "Поиск всего слова",
   "ace_Search In Selection": "Искать в выборе",
   "ace_Toggle Replace mode": "Переключить режим замены",
-  "Active widget(s) from %s": "Активные виджеты от %s"
+  "Active widget(s) from %s": "Активные виджеты от %s",
+  "multi-views": "Показать на страницах"
 }

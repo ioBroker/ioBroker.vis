@@ -31,7 +31,7 @@ Ace.config.setModuleUrl('ace/theme/clouds_midnight', './lib/js/ace/theme-clouds_
 Ace.config.setModuleUrl('ace/theme/chrome', './lib/js/ace/theme-chrome.js');
 Ace.config.setModuleUrl('ace/ext/searchbox', './lib/js/ace/ext-searchbox.js');
 
-Ace.config.setModuleUrl('ace/mode/html', './lib/js/ace/snippets/html.js');
+Ace.config.setModuleUrl('ace/snippets/html', './lib/js/ace/snippets/html.js');
 Ace.config.setModuleUrl('ace/mode/html_worker', './lib/js/ace/worker-html.js');
 Ace.config.setModuleUrl('ace/mode/html', './lib/js/ace/mode-html.js');
 

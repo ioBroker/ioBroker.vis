@@ -410,5 +410,6 @@
   "ace_Whole Word Search": "全词搜索",
   "ace_Search In Selection": "在选择中搜索",
   "ace_Toggle Replace mode": "切换替换模式",
-  "Active widget(s) from %s": "来自 %s 的活动小部件"
+  "Active widget(s) from %s": "来自 %s 的活动小部件",
+  "multi-views": "在视图中显示"
 }

@@ -410,5 +410,6 @@
   "ace_Whole Word Search": "Whole Word Search",
   "ace_Search In Selection": "Search In Selection",
   "ace_Toggle Replace mode": "Toggle Replace mode",
-  "Active widget(s) from %s": "Active widget(s) from %s"
+  "Active widget(s) from %s": "Active widget(s) from %s",
+  "multi-views": "Show in Views"
 }

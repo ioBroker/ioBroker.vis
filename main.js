@@ -468,7 +468,7 @@ const POSSIBLE_WIDGET_SETS_LOCATIONS = [
     path.normalize(`${__dirname}/../../`),
 ];
 
-async function readAdaptersList() {
+async function readAdapterList() {
     const res = await adapter.getObjectViewAsync('system', 'instance', {});
 
     const instances = [];
@@ -479,6 +479,7 @@ async function readAdaptersList() {
                 instances.push(name);
             }
         });
+
     instances.sort();
 
     let sets = [];
@@ -722,7 +723,7 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 }
 
 async function buildHtmlPages(forceBuild) {
-    const enabledList = await readAdaptersList();
+    const enabledList = (await readAdapterList()).filter(a => a.name !== 'iobroker.vis-metro');
     const configChanged = await generateConfigPage(forceBuild, enabledList);
 
     widgetInstances = {};
@@ -732,17 +733,20 @@ async function buildHtmlPages(forceBuild) {
     const {widgetSets, filesChanged} = syncWidgetSets(enabledList, forceBuild);
     const widgetsChanged = await generateWidgetsHtml(widgetSets, forceBuild);
 
-    const indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
-    let uploadedIndexHtml;
-    try {
-        uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');
-    } catch (err) {
-        // ignore
+    let uploadedIndexHtml = '';
+    let indexHtml = '';
+    if (fs.existsSync(`${__dirname}/www/index.html`)) {
+        indexHtml = fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8');
+        try {
+            uploadedIndexHtml = await adapter.readFileAsync(adapterName, 'index.html');
+        } catch (err) {
+            // ignore
+        }
+        if (typeof uploadedIndexHtml === 'object') {
+            uploadedIndexHtml = uploadedIndexHtml.file;
+        }
+        uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
     }
-    if (typeof uploadedIndexHtml === 'object') {
-        uploadedIndexHtml = uploadedIndexHtml.file;
-    }
-    uploadedIndexHtml = uploadedIndexHtml ? uploadedIndexHtml.toString('utf8') : uploadedIndexHtml;
 
     if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml || forceBuild) {
         await uploadAdapter();
@@ -788,9 +792,9 @@ async function main() {
             type: 'meta',
             common: {
                 name: 'vis core files',
-                type: 'meta.user'
+                type: 'meta.user',
             },
-            native: {}
+            native: {},
         });
     }
 
@@ -801,9 +805,9 @@ async function main() {
             type: 'meta',
             common: {
                 name: 'user files and images for vis',
-                type: 'meta.user'
+                type: 'meta.user',
             },
-            native: {}
+            native: {},
         });
     }
 

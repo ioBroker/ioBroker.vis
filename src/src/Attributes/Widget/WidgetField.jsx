@@ -775,17 +775,27 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             disabled={disabled}
-            value={value || []}
+            value={Array.isArray(value) ? value : (value || '').split(',')}
             placeholder={isDifferent ? t('different') : null}
             multiple={field.multiple !== false}
-            renderValue={selected => (field.multiple !== false ? selected.join(', ') : selected)}
+            renderValue={selected => {
+                if (Array.isArray(selected)) {
+                    return selected.join(', ');
+                }
+                return selected;
+            }}
             classes={{
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
             onChange={e => {
-                if (field.multiple !== false) {
-                    change(e.target.value.filter(selectValue => selectValue !== null));
+                if (Array.isArray(e.target.value)) {
+                    const values = e.target.value.filter(tt => tt);
+                    if (values.length) {
+                        change(e.target.value.filter(tt => tt).join(','));
+                    } else {
+                        change(null);
+                    }
                 } else {
                     change(e.target.value);
                 }

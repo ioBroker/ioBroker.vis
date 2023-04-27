@@ -410,5 +410,6 @@
   "ace_Whole Word Search": "Zoeken op hele woorden",
   "ace_Search In Selection": "Zoeken in selectie",
   "ace_Toggle Replace mode": "Schakel de vervangingsmodus in",
-  "Active widget(s) from %s": "Actieve widget(s) van %s"
+  "Active widget(s) from %s": "Actieve widget(s) van %s",
+  "multi-views": "Weergeven in weergaven"
 }
