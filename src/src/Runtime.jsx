@@ -160,6 +160,67 @@ class Runtime extends GenericApp {
         }
     };
 
+    fixProject(project) {
+        project.___settings = project.___settings || {};
+        project.___settings.folders = project.___settings.folders || [];
+
+        // fix project
+        Object.keys(project).forEach(view => {
+            if (project[view].widgets) {
+                Object.keys(project[view].widgets).forEach(wid => {
+                    const widget = project[view].widgets[wid];
+                    if (!widget) {
+                        delete project[view].widgets[wid];
+                        return;
+                    }
+                    if (!widget.data) {
+                        widget.data = {};
+                    }
+                    if (!widget.style) {
+                        widget.style = {};
+                    }
+
+                    if (widget.data.members && !Array.isArray(widget.data.members)) {
+                        widget.data.members = [];
+                    }
+
+                    if (widget.data.members) {
+                        widget.data.members.forEach((_wid, i) =>
+                            widget.data.members[i] = _wid.replace(/\s/g, '_'));
+                    }
+
+                    if (wid.includes(' ')) {
+                        const newWid = wid.replace(/\s/g, '_');
+                        delete project[view].widgets[wid];
+                        project[view].widgets[newWid] = widget;
+                    }
+                    // If widget is not unique, change its name
+                    if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
+                        const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
+                        console.log(`Rename widget ${wid} to ${_newWid}`);
+                        delete project[view].widgets[wid];
+                        project[view].widgets[_newWid] = widget;
+                    }
+
+                    // fix Groups
+                    if (widget.tpl === '_tplGroup' && widget.data.attrCount !== undefined) {
+                        widget.data.members = widget.data.members || [];
+                        // replace attrNameX with attrName_groupAttrX and attrTypeX with attrType_groupAttrX
+                        for (let i = 1; i <= widget.data.attrCount; i++) {
+                            const attrName = widget.data[`attrName${i}`];
+                            const attrType = widget.data[`attrType${i}`];
+                            widget.data[`attrName_groupAttr${i}`] = attrName || `groupAttr${i}`;
+                            widget.data[`attrType_groupAttr${i}`] = attrType || '';
+                            delete widget.data[`attrName${i}`];
+                            delete widget.data[`attrType${i}`];
+                        }
+                        delete widget.data.attrCount;
+                    }
+                });
+            }
+        });
+    }
+
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
@@ -184,7 +245,7 @@ class Runtime extends GenericApp {
         }
 
         if (!this.state.runtime) {
-            // remember last loaded project file
+            // remember the last loaded project file
             this.lastProjectJSONfile = file;
         }
 
@@ -200,8 +261,7 @@ class Runtime extends GenericApp {
             };
         }
 
-        project.___settings = project.___settings || {};
-        project.___settings.folders = project.___settings.folders || [];
+        this.fixProject(project);
 
         // take selected view from hash
         const currentPath = VisEngine.getCurrentPath();
@@ -224,48 +284,6 @@ class Runtime extends GenericApp {
         }
 
         const len = openedViews.length;
-
-        // fix project
-        Object.keys(project).forEach(view => {
-            if (project[view].widgets) {
-                Object.keys(project[view].widgets).forEach(wid => {
-                    if (!project[view].widgets[wid]) {
-                        delete project[view].widgets[wid];
-                        return;
-                    }
-                    if (!project[view].widgets[wid].data) {
-                        project[view].widgets[wid].data = {};
-                    }
-                    if (!project[view].widgets[wid].style) {
-                        project[view].widgets[wid].style = {};
-                    }
-
-                    if (project[view].widgets[wid].data.members && !Array.isArray(project[view].widgets[wid].data.members)) {
-                        project[view].widgets[wid].data.members = [];
-                    }
-
-                    if (project[view].widgets[wid].data.members) {
-                        project[view].widgets[wid].data.members.forEach((_wid, i) =>
-                            project[view].widgets[wid].data.members[i] = _wid.replace(/\s/g, '_'));
-                    }
-
-                    if (wid.includes(' ')) {
-                        const newWid = wid.replace(/\s/g, '_');
-                        const widget = project[view].widgets[wid];
-                        delete project[view].widgets[wid];
-                        project[view].widgets[newWid] = widget;
-                    }
-                    // If widget is not unique, change its name
-                    if (Object.keys(project).find(v => v !== view && project[v].widgets && project[v].widgets[wid])) {
-                        const _newWid = wid[0] === 'g' ? this.getNewGroupId(project) : this.getNewWidgetId(project);
-                        console.log(`Rename widget ${wid} to ${_newWid}`);
-                        const widget = project[view].widgets[wid];
-                        delete project[view].widgets[wid];
-                        project[view].widgets[_newWid] = widget;
-                    }
-                });
-            }
-        });
 
         let changed = false;
         for (let i = len - 1; i >= 0; i--) {

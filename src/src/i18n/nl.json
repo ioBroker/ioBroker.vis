@@ -411,5 +411,10 @@
   "ace_Search In Selection": "Zoeken in selectie",
   "ace_Toggle Replace mode": "Schakel de vervangingsmodus in",
   "Active widget(s) from %s": "Actieve widget(s) van %s",
-  "multi-views": "Weergeven in weergaven"
+  "multi-views": "Weergeven in weergaven",
+  "group_attrName": "Naam",
+  "group_attrType": "Type",
+  "group_fields": "attributen",
+  "group_size_hint": "U kunt de groepsgrootte wijzigen door deze te selecteren in de vervolgkeuzewidgetkiezer of door op deze tekst te klikken",
+  "group_help": "U kunt in de attributen van de groepswidget de speciale namen definiëren in de indeling \"%yourCustomName%\" en deze zal verschijnen in de \"Attributen\"-instellingen. Daarna kunt u de naam en het type aangepaste kenmerken opgeven."
 }

@@ -91,22 +91,22 @@ class MyWidget extends Generic {
 ## Common settings
 - `id`: [mandatory] Unique widget type ID. Should start with `tpl` followed by unique widget set ID.
 - `visSet`: [mandatory] Unique ID of widget set
-- `visSetLabel`: Label of widget set. it is enough to set label only in one widget of set
-- `visSetColor`: Color of widget set. it is enough to set color only in one widget of set
-- `visName`: [mandatory] Name of widget
-- `visWidgetLabel`: Label of widget
-- `visWidgetColor`: color of widget 
+- `visSetLabel`: Label of the widget set. It is enough to set label only in one widget of the set
+- `visSetColor`: Color of the widget set. It is enough to set color only in one widget of the set
+- `visName`: [mandatory] Name of the widget
+- `visWidgetLabel`: Label of the widget
+- `visWidgetColor`: color of the widget 
 - `visAttrs`: Groups with attributes.
 
 ## Group
 `visAttrs` consist of groups.
 
 Group can have the following attributes:
-- `name`: name of group. There are some predefined groups: `common`, `visibility`, `fixed`, `signals`, `css_common`, `css_font_text`, `css_background`, `css_border`, `css_shadow_padding`, `gestures`, `last_change`, `echarts`. Avoid using of all reserved group names except `common`.
-- `label`: Translated label of group. Like `vis_2_widgets_material_group_switch`. Label is not required for `common` group.
+- `name`: name of the group. There are some predefined groups: `common`, `visibility`, `fixed`, `signals`, `css_common`, `css_font_text`, `css_background`, `css_border`, `css_shadow_padding`, `gestures`, `last_change`, `echarts`. Avoid using of all reserved group names except `common`.
+- `label`: Translated label of the group. Like `vis_2_widgets_material_group_switch`. Label is not required for `common` group.
 - `indexFrom`: [optional] start index of iterator
 - `indexTo`: [optional] if `indexFrom` is defined, `indexTo` is required and could be a number or a name of attribute in same widget.
-- `fields`: Array of fields. See next chapter
+- `fields`: Array of fields. See the next chapter
 - `hidden`: [optional] JS code to calculate the hidden state of the attribute. Or real function in form `function (data, index, style) => boolean`.
 
 ## Fields
@@ -178,9 +178,9 @@ onChange: async (field, data, changeData, socket) => {
   - `widget` - Widget ID selector. It could have additional settings:
     - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`
     - `all` - [optional] if true, all widgets of all views will be shown, not only from the current view. Default is false.
-  - `select-views` - Select view via drop-down menu with folders.
+  - `select-views` - Select view via the drop-down menu with folders.
     - `multiple` - [optional] if false, only one view can be selected. Default is true. 
-  - `groups` - Select user group
+  - `groups` - Selects a user group
   - `auto` - Autocomplete. It must have additional settings:
     - `options` - [mandatory] array of options. Like `['auto', 'on', 'off']`
   - `class` - CSS class selector
@@ -193,6 +193,10 @@ onChange: async (field, data, changeData, socket) => {
   - `html` - Input field with Edit dialog and parsing of HTML code
   - `json` - Input field with Edit dialog and parsing of JSON code
   - `icon64` - Select from predefined material icons as base64 (svg)
+  - `help` - show help text
+    - `text` - [required] This text will be shown without label
+    - `noTranslation` - [optional] if true, the text will not be translated
+    - `style` - [optional] this style will be applied to the text
 
 ### Custom field editor
 Example of custom field

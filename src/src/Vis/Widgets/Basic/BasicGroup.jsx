@@ -16,29 +16,101 @@
 import PropTypes from 'prop-types';
 import VisRxWidget from '../../visRxWidget';
 
+import { I18n } from '@iobroker/adapter-react-v5';
+
 class BasicGroup extends VisRxWidget {
     static getWidgetInfo() {
         return {
             id: '_tplGroup',
             visSet: 'basic',
-            // visAttrs: 'attrCount[1]/slider,0,20,1;group.objects;attrName(1-attrCount)//onAttrChanged;attrType(1-attrCount)/select,,id,checkbox,image,color,views,html,widget,history/onAttrChanged;',
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    {
-                        name: 'objects',
-                        singleName: 'objects',
-                        fields: [{
-                            name: 'attrCount',
-                            type: 'slider',
-                            min: 1,
-                            max: 19,
-                            step: 1,
-                        }],
-                    },
-                ],
-                // todo: implement autodetect of attributes
-            }],
+            visAttrs: (data, onChange, context) => { // this will be dynamically rendered in src/src/Attributes/Widget/index.jsx => Widget class
+                // Try to find all fields where could be groupAttrX
+                const listOfWidgets = data.members;
+                const attributes = [];
+
+                listOfWidgets.forEach(wid => {
+                    const widgetData = context.views[context.view].widgets[wid].data;
+                    Object.keys(widgetData).forEach(attr => {
+                        if (typeof widgetData[attr] === 'string') {
+                            let ms = widgetData[attr].match(/(groupAttr\d+)+?/g);
+                            if (ms) {
+                                ms.forEach(m => attributes.push(m));
+                            }
+
+                            // new style: {html}, {myAttr}, ...
+                            ms = widgetData[attr].match(/%([-_a-zA-Z\d]+)+?%/g);
+                            if (ms) {
+                                ms.forEach(m => attributes.push(m.substring(1, m.length - 1)));
+                            }
+                        }
+                    });
+                });
+                console.log(`Attributes: ${attributes.join(', ')}`);
+
+                const common = {
+                    name: 'common',
+                    fields: [{
+                        name: 'group_hint',
+                        label: 'group_hint',
+                        type: 'help',
+                        text: 'group_help',
+                    }],
+                };
+                const objects = {
+                    name: 'objects',
+                    label: 'group_fields',
+                    fields: [],
+                };
+
+                const groupFields = [common, objects];
+
+                for (let i = 0; i < attributes.length; i++) {
+                    const attrName = attributes[i];
+                    const num = attrName.startsWith('groupAttr') ? parseInt(attrName.substring(9), 10) : 0;
+                    // Add to common
+                    common.fields.push({
+                        name: attrName,
+                        title: data[`attrName_${attrName}`] || data[`attrName${num}`] || attrName,
+                        type: data[`attrType_${attrName}`] || data[`attrType${num}`] || '',
+                    });
+                    // add to objects
+                    objects.fields.push({
+                        name: `attrName_${attrName}`,
+                        title: `${I18n.t('group_attrName')} [${attrName}]`,
+                        type: '',
+                    });
+                    objects.fields.push({
+                        name: `attrType_${attrName}`,
+                        title: `${I18n.t('group_attrType')} [${attrName}]`,
+                        type: 'select',
+                        noTranslation: true,
+                        options: [
+                            '',
+                            'text',
+                            'checkbox',
+                            'number',
+                            'html',
+                            'image',
+                            'icon',
+                            'icon64',
+                            'id',
+                            'color',
+                            'views',
+                            'widget',
+                            'history',
+                            'password',
+                            'fontname',
+                            'widget',
+                            'groups',
+                            'class',
+                            'filters',
+                            'json',
+                        ],
+                    });
+                }
+
+                return groupFields;
+            },
         };
     }
 
@@ -49,7 +121,20 @@ class BasicGroup extends VisRxWidget {
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return BasicGroup.getWidgetInfo();
+        // render dynamical attributes
+        const info = BasicGroup.getWidgetInfo();
+        info.visAttrs = info.visAttrs(this.props.context.views[this.props.view].widgets[this.props.id].data, null, {
+            views: this.props.context.views,
+            view: this.props.view,
+            socket: this.props.context.socket,
+            themeType: this.props.context.themeType,
+            projectName: this.props.context.projectName,
+            adapterName: this.props.context.adapterName,
+            instance: this.props.context.instance,
+            id: this.props.id,
+            widget: this.props.context.views[this.props.view].widgets[this.props.id],
+        });
+        return info;
     }
 
     renderWidgetBody(props) {

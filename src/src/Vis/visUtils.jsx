@@ -26,7 +26,7 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     }
 
     // new style: {html}, {myAttr}, ...
-    ms = inputStr.match(/\{([-_a-zA-Z\d]+)+?}/g);
+    ms = inputStr.match(/%([-_a-zA-Z\d]+)+?%/g);
     if (ms) {
         match = true;
         ms.forEach(m => {

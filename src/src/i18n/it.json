@@ -411,5 +411,10 @@
   "ace_Search In Selection": "Cerca nella selezione",
   "ace_Toggle Replace mode": "Attiva/disattiva la modalità Sostituisci",
   "Active widget(s) from %s": "Widget attivi da %s",
-  "multi-views": "Mostra nelle viste"
+  "multi-views": "Mostra nelle viste",
+  "group_attrName": "Nome",
+  "group_attrType": "Tipo",
+  "group_fields": "Attributi",
+  "group_size_hint": "Puoi modificare la dimensione del gruppo, selezionandolo nel selettore del widget a discesa o facendo clic su questo testo",
+  "group_help": "Puoi definire negli attributi del widget del gruppo i nomi speciali nel formato \"%yourCustomName%\" e appariranno nelle impostazioni \"Attributi\". Successivamente è possibile fornire il nome e il tipo di attributi personalizzati."
 }

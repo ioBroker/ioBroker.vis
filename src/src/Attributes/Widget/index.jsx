@@ -180,6 +180,12 @@ const styles = theme => ({
     widgetNameText: {
         lineHeight: '20px',
     },
+    fieldHelp: {
+        fontSize: 12,
+        fontStyle: 'italic',
+        paddingLeft: 16,
+        color: theme.palette.mode === 'dark' ? '#00931a' : '#014807',
+    },
 });
 
 const getFieldsBefore = () => [
@@ -455,213 +461,69 @@ const Widget = props => {
                 return;
             }
 
-            if (widget.tpl === '_tplGroup') {
-                const groupFields = [{
-                    name: 'common',
-                    singleName: 'common',
-                    fields: [],
-                }, {
-                    name: 'objects',
-                    singleName: 'objects',
-                    fields: [{
-                        name: 'attrCount',
-                        type: 'slider',
-                        min: 1,
-                        max: 19,
-                        step: 1,
-                    }],
-                }];
-
-                for (let i = 1; i <= widget.data.attrCount; i++) {
-                    groupFields[0].fields.push({
-                        name: `groupAttr${i}`,
-                        title: widget.data[`attrName${i}`],
-                        type: widget.data[`attrType${i}`],
-                    });
-                    groupFields[1].fields.push({
-                        name: `attrName${i}`,
-                        singleName: 'attrName',
-                        index: i,
-                    });
-                }
-                for (let i = 1; i <= widget.data.attrCount; i++) {
-                    groupFields[1].fields.push({
-                        name: `attrType${i}`,
-                        singleName: 'attrType',
-                        index: i,
-                        type: 'select',
-                        options: ['', 'checkbox', 'image', 'color', 'views', 'html', 'widget', 'history'],
-                    });
-                }
-                selectedWidgetsFields.push(groupFields);
-                return;
-            }
-
             widgetType = widgetTypes.find(type => type.name === widget.tpl);
             if (!widgetType) {
                 return;
             }
 
-            /*
-            let currentGroup = fields[fields.length - 1];
-            let indexedGroups = {};
-            let groupName = 'common';
-            let isIndexedGroup = false;
+            let params = widgetType.params;
+            if (typeof widgetType.params === 'function') {
+                params = widgetType.params(widget.data, null, {
+                    views: props.project,
+                    view: props.selectedView,
+                    socket: props.socket,
+                    themeType: props.themeType,
+                    projectName: props.projectName,
+                    adapterName: props.adapterName,
+                    instance: props.instance,
+                    id: selectedWidget,
+                    widget,
+                });
+            }
 
-            widgetType.params.split(';').forEach(fieldString => {
-                if (!fieldString) {
-                    return;
-                }
-                if (fieldString.split('/')[0].startsWith('group.')) {
-                    groupName = fieldString.split('/')[0].split('.')[1];
-                    if (widgetIndex > 0 && !commonGroups[groupName]) {
-                        return;
-                    }
-                    indexedGroups = {};
-                    if (fieldString.split('/')[1] !== 'byindex') {
-                        currentGroup = fields.find(group => group.name === groupName);
-                        if (!currentGroup) {
-                            fields.push(
-                                {
-                                    name: groupName,
-                                    singleName: groupName,
-                                    fields: [],
-                                },
-                            );
-                            currentGroup = fields[fields.length - 1];
-                        }
-                        if (!commonGroups[groupName]) {
-                            commonGroups[groupName] = 0;
-                        }
-                        commonGroups[groupName]++;
-                        isIndexedGroup = false;
-                    } else {
-                        isIndexedGroup = true;
-                    }
-                } else {
-                    const match = fieldString.match(/([a-zA-Z0-9._-]+)(\([a-zA-Z.0-9-_]*\))?(\[.*])?(\/[-_,^§~\s:/.a-zA-Z0-9]+)?/);
+            // if (widget.tpl === '_tplGroup') {
+            //     const groupFields = [{
+            //         name: 'common',
+            //         singleName: 'common',
+            //         fields: [],
+            //     }, {
+            //         name: 'objects',
+            //         singleName: 'objects',
+            //         fields: [{
+            //             name: 'attrCount',
+            //             type: 'slider',
+            //             min: 1,
+            //             max: 19,
+            //             step: 1,
+            //         }],
+            //     }];
+            //
+            //     for (let i = 1; i <= widget.data.attrCount; i++) {
+            //         groupFields[0].fields.push({
+            //             name: `groupAttr${i}`,
+            //             title: widget.data[`attrName${i}`],
+            //             type: widget.data[`attrType${i}`],
+            //         });
+            //         groupFields[1].fields.push({
+            //             name: `attrName${i}`,
+            //             singleName: 'attrName',
+            //             index: i,
+            //         });
+            //     }
+            //     for (let i = 1; i <= widget.data.attrCount; i++) {
+            //         groupFields[1].fields.push({
+            //             name: `attrType${i}`,
+            //             singleName: 'attrType',
+            //             index: i,
+            //             type: 'select',
+            //             options: ['', 'checkbox', 'image', 'color', 'views', 'html', 'widget', 'history'],
+            //         });
+            //     }
+            //     selectedWidgetsFields.push(groupFields);
+            //     return;
+            // }
 
-                    const repeats = match[2];
-
-                    const field = {
-                        name: match[1],
-                        default: match[3] ? match[3].substring(1, match[3].length - 1) : undefined,
-                        type: match[4] ? match[4].substring(1).split('/')[0] : undefined,
-                        onChangeFunc: match[4] ? match[4].substring(1).split('/')[1] : undefined,
-                    };
-
-                    if (widgetIndex > 0 && !repeats && !commonFields[`${groupName}.${field.name}`]) {
-                        return;
-                    }
-
-                    if (field.name === 'oid' || field.name.match(/^oid-/)) {
-                        field.type = field.type || 'id';
-                    } else if (field.name === 'color') {
-                        field.type = 'color';
-                    } else if (field.name.match(/nav_view$/)) {
-                        field.type = 'views';
-                    } else
-                    if (field.name === 'sound') {
-                        field.type = 'sound';
-                    } else if (field.name.includes('_effect')) {
-                        field.type = 'effect';
-                    } else if (field.name.includes('_eff_opt')) {
-                        field.type = 'effect-options';
-                    }
-
-                    if (field.type && (field.type.startsWith('id,'))) {
-                        const options = field.type.split(',');
-                        [field.type, field.filter] = options;
-                    }
-                    if (field.type && (field.type.startsWith('select,') || field.type.startsWith('nselect,') || field.type.startsWith('auto,'))) {
-                        const options = field.type.split(',');
-                        [field.type] = options;
-                        field.options = options.slice(1);
-                    }
-                    if (field.type && (field.type.startsWith('slider,') || field.type.startsWith('number,'))) {
-                        const options = field.type.split(',');
-                        field.type = options[0];
-                        field.min = parseInt(options[1]);
-                        field.max = parseInt(options[2]);
-                        field.step = parseInt(options[3]);
-                        if (!field.step) {
-                            field.step = (field.max - field.min / 100);
-                        }
-                    }
-                    if (field.type && field.type.startsWith('style,')) {
-                        const options = field.type.split(',');
-                        field.type = options[0];
-                        field.filterFile = options[1];
-                        field.filterName = options[2];
-                        field.filterAttrs = options[3];
-                        field.removeName = options[4];
-                        if (!field.step) {
-                            field.step = (field.max - field.min / 100);
-                        }
-                    }
-                    field.singleName = field.name;
-                    field.set = widgetType.set;
-                    if (repeats) {
-                        const repeatsMatch = repeats.match(/\(([0-9a-z_]+)-([0-9a-z_]+)\)/i);
-                        const name = field.name;
-                        if (repeatsMatch) {
-                            if (!repeatsMatch[1].match(/^[0-9]$/)) {
-                                repeatsMatch[1] = parseInt(widget.data[repeatsMatch[1]]);
-                            }
-                            if (!repeatsMatch[2].match(/^[0-9]$/)) {
-                                repeatsMatch[2] = parseInt(widget.data[repeatsMatch[2]]);
-                            }
-                            for (let i = repeatsMatch[1]; i <= repeatsMatch[2]; i++) {
-                                if (isIndexedGroup) {
-                                    if (widgetIndex > 0 && !commonGroups[`${groupName}-${i}`]) {
-                                        return;
-                                    }
-                                    if (widgetIndex > 0 && !commonFields[`${groupName}-${i}.${field.name}`]) {
-                                        return;
-                                    }
-                                    if (!indexedGroups[i]) {
-                                        currentGroup = {
-                                            name: `${groupName}-${i}`,
-                                            singleName: groupName,
-                                            index: i,
-                                            fields: [],
-                                        };
-                                        indexedGroups[i] = currentGroup;
-                                        fields.push(currentGroup);
-                                    }
-                                    if (!commonGroups[`${groupName}-${i}`]) {
-                                        commonGroups[`${groupName}-${i}`] = 0;
-                                    }
-                                    commonGroups[`${groupName}-${i}`]++;
-
-                                    field.name = `${name}${i}`;
-                                    indexedGroups[i].fields.push({ ...field });
-                                    if (!commonFields[`${groupName}-${i}.${field.name}`]) {
-                                        commonFields[`${groupName}-${i}.${field.name}`] = 0;
-                                    }
-                                    commonFields[`${groupName}-${i}.${field.name}`]++;
-                                } else {
-                                    field.name = `${name}${i}`;
-                                    field.index = i;
-                                    currentGroup.fields.push({ ...field });
-                                    if (!commonFields[`${groupName}.${field.name}`]) {
-                                        commonFields[`${groupName}.${field.name}`] = 0;
-                                    }
-                                    commonFields[`${groupName}.${field.name}`]++;
-                                }
-                            }
-                        }
-                    } else {
-                        currentGroup.fields.push(field);
-                        if (!commonFields[`${groupName}.${field.name}`]) {
-                            commonFields[`${groupName}.${field.name}`] = 0;
-                        }
-                        commonFields[`${groupName}.${field.name}`]++;
-                    }
-                }
-            });
-             */
-            const fields = parseAttributes(widgetType.params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
+            const fields = parseAttributes(params, widgetIndex, commonGroups, commonFields, widgetType.set, widget.data);
 
             selectedWidgetsFields.push(fields);
         });
@@ -1002,6 +864,14 @@ const Widget = props => {
                                                 return null;
                                             }
                                         }
+                                        if (field.type === 'help') {
+                                            return <tr key={fieldIndex} className={props.classes.fieldRow}>
+                                                <td colSpan={2} className={props.classes.fieldHelp} style={field.style}>
+                                                    {field.noTranslation ? field.text : I18n.t(field.text)}
+                                                </td>
+                                            </tr>;
+                                        }
+
                                         if (field.error) {
                                             error = checkFunction(field.error, props.project, props.selectedView, props.selectedWidgets, field.index);
                                         }
@@ -1024,6 +894,7 @@ const Widget = props => {
                                         }
 
                                         const labelStyle = {};
+
                                         if (label.trim().startsWith('<b')) {
                                             label = label.match(/<b>(.*?)<\/b>/)[1];
                                             labelStyle.fontWeight = 'bold';
@@ -1043,9 +914,9 @@ const Widget = props => {
                                                         title={field.tooltip ? I18n.t(field.tooltip) : null}
                                                         style={labelStyle}
                                                     >
-                                                        { ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null }
-                                                        { label }
-                                                        { field.type === 'image' && !isDifferent[field.name] && widget && widget.data[field.name] ?
+                                                        {ICONS[field.singleName || field.name] ? ICONS[field.singleName || field.name] : null}
+                                                        {label}
+                                                        {field.type === 'image' && !isDifferent[field.name] && widget && widget.data[field.name] ?
                                                             <div className={props.classes.smallImageDiv}>
                                                                 <img
                                                                     src={widget.data[field.name].startsWith('_PRJ_NAME/') ?
@@ -1059,8 +930,8 @@ const Widget = props => {
                                                                     }}
                                                                     alt={field.name}
                                                                 />
-                                                            </div> : null }
-                                                        { group.isStyle ?
+                                                            </div> : null}
+                                                        {group.isStyle ?
                                                             <ColorizeIcon
                                                                 fontSize="small"
                                                                 className={props.classes.colorize}
@@ -1072,7 +943,7 @@ const Widget = props => {
                                                                         props.changeProject(project);
                                                                     }
                                                                 })}
-                                                            /> : null }
+                                                            /> : null}
                                                         {field.tooltip ? <InfoIcon className={props.classes.infoIcon} /> : null}
                                                     </td>
                                                     <td className={props.classes.fieldContent}>

@@ -411,5 +411,10 @@
   "ace_Search In Selection": "In Auswahl suchen",
   "ace_Toggle Replace mode": "Ersetzungsmodus wechseln ",
   "Active widget(s) from %s": "Aktive(s) Widget(s) von %s",
-  "multi-views": "Zeige in Views"
+  "multi-views": "Zeige in Views",
+  "group_attrName": "Name",
+  "group_attrType": "Typ",
+  "group_fields": "Attribute",
+  "group_size_hint": "Sie können die Gruppengröße ändern, indem Sie sie im Dropdown-Widget-Selektor auswählen oder auf diesen Text klicken",
+  "group_help": "Sie können in den Attributen des Gruppen-Widgets die speziellen Namen im Format \"%yourCustomName%\" definieren und sie werden in den \"Attribute\"-Einstellungen angezeigt. Danach können Sie Name und Typ der benutzerdefinierten Attribute angeben."
 }

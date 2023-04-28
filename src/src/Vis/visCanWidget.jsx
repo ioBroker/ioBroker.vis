@@ -91,7 +91,7 @@ class VisCanWidget extends VisBaseWidget {
 
         // legacy support
         const widget = this.props.context.views[this.props.view].widgets[this.props.id];
-        if (widget?.tpl?.includes('materialdesign') && this.props.buildLegacyStructures) {
+        if (widget?.tpl?.includes('materialdesign') && this.props.context.buildLegacyStructures) {
             this.props.context.buildLegacyStructures();
         }
     }
@@ -910,13 +910,17 @@ class VisCanWidget extends VisBaseWidget {
         if (widget?.groupid) {
             // this widget belongs to group
             const parentWidgetData = this.props.context.views[this.props.view].widgets[widget.groupid].data;
-            const aCount = parseInt(parentWidgetData.attrCount, 10);
+            // extract attribute names
+            const names = Object.keys(parentWidgetData)
+                .map(attr => (attr.startsWith('attrType_') ? attr.substring(9) : null))
+                .filter(attr => attr);
 
-            if (aCount && widget.data) {
+            if (names.length && widget.data) {
+                // create a copy as we will substitute the values
                 widget = JSON.parse(JSON.stringify(widget));
 
                 Object.keys(widget.data).forEach(attr => {
-                    if (typeof widget.data[attr] === 'string') {
+                    if (typeof widget.data[attr] === 'string' && names.find(a => widget.data[attr].includes(a))) {
                         const result = replaceGroupAttr(widget.data[attr], parentWidgetData);
                         if (result.doesMatch) {
                             widget.data[attr] = result.newString || '';
@@ -1276,39 +1280,13 @@ class VisCanWidget extends VisBaseWidget {
             }
 
             return <VisView
-                $$={context.$$}
+                context={context}
                 activeView={view}
-                adapterName={context.adapterName}
-                allWidgets={context.allWidgets}
-                buildLegacyStructures={context.buildLegacyStructures}
-                can={context.can}
-                canStates={context.canStates}
-                container={context.container}
-                customSettings={context.customSettings}
-                dateFormat={context.dateFormat}
                 editMode={false}
-                formatUtils={context.formatUtils}
-                instance={context.instance}
-                jQuery={context.jQuery}
                 key={view}
-                lang={context.lang}
-                linkContext={context.linkContext}
-                projectName={context.projectName}
                 ref={this.refViews[view]}
                 registerRef={props.registerRef}
-                runtime={context.runtime}
-                setValue={context.setValue}
-                showWidgetNames={context.showWidgetNames}
-                socket={context.socket}
-                systemConfig={context.systemConfig}
-                theme={context.theme}
-                themeName={context.themeName}
-                themeType={context.themeType}
-                user={context.user}
-                userGroups={context.userGroups}
                 view={view}
-                views={context.views}
-                viewsActiveFilter={context.viewsActiveFilter}
                 visInWidget
             />;
         }) : null;

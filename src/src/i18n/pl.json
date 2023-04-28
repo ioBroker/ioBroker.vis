@@ -411,5 +411,10 @@
   "ace_Search In Selection": "Szukaj w zaznaczeniu",
   "ace_Toggle Replace mode": "Przełącz tryb zastępowania",
   "Active widget(s) from %s": "Aktywne widżety z %s",
-  "multi-views": "Pokaż w widokach"
+  "multi-views": "Pokaż w widokach",
+  "group_attrName": "Nazwa",
+  "group_attrType": "Typ",
+  "group_fields": "Atrybuty",
+  "group_size_hint": "Możesz zmienić rozmiar grupy, wybierając ją w rozwijanym selektorze widżetów lub klikając ten tekst",
+  "group_help": "Możesz zdefiniować w atrybutach widżetu grupy specjalne nazwy w formacie \"%twojaCustomName%\" i pojawią się one w ustawieniach \"Atrybuty\". Następnie możesz podać nazwę i typ atrybutów niestandardowych."
 }

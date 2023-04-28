@@ -1558,7 +1558,7 @@ class VisBaseWidget extends React.Component {
                     this.props.context.setSelectedWidgets([this.props.id]);
                 }}
             >
-                {I18n.t('You can change group size, by selecting it in the drop down widget selector or by clicking on this text')}
+                {I18n.t('group_size_hint')}
             </div>;
         }
 
