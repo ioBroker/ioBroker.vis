@@ -43,7 +43,7 @@
         "eslint-plugin-jsx-a11y": "^6.7.1",
         "eslint-plugin-react": "^7.32.2",
         "eslint-plugin-react-hooks": "^4.6.0",
-        "sass": "^1.60.0"
+        "sass": "^1.62.1"
     },
     "scripts": {
         "start": "craco start",
