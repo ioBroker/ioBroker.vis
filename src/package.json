@@ -10,7 +10,7 @@
         "@iobroker/vis-2-widgets-react-dev": "^0.3.19",
         "@mui/icons-material": "^5.11.11",
         "@mui/material": "^5.11.15",
-        "@mui/styles": "^5.11.13",
+        "@mui/styles": "^5.12.0",
         "@sentry/browser": "^7.46.0",
         "@sentry/integrations": "^7.46.0",
         "ace-builds": "^1.16.0",
