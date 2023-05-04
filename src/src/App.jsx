@@ -327,7 +327,11 @@ class App extends Runtime {
         }
     };
 
-    setViewsManager = isOpen => this.setState({ viewsManager: isOpen });
+    setViewsManager = isOpen => {
+        if ((!!isOpen) !== this.state.viewsManager) {
+            this.setState({ viewsManager: !!isOpen });
+        }
+    };
 
     setProjectsDialog = isOpen => this.setState({ projectsDialog: isOpen });
 
@@ -958,29 +962,11 @@ class App extends Runtime {
             if (view === '___settings') {
                 return;
             }
-            if (project[view].__multiViews) {
-                delete project[view].__multiViews;
-            }
-        });
-    }
-
-    syncMultipleWidgets(project) {
-        project = project || this.state.visProject;
-        Object.keys(project).forEach(view => {
-            if (view === '___settings') {
-                return;
-            }
             const oView = project[view];
+            // remove all copied widgets
             Object.keys(oView.widgets).forEach(widgetId => {
-                const oWidget = oView.widgets[widgetId];
-                if (oWidget.data && oWidget.data['multi-views']) {
-                    const views = oWidget.data['multi-views'].split(',');
-                    views.forEach(viewId => {
-                        if (viewId !== view && project[viewId]) {
-                            project[viewId].__multiViews = project[viewId].__multiViews || {};
-                            project[viewId].__multiViews[widgetId] = view;
-                        }
-                    });
+                if (widgetId.includes('_')) {
+                    delete oView.widgets[widgetId];
                 }
             });
         });
@@ -1014,34 +1000,59 @@ class App extends Runtime {
         }
     };
 
-    toggleView = (view, isShow, isActivate) => {
+    toggleView = async (view, isShow, isActivate) => {
         const openedViews = JSON.parse(JSON.stringify(this.state.openedViews));
+        let changed = false;
         if (isShow && !openedViews.includes(view)) {
             openedViews.push(view);
-        }
+            changed = true;
+        } else
         if (!isShow && openedViews.includes(view)) {
             openedViews.splice(openedViews.indexOf(view), 1);
+            changed = true;
         }
+
         window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
-        this.setState({ openedViews }, async () => {
-            if (isActivate) {
-                this.setViewsManager(false);
-                await this.changeView(view);
-            } else
-            if (!openedViews.includes(this.state.selectedView)) {
-                await this.changeView(openedViews[0]);
-            }
-        });
+
+        if (changed) {
+            await this.setStateAsync({ openedViews });
+        }
+
+        if (isActivate) {
+            this.setViewsManager(false);
+            await this.changeView(view);
+        } else
+        if (!openedViews.includes(this.state.selectedView)) {
+            await this.changeView(openedViews[0]);
+        }
     };
 
-    setSelectedWidgets = (selectedWidgets, cb) => {
-        this.setState({
-            selectedWidgets,
-            alignType: null,
-            alignIndex: 0,
-            alignValues: [],
-        }, () => cb && cb());
-        window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
+    setSelectedWidgets = async (selectedWidgets, selectedView, cb) => {
+        if (typeof selectedView === 'function') {
+            cb = selectedView;
+            selectedView = null;
+        }
+
+        if (cb) {
+            // It should never happen, as cb not used
+            // eslint-disable-next-line
+            debugger;
+        }
+
+        if (selectedView) {
+            window.localStorage.setItem(`${this.state.projectName}.${selectedView}.widgets`, JSON.stringify(selectedWidgets));
+            // changeView reads selected widgets from localStorage
+            await this.changeView(selectedView, true, true, true);
+        } else {
+            window.localStorage.setItem(`${this.state.projectName}.${this.state.selectedView}.widgets`, JSON.stringify(selectedWidgets));
+
+            this.setState({
+                selectedWidgets,
+                alignType: null,
+                alignIndex: 0,
+                alignValues: [],
+            });
+        }
     };
 
     toggleCode = () => {

@@ -416,5 +416,8 @@
   "group_attrType": "Type",
   "group_fields": "Attributes",
   "group_size_hint": "You can change group size, by selecting it in the drop down widget selector or by clicking on this text",
-  "group_help": "You can define in attributes of group's widget the special names in format \"%yourCustomName%\" and it will appear in the \"Attributes\" settings. After that you can provide name and type of custom attributes."
+  "group_help": "You can define in attributes of group's widget the special names in format \"%yourCustomName%\" and it will appear in the \"Attributes\" settings. After that you can provide name and type of custom attributes.",
+  "%s from %s": "%s from %s",
+  "Jump to widget by double click": "Jump to widget by double click on widget",
+  "Switch to group edit mode by double click": "Switch to group edit mode by double click on widget"
 }

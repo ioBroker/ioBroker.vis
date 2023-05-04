@@ -45,7 +45,6 @@ class BasicGroup extends VisRxWidget {
                         }
                     });
                 });
-                console.log(`Attributes: ${attributes.join(', ')}`);
 
                 const common = {
                     name: 'common',

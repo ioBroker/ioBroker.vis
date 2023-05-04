@@ -723,7 +723,7 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 }
 
 async function buildHtmlPages(forceBuild) {
-    const enabledList = (await readAdapterList()).filter(a => a.name === 'iobroker.vis-inventwo');
+    const enabledList = await readAdapterList();
     const configChanged = await generateConfigPage(forceBuild, enabledList);
 
     widgetInstances = {};

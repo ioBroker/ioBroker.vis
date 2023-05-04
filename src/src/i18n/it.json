@@ -416,5 +416,8 @@
   "group_attrType": "Tipo",
   "group_fields": "Attributi",
   "group_size_hint": "Puoi modificare la dimensione del gruppo, selezionandolo nel selettore del widget a discesa o facendo clic su questo testo",
-  "group_help": "Puoi definire negli attributi del widget del gruppo i nomi speciali nel formato \"%yourCustomName%\" e appariranno nelle impostazioni \"Attributi\". Successivamente è possibile fornire il nome e il tipo di attributi personalizzati."
+  "group_help": "Puoi definire negli attributi del widget del gruppo i nomi speciali nel formato \"%yourCustomName%\" e appariranno nelle impostazioni \"Attributi\". Successivamente è possibile fornire il nome e il tipo di attributi personalizzati.",
+  "%s from %s": "%s da %s",
+  "Jump to widget by double click": "Vai al widget facendo doppio clic sul widget",
+  "Switch to group edit mode by double click": "Passa alla modalità di modifica del gruppo facendo doppio clic sul widget"
 }

@@ -346,7 +346,7 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         if (!views[view].widgets[widget.groupid]) {
             widget.groupid = getWidgetGroup(views, view, wid);
             if (!widget.groupid) {
-                // create fictive group
+                // create a fictive group
                 let groupNum = 1;
                 let gId = `g${groupNum.toString().padStart(5, '0')}`;
                 while (views[view].widgets[gId]) {

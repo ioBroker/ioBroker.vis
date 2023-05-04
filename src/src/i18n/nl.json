@@ -416,5 +416,8 @@
   "group_attrType": "Type",
   "group_fields": "attributen",
   "group_size_hint": "U kunt de groepsgrootte wijzigen door deze te selecteren in de vervolgkeuzewidgetkiezer of door op deze tekst te klikken",
-  "group_help": "U kunt in de attributen van de groepswidget de speciale namen definiëren in de indeling \"%yourCustomName%\" en deze zal verschijnen in de \"Attributen\"-instellingen. Daarna kunt u de naam en het type aangepaste kenmerken opgeven."
+  "group_help": "U kunt in de attributen van de groepswidget de speciale namen definiëren in de indeling \"%yourCustomName%\" en deze zal verschijnen in de \"Attributen\"-instellingen. Daarna kunt u de naam en het type aangepaste kenmerken opgeven.",
+  "%s from %s": "%s van %s",
+  "Jump to widget by double click": "Spring naar widget door te dubbelklikken op widget",
+  "Switch to group edit mode by double click": "Schakel over naar de groepsbewerkingsmodus door te dubbelklikken op de widget"
 }

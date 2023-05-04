@@ -128,7 +128,7 @@ class VisCanWidget extends VisBaseWidget {
         this.props.context.linkContext.subscribe(this.IDs);
 
         if (!this.widDiv) {
-            // link could be a ref or direct a div (e.g. by groups)
+            // link could be a ref or direct a div (e.g., by groups)
             // console.log('Widget mounted');
             this.renderWidget(() => {
                 const newState = { mounted: true };
@@ -973,6 +973,13 @@ class VisCanWidget extends VisBaseWidget {
                 delete widgetStyle.left;
                 if (Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
                     widgetStyle['margin-bottom'] = `${parseFloat(this.props.context.views[this.props.view].settings.rowGap)}px`;
+                }
+            }
+
+            // if multi-view widget dim it in edit mode
+            if (this.state.multiViewWidget && this.state.editMode) {
+                if (widgetStyle.opacity === undefined || widgetStyle.opacity === null || widgetStyle.opacity > 0.3) {
+                    widgetStyle.opacity = 0.3;
                 }
             }
         } catch (e) {

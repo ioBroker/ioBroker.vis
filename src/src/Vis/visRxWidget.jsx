@@ -458,7 +458,6 @@ class VisRxWidget extends VisBaseWidget {
 }
 
 VisRxWidget.propTypes = {
-    // eslint-disable-next-line react/no-unused-prop-types
     id: PropTypes.string.isRequired,
     context: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,

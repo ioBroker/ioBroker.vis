@@ -41,8 +41,9 @@ class VisBaseWidget extends React.Component {
         this.refService = React.createRef();
         this.resize = false;
         this.widDiv = null;
+        const multiViewWidget = props.id.includes('_');
 
-        const selected = props.editMode && props.selectedWidgets?.includes(props.id);
+        const selected = !multiViewWidget && props.editMode && props.selectedWidgets?.includes(props.id);
 
         const data = JSON.parse(JSON.stringify(widget.data || {}));
         const style = JSON.parse(JSON.stringify(widget.style || {}));
@@ -53,7 +54,8 @@ class VisBaseWidget extends React.Component {
             style,
             // eslint-disable-next-line react/no-unused-state
             applyBindings: false,
-            editMode: this.props.editMode,
+            editMode: !multiViewWidget && this.props.editMode,
+            multiViewWidget,
             selected,
             selectedOne: selected && this.props.selectedWidgets.length === 1,
             resizable: true,
@@ -219,7 +221,7 @@ class VisBaseWidget extends React.Component {
             newState.context.widgetHint = props.widgetHint;
         }
 
-        const selected = props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
+        const selected = !state.multiViewWidget && props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
         const selectedOne = selected && props.selectedWidgets.length === 1;
 
         if (selected !== state.selected || selectedOne !== state.selectedOne) {
@@ -284,13 +286,26 @@ class VisBaseWidget extends React.Component {
 
     onMouseDown(e) {
         e.stopPropagation();
-        if (this.stealCursor) {
+        if (this.stealCursor && !this.state.multiViewWidget) {
             this.props.mouseDownOnView(e, this.props.id, this.props.isRelative);
             return;
         }
         if (this.props.context.views[this.props.view].widgets[this.props.id].data.locked) {
             return;
         }
+
+        // detect double click for multi-view widgets
+        if (this.state.multiViewWidget) {
+            if (Date.now() - this.lastClick < 300) {
+                // change view
+                const [multiView, multiId] = this.props.id.split('_');
+                this.props.context.setSelectedWidgets([multiId], multiView);
+            }
+
+            this.lastClick = Date.now();
+            return;
+        }
+
         if (!this.props.selectedWidgets.includes(this.props.id)) {
             if (e.shiftKey || e.ctrlKey) {
                 // add or remove
@@ -348,7 +363,7 @@ class VisBaseWidget extends React.Component {
     }
 
     onMove = (x, y, save, calculateRelativeWidgetPosition) => {
-        if (!this.props.editMode) {
+        if (this.state.multiViewWidget || !this.props.editMode) {
             return;
         }
 
@@ -926,7 +941,7 @@ class VisBaseWidget extends React.Component {
     changeOrder(e, dir) {
         e.stopPropagation();
         e.preventDefault();
-        if (!this.props.editMode) {
+        if (this.state.multiViewWidget || !this.props.editMode) {
             return;
         }
 
@@ -1365,7 +1380,7 @@ class VisBaseWidget extends React.Component {
         }
 
         const style = {};
-        const selected = this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
+        const selected = !this.state.multiViewWidget && this.state.editMode && this.props.selectedWidgets?.includes(this.props.id);
         let classNames = selected ? 'vis-editmode-selected' : 'vis-editmode-overlay-not-selected';
         if (selected && this.state.widgetHint === 'hide') {
             classNames = addClass(classNames, 'vis-editmode-selected-background');
@@ -1406,7 +1421,7 @@ class VisBaseWidget extends React.Component {
                 }
             } else if (widget.data?.locked) {
                 style.cursor = 'default';
-            } else if (this.props.selectedGroup !== this.props.id) {
+            } else if (this.props.selectedGroup !== this.props.id && !this.state.multiViewWidget) {
                 style.cursor = 'pointer';
             }
 
@@ -1485,7 +1500,13 @@ class VisBaseWidget extends React.Component {
                 setTimeout(() => this.forceUpdate(), 50);
             }
 
+            const [multiView, multiId] = this.state.multiViewWidget ? this.props.id.split('_') : [null, null];
+
             widgetName = <div
+                title={this.state.multiViewWidget ?
+                    I18n.t('Jump to widget by double click') :
+                    (widget.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)
+                }
                 className={Utils.clsx(
                     'vis-editmode-widget-name',
                     selected && 'selected',
@@ -1494,9 +1515,11 @@ class VisBaseWidget extends React.Component {
                     this.props.isRelative && this.state.resizable && 'vis-editmode-widget-name-long',
                 )}
             >
-                <span>{this.props.id}</span>
-                <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />
-                {this.props.isRelative && this.state.resizable ? <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
+                <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId, multiView) : this.props.id}</span>
+                {this.state.multiViewWidget ? null :
+                    <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />}
+                {!this.state.multiViewWidget && this.props.isRelative && this.state.resizable ?
+                    <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
             </div>;
 
             if (this.props.isRelative) {
@@ -1524,6 +1547,13 @@ class VisBaseWidget extends React.Component {
             }
 
             style.overflow = 'visible';
+        }
+
+        // if multi-view widget and it is not "can", dim it in edit mode
+        if (!this.isCanWidget && this.state.multiViewWidget && this.state.editMode) {
+            if (style.opacity === undefined || style.opacity === null || style.opacity > 0.5) {
+                style.opacity = 0.5;
+            }
         }
 
         const overlay =

@@ -416,5 +416,8 @@
   "group_attrType": "Typ",
   "group_fields": "Attribute",
   "group_size_hint": "Sie können die Gruppengröße ändern, indem Sie sie im Dropdown-Widget-Selektor auswählen oder auf diesen Text klicken",
-  "group_help": "Sie können in den Attributen des Gruppen-Widgets die speziellen Namen im Format \"%yourCustomName%\" definieren und sie werden in den \"Attribute\"-Einstellungen angezeigt. Danach können Sie Name und Typ der benutzerdefinierten Attribute angeben."
+  "group_help": "Sie können in den Attributen des Gruppen-Widgets die speziellen Namen im Format \"%yourCustomName%\" definieren und sie werden in den \"Attribute\"-Einstellungen angezeigt. Danach können Sie Name und Typ der benutzerdefinierten Attribute angeben.",
+  "%s from %s": "%s von %s",
+  "Jump to widget by double click": "Springen Sie zum Widget, indem Sie auf das Widget doppelklicken",
+  "Switch to group edit mode by double click": "Wechseln Sie in den Gruppenbearbeitungsmodus, indem Sie auf das Widget doppelklicken"
 }

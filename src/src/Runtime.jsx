@@ -221,6 +221,45 @@ class Runtime extends GenericApp {
         });
     }
 
+    syncMultipleWidgets(project) {
+        project = project || this.state.visProject;
+        Object.keys(project).forEach(view => {
+            if (view === '___settings') {
+                return;
+            }
+
+            const oView = project[view];
+            Object.keys(oView.widgets).forEach(widgetId => {
+                const oWidget = oView.widgets[widgetId];
+                // if widget must be shown in more than one view
+                if (oWidget.data && oWidget.data['multi-views']) {
+                    const views = oWidget.data['multi-views'].split(',');
+                    views.forEach(viewId => {
+                        if (viewId !== view && project[viewId]) {
+                            // copy all widgets, that must be shown in this view too
+                            project[viewId].widgets[`${view}_${widgetId}`] = JSON.parse(JSON.stringify(oWidget));
+                            delete project[viewId].widgets[`${view}_${widgetId}`].data['multi-views'];
+                            if (oWidget.tpl === '_tplGroup' && oWidget.data.members?.length) {
+                                // copy all group widgets too
+                                const newWidget = project[viewId].widgets[`${view}_${widgetId}`];
+                                newWidget.data.members.forEach((memberId, i) => {
+                                    const newId = `${view}_${memberId}`;
+                                    project[viewId].widgets[newId] = JSON.parse(JSON.stringify(oView.widgets[memberId]));
+                                    delete project[viewId].widgets[newId].data['multi-views']; // do not allow multi-multi-views
+                                    newWidget.data.members[i] = newId;
+                                    // do not copy members of multi-group
+                                    if (project[viewId].widgets[newId].members) {
+                                        project[viewId].widgets[newId].members = [];
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    }
+
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
@@ -335,6 +374,9 @@ class Runtime extends GenericApp {
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
         }
 
+        // copy multi-views to corresponding views
+        this.syncMultipleWidgets(project);
+
         await this.setStateAsync({
             visCommonCss: null,
             visUserCss: null,
@@ -443,6 +485,9 @@ class Runtime extends GenericApp {
         if (selectedView === this.state.selectedView) {
             return;
         }
+        const newState = {
+            selectedView,
+        };
 
         let selectedWidgets = JSON.parse(window.localStorage.getItem(
             `${this.state.projectName}.${selectedView}.widgets`,
@@ -454,16 +499,24 @@ class Runtime extends GenericApp {
                 selectedWidgets = selectedWidgets.splice(i, 1);
             }
         }
-
-        const newState = {
-            selectedView,
-            selectedWidgets,
-        };
+        if (JSON.stringify(newState.selectedWidgets) !== JSON.stringify(selectedWidgets)) {
+            newState.selectedWidgets = selectedWidgets;
+        }
+        if (newState.alignType !== null) {
+            newState.alignType = null;
+        }
+        if (newState.alignIndex !== 0) {
+            newState.alignIndex = 0;
+        }
+        if (newState.alignValues?.length > 0) {
+            newState.alignValues = [];
+        }
 
         if (!this.state.openedViews || !this.state.openedViews.includes(selectedView)) {
             const openedViews = this.state.openedViews ? [...this.state.openedViews] : [];
             openedViews.push(selectedView);
             newState.openedViews = openedViews;
+            window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
         }
 
         window.localStorage.setItem('selectedView', selectedView);

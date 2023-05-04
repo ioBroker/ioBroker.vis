@@ -857,6 +857,9 @@ const Widget = props => {
                             <tbody>
                                 {
                                     group.fields.map((field, fieldIndex) => {
+                                        if (!field) {
+                                            return null;
+                                        }
                                         let error;
                                         let disabled;
                                         if (field.hidden) {

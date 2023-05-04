@@ -416,5 +416,8 @@
   "group_attrType": "Typ",
   "group_fields": "Atrybuty",
   "group_size_hint": "Możesz zmienić rozmiar grupy, wybierając ją w rozwijanym selektorze widżetów lub klikając ten tekst",
-  "group_help": "Możesz zdefiniować w atrybutach widżetu grupy specjalne nazwy w formacie \"%twojaCustomName%\" i pojawią się one w ustawieniach \"Atrybuty\". Następnie możesz podać nazwę i typ atrybutów niestandardowych."
+  "group_help": "Możesz zdefiniować w atrybutach widżetu grupy specjalne nazwy w formacie \"%twojaCustomName%\" i pojawią się one w ustawieniach \"Atrybuty\". Następnie możesz podać nazwę i typ atrybutów niestandardowych.",
+  "%s from %s": "%s od %s",
+  "Jump to widget by double click": "Przejdź do widżetu, klikając dwukrotnie widżet",
+  "Switch to group edit mode by double click": "Przejdź do trybu edycji grupy, klikając dwukrotnie widżet"
 }

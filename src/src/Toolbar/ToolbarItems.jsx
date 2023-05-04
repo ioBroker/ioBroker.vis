@@ -96,7 +96,7 @@ const getItem = (item, key, props, full) => {
         return <MultiSelect
             key={key}
             // style={{ margin: '0px 10px' }}
-            label={props.toolbarHeight !== 'veryNarrow' ? I18n.t(item.name) : null}
+            label={props.toolbarHeight !== 'veryNarrow' ? (item.doNotTranslateName ? item.name : I18n.t(item.name)) : null}
             width={item.width}
             value={item.value ? item.value : value}
             onChange={_value => item.onChange(_value)}

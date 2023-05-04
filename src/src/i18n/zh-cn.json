@@ -416,5 +416,8 @@
   "group_attrType": "类型",
   "group_fields": "属性",
   "group_size_hint": "您可以通过在下拉小部件选择器中选择它或单击此文本来更改组大小",
-  "group_help": "您可以在组的小部件的属性中定义格式为“%yourCustomName%”的特殊名称，它将出现在“属性”设置中。之后，您可以提供自定义属性的名称和类型。"
+  "group_help": "您可以在组的小部件的属性中定义格式为“%yourCustomName%”的特殊名称，它将出现在“属性”设置中。之后，您可以提供自定义属性的名称和类型。",
+  "%s from %s": "来自 %s 的 %s",
+  "Jump to widget by double click": "双击小部件跳转到小部件",
+  "Switch to group edit mode by double click": "双击小部件切换到组编辑模式"
 }
