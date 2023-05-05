@@ -724,7 +724,6 @@ class VisEngine extends React.Component {
                     callback && callback(data)),
             formatDate: (dateObj, isDuration, _format) => this.formatUtils.formatDate(dateObj, isDuration, _format),
             widgets: this.allWidgets,
-
             editSelect:         this.props.runtime ? null : (widAttr, values, notTranslate, init, onchange) => {
                 console.log('DEPRECATED!!!!! please remove vis.editSelect');
                 if (typeof notTranslate === 'function') {
@@ -754,6 +753,85 @@ class VisEngine extends React.Component {
                 }
                 line.input += '</select>';
                 return line;
+            },
+            isWidgetHidden: (view, widget, val, widgetData) => {
+                widgetData = widgetData || this.props.views[view].widgets[widget].data;
+                const oid = widgetData['visibility-oid'];
+                const condition = widgetData['visibility-cond'];
+                if (oid) {
+                    if (val === undefined || val === null) {
+                        val = this.canStates.attr(`${oid}.val`);
+                    }
+                    if (val === undefined || val === null) {
+                        return condition === 'not exist';
+                    }
+
+                    let value = widgetData['visibility-val'];
+
+                    if (!condition || value === undefined || value === null) {
+                        return condition === 'not exist';
+                    }
+
+                    if (val === 'null' && condition !== 'exist' && condition !== 'not exist') {
+                        return false;
+                    }
+
+                    const t = typeof val;
+                    if (t === 'boolean' || val === 'false' || val === 'true') {
+                        value = value === 'true' || value === true || value === 1 || value === '1';
+                    } else
+                    if (t === 'number') {
+                        value = parseFloat(value);
+                    } else
+                    if (t === 'object') {
+                        val = JSON.stringify(val);
+                    }
+
+                    // Take care: return true if the widget is hidden!
+                    switch (condition) {
+                        case '==':
+                            value = value.toString();
+                            val = val.toString();
+                            if (val === '1') val = 'true';
+                            if (value === '1') value = 'true';
+                            if (val === '0') val = 'false';
+                            if (value === '0') value = 'false';
+                            return value !== val;
+                        case '!=':
+                            value = value.toString();
+                            val = val.toString();
+                            if (val === '1') val = 'true';
+                            if (value === '1') value = 'true';
+                            if (val === '0') val = 'false';
+                            if (value === '0') value = 'false';
+                            return value === val;
+                        case '>=':
+                            return val < value;
+                        case '<=':
+                            return val > value;
+                        case '>':
+                            return val <= value;
+                        case '<':
+                            return val >= value;
+                        case 'consist':
+                            value = value.toString();
+                            val = val.toString();
+                            return !val.toString().includes(value);
+                        case 'not consist':
+                            value = value.toString();
+                            val = val.toString();
+                            return val.toString().includes(value);
+                        case 'exist':
+                            return val === 'null';
+                        case 'not exist':
+                            return val !== 'null';
+                        default:
+                            console.log(`Unknown visibility condition for ${widget}: ${condition}`);
+                            return false;
+                    }
+                } else {
+                    return condition === 'not exist';
+                }
             },
         };
     }

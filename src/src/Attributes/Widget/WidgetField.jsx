@@ -210,8 +210,12 @@ const WidgetField = props => {
         const options = field.type.split(',');
         options.shift();
         const funcs = options[0].split('.');
-        if (funcs[0] === 'vis') funcs.shift();
-        if (funcs[0] === 'binds') funcs.shift();
+        if (funcs[0] === 'vis') {
+            funcs.shift();
+        }
+        if (funcs[0] === 'binds') {
+            funcs.shift();
+        }
 
         window._   = window.vis._; // for old widgets, else lodash overwrites it
         window.vis.activeWidgets = [...props.selectedWidgets];
@@ -1186,7 +1190,7 @@ const WidgetField = props => {
         </>;
     }
 
-    if (!field.type || field.type === 'number' || field.type === 'password') {
+    if (!field.type || field.type === 'number' || field.type === 'password' || field.type === 'text' || field.type === 'url') {
         return <>
             <TextField
                 variant="standard"

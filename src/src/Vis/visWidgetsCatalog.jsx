@@ -313,6 +313,12 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         field.step = (field.max - field.min / 100);
                     }
                 }
+                // remove comma from type
+                if (field.type?.startsWith('style,')) {
+                    console.warn(`Attribute "${field.name}" of ${widgetSet} has wrong type: ${field.type}`);
+                    field.type = field.type.split(',')[0];
+                }
+
                 field.singleName = field.name;
                 field.set = widgetSet;
                 if (repeats) {
