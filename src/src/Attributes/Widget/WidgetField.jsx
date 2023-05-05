@@ -330,8 +330,8 @@ const WidgetField = props => {
         if (propValue !== undefined) {
             setCachedValue(propValue);
         }
-        if (field.type === 'instance') {
-            if (field.adapter === '_dataSources') {
+        if (field.type === 'instance' || field.type === 'history') {
+            if (field.adapter === '_dataSources' || field.type === 'history') {
                 props.socket.getAdapterInstances('')
                     .then(_instances => {
                         const inst = _instances
@@ -454,7 +454,7 @@ const WidgetField = props => {
         return <div ref={refCustom} dangerouslySetInnerHTML={{ __html: customLegacyComponent.input }} />;
     }
 
-    if (field.type === 'id' || field.type === 'hid' || field.type === 'history') {
+    if (field.type === 'id' || field.type === 'hid') {
         if (value && (!objectCache || value !== objectCache._id)) {
             props.socket.getObject(value)
                 .then(objectData =>
@@ -469,7 +469,7 @@ const WidgetField = props => {
         let customFilter = null;
         let filters = null;
         if (idDialog && !disabled) {
-            if (field.type === 'hid' || field.type === 'history') {
+            if (field.type === 'hid') {
                 customFilter = { common: { custom: '_dataSources' } };
             } else if (
                 typeof field.filter === 'string' &&
@@ -1091,7 +1091,7 @@ const WidgetField = props => {
         }
     }
 
-    if (field.type === 'instance') {
+    if (field.type === 'instance' || field.type === 'history') {
         return <Select
             variant="standard"
             value={value}
