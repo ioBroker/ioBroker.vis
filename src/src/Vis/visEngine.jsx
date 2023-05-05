@@ -355,6 +355,27 @@ class VisEngine extends React.Component {
     }
 
     createLegacyVisObject() {
+        // simulate legacy file manager
+        if (this.props.showLegacyFileSelector) {
+            window.jQuery.fm = (options, onChange) => {
+                // possible options
+                // {
+                //     lang,
+                //     defaultPath,
+                //     path,
+                //     uploadDir,
+                //     fileFilter,
+                //     folderFilter,
+                //     mode: 'open',
+                //     view: 'prev',
+                //     userArg: wdata,
+                //     conn,
+                //     zindex
+                // }
+                this.props.showLegacyFileSelector((data, userArg) => onChange(data, userArg), options);
+            };
+        }
+
         return {
             version: 2,
             states: this.canStates,
@@ -702,6 +723,38 @@ class VisEngine extends React.Component {
                 this.props.socket.getRawSocket().emit('httpGet', url, data =>
                     callback && callback(data)),
             formatDate: (dateObj, isDuration, _format) => this.formatUtils.formatDate(dateObj, isDuration, _format),
+            widgets: this.allWidgets,
+
+            editSelect:         this.props.runtime ? null : (widAttr, values, notTranslate, init, onchange) => {
+                console.log('DEPRECATED!!!!! please remove vis.editSelect');
+                if (typeof notTranslate === 'function') {
+                    onchange = init;
+                    init = notTranslate;
+                    notTranslate = false;
+                }
+
+                // Select
+                const line = {
+                    input: `<select type="text" id="inspect_${widAttr}">`,
+                };
+                if (onchange) {
+                    line.onchange = onchange;
+                }
+                if (init) {
+                    line.init = init;
+                }
+                if (values.length && values[0] !== undefined) {
+                    for (let t = 0; t < values.length; t++) {
+                        line.input += `<option value="${values[t]}">${notTranslate ? values[t] : window.vis._(values[t])}</option>`;
+                    }
+                } else {
+                    for (const name in values) {
+                        line.input += `<option value="${values[name]}">${name}</option>`;
+                    }
+                }
+                line.input += '</select>';
+                return line;
+            },
         };
     }
 
@@ -1862,6 +1915,7 @@ VisEngine.propTypes = {
     adapterId: PropTypes.string.isRequired, // vis.0
     currentUser: PropTypes.object,
     renderAlertDialog: PropTypes.func,
+    showLegacyFileSelector: PropTypes.func,
 };
 
 export default VisEngine;

@@ -50,3 +50,29 @@ body {
   left: 0 !important;
   padding: 0 !important;
 }
+
+.ui-menu {
+  background: #EEE;
+  height: 300px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  border: 1px solid #aaa;
+  color: #111;
+  padding: 0;
+}
+
+.ui-menu-item {
+  list-style-image: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 3px 1em 3px 0.4em;
+  cursor: pointer;
+}
+.ui-menu-item::marker {
+  list-style-image: none;
+  list-style-type: none;
+  margin: 0;
+}
+.ui-menu-item:hover {
+  background-color: #CCC;
+}

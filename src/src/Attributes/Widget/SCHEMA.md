@@ -189,9 +189,11 @@ onChange: async (field, data, changeData, socket) => {
   - `style` - Drop-down menu with all possible styles. ?
   - `custom` - Custom field editor. See [below](#custom-field-editor)
   - `text` - Input field with Edit dialog.
-    - `noButton` - [optional] if true, no edit button will be shown. Default is false. 
+    - `noButton` - [optional] if true, no edit button will be shown. Default is true. 
   - `html` - Input field with Edit dialog and parsing of HTML code
+    - `multiline` - show multi-line editor
   - `json` - Input field with Edit dialog and parsing of JSON code
+    - `multiline` - show multi-line editor
   - `icon64` - Select from predefined material icons as base64 (svg)
   - `help` - show help text
     - `text` - [required] This text will be shown without label

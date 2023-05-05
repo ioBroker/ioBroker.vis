@@ -1036,10 +1036,12 @@ class VisCanWidget extends VisBaseWidget {
             this.props.context.linkContext.subscribe(subscribe);
         }
 
+        widgetData.wid = wid; // legacy
         // try to apply bindings to every attribute
         this.props.context.allWidgets[wid] = {
             style: new this.props.context.can.Map(widgetStyle),
             data: new this.props.context.can.Map(widgetData),
+            wid, // legacy
         };
 
         // Add to the global array of widgets

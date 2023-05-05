@@ -27,6 +27,7 @@ import {
     Loader,
     Confirm as ConfirmDialog,
     Message as MessageDialog,
+    SelectFile as SelectFileDialog,
 } from '@iobroker/adapter-react-v5';
 
 import Attributes from './Attributes';
@@ -221,6 +222,7 @@ class App extends Runtime {
             confirmDialog: null,
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
+            legacyFileSelector: null,
         });
     }
 
@@ -1528,6 +1530,58 @@ class App extends Runtime {
         />;
     }
 
+    showLegacyFileSelector = (callback, options) => this.setState({ legacyFileSelector: { callback, options } });
+
+    renderLegacyFileSelectorDialog() {
+        return this.state.legacyFileSelector ? <SelectFileDialog
+            title={I18n.t('Select file')}
+            onClose={() => this.setState({ legacyFileSelector: false })}
+            allowUpload
+            allowDownload
+            allowCreateFolder
+            allowDelete
+            allowView
+            showToolbar
+            imagePrefix="../"
+            selected={this.state.legacyFileSelector.options?.path || ''}
+            filterByType="images"
+            onSelect={(selected, isDoubleClick) => {
+                const projectPrefix = `${this.adapterName}.${this.instance}/${this.state.projectName}/`;
+                if (selected.startsWith(projectPrefix)) {
+                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                } else if (selected.startsWith('/')) {
+                    selected = `..${selected}`;
+                } else if (!selected.startsWith('.')) {
+                    selected = `../${selected}`;
+                }
+                if (isDoubleClick) {
+                    const parts = selected.split('/');
+                    const file = parts.pop();
+                    const path = `${parts.join('/')}/`;
+
+                    this.state.legacyFileSelector.callback({ path, file }, this.state.legacyFileSelector.options?.userArg);
+                    this.setState({ legacyFileSelector: null });
+                }
+            }}
+            onOk={selected => {
+                const projectPrefix = `${this.adapterName}.${this.instance}/${this.state.projectName}/`;
+                if (selected.startsWith(projectPrefix)) {
+                    selected = `_PRJ_NAME/${selected.substring(projectPrefix.length)}`;
+                } else if (selected.startsWith('/')) {
+                    selected = `..${selected}`;
+                } else if (!selected.startsWith('.')) {
+                    selected = `../${selected}`;
+                }
+                const parts = selected.split('/');
+                const file = parts.pop();
+                const path = `${parts.join('/')}/`;
+                this.state.legacyFileSelector.callback({ path, file }, this.state.legacyFileSelector.options?.userArg);
+                this.setState({ legacyFileSelector: null });
+            }}
+            socket={this.socket}
+        /> : null;
+    }
+
     render() {
         if (this.state.projectDoesNotExist) {
             return <StylesProvider generateClassName={generateClassName}>
@@ -1695,6 +1749,7 @@ class App extends Runtime {
                     {this.renderShowCodeDialog()}
                     {this.renderShowProjectUpdateDialog()}
                     {this.renderMessageDialog()}
+                    {this.renderLegacyFileSelectorDialog()}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

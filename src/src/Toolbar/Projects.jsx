@@ -8,7 +8,10 @@ import ListIcon from '@mui/icons-material/List';
 import FilesIcon from '@mui/icons-material/FileCopy';
 
 import {
-    SelectID, I18n, SelectFile as SelectFileDialog, Utils,
+    SelectID,
+    I18n,
+    SelectFile as SelectFileDialog,
+    Utils,
 } from '@iobroker/adapter-react-v5';
 
 import ToolbarItems from './ToolbarItems';

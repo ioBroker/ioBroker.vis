@@ -14,9 +14,10 @@
  */
 
 import PropTypes from 'prop-types';
-import VisRxWidget from '../../visRxWidget';
 
 import { I18n } from '@iobroker/adapter-react-v5';
+
+import VisRxWidget from '../../visRxWidget';
 
 class BasicGroup extends VisRxWidget {
     static getWidgetInfo() {

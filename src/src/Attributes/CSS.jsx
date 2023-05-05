@@ -128,26 +128,12 @@ const CSS = props => {
             focus
             height="calc(100% - 34px)"
         />
-        {/*<AceEditor
-            mode="css"
-            theme={props.themeName === 'dark' ? 'clouds_midnight' : 'chrome'}
-            readOnly={!props.editMode}
-            value={value}
-            onChange={newValue => save(newValue, type)}
-            width="100%"
-            height="calc(100% - 34px)"
-            highlightActiveLine
-            enableBasicAutocompletion
-            enableLiveAutocompletion
-            enableSnippets
-        />*/}
     </>;
 };
 
 CSS.propTypes = {
     projectName: PropTypes.string,
     socket: PropTypes.object,
-    themeName: PropTypes.string,
     saveCssFile: PropTypes.func.isRequired,
     adapterId: PropTypes.string.isRequired,
     adapterName: PropTypes.string.isRequired,

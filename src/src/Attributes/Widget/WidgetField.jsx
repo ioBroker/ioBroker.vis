@@ -397,12 +397,55 @@ const WidgetField = props => {
     // part for customLegacyComponent
     useEffect(() => {
         if (customLegacyComponent && refCustom.current && typeof customLegacyComponent.init === 'function') {
-            customLegacyComponent.init.call(refCustom.current, field.name, propValue);
+            // take the first child in div
+            customLegacyComponent.init.call(refCustom.current.children[0] || refCustom.current, field.name, propValue);
         }
     }, []);
 
     if (customLegacyComponent) {
         // console.log(customLegacyComponent.input);
+        if (customLegacyComponent.button) {
+            return <div style={{ width: '100%', display: 'flex' }}>
+                {/* eslint-disable-next-line react/no-danger */}
+                <div ref={refCustom} dangerouslySetInnerHTML={{ __html: customLegacyComponent.input }} />
+                <Button
+                    style={{
+                        width: 30,
+                        height: 30,
+                        minWidth: 30,
+                        minHeight: 30,
+                        marginLeft: 5,
+                    }}
+                    title={customLegacyComponent.button.title}
+                    onClick={e => {
+                        if (typeof customLegacyComponent.button.code === 'function') {
+                            customLegacyComponent.button.code(customLegacyComponent.button);
+                        }
+                        const $button = window.jQuery(e.target);
+                        $button.data('wdata', {
+                            attr: field.name,
+                            widgets: props.selectedWidgets,
+                            view: props.selectedView,
+                        });
+                        if (customLegacyComponent.button.data) {
+                            $button.data('data-custom', customLegacyComponent.button.data);
+                        }
+                        // initialize field
+                        if (window.vis.widgets[props.selectedWidgets[0]] &&
+                            window.vis.widgets[props.selectedWidgets[0]].data &&
+                            window.vis.widgets[props.selectedWidgets[0]].data[field.name] === undefined
+                        ) {
+                            window.vis.widgets[props.selectedWidgets[0]].data[field.name] = '';
+                        }
+
+                        customLegacyComponent.button.click.call(e.target);
+                    }}
+                >
+                    ...
+                </Button>
+            </div>;
+        }
+
         // eslint-disable-next-line react/no-danger
         return <div ref={refCustom} dangerouslySetInnerHTML={{ __html: customLegacyComponent.input }} />;
     }
@@ -1105,14 +1148,14 @@ const WidgetField = props => {
         </div>;
     }
 
-    if (field.type === 'text' || field.type === 'html' || field.type === 'json') {
+    if (field.type === 'html' || field.type === 'json' || (field.type === 'text' && field.noButton === false)) {
         return <>
             <TextField
                 size="small"
                 placeholder={isDifferent ? t('different') : null}
                 variant="standard"
                 value={value}
-                multiline={!field.noButton}
+                multiline={field.multiline}
                 fullWidth
                 error={!!error}
                 disabled={disabled}

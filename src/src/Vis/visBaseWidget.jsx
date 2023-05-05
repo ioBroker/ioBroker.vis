@@ -1505,8 +1505,7 @@ class VisBaseWidget extends React.Component {
             widgetName = <div
                 title={this.state.multiViewWidget ?
                     I18n.t('Jump to widget by double click') :
-                    (widget.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)
-                }
+                    (widget.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)}
                 className={Utils.clsx(
                     'vis-editmode-widget-name',
                     selected && 'selected',

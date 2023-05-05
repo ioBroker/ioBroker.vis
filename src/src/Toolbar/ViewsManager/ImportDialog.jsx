@@ -76,7 +76,6 @@ ImportDialog.propTypes = {
     onClose: PropTypes.func,
     open: PropTypes.bool,
     project: PropTypes.object,
-    themeName: PropTypes.string,
     view: PropTypes.string,
 };
 export default ImportDialog;

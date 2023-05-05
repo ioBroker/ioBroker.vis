@@ -769,6 +769,7 @@ class Runtime extends GenericApp {
             onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
             currentUser={this.state.currentUser}
             renderAlertDialog={this.renderAlertDialog}
+            showLegacyFileSelector={this.showLegacyFileSelector}
         />;
     }
 
