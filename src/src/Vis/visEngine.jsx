@@ -1508,7 +1508,7 @@ class VisEngine extends React.Component {
                 return;
             }
             // ignore too old commands
-            if (state.ts && Date.now() - state.ts > 5000) {
+            if (this._cmdData !== undefined && state.ts && Date.now() - state.ts > 5000) {
                 return;
             }
             this._cmdData = state.val;
@@ -1520,7 +1520,7 @@ class VisEngine extends React.Component {
                 return;
             }
             // ignore too old commands
-            if (state.ts && Date.now() - state.ts > 5000) {
+            if (this._cmdInstance !== undefined && state.ts && Date.now() - state.ts > 5000) {
                 return;
             }
             this._cmdInstance = state.val;
