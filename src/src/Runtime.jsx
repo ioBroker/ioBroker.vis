@@ -678,6 +678,7 @@ class Runtime extends GenericApp {
                                 <ListItemText>{project}</ListItemText>
                             </ListItemButton>)}
                         <ListItemButton
+                            id="create-new-project"
                             onClick={() => this.setState({ showNewProjectDialog: true, newProjectName: this.state.projects.length ? '' : 'main' })}
                             style={{ backgroundColor: '#112233', color: '#ffffff' }}
                         >

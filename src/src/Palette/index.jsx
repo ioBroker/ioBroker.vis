@@ -225,6 +225,7 @@ const Palette = props => {
                     }}
                 >
                     <AccordionSummary
+                        id={`summary_${category}`}
                         expandIcon={<ExpandMoreIcon />}
                         classes={{
                             root: Utils.clsx(

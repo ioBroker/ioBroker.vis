@@ -25,23 +25,23 @@ Additionally, you need a license to use the adapter. The following license editi
 
 ## Bindings of objects
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
-But there is another option how to bind *any* attribute of widget to some ObjectID. 
+But there is another option for how to bind *any* attribute of widget to some ObjectID. 
 
 Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
-If you use the special format, you can even make some simple operations with it, e.g. multiplying or formatting.
+If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.
 Patten has the following format:
 
 ```
 {objectID;operation1;operation2;...}
 ```
 
-Following operations are supported:
+The following operations are supported:
 
-- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample we multiply value with 4.
+- `\*` - multiplying. Argument must be in brackets, like "*(4)". In this sample, we multiply the value with 4.
 - `\+` - add. Argument must be in brackets, like "+(4.5)". In this sample we add to value 4.5.
 - `\-` - subtract. Argument must be in brackets, like "-(-674.5)". In this sample we subtract from value -674.5.
 - `/` - dividing. Argument must be in brackets, like "/(0.5)". In this sample we divide value by 0.5.
-- `%` - modulo. Argument must be in brackets, like "%(5)". In this sample we take modulo of 5.
+- `%` - modulo. Argument must be in brackets, like "%(5)". In this sample, we take modulo of 5.
 - `round` - round the value.
 - `round(N)` - round the value with N places after point, e.g. 34.678;round(1) => 34.7
 - `hex` - convert value to hexadecimal value. All letters are lower cased.
@@ -58,7 +58,7 @@ Following operations are supported:
 - `ceil` - Math.ceil
 - `random(R)` - Math.random() * R, or just Math.random() if no argument
 - `formatValue(decimals)` - format value according to system settings and use decimals
-- `date(format)` - format value as date. Format is like: "YYYY-MM-DD hh:mm:ss.sss"
+- `date(format)` - format value as date. The format is like: "YYYY-MM-DD hh:mm:ss.sss"
 - `momentDate(format, useTodayOrYesterday)` - format value as date using Moment.js. [Approved formats must be entered according to the moment.js library](https://momentjs.com/docs/#/displaying/format/). With `useTodayOrYesterday=true` the momentjs format `ddd`/`dddd` are overwritten with today / yesterday
 - `array(element1,element2[,element3,element4])` - returns the element of index. e.g.: `{id.ack;array(ack is false,ack is true)}`
 
@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.24 (2023-04-03)
+### 2.0.25 (2023-05-07)
 * (bluefox) Corrected errors
 
 ### 2.0.10 (2022-12-01)
