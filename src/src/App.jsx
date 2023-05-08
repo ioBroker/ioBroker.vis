@@ -181,6 +181,8 @@ class App extends Runtime {
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
+        this.mainRef = React.createRef();
+
         // this function will be called from Runtime
 
         let runtime = false;
@@ -1630,6 +1632,9 @@ class App extends Runtime {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     <Popper
+                        id="vis_main_popper"
+                        placement="top-start"
+                        anchorEl={this.mainRef.current}
                         open={!!Object.keys(this.state.widgetsClipboard.widgets).length}
                         style={{ width: '100%', textAlign: 'center', pointerEvents: 'none' }}
                     >
@@ -1708,7 +1713,7 @@ class App extends Runtime {
                             }}
                             version={this.props.version}
                         />
-                        <div style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative' }} ref={this.mainRef}>
                             <DndProvider backend={isTouchDevice() ? TouchBackend : HTML5Backend}>
                                 <DndPreview />
                                 {this.state.hidePalette && this.state.hideAttributes ? this.renderWorkspace() : null}

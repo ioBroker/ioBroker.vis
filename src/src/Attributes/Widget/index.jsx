@@ -427,9 +427,15 @@ const checkFunction = (funcText, project, selectedView, selectedWidgets, index) 
         }
         const isHidden = [];
         for (let i = 0; i < selectedWidgets.length; i++) {
-            const data = project[selectedView].widgets[selectedWidgets[i]].data;
-            const style = project[selectedView].widgets[selectedWidgets[i]].style;
-            isHidden[i] = _func(data, index, style);
+            const widget = project[selectedView].widgets[selectedWidgets[i]];
+            const data = widget?.data;
+            const style = widget?.style;
+            if (!widget) {
+                // strange error
+                console.warn(`Strange error, that widget ${selectedWidgets[i]} does not exists`);
+                continue;
+            }
+            isHidden.push(_func(data || {}, index, style || {}));
         }
         let _isHdn = isHidden[0];
         if (_isHdn && isHidden.find((hidden, i) => i > 0 && !hidden)) {
