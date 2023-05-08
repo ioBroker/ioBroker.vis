@@ -9,12 +9,12 @@
 WEB visualisation for ioBroker platform.
 
 ## License requirements
-To use this adapter in ioBroker you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
+To use this adapter in `ioBroker` you need to accept the source code license of the adapter. The source code of this adapter is available under the CC BY-NC license.
 
 Additionally, you need a license to use the adapter. The following license editions are available on https://iobroker.net/www/pricing 
-* **Community-License: Free for private use!**: Get a free license by registering an account on https://iobroker.net . The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this timepoint is required!
-* **Private use Offline-License**: For paying a small support fee you can get rid of the required online license check on adapter startup. **Only for Private use!**
-* **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers this license is for you. License check is also not requiring an online connection.
+* **Community-License: Free for private use!**: Get a free license by registering an account on [https://iobroker.net](https://iobroker.net). The license if checked online against the ioBroker license server when the vis adapter is started, so an online connection at this time point is required!
+* **Private use Offline-License**: For paying a small support fee, you can get rid of the required online license check on adapter startup. **Only for Private use!**
+* **Commercial License**: When using Vis in a commercial environment or selling Vis as part of ioBroker packages to your customers, this license is for you. License check is also not requiring an online connection.
 
 ## Installation & Documentation
 
@@ -27,7 +27,7 @@ Additionally, you need a license to use the adapter. The following license editi
 Normally, most of the widgets have ObjectID attribute and this attribute can be bound with some value of object ID.
 But there is another option for how to bind *any* attribute of widget to some ObjectID. 
 
-Just write into attribute ```{object.id}``` and it will be bound (not in edit mode) to this object's value. 
+Just write into attribute `{object.id}` and it will be bound (not in edit mode) to this object's value. 
 If you use the special format, you can even make some simple operations with it, e.g., multiplying or formatting.
 Patten has the following format:
 
@@ -59,7 +59,7 @@ The following operations are supported:
 - `random(R)` - Math.random() * R, or just Math.random() if no argument
 - `formatValue(decimals)` - format value according to system settings and use decimals
 - `date(format)` - format value as date. The format is like: "YYYY-MM-DD hh:mm:ss.sss"
-- `momentDate(format, useTodayOrYesterday)` - format value as date using Moment.js. [Approved formats must be entered according to the moment.js library](https://momentjs.com/docs/#/displaying/format/). With `useTodayOrYesterday=true` the momentjs format `ddd`/`dddd` are overwritten with today / yesterday
+- `momentDate(format, useTodayOrYesterday)` - format value as date using Moment.js. [Approved formats must be entered according to the moment.js library](https://momentjs.com/docs/#/displaying/format/). With `useTodayOrYesterday=true` the `moment.js` format `ddd`/`dddd` are overwritten with today / yesterday
 - `array(element1,element2[,element3,element4])` - returns the element of index. e.g.: `{id.ack;array(ack is false,ack is true)}`
 
 You can use this pattern in any text, like
@@ -98,14 +98,14 @@ value = (function () {
 
 You can use *any* javascript functions. Arguments must be defined with ':', if not, it will be interpreted as formula.
 
-Take care about types. All of them defined as strings. To be sure, that value will be treated as number use parseFloat function.
+Take care about types. All of them are defined as strings. To be sure, that value will be treated as number use parseFloat function.
 
 ```
 Hypotenuse of {height} and {width} = {h:height;w:width;Math.max(20, Math.sqrt(Math.pow(parseFloat(h), 2) + Math.pow(parseFloat(w), 2)))}
 ```
 
 ### Special bindings
-There are a number different internal bindings to provide additional information in views:
+There are a number of different internal bindings to provide additional information in views:
 * `username` - shows logged-in user
 * `view` - name of actual view
 * `wname` - widget name
@@ -113,7 +113,7 @@ There are a number different internal bindings to provide additional information
 * `wid` - name of actual widget
 * `language` - can be `de`, `en` or `ru`.
 * `instance` - browser instance
-* `login` - if login required or not (e.g. to show/hide logout button)
+* `login` - if login required or not (e.g., to show/hide logout button)
 * `local_*` - if state name is started from `local_` it will not be reported to ioBroker but will update all widgets, that depends on this state. (Local variable for current browser session)
 
 Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
@@ -129,7 +129,7 @@ Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 for that.
 
 ## Filters
-To visualise on the one view thw whole number of widgets you can use filters to reduce the amount of widgets simultaneously shown on the view.
+To visualise on the one view the whole number of widgets, you can use filters to reduce the count of widgets simultaneously shown on the view.
  
 Every widget has a field `filter`. If you set it to some value, e.g. `light`, so you can use other widget `(bars - filters, filter - dropdown)` to control which filter is actually active.
 
@@ -138,7 +138,7 @@ Vis creates 3 variables:
 
 - `control.instance` - Here the browser instance should be written or `FFFFFFFF` if every browser must be controlled.
 - `control.data`     - Parameter for command. See specific command description.
-- `control.command`  - Command name. Write this variable triggers the command. That means before command will be written the "instance" and "data" must be prepared with data.
+- `control.command`  - Command name. Write this variable triggers the command. That means before command will be written, the "instance" and "data" must be prepared with data.
 
 Commands:
 
@@ -167,7 +167,7 @@ If the user changes the view or at the start, the variables will be filled by th
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
 - `control.command`: `changedView` and `ack=true`
 
-You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case the instance and data will be taken from JSON object.
+You can write the JSON-string or Object into `control.command` as `{instance: 'AABBCCDD', command: 'cmd', data: 'ddd'}`. In this case, the instance and data will be taken from JSON object.
 
 Example for javascript adapter:
 
@@ -176,20 +176,21 @@ setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data"
 ```
 
 ## Default view
-You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In the real-time mode, it will not be visible and all widgets outside of the border will be visible.  
+You can define for every view the desired resolution (Menu=>Tools=>Resolution).
+This is only the visual border in edit mode to show you the screen size on some specific device. In the real-time mode, it will not be visible and all widgets outside the border will be visible.  
 
 Additionally, you can define if this view must be used as default for this resolution. 
 
 So every time the `index.html` (without `#viewName`) is called, the best suitable for this resolution view will be opened.
 If only one view has *"Default"* flag, so this view will be opened independently of screen resolution or orientation.      
 
-E.g. you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
+E.g., you can create two views "Landscape-Mobile" and "Portrait-Mobile" and these two views will be switched automatically when you change the orientation or screen size.
 
 There is a helper widget "basic - Screen Resolution" that shows actual screen resolution and best suitable default view for this resolution. 
 
 ## Settings
 ### Reload if sleep longer than
-There is a rule, that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
+There is a rule that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
 You can configure it in the menu "Settings...". If you set the interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
@@ -207,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.26 (2023-05-08)
+### 2.0.27 (2023-05-08)
 * (bluefox) Corrected errors
 
 ### 2.0.10 (2022-12-01)
@@ -217,7 +218,7 @@ Notice that these settings are valid only for reconnection and not for the first
 * (bluefox) Improved the error handling
 
 ### 2.0.0 (2022-10-21)
-* (bluefox) Completely new visualization, but compatible with previous version
+* (bluefox) Completely new visualization, but compatible with the previous version
 
 ### 1.4.15 (2022-04-10)
 * (bluefox) Better check of the offline license

@@ -179,6 +179,7 @@ class App extends Runtime {
     // eslint-disable-next-line class-methods-use-this
     initState(newState) {
         this.visEngineHandlers = {};
+        window.visAddWidget = this.addWidget; // Used for tests
 
         // this function will be called from Runtime
 
@@ -445,7 +446,8 @@ class App extends Runtime {
         }
 
         await this.changeProject(project);
-        this.setSelectedWidgets([newKey]);
+        await this.setSelectedWidgets([newKey]);
+        return newKey;
     };
 
     deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true });

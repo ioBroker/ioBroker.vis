@@ -114,7 +114,7 @@ const Widget = props => {
             <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
             <div className={props.classes.widgetTitle} style={titleStyle}>{label}</div>
             <span className={props.classes.widgetImageContainer}>
-                { img }
+                {img}
             </span>
         </div>
     </Tooltip>;
@@ -138,7 +138,7 @@ const Widget = props => {
         preview(getEmptyImage(), { captureDraggingState: true });
     }, [props.widgetType]);
 
-    return <span ref={dragRef} id={`widget_${props.widgetTypeName}`}>
+    return <span ref={dragRef} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>
         <span ref={widthRef}>
             {result}
         </span>
