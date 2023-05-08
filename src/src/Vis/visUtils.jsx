@@ -834,7 +834,9 @@ function getRemoteWidgets(socket) {
                 for (const widgetSetName in dynamicWidgetInstance.common.visWidgets) {
                     if (widgetSetName === 'i18n') {
                         // ignore
-                        console.warn(`common.visWidgets.i18n is deprecated. Use common.visWidgets.${widgetSetName}.i18n instead.`);
+                        // find first widget set that is not i18n
+                        const _widgetSetName = Object.keys(dynamicWidgetInstance.common.visWidgets).find(name => name !== 'i18n');
+                        console.warn(`common.visWidgets.i18n is deprecated. Use common.visWidgets.${_widgetSetName}.i18n instead.`);
                     } else {
                         const visWidgetsCollection = dynamicWidgetInstance.common.visWidgets[widgetSetName];
                         if (!visWidgetsCollection.url?.startsWith('http')) {

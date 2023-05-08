@@ -243,89 +243,88 @@
             options.minWidth  = options.width;
 
             // Show dialog in edit mode too
-            if (1 || !vis.editMode) {
-                $(el).parent().find('div.vis-widget-body').on('click touchend', function (event) {
-                    event.stopPropagation();
-                    // Protect against two events
-                    if (vis.detectBounce(this)) {
-                        return;
-                    }
+            $(el).parent().find('div.vis-widget-body').on('click touchend', function (event) {
+                event.stopPropagation();
+                // Protect against two events
+                if (vis.detectBounce(this)) {
+                    return;
+                }
 
-                    if ($dlg.data('preload')) {
-                        $dlg.html(html);
-                    }
+                if ($dlg.data('preload')) {
+                    $dlg.html(html);
+                }
 
-                    if (persistent) {
-                        if (options.setId) {
-                            vis.setValue(options.setId, options.setValue);
-                        }
-                        $dlg.dialog('open');
-                        $dlg.parent().css('z-index', 998);
-                        $dlg.parent().find('.ui-widget-header button .ui-button-text').html('');
-                        if (options.minHeight)   $dlg.css('min-height', options.minHeight);
-                        if (options.minWidth)    $dlg.css('min-width', options.minWidth);
-                        if (options.top  || options.top  === 0 || options.top  === '0') $dlg.parent().css('top',  options.top);
-                        if (options.left || options.left === 0 || options.left === '0') $dlg.parent().css('left', options.left);
-                        if (options.overflowX) $dlg.css('overflow-x', options.overflowX);
-                        if (options.overflowY) $dlg.css('overflow-y', options.overflowY);
-                        if (options.noHeader) {
-                            $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
-                            $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
-                        }
-                        $dlg.parent().find('.ui-state-focus').blur();
-                    } else {
-                        $dlg.dialog($.extend({
-                            autoOpen: true,
-                            open: function () {
-                                $(this).parent().find('.ui-widget-header button .ui-button-text').html('');
-                                if (options.setId) {
-                                    vis.setValue(options.setId, options.setValue);
-                                }
-                                $(this).parent().css('z-index', 998);
-                                if (options.minHeight)   $(this).css('min-height', options.minHeight);
-                                if (options.minWidth)    $(this).css('min-width', options.minWidth);
-                                if (options.top  || options.top  === 0 || options.top  === '0') $(this).parent().css('top',  options.top);
-                                if (options.left || options.left === 0 || options.left === '0') $(this).parent().css('left', options.left);
-                                if (options.overflowX) $(this).css('overflow-x', options.overflowX);
-                                if (options.overflowY) $(this).css('overflow-y', options.overflowY);
-                                if (options.noHeader) {
-                                    $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
-                                    $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
-                                }
-                                $(this).parent().find('.ui-state-focus').blur();
-                                //touchscreen fix
-                                var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
-                                $closeButton.off('touchend').on('touchend', function (event) {
-                                    event.stopPropagation();
-                                    $dlg.dialog('close');
-                                    return false;
-                                });
-                            },
-                            close: function () {
-                                if ($dlg.data('timer')) {
-                                    clearTimeout($dlg.data('timer')); $dlg.data('timer', null);
-                                }
-                                $dlg.dialog('destroy');
-                                // Destroy content if not preloaded
-                                if ($dlg.data('preload')) {
-                                    $dlg.html('');
-                                }
+                if (persistent) {
+                    if (options.setId) {
+                        vis.setValue(options.setId, options.setValue);
+                    }
+                    $dlg.dialog('open');
+                    $dlg.parent().css('z-index', 998);
+                    $dlg.parent().find('.ui-widget-header button .ui-button-text').html('');
+                    if (options.minHeight)   $dlg.css('min-height', options.minHeight);
+                    if (options.minWidth)    $dlg.css('min-width', options.minWidth);
+                    if (options.top  || options.top  === 0 || options.top  === '0') $dlg.parent().css('top',  options.top);
+                    if (options.left || options.left === 0 || options.left === '0') $dlg.parent().css('left', options.left);
+                    if (options.overflowX) $dlg.css('overflow-x', options.overflowX);
+                    if (options.overflowY) $dlg.css('overflow-y', options.overflowY);
+                    if (options.noHeader) {
+                        $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                        $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
+                    }
+                    $dlg.parent().find('.ui-state-focus').blur();
+                } else {
+                    $dlg.dialog($.extend({
+                        autoOpen: true,
+                        open: function () {
+                            $(this).parent().find('.ui-widget-header button .ui-button-text').html('');
+                            if (options.setId) {
+                                vis.setValue(options.setId, options.setValue);
                             }
-                        }, options));
-
-                        $dlg.data('inited', true);
-
-                        if (closeOnClick) {
-                            $dlg.off('click touchstart touchend').on('click touchend', function (event) {
+                            $(this).parent().css('z-index', 998);
+                            if (options.minHeight)   $(this).css('min-height', options.minHeight);
+                            if (options.minWidth)    $(this).css('min-width', options.minWidth);
+                            if (options.top  || options.top  === 0 || options.top  === '0') $(this).parent().css('top',  options.top);
+                            if (options.left || options.left === 0 || options.left === '0') $(this).parent().css('left', options.left);
+                            if (options.overflowX) $(this).css('overflow-x', options.overflowX);
+                            if (options.overflowY) $(this).css('overflow-y', options.overflowY);
+                            if (options.noHeader) {
+                                $dlg.parent().find('.ui-dialog-titlebar').css({background: 'rgba(0,0,0,0)', border: 0, color: 'rgba(0,0,0,0)'});
+                                $dlg.parent().find('.ui-dialog-title').html('&nbsp;');
+                            }
+                            $(this).parent().find('.ui-state-focus').blur();
+                            //touchscreen fix
+                            var $closeButton = $(this).parent().find('button.ui-dialog-titlebar-close');
+                            $closeButton.off('touchend').on('touchend', function (event) {
                                 event.stopPropagation();
                                 $dlg.dialog('close');
                                 return false;
                             });
+                        },
+                        close: function () {
+                            if ($dlg.data('timer')) {
+                                clearTimeout($dlg.data('timer')); $dlg.data('timer', null);
+                            }
+                            $dlg.dialog('destroy');
+                            // Destroy content if not preloaded
+                            if ($dlg.data('preload')) {
+                                $dlg.html('');
+                            }
                         }
+                    }, options));
+
+                    $dlg.data('inited', true);
+
+                    if (closeOnClick) {
+                        $dlg.off('click touchstart touchend').on('click touchend', function (event) {
+                            event.stopPropagation();
+                            $dlg.dialog('close');
+                            return false;
+                        });
                     }
-                    return false;
-                });
-            }
+                }
+                return false;
+            });
+
             if (persistent) {
                 $dlg.dialog($.extend({
                     autoOpen: false,
@@ -461,14 +460,18 @@
             }
         },
         dialogAutoClose: function (el, timeout) {
-            if (timeout === true || timeout === 'true') timeout = 10000;
-            if (timeout === null || timeout === undefined || timeout === '') return;
+            if (timeout === true || timeout === 'true') {
+                timeout = 10000;
+            }
+            if (timeout === null || timeout === undefined || timeout === '') {
+                return;
+            }
             timeout = parseInt(timeout, 10);
             if (timeout < 60) {
                 // may be this is seconds
                 timeout *= 1000;
             }
-            if (!timeout) timeout = 1000;
+            timeout = timeout || 1000;
 
             var $dialog = $('#' + $(el).parent().attr('id') + '_dialog');
 
@@ -487,7 +490,7 @@
             $dialog.on('dialogopen', function () {
                 $dialog.find('input').on('click', function () {
                     var timer = $dialog.data('timer');
-                    if (timer) clearTimeout(timer);
+                    timer && clearTimeout(timer);
                     $dialog.data('timer', setTimeout(function () {
                         $dialog.data('timer', null);
                         $dialog.dialog('close');

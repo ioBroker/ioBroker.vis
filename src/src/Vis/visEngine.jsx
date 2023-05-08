@@ -283,7 +283,7 @@ class VisEngine extends React.Component {
             const wid = this.options.wid;
             const view = Object.keys(that.props.views).find(v => that.props.views[v].widgets && that.props.views[v].widgets[wid]);
             !view && console.warn(`Cannot find view for widget "${wid}"!`);
-            return this.document.find(view ? `#visview_${view}` : 'body').eq(0);
+            return this.document.find(view ? `#visview_${view.replace(/\s/g, '_')}` : 'body').eq(0);
         };
 
         this.detectWakeUp();
