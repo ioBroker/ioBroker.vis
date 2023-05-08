@@ -25,6 +25,35 @@ import { I18n } from '@iobroker/adapter-react-v5';
 import VisBaseWidget from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
+const POSSIBLE_CARD_STYLES = [
+    'background-color',
+    'border',
+    'background',
+    'background-image',
+    'background-position',
+    'background-repeat',
+    'background-size',
+    'background-clip',
+    'background-origin',
+    'color',
+    'box-sizing',
+    'border-width',
+    'border-style',
+    'border-color',
+    'border-radius',
+    'box-shadow',
+    'text-align',
+    'text-shadow',
+    'font-family',
+    'font-size',
+    'font-weight',
+    'line-height',
+    'font-style',
+    'font-variant',
+    'letter-spacing',
+    'word-spacing',
+];
+
 class VisRxWidget extends VisBaseWidget {
     constructor(props) {
         super(props, true);
@@ -335,11 +364,36 @@ class VisRxWidget extends VisBaseWidget {
         const MyCard = components.Card || Card;
         const MyCardContent = components.CardContent || CardContent;
 
+        const style = {
+            width: 'calc(100% - 8px)',
+            height: 'calc(100% - 8px)',
+            margin: 4,
+        };
+
+        // apply style from the element
+        Object.keys(this.state.rxStyle).forEach(attr => {
+            const value = this.state.rxStyle[attr];
+            if (value !== null &&
+                value !== undefined &&
+                POSSIBLE_CARD_STYLES.includes(attr)
+            ) {
+                attr = attr.replace(
+                    /(-\w)/g,
+                    text => text[1].toUpperCase(),
+                );
+                style[attr] = value;
+            }
+        });
+
+        this.wrappedContent = true;
+
         return <MyCard
-            style={{ width: 'calc(100% - 8px)', height: 'calc(100% - 8px)', margin: 4 }}
+            className="vis_rx_widget_card"
+            style={style}
             onClick={onCardClick}
         >
             <MyCardContent
+                className="vis_rx_widget_card_content"
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -349,7 +403,8 @@ class VisRxWidget extends VisBaseWidget {
                     ...cardContentStyle,
                 }}
             >
-                {this.state.rxData.name ? <div
+                {this.state.rxData.widgetTitle ? <div
+                    className="vis_rx_widget_card_name"
                     style={{
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -358,6 +413,7 @@ class VisRxWidget extends VisBaseWidget {
                     }}
                 >
                     <div
+                        className="vis_rx_widget_card_name_div"
                         style={{
                             fontSize: 24,
                             paddingTop: 0,
@@ -365,7 +421,7 @@ class VisRxWidget extends VisBaseWidget {
                             ...headerStyle,
                         }}
                     >
-                        {this.state.rxData.name}
+                        {this.state.rxData.widgetTitle}
                     </div>
                     {addToHeader || null}
                 </div> : (addToHeader || null)}
@@ -386,11 +442,13 @@ class VisRxWidget extends VisBaseWidget {
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
             if (value !== null && value !== undefined) {
-                attr = attr.replace(
-                    /(-\w)/g,
-                    text => text[1].toUpperCase(),
-                );
-                props.style[attr] = value;
+                if (!this.wrappedContent || !POSSIBLE_CARD_STYLES.includes(attr)) {
+                    attr = attr.replace(
+                        /(-\w)/g,
+                        text => text[1].toUpperCase(),
+                    );
+                    props.style[attr] = value;
+                }
             }
         });
 
