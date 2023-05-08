@@ -1555,7 +1555,7 @@ class VisView extends React.Component {
         }
 
         let renderedView = <div
-            className={className}
+            className={`${className} visview_${this.props.view.replace(/\s/g, '_')}`}
             ref={this.refView}
             id={`visview_${this.props.view.replace(/\s/g, '_')}`}
             onMouseDown={!this.props.context.runtime ? e => this.props.editMode && this.mouseDownLocal(e) : undefined}
