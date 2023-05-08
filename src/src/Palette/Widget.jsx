@@ -138,7 +138,7 @@ const Widget = props => {
         preview(getEmptyImage(), { captureDraggingState: true });
     }, [props.widgetType]);
 
-    return <span ref={dragRef} id={`widget_${widgetTypeName}`}>
+    return <span ref={dragRef} id={`widget_${props.widgetTypeName}`}>
         <span ref={widthRef}>
             {result}
         </span>

@@ -31,7 +31,7 @@ function startAdapter(options) {
         name: adapterName,
         ready: main,
         objectChange: (id, obj) => {
-            // if it is instance object
+            // if it is an instance object
             if (id.startsWith('system.adapter.') &&
                 id.match(/\d+$/) &&
                 id !== 'system.adapter.vis-2-beta.0' &&
@@ -47,7 +47,7 @@ function startAdapter(options) {
                         buildHtmlPages();
                     }
                 } else
-                // Check if widgets folder exists
+                // Check if the widgets folder exists
                 if (POSSIBLE_WIDGET_SETS_LOCATIONS.find(dir => fs.existsSync(`${dir}/iobroker.${id}/widgets/`))) {
                     // still exists
                     if (!widgetInstances[id] || widgetInstances[id] !== obj.common.version) {
@@ -97,7 +97,7 @@ async function generateWidgetsHtml(widgetSets, forceBuild) {
         file = fs.readFileSync(`${__dirname}/www/widgets/${name}`);
         // extract all css and js
 
-        // mark all script with data-widgetset attribute
+        // mark all scripts with data-widgetset attribute
         file = file.toString().replace(/<script/g, `<script data-widgetset="${name.replace('.html', '')}"`);
 
         text += `<!-- --------------${name}--- START -->\n${file.toString()}\n<!-- --------------${name}--- END -->\n`;

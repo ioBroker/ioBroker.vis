@@ -142,9 +142,9 @@ Vis creates 3 variables:
 
 Commands:
 
-* `alert` - show alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write ```Message;;info```.
-* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify project name too as "project/view". Default project is "main".
-* `refresh` - reload the vis, for instance after project is changed to reload on all browsers.
+* `alert` - show an alert window in the vis. "control.data" has the following format "message;title;jquery-icon". Title and jquery-icon are optional. Icon names can be found [here](http://jqueryui.com/themeroller/). To show icon "ui-icon-info" write `Message;;info`.
+* `changeView` - switch to desired view. "control.data" must have the name of view. You can specify the project name too as "project/view". The default project is `main`.
+* `refresh` - reload the vis, for instance after the project is changed to reload on all browsers.
 * `reload` - same as refresh.
 * `dialog` - Show dialog window. Dialog must exist on view. One of:
 
@@ -161,7 +161,7 @@ Commands:
 * `playSound` - play sound file. The link to file is specified in `control.data`, e.g. http://www.modular-planet.de/fx/marsians/Marsiansrev.mp3.
   You can upload your own file in vis and let it play as for instance `/vis.0/main/img/myFile.mp3`.
 
-If user changes the view or at start the variables will be filled by the vis with
+If the user changes the view or at the start, the variables will be filled by the vis with
 
 - `control.instance`: browser instance and `ack=true`
 - `control.data`: project and view name in form `project/view`, e.g. `main/view` (and `ack=true`)
@@ -176,7 +176,7 @@ setState('vis.0.control.command', {"instance": "*", "command": "refresh", "data"
 ```
 
 ## Default view
-You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In real time mode it will not be visible and all widgets outside of border will be visible.  
+You can define for every view the desired resolution (Menu=>Tools=>Resolution). This is only the visual border in edit mode to show you the screen size on some specific device. In the real-time mode, it will not be visible and all widgets outside of the border will be visible.  
 
 Additionally, you can define if this view must be used as default for this resolution. 
 
@@ -189,16 +189,16 @@ There is a helper widget "basic - Screen Resolution" that shows actual screen re
 
 ## Settings
 ### Reload if sleep longer than
-There is a rule, that after some disconnection period the whole VIS page will be reloaded to synchronise the project.
-You can configure it in the menu "Settings...". If you set interval to "never" so the page will never be reloaded.
+There is a rule, that after some disconnection period, the whole VIS page will be reloaded to synchronise the project.
+You can configure it in the menu "Settings...". If you set the interval to "never" so the page will never be reloaded.
 
 ### Reconnect interval
 Set the interval between the connection attempts if disconnected. If you set 2 seconds, it will try to establish the connection every 2 seconds.
 
 ### Dark reconnect screen
-Sometimes (in the night) it is required to have dark loading screen. With this option you can set it.
+Sometimes (in the night) it is required to have the dark loading screen. With this option, you can set it.
 
-Notice that these settings are valid only for reconnection and not for the first connect.
+Notice that these settings are valid only for reconnection and not for the first connecting.
 
 ![Dark](img/dark_screen.png)
 
@@ -207,7 +207,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.25 (2023-05-07)
+### 2.0.26 (2023-05-08)
 * (bluefox) Corrected errors
 
 ### 2.0.10 (2022-12-01)

@@ -628,6 +628,7 @@ class Runtime extends GenericApp {
             </DialogContent>
             <DialogActions>
                 <Button
+                    id="create_new_project_ok_buton"
                     variant="contained"
                     default
                     color="primary"
@@ -678,7 +679,7 @@ class Runtime extends GenericApp {
                                 <ListItemText>{project}</ListItemText>
                             </ListItemButton>)}
                         <ListItemButton
-                            id="create-new-project"
+                            id="create_new_project"
                             onClick={() => this.setState({ showNewProjectDialog: true, newProjectName: this.state.projects.length ? '' : 'main' })}
                             style={{ backgroundColor: '#112233', color: '#ffffff' }}
                         >
