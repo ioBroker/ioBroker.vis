@@ -397,7 +397,7 @@ class VisCanWidget extends VisBaseWidget {
                     this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
                 }
             } else {
-                this.widDiv.style.display = this.widDiv._storedDisplay || 'block';
+                this.widDiv.style.display = this.widDiv._storedDisplay;
                 this.widDiv._storedDisplay = '';
 
                 if (this.widDiv &&
@@ -1245,19 +1245,22 @@ class VisCanWidget extends VisBaseWidget {
             }, 10);
         }
 
+        // this.widDiv is a body of normal can widget
+        // props.style is a style of overlay
+
         if (this.widDiv && this.state.editMode) {
             const zIndexProp = this.props.context.allWidgets[this.props.id].style['z-index'];
             const zIndex = parseInt((zIndexProp || 0), 10);
             if (this.state.selected) {
-                // move widget to foreground
+                // move widget overlay in foreground
                 this.widDiv.style.zIndex = 500 + zIndex;
             } else if (zIndexProp !== undefined) {
-                this.widDiv.style.zIndex = parseInt((zIndexProp || 0), 10).toString();
+                // overlay must be always on top of the widget itself
+                this.widDiv.style.zIndex = parseInt((zIndexProp || 0), 10);
             }
 
-            if (zIndexProp) {
-                props.style.zIndex = zIndex; // + 800
-            }
+            props.style.zIndex = (zIndex || 0) + 1; // + 800
+
             this.widDiv.style.userSelect = 'none';
             this.widDiv.style.pointerEvents = 'none';
 
