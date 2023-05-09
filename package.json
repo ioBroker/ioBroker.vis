@@ -24,21 +24,21 @@
     "SCADA"
   ],
   "dependencies": {
-    "jsonwebtoken": "^9.0.0",
     "@iobroker/adapter-core": "^2.6.8",
     "axios": "^1.4.0",
+    "jsonwebtoken": "^9.0.0",
     "mime": "^3.0.0"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.9",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.9",
     "@alcalzone/release-script-plugin-license": "^3.5.9",
+    "@iobroker/vis-2-widgets-testing": "^0.2.7",
+    "chai": "^4.3.7",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
-    "chai": "^4.3.7",
     "mocha": "^10.2.0",
-    "unzipper": "^0.10.11",
-    "@iobroker/vis-2-widgets-testing": "^0.2.7"
+    "unzipper": "^0.10.11"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"

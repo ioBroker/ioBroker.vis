@@ -148,7 +148,7 @@ gulp.task('0-clean', done => {
 });
 
 gulp.task('2-npm', () => {
-    if (fs.existsSync(`${__dirname}/src/package-lock.json`)) {
+    if (fs.existsSync(`${__dirname}/src/package-lock.json`) && process.env.CI !== 'true') {
         return Promise.resolve();
     } else {
         return npmInstall();
