@@ -929,11 +929,11 @@ function getRemoteWidgets(socket) {
                                                         }
                                                         result.push(Component.default);
                                                     } else {
-                                                        console.error(`Cannot load widget ${dynamicWidgetInstance._id}`);
+                                                        console.error(`Cannot load widget ${dynamicWidgetInstance._id}. No default found`);
                                                     }
                                                     window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
                                                 })
-                                                .catch(e => console.error(`Cannot load widget ${dynamicWidgetInstance._id}: `, e));
+                                                .catch(e => console.error(`Cannot load widget ${dynamicWidgetInstance._id}: ${JSON.stringify(e)}`));
                                             // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
 
                                             promises.push(promise);

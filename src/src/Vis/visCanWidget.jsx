@@ -255,7 +255,7 @@ class VisCanWidget extends VisBaseWidget {
                     const legacyViewContainers = [];
                     for (let v = 0; v < containers.length; v++) {
                         const view = (containers[v].dataset.visContains || '').trim();
-                        if (view) {
+                        if (view && view !== 'undefined' && view !== 'null') {
                             legacyViewContainers.push(view);
                             containers[v].className = addClass(containers[v].className, 'vis-editmode-helper');
                         }
@@ -332,7 +332,7 @@ class VisCanWidget extends VisBaseWidget {
                 if (this.refViews[view].current) {
                     const container = this.widDiv.querySelector(`.vis-view-container[data-vis-contains="${view}"]`);
                     const current = this.refViews[view].current;
-                    if (current && !current.refView) {
+                    if (current && !current.refView?.current) {
                         // it is just div
                         if (current.parentNode !== container) {
                             // current._originalParent = current.parentNode;
@@ -1342,17 +1342,19 @@ class VisCanWidget extends VisBaseWidget {
                 </div>;
                 */
             }
-
-            return <VisView
-                context={context}
-                activeView={view}
-                editMode={false}
-                key={view}
-                ref={this.refViews[view]}
-                registerRef={props.registerRef}
-                view={view}
-                visInWidget
-            />;
+            if (view && context.views[view]) {
+                return <VisView
+                    context={context}
+                    activeView={view}
+                    editMode={false}
+                    key={view}
+                    ref={this.refViews[view]}
+                    registerRef={props.registerRef}
+                    view={view}
+                    visInWidget
+                />;
+            }
+            return null;
         }) : null;
 
         if (!this.state.editMode) {
