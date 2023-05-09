@@ -35,8 +35,10 @@
     "@alcalzone/release-script-plugin-license": "^3.5.9",
     "gulp": "^4.0.2",
     "iobroker.web": "*",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
     "unzipper": "^0.10.11",
-    "@iobroker/legacy-testing": "^0.1.1"
+    "@iobroker/vis-2-widgets-testing": "^0.2.6"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
@@ -52,10 +54,11 @@
     "main.js"
   ],
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --exit",
-    "prepublishOnly": "node node_modules/gulp/bin/gulp.js",
-    "build": "node node_modules/gulp/bin/gulp.js",
-    "build-beta": "node node_modules/gulp/bin/gulp.js beta",
+    "test": "mocha ./test/*.engine.js --exit",
+    "test-gui": "mocha ./test/*.gui.js --exit",
+    "prepublishOnly": "gulp",
+    "build": "gulp",
+    "build-beta": "gulp beta",
     "release": "release-script",
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",
