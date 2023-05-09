@@ -18,7 +18,7 @@ if (window.location.pathname.includes('beta')) {
 const themeName = Utils.getThemeName();
 
 console.log(`iobroker.${window.adapterName}@${packageJson.version} using theme "${themeName}"`);
-// window.sentryDSN = 'https://6ccbeba86d86457b82ded80109fa7aba@sentry.iobroker.net/144';
+window.sentryDSN = 'https://76ba808e24ed438ab3bf32ce00836dbb@sentry.iobroker.net/232';
 
 window.visRxWidget = require('./Vis/visRxWidget').default;
 
