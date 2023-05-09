@@ -55,6 +55,7 @@ const getItem = (item, key, props, full) => {
     const view = props.project[props.selectedView];
 
     if (!item || item.hide) {
+        !item && console.warn(`Strange item: ${key}`);
         return null;
     }
 
