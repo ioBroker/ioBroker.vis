@@ -54,11 +54,11 @@ const styles = theme => ({
 const getItem = (item, key, props, full) => {
     const view = props.project[props.selectedView];
 
-    if (item.hide) {
+    if (!item || item.hide) {
         return null;
     }
 
-    let value = view ? view.settings[item.field] : null;
+    let value = view && item.field ? view.settings[item.field] : null;
     if (item.field && (value === null || value === undefined)) {
         value = '';
     }
