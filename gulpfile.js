@@ -147,16 +147,6 @@ gulp.task('0-clean', done => {
     done();
 });
 
-gulp.task('2-npm', () => {
-    if (fs.existsSync(`${__dirname}/src/package-lock.json`) && process.env.CI !== 'true') {
-        return Promise.resolve();
-    } else {
-        return npmInstall();
-    }
-});
-
-gulp.task('2-npm-dep', gulp.series('0-clean', '2-npm'));
-
 function npmInstall(dir) {
     dir = dir || `${__dirname}/src/`;
     return new Promise((resolve, reject) => {
