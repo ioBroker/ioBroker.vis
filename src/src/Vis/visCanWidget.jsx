@@ -167,14 +167,29 @@ class VisCanWidget extends VisBaseWidget {
         this.destroy();
     }
 
-    static applyStyle(el, style) {
+    static applyStyle(el, style, isSelected, editMode) {
         if (typeof style === 'string') {
             // style is a string
             // "height: 10; width: 20"
             style = VisBaseWidget.parseStyle(style);
             Object.keys(style).forEach(attr => {
                 if (!attr.startsWith('_')) {
-                    el.style[attr] = style[attr];
+                    let value = style[attr];
+                    if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
+                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
+                            value = `${value}px`;
+                        }
+                    }
+
+                    if (attr.includes('-')) {
+                        console.log(`${attr} to ${value}`);
+                        attr = attr.replace(/-([a-z])/g, g => g[1].toUpperCase());
+                    }
+                    if (value) {
+                        el.style[attr] = value;
+                    } else if (el.style[attr]) { // delete style
+                        el.style[attr] = '';
+                    }
                 }
             });
         } else if (style) {
@@ -190,6 +205,10 @@ class VisCanWidget extends VisBaseWidget {
                             value = `${value}px`;
                         }
                     }
+                    // a-b => aB
+                    if (attr.includes('-')) {
+                        attr = attr.replace(/-([a-z])/g, g => g[1].toUpperCase());
+                    }
                     if (value) {
                         el.style[attr] = value;
                     } else if (el.style[attr]) { // delete style
@@ -197,6 +216,23 @@ class VisCanWidget extends VisBaseWidget {
                     }
                 }
             });
+
+            if (editMode) {
+                if (isSelected) {
+                    // z-index
+                    el.style.zIndex = (500 + (parseInt(style['z-index'], 10) || 0)).toString();
+                }
+
+                const zIndex = parseInt(el.style.zIndex, 10) || 0;
+                // apply zIndex to parent
+                const overlay = el.parentNode.querySelector(`#rx_${el.id}`);
+                if (overlay) {
+                    overlay.style.zIndex = zIndex + 1;
+                }
+                el.style.userSelect = 'none';
+                el.style.pointerEvents = 'none';
+            }
+
             // absolute widgets must have top and left
             if (el.style.position === 'absolute') {
                 if (!el.style.top) {
@@ -303,7 +339,7 @@ class VisCanWidget extends VisBaseWidget {
                             // container.appendChild(current);
                         }
                     } else
-                    if (current && container && current.refView.current?.parentNode !== container) {
+                    if (current?.refView?.current && container && current.refView.current.parentNode !== container) {
                         current.refView.current._originalParent = current.refView.current.parentNode;
                         container.appendChild(current.refView.current);
                     }
@@ -340,7 +376,7 @@ class VisCanWidget extends VisBaseWidget {
         if (this.widDiv) {
             if (type === 'style') {
                 // apply style from this.props.context.allWidgets.style
-                VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[this.props.id].style);
+                VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[this.props.id].style, this.state.selected, this.state.editMode);
             } else if (type === 'signal') {
                 this.updateSignal(item);
             } else if (type === 'visibility') {
@@ -866,12 +902,12 @@ class VisCanWidget extends VisBaseWidget {
                 if (widgetStyle) {
                     widgetStyle[item.attr] = value;
                     // update style
-                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetStyle);
+                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetStyle, this.state.selected, this.state.editMode);
                 } else if (widgetContext) {
                     // trigger observable
                     widgetContext.style.attr(item.attr, value);
                     // update style
-                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style);
+                    !doNotApplyStyles && VisCanWidget.applyStyle(this.widDiv, widgetContext.style, this.state.selected, this.state.editMode);
                 }
             }
             // TODO
@@ -998,10 +1034,22 @@ class VisCanWidget extends VisBaseWidget {
                         // console.log('Rerender ignored as no changes');
                         return;
                     }
+
                     if (!this.updateOnStyle) {
+                        this.oldStyle = newStyle;
+                        // update global styles
+                        if (this.props.context.allWidgets[wid] && this.props.context.allWidgets[wid].style) {
+                            const mStyle = this.props.context.allWidgets[wid].style;
+                            Object.keys(widgetStyle).forEach(attr => {
+                                if (mStyle[attr] !== widgetStyle[attr]) {
+                                    mStyle.attr(attr, widgetStyle[attr]);
+                                }
+                            });
+                        }
+
                         // apply new style changes directly on DOM
+                        VisCanWidget.applyStyle(this.widDiv, widgetStyle, this.state.selected, this.state.editMode);
                         // fix position
-                        VisCanWidget.applyStyle(this.widDiv, widgetStyle);
                         this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
                         console.log('Rerender ignored as only style applied');
                         return;
@@ -1118,7 +1166,7 @@ class VisCanWidget extends VisBaseWidget {
             if (this.widDiv) {
                 if (this.props.context.allWidgets[wid].style && !widgetData._no_style) {
                     // fix position
-                    VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[wid].style);
+                    VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[wid].style, this.state.selected, this.state.editMode);
                 }
 
                 this.widDiv.style.position = isRelative ? (this.props.context.allWidgets[wid].style.position || 'relative') : 'absolute';
@@ -1253,13 +1301,17 @@ class VisCanWidget extends VisBaseWidget {
             const zIndex = parseInt((zIndexProp || 0), 10);
             if (this.state.selected) {
                 // move widget overlay in foreground
-                this.widDiv.style.zIndex = 500 + zIndex;
+                this.widDiv.style.zIndex = 500 + (zIndex || 0);
             } else if (zIndexProp !== undefined) {
                 // overlay must be always on top of the widget itself
                 this.widDiv.style.zIndex = parseInt((zIndexProp || 0), 10);
             }
 
-            props.style.zIndex = (zIndex || 0) + 1; // + 800
+            if (this.state.selected) {
+                props.style.zIndex = 500 + (zIndex || 0) + 1; // + 800
+            } else {
+                props.style.zIndex = (zIndex || 0) + 1; // + 800
+            }
 
             this.widDiv.style.userSelect = 'none';
             this.widDiv.style.pointerEvents = 'none';
@@ -1271,7 +1323,7 @@ class VisCanWidget extends VisBaseWidget {
             }
         }
 
-        // the helper div is always relative
+        // the helper div is always absolute
         props.style.position = 'absolute';
         props.style.boxSizing = 'border-box';
 

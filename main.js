@@ -490,9 +490,9 @@ async function readAdapterList() {
 }
 
 /**
- * Collect Files of an adapter specific directory from the iobroker storage
+ * Collect Files of an adapter-specific directory from the iobroker storage
  *
- * @param path path in the adapter specific storage space
+ * @param path path in the adapter-specific storage space
  */
 async function collectExistingFilesToDelete(path) {
     let _files = [];
@@ -674,7 +674,7 @@ async function uploadAdapter() {
     } catch {
         // ignore
     }
-    // Read all names with subtrees from local directory
+    // Read all names with subtrees from the local directory
     const files = walk(dir);
     if (!result) {
         await adapter.setForeignObjectAsync(adapterName, {
