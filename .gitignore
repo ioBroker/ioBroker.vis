@@ -2,6 +2,7 @@
 /node_modules
 *.zip
 **/*.zip
+*.tgz
 /_socket
 /.build
 /lib/js
@@ -43,3 +44,4 @@ src/build
 /src/dist
 /www
 /runtime
+/tmp

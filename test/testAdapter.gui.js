@@ -21,7 +21,12 @@ describe('vis', () => {
         }
 
         // install js-controller, web and vis-2-beta
-        await helper.startIoBroker({startOwnAdapter: true, additionalAdapters: ['web']});
+        await helper.startIoBroker({
+            startOwnAdapter: true,
+            additionalAdapters: ['web'],
+            visUploadedId: 'vis.0.info.uploaded',
+            mainGuiProject: 'vis',
+        });
         await helper.startBrowser(process.env.CI === 'true');
         await helper.createProject();
 
@@ -32,11 +37,15 @@ describe('vis', () => {
 
     it('Check all widgets', async function (){
         this.timeout(60000);
-        const widgets = await helper.palette.getListOfWidgets(null, 'basic');
-        for (let w = 0; w < widgets.length; w++) {
-            const wid = await helper.palette.addWidget(null, widgets[w], true);
-            await helper.screenshot(null, `10_${widgets[w]}`);
-            await helper.view.deleteWidget(null, wid);
+        const widgetSets = await helper.palette.getListOfWidgetSets();
+        console.log(`Widget sets found: ${widgetSets.join(', ')}`);
+        for (let s = 0; s < widgetSets.length; s++) {
+            const widgets = await helper.palette.getListOfWidgets(null, widgetSets[s]);
+            for (let w = 0; w < widgets.length; w++) {
+                const wid = await helper.palette.addWidget(null, widgets[w], true);
+                await helper.screenshot(null, `10_${widgetSets[s]}_${widgets[w]}`);
+                await helper.view.deleteWidget(null, wid);
+            }
         }
     });
 

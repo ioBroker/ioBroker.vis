@@ -227,6 +227,7 @@ const Palette = props => {
                     <AccordionSummary
                         id={`summary_${category}`}
                         expandIcon={<ExpandMoreIcon />}
+                        className={Utils.clsx('vis-palette-widget-set', accordionOpen[category] && 'vis-palette-summary-expanded')}
                         classes={{
                             root: Utils.clsx(
                                 props.classes.clearPadding,

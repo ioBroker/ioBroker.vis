@@ -38,7 +38,7 @@
     "chai": "^4.3.7",
     "mocha": "^10.2.0",
     "unzipper": "^0.10.11",
-    "@iobroker/vis-2-widgets-testing": "^0.2.6"
+    "@iobroker/vis-2-widgets-testing": "^0.2.7"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"

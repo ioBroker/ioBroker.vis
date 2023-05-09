@@ -30,7 +30,7 @@ function startAdapter(options) {
     Object.assign(options, {
         name: adapterName,
         ready: main,
-        objectChange: (id, obj) => {
+        objectChange: async (id, obj) => {
             // if it is an instance object
             if (id.startsWith('system.adapter.') &&
                 id.match(/\d+$/) &&
@@ -44,7 +44,7 @@ function startAdapter(options) {
                 if (!obj || !obj.common || !obj.common.version) {
                     if (widgetInstances[id]) {
                         delete widgetInstances[id];
-                        buildHtmlPages();
+                        await buildHtmlPages();
                     }
                 } else
                 // Check if the widgets folder exists
@@ -52,11 +52,11 @@ function startAdapter(options) {
                     // still exists
                     if (!widgetInstances[id] || widgetInstances[id] !== obj.common.version) {
                         widgetInstances[id] = obj.common.version;
-                        buildHtmlPages();
+                        await buildHtmlPages();
                     }
                 } else if (widgetInstances[id]) {
                     delete widgetInstances[id];
-                    buildHtmlPages();
+                    await buildHtmlPages();
                 }
             }
         },
@@ -71,7 +71,7 @@ async function processMessage(msg) {
     if (msg && msg.command === 'checkLicense' && msg.message && msg.callback) {
         const obj = await adapter.getForeignObjectAsync(`system.adapter.${msg.message}.0`);
         if (!obj || !obj.native || (!obj.native.license && !obj.native.useLicenseManager)) {
-            console.log('[vis-2-widgets-jaeger-design] License not found');
+            console.log(`[${msg.message}] License not found`);
             adapter.sendTo(msg.from, msg.command, {error: 'License not found'}, msg.callback);
         } else {
             const result = await checkL(obj.native.license, obj.native.useLicenseManager, msg.message);
@@ -133,7 +133,7 @@ async function generateConfigPage(forceBuild, enabledList) {
         'jqplot',
         'jqui',
         'swipe',
-        'tabs'
+        'tabs',
     ];
     // collect vis-1 widgets
     enabledList.forEach(obj => {
@@ -345,7 +345,7 @@ function checkLicense(license, uuid, originalError, name) {
 
         const t = '\u0063\u006f\u006d\u006d\u0065\u0072\u0063\u0069\u0061\u006c';
         if (t.length !== code.length) {
-            originalError && adapter.log.error('Cannot check license: ' + originalError);
+            originalError && adapter.log.error(`Cannot check license: ${originalError}`);
             return true;
         }
         for (let s = 0; s < code.length; s++) {
@@ -380,7 +380,7 @@ function doLicense(license, uuid, name) {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain',
-                'Content-Length': Buffer.byteLength(data)
+                'Content-Length': Buffer.byteLength(data),
             }
         };
 
@@ -846,9 +846,9 @@ async function main() {
                 type: 'meta',
                 common: {
                     name: 'user files and images for vis',
-                    type: 'meta.user'
+                    type: 'meta.user',
                 },
-                native: {}
+                native: {},
             });
         }
 

@@ -392,7 +392,7 @@ class App extends Runtime {
         return newKey;
     };
 
-    addWidget = async (widgetType, x, y) => {
+    addWidget = async (widgetType, x, y, data, style) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = project[this.state.selectedView].widgets;
         const newKey = this.getNewWidgetId();
@@ -439,6 +439,10 @@ class App extends Runtime {
                 widgets[newKey].style.width = '100%';
             }
         }
+
+        // used by tests
+        data && Object.assign(widgets[newKey].data, data);
+        style && Object.assign(widgets[newKey].style, style);
 
         // Custom init of widgets
         if (tplWidget.init) {
