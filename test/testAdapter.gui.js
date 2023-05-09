@@ -1,11 +1,27 @@
 const helper = require('@iobroker/vis-2-widgets-testing');
+const fs = require('fs');
+const path = require('path');
 const adapterName = require('../package.json').name.split('.').pop();
 
 describe('vis', () => {
     before(async function (){
         this.timeout(180000);
+        const rootDir = path.normalize(`${__dirname}/..`).replace(/\\/g, '/');
+        try {
+            fs.existsSync(`${rootDir}tmp/iobroker-data/files/vis.0`) && fs.unlinkSync(`${rootDir}tmp/iobroker-data/files/vis.0`);
+        } catch (e) {
+            console.error(`Cannot delete folder: ${e}`);
+        }
+        if (fs.existsSync(`${rootDir}tmp/iobroker-data/files/vis.0/_data.json`)) {
+            try {
+                fs.writeFileSync(`${rootDir}tmp/iobroker-data/files/vis.0/_data.json`, '{}');
+            } catch (e) {
+                console.error(`Cannot write file: ${e}`);
+            }
+        }
+
         // install js-controller, web and vis-2-beta
-        await helper.startIoBroker({startOwnAdapter: true});
+        await helper.startIoBroker({startOwnAdapter: true, additionalAdapters: ['web']});
         await helper.startBrowser(process.env.CI === 'true');
         await helper.createProject();
 
