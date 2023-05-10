@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
@@ -135,6 +135,7 @@ const styles = theme => ({
         maxHeight: '100%',
     },
     widgetIcon: {
+        overflow: 'hidden',
         width: 40,
         height: 40,
         display: 'inline-block',
@@ -146,7 +147,7 @@ const styles = theme => ({
         objectFit: 'contain',
     },
     widgetImage: {
-        transform: 'scale(0.3)',
+        display: 'block',
         width: 30,
         height: 30,
         transformOrigin: '0 0',
@@ -450,9 +451,12 @@ const checkFunction = (funcText, project, selectedView, selectedWidgets, index) 
     return false;
 };
 
+const WIDGET_ICON_HEIGHT = 34;
+
 const Widget = props => {
     const widgetTypes = props.widgetTypes;
     const widgets = props.project[props.selectedView]?.widgets;
+    const imageRef = useRef();
 
     const fieldsData = useMemo(() => {
         let widget;
@@ -666,6 +670,15 @@ const Widget = props => {
         }
     }, [props.triggerAllOpened, props.triggerAllClosed]);
 
+    useEffect(() => {
+        if (imageRef.current?.children[0]) {
+            const height = imageRef.current.children[0].clientHeight;
+            if (height > WIDGET_ICON_HEIGHT) {
+                imageRef.current.style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
+            }
+        }
+    }, [imageRef]);
+
     if (!widgets) {
         return null;
     }
@@ -681,6 +694,7 @@ const Widget = props => {
     }
 
     let list;
+    // If selected only one widget, show its icon
     if (props.selectedWidgets.length === 1) {
         const tpl = widgets[props.selectedWidgets[0]].tpl;
         const _widgetType = getWidgetTypes().find(foundWidgetType => foundWidgetType.name === tpl);
@@ -726,6 +740,7 @@ const Widget = props => {
         if (!img) {
             img = <span
                 className={props.classes.widgetImage}
+                ref={imageRef}
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={
                     { __html: _widgetType?.preview }
@@ -742,7 +757,7 @@ const Widget = props => {
                 widgetBackColor = '#000';
             }
         }
-        list = <div style={{ lineHeight: widgetIcon ? '40px' : undefined }}>
+        list = <div style={{ display: 'flex' }}>
             {widgetIcon ? <div className={props.classes.widgetIcon}>{img}</div> : null}
             <div className={props.classes.widgetName}>{props.selectedWidgets[0]}</div>
             <div className={props.classes.widgetType}>
@@ -773,10 +788,8 @@ const Widget = props => {
     }
 
     return <>
-        <div style={{ width: '100%' }}>
-            <div style={{ display: 'inline-block', width: '100%' }}>
-                {list}
-            </div>
+        <div style={{ width: '100%', height: 34, overflow: 'hidden' }}>
+            {list}
         </div>
 
         <div style={{ height: 'calc(100% - 34px)', overflowY: 'auto' }}>

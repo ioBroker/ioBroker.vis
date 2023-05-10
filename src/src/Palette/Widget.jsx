@@ -28,7 +28,7 @@ const styles = () => ({
         color: 'black',
     },
     widgetImage: {
-        transform: 'scale(0.3)',
+        // transform: 'scale(0.3)',
         width: 30,
         height: 30,
         transformOrigin: '0 0',
@@ -54,11 +54,24 @@ const styles = () => ({
         display: 'flex',
         padding: 4,
         alignItems: 'center',
+        overflow: 'hidden',
     },
 });
 
+const WIDGET_ICON_HEIGHT = 34;
 const Widget = props => {
+    const imageRef = useRef();
     const style = {};
+
+    useEffect(() => {
+        if (imageRef.current?.children[0]) {
+            const height = imageRef.current.children[0].clientHeight;
+            if (height > WIDGET_ICON_HEIGHT) {
+                imageRef.current.style.transform = `scale(${WIDGET_ICON_HEIGHT / height})`;
+            }
+        }
+    }, [imageRef]);
+
     if (props.widgetType?.color) {
         style.backgroundColor = props.widgetType.color;
     } else if (props.widgetSetProps?.color) {
@@ -90,6 +103,7 @@ const Widget = props => {
     if (!img) {
         img = <span
             className={props.classes.widgetImage}
+            ref={imageRef}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={
                 { __html: props.widgetType.preview }

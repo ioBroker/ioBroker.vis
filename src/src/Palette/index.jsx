@@ -252,14 +252,14 @@ const Palette = props => {
                         {widgetSetProps[category]?.version ?
                             <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
                         <div>
-                            {Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
+                            {accordionOpen[category] ? Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
                                 (widgetTypeName === '_tplGroup' ? null : <Widget
                                     widgetType={widgetsList[category][widgetTypeName]}
                                     key={widgetKey}
                                     widgetSet={category}
                                     widgetSetProps={widgetSetProps[category]}
                                     widgetTypeName={widgetTypeName}
-                                />))}
+                                />)) : null}
                         </div>
                     </AccordionDetails>
                 </Accordion>)
