@@ -922,7 +922,6 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line class-methods-use-this,no-unused-vars
     renderWidgetBody(props) {
-        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
         return <div
             style={{
                 width: '100%',
@@ -932,7 +931,7 @@ class VisBaseWidget extends React.Component {
                 color: '#FFF',
             }}
         >
-            <div style={{ color: '#FF0000', paddingLeft: 10 }}>{I18n.t('Unknown widget type "%s"', widget.tpl)}</div>
+            <div style={{ color: '#FF0000', paddingLeft: 10 }}>{I18n.t('Unknown widget type "%s"', this.props.tpl)}</div>
             <pre>{ JSON.stringify(this.state.data, null, 2) }</pre>
         </div>;
     }
@@ -1425,7 +1424,7 @@ class VisBaseWidget extends React.Component {
                 style.cursor = 'pointer';
             }
 
-            if (widget.tpl && widget.tpl.toLowerCase().includes('image')) {
+            if (this.props.tpl?.toLowerCase().includes('image')) {
                 classNames = addClass(classNames, 'vis-editmode-helper');
                 style.opacity = style.opacity || 0.3;
             }
@@ -1505,7 +1504,7 @@ class VisBaseWidget extends React.Component {
             widgetName = <div
                 title={this.state.multiViewWidget ?
                     I18n.t('Jump to widget by double click') :
-                    (widget.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)}
+                    (this.props.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)}
                 className={Utils.clsx(
                     'vis-editmode-widget-name',
                     selected && 'selected',
@@ -1556,7 +1555,7 @@ class VisBaseWidget extends React.Component {
         }
 
         const overlay =
-            !this.state.hideHelper &&                        // if helper does not hidden
+            !this.state.hideHelper &&                        // if the helper does not hidden
             this.state.editMode &&                           // if edit mode
             !widget.data.locked &&                           // if not locked
             (!widget.groupid || this.props.selectedGroup) && // if not in group or in the edit group mode
@@ -1617,6 +1616,7 @@ VisBaseWidget.propTypes = {
     moveAllowed: PropTypes.bool,
     selectedGroup: PropTypes.string,
     context: PropTypes.object.isRequired,
+    tpl: PropTypes.string.isRequired,
 };
 
 export default VisBaseWidget;

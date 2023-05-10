@@ -419,5 +419,14 @@
   "group_help": "Możesz zdefiniować w atrybutach widżetu grupy specjalne nazwy w formacie \"%twojaCustomName%\" i pojawią się one w ustawieniach \"Atrybuty\". Następnie możesz podać nazwę i typ atrybutów niestandardowych.",
   "%s from %s": "%s od %s",
   "Jump to widget by double click": "Przejdź do widżetu, klikając dwukrotnie widżet",
-  "Switch to group edit mode by double click": "Przejdź do trybu edycji grupy, klikając dwukrotnie widżet"
+  "Switch to group edit mode by double click": "Przejdź do trybu edycji grupy, klikając dwukrotnie widżet",
+  "jqui_button_link": "Przejdź do adresu URL",
+  "jqui_jquery_style": "Styl jQuery",
+  "jqui_new_window": "Otworzyć w nowym oknie",
+  "jqui_image": "Obraz",
+  "jqui_icon": "Ikona",
+  "jqui_variant": "Wariant",
+  "jqui_set_label": "stylizowany",
+  "jqui_button_link_blank_note": "Przestarzałe. Użyj powyższego widżetu z opcją „Otwórz w nowym oknie”. Zachowany tylko ze względu na zgodność z wersją vis.1",
+  "jqui_button_link_blank": "Przejdź do adresu URL (w nowym oknie)"
 }

@@ -419,5 +419,14 @@
   "group_help": "Puede definir en los atributos del widget del grupo los nombres especiales en formato \"%yourCustomName%\" y aparecerán en la configuración de \"Atributos\". Después de eso, puede proporcionar el nombre y el tipo de atributos personalizados.",
   "%s from %s": "%s de %s",
   "Jump to widget by double click": "Saltar al widget haciendo doble clic en el widget",
-  "Switch to group edit mode by double click": "Cambie al modo de edición de grupo haciendo doble clic en el widget"
+  "Switch to group edit mode by double click": "Cambie al modo de edición de grupo haciendo doble clic en el widget",
+  "jqui_button_link": "Saltar a URL",
+  "jqui_jquery_style": "Estilo jQuery",
+  "jqui_new_window": "Abrir en Nueva ventana",
+  "jqui_image": "Imagen",
+  "jqui_icon": "Icono",
+  "jqui_variant": "Variante",
+  "jqui_set_label": "con estilo",
+  "jqui_button_link_blank_note": "Obsoleto. Use el widget anterior con la opción \"Abrir en una ventana nueva\". Mantenido solo por compatibilidad con vis.1",
+  "jqui_button_link_blank": "Saltar a URL (en ventana nueva)"
 }

@@ -419,5 +419,14 @@
   "group_help": "U kunt in de attributen van de groepswidget de speciale namen definiëren in de indeling \"%yourCustomName%\" en deze zal verschijnen in de \"Attributen\"-instellingen. Daarna kunt u de naam en het type aangepaste kenmerken opgeven.",
   "%s from %s": "%s van %s",
   "Jump to widget by double click": "Spring naar widget door te dubbelklikken op widget",
-  "Switch to group edit mode by double click": "Schakel over naar de groepsbewerkingsmodus door te dubbelklikken op de widget"
+  "Switch to group edit mode by double click": "Schakel over naar de groepsbewerkingsmodus door te dubbelklikken op de widget",
+  "jqui_button_link": "Spring naar URL",
+  "jqui_jquery_style": "jQuery-stijl",
+  "jqui_new_window": "Openen in een nieuw venster",
+  "jqui_image": "Afbeelding",
+  "jqui_icon": "Icoon",
+  "jqui_variant": "Variant",
+  "jqui_set_label": "Gestileerd",
+  "jqui_button_link_blank_note": "Verouderd. Gebruik bovenstaande widget met de optie \"Openen in nieuw venster\". Alleen behouden voor compatibiliteit met vis.1",
+  "jqui_button_link_blank": "Spring naar URL (in nieuw venster)"
 }

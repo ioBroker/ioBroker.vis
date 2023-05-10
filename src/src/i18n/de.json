@@ -419,5 +419,14 @@
   "group_help": "Sie können in den Attributen des Gruppen-Widgets die speziellen Namen im Format \"%yourCustomName%\" definieren und sie werden in den \"Attribute\"-Einstellungen angezeigt. Danach können Sie Name und Typ der benutzerdefinierten Attribute angeben.",
   "%s from %s": "%s von %s",
   "Jump to widget by double click": "Springen Sie zum Widget, indem Sie auf das Widget doppelklicken",
-  "Switch to group edit mode by double click": "Wechseln Sie in den Gruppenbearbeitungsmodus, indem Sie auf das Widget doppelklicken"
+  "Switch to group edit mode by double click": "Wechseln Sie in den Gruppenbearbeitungsmodus, indem Sie auf das Widget doppelklicken",
+  "jqui_button_link": "Zur URL springen",
+  "jqui_jquery_style": "jQuery-Stil",
+  "jqui_new_window": "In neuem Fenster öffnen",
+  "jqui_image": "Bild",
+  "jqui_icon": "Symbol",
+  "jqui_variant": "Variante",
+  "jqui_set_label": "Gestylt",
+  "jqui_button_link_blank_note": "Veraltet. Verwenden Sie das obige Widget mit der Option „In neuem Fenster öffnen“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
+  "jqui_button_link_blank": "Zur URL springen (in neuem Fenster)"
 }

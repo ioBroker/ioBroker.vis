@@ -101,6 +101,7 @@ export const getWidgetTypes = () => {
                         .join(''),
                     setLabel: info?.visSetLabel || undefined,
                     setColor: info?.visSetColor || undefined,
+                    order: info?.visOrder || undefined,
                     hidden: script.attributes['data-vis-no-palette']?.value === 'true',
                 };
 
@@ -132,11 +133,13 @@ export const getWidgetTypes = () => {
                 adapter: widget.adapter || undefined,
                 version: widget.version || undefined,
                 hidden: widget.visHidden,
+                order: widgetInfo.visOrder,
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
 
             window.visWidgetTypes.push(widgetObj);
+
             if (i18nPrefix && typeof widgetInfo.visAttrs === 'object') {
                 widgetInfo.visAttrs.forEach(group => {
                     if (group.label && !group.label.startsWith(i18nPrefix)) {

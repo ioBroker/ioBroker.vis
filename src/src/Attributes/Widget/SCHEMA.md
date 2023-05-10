@@ -15,6 +15,7 @@ class MyWidget extends Generic {
             visResizeLocked: true,                           // require, that width is always equal to height
             visResizable: false,                             // widget is not resizable 
             visDraggable: false,                             // widget is not draggable 
+            visOrder: 1,                                     // order of widget in palette
             visAttrs: [
                 {
                     name: 'common', // group name

@@ -894,11 +894,12 @@ class VisView extends React.Component {
             id,
         } = options;
 
-        const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
+        const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
         return <Widget
             {...context} // Todo: migrate ALL widgets on context
             key={`${index}_${id}`}
+            tpl={widget.tpl}
             {...options}
         />;
     }

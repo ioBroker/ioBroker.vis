@@ -90,8 +90,7 @@ class VisCanWidget extends VisBaseWidget {
         this.props.context.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
 
         // legacy support
-        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
-        if (widget?.tpl?.includes('materialdesign') && this.props.context.buildLegacyStructures) {
+        if (props.tpl?.includes('materialdesign') && this.props.context.buildLegacyStructures) {
             this.props.context.buildLegacyStructures();
         }
     }
@@ -1107,7 +1106,7 @@ class VisCanWidget extends VisBaseWidget {
 
         try {
             // Append html element to view
-            if (widget.tpl) {
+            if (this.props.tpl) {
                 if (!this.widDiv || !update || !widget?.data?.members.length) {
                     const options = {
                         data: this.props.context.allWidgets[wid].data,
@@ -1119,7 +1118,7 @@ class VisCanWidget extends VisBaseWidget {
                     if (widgetData?.oid) {
                         options.val = this.props.context.canStates.attr(`${widgetData.oid}.val`);
                     }
-                    const widgetFragment = this.props.context.can.view(widget.tpl, options);
+                    const widgetFragment = this.props.context.can.view(this.props.tpl, options);
 
                     // replace all scripts in the widget
                     const scripts = Array.from(widgetFragment.querySelectorAll('script'));
@@ -1181,7 +1180,7 @@ class VisCanWidget extends VisBaseWidget {
                 }
 
                 // add template classes to div
-                const tplEl = window.document.getElementById(widget.tpl);
+                const tplEl = window.document.getElementById(this.props.tpl);
                 const visName = tplEl.dataset.visName || (wid[0] === 'g' ? 'group' : 'noname');
                 const visSet = tplEl.dataset.visSet || 'noset';
                 this.updateOnStyle = tplEl.dataset.visUpdateStyle === 'true';
@@ -1256,7 +1255,7 @@ class VisCanWidget extends VisBaseWidget {
             );
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
-            const error = `can't render ${widget.tpl} ${wid} on "${this.props.view}": `;
+            const error = `can't render ${this.props.tpl} ${wid} on "${this.props.view}": `;
             this.props.context.socket.log(error, 'error');
             console.error(error);
             for (let l = 0; l < lines.length; l++) {
@@ -1373,6 +1372,7 @@ VisCanWidget.propTypes = {
     refParent: PropTypes.object.isRequired,
     selectedWidgets: PropTypes.array,
     relativeWidgetOrder: PropTypes.array,
+    tpl: PropTypes.string.isRequired,
 };
 
 export default VisCanWidget;

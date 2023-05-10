@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import withStyles from '@mui/styles/withStyles';
 
 import {
@@ -89,58 +89,77 @@ const Palette = props => {
             : {},
     );
 
+    const widgetSetProps = {};
+    const widgetsList = useMemo(() => {
+        const _widgetsList = {};
+        if (!props.widgetsLoaded) {
+            return _widgetsList;
+        }
+        const widgetTypes = getWidgetTypes();
+        widgetTypes.forEach(widgetType => {
+            const widgetTypeName = widgetType.set;
+            _widgetsList[widgetTypeName] = _widgetsList[widgetTypeName] || {};
+            const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
+            if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
+                return;
+            }
+
+            if (widgetType.setLabel) {
+                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
+            }
+            if (widgetType.setColor) {
+                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName].color = widgetType.setColor;
+            }
+            if (widgetType.setIcon) {
+                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
+            } else
+            if (widgetType.adapter && !widgetSetProps[widgetTypeName]?.icon) {
+                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+                if (window.location.port === '3000') {
+                    widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                } else {
+                    widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                }
+            }
+
+            if (widgetType.version) {
+                widgetSetProps[widgetTypeName].version = widgetType.version;
+            }
+
+            _widgetsList[widgetTypeName][widgetType.name] = widgetType;
+        });
+
+        if (filter) {
+            Object.keys(_widgetsList).forEach(widgetType => {
+                if (!Object.keys(_widgetsList[widgetType]).length) {
+                    delete _widgetsList[widgetType];
+                }
+            });
+        }
+
+        // convert the objects to array
+        Object.keys(_widgetsList).forEach(widgetType => {
+            _widgetsList[widgetType] = Object.values(_widgetsList[widgetType]);
+            // sort items
+            _widgetsList[widgetType].sort((a, b) => {
+                if (a.order === undefined) {
+                    a.order = 1000;
+                }
+                if (b.order === undefined) {
+                    b.order = 1000;
+                }
+                return a.order - b.order;
+            });
+        });
+
+        return _widgetsList;
+    }, [filter, props.widgetsLoaded]);
+
     if (!props.widgetsLoaded) {
         return null;
-    }
-    const widgetsList = {};
-    const widgetSetProps = {};
-
-    const widgetTypes = getWidgetTypes();
-
-    // console.log(widgetTypes);
-
-    widgetTypes.forEach(widgetType => {
-        const widgetTypeName = widgetType.set;
-        widgetsList[widgetTypeName] = widgetsList[widgetTypeName] || {};
-        const title = widgetType.label ? I18n.t(widgetType.label) : window.vis._(widgetType.title) || '';
-        if (widgetType.hidden || (filter && !title.toLowerCase().includes(filter.toLowerCase()))) {
-            return;
-        }
-
-        if (widgetType.setLabel) {
-            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-            widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
-        }
-        if (widgetType.setColor) {
-            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-            widgetSetProps[widgetTypeName].color = widgetType.setColor;
-        }
-        if (widgetType.setIcon) {
-            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-            widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
-        } else
-        if (widgetType.adapter && !widgetSetProps[widgetTypeName]?.icon) {
-            widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-            if (window.location.port === '3000') {
-                widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
-            } else {
-                widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
-            }
-        }
-
-        if (widgetType.version) {
-            widgetSetProps[widgetTypeName].version = widgetType.version;
-        }
-
-        widgetsList[widgetTypeName][widgetType.name] = widgetType;
-    });
-
-    if (filter) {
-        Object.keys(widgetsList).forEach(widgetType => {
-            if (!Object.keys(widgetsList[widgetType]).length) {
-                delete widgetsList[widgetType];
-            }
-        });
     }
 
     const allOpened = !Object.keys(widgetsList).find(group => !accordionOpen[group]);
@@ -252,13 +271,13 @@ const Palette = props => {
                         {widgetSetProps[category]?.version ?
                             <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
                         <div>
-                            {accordionOpen[category] ? Object.keys(widgetsList[category]).map((widgetTypeName, widgetKey) =>
-                                (widgetTypeName === '_tplGroup' ? null : <Widget
-                                    widgetType={widgetsList[category][widgetTypeName]}
-                                    key={widgetKey}
+                            {accordionOpen[category] ? widgetsList[category].map(widgetItem =>
+                                (widgetItem.name === '_tplGroup' ? null : <Widget
+                                    widgetType={widgetItem}
+                                    key={widgetItem.name}
                                     widgetSet={category}
                                     widgetSetProps={widgetSetProps[category]}
-                                    widgetTypeName={widgetTypeName}
+                                    widgetTypeName={widgetItem.name}
                                 />)) : null}
                         </div>
                     </AccordionDetails>
