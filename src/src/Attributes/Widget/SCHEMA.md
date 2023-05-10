@@ -214,7 +214,7 @@ Example of custom field
         onDataChange,// function to call, when data changed 
         props,       // additional properties : {socket, projectName, instance, adapterName, selectedView, selectedWidgets, project, widgetID}
                      // widgetID: widget ID or widgets IDs. If selecteld more than one widget, it is array of IDs
-                     // project object: {VIEWS..., [view]: {widgets: {[widgetID]: {tpl, data, style}}, settings, parentId, rerender, filterList, activeWidgets}, __settings: {}}
+                     // project object: {VIEWS..., [view]: {widgets: {[widgetID]: {tpl, data, style}}, settings, parentId, rerender, filterList, activeWidgets}, ___settings: {}}
     ) => <TextField
         fullWidth
         value={data[field.name]}

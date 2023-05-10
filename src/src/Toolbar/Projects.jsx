@@ -52,7 +52,14 @@ const Tools = props => {
 
     return <>
         <ToolbarItems group={toolbar} last {...props} classes={{}} />
-        <Settings open={settingsDialog} onClose={() => setSettingsDialog(false)} {...props} classes={{}} />
+        {settingsDialog ? <Settings
+            onClose={() => setSettingsDialog(false)}
+            {...props}
+            classes={{}}
+            adapterName={props.adapterName}
+            instance={props.instance}
+            projectName={props.projectName}
+        /> : null}
         {props.projectsDialog ? <ProjectsManager
             open={!0}
             onClose={() => props.setProjectsDialog(false)}

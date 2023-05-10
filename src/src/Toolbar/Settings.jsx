@@ -10,6 +10,7 @@ import {
     InputLabel,
     MenuItem,
     Select,
+    Switch,
     TextField,
 } from '@mui/material';
 
@@ -31,6 +32,8 @@ const styles = () => ({
 });
 
 const Settings = props => {
+    const [projectMode, setProjectMode] = useState(0);
+
     const [settings, setSettings] = useState({});
     const [instance, setInstance] = useState(window.localStorage.getItem('visInstance'));
     /* eslint no-underscore-dangle: 0 */
@@ -39,8 +42,18 @@ const Settings = props => {
         if (_settings.reloadOnEdit === undefined) {
             _settings.reloadOnEdit = true;
         }
+
+        // read project settings
+        props.socket.readDir(`${props.adapterName}.${props.instance}`, props.projectName)
+            .then(files => {
+                const file = files.find(f => f.file === 'vis-views.json');
+                if (file?.mode || file?.acl?.permissions) {
+                    setProjectMode(file.mode || file.acl.permissions);
+                }
+            });
+
         setSettings(_settings);
-    }, [props.open]);
+    }, []);
 
     const fields = [
         {
@@ -130,7 +143,19 @@ const Settings = props => {
                 </Button>
             </>,
         },
-        { type: 'checkbox', name: 'Available for all', field: '??' },
+        { type: 'switchMode' }, // very specific control
+        {
+            type: 'select',
+            name: 'Body overflow',
+            field: 'bodyOverflow',
+            noTranslate: true,
+            items: [
+                { value: 'auto', name: 'auto' },
+                { value: 'scroll', name: 'scroll' },
+                { value: 'hidden', name: 'hidden' },
+                { value: 'visible', name: 'visible' },
+            ],
+        },
     ];
 
     const save = () => {
@@ -140,7 +165,7 @@ const Settings = props => {
         props.onClose();
     };
 
-    return props.open ? <IODialog
+    return <IODialog
         open={!0}
         onClose={props.onClose}
         title="Settings"
@@ -175,12 +200,39 @@ const Settings = props => {
                                 value={selectItem.value}
                                 key={selectItem.value}
                             >
-                                {I18n.t(selectItem.name)}
+                                {field.noTranslate ? selectItem.name : I18n.t(selectItem.name)}
                             </MenuItem>)}
                         </Select>
                     </FormControl>;
                 } else if (field.type === 'raw') {
                     result = field.Node;
+                } else if (field.type === 'switchMode') {
+                    result = <FormControlLabel
+                        label={I18n.t('Available for all')}
+                        control={<Switch
+                            // eslint-disable-next-line no-bitwise
+                            checked={!!(projectMode & 0x60)}
+                            onChange={e => {
+                                // eslint-disable-next-line no-bitwise
+                                props.socket.getRawSocket().emit(
+                                    'chmodFile',
+                                    `${props.adapterName}.${props.instance}`,
+                                    `${props.projectName}/*`,
+                                    { mode: e.target.checked ? 0x644 : 0x600 },
+                                    (err, files) => {
+                                        if (err) {
+                                            window.alert(err);
+                                        } else {
+                                            const file = files.find(f => f.file === 'vis-views.json');
+                                            if (file?.mode || file?.acl?.permissions) {
+                                                setProjectMode(file.mode || file.acl.permissions);
+                                            }
+                                        }
+                                    },
+                                );
+                            }}
+                        />}
+                    />;
                 } else {
                     result = <TextField
                         variant="standard"
@@ -195,16 +247,18 @@ const Settings = props => {
                 return <div key={key} className={props.classes.field}>{result}</div>;
             })}
         </div>
-    </IODialog> : null;
+    </IODialog>;
 };
 
 Settings.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
     onClose: PropTypes.func,
-    open: PropTypes.bool,
     project: PropTypes.object,
-    // selectedGroup: PropTypes.string,
+    socket: PropTypes.object,
+    adapterName: PropTypes.string,
+    instance: PropTypes.number,
+    projectName: PropTypes.string,
 };
 
 export default withStyles(styles)(Settings);

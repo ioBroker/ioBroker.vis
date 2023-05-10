@@ -377,6 +377,10 @@ class Runtime extends GenericApp {
         // copy multi-views to corresponding views
         this.syncMultipleWidgets(project);
 
+        if (this.state.runtime && project.___settings?.bodyOverflow) {
+            window.document.body.style.overflow = project.___settings.bodyOverflow;
+        }
+
         await this.setStateAsync({
             visCommonCss: null,
             visUserCss: null,

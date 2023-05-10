@@ -21,10 +21,12 @@ import HeightNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 import HeightVeryNarrowIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 import SaveIcon from '@mui/icons-material/Save';
 
-import I18n from '@iobroker/adapter-react-v5/i18n';
-import ToggleThemeMenu from '@iobroker/adapter-react-v5/Components/ToggleThemeMenu';
-import Icon from '@iobroker/adapter-react-v5/Components/Icon';
-import Utils from '@iobroker/adapter-react-v5/Components/Utils';
+import {
+    Icon,
+    Utils,
+    I18n,
+    ToggleThemeMenu,
+} from '@iobroker/adapter-react-v5';
 
 import Views from './Views';
 import Widgets from './Widgets';

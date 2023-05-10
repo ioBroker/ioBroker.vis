@@ -58,7 +58,6 @@ const styles = theme => ({
         height: 'calc(100vh - 39px)',
     },
     canvas: {
-        overflow: 'auto',
         height: 'calc(100vh - 154px)',
     },
     canvasNarrow: {
@@ -178,6 +177,7 @@ class App extends Runtime {
 
     // eslint-disable-next-line class-methods-use-this
     initState(newState) {
+
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
@@ -192,6 +192,12 @@ class App extends Runtime {
         }
         if (window.location.search.includes('edit') || (window.location.port.startsWith('300') && !window.location.search.includes('runtime'))) {
             runtime = false;
+        }
+
+        if (!runtime) {
+            window.document.body.style.overflow = 'hidden';
+        } else {
+            window.document.body.style.overflow = 'visible'; // default behavior
         }
 
         Object.assign(newState, {
@@ -1344,6 +1350,7 @@ class App extends Runtime {
         return <div key="engine">
             {this.renderTabs()}
             <div
+                style={{ overflow: this.state.editMode ? 'auto' : (this.state.project.___settings?.bodyOverflow || undefined) }}
                 className={Utils.clsx(
                     this.props.classes.canvas,
                     this.state.toolbarHeight === 'narrow' && this.props.classes.canvasNarrow,
