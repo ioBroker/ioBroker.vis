@@ -177,7 +177,6 @@ class App extends Runtime {
 
     // eslint-disable-next-line class-methods-use-this
     initState(newState) {
-
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
@@ -1409,7 +1408,7 @@ class App extends Runtime {
             <Attributes
                 classes={{}}
                 selectedView={this.state.selectedView}
-                groups={this.state.groups}
+                userGroups={this.state.userGroups}
                 project={this.state.project}
                 changeProject={this.changeProject}
                 openedViews={this.state.openedViews}
@@ -1618,7 +1617,7 @@ class App extends Runtime {
             </StylesProvider>;
         }
 
-        if (!this.state.loaded || !this.state.project || !this.state.groups) {
+        if (!this.state.loaded || !this.state.project || !this.state.userGroups) {
             return <StylesProvider generateClassName={generateClassName}>
                 <StyledEngineProvider injectFirst>
                     <ThemeProvider theme={this.state.theme}>

@@ -353,8 +353,6 @@ class Runtime extends GenericApp {
             window.localStorage.setItem('selectedView', selectedView);
         }
 
-        const groups = await this.socket.getGroups();
-
         window.localStorage.setItem('projectName', projectName);
 
         if (this.subscribedProject && (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)) {
@@ -390,7 +388,6 @@ class Runtime extends GenericApp {
             visProject: project,
             openedViews,
             projectName,
-            groups,
         });
 
         await this.changeView(selectedView);
@@ -434,10 +431,15 @@ class Runtime extends GenericApp {
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
-        const user = await this.socket.getCurrentUser();
-        const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
+        const userName = await this.socket.getCurrentUser(); // just name, like "admin"
+        const currentUser = await this.socket.getObject(`system.user.${userName || 'admin'}`);
+        const groups = await this.  socket.getGroups();
+        const userGroups = {};
+        groups.forEach(group => userGroups[group._id] = group);
+
         await this.setStateAsync({
             currentUser,
+            userGroups,
             selectedView: '',
             splitSizes: window.localStorage.getItem('Vis.splitSizes')
                 ? JSON.parse(window.localStorage.getItem('Vis.splitSizes'))
@@ -774,6 +776,7 @@ class Runtime extends GenericApp {
             })}
             onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
             currentUser={this.state.currentUser}
+            userGroups={this.state.userGroups}
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
         />;
@@ -784,7 +787,7 @@ class Runtime extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {
-                        !this.state.loaded || !this.state.project || !this.state.groups ?
+                        !this.state.loaded || !this.state.project ?
                             <Loader theme={this.state.themeType} /> :
                             this.getVisEngine()
                     }

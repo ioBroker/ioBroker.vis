@@ -194,14 +194,9 @@ class VisEngine extends React.Component {
 
         this.loadLegacyObjects()
             .then(() => this.loadEditWords())
-            .then(() => this.readGroups())
-            .then(userGroups => {
-                this.userGroups = userGroups;
-                return this.props.socket.getCurrentUser();
-            })
-            .then(user => {
-                this.user = user;
-                this.vis.user = user;
+            .then(() => {
+                this.userName = this.props.currentUser._id.replace('system.user.', '')
+                this.vis.user = this.userName;
                 this.vis.loginRequired = this.props.socket.isSecure;
                 return this.props.socket.getSystemConfig();
             })
@@ -679,7 +674,7 @@ class VisEngine extends React.Component {
                     if (id.startsWith('local_')) {
                         // if it is a local variable, we have to initiate this
                         state = {
-                            val: getUrlParameter(id), // using url parameter to set initial value of local variable
+                            val: getUrlParameter(id), // using url parameter to set the initial value of the local variable
                             ts: Date.now(),
                             lc: Date.now(),
                             ack: false,
@@ -835,6 +830,7 @@ class VisEngine extends React.Component {
                     return condition === 'not exist';
                 }
             },
+            getUserGroups: () => this.props.userGroups,
         };
     }
 
@@ -952,17 +948,8 @@ class VisEngine extends React.Component {
                 }
                 groupName = groupName || '';
 
-                return this.props.socket.getGroups(!useCache)
-                    .then(groups => {
-                        const result = {};
-                        if (groupName) {
-                            const gr = `system.group.${groupName}`;
-                            groups = groups.filter(group => group._id.startsWith(`${gr}.`) || group._id === gr);
-                        }
-
-                        groups.forEach(group => result[group._id] = group);
-                        cb(result);
-                    })
+                return this.readGroups(groupName, !useCache)
+                    .then(groups => cb(groups))
                     .catch(error => cb(error));
             },
             getConfig: (useCache, cb) => {
@@ -1075,7 +1062,7 @@ class VisEngine extends React.Component {
             setReconnectInterval: () => {
 
             },
-            getUser: () => this.user,
+            getUser: () => this.userName,
             sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
                 .then(() => this.props.socket.setState(this.idControlData, { val: data, ack: true }))
                 .then(() => this.props.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
@@ -1226,8 +1213,8 @@ class VisEngine extends React.Component {
         return result;
     }
 
-    readGroups(groupName) {
-        return this.props.socket.getGroups()
+    readGroups(groupName, useCache) {
+        return this.props.socket.getGroups(!useCache)
             .then(groups => {
                 const result = {};
                 if (groupName) {
@@ -1920,8 +1907,8 @@ ${this.scripts}
             themeType: this.props.themeType,
             timeInterval: this.state.timeInterval,
             timeStart: this.state.timeStart,
-            user: this.user,
-            userGroups: this.userGroups,
+            user: this.userName,
+            userGroups: this.props.userGroups,
             views: this.props.views, // project
             viewsActiveFilter: this.viewsActiveFilter,
             widgetHint: this.props.widgetHint,
@@ -1994,6 +1981,7 @@ VisEngine.propTypes = {
     projectName: PropTypes.string.isRequired,
     adapterId: PropTypes.string.isRequired, // vis.0
     currentUser: PropTypes.object,
+    userGroups: PropTypes.object,
     renderAlertDialog: PropTypes.func,
     showLegacyFileSelector: PropTypes.func,
 };

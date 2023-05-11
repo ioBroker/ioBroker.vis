@@ -875,7 +875,7 @@ const WidgetField = props => {
             placeholder={isDifferent ? t('different') : null}
             multiple
             renderValue={selected => <div style={{ display: 'flex' }}>
-                {props.groups
+                {Object.values(props.userGroups)
                     .filter(group => selected.includes(group._id.split('.')[2]))
                     .map((group, key) =>
                         <span key={key} style={{ padding: '4px 4px' }}>
@@ -894,7 +894,7 @@ const WidgetField = props => {
             onChange={e => change(e.target.value)}
             fullWidth
         >
-            {props.groups.map((group, i) => <MenuItem
+            {Object.values(props.userGroups).map((group, i) => <MenuItem
                 value={group._id.split('.')[2]}
                 key={`${group._id.split('.')[2]}_${i}`}
             >
@@ -1247,7 +1247,7 @@ WidgetField.propTypes = {
     classes: PropTypes.object,
     field: PropTypes.object.isRequired,
     fonts: PropTypes.array,
-    groups: PropTypes.array,
+    userGroups: PropTypes.array,
     instance: PropTypes.number.isRequired,
     isDifferent: PropTypes.bool,
     isStyle: PropTypes.bool,

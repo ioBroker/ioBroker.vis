@@ -146,6 +146,7 @@ Attributes.propTypes = {
     editMode: PropTypes.bool,
     onHide: PropTypes.func,
     adapterId: PropTypes.string.isRequired,
+    userGroups: PropTypes.object.isRequired,
 };
 
 export default withStyles(style)(Attributes);
