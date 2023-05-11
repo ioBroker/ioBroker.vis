@@ -195,7 +195,7 @@ class VisEngine extends React.Component {
         this.loadLegacyObjects()
             .then(() => this.loadEditWords())
             .then(() => {
-                this.userName = this.props.currentUser._id.replace('system.user.', '')
+                this.userName = this.props.currentUser._id.replace('system.user.', '');
                 this.vis.user = this.userName;
                 this.vis.loginRequired = this.props.socket.isSecure;
                 return this.props.socket.getSystemConfig();

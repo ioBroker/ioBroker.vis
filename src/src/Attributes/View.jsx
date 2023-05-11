@@ -1150,7 +1150,7 @@ const View = props => {
 View.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
-    userGroups: PropTypes.array,
+    userGroups: PropTypes.object,
     project: PropTypes.object,
     selectedView: PropTypes.string,
 

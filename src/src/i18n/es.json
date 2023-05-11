@@ -94,7 +94,7 @@
   "Are you sure to delete widgets %s?": "¿Estás seguro de eliminar los widgets %s?",
   "Do you want to delete view \"%s\"?": "¿Desea eliminar la vista \"%s\"?",
   "Attributes": "Atributos",
-  "Available for all": "Disponible para todos",
+  "Available for all": "Proyecto accesible para todos los usuarios",
   "Background class": "Clase de fondo",
   "Benutzer": "Benutzer",
   "Blue flowers": "Flores azules",
@@ -422,11 +422,11 @@
   "Switch to group edit mode by double click": "Cambie al modo de edición de grupo haciendo doble clic en el widget",
   "jqui_button_link": "Saltar a URL",
   "jqui_jquery_style": "Estilo jQuery",
-  "jqui_new_window": "Abrir en Nueva ventana",
   "jqui_image": "Imagen",
   "jqui_icon": "Icono",
   "jqui_variant": "Variante",
   "jqui_set_label": "con estilo",
-  "jqui_button_link_blank_note": "Obsoleto. Use el widget anterior con la opción \"Abrir en una ventana nueva\". Mantenido solo por compatibilidad con vis.1",
-  "jqui_button_link_blank": "Saltar a URL (en ventana nueva)"
+  "jqui_button_link_blank_note": "Obsoleto. Utilice el primer widget con la opción \"Abrir en ventana nueva\". Mantenido solo por compatibilidad con vis.1",
+  "jqui_button_link_blank": "Saltar a URL (en ventana nueva)",
+  "jqui_icon_link": "Saltar a URL (con icono)"
 }

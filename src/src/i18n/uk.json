@@ -94,7 +94,7 @@
   "Are you sure to delete widgets %s?": "Ви впевнені, що хочете видалити віджети %s?",
   "Do you want to delete view \"%s\"?": "Ви бажаєте видалити перегляд \"%s\"?",
   "Attributes": "Атрибути",
-  "Available for all": "Доступно для всіх",
+  "Available for all": "Проект доступний для всіх користувачів",
   "Background class": "Фоновий клас",
   "Benutzer": "Бенуцер",
   "Blue flowers": "Сині квіти",
@@ -422,11 +422,11 @@
   "Switch to group edit mode by double click": "Перейдіть у режим редагування групи, двічі клацнувши на віджеті",
   "jqui_button_link": "Перейти до URL",
   "jqui_jquery_style": "Стиль jQuery",
-  "jqui_new_window": "Відкрити в новому вікні",
   "jqui_image": "Зображення",
   "jqui_icon": "значок",
   "jqui_variant": "Варіант",
   "jqui_set_label": "Стилізована",
-  "jqui_button_link_blank_note": "Застаріле. Використовуйте віджет вище з опцією «Відкрити в новому вікні». Збережено тільки для сумісності з vis.1",
-  "jqui_button_link_blank": "Перейти до URL (у новому вікні)"
+  "jqui_button_link_blank_note": "Застаріле. Використовуйте перший віджет із опцією «Відкрити в новому вікні». Збережено тільки для сумісності з vis.1",
+  "jqui_button_link_blank": "Перейти до URL (у новому вікні)",
+  "jqui_icon_link": "Перейти до URL-адреси (зі значком)"
 }

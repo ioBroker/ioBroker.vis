@@ -94,7 +94,7 @@
   "Are you sure to delete widgets %s?": "Czy na pewno chcesz usunąć widżety %s?",
   "Do you want to delete view \"%s\"?": "Czy chcesz usunąć widok „%s”?",
   "Attributes": "Atrybuty",
-  "Available for all": "Dostępne dla wszystkich",
+  "Available for all": "Projekt dostępny dla wszystkich użytkowników",
   "Background class": "Klasa podstawowa",
   "Benutzer": "Benutzer",
   "Blue flowers": "Niebieskie kwiaty",
@@ -422,11 +422,11 @@
   "Switch to group edit mode by double click": "Przejdź do trybu edycji grupy, klikając dwukrotnie widżet",
   "jqui_button_link": "Przejdź do adresu URL",
   "jqui_jquery_style": "Styl jQuery",
-  "jqui_new_window": "Otworzyć w nowym oknie",
   "jqui_image": "Obraz",
   "jqui_icon": "Ikona",
   "jqui_variant": "Wariant",
   "jqui_set_label": "stylizowany",
-  "jqui_button_link_blank_note": "Przestarzałe. Użyj powyższego widżetu z opcją „Otwórz w nowym oknie”. Zachowany tylko ze względu na zgodność z wersją vis.1",
-  "jqui_button_link_blank": "Przejdź do adresu URL (w nowym oknie)"
+  "jqui_button_link_blank_note": "Przestarzałe. Użyj pierwszego widżetu z opcją „Otwórz w nowym oknie”. Zachowany tylko ze względu na zgodność z wersją vis.1",
+  "jqui_button_link_blank": "Przejdź do adresu URL (w nowym oknie)",
+  "jqui_icon_link": "Przejdź do adresu URL (z ikoną)"
 }

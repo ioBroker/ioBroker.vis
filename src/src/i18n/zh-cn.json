@@ -94,7 +94,7 @@
   "Are you sure to delete widgets %s?": "您确定要删除小部件 %s 吗？",
   "Do you want to delete view \"%s\"?": "您要删除视图“%s”吗？",
   "Attributes": "属性",
-  "Available for all": "可供所有人使用",
+  "Available for all": "所有用户均可访问的项目",
   "Background class": "背景类",
   "Benutzer": "本努策",
   "Blue flowers": "蓝色花朵",
@@ -422,11 +422,11 @@
   "Switch to group edit mode by double click": "双击小部件切换到组编辑模式",
   "jqui_button_link": "跳转到网址",
   "jqui_jquery_style": "jQuery 风格",
-  "jqui_new_window": "在新窗口中打开",
   "jqui_image": "图像",
   "jqui_icon": "图标",
   "jqui_variant": "变体",
   "jqui_set_label": "风格化",
-  "jqui_button_link_blank_note": "已弃用。将上面的小部件与“在新窗口中打开”选项一起使用。保留只是为了与 vis.1 兼容",
-  "jqui_button_link_blank": "跳转到网址（在新窗口中）"
+  "jqui_button_link_blank_note": "已弃用。使用带有“在新窗口中打开”选项的第一个小部件。保留只是为了与 vis.1 兼容",
+  "jqui_button_link_blank": "跳转到网址（在新窗口中）",
+  "jqui_icon_link": "跳转到 URL（带图标）"
 }

@@ -433,7 +433,7 @@ class Runtime extends GenericApp {
 
         const userName = await this.socket.getCurrentUser(); // just name, like "admin"
         const currentUser = await this.socket.getObject(`system.user.${userName || 'admin'}`);
-        const groups = await this.  socket.getGroups();
+        const groups = await this.socket.getGroups();
         const userGroups = {};
         groups.forEach(group => userGroups[group._id] = group);
 
