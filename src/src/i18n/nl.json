@@ -428,5 +428,10 @@
   "jqui_set_label": "Gestileerd",
   "jqui_button_link_blank_note": "Verouderd. Gebruik de eerste widget met de optie \"Openen in nieuw venster\". Alleen behouden voor compatibiliteit met vis.1",
   "jqui_button_link_blank": "Spring naar URL (in nieuw venster)",
-  "jqui_icon_link": "Spring naar URL (met icoon)"
+  "jqui_icon_link": "Spring naar URL (met icoon)",
+  "jqui_href_tooltip": "Deze URL wordt in de browser aangeroepen",
+  "jqui_url_tooltip": "Deze URL wordt op de achtergrond aangeroepen door de ioBroker-engine",
+  "visResizable": "Aanpasbaar",
+  "jqui_url_in_browser": "URL in browser",
+  "jqui_url_in_background": "URL in back-end"
 }

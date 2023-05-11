@@ -109,7 +109,7 @@ class Vis {
         this.can = props.can;
         this.project = props.project || 'main';
         this.lang = props.lang || window.systemLang;
-        this.projectPrefix = this.project + '/';
+        this.projectPrefix = `${this.project}/`;
         this.views = props.views || null;
         this._ = props._;
 
@@ -145,7 +145,7 @@ class Vis {
                     .then(groups => {
                         const result = {};
                         if (groupName) {
-                            groups = groups.filter(group => group._id.startsWith('system.group.' + groupName + '.') || group._id === 'system.group.' + groupName);
+                            groups = groups.filter(group => group._id.startsWith(`system.group.${groupName}.`) || group._id === `system.group.${groupName}`);
                         }
 
                         groups.forEach(group => result[group._id] = group);
@@ -198,10 +198,8 @@ class Vis {
                     .catch(error =>
                         cb(error));
             },
-            getLoggedUser: cb => {
-                return this.socket.getCurrentUser()
-                    .then(user => cb(this.socket.isSecure, user));
-            },
+            getLoggedUser: cb => this.socket.getCurrentUser()
+                .then(user => cb(this.socket.isSecure, user)),
             subscribe: IDs => {
                 if (!Array.isArray(IDs)) {
                     IDs = [IDs];
@@ -229,16 +227,12 @@ class Vis {
                     };
                 }
             },
-            getStates: (IDs, cb) => {
-                return this.socket.getForeignStates(IDs)
-                    .then(data => cb(null, data))
-                    .catch(error => cb(error || 'Authentication required'));
-            },
-            setState: (id, val, cb) => {
-                return this.socket.setState(id, val)
-                    .then(() => cb && cb())
-                    .catch(error => cb && cb(error));
-            },
+            getStates: (IDs, cb) => this.socket.getForeignStates(IDs)
+                .then(data => cb(null, data))
+                .catch(error => cb(error || 'Authentication required')),
+            setState: (id, val, cb) => this.socket.setState(id, val)
+                .then(() => cb && cb())
+                .catch(error => cb && cb(error)),
             setReloadTimeout: () => {
 
             },
@@ -247,10 +241,9 @@ class Vis {
             },
             getUser: () => this.user,
             sendCommand: (instance, command, data, ack) =>
-                this.socket.setState(this.conn.namespace + '.control.instance', { val: instance || 'notdefined', ack: true })
-                    .then(() => this.socket.setState(this.conn.namespace + '.control.data', { val: data, ack: true }))
-                    .then(() => this.socket.setState(this.conn.namespace + '.control.command', { val: command, ack: ack === undefined ? true : ack }))
-            ,
+                this.socket.setState(`${this.conn.namespace}.control.instance`, { val: instance || 'notdefined', ack: true })
+                    .then(() => this.socket.setState(`${this.conn.namespace}.control.data`, { val: data, ack: true }))
+                    .then(() => this.socket.setState(`${this.conn.namespace}.control.command`, { val: command, ack: ack === undefined ? true : ack })),
             readFile: (filename, cb) => {
                 let adapter = this.conn.namespace;
                 if (filename[0] === '/') {
@@ -485,8 +478,7 @@ class Vis {
         let parts;
         if (!instance || (instance !== this.instance && instance !== 'FFFFFFFF' && !instance.includes('*'))) {
             return false;
-        } else
-        if (command) {
+        } if (command) {
             if (this.editMode && command !== 'tts' && command !== 'playSound') {
                 return;
             }
@@ -679,7 +671,7 @@ class Vis {
                 .catch(error => {
                     this.conn.logError(`Cannot load /${this.conn.namespace}/${this.projectPrefix}vis-user.css - ${error}`);
                     this.$('head').append('<style id="vis-user" class="vis-user"></style>');
-                   // this.$(document).trigger('vis-user');
+                    // this.$(document).trigger('vis-user');
                 });
 
             Promise.all([fetchCommonCss, fetchUserCss])
@@ -1351,9 +1343,8 @@ class Vis {
                 } if (cView === view) {
                     that.$(this).append('error: view container recursion.');
                     return false;
-                } else {
-                    containers.push({ thisView: this, view: cView });
                 }
+                containers.push({ thisView: this, view: cView });
             });
             // add view class
             if (this.views[view].settings.class) {
@@ -1671,45 +1662,45 @@ class Vis {
             }
 
             switch (condition) {
-            case '==':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value === val;
-            case '!=':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value !== val;
-            case '>=':
-                return val >= value;
-            case '<=':
-                return val <= value;
-            case '>':
-                return val > value;
-            case '<':
-                return val < value;
-            case 'consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().indexOf(value) !== -1;
-            case 'not consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().indexOf(value) === -1;
-            case 'exist':
-                return (value !== 'null');
-            case 'not exist':
-                return (value === 'null');
-            default:
-                console.log(`Unknown signals condition for ${widget}: ${condition}`);
-                return false;
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '>=':
+                    return val >= value;
+                case '<=':
+                    return val <= value;
+                case '>':
+                    return val > value;
+                case '<':
+                    return val < value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().indexOf(value) !== -1;
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().indexOf(value) === -1;
+                case 'exist':
+                    return (value !== 'null');
+                case 'not exist':
+                    return (value === 'null');
+                default:
+                    console.log(`Unknown signals condition for ${widget}: ${condition}`);
+                    return false;
             }
         } else {
             return false;
@@ -1832,39 +1823,39 @@ class Vis {
                                 let indicatorY = 0;
 
                                 switch (gesture) {
-                                case 'swiping':
-                                    swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    indicatorX = data.touch.x;
-                                    indicatorY = data.touch.y;
-                                    break;
+                                    case 'swiping':
+                                        swipeDelta = Math.abs(data.touch.delta.x) > Math.abs(data.touch.delta.y) ? data.touch.delta.x : data.touch.delta.y * (-1);
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        indicatorX = data.touch.x;
+                                        indicatorY = data.touch.y;
+                                        break;
 
-                                case 'rotating':
-                                    swipeDelta = data.touch.delta;
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                        indicatorX = data.touch.touches[1].x;
-                                        indicatorY = data.touch.touches[1].y;
-                                    } else {
-                                        indicatorX = data.touch.touches[0].x;
-                                        indicatorY = data.touch.touches[0].y;
-                                    }
-                                    break;
+                                    case 'rotating':
+                                        swipeDelta = data.touch.delta;
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                            indicatorX = data.touch.touches[1].x;
+                                            indicatorY = data.touch.touches[1].y;
+                                        } else {
+                                            indicatorX = data.touch.touches[0].x;
+                                            indicatorY = data.touch.touches[0].y;
+                                        }
+                                        break;
 
-                                case 'pinching':
-                                    swipeDelta = data.touch.delta;
-                                    swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
-                                    if (data.touch.touches[0].y < data.touch.touches[1].y) {
-                                        indicatorX = data.touch.touches[1].x;
-                                        indicatorY = data.touch.touches[1].y;
-                                    } else {
-                                        indicatorX = data.touch.touches[0].x;
-                                        indicatorY = data.touch.touches[0].y;
-                                    }
-                                    break;
+                                    case 'pinching':
+                                        swipeDelta = data.touch.delta;
+                                        swipeDelta = swipeDelta > 0 ? Math.floor(swipeDelta / delta) : Math.ceil(swipeDelta / delta);
+                                        if (data.touch.touches[0].y < data.touch.touches[1].y) {
+                                            indicatorX = data.touch.touches[1].x;
+                                            indicatorY = data.touch.touches[1].y;
+                                        } else {
+                                            indicatorX = data.touch.touches[0].x;
+                                            indicatorY = data.touch.touches[0].y;
+                                        }
+                                        break;
 
-                                default:
-                                    break;
+                                    default:
+                                        break;
                                 }
 
                                 newVal = (parseFloat(valState) || 0) + (parseFloat(val) || 1) * swipeDelta;
@@ -2062,7 +2053,7 @@ class Vis {
 
             this.widgets[id] = {
                 wid: id,
-                data: new this.can.Map(Object.assign({ wid: id }, widget.data)),
+                data: new this.can.Map({ wid: id, ...widget.data }),
             };
         } catch (e) {
             console.log(`Cannot bind data of widget widget: ${id}`);
@@ -2658,45 +2649,45 @@ class Vis {
 
             // Take care: return true if widget is hidden!
             switch (condition) {
-            case '==':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value !== val;
-            case '!=':
-                value = value.toString();
-                val = val.toString();
-                if (val === '1') val = 'true';
-                if (value === '1') value = 'true';
-                if (val === '0') val = 'false';
-                if (value === '0') value = 'false';
-                return value === val;
-            case '>=':
-                return val < value;
-            case '<=':
-                return val > value;
-            case '>':
-                return val <= value;
-            case '<':
-                return val >= value;
-            case 'consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().indexOf(value) === -1;
-            case 'not consist':
-                value = value.toString();
-                val = val.toString();
-                return val.toString().indexOf(value) !== -1;
-            case 'exist':
-                return val === 'null';
-            case 'not exist':
-                return val !== 'null';
-            default:
-                console.log(`Unknown visibility condition for ${widget}: ${condition}`);
-                return false;
+                case '==':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value !== val;
+                case '!=':
+                    value = value.toString();
+                    val = val.toString();
+                    if (val === '1') val = 'true';
+                    if (value === '1') value = 'true';
+                    if (val === '0') val = 'false';
+                    if (value === '0') value = 'false';
+                    return value === val;
+                case '>=':
+                    return val < value;
+                case '<=':
+                    return val > value;
+                case '>':
+                    return val <= value;
+                case '<':
+                    return val >= value;
+                case 'consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().indexOf(value) === -1;
+                case 'not consist':
+                    value = value.toString();
+                    val = val.toString();
+                    return val.toString().indexOf(value) !== -1;
+                case 'exist':
+                    return val === 'null';
+                case 'not exist':
+                    return val !== 'null';
+                default:
+                    console.log(`Unknown visibility condition for ${widget}: ${condition}`);
+                    return false;
             }
         } else {
             return (condition === 'not exist');
@@ -2848,64 +2839,64 @@ class Vis {
             let v = '';
 
             switch (s) {
-            case 'YYYY':
-            case 'JJJJ':
-            case 'ГГГГ':
-            case 'YY':
-            case 'JJ':
-            case 'ГГ':
-                v = dateObj.getFullYear();
-                if (s.length === 2) v %= 100;
-                break;
-            case 'MM':
-            case 'M':
-            case 'ММ':
-            case 'М':
-                v = dateObj.getMonth() + 1;
-                if ((v < 10) && (s.length === 2)) v = `0${v}`;
-                break;
-            case 'DD':
-            case 'TT':
-            case 'D':
-            case 'T':
-            case 'ДД':
-            case 'Д':
-                v = dateObj.getDate();
-                if (v < 10 && s.length === 2) v = `0${v}`;
-                break;
-            case 'hh':
-            case 'SS':
-            case 'h':
-            case 'S':
-            case 'чч':
-            case 'ч':
-                v = dateObj.getHours();
-                if (v < 10 && s.length === 2) v = `0${v}`;
-                break;
-            case 'mm':
-            case 'm':
-            case 'мм':
-            case 'м':
-                v = dateObj.getMinutes();
-                if (v < 10 && s.length === 2) v = `0${v}`;
-                break;
-            case 'ss':
-            case 's':
-            case 'cc':
-            case 'c':
-                v = dateObj.getSeconds();
-                if (v < 10 && s.length === 2) v = `0${v}`;
-                v = v.toString();
-                break;
-            case 'sss':
-            case 'ссс':
-                v = dateObj.getMilliseconds();
-                if (v < 10) {
-                    v = `00${v}`;
-                } else if (v < 100) {
-                    v = `0${v}`;
-                }
-                v = v.toString();
+                case 'YYYY':
+                case 'JJJJ':
+                case 'ГГГГ':
+                case 'YY':
+                case 'JJ':
+                case 'ГГ':
+                    v = dateObj.getFullYear();
+                    if (s.length === 2) v %= 100;
+                    break;
+                case 'MM':
+                case 'M':
+                case 'ММ':
+                case 'М':
+                    v = dateObj.getMonth() + 1;
+                    if ((v < 10) && (s.length === 2)) v = `0${v}`;
+                    break;
+                case 'DD':
+                case 'TT':
+                case 'D':
+                case 'T':
+                case 'ДД':
+                case 'Д':
+                    v = dateObj.getDate();
+                    if (v < 10 && s.length === 2) v = `0${v}`;
+                    break;
+                case 'hh':
+                case 'SS':
+                case 'h':
+                case 'S':
+                case 'чч':
+                case 'ч':
+                    v = dateObj.getHours();
+                    if (v < 10 && s.length === 2) v = `0${v}`;
+                    break;
+                case 'mm':
+                case 'm':
+                case 'мм':
+                case 'м':
+                    v = dateObj.getMinutes();
+                    if (v < 10 && s.length === 2) v = `0${v}`;
+                    break;
+                case 'ss':
+                case 's':
+                case 'cc':
+                case 'c':
+                    v = dateObj.getSeconds();
+                    if (v < 10 && s.length === 2) v = `0${v}`;
+                    v = v.toString();
+                    break;
+                case 'sss':
+                case 'ссс':
+                    v = dateObj.getMilliseconds();
+                    if (v < 10) {
+                        v = `00${v}`;
+                    } else if (v < 100) {
+                        v = `0${v}`;
+                    }
+                    v = v.toString();
             }
             return result += v;
         }
@@ -2944,22 +2935,22 @@ class Vis {
 
     getSpecialValues(name, view, wid, widget) {
         switch (name) {
-        case 'username.val':
-            return this.user;
-        case 'login.val':
-            return this.loginRequired;
-        case 'instance.val':
-            return this.instance;
-        case 'language.val':
-            return this.language;
-        case 'wid.val':
-            return wid;
-        case 'wname.val':
-            return widget && (widget.data.name || wid);
-        case 'view.val':
-            return view;
-        default:
-            return undefined;
+            case 'username.val':
+                return this.user;
+            case 'login.val':
+                return this.loginRequired;
+            case 'instance.val':
+                return this.instance;
+            case 'language.val':
+                return this.language;
+            case 'wid.val':
+                return wid;
+            case 'wname.val':
+                return widget && (widget.data.name || wid);
+            case 'view.val':
+                return view;
+            default:
+                return undefined;
         }
     }
 
@@ -2976,151 +2967,151 @@ class Vis {
             if (oids[t].operations) {
                 for (let k = 0; k < oids[t].operations.length; k++) {
                     switch (oids[t].operations[k].op) {
-                    case 'eval':
-                        let string = '';// '(function() {';
-                        for (let a = 0; a < oids[t].operations[k].arg.length; a++) {
-                            if (!oids[t].operations[k].arg[a].name) {
-                                continue;
-                            }
-                            value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widget);
-                            if (value === undefined || value === null) {
-                                value = this.states.attr(oids[t].operations[k].arg[a].visOid);
-                            }
-                            try {
-                                value = JSON.parse(value);
-                                // if array or object, we format it correctly, else it should be a string
-                                if (typeof value === 'object') {
-                                    string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
-                                } else {
+                        case 'eval':
+                            let string = '';// '(function() {';
+                            for (let a = 0; a < oids[t].operations[k].arg.length; a++) {
+                                if (!oids[t].operations[k].arg[a].name) {
+                                    continue;
+                                }
+                                value = this.getSpecialValues(oids[t].operations[k].arg[a].visOid, view, wid, widget);
+                                if (value === undefined || value === null) {
+                                    value = this.states.attr(oids[t].operations[k].arg[a].visOid);
+                                }
+                                try {
+                                    value = JSON.parse(value);
+                                    // if array or object, we format it correctly, else it should be a string
+                                    if (typeof value === 'object') {
+                                        string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
+                                    } else {
+                                        string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                    }
+                                } catch (e) {
                                     string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
                                 }
+                            }
+                            const { formula } = oids[t].operations[k];
+                            if (formula && formula.indexOf('widget.') !== -1) {
+                                string += `const widget = ${JSON.stringify(widget)};`;
+                            }
+                            string += `return ${oids[t].operations[k].formula};`;
+
+                            if (string.indexOf('\\"') >= 0) {
+                                string = string.replace(/\\"/g, '"');
+                            }
+
+                            // string += '}())';
+                            try {
+                                value = new Function(string)();
                             } catch (e) {
-                                string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                console.error(`Error in eval[value]: ${format}`);
+                                console.error(`Error in eval[script]: ${string}`);
+                                console.error(`Error in eval[error]: ${e}`);
+                                value = 0;
                             }
-                        }
-                        const { formula } = oids[t].operations[k];
-                        if (formula && formula.indexOf('widget.') !== -1) {
-                            string += `const widget = ${JSON.stringify(widget)};`;
-                        }
-                        string += `return ${oids[t].operations[k].formula};`;
-
-                        if (string.indexOf('\\"') >= 0) {
-                            string = string.replace(/\\"/g, '"');
-                        }
-
-                        // string += '}())';
-                        try {
-                            value = new Function(string)();
-                        } catch (e) {
-                            console.error(`Error in eval[value]: ${format}`);
-                            console.error(`Error in eval[script]: ${string}`);
-                            console.error(`Error in eval[error]: ${e}`);
-                            value = 0;
-                        }
-                        break;
-                    case '*':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            value = parseFloat(value) * oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '/':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            value = parseFloat(value) / oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '+':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            value = parseFloat(value) + oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '-':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            value = parseFloat(value) - oids[t].operations[k].arg;
-                        }
-                        break;
-                    case '%':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            value = parseFloat(value) % oids[t].operations[k].arg;
-                        }
-                        break;
-                    case 'round':
-                        if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                            value = Math.round(parseFloat(value));
-                        } else {
-                            value = parseFloat(value).toFixed(oids[t].operations[k].arg);
-                        }
-                        break;
-                    case 'pow':
-                        if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                            value = Math.pow(parseFloat(value), 2);
-                        } else {
-                            value = Math.pow(parseFloat(value), oids[t].operations[k].arg);
-                        }
-                        break;
-                    case 'sqrt':
-                        value = Math.sqrt(parseFloat(value));
-                        break;
-                    case 'hex':
-                        value = Math.round(parseFloat(value)).toString(16);
-                        break;
-                    case 'hex2':
-                        value = Math.round(parseFloat(value)).toString(16);
-                        if (value.length < 2) {
-                            value = `0${value}`;
-                        }
-                        break;
-                    case 'HEX':
-                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                        break;
-                    case 'HEX2':
-                        value = Math.round(parseFloat(value)).toString(16).toUpperCase();
-                        if (value.length < 2) {
-                            value = `0${value}`;
-                        }
-                        break;
-                    case 'value':
-                        value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
-                        break;
-                    case 'array':
-                        value = oids[t].operations[k].arg[~~value];
-                        break;
-                    case 'date':
-                        value = this.formatDate(value, oids[t].operations[k].arg);
-                        break;
-                    case 'momentDate':
-                        if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
-                            const params = oids[t].operations[k].arg.split(',');
-
-                            if (params.length === 1) {
-                                value = this.formatMomentDate(value, params[0]);
-                            } else if (params.length === 2) {
-                                value = this.formatMomentDate(value, params[0], params[1]);
+                            break;
+                        case '*':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) * oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '/':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) / oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '+':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) + oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '-':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) - oids[t].operations[k].arg;
+                            }
+                            break;
+                        case '%':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) % oids[t].operations[k].arg;
+                            }
+                            break;
+                        case 'round':
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                                value = Math.round(parseFloat(value));
                             } else {
-                                value = 'error';
+                                value = parseFloat(value).toFixed(oids[t].operations[k].arg);
                             }
-                        }
-                        break;
-                    case 'min':
-                        value = parseFloat(value);
-                        value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                        break;
-                    case 'max':
-                        value = parseFloat(value);
-                        value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
-                        break;
-                    case 'random':
-                        if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
-                            value = Math.random();
-                        } else {
-                            value = Math.random() * oids[t].operations[k].arg;
-                        }
-                        break;
-                    case 'floor':
-                        value = Math.floor(parseFloat(value));
-                        break;
-                    case 'ceil':
-                        value = Math.ceil(parseFloat(value));
-                        break;
+                            break;
+                        case 'pow':
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                                value = parseFloat(value) ** 2;
+                            } else {
+                                value = parseFloat(value) ** oids[t].operations[k].arg;
+                            }
+                            break;
+                        case 'sqrt':
+                            value = Math.sqrt(parseFloat(value));
+                            break;
+                        case 'hex':
+                            value = Math.round(parseFloat(value)).toString(16);
+                            break;
+                        case 'hex2':
+                            value = Math.round(parseFloat(value)).toString(16);
+                            if (value.length < 2) {
+                                value = `0${value}`;
+                            }
+                            break;
+                        case 'HEX':
+                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                            break;
+                        case 'HEX2':
+                            value = Math.round(parseFloat(value)).toString(16).toUpperCase();
+                            if (value.length < 2) {
+                                value = `0${value}`;
+                            }
+                            break;
+                        case 'value':
+                            value = this.formatValue(value, parseInt(oids[t].operations[k].arg, 10));
+                            break;
+                        case 'array':
+                            value = oids[t].operations[k].arg[~~value];
+                            break;
+                        case 'date':
+                            value = this.formatDate(value, oids[t].operations[k].arg);
+                            break;
+                        case 'momentDate':
+                            if (oids[t].operations[k].arg !== undefined && oids[t].operations[k].arg !== null) {
+                                const params = oids[t].operations[k].arg.split(',');
+
+                                if (params.length === 1) {
+                                    value = this.formatMomentDate(value, params[0]);
+                                } else if (params.length === 2) {
+                                    value = this.formatMomentDate(value, params[0], params[1]);
+                                } else {
+                                    value = 'error';
+                                }
+                            }
+                            break;
+                        case 'min':
+                            value = parseFloat(value);
+                            value = (value < oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            break;
+                        case 'max':
+                            value = parseFloat(value);
+                            value = (value > oids[t].operations[k].arg) ? oids[t].operations[k].arg : value;
+                            break;
+                        case 'random':
+                            if (oids[t].operations[k].arg === undefined && oids[t].operations[k].arg !== null) {
+                                value = Math.random();
+                            } else {
+                                value = Math.random() * oids[t].operations[k].arg;
+                            }
+                            break;
+                        case 'floor':
+                            value = Math.floor(parseFloat(value));
+                            break;
+                        case 'ceil':
+                            value = Math.ceil(parseFloat(value));
+                            break;
                     } // switch
                 }
             } // if for
@@ -3176,12 +3167,14 @@ class Vis {
                 if (!this.views.hasOwnProperty(view_) || view_ === '___settings') {
                     continue;
                 }
-                if (this.views[view_].settings && this.views[view_].settings.useAsDefault
+                if (this.views[view_].settings &&
+                    this.views[view_].settings.useAsDefault &&
                     // If difference less than 20%
-                    && parseInt(this.views[view_].settings.sizey, 10) && Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10)) < difference
+                    parseInt(this.views[view_].settings.sizey, 10) &&
+                    Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10)) < difference)
                 ) {
                     result = view_;
-                    difference = Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10));
+                    difference = Math.abs(ratio - (parseInt(this.views[view_].settings.sizex, 10) / parseInt(this.views[view_].settings.sizey, 10)));
                 }
             }
         }
@@ -3454,11 +3447,10 @@ class Vis {
     }
 
     updateState = (id, state) => {
-        if (id === this.conn.namespace + '.control.command') {
+        if (id === `${this.conn.namespace}.control.command`) {
             if (state.ack) {
                 return;
-            } else
-            if (state.val &&
+            } if (state.val &&
                 typeof state.val === 'string' &&
                 state.val[0] === '{' &&
                 state.val[state.val.length - 1] === '}'
@@ -3482,10 +3474,10 @@ class Vis {
             }
 
             return;
-        } else if (id === this.conn.namespace + '.control.data') {
+        } if (id === `${this.conn.namespace}.control.data`) {
             this._cmdData = state.val;
             return;
-        } else if (id === this.conn.namespace + '.control.instance') {
+        } if (id === `${this.conn.namespace}.control.instance`) {
             this._cmdInstance = state.val;
             return;
         }
@@ -3608,7 +3600,7 @@ class Vis {
         }
 
         this.editMode && $.fn.selectId && $.fn.selectId('stateAll', id, state);
-    }
+    };
 
     updateStates(data) {
         if (data) {

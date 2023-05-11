@@ -428,5 +428,10 @@
   "jqui_set_label": "Стилізована",
   "jqui_button_link_blank_note": "Застаріле. Використовуйте перший віджет із опцією «Відкрити в новому вікні». Збережено тільки для сумісності з vis.1",
   "jqui_button_link_blank": "Перейти до URL (у новому вікні)",
-  "jqui_icon_link": "Перейти до URL-адреси (зі значком)"
+  "jqui_icon_link": "Перейти до URL-адреси (зі значком)",
+  "jqui_href_tooltip": "Ця URL-адреса буде викликана в браузері",
+  "jqui_url_tooltip": "Ця URL-адреса викликатиметься у фоновому режимі системою ioBroker",
+  "visResizable": "Змінний розмір",
+  "jqui_url_in_browser": "URL у браузері",
+  "jqui_url_in_background": "URL у серверній частині"
 }

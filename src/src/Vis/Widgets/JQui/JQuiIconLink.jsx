@@ -37,8 +37,11 @@ class JQuiIconLink extends JQuiButton {
             text: 'jqui_button_link_blank_note',
         });
 
-        const target = newWidgetInfo.visAttrs[0].fields.find(item => item.name === 'target');
+        const target = JQuiButton.findField(newWidgetInfo, 'target');
         target.default = '_blank';
+
+        const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
+        visResizable.default = true;
 
         return newWidgetInfo;
     }

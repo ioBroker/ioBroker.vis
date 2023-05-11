@@ -428,5 +428,10 @@
   "jqui_set_label": "stylizowany",
   "jqui_button_link_blank_note": "Przestarzałe. Użyj pierwszego widżetu z opcją „Otwórz w nowym oknie”. Zachowany tylko ze względu na zgodność z wersją vis.1",
   "jqui_button_link_blank": "Przejdź do adresu URL (w nowym oknie)",
-  "jqui_icon_link": "Przejdź do adresu URL (z ikoną)"
+  "jqui_icon_link": "Przejdź do adresu URL (z ikoną)",
+  "jqui_href_tooltip": "Ten adres URL zostanie wywołany w przeglądarce",
+  "jqui_url_tooltip": "Ten adres URL zostanie wywołany w tle przez silnik ioBroker",
+  "visResizable": "Zmienny rozmiar",
+  "jqui_url_in_browser": "Adres URL w przeglądarce",
+  "jqui_url_in_background": "Adres URL w zapleczu"
 }

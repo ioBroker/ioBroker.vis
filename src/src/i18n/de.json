@@ -428,5 +428,10 @@
   "jqui_set_label": "Gestylt",
   "jqui_button_link_blank_note": "Veraltet. Verwenden Sie das erste Widget mit der Option „In neuem Fenster öffnen“. Wird nur aus Kompatibilitätsgründen mit vis.1 beibehalten",
   "jqui_button_link_blank": "Zur URL springen (in neuem Fenster)",
-  "jqui_icon_link": "Zur URL springen (mit Symbol)"
+  "jqui_icon_link": "Zur URL springen (mit Symbol)",
+  "jqui_href_tooltip": "Diese URL wird im Browser aufgerufen",
+  "jqui_url_tooltip": "Diese URL wird im Hintergrund von der ioBroker-Engine aufgerufen",
+  "visResizable": "Der Größe veränderbar",
+  "jqui_url_in_browser": "URL im Browser",
+  "jqui_url_in_background": "URL im Backend"
 }

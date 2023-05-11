@@ -428,5 +428,10 @@
   "jqui_set_label": "风格化",
   "jqui_button_link_blank_note": "已弃用。使用带有“在新窗口中打开”选项的第一个小部件。保留只是为了与 vis.1 兼容",
   "jqui_button_link_blank": "跳转到网址（在新窗口中）",
-  "jqui_icon_link": "跳转到 URL（带图标）"
+  "jqui_icon_link": "跳转到 URL（带图标）",
+  "jqui_href_tooltip": "该 URL 将在浏览器中调用",
+  "jqui_url_tooltip": "ioBroker 引擎将在后台调用此 URL",
+  "visResizable": "可调整大小",
+  "jqui_url_in_browser": "浏览器中的网址",
+  "jqui_url_in_background": "后端网址"
 }

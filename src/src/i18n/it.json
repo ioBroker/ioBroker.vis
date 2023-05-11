@@ -428,5 +428,10 @@
   "jqui_set_label": "Stile",
   "jqui_button_link_blank_note": "Deprecato. Usa il primo widget con l'opzione \"Apri in una nuova finestra\". Mantenuto solo per compatibilità con vis.1",
   "jqui_button_link_blank": "Passa all'URL (in una nuova finestra)",
-  "jqui_icon_link": "Passa all'URL (con icona)"
+  "jqui_icon_link": "Passa all'URL (con icona)",
+  "jqui_href_tooltip": "Questo URL verrà chiamato nel browser",
+  "jqui_url_tooltip": "Questo URL verrà richiamato in background dal motore ioBroker",
+  "visResizable": "Ridimensionabile",
+  "jqui_url_in_browser": "URL nel browser",
+  "jqui_url_in_background": "URL nel back-end"
 }

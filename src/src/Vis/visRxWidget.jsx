@@ -25,7 +25,7 @@ import { I18n } from '@iobroker/adapter-react-v5';
 import VisBaseWidget from './visBaseWidget';
 import { addClass, getUsedObjectIDsInWidget } from './visUtils';
 
-const POSSIBLE_CARD_STYLES = [
+const POSSIBLE_MUI_STYLES = [
     'background-color',
     'border',
     'background',
@@ -55,6 +55,8 @@ const POSSIBLE_CARD_STYLES = [
 ];
 
 class VisRxWidget extends VisBaseWidget {
+    static POSSIBLE_MUI_STYLES = POSSIBLE_MUI_STYLES;
+
     constructor(props) {
         super(props, true);
 
@@ -88,6 +90,15 @@ class VisRxWidget extends VisBaseWidget {
 
         this.resizeLocked = options.visResizeLocked;
 
+        // find in fields visResizable name
+        // if resizable exists, take the resizable from data
+        this.visDynamicResizable = VisRxWidget.findField(options, 'visResizable');
+        if (this.visDynamicResizable) {
+            this.visDynamicResizable = { default: this.visDynamicResizable.default !== undefined ? this.visDynamicResizable.default : true, desiredSize: this.visDynamicResizable.desiredSize };
+        } else {
+            this.visDynamicResizable = null;
+        }
+
         this.state = {
             ...this.state,
             resizable: options.resizable === undefined ? (options.visResizable === undefined ? true : options.visResizable) : options.resizable,
@@ -99,6 +110,19 @@ class VisRxWidget extends VisBaseWidget {
             visible: newState.visible,
             disabled: false,
         };
+    }
+
+    static findField(widgetInfo, name) {
+        for (let g = 0; g < widgetInfo.visAttrs.length; g++) {
+            const group = widgetInfo.visAttrs[g];
+            for (let f = 0; f < group.fields.length; f++) {
+                if (group.fields[f].name === name) {
+                    return group.fields[f];
+                }
+            }
+        }
+
+        return null;
     }
 
     static getI18nPrefix() {
@@ -375,7 +399,7 @@ class VisRxWidget extends VisBaseWidget {
             const value = this.state.rxStyle[attr];
             if (value !== null &&
                 value !== undefined &&
-                POSSIBLE_CARD_STYLES.includes(attr)
+                POSSIBLE_MUI_STYLES.includes(attr)
             ) {
                 attr = attr.replace(
                     /(-\w)/g,
@@ -442,7 +466,7 @@ class VisRxWidget extends VisBaseWidget {
         Object.keys(this.state.rxStyle).forEach(attr => {
             const value = this.state.rxStyle[attr];
             if (value !== null && value !== undefined) {
-                if (!this.wrappedContent || !POSSIBLE_CARD_STYLES.includes(attr)) {
+                if (!this.wrappedContent || !POSSIBLE_MUI_STYLES.includes(attr)) {
                     attr = attr.replace(
                         /(-\w)/g,
                         text => text[1].toUpperCase(),

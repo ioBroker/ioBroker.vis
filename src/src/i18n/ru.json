@@ -428,5 +428,10 @@
   "jqui_set_label": "Стилизованные",
   "jqui_button_link_blank_note": "Устарело. Используйте первый виджет с опцией «Открыть в новом окне». Сохранено только для совместимости с vis.1",
   "jqui_button_link_blank": "Перейти к URL (в новом окне)",
-  "jqui_icon_link": "Перейти к URL (со значком)"
+  "jqui_icon_link": "Перейти к URL (со значком)",
+  "jqui_href_tooltip": "Этот URL будет вызываться в браузере",
+  "jqui_url_tooltip": "Этот URL будет вызываться в фоновом режиме движком ioBroker.",
+  "visResizable": "Изменяемый размер",
+  "jqui_url_in_browser": "URL-адрес в браузере",
+  "jqui_url_in_background": "URL-адрес в бэкэнде"
 }

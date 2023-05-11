@@ -428,5 +428,10 @@
   "jqui_set_label": "estilizado",
   "jqui_button_link_blank_note": "Descontinuada. Use o primeiro widget com a opção \"Abrir em nova janela\". Mantido apenas para compatibilidade com vis.1",
   "jqui_button_link_blank": "Ir para URL (em nova janela)",
-  "jqui_icon_link": "Ir para URL (com ícone)"
+  "jqui_icon_link": "Ir para URL (com ícone)",
+  "jqui_href_tooltip": "Este URL será chamado no navegador",
+  "jqui_url_tooltip": "Este URL será chamado em segundo plano pelo mecanismo ioBroker",
+  "visResizable": "Redimensionável",
+  "jqui_url_in_browser": "URL no navegador",
+  "jqui_url_in_background": "URL no back-end"
 }

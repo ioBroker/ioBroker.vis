@@ -428,5 +428,10 @@
   "jqui_set_label": "Stylisé",
   "jqui_button_link_blank_note": "Obsolète. Utilisez le premier widget avec l'option \"Ouvrir dans une nouvelle fenêtre\". Conservé uniquement pour la compatibilité avec vis.1",
   "jqui_button_link_blank": "Aller à l'URL (dans une nouvelle fenêtre)",
-  "jqui_icon_link": "Aller à l'URL (avec icône)"
+  "jqui_icon_link": "Aller à l'URL (avec icône)",
+  "jqui_href_tooltip": "Cette URL sera appelée dans le navigateur",
+  "jqui_url_tooltip": "Cette URL sera appelée en arrière-plan par le moteur ioBroker",
+  "visResizable": "Redimensionnable",
+  "jqui_url_in_browser": "URL dans le navigateur",
+  "jqui_url_in_background": "URL dans le backend"
 }

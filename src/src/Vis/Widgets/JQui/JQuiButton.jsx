@@ -37,72 +37,108 @@ class JQuiButton extends VisRxWidget {
             visSetLabel: 'jqui_set_label',
             visWidgetLabel: 'jqui_button_link',
             visPrev: 'widgets/jqui/img/Prev_ButtonLink.png',
-            visResizable: false,
             visOrder: 1,
-            visAttrs: [{
-                name: 'common',
-                fields: [
-                    { name: 'buttontext', type: 'text', default: 'Text' },
-                    { name: 'href', type: 'url' },
-                    { name: 'html_prepend', type: 'html' },
-                    { name: 'html_append', type: 'html' },
-                    { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
-                    {
-                        name: 'jquery_style',
-                        label: 'jqui_jquery_style',
-                        type: 'checkbox',
-                        hidden: data => data.no_style,
-                    },
-                    {
-                        name: 'padding',
-                        type: 'slider',
-                        min: 0,
-                        max: 100,
-                        default: 5,
-                        hidden: data => !data.no_style && !data.jquery_style,
-                    },
-                    {
-                        name: 'target',
-                        type: 'auto',
-                        options: ['_blank', '_self', '_parent', '_top'],
-                    },
-                    {
-                        name: 'src',
-                        label: 'jqui_image',
-                        type: 'image',
-                        hidden: data => data.icon || data.jquery_style,
-                    },
-                    {
-                        name: 'icon',
-                        label: 'jqui_icon',
-                        type: 'icon64',
-                        hidden: data => data.src || data.jquery_style,
-                    },
-                    {
-                        name: 'invert_icon',
-                        type: 'checkbox',
-                        hidden: data => (!data.icon || !data.image) && data.jquery_style,
-                    },
-                    {
-                        name: 'imageHeight',
-                        type: 'slider',
-                        min: 0,
-                        max: 200,
-                        default: 100,
-                        hidden: data => !data.src || data.jquery_style,
-                    },
-                    {
-                        name: 'variant',
-                        label: 'jqui_variant',
-                        type: 'select',
-                        noTranslation: true,
-                        options: ['contained', 'outlined', 'standard'],
-                        default: 'contained',
-                        hidden: data => data.jquery_style || data.no_style,
-                    },
-                ],
-            }],
+            visAttrs: [
+                {
+                    name: 'common',
+                    fields: [
+                        { name: 'buttontext', type: 'text', default: 'URL' },
+                        {
+                            name: 'href',
+                            label: 'jqui_url_in_browser',
+                            type: 'url',
+                            hidden: data => !!data.url,
+                            tooltip: 'jqui_href_tooltip',
+                        },
+                        {
+                            name: 'url',
+                            label: 'jqui_url_in_background',
+                            type: 'url',
+                            hidden: data => !!data.href,
+                            tooltip: 'jqui_url_tooltip',
+                        },
+                        {
+                            name: 'target',
+                            type: 'auto',
+                            options: ['_blank', '_self', '_parent', '_top'],
+                            hidden: data => !!data.url,
+                        },
+                    ],
+                },
+                {
+                    name: 'style',
+                    fields: [
+                        { name: 'no_style', type: 'checkbox', hidden: data => data.jquery_style },
+                        {
+                            name: 'jquery_style',
+                            label: 'jqui_jquery_style',
+                            type: 'checkbox',
+                            hidden: data => data.no_style,
+                        },
+                        {
+                            name: 'padding',
+                            type: 'slider',
+                            min: 0,
+                            max: 100,
+                            default: 5,
+                            // hidden: data => !data.no_style && !data.jquery_style,
+                        },
+                        {
+                            name: 'variant',
+                            label: 'jqui_variant',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['contained', 'outlined', 'standard'],
+                            default: 'contained',
+                            hidden: data => data.jquery_style || data.no_style,
+                        },
+                        { name: 'html_prepend', type: 'html' },
+                        { name: 'html_append', type: 'html' },
+                        {
+                            name: 'visResizable', // reserved name for resizable
+                            label: 'visResizable',
+                            type: 'checkbox',
+                            default: false,
+                            desiredSize: false, // If sizes should be deleted or set to specific value. `false` - delete sizes, or {width: 100, height: 100}
+                        },
+                    ],
+                },
+                {
+                    name: 'icon',
+                    fields: [
+                        {
+                            name: 'src',
+                            label: 'jqui_image',
+                            type: 'image',
+                            hidden: data => data.icon || data.jquery_style,
+                        },
+                        {
+                            name: 'icon',
+                            label: 'jqui_icon',
+                            type: 'icon64',
+                            hidden: data => data.src || data.jquery_style,
+                        },
+                        {
+                            name: 'invert_icon',
+                            type: 'checkbox',
+                            hidden: data => (!data.icon || !data.image) && data.jquery_style,
+                        },
+                        {
+                            name: 'imageHeight',
+                            type: 'slider',
+                            min: 0,
+                            max: 200,
+                            default: 100,
+                            hidden: data => !data.src || data.jquery_style,
+                        },
+                    ],
+                },
+            ],
         };
+    }
+
+    static findField(widgetInfo, name) {
+        return VisRxWidget.findField(widgetInfo, name);
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -131,6 +167,10 @@ class JQuiButton extends VisRxWidget {
             } else {
                 window.location.href = this.state.rxData.href;
             }
+        } else if (this.state.rxData.url) {
+            this.props.socket.getRawSocket().emit('httpGet', this.state.rxData.url, data => {
+                console.log('httpGet', this.state.rxData.url, data);
+            });
         }
     }
 
@@ -152,10 +192,34 @@ class JQuiButton extends VisRxWidget {
             }
         }
 
-        const icon = !this.state.rxData.jquery_style ? <Icon
+        const icon = !this.state.rxData.jquery_style && (this.state.rxData.src || this.state.rxData.icon) ? <Icon
             src={this.state.rxData.src || this.state.rxData.icon}
             style={iconStyle}
         /> : null;
+
+        const buttonStyle = {};
+        // apply style from the element
+        Object.keys(this.state.rxStyle).forEach(attr => {
+            const value = this.state.rxStyle[attr];
+            if (value !== null &&
+                value !== undefined &&
+                VisRxWidget.POSSIBLE_MUI_STYLES.includes(attr)
+            ) {
+                attr = attr.replace(
+                    /(-\w)/g,
+                    text => text[1].toUpperCase(),
+                );
+                buttonStyle[attr] = value;
+            }
+        });
+
+        // extra no rxData here, as it is not possible to set it with bindings
+        if (this.state.data.visResizable) {
+            buttonStyle.width = '100%';
+            buttonStyle.height = '100%';
+        } else {
+            buttonStyle.padding = this.state.rxData.padding;
+        }
 
         return <div className="vis-widget-body">
             {this.state.rxData.html_prepend ? <span
@@ -166,7 +230,7 @@ class JQuiButton extends VisRxWidget {
                 <button
                     ref={this.buttonRef}
                     type="button"
-                    style={{ padding: this.state.rxData.padding }}
+                    style={buttonStyle}
                     onClick={() => this.onClick()}
                 >
                     {icon}
@@ -175,7 +239,7 @@ class JQuiButton extends VisRxWidget {
                 :
                 <Button
                     ref={this.buttonRef}
-                    style={this.props.tpl === 'tplIconLink' ? { width: '100%', height: '100%' } : undefined}
+                    style={buttonStyle}
                     variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
                     onClick={() => this.onClick()}
                 >

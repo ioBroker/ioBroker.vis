@@ -362,13 +362,24 @@ class VisBaseWidget extends React.Component {
         this.refService.current.style.top = `${this.movement.top}px`;
     }
 
+    isResizable() {
+        if (this.visDynamicResizable) {
+            // take data from field "visResizable"
+            // this value cannot be bound, so we can read it directly from widget.data
+            return typeof this.state.data.visResizable === 'boolean' ?
+                this.state.data.visResizable : this.visDynamicResizable.default; // by default all widgets are resizable
+        }
+
+        return this.state.resizable;
+    }
+
     onMove = (x, y, save, calculateRelativeWidgetPosition) => {
         if (this.state.multiViewWidget || !this.props.editMode) {
             return;
         }
 
         if (this.resize) {
-            if (this.state.resizable === false) {
+            if (this.isResizable() === false) {
                 return;
             }
             if (x === undefined) {
@@ -674,9 +685,11 @@ class VisBaseWidget extends React.Component {
         const border = `0.1em dashed ${color}`;
         const borderDisabled = '0.1em dashed #888';
 
-        let resizeHandlers = this.state.resizable ? this.state.resizeHandles : [];
+        const resizable = this.isResizable();
 
-        if (this.state.resizable && this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
+        let resizeHandlers = resizable ? this.state.resizeHandles : [];
+
+        if (resizable && this.props.selectedGroup && this.props.selectedGroup === this.props.id) {
             resizeHandlers = ['s', 'e', 'se'];
         }
 
@@ -1441,6 +1454,32 @@ class VisBaseWidget extends React.Component {
             refService: this.refService,
         };
 
+        // If the resizable flag can be controlled dynamically by settings, and it is now not resizable
+        if (this.visDynamicResizable && !this.isResizable()) {
+            if (this.visDynamicResizable.desiredSize === false) {
+                delete this.state.style.width;
+                delete this.state.style.height;
+                delete style.width;
+                delete style.height;
+            } else if (typeof this.visDynamicResizable.desiredSize === 'object') {
+                if (this.state.style.width) {
+                    style.width = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.width);
+                    this.state.style.width = style.height;
+                } else {
+                    delete this.state.style.width;
+                    delete style.width;
+                }
+
+                if (this.state.style.height) {
+                    style.height = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.height);
+                    this.state.style.height = style.height;
+                } else {
+                    delete this.state.style.height;
+                    delete style.height;
+                }
+            }
+        }
+
         const rxWidget = this.renderWidgetBody(props);
 
         // in group edit mode show it in the top left corner
@@ -1501,6 +1540,8 @@ class VisBaseWidget extends React.Component {
 
             const [multiView, multiId] = this.state.multiViewWidget ? this.props.id.split('_') : [null, null];
 
+            const resizable = this.isResizable();
+
             widgetName = <div
                 title={this.state.multiViewWidget ?
                     I18n.t('Jump to widget by double click') :
@@ -1510,13 +1551,13 @@ class VisBaseWidget extends React.Component {
                     selected && 'selected',
                     this.state.widgetHint,
                     widgetNameBottom && 'bottom',
-                    this.props.isRelative && this.state.resizable && 'vis-editmode-widget-name-long',
+                    this.props.isRelative && resizable && 'vis-editmode-widget-name-long',
                 )}
             >
                 <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId, multiView) : this.props.id}</span>
                 {this.state.multiViewWidget ? null :
                     <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />}
-                {!this.state.multiViewWidget && this.props.isRelative && this.state.resizable ?
+                {!this.state.multiViewWidget && this.props.isRelative && resizable ?
                     <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
             </div>;
 
