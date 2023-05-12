@@ -433,5 +433,9 @@
   "jqui_url_tooltip": "Ten adres URL zostanie wywołany w tle przez silnik ioBroker",
   "visResizable": "Zmienny rozmiar",
   "jqui_url_in_browser": "Adres URL w przeglądarce",
-  "jqui_url_in_background": "Adres URL w zapleczu"
+  "jqui_url_in_background": "Adres URL w zapleczu",
+  "jqui_icon_http_get": "Adres URL wywołania w zapleczu",
+  "jqui_url_group": "Zadzwoń do adresu URL po kliknięciu",
+  "jqui_dialog_set_id_tooltip": "Ustaw stan przez otwarte okno dialogowe",
+  "jqui_html_tooltip": "HTML można konfigurować tylko wtedy, gdy tekst i ikona są puste"
 }

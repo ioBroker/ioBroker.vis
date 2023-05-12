@@ -433,5 +433,9 @@
   "jqui_url_tooltip": "Questo URL verrà richiamato in background dal motore ioBroker",
   "visResizable": "Ridimensionabile",
   "jqui_url_in_browser": "URL nel browser",
-  "jqui_url_in_background": "URL nel back-end"
+  "jqui_url_in_background": "URL nel back-end",
+  "jqui_icon_http_get": "Chiama l'URL nel back-end",
+  "jqui_url_group": "Chiama l'URL con un clic",
+  "jqui_dialog_set_id_tooltip": "Imposta stato aprendo la finestra di dialogo",
+  "jqui_html_tooltip": "L'HTML è configurabile solo se il testo e l'icona sono vuoti"
 }

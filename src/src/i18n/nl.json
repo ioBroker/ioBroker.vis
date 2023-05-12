@@ -433,5 +433,9 @@
   "jqui_url_tooltip": "Deze URL wordt op de achtergrond aangeroepen door de ioBroker-engine",
   "visResizable": "Aanpasbaar",
   "jqui_url_in_browser": "URL in browser",
-  "jqui_url_in_background": "URL in back-end"
+  "jqui_url_in_background": "URL in back-end",
+  "jqui_icon_http_get": "Aanroep-URL in backend",
+  "jqui_url_group": "Bel URL door te klikken",
+  "jqui_dialog_set_id_tooltip": "Status instellen door dialoogvenster te openen",
+  "jqui_html_tooltip": "HTML kan alleen worden geconfigureerd als tekst en pictogram leeg zijn"
 }

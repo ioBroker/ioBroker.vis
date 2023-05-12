@@ -1524,14 +1524,26 @@ class VisEngine extends React.Component {
                     window.location.reload(), 1);
                 break;
             case 'dialog':
-            case 'dialogOpen':
-                // noinspection JSJQueryEfficiency
-                window.jQuery(`#${data}_dialog`).dialog('open');
+            case 'dialogOpen': {
+                const el = window.document.getElementById(data);
+                if (el?._showDialog) {
+                    el._showDialog(true);
+                } else {
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('open');
+                }
                 break;
-            case 'dialogClose':
-                // noinspection JSJQueryEfficiency
-                window.jQuery(`#${data}_dialog`).dialog('close');
+            }
+            case 'dialogClose': {
+                const el = window.document.getElementById(data);
+                if (el?._showDialog) {
+                    el._showDialog(false);
+                } else {
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('close');
+                }
                 break;
+            }
             case 'popup':
                 window.open(data);
                 break;

@@ -433,5 +433,9 @@
   "jqui_url_tooltip": "Ця URL-адреса викликатиметься у фоновому режимі системою ioBroker",
   "visResizable": "Змінний розмір",
   "jqui_url_in_browser": "URL у браузері",
-  "jqui_url_in_background": "URL у серверній частині"
+  "jqui_url_in_background": "URL у серверній частині",
+  "jqui_icon_http_get": "URL-адреса виклику в серверній частині",
+  "jqui_url_group": "Виклик URL за кліком",
+  "jqui_dialog_set_id_tooltip": "Установити стан відкритим діалоговим вікном",
+  "jqui_html_tooltip": "HTML можна налаштувати, лише якщо текст і піктограма порожні"
 }

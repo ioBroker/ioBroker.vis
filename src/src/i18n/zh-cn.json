@@ -433,5 +433,9 @@
   "jqui_url_tooltip": "ioBroker 引擎将在后台调用此 URL",
   "visResizable": "可调整大小",
   "jqui_url_in_browser": "浏览器中的网址",
-  "jqui_url_in_background": "后端网址"
+  "jqui_url_in_background": "后端网址",
+  "jqui_icon_http_get": "后台调用地址",
+  "jqui_url_group": "点击调用URL",
+  "jqui_dialog_set_id_tooltip": "通过打开对话框设置状态",
+  "jqui_html_tooltip": "HTML 仅在文本和图标为空时才可配置"
 }

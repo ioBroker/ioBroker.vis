@@ -279,6 +279,7 @@
                     "refresh": "refresh",
                     "reload": "reload",
                     "dialog": "dialog",
+                    "dialogClose": "dialogClose",
                     "popup": "popup",
                     "playSound": "playSound",
                     "changedView": "changedView",

@@ -16,7 +16,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from '@mui/material';
+import {
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Popper,
+    Paper,
+} from '@mui/material';
+
+import Close from '@mui/icons-material/Close';
+
 import { Icon } from '@iobroker/adapter-react-v5';
 
 import VisRxWidget from '../../visRxWidget';
@@ -26,7 +37,9 @@ class JQuiButton extends VisRxWidget {
         super(props);
         this.state.width = 0;
         this.state.height = 0;
-        this.buttonRef = React.createRef();
+        this.state.dialogVisible = false;
+        this.refButton = React.createRef();
+        this.refDialog = React.createRef();
     }
 
     static getWidgetInfo() {
@@ -42,7 +55,25 @@ class JQuiButton extends VisRxWidget {
                 {
                     name: 'common',
                     fields: [
-                        { name: 'buttontext', type: 'text', default: 'URL' },
+                        {
+                            name: 'buttontext',
+                            type: 'text',
+                            default: 'URL',
+                            hidden: data => !!data.html,
+                        },
+                        {
+                            name: 'html',
+                            type: 'html',
+                            default: '',
+                            tootip: 'jqui_html_tooltip',
+                            disabled: data => !!data.buttontext || !!data.icon || !!data.src,
+                        },
+                    ],
+                },
+                {
+                    name: 'URL',
+                    label: 'jqui_url_group',
+                    fields: [
                         {
                             name: 'href',
                             label: 'jqui_url_in_browser',
@@ -61,7 +92,7 @@ class JQuiButton extends VisRxWidget {
                             name: 'target',
                             type: 'auto',
                             options: ['_blank', '_self', '_parent', '_top'],
-                            hidden: data => !!data.url,
+                            hidden: data => !!data.url || !data.href,
                         },
                     ],
                 },
@@ -105,6 +136,7 @@ class JQuiButton extends VisRxWidget {
                 },
                 {
                     name: 'icon',
+                    hidden: data => !!data.html,
                     fields: [
                         {
                             name: 'src',
@@ -133,6 +165,96 @@ class JQuiButton extends VisRxWidget {
                         },
                     ],
                 },
+                {
+                    name: 'dialog',
+                    fields: [
+                        {
+                            name: 'html_dialog',
+                            type: 'html',
+                        },
+                        {
+                            name: 'title',
+                            type: 'text',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'autoclose',
+                            type: 'slider',
+                            min: 0,
+                            max: 30000,
+                            step: 100,
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'modal',
+                            type: 'checkbox',
+                            default: true,
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'dialog_width',
+                            type: 'text',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'dialog_height',
+                            type: 'text',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'persistent',
+                            type: 'checkbox',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'preload',
+                            type: 'checkbox',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'closeOnClick',
+                            type: 'checkbox',
+                            hidden: data => !data.html_dialog,
+                        },
+                        /*
+                        {
+                            name: 'dialog_top',
+                            type: 'text',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'dialog_left',
+                            type: 'text',
+                            hidden: data => !data.html_dialog,
+                        },
+                        */
+                        {
+                            name: 'overflowX',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['', 'auto', 'hidden', 'visible', 'scroll', 'initial', 'inherit'],
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'overflowY',
+                            type: 'select',
+                            noTranslation: true,
+                            options: ['', 'auto', 'hidden', 'visible', 'scroll', 'initial', 'inherit'],
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'setId',
+                            type: 'id',
+                            tooltip: 'jqui_dialog_set_id_tooltip',
+                            hidden: data => !data.html_dialog,
+                        },
+                        {
+                            name: 'setValue',
+                            type: 'text',
+                            hidden: data => !data.setId || !data.html_dialog,
+                        },
+                    ],
+                },
             ],
         };
     }
@@ -146,17 +268,60 @@ class JQuiButton extends VisRxWidget {
         return JQuiButton.getWidgetInfo();
     }
 
+    async componentWillUnmount() {
+        this.hideTimeout && clearTimeout(this.hideTimeout);
+        this.hideTimeout = null;
+        super.componentWillUnmount();
+    }
+
     async componentDidUpdate() {
-        if (this.buttonRef.current) {
-            if (this.state.rxData.jquery_style && !this.buttonRef.current._jQueryDone) {
-                this.buttonRef.current._jQueryDone = true;
-                window.jQuery(this.buttonRef.current).button();
+        if (this.refButton.current) {
+            if (this.state.rxData.jquery_style && !this.refButton.current._jQueryDone) {
+                this.refButton.current._jQueryDone = true;
+                window.jQuery(this.refButton.current).button();
             }
-            if (this.buttonRef.current.clientWidth !== this.state.width || this.buttonRef.current.clientHeight !== this.state.height) {
-                this.setState({ width: this.buttonRef.current.clientWidth, height: this.buttonRef.current.clientHeight });
+            if (this.refButton.current.clientWidth !== this.state.width || this.refButton.current.clientHeight !== this.state.height) {
+                this.setState({ width: this.refButton.current.clientWidth, height: this.refButton.current.clientHeight });
+            }
+        }
+        // from base class
+        if (this.refService.current) {
+            if (this.state.rxData.html_dialog && !this.refService.current._showDialog) {
+                this.refService.current._showDialog = this.showDialog;
             }
         }
     }
+
+    showDialog = show => {
+        this.setState({ dialogVisible: show });
+
+        // Autoclose
+        let timeout = this.state.rxData.autoclose;
+        if (timeout === true || timeout === 'true') {
+            timeout = 10000;
+        }
+        if (timeout === null || timeout === undefined || timeout === '') {
+            return;
+        }
+        timeout = parseInt(timeout, 10);
+        if (timeout < 60) {
+            // may be this is seconds
+            timeout *= 1000;
+        }
+        timeout = timeout || 1000;
+
+        if (timeout) {
+            if (show) {
+                this.hideTimeout = setTimeout(() => {
+                    this.hideTimeout = null;
+                    this.showDialog(false);
+                }, timeout);
+            } else if (this.hideTimeout) {
+                clearTimeout(this.hideTimeout);
+                this.hideTimeout = null;
+            }
+        }
+    };
 
     onClick() {
         if (!this.props.editMode && this.state.rxData.href) {
@@ -172,6 +337,141 @@ class JQuiButton extends VisRxWidget {
                 console.log('httpGet', this.state.rxData.url, data);
             });
         }
+
+        if (this.state.rxData.html_dialog) {
+            // show dialog
+            this.showDialog(true);
+        }
+    }
+
+    renderRxDialog(dialogStyle) {
+        if (this.state.rxData.modal) {
+            return <Dialog
+                id={`${this.props.id}_dialog`}
+                ref={this.refDialog}
+                open={this.state.dialogVisible}
+                style={dialogStyle}
+                onClick={() => {
+                    if (this.state.rxData.closeOnClick) {
+                        this.showDialog(false);
+                    }
+                }}
+            >
+                {this.state.rxData.title ? <DialogTitle><div>{this.state.rxData.title}</div></DialogTitle> : null}
+                <IconButton
+                    style={{ position: 'absolute', top: 0, right: 0 }}
+                    onClick={() => this.showDialog(false)}
+                >
+                    <Close />
+                </IconButton>
+                <DialogContent>
+                    <div
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
+                    />
+                </DialogContent>
+            </Dialog>;
+        }
+
+        if (!this.state.dialogVisible) {
+            dialogStyle.display = 'none';
+        }
+
+        if (!dialogStyle.minWidth || dialogStyle.minWidth < 200) {
+            dialogStyle.minWidth = 200;
+        }
+        if (!dialogStyle.minHeight || dialogStyle.minHeight < 100) {
+            dialogStyle.minHeight = 100;
+        }
+
+        const paperStyle = { ...dialogStyle };
+        delete paperStyle.top;
+        delete paperStyle.left;
+        paperStyle.padding = this.state.rxData.title ? '0 24px 24px 24px' : '26px 24px 24px 24px';
+
+        return <Popper
+            open={this.state.dialogVisible}
+            id={`${this.props.id}_dialog`}
+            ref={this.refDialog}
+            anchorEl={this.refButton.current}
+            style={dialogStyle}
+            onClick={() => {
+                if (this.state.rxData.closeOnClick) {
+                    this.showDialog(false);
+                }
+            }}
+        >
+            <Paper
+                style={paperStyle}
+            >
+                {this.state.rxData.title ?
+                    <DialogTitle style={{ padding: '16px 0 0 0' }}>
+                        <div>{this.state.rxData.title}</div>
+                    </DialogTitle>
+                    :
+                    null}
+                <IconButton
+                    style={{ position: 'absolute', top: 0, right: 0 }}
+                    onClick={() => this.showDialog(false)}
+                >
+                    <Close />
+                </IconButton>
+                <DialogContent>
+                    <div
+                        // eslint-disable-next-line react/no-danger
+                        dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
+                    />
+                </DialogContent>
+            </Paper>
+        </Popper>;
+    }
+
+    renderJQueryDialog(dialogStyle) {
+        return <div
+            id={`${this.props.id}_dialog`}
+            className="vis-widget-dialog"
+            title={this.state.rxData.title}
+            style={dialogStyle}
+            ref={this.refDialog}
+        >
+            {this.state.rxData.preload ?
+                <div
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html_dialog }}
+                />
+                :
+                null}
+        </div>;
+    }
+
+    renderDialog() {
+        if (this.props.editMode || (!this.state.dialogVisible && !this.state.persistent) || !this.state.rxData.html_dialog) {
+            return null;
+        }
+
+        // eslint-disable-next-line no-restricted-properties
+        // const top = window.isFinite(this.state.rxData.dialog_top) ? parseFloat(this.state.rxData.dialog_top) : this.state.rxData.dialog_top;
+        // eslint-disable-next-line no-restricted-properties
+        // const left = window.isFinite(this.state.rxData.dialog_left) ? parseFloat(this.state.rxData.dialog_left) : this.state.rxData.dialog_left;
+        // eslint-disable-next-line no-restricted-properties
+        const width = window.isFinite(this.state.rxData.dialog_width) ? parseFloat(this.state.rxData.dialog_width) : this.state.rxData.dialog_width;
+        // eslint-disable-next-line no-restricted-properties
+        const height = window.isFinite(this.state.rxData.dialog_height) ? parseFloat(this.state.rxData.dialog_height) : this.state.rxData.dialog_height;
+
+        const dialogStyle = {
+            minWidth: width || undefined,
+            minHeight: height || undefined,
+            // top: top || top === 0 ? top : undefined,
+            // left: left || left === 0 ? left : undefined,
+            overflowX: this.state.rxData.overflowX,
+            overflowY: this.state.rxData.overflowY,
+        };
+
+        if (this.state.rxData.jquery_style) {
+            return this.renderJQueryDialog(dialogStyle);
+        }
+
+        return this.renderRxDialog(dialogStyle);
     }
 
     renderWidgetBody(props) {
@@ -226,30 +526,37 @@ class JQuiButton extends VisRxWidget {
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: this.state.rxData.html_prepend }}
             /> : null}
-            {this.state.rxData.no_style || this.state.rxData.jquery_style ?
-                <button
-                    ref={this.buttonRef}
-                    type="button"
-                    style={buttonStyle}
-                    onClick={() => this.onClick()}
-                >
-                    {icon}
-                    {this.state.rxData.buttontext}
-                </button>
+            {this.state.rxData.html ?
+                <span
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: this.state.rxData.html }}
+                />
                 :
-                <Button
-                    ref={this.buttonRef}
-                    style={buttonStyle}
-                    variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
-                    onClick={() => this.onClick()}
-                >
-                    {icon}
-                    {this.state.rxData.buttontext}
-                </Button>}
+                (this.state.rxData.no_style || this.state.rxData.jquery_style ?
+                    <button
+                        ref={this.refButton}
+                        type="button"
+                        style={buttonStyle}
+                        onClick={() => this.onClick()}
+                    >
+                        {icon}
+                        {this.state.rxData.buttontext}
+                    </button>
+                    :
+                    <Button
+                        ref={this.refButton}
+                        style={buttonStyle}
+                        variant={this.state.rxData.variant === undefined ? 'contained' : this.state.rxData.variant}
+                        onClick={() => this.onClick()}
+                    >
+                        {icon}
+                        {this.state.rxData.buttontext}
+                    </Button>)}
             {this.state.rxData.html_append ? <span
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{ __html: this.state.rxData.html_append }}
             /> : null}
+            {this.renderDialog()}
         </div>;
     }
 }

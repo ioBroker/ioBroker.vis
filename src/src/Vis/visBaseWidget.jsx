@@ -1464,7 +1464,7 @@ class VisBaseWidget extends React.Component {
             } else if (typeof this.visDynamicResizable.desiredSize === 'object') {
                 if (this.state.style.width) {
                     style.width = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.width);
-                    this.state.style.width = style.height;
+                    this.state.style.width = style.width;
                 } else {
                     delete this.state.style.width;
                     delete style.width;
