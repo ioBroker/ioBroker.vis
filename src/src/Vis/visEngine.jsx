@@ -123,6 +123,7 @@ class VisEngine extends React.Component {
 
         this.state = {
             ready: false,
+            legacyRequestedViews: [],
 
             timeInterval: JSON.parse(window.localStorage.getItem('timeInterval')) || 'week',
             timeStart: JSON.parse(window.localStorage.getItem('timeStart')) || null,
@@ -334,7 +335,10 @@ class VisEngine extends React.Component {
     buildLegacyStructures = () => {
         this.buildLegacySubscribing();
         if (this.vis.binds.materialdesign?.helper?.subscribeStatesAtRuntime && !this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited) {
-            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (/* wid, widgetName, callback, debug */) => {};
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (wid, widgetName, callback, debug) => {
+                debug && console.log(`[subscribeStatesAtRuntime] ${widgetName} (${wid}) subscribe states at runtime`);
+                callback && callback();
+            };
             this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited = true;
         }
     };
@@ -410,8 +414,21 @@ class VisEngine extends React.Component {
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
             renderView: (viewDiv, view, hidden, cb) => {
+                if (typeof view === 'boolean') {
+                    cb = hidden;
+                    hidden   = undefined;
+                    view     = viewDiv;
+                }
                 console.warn('renderView not implemented: ', viewDiv, view, hidden);
-                cb && cb(viewDiv, view);
+                if (!this.state.legacyRequestedViews.includes(viewDiv)) {
+                    const legacyRequestedViews = [...this.state.legacyRequestedViews];
+                    legacyRequestedViews.push(viewDiv);
+                    this.setState({ legacyRequestedViews }, () =>
+                        setTimeout(() => cb && cb(viewDiv, view), 100));
+                } else {
+                    // show this view
+                    cb && cb(viewDiv, view);
+                }
             },
             updateFilter: view => {
                 view = view || this.props.activeView;
@@ -1972,7 +1989,12 @@ ${this.scripts}
         };
 
         const views = Object.keys(this.props.views).map(view => {
-            if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
+            if (view !== '___settings' && (
+                view === this.props.activeView ||
+                    this.props.views[view].settings?.alwaysRender ||
+                    (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
+                )
+            ) {
                 // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
                     context={this.context}
