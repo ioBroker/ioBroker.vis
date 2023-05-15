@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "URL de chamada no back-end",
   "jqui_url_group": "URL de chamada por clique",
   "jqui_dialog_set_id_tooltip": "Definir estado pela caixa de diálogo aberta",
-  "jqui_html_tooltip": "O HTML só é configurável se o texto e o ícone estiverem vazios"
+  "jqui_html_tooltip": "O HTML só é configurável se o texto e o ícone estiverem vazios",
+  "jqui_hide_close_button": "Ocultar botão fechar"
 }

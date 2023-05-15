@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "URL de llamada en backend",
   "jqui_url_group": "URL de llamada por clic",
   "jqui_dialog_set_id_tooltip": "Establecer estado por cuadro de diálogo abierto",
-  "jqui_html_tooltip": "HTML solo se puede configurar si el texto y el ícono están vacíos"
+  "jqui_html_tooltip": "HTML solo se puede configurar si el texto y el ícono están vacíos",
+  "jqui_hide_close_button": "Ocultar botón de cerrar"
 }

@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "后台调用地址",
   "jqui_url_group": "点击调用URL",
   "jqui_dialog_set_id_tooltip": "通过打开对话框设置状态",
-  "jqui_html_tooltip": "HTML 仅在文本和图标为空时才可配置"
+  "jqui_html_tooltip": "HTML 仅在文本和图标为空时才可配置",
+  "jqui_hide_close_button": "隐藏关闭按钮"
 }

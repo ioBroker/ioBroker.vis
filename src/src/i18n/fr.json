@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "URL d'appel dans le backend",
   "jqui_url_group": "URL d'appel par clic",
   "jqui_dialog_set_id_tooltip": "Définir l'état en ouvrant la boîte de dialogue",
-  "jqui_html_tooltip": "HTML n'est configurable que si le texte et l'icône sont vides"
+  "jqui_html_tooltip": "HTML n'est configurable que si le texte et l'icône sont vides",
+  "jqui_hide_close_button": "Masquer le bouton de fermeture"
 }

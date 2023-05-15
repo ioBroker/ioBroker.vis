@@ -16,17 +16,17 @@ import PropTypes from 'prop-types';
 
 import JQuiButton from './JQuiButton';
 
-class JQuiIconLink extends JQuiButton {
+class JQuiDialog extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
-            id: 'tplIconLink',
+            id: 'tplJquiDialog',
             visSet: 'jqui',
-            visName: 'Button Link',
-            visWidgetLabel: 'jqui_icon_link',
-            visPrev: 'widgets/jqui/img/Prev_IconLink.png',
-            visOrder: 3,
+            visName: 'HTML - Dialog',
+            visWidgetLabel: 'jqui_html_dialog',
+            visPrev: 'widgets/jqui/img/Prev_JquiDialog.png',
+            visOrder: 5,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -37,28 +37,42 @@ class JQuiIconLink extends JQuiButton {
             text: 'jqui_button_link_blank_note',
         });
 
-        const target = JQuiButton.findField(newWidgetInfo, 'target');
-        target.default = '_blank';
-
         // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
         visResizable.default = true;
+
+        const html = JQuiButton.findField(newWidgetInfo, 'html');
+        html.default = '<div>HTML</div>';
+
+        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        delete buttonText.default;
+
+        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        htmlDialog.default = '<div>HTML Dialog</div>';
+
+        newWidgetInfo.visDefaultStyle = {
+            'border-width': 1,
+            'border-style': 'solid',
+            'border-color': '#000',
+            width: '200px',
+            height: '130px',
+            cursor: 'pointer',
+        };
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiIconLink.getWidgetInfo();
+        return JQuiDialog.getWidgetInfo();
     }
 }
 
-JQuiIconLink.propTypes = {
+JQuiDialog.propTypes = {
     id: PropTypes.string.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiIconLink;
+export default JQuiDialog;

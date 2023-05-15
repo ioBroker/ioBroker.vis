@@ -57,7 +57,7 @@ const ImportDialog = props => {
         <CustomAceEditor
             type="json"
             theme={props.themeType}
-            ref={node => {
+            refEditor={node => {
                 editor.current = node;
                 inputField.current = node;
             }}

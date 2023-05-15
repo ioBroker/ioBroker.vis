@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "Aanroep-URL in backend",
   "jqui_url_group": "Bel URL door te klikken",
   "jqui_dialog_set_id_tooltip": "Status instellen door dialoogvenster te openen",
-  "jqui_html_tooltip": "HTML kan alleen worden geconfigureerd als tekst en pictogram leeg zijn"
+  "jqui_html_tooltip": "HTML kan alleen worden geconfigureerd als tekst en pictogram leeg zijn",
+  "jqui_hide_close_button": "Sluitknop verbergen"
 }

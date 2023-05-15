@@ -43,6 +43,7 @@ class JQuiIconHttpGet extends JQuiButton {
         const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
         text.default = 'URL Backend';
 
+        // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
         visResizable.default = true;
 

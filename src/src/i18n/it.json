@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "Chiama l'URL nel back-end",
   "jqui_url_group": "Chiama l'URL con un clic",
   "jqui_dialog_set_id_tooltip": "Imposta stato aprendo la finestra di dialogo",
-  "jqui_html_tooltip": "L'HTML è configurabile solo se il testo e l'icona sono vuoti"
+  "jqui_html_tooltip": "L'HTML è configurabile solo se il testo e l'icona sono vuoti",
+  "jqui_hide_close_button": "Nascondi pulsante di chiusura"
 }

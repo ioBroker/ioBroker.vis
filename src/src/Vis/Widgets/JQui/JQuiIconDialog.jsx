@@ -16,17 +16,17 @@ import PropTypes from 'prop-types';
 
 import JQuiButton from './JQuiButton';
 
-class JQuiIconLink extends JQuiButton {
+class JQuiIconDialog extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
 
         const newWidgetInfo = {
-            id: 'tplIconLink',
+            id: 'tplJQuiIconDialog',
             visSet: 'jqui',
-            visName: 'Button Link',
-            visWidgetLabel: 'jqui_icon_link',
-            visPrev: 'widgets/jqui/img/Prev_IconLink.png',
-            visOrder: 3,
+            visName: 'Icon - Dialog',
+            visWidgetLabel: 'jqui_icon_dialog',
+            visPrev: 'widgets/jqui/img/Prev_JquiIconDialog.png',
+            visOrder: 5,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -37,28 +37,30 @@ class JQuiIconLink extends JQuiButton {
             text: 'jqui_button_link_blank_note',
         });
 
-        const target = JQuiButton.findField(newWidgetInfo, 'target');
-        target.default = '_blank';
-
         // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
         visResizable.default = true;
+
+        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        buttonText.default = 'Icon Dialog';
+
+        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        htmlDialog.default = '<div>HTML Dialog</div>';
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiIconLink.getWidgetInfo();
+        return JQuiIconDialog.getWidgetInfo();
     }
 }
 
-JQuiIconLink.propTypes = {
+JQuiIconDialog.propTypes = {
     id: PropTypes.string.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiIconLink;
+export default JQuiIconDialog;

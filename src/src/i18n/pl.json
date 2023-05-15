@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "Adres URL wywołania w zapleczu",
   "jqui_url_group": "Zadzwoń do adresu URL po kliknięciu",
   "jqui_dialog_set_id_tooltip": "Ustaw stan przez otwarte okno dialogowe",
-  "jqui_html_tooltip": "HTML można konfigurować tylko wtedy, gdy tekst i ikona są puste"
+  "jqui_html_tooltip": "HTML można konfigurować tylko wtedy, gdy tekst i ikona są puste",
+  "jqui_hide_close_button": "Ukryj przycisk zamykania"
 }

@@ -437,5 +437,6 @@
   "jqui_icon_http_get": "Aufruf-URL im Backend",
   "jqui_url_group": "URL per Klick aufrufen",
   "jqui_dialog_set_id_tooltip": "Zustand durch Öffnen des Dialogs setzen",
-  "jqui_html_tooltip": "HTML ist nur konfigurierbar, wenn Text und Symbol leer sind"
+  "jqui_html_tooltip": "HTML ist nur konfigurierbar, wenn Text und Symbol leer sind",
+  "jqui_hide_close_button": "Schaltfläche „Schließen“ ausblenden"
 }

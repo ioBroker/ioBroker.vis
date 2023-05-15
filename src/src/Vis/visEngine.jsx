@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    Button, Dialog, DialogContent, DialogTitle, DialogActions,
+    Button, Dialog, DialogContent, DialogTitle, DialogActions, LinearProgress,
 } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
@@ -1874,10 +1874,13 @@ ${this.scripts}
     render() {
         if (!this.state.ready || this.props.widgetsLoaded < 2) {
             if (this.props.renderAlertDialog && this.props.runtime) {
-                return this.props.renderAlertDialog();
+                return <>
+                    <LinearProgress />
+                    {this.props.renderAlertDialog()}
+                </>;
             }
 
-            return null;
+            return <LinearProgress />;
         }
 
         this.vis.editMode = this.props.editMode;

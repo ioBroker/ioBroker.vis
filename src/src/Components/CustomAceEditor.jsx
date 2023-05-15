@@ -122,7 +122,7 @@ const CustomAceEditor = props => {
             onChange={newValue => props.onChange(newValue)}
             readOnly={props.readOnly || false}
             focus={props.focus}
-            ref={props.ref}
+            ref={props.refEditor}
             highlightActiveLine
             enableBasicAutocompletion
             enableLiveAutocompletion
@@ -139,7 +139,7 @@ CustomAceEditor.propTypes = {
     readOnly: PropTypes.bool,
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-    ref: PropTypes.func,
+    refEditor: PropTypes.func,
 };
 
 export default CustomAceEditor;
