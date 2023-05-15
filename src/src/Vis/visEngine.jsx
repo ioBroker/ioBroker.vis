@@ -281,6 +281,11 @@ class VisEngine extends React.Component {
             return this.document.find(view ? `#visview_${view.replace(/\s/g, '_')}` : 'body').eq(0);
         };
 
+        // generate the browser instance ID
+        if (!window.localStorage.getItem('visInstance')) {
+            this.vis.generateInstance();
+        }
+
         this.detectWakeUp();
     }
 
@@ -451,6 +456,25 @@ class VisEngine extends React.Component {
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
+                if (typeof view === 'object') {
+                    cb = sync;
+                    sync = showOptions;
+                    hideOptions = showOptions;
+                    view = viewDiv;
+                }
+                if (!view && viewDiv) {
+                    view = viewDiv;
+                }
+                if (typeof hideOptions === 'function') {
+                    cb = hideOptions;
+                }
+                if (typeof showOptions === 'function') {
+                    cb = showOptions;
+                }
+                if (typeof sync === 'function') {
+                    cb = sync;
+                }
+
                 window.location.hash = VisEngine.buildPath(view);
                 cb && cb(viewDiv, view);
             },
@@ -1000,7 +1024,7 @@ class VisEngine extends React.Component {
                                 }
 
                                 const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
-                                // find out default file mode
+                                // find out the default file mode
                                 if (objects[instance]?.native?.defaultFileMode) {
                                     this.defaultMode = objects[instance].native.defaultFileMode;
                                 }
@@ -1891,6 +1915,19 @@ ${this.scripts}
         this.updateCommonCss();
         this.updateUserCss();
 
+        if (this.lastChangedView !== this.props.activeView && !this.props.editMode) {
+            this.lastChangedView = this.props.activeView;
+            window.vis.conn.sendCommand(
+                window.vis.instance,
+                'changedView',
+                this.props.projectName ? `${this.props.projectName}/${this.props.activeView}` : this.props.activeView,
+            );
+
+            // inform the legacy widgets
+            window.jQuery && window.jQuery(window).trigger('viewChanged', this.props.activeView);
+
+        }
+
         this.context = {
             $$: window.$$,
             VisView,
@@ -1983,6 +2020,7 @@ VisEngine.propTypes = {
     visCommonCss: PropTypes.string,
     visUserCss: PropTypes.string,
     setSelectedGroup: PropTypes.func,
+    selectedGroup: PropTypes.string,
     widgetHint: PropTypes.string,
     themeType: PropTypes.string,
     themeName: PropTypes.string,

@@ -360,23 +360,24 @@ class Runtime extends GenericApp {
             this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
         }
 
+        // copy multi-views to corresponding views
+        this.syncMultipleWidgets(project);
+
         if (this.state.runtime) {
             if (project.___settings.reloadOnEdit !== false) {
                 this.subscribedProject = projectName;
                 // subscribe on changes
                 this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
             }
+
+            // set overflow mode in runtime mode
+            if (project.___settings?.bodyOverflow) {
+                window.document.body.style.overflow = project.___settings.bodyOverflow;
+            }
         } else {
             this.subscribedProject = projectName;
             // subscribe on changes
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
-        }
-
-        // copy multi-views to corresponding views
-        this.syncMultipleWidgets(project);
-
-        if (this.state.runtime && project.___settings?.bodyOverflow) {
-            window.document.body.style.overflow = project.___settings.bodyOverflow;
         }
 
         await this.setStateAsync({
@@ -523,6 +524,18 @@ class Runtime extends GenericApp {
             openedViews.push(selectedView);
             newState.openedViews = openedViews;
             window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
+        }
+
+        if (!this.state.editMode) {
+            window.vis.conn.sendCommand(window.vis.instance, 'changedView', this.state.projectName ? (this.state.projectName + selectedView) : selectedView);
+
+            // inform the legacy widgets
+            window.jQuery && window.jQuery(window).trigger('viewChanged', selectedView);
+        }
+
+        // disable group edit if view changed
+        if (this.state.selectedGroup) {
+            newState.selectedGroup = null;
         }
 
         window.localStorage.setItem('selectedView', selectedView);
