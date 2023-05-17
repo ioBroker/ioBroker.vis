@@ -89,11 +89,11 @@ const Palette = props => {
             : {},
     );
 
-    const widgetSetProps = {};
-    const widgetsList = useMemo(() => {
+    const { widgetsList, widgetSetProps } = useMemo(() => {
         const _widgetsList = {};
+        const _widgetSetProps = {};
         if (!props.widgetsLoaded) {
-            return _widgetsList;
+            return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
         }
         const widgetTypes = getWidgetTypes();
         widgetTypes.forEach(widgetType => {
@@ -105,28 +105,28 @@ const Palette = props => {
             }
 
             if (widgetType.setLabel) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-                widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
+                _widgetSetProps[widgetTypeName].label = I18n.t(widgetType.setLabel);
             }
             if (widgetType.setColor) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-                widgetSetProps[widgetTypeName].color = widgetType.setColor;
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
+                _widgetSetProps[widgetTypeName].color = widgetType.setColor;
             }
             if (widgetType.setIcon) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
-                widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
+                _widgetSetProps[widgetTypeName].icon = widgetType.setIcon;
             } else
-            if (widgetType.adapter && !widgetSetProps[widgetTypeName]?.icon) {
-                widgetSetProps[widgetTypeName] = widgetSetProps[widgetTypeName] || {};
+            if (widgetType.adapter && !_widgetSetProps[widgetTypeName]?.icon) {
+                _widgetSetProps[widgetTypeName] = _widgetSetProps[widgetTypeName] || {};
                 if (window.location.port === '3000') {
-                    widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                    _widgetSetProps[widgetTypeName].icon = `./adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
                 } else {
-                    widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
+                    _widgetSetProps[widgetTypeName].icon = `../adapter/${widgetType.adapter}/${widgetType.adapter}.png`;
                 }
             }
 
             if (widgetType.version) {
-                widgetSetProps[widgetTypeName].version = widgetType.version;
+                _widgetSetProps[widgetTypeName].version = widgetType.version;
             }
 
             _widgetsList[widgetTypeName][widgetType.name] = widgetType;
@@ -155,7 +155,7 @@ const Palette = props => {
             });
         });
 
-        return _widgetsList;
+        return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
     }, [filter, props.widgetsLoaded]);
 
     if (!props.widgetsLoaded) {
@@ -173,7 +173,7 @@ const Palette = props => {
             style={{ display: 'flex', lineHeight: '34px' }}
         >
             <span style={{ verticalAlign: 'middle' }}>{I18n.t('Palette')}</span>
-            <div style={{ flex: 1 }}></div>
+            <div style={{ flex: 1 }} />
             {!allOpened ? <Tooltip title={I18n.t('Expand all')}>
                 <IconButton
                     size="small"
