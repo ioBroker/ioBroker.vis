@@ -23,6 +23,8 @@ let adapter;
 let isLicenseError   = false;
 let lastProgressUpdate;
 let widgetInstances  = {};
+let stoppingPromise = false;
+let synchronyzing = false;
 
 function startAdapter(options) {
     options = options || {};
@@ -61,6 +63,14 @@ function startAdapter(options) {
             }
         },
         message: obj => processMessage(obj),
+        unload: callback => {
+            if (synchronyzing) {
+                new Promise(resolve => stoppingPromise = resolve)
+                    .then(() => callback && callback())
+            } else {
+                callback && callback();
+            }
+        }
     });
 
     adapter = new utils.Adapter(options);
@@ -135,6 +145,7 @@ async function generateConfigPage(forceBuild, enabledList) {
         'swipe',
         'tabs',
     ];
+
     // collect vis-1 widgets
     enabledList.forEach(obj => {
         if (!obj.pack.common.visWidgets) {
@@ -498,6 +509,11 @@ async function collectExistingFilesToDelete(path) {
     let _files = [];
     let _dirs = [];
     let files;
+
+    if (stoppingPromise) {
+        return { filesToDelete: _files, dirs: _dirs };
+    }
+
     try {
         adapter.log.debug(`Scanning ${path}`);
         files = await adapter.readDirAsync(adapterName, path);
@@ -541,6 +557,9 @@ async function eraseFiles(files) {
             if (file === '/index.html' || file === '/edit.html') {
                 continue;
             }
+            if (stoppingPromise) {
+                return;
+            }
             try {
                 // @ts-expect-error should be fixed with #1917
                 await adapter.unlinkAsync(adapterName, file);
@@ -560,6 +579,10 @@ async function upload(files) {
 
     for (let f = 0; f < files.length; f++) {
         const file = files[f];
+
+        if (stoppingPromise) {
+            return;
+        }
 
         let attName = file.substring(wwwLen).replace(/\\/g, '/');
         if (attName === 'index.html' || attName === 'edit.html') {
@@ -605,6 +628,11 @@ async function upload(files) {
 // Read synchronous all files recursively from local directory
 function walk(dir, _results) {
     const results = _results || [];
+
+    if (stoppingPromise) {
+        return results;
+    }
+
     try {
         if (fs.existsSync(dir)) {
             const list = fs.readdirSync(dir);
@@ -690,6 +718,10 @@ async function uploadAdapter() {
     const { filesToDelete } = await collectExistingFilesToDelete('/');
     adapter.log.debug(`Erasing files: ${filesToDelete.length}`);
 
+    if (stoppingPromise) {
+        return;
+    }
+
     // write temp index.html and edit.html
     await adapter.writeFileAsync(adapterName, 'index.html', fs.readFileSync(`${__dirname}/lib/updating.html`).toString('utf8'));
     await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/lib/updating.html`).toString('utf8'));
@@ -698,10 +730,13 @@ async function uploadAdapter() {
     await eraseFiles(filesToDelete);
     await upload(files);
 
+    if (stoppingPromise) {
+        return;
+    }
+
     // restore normal files
     await adapter.writeFileAsync(adapterName, 'index.html', fs.readFileSync(`${__dirname}/www/index.html`).toString('utf8'));
     await adapter.writeFileAsync(adapterName, 'edit.html', fs.readFileSync(`${__dirname}/www/edit.html`).toString('utf8'));
-    return adapter;
 }
 
 async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
@@ -723,6 +758,7 @@ async function copyFolder(sourceId, sourcePath, targetId, targetPath) {
 }
 
 async function buildHtmlPages(forceBuild) {
+    synchronyzing = true;
     const enabledList = await readAdapterList();
     const configChanged = await generateConfigPage(forceBuild, enabledList);
 
@@ -750,12 +786,28 @@ async function buildHtmlPages(forceBuild) {
 
     if (configChanged || widgetsChanged || filesChanged || uploadedIndexHtml !== indexHtml || forceBuild) {
         await uploadAdapter();
+
+        // terminate promise
+        if (stoppingPromise) {
+            if (typeof stoppingPromise === 'function') {
+                stoppingPromise();
+                stoppingPromise = null;
+            }
+            synchronyzing = false;
+            return;
+        }
+
         await adapter.setStateAsync('info.uploaded', Date.now(), true);
     } else {
         const state = await adapter.getStateAsync('info.uploaded');
         if (!state || !state.val) {
             adapter.setStateAsync('info.uploaded', Date.now(), true);
         }
+    }
+    synchronyzing = false;
+    if (typeof stoppingPromise === 'function') {
+        stoppingPromise();
+        stoppingPromise = null;
     }
 }
 

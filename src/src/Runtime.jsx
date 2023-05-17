@@ -353,8 +353,6 @@ class Runtime extends GenericApp {
             window.localStorage.setItem('selectedView', selectedView);
         }
 
-        const groups = await this.socket.getGroups();
-
         window.localStorage.setItem('projectName', projectName);
 
         if (this.subscribedProject && (this.subscribedProject !== projectName || project.___settings.reloadOnEdit === false)) {
@@ -362,23 +360,24 @@ class Runtime extends GenericApp {
             this.socket.unsubscribeFiles(this.adapterId, `${this.subscribedProject}/*`, this.onProjectChange);
         }
 
+        // copy multi-views to corresponding views
+        this.syncMultipleWidgets(project);
+
         if (this.state.runtime) {
             if (project.___settings.reloadOnEdit !== false) {
                 this.subscribedProject = projectName;
                 // subscribe on changes
                 this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
             }
+
+            // set overflow mode in runtime mode
+            if (project.___settings?.bodyOverflow) {
+                window.document.body.style.overflow = project.___settings.bodyOverflow;
+            }
         } else {
             this.subscribedProject = projectName;
             // subscribe on changes
             this.socket.subscribeFiles(this.adapterId, `${projectName}/*`, this.onProjectChange);
-        }
-
-        // copy multi-views to corresponding views
-        this.syncMultipleWidgets(project);
-
-        if (this.state.runtime && project.___settings?.bodyOverflow) {
-            window.document.body.style.overflow = project.___settings.bodyOverflow;
         }
 
         await this.setStateAsync({
@@ -390,7 +389,6 @@ class Runtime extends GenericApp {
             visProject: project,
             openedViews,
             projectName,
-            groups,
         });
 
         await this.changeView(selectedView);
@@ -434,10 +432,15 @@ class Runtime extends GenericApp {
             await this.setStateAsync({ widgetsLoaded: Runtime.WIDGETS_LOADING_STEP_ALL_LOADED });
         }
 
-        const user = await this.socket.getCurrentUser();
-        const currentUser = await this.socket.getObject(`system.user.${user || 'admin'}`);
+        const userName = await this.socket.getCurrentUser(); // just name, like "admin"
+        const currentUser = await this.socket.getObject(`system.user.${userName || 'admin'}`);
+        const groups = await this.socket.getGroups();
+        const userGroups = {};
+        groups.forEach(group => userGroups[group._id] = group);
+
         await this.setStateAsync({
             currentUser,
+            userGroups,
             selectedView: '',
             splitSizes: window.localStorage.getItem('Vis.splitSizes')
                 ? JSON.parse(window.localStorage.getItem('Vis.splitSizes'))
@@ -521,6 +524,18 @@ class Runtime extends GenericApp {
             openedViews.push(selectedView);
             newState.openedViews = openedViews;
             window.localStorage.setItem('openedViews', JSON.stringify(openedViews));
+        }
+
+        if (!this.state.editMode) {
+            window.vis.conn.sendCommand(window.vis.instance, 'changedView', this.state.projectName ? (this.state.projectName + selectedView) : selectedView);
+
+            // inform the legacy widgets
+            window.jQuery && window.jQuery(window).trigger('viewChanged', selectedView);
+        }
+
+        // disable group edit if view changed
+        if (this.state.selectedGroup) {
+            newState.selectedGroup = null;
         }
 
         window.localStorage.setItem('selectedView', selectedView);
@@ -774,6 +789,7 @@ class Runtime extends GenericApp {
             })}
             onShowCode={(code, title, mode) => this.showCodeDialog && this.showCodeDialog({ code, title, mode })}
             currentUser={this.state.currentUser}
+            userGroups={this.state.userGroups}
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
         />;
@@ -784,7 +800,7 @@ class Runtime extends GenericApp {
             <StyledEngineProvider injectFirst>
                 <ThemeProvider theme={this.state.theme}>
                     {
-                        !this.state.loaded || !this.state.project || !this.state.groups ?
+                        !this.state.loaded || !this.state.project ?
                             <Loader theme={this.state.themeType} /> :
                             this.getVisEngine()
                     }

@@ -16,16 +16,17 @@ import PropTypes from 'prop-types';
 
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonBlank extends JQuiButton {
+class JQuiIconLink extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
+
         const newWidgetInfo = {
-            id: 'tplJquiButtonLinkBlank',
+            id: 'tplIconLink',
             visSet: 'jqui',
             visName: 'Button Link',
-            visWidgetLabel: 'jqui_button_link_blank',
-            visPrev: 'widgets/jqui/img/Prev_ButtonLinkBlank.png',
-            visOrder: 2,
+            visWidgetLabel: 'jqui_icon_link',
+            visPrev: 'widgets/jqui/img/Prev_IconLink.png',
+            visOrder: 3,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -35,29 +36,29 @@ class JQuiButtonBlank extends JQuiButton {
             type: 'help',
             text: 'jqui_button_link_blank_note',
         });
+
         const target = JQuiButton.findField(newWidgetInfo, 'target');
         target.default = '_blank';
 
+        // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
-        visResizable.default = false;
-
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'URL Browser';
+        visResizable.default = true;
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonBlank.getWidgetInfo();
+        return JQuiIconLink.getWidgetInfo();
     }
 }
 
-JQuiButtonBlank.propTypes = {
+JQuiIconLink.propTypes = {
     id: PropTypes.string.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
+    tpl: PropTypes.string.isRequired,
 };
 
-export default JQuiButtonBlank;
+export default JQuiIconLink;

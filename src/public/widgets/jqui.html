@@ -233,6 +233,7 @@
         dialog: function (el, options, persistent, preload, html, closeOnClick) {
             var $dlg = $(el).parent().find('div.vis-widget-dialog');
             $dlg.data('preload', (!preload || preload === 'false') && !$dlg.html().replace(/\s/g, ''));
+            // destroy old dialog
             $('[aria-describedby="' + $dlg.attr('id') + '"]').remove();
 
             options.width     = options.width  || options.dialog_width;

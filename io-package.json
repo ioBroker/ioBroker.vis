@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.27",
+        "version": "2.0.28",
         "news": {
-            "2.0.27": {
+            "2.0.28": {
                 "en": "Corrected error with connection",
                 "de": "Fehler behoben mit Verbindung",
                 "ru": "Исправлена ошибка с подключением",
@@ -279,6 +279,7 @@
                     "refresh": "refresh",
                     "reload": "reload",
                     "dialog": "dialog",
+                    "dialogClose": "dialogClose",
                     "popup": "popup",
                     "playSound": "playSound",
                     "changedView": "changedView",

@@ -85,7 +85,7 @@ const WidgetImportDialog = props => {
         <CustomAceEditor
             type="json"
             themeType={props.themeType}
-            ref={node => {
+            refEditor={node => {
                 editor.current = node;
                 inputField.current = node;
             }}

@@ -90,9 +90,11 @@ class VisCanWidget extends VisBaseWidget {
         this.props.context.linkContext.registerChangeHandler(this.props.id, this.changeHandler);
 
         // legacy support
-        if (props.tpl?.includes('materialdesign') && this.props.context.buildLegacyStructures) {
-            this.props.context.buildLegacyStructures();
-        }
+        // if (props.tpl?.includes('materialdesign') && this.props.context.buildLegacyStructures) {
+        // event if no materialdesign widget used, the legacy structures must build,
+        // because the materialdesign set tries to call vis.subscribing.byViews
+        this.props.context.buildLegacyStructures();
+        // }
     }
 
     setupSubscriptions() {

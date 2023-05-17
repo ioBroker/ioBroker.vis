@@ -17,7 +17,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    Button, Dialog, DialogContent, DialogTitle, DialogActions,
+    Button, Dialog, DialogContent, DialogTitle, DialogActions, LinearProgress,
 } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
@@ -123,6 +123,7 @@ class VisEngine extends React.Component {
 
         this.state = {
             ready: false,
+            legacyRequestedViews: [],
 
             timeInterval: JSON.parse(window.localStorage.getItem('timeInterval')) || 'week',
             timeStart: JSON.parse(window.localStorage.getItem('timeStart')) || null,
@@ -194,14 +195,9 @@ class VisEngine extends React.Component {
 
         this.loadLegacyObjects()
             .then(() => this.loadEditWords())
-            .then(() => this.readGroups())
-            .then(userGroups => {
-                this.userGroups = userGroups;
-                return this.props.socket.getCurrentUser();
-            })
-            .then(user => {
-                this.user = user;
-                this.vis.user = user;
+            .then(() => {
+                this.userName = this.props.currentUser._id.replace('system.user.', '');
+                this.vis.user = this.userName;
                 this.vis.loginRequired = this.props.socket.isSecure;
                 return this.props.socket.getSystemConfig();
             })
@@ -286,6 +282,11 @@ class VisEngine extends React.Component {
             return this.document.find(view ? `#visview_${view.replace(/\s/g, '_')}` : 'body').eq(0);
         };
 
+        // generate the browser instance ID
+        if (!window.localStorage.getItem('visInstance')) {
+            this.vis.generateInstance();
+        }
+
         this.detectWakeUp();
     }
 
@@ -334,7 +335,10 @@ class VisEngine extends React.Component {
     buildLegacyStructures = () => {
         this.buildLegacySubscribing();
         if (this.vis.binds.materialdesign?.helper?.subscribeStatesAtRuntime && !this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited) {
-            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (/* wid, widgetName, callback, debug */) => {};
+            this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime = (wid, widgetName, callback, debug) => {
+                debug && console.log(`[subscribeStatesAtRuntime] ${widgetName} (${wid}) subscribe states at runtime`);
+                callback && callback();
+            };
             this.vis.binds.materialdesign.helper.subscribeStatesAtRuntime.__inited = true;
         }
     };
@@ -410,8 +414,21 @@ class VisEngine extends React.Component {
                 Object.keys(refViews).forEach(view => refViews[view].onCommand('updateContainers'));
             },
             renderView: (viewDiv, view, hidden, cb) => {
+                if (typeof view === 'boolean') {
+                    cb = hidden;
+                    hidden   = undefined;
+                    view     = viewDiv;
+                }
                 console.warn('renderView not implemented: ', viewDiv, view, hidden);
-                cb && cb(viewDiv, view);
+                if (!this.state.legacyRequestedViews.includes(viewDiv)) {
+                    const legacyRequestedViews = [...this.state.legacyRequestedViews];
+                    legacyRequestedViews.push(viewDiv);
+                    this.setState({ legacyRequestedViews }, () =>
+                        setTimeout(() => cb && cb(viewDiv, view), 100));
+                } else {
+                    // show this view
+                    cb && cb(viewDiv, view);
+                }
             },
             updateFilter: view => {
                 view = view || this.props.activeView;
@@ -456,6 +473,25 @@ class VisEngine extends React.Component {
             },
             setValue: this.setValue,
             changeView: (viewDiv, view, hideOptions, showOptions, sync, cb) => {
+                if (typeof view === 'object') {
+                    cb = sync;
+                    sync = showOptions;
+                    hideOptions = showOptions;
+                    view = viewDiv;
+                }
+                if (!view && viewDiv) {
+                    view = viewDiv;
+                }
+                if (typeof hideOptions === 'function') {
+                    cb = hideOptions;
+                }
+                if (typeof showOptions === 'function') {
+                    cb = showOptions;
+                }
+                if (typeof sync === 'function') {
+                    cb = sync;
+                }
+
                 window.location.hash = VisEngine.buildPath(view);
                 cb && cb(viewDiv, view);
             },
@@ -679,7 +715,7 @@ class VisEngine extends React.Component {
                     if (id.startsWith('local_')) {
                         // if it is a local variable, we have to initiate this
                         state = {
-                            val: getUrlParameter(id), // using url parameter to set initial value of local variable
+                            val: getUrlParameter(id), // using url parameter to set the initial value of the local variable
                             ts: Date.now(),
                             lc: Date.now(),
                             ack: false,
@@ -835,6 +871,7 @@ class VisEngine extends React.Component {
                     return condition === 'not exist';
                 }
             },
+            getUserGroups: () => this.props.userGroups,
         };
     }
 
@@ -952,17 +989,8 @@ class VisEngine extends React.Component {
                 }
                 groupName = groupName || '';
 
-                return this.props.socket.getGroups(!useCache)
-                    .then(groups => {
-                        const result = {};
-                        if (groupName) {
-                            const gr = `system.group.${groupName}`;
-                            groups = groups.filter(group => group._id.startsWith(`${gr}.`) || group._id === gr);
-                        }
-
-                        groups.forEach(group => result[group._id] = group);
-                        cb(result);
-                    })
+                return this.readGroups(groupName, !useCache)
+                    .then(groups => cb(groups))
                     .catch(error => cb(error));
             },
             getConfig: (useCache, cb) => {
@@ -1013,7 +1041,7 @@ class VisEngine extends React.Component {
                                 }
 
                                 const instance = `system.adapter.${this.props.adapterName}.${this.props.instance}`;
-                                // find out default file mode
+                                // find out the default file mode
                                 if (objects[instance]?.native?.defaultFileMode) {
                                     this.defaultMode = objects[instance].native.defaultFileMode;
                                 }
@@ -1075,7 +1103,7 @@ class VisEngine extends React.Component {
             setReconnectInterval: () => {
 
             },
-            getUser: () => this.user,
+            getUser: () => this.userName,
             sendCommand: (instance, command, data, ack) => this.props.socket.setState(this.idControlInstance, { val: instance || 'notdefined', ack: true })
                 .then(() => this.props.socket.setState(this.idControlData, { val: data, ack: true }))
                 .then(() => this.props.socket.setState(this.idControlCommand, { val: command, ack: ack === undefined ? true : ack })),
@@ -1226,8 +1254,8 @@ class VisEngine extends React.Component {
         return result;
     }
 
-    readGroups(groupName) {
-        return this.props.socket.getGroups()
+    readGroups(groupName, useCache) {
+        return this.props.socket.getGroups(!useCache)
             .then(groups => {
                 const result = {};
                 if (groupName) {
@@ -1537,14 +1565,26 @@ class VisEngine extends React.Component {
                     window.location.reload(), 1);
                 break;
             case 'dialog':
-            case 'dialogOpen':
-                // noinspection JSJQueryEfficiency
-                window.jQuery(`#${data}_dialog`).dialog('open');
+            case 'dialogOpen': {
+                const el = window.document.getElementById(data);
+                if (el?._showDialog) {
+                    el._showDialog(true);
+                } else {
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('open');
+                }
                 break;
-            case 'dialogClose':
-                // noinspection JSJQueryEfficiency
-                window.jQuery(`#${data}_dialog`).dialog('close');
+            }
+            case 'dialogClose': {
+                const el = window.document.getElementById(data);
+                if (el?._showDialog) {
+                    el._showDialog(false);
+                } else {
+                    // noinspection JSJQueryEfficiency
+                    window.jQuery(`#${data}_dialog`).dialog('close');
+                }
                 break;
+            }
             case 'popup':
                 window.open(data);
                 break;
@@ -1875,10 +1915,13 @@ ${this.scripts}
     render() {
         if (!this.state.ready || this.props.widgetsLoaded < 2) {
             if (this.props.renderAlertDialog && this.props.runtime) {
-                return this.props.renderAlertDialog();
+                return <>
+                    <LinearProgress />
+                    {this.props.renderAlertDialog()}
+                </>;
             }
 
-            return null;
+            return <LinearProgress />;
         }
 
         this.vis.editMode = this.props.editMode;
@@ -1888,6 +1931,19 @@ ${this.scripts}
         this.updateCustomScripts();
         this.updateCommonCss();
         this.updateUserCss();
+
+        if (this.lastChangedView !== this.props.activeView && !this.props.editMode) {
+            this.lastChangedView = this.props.activeView;
+            window.vis.conn.sendCommand(
+                window.vis.instance,
+                'changedView',
+                this.props.projectName ? `${this.props.projectName}/${this.props.activeView}` : this.props.activeView,
+            );
+
+            // inform the legacy widgets
+            window.jQuery && window.jQuery(window).trigger('viewChanged', this.props.activeView);
+
+        }
 
         this.context = {
             $$: window.$$,
@@ -1920,8 +1976,8 @@ ${this.scripts}
             themeType: this.props.themeType,
             timeInterval: this.state.timeInterval,
             timeStart: this.state.timeStart,
-            user: this.user,
-            userGroups: this.userGroups,
+            user: this.userName,
+            userGroups: this.props.userGroups,
             views: this.props.views, // project
             viewsActiveFilter: this.viewsActiveFilter,
             widgetHint: this.props.widgetHint,
@@ -1933,7 +1989,12 @@ ${this.scripts}
         };
 
         const views = Object.keys(this.props.views).map(view => {
-            if (view !== '___settings' && (view === this.props.activeView || this.props.views[view].settings?.alwaysRender)) {
+            if (view !== '___settings' && (
+                view === this.props.activeView ||
+                    this.props.views[view].settings?.alwaysRender ||
+                    (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
+                )
+            ) {
                 // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
                     context={this.context}
@@ -1981,6 +2042,7 @@ VisEngine.propTypes = {
     visCommonCss: PropTypes.string,
     visUserCss: PropTypes.string,
     setSelectedGroup: PropTypes.func,
+    selectedGroup: PropTypes.string,
     widgetHint: PropTypes.string,
     themeType: PropTypes.string,
     themeName: PropTypes.string,
@@ -1994,6 +2056,7 @@ VisEngine.propTypes = {
     projectName: PropTypes.string.isRequired,
     adapterId: PropTypes.string.isRequired, // vis.0
     currentUser: PropTypes.object,
+    userGroups: PropTypes.object,
     renderAlertDialog: PropTypes.func,
     showLegacyFileSelector: PropTypes.func,
 };

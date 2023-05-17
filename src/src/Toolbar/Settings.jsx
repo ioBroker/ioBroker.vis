@@ -188,8 +188,7 @@ const Settings = props => {
 
                 if (field.type === 'checkbox') {
                     result = <FormControlLabel
-                        control={<Checkbox checked={!!value} />}
-                        onChange={e => change(e.target.checked)}
+                        control={<Checkbox checked={!!value} onChange={e => change(e.target.checked)} />}
                         label={I18n.t(field.name)}
                     />;
                 } else if (field.type === 'select') {

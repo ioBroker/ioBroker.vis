@@ -16,16 +16,17 @@ import PropTypes from 'prop-types';
 
 import JQuiButton from './JQuiButton';
 
-class JQuiButtonBlank extends JQuiButton {
+class JQuiIconDialog extends JQuiButton {
     static getWidgetInfo() {
         const widgetInfo = JQuiButton.getWidgetInfo();
+
         const newWidgetInfo = {
-            id: 'tplJquiButtonLinkBlank',
+            id: 'tplJQuiIconDialog',
             visSet: 'jqui',
-            visName: 'Button Link',
-            visWidgetLabel: 'jqui_button_link_blank',
-            visPrev: 'widgets/jqui/img/Prev_ButtonLinkBlank.png',
-            visOrder: 2,
+            visName: 'Icon - Dialog',
+            visWidgetLabel: 'jqui_icon_dialog',
+            visPrev: 'widgets/jqui/img/Prev_JquiIconDialog.png',
+            visOrder: 5,
             visAttrs: widgetInfo.visAttrs,
         };
 
@@ -35,29 +36,31 @@ class JQuiButtonBlank extends JQuiButton {
             type: 'help',
             text: 'jqui_button_link_blank_note',
         });
-        const target = JQuiButton.findField(newWidgetInfo, 'target');
-        target.default = '_blank';
 
+        // set resizable to true
         const visResizable = JQuiButton.findField(newWidgetInfo, 'visResizable');
-        visResizable.default = false;
+        visResizable.default = true;
 
-        const text = JQuiButton.findField(newWidgetInfo, 'buttontext');
-        text.default = 'URL Browser';
+        const buttonText = JQuiButton.findField(newWidgetInfo, 'buttontext');
+        buttonText.default = 'Icon Dialog';
+
+        const htmlDialog = JQuiButton.findField(newWidgetInfo, 'html_dialog');
+        htmlDialog.default = '<div>HTML Dialog</div>';
 
         return newWidgetInfo;
     }
 
     // eslint-disable-next-line class-methods-use-this
     getWidgetInfo() {
-        return JQuiButtonBlank.getWidgetInfo();
+        return JQuiIconDialog.getWidgetInfo();
     }
 }
 
-JQuiButtonBlank.propTypes = {
+JQuiIconDialog.propTypes = {
     id: PropTypes.string.isRequired,
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
 };
 
-export default JQuiButtonBlank;
+export default JQuiIconDialog;

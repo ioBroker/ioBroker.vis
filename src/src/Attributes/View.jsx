@@ -37,6 +37,7 @@ import {
     IconPicker,
     SelectFile as SelectFileDialog,
     Confirm as ConfirmDialog,
+    TextWithIcon,
 } from '@iobroker/adapter-react-v5';
 
 import { theme, background } from './ViewData';
@@ -234,14 +235,8 @@ const View = props => {
                     name: 'Only for groups',
                     field: 'group',
                     notStyle: true,
-                    type: 'multi-select',
+                    type: 'groups',
                     title: 'This view will be shown only to defined groups',
-                    items: props.groups.map(group => ({
-                        name: typeof group.common.name === 'string' ? group.common.name : group.common.name[I18n.getLanguage()],
-                        /* eslint no-underscore-dangle: 0 */
-                        value: group._id.split('.')[2],
-                    })),
-                    noTranslation: true,
                 },
                 {
                     name: 'Theme',
@@ -909,6 +904,48 @@ const View = props => {
                                             <ListItemText primary={field.noTranslation ? selectItem.name : I18n.t(selectItem.name)} />
                                         </MenuItem>)}
                                     </Select>;
+                                } else if (field.type === 'groups') {
+                                    result = <Select
+                                        variant="standard"
+                                        disabled={!props.editMode || disabled}
+                                        value={value || []}
+                                        fullWidth
+                                        multiple
+                                        classes={{
+                                            root: props.classes.clearPadding,
+                                            select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
+                                        }}
+                                        renderValue={selected => <div style={{ display: 'flex' }}>
+                                            {Object.values(props.userGroups)
+                                                .filter(_group => selected.includes(_group._id.split('.')[2]))
+                                                .map(_group =>
+                                                    <span key={_group._id} style={{ padding: '4px 4px' }}>
+                                                        <TextWithIcon
+                                                            value={_group._id}
+                                                            t={I18n.t}
+                                                            lang={I18n.getLanguage()}
+                                                            list={[_group]}
+                                                        />
+                                                    </span>)}
+                                        </div>}
+                                        onChange={e => change(e.target.value)}
+                                    >
+                                        {Object.values(props.userGroups).map((_group, i) => <MenuItem
+                                            value={_group._id.split('.')[2]}
+                                            key={`${_group._id.split('.')[2]}_${i}`}
+                                        >
+                                            <Checkbox
+                                                disabled={disabled}
+                                                checked={(value || []).includes(_group._id.split('.')[2])}
+                                            />
+                                            <TextWithIcon
+                                                value={_group._id}
+                                                t={I18n.t}
+                                                lang={I18n.getLanguage()}
+                                                list={[_group]}
+                                            />
+                                        </MenuItem>)}
+                                    </Select>;
                                 } else if (field.type === 'raw') {
                                     result = field.Component;
                                 } else if (field.type === 'color') {
@@ -1113,7 +1150,7 @@ const View = props => {
 View.propTypes = {
     changeProject: PropTypes.func,
     classes: PropTypes.object,
-    groups: PropTypes.array,
+    userGroups: PropTypes.object,
     project: PropTypes.object,
     selectedView: PropTypes.string,
 
