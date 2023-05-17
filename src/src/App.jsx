@@ -40,6 +40,8 @@ import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 import Runtime from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
+import { loadComponent } from './Vis/visUtils';
+import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 
 const generateClassName = createGenerateClassName({
     productionPrefix: 'vis-e',
@@ -177,7 +179,6 @@ class App extends Runtime {
 
     // eslint-disable-next-line class-methods-use-this
     initState(newState) {
-
         this.visEngineHandlers = {};
         window.visAddWidget = this.addWidget; // Used for tests
 
@@ -232,6 +233,7 @@ class App extends Runtime {
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
             legacyFileSelector: null,
+            marketplaceDialog: false,
         });
     }
 
@@ -239,6 +241,10 @@ class App extends Runtime {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
+        loadComponent('__marketplace', 'default', './VisMarketplace', 'http://localhost:3002/customWidgets.js')().then(c => {
+            this.setState({ VisMarketplace: c });
+            window.VisMarketplace = c;
+        });
     }
 
     componentWillUnmount() {
@@ -1203,6 +1209,13 @@ class App extends Runtime {
         this.setState({ showCodeDialog: codeDialog });
     }
 
+    setMarketplaceDialog = marketplaceDialog => this.setState({ marketplaceDialog });
+
+    installWidget = async widget => {
+        console.log(await (await window.VisMarketplace.client).getWidgetById(widget));
+        console.log(widget);
+    };
+
     renderTabs() {
         const views = Object.keys(this.state.project)
             .filter(view => !view.startsWith('__') && this.state.openedViews.includes(view));
@@ -1340,6 +1353,7 @@ class App extends Runtime {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
                     this.setState({ hidePalette: true });
                 }}
+                setMarketplaceDialog={this.setMarketplaceDialog}
             />
         </div>;
     }
@@ -1389,6 +1403,7 @@ class App extends Runtime {
                             groupWidgets={this.groupWidgets}
                             ungroupWidgets={this.ungroupWidgets}
                             setSelectedGroup={this.setSelectedGroup}
+                            setMarketplaceDialog={this.setMarketplaceDialog}
                         >
                             { visEngine }
                         </VisContextMenu>
@@ -1768,6 +1783,13 @@ class App extends Runtime {
                     {this.renderShowProjectUpdateDialog()}
                     {this.renderMessageDialog()}
                     {this.renderLegacyFileSelectorDialog()}
+                    <MarketplaceDialog
+                        open={!!this.state.marketplaceDialog}
+                        fullScreen
+                        onClose={() => this.setState({ marketplaceDialog: false })}
+                        installWidget={this.installWidget}
+                        {...this.state.marketplaceDialog}
+                    />
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

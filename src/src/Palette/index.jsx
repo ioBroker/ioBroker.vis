@@ -21,6 +21,7 @@ import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
+import MarketplacePalette from '../Marketplace/MarketplacePalette';
 
 const styles = theme => ({
     widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
@@ -91,7 +92,7 @@ const Palette = props => {
 
     const widgetSetProps = {};
     const widgetsList = useMemo(() => {
-        const _widgetsList = {};
+        const _widgetsList = { __marketplace: {} };
         if (!props.widgetsLoaded) {
             return _widgetsList;
         }
@@ -268,6 +269,9 @@ const Palette = props => {
                             category}
                     </AccordionSummary>
                     <AccordionDetails>
+                        {
+                            category === '__marketplace' && <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
+                        }
                         {widgetSetProps[category]?.version ?
                             <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
                         <div>
