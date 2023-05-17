@@ -9,6 +9,7 @@ import JQuiIconLink from './JQui/JQuiIconLink';
 import JQuiIconHttpGet from './JQui/JQuiIconHttpGet';
 import JQuiDialog from './JQui/JQuiDialog';
 import JQuiIconDialog from './JQui/JQuiIconDialog';
+import JQuiContainerDialog from './JQui/JQuiContainerDialog';
 
 import TabsSliderTabs from './Tabs/TabsSliderTabs';
 
@@ -24,6 +25,7 @@ const WIDGETS = [
     JQuiIconHttpGet,
     JQuiDialog,
     JQuiIconDialog,
+    JQuiContainerDialog,
 
     TabsSliderTabs,
 ];

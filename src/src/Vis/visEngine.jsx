@@ -17,7 +17,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
-    Button, Dialog, DialogContent, DialogTitle, DialogActions, LinearProgress,
+    Button,
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogActions,
+    LinearProgress,
 } from '@mui/material';
 
 import { I18n } from '@iobroker/adapter-react-v5';
@@ -1493,14 +1498,6 @@ class VisEngine extends React.Component {
         }
     }
 
-    /*
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.divRef.current) {
-            this.vis.main(this.divRef.current);
-        }
-    }
-    */
-
     updateWidget(view, wid, type, item, stateId, state) {
         if (this.widgetChangeHandlers[wid]) {
             this.widgetChangeHandlers[wid](type, item, stateId, state);
@@ -1942,7 +1939,6 @@ ${this.scripts}
 
             // inform the legacy widgets
             window.jQuery && window.jQuery(window).trigger('viewChanged', this.props.activeView);
-
         }
 
         this.context = {
@@ -1993,8 +1989,7 @@ ${this.scripts}
                 view === this.props.activeView ||
                     this.props.views[view].settings?.alwaysRender ||
                     (!this.props.editMode && this.state.legacyRequestedViews.includes(view))
-                )
-            ) {
+            )) {
                 // return <div key={view} id="vis_container" ref={this.divRef} style={{ width: '100%', height: '100%' }} />;
                 return <VisView
                     context={this.context}
