@@ -145,11 +145,15 @@ const ViewDrop = props => {
             console.log(monitor.getClientOffset());
             console.log(targetRef.current.getBoundingClientRect());
             console.log(item);
-            props.addWidget(
-                item.widgetType.name,
-                monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
-                monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
-            );
+            if (item.widgetSet === '__marketplace') {
+                props.addMarketplaceWidget(item.widgetType.id);
+            } else {
+                props.addWidget(
+                    item.widgetType.name,
+                    monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
+                    monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
+                );
+            }
         },
         canDrop: () => props.editMode,
         collect: monitor => ({
@@ -1212,8 +1216,60 @@ class App extends Runtime {
     setMarketplaceDialog = marketplaceDialog => this.setState({ marketplaceDialog });
 
     installWidget = async widget => {
-        console.log(await (await window.VisMarketplace.client).getWidgetById(widget));
-        console.log(widget);
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const marketplaceWidget = (await (await window.VisMarketplace.client).getWidgetById(widget)).data;
+        if (!project.___settings.marketplace) {
+            project.___settings.marketplace = [];
+        }
+        project.___settings.marketplace = [];
+        const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === marketplaceWidget.id);
+        if (widgetIndex === -1) {
+            project.___settings.marketplace.push(marketplaceWidget);
+        } else {
+            project.___settings.marketplace[widgetIndex] = marketplaceWidget;
+        }
+        this.changeProject(project);
+    };
+
+    addMarketplaceWidget = async id => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
+        let newKeyNumber = this.getNewWidgetIdNumber();
+        let newGroupKeyNumber = this.getNewWidgetIdNumber(true);
+        const newWidgets = {};
+
+        widgets.forEach(_widget => {
+            if (_widget.tpl === '_tplGroup') {
+                const newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+                newWidgets[newKey] = _widget;
+                // find all widgets that belong to this group and change groupid
+                let w;
+                do {
+                    w = widgets.find(item => item.groupid === _widget._id);
+                    if (w) {
+                        w.groupid = newKey;
+                    }
+                } while (w);
+
+                newGroupKeyNumber++;
+            } else {
+                const newKey = `w${newKeyNumber.toString().padStart(6, '0')}`;
+                newWidgets[newKey] = _widget;
+                if (_widget.grouped && newWidgets[_widget.groupid] && newWidgets[_widget.groupid].data && newWidgets[_widget.groupid].data.members) {
+                    // find group
+                    const pos = newWidgets[_widget.groupid].data.members.indexOf(_widget._id);
+                    if (pos !== -1) {
+                        newWidgets[_widget.groupid].data.members[pos] = newKey;
+                    }
+                }
+                newKeyNumber++;
+            }
+        });
+
+        Object.keys(newWidgets).forEach(wid => delete newWidgets[wid]._id);
+
+        project[this.state.selectedView].widgets = { ...project[this.state.selectedView].widgets, ...newWidgets };
+        this.changeProject(project);
     };
 
     renderTabs() {
@@ -1354,6 +1410,7 @@ class App extends Runtime {
                     this.setState({ hidePalette: true });
                 }}
                 setMarketplaceDialog={this.setMarketplaceDialog}
+                project={this.state.project}
             />
         </div>;
     }
@@ -1375,7 +1432,7 @@ class App extends Runtime {
                     ? <pre>
                         {JSON.stringify(this.state.project, null, 2)}
                     </pre> : null}
-                <ViewDrop addWidget={this.addWidget} editMode={this.state.editMode}>
+                <ViewDrop addWidget={this.addWidget} addMarketplaceWidget={this.addMarketplaceWidget} editMode={this.state.editMode}>
                     <div
                         id="vis-react-container"
                         style={{
@@ -1622,6 +1679,8 @@ class App extends Runtime {
                 </StyledEngineProvider>
             </StylesProvider>;
         }
+
+        console.log(this.state.project);
 
         if (this.state.showProjectsDialog) {
             return <StylesProvider generateClassName={generateClassName}>

@@ -270,7 +270,18 @@ const Palette = props => {
                     </AccordionSummary>
                     <AccordionDetails>
                         {
-                            category === '__marketplace' && <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
+                            category === '__marketplace' && <div>
+                                <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
+                                {props.project.___settings.marketplace?.map(item => <div key={item.id}>
+                                    <Widget
+                                        widgetType={{ id: item.id, label: item.name, preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}` }}
+                                        key={item.id}
+                                        widgetSet={category}
+                                        widgetSetProps={widgetSetProps[category]}
+                                        widgetTypeName={item.name}
+                                    />
+                                </div>)}
+                            </div>
                         }
                         {widgetSetProps[category]?.version ?
                             <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}

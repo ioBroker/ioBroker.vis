@@ -96,7 +96,8 @@ const Widget = props => {
         if (m) {
             img = <img src={m[1]} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
         }
-    } else if (props.widgetType.preview && (props.widgetType.preview.endsWith('.svg') || props.widgetType.preview.endsWith('.png') || props.widgetType.preview.endsWith('.jpg'))) {
+    } else if (props.widgetType.preview &&
+        (props.widgetType.preview.endsWith('.svg') || props.widgetType.preview.endsWith('.png') || props.widgetType.preview.endsWith('.jpg') || props.widgetSet === '__marketplace')) {
         img = <img src={props.widgetType.preview} className={props.classes.widgetImageWithSrc} alt={props.widgetType.id} />;
     }
 
@@ -138,6 +139,7 @@ const Widget = props => {
         type: 'widget',
         item: () => ({
             widgetType: props.widgetType,
+            widgetSet: props.widgetSet,
             preview: <div style={{ width: widthRef.current.offsetWidth }}>
                 {result}
             </div>,

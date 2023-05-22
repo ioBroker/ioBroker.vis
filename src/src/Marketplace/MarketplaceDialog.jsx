@@ -3,10 +3,10 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-window.apiUrl = 'https://iobroker.net';
-window.webPrefix = '/market';
-// window.apiUrl = 'http://localhost:3009'; 
-// window.webPrefix = '';
+// window.apiUrl = 'https://iobroker.net';
+// window.webPrefix = '/market';
+window.apiUrl = 'http://localhost:3009'; 
+window.webPrefix = '';
 
 const MarketplaceDialog = props => {
     const VisMarketplace = window.VisMarketplace?.default;
