@@ -18,6 +18,8 @@
         "ace-builds": "^1.19.0",
         "craco-esbuild": "^0.5.2",
         "craco-module-federation": "^1.1.0",
+        "echarts": "^5.4.2",
+        "echarts-for-react": "^3.0.2",
         "eslint": "^8.40.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",

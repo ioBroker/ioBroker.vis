@@ -36,7 +36,7 @@ function buildRuntime() {
     return new Promise((resolve, reject) => {
         const options = {
             stdio: 'pipe',
-            cwd:   `${__dirname}/runtime/`
+            cwd:   `${__dirname}/runtime/`,
         };
 
         const version = JSON.parse(fs.readFileSync(`${__dirname}/package.json`).toString('utf8')).version;
