@@ -4,7 +4,9 @@ import { withStyles } from '@mui/styles';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
-import { Tooltip } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import UpdateIcon from '@mui/icons-material/Update';
 
 import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
 
@@ -55,6 +57,10 @@ const styles = () => ({
         padding: 4,
         alignItems: 'center',
         overflow: 'hidden',
+    },
+    widgetMarketplace:{
+        fontSize: '80%',
+        fontStyle: 'italic',
     },
 });
 
@@ -118,6 +124,11 @@ const Widget = props => {
     label = label.split('<span')[0];
     label = label.split('<div')[0];
 
+    let marketplaceUpdate;
+    if (props.widgetSet === '__marketplace') {
+        marketplaceUpdate = props.marketplaceUpdates.find(u => u.widget_id === props.widgetType.widget_id);
+    }
+
     const result = <Tooltip
         title={<div className={props.classes.widgetTooltip}>
             <div>{img}</div>
@@ -127,7 +138,28 @@ const Widget = props => {
     >
         <div className={props.classes.widget} style={style}>
             <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
-            <div className={props.classes.widgetTitle} style={titleStyle}>{label}</div>
+            <div className={props.classes.widgetTitle} style={titleStyle}>
+                <div>{label}</div>
+                {props.widgetSet === '__marketplace' && <div className={props.classes.widgetMarketplace}>
+                    {`${I18n.t('version')} ${props.marketplace.version}`}
+                </div>}
+            </div>
+            {props.widgetSet === '__marketplace' && <>
+                <Tooltip title={I18n.t('Uninstall')}>
+                    <IconButton onClick={() => props.uninstallWidget(props.widgetType.id)}>
+                        <DeleteIcon />
+                    </IconButton>
+                </Tooltip>
+                {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`}>
+                    <IconButton onClick={async () => {
+                        await props.installWidget(props.widgetType.widget_id);
+                        props.checkForUpdates();
+                    }}
+                    >
+                        <UpdateIcon />
+                    </IconButton>
+                </Tooltip>}
+            </>}
             <span className={props.classes.widgetImageContainer}>
                 {img}
             </span>

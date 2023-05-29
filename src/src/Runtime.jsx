@@ -118,6 +118,8 @@ class Runtime extends GenericApp {
             newProjectName: '',
             projects: null,
             projectDoesNotExist: false,
+            marketplaceDialog: false,
+            marketplaceUpdates: [],
         };
 
         if (this.initState) {
@@ -260,6 +262,19 @@ class Runtime extends GenericApp {
         });
     }
 
+    checkForUpdates = async () => {
+        const updates = [];
+        for (const i in this.state.project.___settings.marketplace) {
+            const widget = this.state.project.___settings.marketplace[i];
+            const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
+            if (data.version !== widget.version) {
+                updates.push(data);
+                console.log(data);
+            }
+        }
+        this.setState({ marketplaceUpdates: updates });
+    };
+
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
@@ -392,6 +407,8 @@ class Runtime extends GenericApp {
         });
 
         await this.changeView(selectedView);
+
+        this.checkForUpdates();
     };
 
     onVisChanged() {

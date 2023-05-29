@@ -106,9 +106,15 @@ const Widgets = props => {
                                 name = widgetId;
                             }
 
+                            let subName = widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl;
+
+                            if (widgets[widgetId].marketplace) {
+                                subName = `${widgets[widgetId].marketplace.name} (${I18n.t('version')} ${widgets[widgetId].marketplace.version})`;
+                            }
+
                             return {
                                 name,
-                                subName: widgetType ? `(${setLabel} - ${tpl === '_tplGroup' ? I18n.t('group') : widgetLabel})` : tpl,
+                                subName,
                                 value: widgetId,
                                 color: widgetColor,
                                 icon: widgetIcon.startsWith('<') ? '' : widgetIcon,

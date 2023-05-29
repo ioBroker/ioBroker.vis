@@ -274,11 +274,21 @@ const Palette = props => {
                                 <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
                                 {props.project.___settings.marketplace?.map(item => <div key={item.id}>
                                     <Widget
-                                        widgetType={{ id: item.id, label: item.name, preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}` }}
+                                        widgetType={{
+                                            id: item.id,
+                                            widget_id: item.widget_id,
+                                            label: item.name,
+                                            preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                        }}
                                         key={item.id}
                                         widgetSet={category}
                                         widgetSetProps={widgetSetProps[category]}
                                         widgetTypeName={item.name}
+                                        marketplace={item}
+                                        marketplaceUpdates={props.marketplaceUpdates}
+                                        checkForUpdates={props.checkForUpdates}
+                                        installWidget={props.installWidget}
+                                        uninstallWidget={props.uninstallWidget}
                                     />
                                 </div>)}
                             </div>

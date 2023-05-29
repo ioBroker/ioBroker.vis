@@ -237,7 +237,6 @@ class App extends Runtime {
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
             legacyFileSelector: null,
-            marketplaceDialog: false,
         });
     }
 
@@ -899,6 +898,9 @@ class App extends Runtime {
     };
 
     setSelectedGroup = groupId => {
+        if (this.state.project[this.state.selectedView].widgets[groupId].marketplace) {
+            return;
+        }
         this.setState({ selectedGroup: groupId });
         this.setSelectedWidgets([]);
     };
@@ -1222,11 +1224,20 @@ class App extends Runtime {
             project.___settings.marketplace = [];
         }
         project.___settings.marketplace = [];
-        const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === marketplaceWidget.id);
+        const widgetIndex = project.___settings.marketplace.findIndex(item => item.widget_id === marketplaceWidget.widget_id);
         if (widgetIndex === -1) {
             project.___settings.marketplace.push(marketplaceWidget);
         } else {
             project.___settings.marketplace[widgetIndex] = marketplaceWidget;
+        }
+        return this.changeProject(project);
+    };
+
+    uninstallWidget = async widget => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgetIndex = project.___settings.marketplace.findIndex(item => item.id === widget);
+        if (widgetIndex !== -1) {
+            project.___settings.marketplace.splice(widgetIndex, 1);
         }
         this.changeProject(project);
     };
@@ -1239,6 +1250,9 @@ class App extends Runtime {
         const newWidgets = {};
 
         widgets.forEach(_widget => {
+            if (_widget.isRoot) {
+                _widget.marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id)));
+            }
             if (_widget.tpl === '_tplGroup') {
                 const newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
                 newWidgets[newKey] = _widget;
@@ -1270,6 +1284,10 @@ class App extends Runtime {
 
         project[this.state.selectedView].widgets = { ...project[this.state.selectedView].widgets, ...newWidgets };
         this.changeProject(project);
+    };
+
+    updateMarketplaceWidget = () => {
+
     };
 
     renderTabs() {
@@ -1409,8 +1427,12 @@ class App extends Runtime {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
                     this.setState({ hidePalette: true });
                 }}
+                installWidget={this.installWidget}
+                uninstallWidget={this.uninstallWidget}
                 setMarketplaceDialog={this.setMarketplaceDialog}
                 project={this.state.project}
+                checkForUpdates={this.checkForUpdates}
+                marketplaceUpdates={this.state.marketplaceUpdates}
             />
         </div>;
     }
@@ -1461,6 +1483,7 @@ class App extends Runtime {
                             ungroupWidgets={this.ungroupWidgets}
                             setSelectedGroup={this.setSelectedGroup}
                             setMarketplaceDialog={this.setMarketplaceDialog}
+                            marketplaceUpdates={this.state.marketplaceUpdates}
                         >
                             { visEngine }
                         </VisContextMenu>
