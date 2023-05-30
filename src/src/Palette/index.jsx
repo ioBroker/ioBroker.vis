@@ -21,6 +21,7 @@ import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
+import MarketplacePalette from '../Marketplace/MarketplacePalette';
 
 const styles = theme => ({
     widgets: { textAlign: 'center', overflowY: 'auto', height: 'calc(100% - 84px)' },
@@ -90,7 +91,7 @@ const Palette = props => {
     );
 
     const { widgetsList, widgetSetProps } = useMemo(() => {
-        const _widgetsList = {};
+        const _widgetsList = { __marketplace: {} };
         const _widgetSetProps = {};
         if (!props.widgetsLoaded) {
             return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
@@ -268,6 +269,30 @@ const Palette = props => {
                             category}
                     </AccordionSummary>
                     <AccordionDetails>
+                        {
+                            category === '__marketplace' && <div>
+                                <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
+                                {props.project.___settings.marketplace?.map(item => <div key={item.id}>
+                                    <Widget
+                                        widgetType={{
+                                            id: item.id,
+                                            widget_id: item.widget_id,
+                                            label: item.name,
+                                            preview: `${window.apiUrl + window.webPrefix}/images/${item.image_id}`,
+                                        }}
+                                        key={item.id}
+                                        widgetSet={category}
+                                        widgetSetProps={widgetSetProps[category]}
+                                        widgetTypeName={item.name}
+                                        marketplace={item}
+                                        marketplaceUpdates={props.marketplaceUpdates}
+                                        checkForUpdates={props.checkForUpdates}
+                                        installWidget={props.installWidget}
+                                        uninstallWidget={props.uninstallWidget}
+                                    />
+                                </div>)}
+                            </div>
+                        }
                         {widgetSetProps[category]?.version ?
                             <div className={props.classes.version}>{widgetSetProps[category]?.version}</div> : null}
                         <div>

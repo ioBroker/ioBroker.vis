@@ -5,6 +5,8 @@ import WidgetIcon from '@mui/icons-material/Widgets';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
+import UpdateIcon from '@mui/icons-material/Update';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
@@ -14,6 +16,8 @@ import {
 import {
     AiOutlineGroup, AiOutlineUngroup,
 } from 'react-icons/ai';
+
+import { toPng } from 'html-to-image';
 
 import I18n from '@iobroker/adapter-react-v5/i18n';
 
@@ -60,6 +64,10 @@ const VisContextMenu = props => {
                     widgetType = widgetItem ? widgetItem.title : tpl;
                 }
             }
+
+            if (view.widgets[coordinatesWidgets[0]].marketplace) {
+                widgetType = `${view.widgets[coordinatesWidgets[0]].marketplace.name} (${I18n.t('version')} ${view.widgets[coordinatesWidgets[0]].marketplace.version})`;
+            }
         }
 
         return [
@@ -100,11 +108,95 @@ const VisContextMenu = props => {
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
             {
+                leftIcon: <UpdateIcon />,
+                label: 'Update widget',
+                onClick: () => {},
+                hide: props.selectedWidgets.length !== 1 ||
+                    !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+            },
+            {
+                leftIcon: <LocalGroceryStoreIcon />,
+                label: 'Add to marketplace',
+                onClick: async () => {
+                    const widgets = props.selectedWidgets.map(wid => {
+                        const w = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[wid]));
+                        w._id = wid;
+                        w.isRoot = true;
+                        delete w.marketplace;
+                        w.set = window.visWidgetTypes.find(type => type.name === w.tpl).set;
+                        return w;
+                    });
+
+                    const groupWidgets = [];
+
+                    let gIdx = 1;
+                    let wIdx = 1;
+                    const len = widgets.length;
+                    for (let w = 0; w < len; w++) {
+                        const widget = widgets[w];
+                        if (widget.tpl === '_tplGroup') {
+                            const newId = `f${gIdx.toString().padStart(6, '0')}`;
+                            gIdx++;
+
+                            if (widget.data && widget.data.members) {
+                                const members = [];
+                                widget.data.members.forEach(member => {
+                                    if (groupWidgets.includes(member)) {
+                                        return;
+                                    }
+                                    const memberWidget = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[member]));
+                                    memberWidget._id = `i${wIdx.toString().padStart(6, '0')}`;
+                                    memberWidget.set = window.visWidgetTypes.find(type => type.name === memberWidget.tpl).set;
+                                    wIdx++;
+                                    members.push(memberWidget._id);
+                                    memberWidget.groupid = newId;
+                                    memberWidget.grouped = true;
+                                    delete memberWidget.isRoot;
+                                    delete w.marketplace;
+                                    widgets.push(memberWidget);
+                                    groupWidgets.push(member);
+                                });
+
+                                widget.data.members = members;
+                            }
+                            widget._id = newId;
+                        } else if (widget._id.startsWith('w')) {
+                            if (widget.grouped) {
+                                delete widget.grouped;
+                                delete widget.groupid;
+                                delete widget._id;
+                            } else {
+                                widget._id = `i${wIdx.toString().padStart(6, '0')}`;
+                                wIdx++;
+                            }
+                        }
+                    }
+
+                    Array.from(document.getElementsByClassName('vis-editmode-resizer')).forEach(el => el.style.display = 'none');
+                    const cachePosition = document.getElementById(props.selectedWidgets[0]).style.position;
+                    document.getElementById(props.selectedWidgets[0]).style.position = 'initial';
+
+                    const dataUrl = await toPng(document.getElementById(props.selectedWidgets[0]));
+                    document.getElementById(props.selectedWidgets[0]).style.position = cachePosition;
+                    Array.from(document.getElementsByClassName('vis-editmode-resizer')).forEach(el => el.style.display = 'block');
+                    console.log(document.getElementById(props.selectedWidgets[0]));
+
+                    props.setMarketplaceDialog({
+                        addPage: true,
+                        widget: { widget: widgets, image: dataUrl },
+                    });
+                },
+                hide: props.selectedWidgets.length !== 1 ||
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+            },
+            {
             // leftIcon: <AiOutlineUngroup />,
                 label: 'Edit group',
                 onClick: () => props.setSelectedGroup(props.selectedWidgets[0]),
                 hide: props.selectedWidgets.length !== 1 ||
-                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
+                    props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             },
             {
                 leftIcon: <BiCopy />,

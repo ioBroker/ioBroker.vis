@@ -762,6 +762,13 @@ const Widget = props => {
                 widgetBackColor = '#000';
             }
         }
+        if (tpl === '_tplGroup') {
+            widgetLabel = I18n.t('group');
+        }
+        if (widgets[props.selectedWidgets[0]].marketplace) {
+            setLabel = `${widgets[props.selectedWidgets[0]].marketplace.name}`;
+            widgetLabel = `${I18n.t('version')} ${widgets[props.selectedWidgets[0]].marketplace.version}`;
+        }
         list = <div style={{ display: 'flex' }}>
             {widgetIcon ? <div className={props.classes.widgetIcon}>{img}</div> : null}
             <div className={props.classes.widgetName}>{props.selectedWidgets[0]}</div>
@@ -776,7 +783,7 @@ const Widget = props => {
                 >
                     {setLabel}
                 </div>
-                <div className={props.classes.widgetNameText}>{tpl === '_tplGroup' ? I18n.t('group') : widgetLabel}</div>
+                <div className={props.classes.widgetNameText}>{widgetLabel}</div>
             </div>
         </div>;
     } else {

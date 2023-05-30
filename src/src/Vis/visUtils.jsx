@@ -807,7 +807,7 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
     return window[`_promise_${remote}`];
 };
 
-const loadComponent = (remote, sharedScope, module, url) =>
+export const loadComponent = (remote, sharedScope, module, url) =>
     () => getOrLoadRemote(remote, sharedScope, url)
         .then(() => window[remote].get(module))
         .then(factory => factory());
