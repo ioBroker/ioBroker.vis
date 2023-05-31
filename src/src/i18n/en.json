@@ -439,5 +439,17 @@
   "jqui_dialog_set_id_tooltip": "Set state by dialog open",
   "jqui_html_tooltip": "HTML is only configurable if text and icon are empty",
   "jqui_hide_close_button": "Hide close button",
-  "__marketplace": "Marketplace"
+  "__marketplace": "Marketplace",
+  "Widget CSS": "Widget CSS",
+  "Widget JS": "Widget JS",
+  "Add to marketplace": "Add to marketplace",
+  "Edit group": "Edit group",
+  "version": "version",
+  "Marketplace": "Marketplace",
+  "Open marketplace": "Open marketplace",
+  "Uninstall": "Uninstall",
+  "Group": "Group",
+  "Ungroup": "Ungroup",
+  "convert from marketplace widget": "convert from marketplace widget",
+  "to version": "to version"
 }

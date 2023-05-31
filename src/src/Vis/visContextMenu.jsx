@@ -108,7 +108,7 @@ const VisContextMenu = props => {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
                 subLabel: props.project[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
-                    'convert from marketplace widget' :
+                    I18n.t('convert from marketplace widget') :
                     null,
                 onClick: () => props.ungroupWidgets(),
                 hide: props.selectedWidgets.length !== 1 ||
@@ -117,7 +117,7 @@ const VisContextMenu = props => {
             {
                 leftIcon: <UpdateIcon />,
                 label: 'Update widget',
-                subLabel: `to version ${marketplaceUpdate?.version}`,
+                subLabel: `${I18n.t('to version')} ${marketplaceUpdate?.version}`,
                 onClick: () => props.updateWidget(props.selectedWidgets[0]),
                 hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
                     !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
