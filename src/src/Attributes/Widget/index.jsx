@@ -23,6 +23,8 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import WidgetField from './WidgetField';
 import IODialog from '../../Components/IODialog';
 import { getWidgetTypes, parseAttributes } from '../../Vis/visWidgetsCatalog';
+import WidgetCSS from './WidgetCSS';
+import WidgetJS from './WidgetJS';
 
 const ICONS = {
     'group.fixed': <FilterAltIcon fontSize="small" />,
@@ -462,6 +464,8 @@ const Widget = props => {
     const widgetTypes = props.widgetTypes;
     const widgets = props.project[props.selectedView]?.widgets;
     const imageRef = useRef();
+    const [cssDialogOpened, setCssDialogOpened] = useState(false);
+    const [jsDialogOpened, setJsDialogOpened] = useState(false);
 
     const fieldsData = useMemo(() => {
         let widget;
@@ -769,7 +773,7 @@ const Widget = props => {
             setLabel = `${widgets[props.selectedWidgets[0]].marketplace.name}`;
             widgetLabel = `${I18n.t('version')} ${widgets[props.selectedWidgets[0]].marketplace.version}`;
         }
-        list = <div style={{ display: 'flex' }}>
+        list = <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             {widgetIcon ? <div className={props.classes.widgetIcon}>{img}</div> : null}
             <div className={props.classes.widgetName}>{props.selectedWidgets[0]}</div>
             <div className={props.classes.widgetType}>
@@ -785,6 +789,32 @@ const Widget = props => {
                 </div>
                 <div className={props.classes.widgetNameText}>{widgetLabel}</div>
             </div>
+            {!widgets[props.selectedWidgets[0]].marketplace && <>
+                <Button onClick={() => setCssDialogOpened(true)}>CSS</Button>
+                <Button onClick={() => setJsDialogOpened(true)}>JS</Button>
+                <WidgetCSS
+                    open={cssDialogOpened}
+                    onClose={() => setCssDialogOpened(false)}
+                    widget={widgets[props.selectedWidgets[0]]}
+                    onChange={value => {
+                        const project = JSON.parse(JSON.stringify(props.project));
+                        project[props.selectedView].widgets[props.selectedWidgets[0]].css = value;
+                        props.changeProject(project);
+                    }}
+                    editMode={props.editMode}
+                />
+                <WidgetJS
+                    open={jsDialogOpened}
+                    onClose={() => setJsDialogOpened(false)}
+                    widget={widgets[props.selectedWidgets[0]]}
+                    onChange={value => {
+                        const project = JSON.parse(JSON.stringify(props.project));
+                        project[props.selectedView].widgets[props.selectedWidgets[0]].js = value;
+                        props.changeProject(project);
+                    }}
+                    editMode={props.editMode}
+                />
+            </>}
         </div>;
     } else {
         list = props.selectedWidgets.join(', ');
@@ -800,7 +830,7 @@ const Widget = props => {
     }
 
     return <>
-        <div style={{ width: '100%', height: 34, overflow: 'hidden' }}>
+        <div style={{ width: '100%', overflow: 'hidden' }}>
             {list}
         </div>
 

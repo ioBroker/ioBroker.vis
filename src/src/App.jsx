@@ -1891,6 +1891,7 @@ class App extends Runtime {
                         fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}
                         installWidget={this.installWidget}
+                        installedWidgets={this.state.project?.___settings.marketplace}
                         {...this.state.marketplaceDialog}
                     />
                 </ThemeProvider>
