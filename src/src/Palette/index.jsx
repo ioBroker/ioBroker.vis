@@ -266,7 +266,7 @@ const Palette = props => {
                             (widgetSetProps[category].label.startsWith('Vis 2 - ') ?
                                 widgetSetProps[category].label.substring(8) : widgetSetProps[category].label)
                             :
-                            category}
+                            I18n.t(category)}
                     </AccordionSummary>
                     <AccordionDetails>
                         {

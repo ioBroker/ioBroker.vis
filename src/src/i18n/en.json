@@ -438,5 +438,6 @@
   "jqui_url_group": "Call URL by click",
   "jqui_dialog_set_id_tooltip": "Set state by dialog open",
   "jqui_html_tooltip": "HTML is only configurable if text and icon are empty",
-  "jqui_hide_close_button": "Hide close button"
+  "jqui_hide_close_button": "Hide close button",
+  "__marketplace": "Marketplace"
 }

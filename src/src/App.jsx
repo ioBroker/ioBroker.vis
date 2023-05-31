@@ -244,14 +244,16 @@ class App extends Runtime {
         });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
-        loadComponent('__marketplace', 'default', './VisMarketplace', 'http://localhost:3002/customWidgets.js')().then(c => {
-            this.setState({ VisMarketplace: c });
-            window.VisMarketplace = c;
-        });
+        const translations = await loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)();
+        I18n.extendTranslations(translations.default);
+        const marketplace = await loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)();
+
+        this.setState({ VisMarketplace: marketplace });
+        window.VisMarketplace = marketplace;
     }
 
     componentWillUnmount() {
