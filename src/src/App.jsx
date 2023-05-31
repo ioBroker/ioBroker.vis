@@ -146,7 +146,11 @@ const ViewDrop = props => {
             console.log(targetRef.current.getBoundingClientRect());
             console.log(item);
             if (item.widgetSet === '__marketplace') {
-                props.addMarketplaceWidget(item.widgetType.id);
+                props.addMarketplaceWidget(
+                    item.widgetType.id,
+                    monitor.getClientOffset().x - targetRef.current.getBoundingClientRect().x,
+                    monitor.getClientOffset().y - targetRef.current.getBoundingClientRect().y,
+                );
             } else {
                 props.addWidget(
                     item.widgetType.name,
@@ -1223,7 +1227,6 @@ class App extends Runtime {
         if (!project.___settings.marketplace) {
             project.___settings.marketplace = [];
         }
-        project.___settings.marketplace = [];
         const widgetIndex = project.___settings.marketplace.findIndex(item => item.widget_id === marketplaceWidget.widget_id);
         if (widgetIndex === -1) {
             project.___settings.marketplace.push(marketplaceWidget);
@@ -1242,7 +1245,7 @@ class App extends Runtime {
         this.changeProject(project);
     };
 
-    addMarketplaceWidget = async id => {
+    addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
         let newKeyNumber = this.getNewWidgetIdNumber();
@@ -1254,7 +1257,18 @@ class App extends Runtime {
                 _widget.marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id)));
             }
             if (_widget.tpl === '_tplGroup') {
-                const newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+                let newKey = `g${newGroupKeyNumber.toString().padStart(6, '0')}`;
+                if (_widget.isRoot) {
+                    if (widgetId) {
+                        newKey = widgetId;
+                        oldData.members = _widget.data.members;
+                        _widget.data = oldData;
+                        _widget.style = oldStyle;
+                    } else {
+                        _widget.style.top = y;
+                        _widget.style.left = x;
+                    }
+                }
                 newWidgets[newKey] = _widget;
                 // find all widgets that belong to this group and change groupid
                 let w;
@@ -1286,8 +1300,14 @@ class App extends Runtime {
         this.changeProject(project);
     };
 
-    updateMarketplaceWidget = () => {
-
+    updateWidget = async id => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widget = project[this.state.selectedView].widgets[id];
+        if (widget && widget.marketplace) {
+            const marketplace = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.widget_id === widget.marketplace.widget_id)));
+            await this.deleteWidgetsAction();
+            this.addMarketplaceWidget(marketplace.id, null, null, id, widget.data, widget.style);
+        }
     };
 
     renderTabs() {
@@ -1484,6 +1504,7 @@ class App extends Runtime {
                             setSelectedGroup={this.setSelectedGroup}
                             setMarketplaceDialog={this.setMarketplaceDialog}
                             marketplaceUpdates={this.state.marketplaceUpdates}
+                            updateWidget={this.updateWidget}
                         >
                             { visEngine }
                         </VisContextMenu>

@@ -12,7 +12,9 @@ window.webPrefix = '';
 const MarketplaceDialog = props => {
     const VisMarketplace = window.VisMarketplace?.default;
 
-    return <Dialog open={props.open} fullScreen onClose={props.onClose}>
+    return <Dialog open={props.open} fullScreen onClose={props.onClose} PaperProps={{
+        color: 'primary',
+    }}>
         {props.addPage ? <DialogTitle>{I18n.t('Add widget or add revision to existing widget')}</DialogTitle> : null}
         <DialogContent>
             {VisMarketplace &&

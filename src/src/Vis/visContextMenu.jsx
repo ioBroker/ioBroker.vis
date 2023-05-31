@@ -46,6 +46,7 @@ const VisContextMenu = props => {
         let widgetType = null;
         let widgetName = '';
         let showSelect = coordinatesWidgets.length > 1;
+        let marketplaceUpdate;
         if (view && coordinatesWidgets[0] && view.widgets[coordinatesWidgets[0]] && view.widgets[coordinatesWidgets[0]].tpl) {
             if (view.widgets[coordinatesWidgets[0]].data?.locked) {
                 showSelect = true;
@@ -67,6 +68,9 @@ const VisContextMenu = props => {
 
             if (view.widgets[coordinatesWidgets[0]].marketplace) {
                 widgetType = `${view.widgets[coordinatesWidgets[0]].marketplace.name} (${I18n.t('version')} ${view.widgets[coordinatesWidgets[0]].marketplace.version})`;
+                marketplaceUpdate = props.project.___settings.marketplace.find(u =>
+                    u.widget_id === view.widgets[coordinatesWidgets[0]].marketplace.widget_id &&
+                    u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
             }
         }
 
@@ -103,6 +107,9 @@ const VisContextMenu = props => {
             {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
+                subLabel: props.project[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
+                    'convert from marketplace widget' :
+                    null,
                 onClick: () => props.ungroupWidgets(),
                 hide: props.selectedWidgets.length !== 1 ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
@@ -110,8 +117,9 @@ const VisContextMenu = props => {
             {
                 leftIcon: <UpdateIcon />,
                 label: 'Update widget',
-                onClick: () => {},
-                hide: props.selectedWidgets.length !== 1 ||
+                subLabel: `to version ${marketplaceUpdate?.version}`,
+                onClick: () => props.updateWidget(props.selectedWidgets[0]),
+                hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
                     !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             },
             {
