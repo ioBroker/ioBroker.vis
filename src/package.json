@@ -12,7 +12,7 @@
         "@material-icons/svg": "^1.0.33",
         "@mui/icons-material": "^5.11.16",
         "@mui/material": "^5.12.3",
-        "@mui/styles": "^5.12.3",
+        "@mui/styles": "^5.13.2",
         "@sentry/browser": "^7.51.2",
         "@sentry/integrations": "^7.51.2",
         "ace-builds": "^1.19.0",
