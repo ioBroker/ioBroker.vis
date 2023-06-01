@@ -38,7 +38,7 @@
     "gulp": "^4.0.2",
     "iobroker.web": "*",
     "mocha": "^10.2.0",
-    "unzipper": "^0.10.11"
+    "unzipper": "^0.10.14"
   },
   "bugs": {
     "url": "https://github.com/iobroker/iobroker.vis/issues"
