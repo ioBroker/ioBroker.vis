@@ -11,7 +11,7 @@
         "@iobroker/vis-2-widgets-react-dev": "^0.3.19",
         "@material-icons/svg": "^1.0.33",
         "@mui/icons-material": "^5.11.16",
-        "@mui/material": "^5.12.3",
+        "@mui/material": "^5.13.3",
         "@mui/styles": "^5.12.3",
         "@sentry/browser": "^7.51.2",
         "@sentry/integrations": "^7.51.2",
