@@ -126,7 +126,7 @@ const Widget = props => {
 
     let marketplaceUpdate;
     if (props.widgetSet === '__marketplace') {
-        marketplaceUpdate = props.marketplaceUpdates.find(u => u.widget_id === props.widgetType.widget_id);
+        marketplaceUpdate = props.marketplaceUpdates?.find(u => u.widget_id === props.widgetType.widget_id);
     }
 
     const result = <Tooltip
@@ -140,7 +140,7 @@ const Widget = props => {
             <span style={{ display: 'none' }}>{props.widgetTypeName}</span>
             <div className={props.classes.widgetTitle} style={titleStyle}>
                 <div>{label}</div>
-                {props.widgetSet === '__marketplace' && <div className={props.classes.widgetMarketplace}>
+                {props.widgetSet === '__marketplace' && props.marketplace && <div className={props.classes.widgetMarketplace}>
                     {`${I18n.t('version')} ${props.marketplace.version}`}
                 </div>}
             </div>

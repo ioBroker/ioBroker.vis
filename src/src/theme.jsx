@@ -1,6 +1,6 @@
 import { Theme } from '@iobroker/adapter-react-v5';
 
-export default type => {
+const createTheme = type => {
     const danger = '#dd5325';
     const success = '#73b6a8';
     const theme = { ...Theme(type) };
@@ -16,3 +16,5 @@ export default type => {
 
     return theme;
 };
+
+export default createTheme;

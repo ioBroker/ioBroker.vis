@@ -677,6 +677,7 @@ function getUsedObjectIDs(views, isByViews) {
         do {
             changed = false;
             // Check containers
+            // eslint-disable-next-line no-loop-func
             Object.keys(views).forEach(view => {
                 if (view === '___settings') {
                     return;
@@ -754,14 +755,19 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
         const onload = async () => {
             // check if it was initialized
             if (!window[remote]) {
-                reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+                if (remoteFallbackUrl.startsWith('http://') || remoteFallbackUrl.startsWith('https://')) {
+                    console.error(`Cannot load remote from url "${remoteFallbackUrl}"`);
+                } else {
+                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+                }
+                resolve();
                 return;
             }
             if (!window[remote].__initialized) {
                 // if share scope doesn't exist (like in webpack 4) then expect shareScope to be a manual object
                 // eslint-disable-next-line camelcase
                 if (typeof __webpack_share_scopes__ === 'undefined') {
-                    // use default share scope object passed in manually
+                    // use the default share scope object, passed in manually
                     await window[remote].init(shareScope.default);
                 } else
                 // otherwise, init share scope as usual

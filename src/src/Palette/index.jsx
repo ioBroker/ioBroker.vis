@@ -91,8 +91,14 @@ const Palette = props => {
     );
 
     const { widgetsList, widgetSetProps } = useMemo(() => {
-        const _widgetsList = { __marketplace: {} };
-        const _widgetSetProps = {};
+        const _widgetsList = props.marketplaceUpdates ? {
+            __marketplace: {},
+        } : {};
+        const _widgetSetProps = props.marketplaceUpdates ? {
+            __marketplace: {
+                icon: 'img/marketplace.png',
+            },
+        } : {};
         if (!props.widgetsLoaded) {
             return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
         }
@@ -270,7 +276,7 @@ const Palette = props => {
                     </AccordionSummary>
                     <AccordionDetails>
                         {
-                            category === '__marketplace' && <div>
+                            category === '__marketplace' && props.marketplaceUpdates && <div>
                                 <MarketplacePalette setMarketplaceDialog={props.setMarketplaceDialog} />
                                 {props.project.___settings.marketplace?.map(item => <div key={item.id}>
                                     <Widget

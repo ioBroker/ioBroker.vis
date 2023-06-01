@@ -1,17 +1,21 @@
 import PropTypes from 'prop-types';
+import { useRef, useState } from 'react';
+
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Button,
 } from '@mui/material';
+
 import { Close } from '@mui/icons-material';
-import { useRef, useState } from 'react';
-import I18n from '@iobroker/adapter-react-v5/i18n';
+
+import { I18n } from '@iobroker/adapter-react-v5';
+
 import CustomAceEditor from '../../Components/CustomAceEditor';
 
 const WidgetCSS = props => {
     const [value, setValue] = useState(props.widget.css || '');
     const timeout = useRef(null);
 
-    return <Dialog open={props.open} onClose={props.onClose} fullWidth>
+    return <Dialog open={!0} onClose={props.onClose} fullWidth>
         <DialogTitle>{I18n.t('Widget CSS')}</DialogTitle>
         <DialogContent style={{ height: 400 }}>
             <CustomAceEditor
@@ -48,6 +52,9 @@ const WidgetCSS = props => {
 WidgetCSS.propTypes = {
     themeType: PropTypes.string,
     editMode: PropTypes.bool,
+    onClose: PropTypes.func,
+    onChange: PropTypes.func,
+    widget: PropTypes.object,
 };
 
 export default WidgetCSS;

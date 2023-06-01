@@ -1464,6 +1464,7 @@ class VisBaseWidget extends React.Component {
             } else if (typeof this.visDynamicResizable.desiredSize === 'object') {
                 if (this.state.style.width) {
                     style.width = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.width);
+                    // eslint-disable-next-line react/no-direct-mutation-state
                     this.state.style.width = style.width;
                 } else {
                     delete this.state.style.width;
@@ -1472,6 +1473,7 @@ class VisBaseWidget extends React.Component {
 
                 if (this.state.style.height) {
                     style.height = VisBaseWidget.correctStylePxValue(this.visDynamicResizable.desiredSize.height);
+                    // eslint-disable-next-line react/no-direct-mutation-state
                     this.state.style.height = style.height;
                 } else {
                     delete this.state.style.height;

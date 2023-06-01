@@ -792,8 +792,7 @@ const Widget = props => {
             {!widgets[props.selectedWidgets[0]].marketplace && <>
                 <Button onClick={() => setCssDialogOpened(true)}>CSS</Button>
                 <Button onClick={() => setJsDialogOpened(true)}>JS</Button>
-                <WidgetCSS
-                    open={cssDialogOpened}
+                {cssDialogOpened ? <WidgetCSS
                     onClose={() => setCssDialogOpened(false)}
                     widget={widgets[props.selectedWidgets[0]]}
                     onChange={value => {
@@ -802,9 +801,8 @@ const Widget = props => {
                         props.changeProject(project);
                     }}
                     editMode={props.editMode}
-                />
-                <WidgetJS
-                    open={jsDialogOpened}
+                /> : null}
+                {jsDialogOpened ? <WidgetJS
                     onClose={() => setJsDialogOpened(false)}
                     widget={widgets[props.selectedWidgets[0]]}
                     onChange={value => {
@@ -813,7 +811,7 @@ const Widget = props => {
                         props.changeProject(project);
                     }}
                     editMode={props.editMode}
-                />
+                /> : null}
             </>}
         </div>;
     } else {
