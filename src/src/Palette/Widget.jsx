@@ -154,7 +154,6 @@ const Widget = props => {
                     <IconButton onClick={async () => {
                         // await props.installWidget(props.widgetType.widget_id);
                         await props.updateWidgets(marketplaceUpdate);
-                        props.checkForUpdates();
                     }}
                     >
                         <UpdateIcon />

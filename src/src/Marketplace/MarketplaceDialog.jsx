@@ -8,6 +8,36 @@ import React from 'react';
 const MarketplaceDialog = props => {
     const VisMarketplace = window.VisMarketplace?.default;
 
+    let installWidget;
+
+    if (props.installWidget) {
+        installWidget = async marketplace => {
+            const widgets = [];
+            Object.keys(props.project).forEach(view => {
+                if (view !== '___settings') {
+                    const viewWidgets = {
+                        name: view,
+                        widgets: [],
+                    };
+                    Object.keys(props.project[view].widgets).forEach(widget => {
+                        if (props.project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
+                        props.project[view].widgets[widget].marketplace?.version !== marketplace.version) {
+                            viewWidgets.widgets.push(widget);
+                        }
+                    });
+                    if (viewWidgets.widgets.length) {
+                        widgets.push(viewWidgets);
+                    }
+                }
+            });
+            if (widgets.length) {
+                await props.updateWidgets(marketplace);
+            } else {
+                await props.installWidget(marketplace.widget_id, marketplace.id);
+            }
+        };
+    }
+
     return <Dialog
         open={props.open}
         fullScreen
@@ -23,7 +53,7 @@ const MarketplaceDialog = props => {
                         addPage={props.addPage}
                         widget={props.widget}
                         onClose={props.onClose}
-                        installWidget={props.installWidget}
+                        installWidget={installWidget}
                         installedWidgets={props.installedWidgets}
                     />}
         </DialogContent>

@@ -482,25 +482,33 @@ class App extends Runtime {
 
     updateWidgets = async marketplaceWidget => this.setState({ updateWidgetsDialog: marketplaceWidget });
 
-    updateWidgetsAction = async marketplace => {
-        const widgets = [];
-        Object.keys(this.state.project).forEach(view => {
-            if (view !== '___settings') {
-                const viewWidgets = {
-                    name: view,
-                    widgets: [],
-                };
-                Object.keys(this.state.project[view].widgets).forEach(widget => {
-                    if (this.state.project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
-                        this.state.project[view].widgets[widget].marketplace?.version !== marketplace.version) {
-                        viewWidgets.widgets.push(widget);
-                    }
-                });
-                if (viewWidgets.widgets.length) {
-                    widgets.push(viewWidgets);
+    updateWidgetsAction = async (marketplace, widgets) => {
+        await this.installWidget(marketplace.widget_id, marketplace.id);
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        widgets.forEach(view => {
+            view.widgets.forEach(widget => {
+                const widgetData = project[view.name].widgets[widget];
+                if (widgetData.tpl === '_tplGroup') {
+                    widgetData.data.members.forEach(member => {
+                        delete project[view.name].widgets[member];
+                    });
                 }
-            }
+                delete project[view.name].widgets[widget];
+                this.importMarketplaceWidget(
+                    project,
+                    view.name,
+                    JSON.parse(JSON.stringify(marketplace.widget)),
+                    marketplace.id,
+                    null,
+                    null,
+                    widget,
+                    JSON.parse(JSON.stringify(widgetData.data)),
+                    JSON.parse(JSON.stringify(widgetData.style)),
+                );
+            });
         });
+        await this.changeProject(project);
+        await this.checkForUpdates();
     };
 
     deleteWidgetsAction = async () => {
@@ -1271,9 +1279,7 @@ class App extends Runtime {
         this.changeProject(project);
     };
 
-    addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
-        const project = JSON.parse(JSON.stringify(this.state.project));
-        const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
+    importMarketplaceWidget = (project, view, widgets, id, x, y, widgetId, oldData, oldStyle) => {
         let newKeyNumber = this.getNewWidgetIdNumber();
         let newGroupKeyNumber = this.getNewWidgetIdNumber(true);
         const newWidgets = {};
@@ -1322,7 +1328,14 @@ class App extends Runtime {
 
         Object.keys(newWidgets).forEach(wid => delete newWidgets[wid]._id);
 
-        project[this.state.selectedView].widgets = { ...project[this.state.selectedView].widgets, ...newWidgets };
+        project[view].widgets = { ...project[view].widgets, ...newWidgets };
+        return project;
+    };
+
+    addMarketplaceWidget = async (id, x, y, widgetId, oldData, oldStyle) => {
+        const project = JSON.parse(JSON.stringify(this.state.project));
+        const widgets = JSON.parse(JSON.stringify(this.state.project.___settings.marketplace.find(item => item.id === id).widget));
+        this.importMarketplaceWidget(project, this.state.selectedView, widgets, id, x, y, widgetId, oldData, oldStyle);
         this.changeProject(project);
     };
 
@@ -1680,7 +1693,7 @@ class App extends Runtime {
             suppressQuestionMinutes={5}
             onClose={isYes => {
                 if (isYes) {
-                    this.updateWidgetsAction(this.state.updateWidgetsDialog);
+                    this.updateWidgetsAction(this.state.updateWidgetsDialog, widgets);
                 }
                 this.setState({ updateWidgetsDialog: false });
             }}
@@ -1969,7 +1982,9 @@ class App extends Runtime {
                         open={!!this.state.marketplaceDialog}
                         fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}
+                        project={this.state.project}
                         installWidget={this.installWidget}
+                        updateWidgets={this.updateWidgets}
                         installedWidgets={this.state.project?.___settings.marketplace}
                         {...this.state.marketplaceDialog}
                     />
