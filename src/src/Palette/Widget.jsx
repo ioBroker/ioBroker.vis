@@ -152,7 +152,8 @@ const Widget = props => {
                 </Tooltip>
                 {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`}>
                     <IconButton onClick={async () => {
-                        await props.installWidget(props.widgetType.widget_id);
+                        // await props.installWidget(props.widgetType.widget_id);
+                        await props.updateWidgets(marketplaceUpdate);
                         props.checkForUpdates();
                     }}
                     >

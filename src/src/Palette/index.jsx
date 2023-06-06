@@ -290,6 +290,7 @@ const Palette = props => {
                                         widgetSet={category}
                                         widgetSetProps={widgetSetProps[category]}
                                         widgetTypeName={item.name}
+                                        updateWidgets={props.updateWidgets}
                                         marketplace={item}
                                         marketplaceUpdates={props.marketplaceUpdates}
                                         checkForUpdates={props.checkForUpdates}

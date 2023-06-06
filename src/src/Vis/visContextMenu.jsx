@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
-import UpdateIcon from '@mui/icons-material/Update';
+// import UpdateIcon from '@mui/icons-material/Update';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
@@ -46,7 +46,7 @@ const VisContextMenu = props => {
         let widgetType = null;
         let widgetName = '';
         let showSelect = coordinatesWidgets.length > 1;
-        let marketplaceUpdate;
+        // let marketplaceUpdate;
         if (view && coordinatesWidgets[0] && view.widgets[coordinatesWidgets[0]] && view.widgets[coordinatesWidgets[0]].tpl) {
             if (view.widgets[coordinatesWidgets[0]].data?.locked) {
                 showSelect = true;
@@ -68,9 +68,9 @@ const VisContextMenu = props => {
 
             if (view.widgets[coordinatesWidgets[0]].marketplace) {
                 widgetType = `${view.widgets[coordinatesWidgets[0]].marketplace.name} (${I18n.t('version')} ${view.widgets[coordinatesWidgets[0]].marketplace.version})`;
-                marketplaceUpdate = props.project.___settings.marketplace.find(u =>
-                    u.widget_id === view.widgets[coordinatesWidgets[0]].marketplace.widget_id &&
-                    u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
+                // marketplaceUpdate = props.project.___settings.marketplace.find(u =>
+                //     u.widget_id === view.widgets[coordinatesWidgets[0]].marketplace.widget_id &&
+                //     u.version > view.widgets[coordinatesWidgets[0]].marketplace.version);
             }
         }
 
@@ -114,14 +114,14 @@ const VisContextMenu = props => {
                 hide: props.selectedWidgets.length !== 1 ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
-            {
-                leftIcon: <UpdateIcon />,
-                label: 'Update widget',
-                subLabel: `${I18n.t('to version')} ${marketplaceUpdate?.version}`,
-                onClick: () => props.updateWidget(props.selectedWidgets[0]),
-                hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
-                    !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
-            },
+            // {
+            //     leftIcon: <UpdateIcon />,
+            //     label: 'Update widget',
+            //     subLabel: `${I18n.t('to version')} ${marketplaceUpdate?.version}`,
+            //     onClick: () => props.updateWidget(props.selectedWidgets[0]),
+            //     hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
+            //         !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
+            // },
             {
                 leftIcon: <LocalGroceryStoreIcon />,
                 label: 'Add to marketplace',

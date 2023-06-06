@@ -230,6 +230,7 @@ class App extends Runtime {
             lockDragging: JSON.parse(window.localStorage.getItem('lockDragging')),
             disableInteraction: JSON.parse(window.localStorage.getItem('disableInteraction')),
             toolbarHeight: window.localStorage.getItem('Vis.toolbarForm') || 'full',
+            updateWidgetsDialog: false,
             deleteWidgetsDialog: false,
             messageDialog: null,
             widgetHint: window.localStorage.getItem('widgetHint') || 'light',
@@ -478,6 +479,29 @@ class App extends Runtime {
     };
 
     deleteWidgets = async () => this.setState({ deleteWidgetsDialog: true });
+
+    updateWidgets = async marketplaceWidget => this.setState({ updateWidgetsDialog: marketplaceWidget });
+
+    updateWidgetsAction = async marketplace => {
+        const widgets = [];
+        Object.keys(this.state.project).forEach(view => {
+            if (view !== '___settings') {
+                const viewWidgets = {
+                    name: view,
+                    widgets: [],
+                };
+                Object.keys(this.state.project[view].widgets).forEach(widget => {
+                    if (this.state.project[view].widgets[widget].marketplace?.widget_id === marketplace.widget_id &&
+                        this.state.project[view].widgets[widget].marketplace?.version !== marketplace.version) {
+                        viewWidgets.widgets.push(widget);
+                    }
+                });
+                if (viewWidgets.widgets.length) {
+                    widgets.push(viewWidgets);
+                }
+            }
+        });
+    };
 
     deleteWidgetsAction = async () => {
         const project = JSON.parse(JSON.stringify(this.state.project));
@@ -1223,9 +1247,9 @@ class App extends Runtime {
 
     setMarketplaceDialog = marketplaceDialog => this.setState({ marketplaceDialog });
 
-    installWidget = async widget => {
+    installWidget = async (widgetId, id) => {
         const project = JSON.parse(JSON.stringify(this.state.project));
-        const marketplaceWidget = (await (await window.VisMarketplace.client).getWidgetById(widget)).data;
+        const marketplaceWidget = (await (await window.VisMarketplace.client).getWidgetRevisionById({ id: widgetId, revision: id })).data;
         if (!project.___settings.marketplace) {
             project.___settings.marketplace = [];
         }
@@ -1455,6 +1479,7 @@ class App extends Runtime {
                 project={this.state.project}
                 checkForUpdates={this.checkForUpdates}
                 marketplaceUpdates={this.state.marketplaceUpdates}
+                updateWidgets={this.updateWidgets}
             />
         </div>;
     }
@@ -1609,6 +1634,57 @@ class App extends Runtime {
             onClose={() => this.setState({ createFirstProjectDialog: false })}
             addProject={this.addProject}
         /> : null;
+    }
+
+    renderUpdateDialog() {
+        if (!this.state.updateWidgetsDialog) {
+            return null;
+        }
+        const widgets = [];
+        Object.keys(this.state.project).forEach(view => {
+            if (view !== '___settings') {
+                const viewWidgets = {
+                    name: view,
+                    widgets: [],
+                };
+                Object.keys(this.state.project[view].widgets).forEach(widget => {
+                    if (this.state.project[view].widgets[widget].marketplace?.widget_id === this.state.updateWidgetsDialog.widget_id &&
+                        this.state.project[view].widgets[widget].marketplace?.version !== this.state.updateWidgetsDialog.version) {
+                        viewWidgets.widgets.push(widget);
+                    }
+                });
+                if (viewWidgets.widgets.length) {
+                    widgets.push(viewWidgets);
+                }
+            }
+        });
+        return <ConfirmDialog
+            fullWidth={false}
+            title={I18n.t('Update widgets')}
+            text={<>
+                <div>
+                    {I18n.t('Are you sure to update widgets:')}
+                </div>
+                <div>
+                    {widgets.map(view => <div key={view.name}>
+                        <b>
+                            {view.name}
+                            {': '}
+                        </b>
+                        {view.widgets.join(', ')}
+                    </div>)}
+                </div>
+            </>}
+            ok={I18n.t('Update')}
+            dialogName="updateDialog"
+            suppressQuestionMinutes={5}
+            onClose={isYes => {
+                if (isYes) {
+                    this.updateWidgetsAction(this.state.updateWidgetsDialog);
+                }
+                this.setState({ updateWidgetsDialog: false });
+            }}
+        />;
     }
 
     renderDeleteDialog() {
@@ -1882,6 +1958,7 @@ class App extends Runtime {
                     </div>
                     {this.renderCreateFirstProjectDialog()}
                     {this.renderDeleteDialog()}
+                    {this.renderUpdateDialog()}
                     {this.renderAlertDialog()}
                     {this.renderConfirmDialog()}
                     {this.renderShowCodeDialog()}
