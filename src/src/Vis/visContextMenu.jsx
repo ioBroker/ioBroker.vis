@@ -108,7 +108,7 @@ const VisContextMenu = props => {
                 leftIcon: <AiOutlineUngroup />,
                 label: 'Ungroup',
                 subLabel: props.project[props.selectedView].widgets[props.selectedWidgets[0]]?.marketplace ?
-                    I18n.t('convert from marketplace widget') :
+                    I18n.t('convert from widgeteria widget') :
                     null,
                 onClick: () => props.ungroupWidgets(),
                 hide: props.selectedWidgets.length !== 1 ||
@@ -122,9 +122,9 @@ const VisContextMenu = props => {
             //     hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
             //         !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             // },
-            {
+            window.VisMarketplace ? {
                 leftIcon: <LocalGroceryStoreIcon />,
-                label: 'Add to marketplace',
+                label: 'Add to widgeteria',
                 onClick: async () => {
                     const widgets = props.selectedWidgets.map(wid => {
                         const w = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[wid]));
@@ -197,7 +197,7 @@ const VisContextMenu = props => {
                 hide: props.selectedWidgets.length !== 1 ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup' ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
-            },
+            } : null,
             {
             // leftIcon: <AiOutlineUngroup />,
                 label: 'Edit group',

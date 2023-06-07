@@ -800,7 +800,13 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
             // mark as data-webpack so runtime can track it internally
             script.setAttribute('data-webpack', `${remote}`);
             script.async = true;
-            script.onerror = () => reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+            script.onerror = () => {
+                if (!remoteFallbackUrl.includes('iobroker.net')) {
+                    reject(new Error(`Cannot load ${remote} from ${remoteFallbackUrl}`));
+                } else {
+                    resolve();
+                }
+            };
             script.onload = onload;
             script.src = remoteFallbackUrl;
             d.getElementsByTagName('head')[0].appendChild(script);
@@ -815,8 +821,8 @@ const getOrLoadRemote = (remote, shareScope, remoteFallbackUrl = undefined) => {
 
 export const loadComponent = (remote, sharedScope, module, url) =>
     () => getOrLoadRemote(remote, sharedScope, url)
-        .then(() => window[remote].get(module))
-        .then(factory => factory());
+        .then(() => window[remote] && window[remote].get(module))
+        .then(factory => factory && factory());
 
 function registerWidgetsLoadIndicator(cb) {
     window.__widgetsLoadIndicator = cb;

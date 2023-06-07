@@ -264,12 +264,14 @@ class Runtime extends GenericApp {
 
     checkForUpdates = async () => {
         const updates = [];
-        for (const i in this.state.project.___settings.marketplace) {
-            const widget = this.state.project.___settings.marketplace[i];
-            const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
-            if (data.version !== widget.version) {
-                updates.push(data);
-                console.log(data);
+        if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.client) {
+            for (const i in this.state.project.___settings.marketplace) {
+                const widget = this.state.project.___settings.marketplace[i];
+                const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
+                if (data.version !== widget.version) {
+                    updates.push(data);
+                    console.log(data);
+                }
             }
         }
         this.setState({ marketplaceUpdates: updates });

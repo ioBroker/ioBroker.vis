@@ -8,10 +8,11 @@ import I18n from '@iobroker/adapter-react-v5/i18n';
 
 const contextMenuItems = (items, open, onClose) =>
     items.map((item, key) => {
+        if (!item || item.hide) {
+            return null;
+        }
+
         if (item.items) {
-            if (item.hide) {
-                return null;
-            }
             return <NestedMenuItem
                 key={key}
                 leftIcon={item.leftIcon}
@@ -26,9 +27,7 @@ const contextMenuItems = (items, open, onClose) =>
                 {contextMenuItems(item.items, open, onClose)}
             </NestedMenuItem>;
         }
-        if (item.hide) {
-            return null;
-        }
+
         return <IconMenuItem
             key={key}
             onClick={() => {

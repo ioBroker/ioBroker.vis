@@ -91,10 +91,10 @@ const Palette = props => {
     );
 
     const { widgetsList, widgetSetProps } = useMemo(() => {
-        const _widgetsList = props.marketplaceUpdates ? {
+        const _widgetsList = window.VisMarketplace && props.marketplaceUpdates ? {
             __marketplace: {},
         } : {};
-        const _widgetSetProps = props.marketplaceUpdates ? {
+        const _widgetSetProps = window.VisMarketplace && props.marketplaceUpdates ? {
             __marketplace: {
                 icon: 'img/marketplace.png',
             },

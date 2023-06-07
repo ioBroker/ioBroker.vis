@@ -1,9 +1,11 @@
-import { I18n } from '@iobroker/adapter-react-v5';
+import React from 'react';
+
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import React from 'react';
+
+import { I18n } from '@iobroker/adapter-react-v5';
 
 const MarketplaceDialog = props => {
     const VisMarketplace = window.VisMarketplace?.default;
@@ -46,16 +48,16 @@ const MarketplaceDialog = props => {
             color: 'primary',
         }}
     >
-        {props.addPage ? <DialogTitle>{I18n.t('Add widget or add revision to existing widget')}</DialogTitle> : null}
+        <DialogTitle>{props.addPage ? I18n.t('Add new or update existing widget') : I18n.t('Browse the widgeteria')}</DialogTitle>
         <DialogContent>
             {VisMarketplace &&
-                    <VisMarketplace
-                        addPage={props.addPage}
-                        widget={props.widget}
-                        onClose={props.onClose}
-                        installWidget={installWidget}
-                        installedWidgets={props.installedWidgets}
-                    />}
+                <VisMarketplace
+                    addPage={props.addPage}
+                    widget={props.widget}
+                    onClose={props.onClose}
+                    installWidget={installWidget}
+                    installedWidgets={props.installedWidgets}
+                />}
         </DialogContent>
         <DialogActions>
             <Button

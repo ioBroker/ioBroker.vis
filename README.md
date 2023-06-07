@@ -208,6 +208,9 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
+### 2.0.30 (2023-06-07)
+* (bluefox) Added widgeteria
+
 ### 2.0.29 (2023-05-17)
 * (bluefox) Corrected errors
 

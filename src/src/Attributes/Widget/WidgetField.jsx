@@ -202,6 +202,7 @@ const WidgetField = props => {
         isDifferent,
         error,
         disabled,
+        index,
     } = props;
 
     let customLegacyComponent = null;
@@ -286,6 +287,7 @@ const WidgetField = props => {
                         field.name,
                         props.isStyle,
                         props.isStyle ? widget.style[field.name] : widget.data[field.name],
+                        index,
                     );
                 } catch (e) {
                     console.error(`Cannot call onChangeFunc: ${e}`);
@@ -300,7 +302,7 @@ const WidgetField = props => {
                         onChangeTimeout = null;
                         props.changeProject(_project);
                     }, 100);
-                }, props.socket);
+                }, props.socket, index);
             }
         });
 

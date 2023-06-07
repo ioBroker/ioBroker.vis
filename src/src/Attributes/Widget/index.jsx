@@ -1019,6 +1019,7 @@ const Widget = props => {
                                                                     field={field}
                                                                     widget={props.selectedWidgets.length > 1 ? commonValues : widget}
                                                                     isStyle={group.isStyle}
+                                                                    index={group.index}
                                                                     isDifferent={isDifferent[field.name]}
                                                                     {...props}
                                                                 /> : null}

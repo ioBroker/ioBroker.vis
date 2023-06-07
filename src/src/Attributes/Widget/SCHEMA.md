@@ -64,7 +64,8 @@ class MyWidget extends Generic {
                             name: 'title',
                             type: 'text',
                             label: 'vis_2_widgets_material_title',
-                            hidden: '!!data["oid" + index]'
+                            hidden: '!!data["oid" + index]',
+                            onChange: (field, data, changeData, index) => changeData(data), // index only if indexFrom and indexTo are defined
                         },
                     ],
                 }

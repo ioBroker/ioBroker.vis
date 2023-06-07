@@ -249,12 +249,15 @@ class App extends Runtime {
         super.componentDidMount();
         window.addEventListener('keydown', this.onKeyDown, false);
         window.addEventListener('beforeunload', this.onBeforeUnload, false);
-        const translations = await loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)();
-        I18n.extendTranslations(translations.default);
-        const marketplace = await loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)();
-
-        this.setState({ VisMarketplace: marketplace });
-        window.VisMarketplace = marketplace;
+        try {
+            const translations = await loadComponent('__marketplace', 'default', './translations', `${window.marketplaceClient}/customWidgets.js`)();
+            I18n.extendTranslations(translations.default);
+            const marketplace = await loadComponent('__marketplace', 'default', './VisMarketplace', `${window.marketplaceClient}/customWidgets.js`)();
+            this.setState({ VisMarketplace: marketplace });
+            window.VisMarketplace = marketplace;
+        } catch (e) {
+            console.error(`Cannot load marketplace: ${e}`);
+        }
     }
 
     componentWillUnmount() {
