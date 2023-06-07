@@ -438,5 +438,17 @@
   "jqui_url_group": "点击调用URL",
   "jqui_dialog_set_id_tooltip": "通过打开对话框设置状态",
   "jqui_html_tooltip": "HTML 仅在文本和图标为空时才可配置",
-  "jqui_hide_close_button": "隐藏关闭按钮"
+  "jqui_hide_close_button": "隐藏关闭按钮",
+  "Add to widgeteria": "添加到 widderia",
+  "Edit group": "编辑群组",
+  "Group": "团体",
+  "Open widgeteria": "打开widderia",
+  "Ungroup": "解组",
+  "Uninstall": "卸载",
+  "Widget CSS": "小部件 CSS",
+  "Widget JS": "小部件JS",
+  "__marketplace": "小鸡科",
+  "convert from widgeteria widget": "从 widderia 小部件转换",
+  "to version": "版本",
+  "version": "版本"
 }

@@ -270,7 +270,7 @@ class Runtime extends GenericApp {
                 const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
                 if (data.version !== widget.version) {
                     updates.push(data);
-                    console.log(data);
+                    // console.log(data);
                 }
             }
         }
@@ -282,7 +282,7 @@ class Runtime extends GenericApp {
             try {
                 file = await readFile(this.socket, this.adapterId, `${projectName}/vis-views.json`);
             } catch (err) {
-                console.warn(`Cannot read project file vis-views.json: ${err}`);
+                console.warn(`Cannot read project file "${projectName}/vis-views.json": ${err}`);
                 file = '{}';
             }
         }
@@ -411,6 +411,25 @@ class Runtime extends GenericApp {
         await this.changeView(selectedView);
 
         this.checkForUpdates();
+    };
+
+    // this function is required here if the project not defined
+    refreshProjects = async reloadCurrentProject => {
+        let projects;
+
+        try {
+            projects = await this.socket.readDir(this.adapterId, '');
+        } catch (e) {
+            projects = [];
+        }
+
+        await this.setStateAsync({
+            projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
+            createFirstProjectDialog: !projects.length,
+        });
+        if (reloadCurrentProject) {
+            await this.loadProject(this.state.projectName);
+        }
     };
 
     onVisChanged() {
@@ -760,11 +779,11 @@ class Runtime extends GenericApp {
     }
 
     getVisEngine() {
-        if (this.state.projectDoesNotExist) {
+        if (!this.state.runtime && this.state.projectDoesNotExist) {
             return this.renderProjectDoesNotExist();
         }
 
-        if (this.state.showProjectsDialog) {
+        if (!this.state.runtime && this.state.showProjectsDialog) {
             return this.showSmallProjectsDialog();
         }
 
@@ -823,6 +842,8 @@ class Runtime extends GenericApp {
                             <Loader theme={this.state.themeType} /> :
                             this.getVisEngine()
                     }
+                    {this.state.projectDoesNotExist ? this.renderProjectDoesNotExist() : null}
+                    {this.state.showProjectsDialog ? this.showSmallProjectsDialog() : null}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;

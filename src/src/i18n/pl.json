@@ -438,5 +438,17 @@
   "jqui_url_group": "Zadzwoń do adresu URL po kliknięciu",
   "jqui_dialog_set_id_tooltip": "Ustaw stan przez otwarte okno dialogowe",
   "jqui_html_tooltip": "HTML można konfigurować tylko wtedy, gdy tekst i ikona są puste",
-  "jqui_hide_close_button": "Ukryj przycisk zamykania"
+  "jqui_hide_close_button": "Ukryj przycisk zamykania",
+  "Add to widgeteria": "Dodaj do widgeterii",
+  "Edit group": "Edytuj grupę",
+  "Group": "Grupa",
+  "Open widgeteria": "Otwórz widgeterię",
+  "Ungroup": "Rozgrupuj",
+  "Uninstall": "Odinstaluj",
+  "Widget CSS": "Widżet CSS",
+  "Widget JS": "Widżet JS",
+  "__marketplace": "Widżeteria",
+  "convert from widgeteria widget": "konwertować z widżetu widgeteria",
+  "to version": "do wersji",
+  "version": "wersja"
 }

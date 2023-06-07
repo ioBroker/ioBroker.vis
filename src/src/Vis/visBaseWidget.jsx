@@ -1660,6 +1660,7 @@ VisBaseWidget.propTypes = {
     selectedGroup: PropTypes.string,
     context: PropTypes.object.isRequired,
     tpl: PropTypes.string.isRequired,
+    viewsActiveFilter: PropTypes.object.isRequired,
 };
 
 export default VisBaseWidget;

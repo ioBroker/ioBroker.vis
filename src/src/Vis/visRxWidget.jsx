@@ -551,6 +551,7 @@ VisRxWidget.propTypes = {
     registerRef: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     selectedWidgets: PropTypes.array,
+    viewsActiveFilter: PropTypes.object.isRequired,
 };
 
 export default VisRxWidget;

@@ -438,5 +438,17 @@
   "jqui_url_group": "URL-адрес вызова по клику",
   "jqui_dialog_set_id_tooltip": "Установить состояние при открытии диалога",
   "jqui_html_tooltip": "HTML можно настроить только в том случае, если текст и значок пусты.",
-  "jqui_hide_close_button": "Скрыть кнопку закрытия"
+  "jqui_hide_close_button": "Скрыть кнопку закрытия",
+  "Add to widgeteria": "Добавить в виджетерию",
+  "Edit group": "Редактировать группу",
+  "Group": "Группа",
+  "Open widgeteria": "Открыть виджетерию",
+  "Ungroup": "Разгруппировать",
+  "Uninstall": "Удалить",
+  "Widget CSS": "Виджет CSS",
+  "Widget JS": "Виджет JS",
+  "__marketplace": "Виджетерия",
+  "convert from widgeteria widget": "конвертировать из виджета widgeteria",
+  "to version": "к версии",
+  "version": "версия"
 }

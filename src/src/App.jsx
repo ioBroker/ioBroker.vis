@@ -339,24 +339,6 @@ class App extends Runtime {
         }
     };
 
-    refreshProjects = async reloadCurrentProject => {
-        let projects;
-
-        try {
-            projects = await this.socket.readDir(this.adapterId, '');
-        } catch (e) {
-            projects = [];
-        }
-
-        await this.setStateAsync({
-            projects: projects.filter(dir => dir.isDir).map(dir => dir.file),
-            createFirstProjectDialog: !projects.length,
-        });
-        if (reloadCurrentProject) {
-            await this.loadProject(this.state.projectName);
-        }
-    };
-
     setViewsManager = isOpen => {
         if ((!!isOpen) !== this.state.viewsManager) {
             this.setState({ viewsManager: !!isOpen });
@@ -1818,7 +1800,7 @@ class App extends Runtime {
             </StylesProvider>;
         }
 
-        console.log(this.state.project);
+        // console.log(this.state.project);
 
         if (this.state.showProjectsDialog) {
             return <StylesProvider generateClassName={generateClassName}>

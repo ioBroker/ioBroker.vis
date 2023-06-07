@@ -438,5 +438,17 @@
   "jqui_url_group": "URL de chamada por clique",
   "jqui_dialog_set_id_tooltip": "Definir estado pela caixa de diálogo aberta",
   "jqui_html_tooltip": "O HTML só é configurável se o texto e o ícone estiverem vazios",
-  "jqui_hide_close_button": "Ocultar botão fechar"
+  "jqui_hide_close_button": "Ocultar botão fechar",
+  "Add to widgeteria": "Adicionar à widgeteria",
+  "Edit group": "Editar grupo",
+  "Group": "Grupo",
+  "Open widgeteria": "Widgeteria aberta",
+  "Ungroup": "Desagrupar",
+  "Uninstall": "Desinstalar",
+  "Widget CSS": "CSS do widget",
+  "Widget JS": "Widget JS",
+  "__marketplace": "Widgeteria",
+  "convert from widgeteria widget": "converter de widget widgeteria",
+  "to version": "para versão",
+  "version": "versão"
 }

@@ -438,5 +438,17 @@
   "jqui_url_group": "Виклик URL за кліком",
   "jqui_dialog_set_id_tooltip": "Установити стан відкритим діалоговим вікном",
   "jqui_html_tooltip": "HTML можна налаштувати, лише якщо текст і піктограма порожні",
-  "jqui_hide_close_button": "Приховати кнопку закриття"
+  "jqui_hide_close_button": "Приховати кнопку закриття",
+  "Add to widgeteria": "Додати до widgeteria",
+  "Edit group": "Редагувати групу",
+  "Group": "Група",
+  "Open widgeteria": "Відкрити widgeteria",
+  "Ungroup": "Розгрупувати",
+  "Uninstall": "Видалити",
+  "Widget CSS": "Віджет CSS",
+  "Widget JS": "Віджет JS",
+  "__marketplace": "Віджетерія",
+  "convert from widgeteria widget": "конвертувати з віджета widgeteria",
+  "to version": "до версії",
+  "version": "версія"
 }

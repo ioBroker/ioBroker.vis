@@ -438,5 +438,17 @@
   "jqui_url_group": "Bel URL door te klikken",
   "jqui_dialog_set_id_tooltip": "Status instellen door dialoogvenster te openen",
   "jqui_html_tooltip": "HTML kan alleen worden geconfigureerd als tekst en pictogram leeg zijn",
-  "jqui_hide_close_button": "Sluitknop verbergen"
+  "jqui_hide_close_button": "Sluitknop verbergen",
+  "Add to widgeteria": "Toevoegen aan widgeteria",
+  "Edit group": "Groep bewerken",
+  "Group": "Groep",
+  "Open widgeteria": "Widgeteria openen",
+  "Ungroup": "Degroeperen",
+  "Uninstall": "Verwijderen",
+  "Widget CSS": "Widget-CSS",
+  "Widget JS": "Widget-JS",
+  "__marketplace": "Widgetaria",
+  "convert from widgeteria widget": "converteren van widgeteria-widget",
+  "to version": "naar versie",
+  "version": "versie"
 }
