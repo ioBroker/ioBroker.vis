@@ -67,7 +67,7 @@ class VisView extends React.Component {
         this.ignoreMouseEvents = false;
 
         // remember filter
-        this.oldFilter = JSON.stringify((props.context.viewsActiveFilter && props.context.viewsActiveFilter[this.props.view]) || []);
+        this.oldFilter = JSON.stringify((props.viewsActiveFilter && props.viewsActiveFilter[this.props.view]) || []);
     }
 
     componentDidMount() {
@@ -145,7 +145,7 @@ class VisView extends React.Component {
             options.filter = options.filter.split(',').map(f => f.trim()).filter(f => f);
         }
 
-        this.props.context.viewsActiveFilter[this.props.view] = options.filter;
+        this.props.viewsActiveFilter[this.props.view] = options.filter;
 
         // inform every widget about changed filter
         Object.keys(this.widgetsRefs).forEach(wid =>
@@ -846,7 +846,7 @@ class VisView extends React.Component {
         this.updateViewWidth();
         // detect filter changes
         if (!this.props.editMode) {
-            const newFilter = JSON.stringify((this.props.context.viewsActiveFilter && this.props.context.viewsActiveFilter[this.props.view]) || []);
+            const newFilter = JSON.stringify((this.props.viewsActiveFilter && this.props.viewsActiveFilter[this.props.view]) || []);
             if (this.oldFilter !== newFilter) {
                 this.oldFilter = newFilter;
                 this.changeFilter({ filter: JSON.parse(newFilter) });
@@ -888,6 +888,7 @@ class VisView extends React.Component {
     static getOneWidget(index, widget, options) {
         // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
+        // viewsActiveFilter
 
         const {
             context, // common
@@ -1266,8 +1267,8 @@ class VisView extends React.Component {
         // and wait for themes too
         if (this.state.mounted && this.state.themeCode && this.refView.current) {
             // save initial filter
-            if (!this.props.context.viewsActiveFilter?.[this.props.view]) {
-                this.props.context.viewsActiveFilter[this.props.view] = (this.props.context.views[this.props.view].settings.filterkey || '')
+            if (!this.props.viewsActiveFilter?.[this.props.view]) {
+                this.props.viewsActiveFilter[this.props.view] = (this.props.context.views[this.props.view].settings.filterkey || '')
                     .split(',')
                     .map(f => f.trim())
                     .filter(f => f);
@@ -1425,6 +1426,7 @@ class VisView extends React.Component {
                         selectedGroup: this.props.selectedGroup,
                         selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
                         view,
+                        viewsActiveFilter: this.props.viewsActiveFilter,
                     }));
 
                 if (listRelativeWidgetsOrder.length) {
@@ -1615,6 +1617,7 @@ VisView.propTypes = {
     editMode: PropTypes.bool,
     selectedGroup: PropTypes.string,
     selectedWidgets: PropTypes.array,
+    viewsActiveFilter: PropTypes.object,
     style: PropTypes.object,
     view: PropTypes.string.isRequired,
     visInWidget: PropTypes.bool,

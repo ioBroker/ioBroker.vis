@@ -507,6 +507,7 @@ class VisRxWidget extends VisBaseWidget {
 
         return <VisView
             context={this.props.context}
+            viewsActiveFilter={this.props.viewsActiveFilter}
             activeView={view}
             editMode={false}
             key={`${this.props.id}_${view}`}

@@ -850,7 +850,7 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData) {
-        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.context.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
+        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods

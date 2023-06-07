@@ -1209,7 +1209,7 @@ class VisEngine extends React.Component {
         const views = [];
         let difference = 10000;
 
-        // First find all with best fitting width
+        // First, find all with the best fitting width
         Object.keys(this.props.views).forEach(view => {
             if (view !== '___settings' &&
                 this.props.views[view].settings &&
@@ -1975,7 +1975,6 @@ ${this.scripts}
             user: this.userName,
             userGroups: this.props.userGroups,
             views: this.props.views, // project
-            viewsActiveFilter: this.viewsActiveFilter,
             widgetHint: this.props.widgetHint,
             registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
             setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
@@ -1995,6 +1994,7 @@ ${this.scripts}
                     context={this.context}
                     activeView={this.props.activeView}
                     editMode={this.props.editMode}
+                    viewsActiveFilter={this.viewsActiveFilter}
                     key={view}
                     selectedGroup={this.props.runtime ? null : this.props.selectedGroup}
                     selectedWidgets={this.props.runtime ? null : this.props.selectedWidgets}

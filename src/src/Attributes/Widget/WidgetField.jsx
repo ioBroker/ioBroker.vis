@@ -85,7 +85,12 @@ function collectClasses() {
                 }
             }
         } catch (e) {
-            console.error(e);
+            if (e.toString().includes('Cannot access rules')) {
+                // ignore
+                console.warn(`[${sSheet}] Cannot access rules`);
+            } else {
+                console.error(`[${sSheet}] Error by rules collection: ${e}`);
+            }
         }
     }
 
