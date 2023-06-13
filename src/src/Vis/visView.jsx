@@ -15,7 +15,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
+import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material/styles';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
 import { Utils, Theme } from '@iobroker/adapter-react-v5';
@@ -1535,6 +1535,11 @@ class VisView extends React.Component {
         // override font family from custom settings
         if (!style.fontFamily && this.props.customSettings?.viewStyle?.fontFamily) {
             style.fontFamily = this.props.customSettings.viewStyle.fontFamily;
+        }
+
+        if (this.props.customSettings?.viewStyle?.overrides) {
+            // override the theme with custom settings
+            theme = createTheme(theme, this.props.customSettings.viewStyle.overrides);
         }
 
         if (this.props.view !== this.props.activeView) {

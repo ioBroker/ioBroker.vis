@@ -392,6 +392,7 @@ class VisRxWidget extends VisBaseWidget {
             width: 'calc(100% - 8px)',
             height: 'calc(100% - 8px)',
             margin: 4,
+            ...this.props.customSettings?.viewStyle?.visCard,
         };
 
         // apply style from the element
