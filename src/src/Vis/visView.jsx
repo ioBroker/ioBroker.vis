@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import { ThemeProvider, StyledEngineProvider } from '@mui/material/styles';
 import { StylesProvider, createGenerateClassName } from '@mui/styles';
 
-import { Utils } from '@iobroker/adapter-react-v5';
+import { Utils, Theme } from '@iobroker/adapter-react-v5';
 
 import VisBaseWidget from './visBaseWidget';
 import VisCanWidget from './visCanWidget';
@@ -64,6 +64,7 @@ class VisView extends React.Component {
         this.widgetsRefs = {};
         this.selectDiv = null;
         this.movement = null;
+        this.theme = {}; // cache for custom themes
         this.ignoreMouseEvents = false;
 
         // remember filter
@@ -888,7 +889,7 @@ class VisView extends React.Component {
     static getOneWidget(index, widget, options) {
         // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
-        // viewsActiveFilter
+        // viewsActiveFilter, customSettings
 
         const {
             context, // common
@@ -1427,6 +1428,7 @@ class VisView extends React.Component {
                         selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
                         view,
                         viewsActiveFilter: this.props.viewsActiveFilter,
+                        customSettings: this.props.customSettings,
                     }));
 
                 if (listRelativeWidgetsOrder.length) {
@@ -1447,6 +1449,7 @@ class VisView extends React.Component {
                             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
                             selectedGroup: this.props.selectedGroup,
                             view,
+                            customSettings: this.props.customSettings,
                         });
                         wColumns[column].push(w);
                     });
@@ -1497,15 +1500,41 @@ class VisView extends React.Component {
             }
         });
 
+        // Check if custom theme should be used
+        let theme = this.props.context.theme;
+        const customThemeType = this.props.customSettings?.themeType;
+        // if custom theme differs from the current one => create new theme
+        if (customThemeType && customThemeType !== theme.palette.mode) {
+            if (!this.theme[customThemeType]) {
+                // cache theme
+                this.theme[customThemeType] = Theme(customThemeType);
+            }
+            theme = this.theme[customThemeType];
+        }
+
         if (!style.backgroundColor && !style.background) {
-            if (this.props.context.customSettings?.viewStyle?.backgroundColor) {
-                style.backgroundColor = this.props.context.customSettings.viewStyle.backgroundColor;
+            if (this.props.customSettings?.viewStyle?.backgroundColor) {
+                style.backgroundColor = this.props.customSettings.viewStyle.backgroundColor;
+            } else if (this.props.customSettings?.themeType === 'dark') {
+                style.backgroundColor = '#000';
             } else {
-                style.backgroundColor = this.props.context.themeType === 'dark' ? '#000' : '#fff';
+                style.backgroundColor = theme.palette.mode === 'dark' ? '#000' : '#fff';
             }
         }
+
         if (!style.color) {
-            style.color = this.props.context.themeType === 'dark' ? '#fff' : '#000';
+            // override the text color from custom settings
+            if (this.props.customSettings?.viewStyle?.color) {
+                style.color = this.props.customSettings.viewStyle.color;
+            } else {
+                // or set according to theme
+                style.color = theme.palette.mode === 'dark' ? '#fff' : '#000';
+            }
+        }
+
+        // override font family from custom settings
+        if (!style.fontFamily && this.props.customSettings?.viewStyle?.fontFamily) {
+            style.fontFamily = this.props.customSettings.viewStyle.fontFamily;
         }
 
         if (this.props.view !== this.props.activeView) {
@@ -1603,7 +1632,7 @@ class VisView extends React.Component {
 
         return <StylesProvider generateClassName={generateClassNameEngine}>
             <StyledEngineProvider injectFirst>
-                <ThemeProvider theme={this.props.context.theme}>
+                <ThemeProvider theme={theme}>
                     {renderedView}
                 </ThemeProvider>
             </StyledEngineProvider>
@@ -1620,7 +1649,8 @@ VisView.propTypes = {
     viewsActiveFilter: PropTypes.object,
     style: PropTypes.object,
     view: PropTypes.string.isRequired,
-    visInWidget: PropTypes.bool,
+    visInWidget: PropTypes.bool, // indicator, that view is in the other widget and e.g., there is no need to render menu
+    customSettings: PropTypes.object,
 };
 
 export default VisView;

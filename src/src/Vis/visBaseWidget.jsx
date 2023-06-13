@@ -826,6 +826,11 @@ class VisBaseWidget extends React.Component {
     }
 
     static isWidgetFilteredOutStatic(viewsActiveFilter, widgetData, view, editMode) {
+        if (!viewsActiveFilter) {
+            console.warn(`viewsActiveFilter is not defined in ${view}, data: ${JSON.stringify(widgetData)}`);
+            return false;
+        }
+
         const vf = viewsActiveFilter[view];
         if (!editMode && widgetData?.filterkey && vf?.length) {
             if (vf[0] === '$') {

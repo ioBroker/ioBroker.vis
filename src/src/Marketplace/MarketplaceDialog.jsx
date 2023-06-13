@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
     Button, Dialog, DialogActions, DialogContent, DialogTitle,
@@ -41,7 +42,7 @@ const MarketplaceDialog = props => {
     }
 
     return <Dialog
-        open={props.open}
+        open={!0}
         fullScreen
         onClose={props.onClose}
         PaperProps={{
@@ -57,6 +58,7 @@ const MarketplaceDialog = props => {
                     onClose={props.onClose}
                     installWidget={installWidget}
                     installedWidgets={props.installedWidgets}
+                    themeName={props.themeName}
                 />}
         </DialogContent>
         <DialogActions>
@@ -65,10 +67,21 @@ const MarketplaceDialog = props => {
                 variant="contained"
                 startIcon={<Close />}
             >
-Close
+                {I18n.t('Close')}
             </Button>
         </DialogActions>
     </Dialog>;
+};
+
+MarketplaceDialog.propTypes = {
+    addPage: PropTypes.func,
+    onClose: PropTypes.func,
+    widget: PropTypes.object,
+    installedWidgets: PropTypes.array,
+    updateWidgets: PropTypes.func,
+    installWidget: PropTypes.func,
+    project: PropTypes.object,
+    themeName: PropTypes.string,
 };
 
 export default MarketplaceDialog;

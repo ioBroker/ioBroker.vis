@@ -203,6 +203,7 @@ class BasicGroup extends VisRxWidget {
                     refParent: props.refService,
                     relativeWidgetOrder: groupWidgets,
                     viewsActiveFilter: this.props.viewsActiveFilter,
+                    customSettings: this.props.customSettings,
                 });
             });
         }

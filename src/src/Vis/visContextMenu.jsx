@@ -5,8 +5,6 @@ import WidgetIcon from '@mui/icons-material/Widgets';
 import DeleteIcon from '@mui/icons-material/Delete';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore';
-// import UpdateIcon from '@mui/icons-material/Update';
 import {
     BiImport, BiExport, BiCut, BiCopy, BiPaste,
 } from 'react-icons/bi';
@@ -123,7 +121,11 @@ const VisContextMenu = props => {
             //         !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
             // },
             window.VisMarketplace ? {
-                leftIcon: <LocalGroceryStoreIcon />,
+                leftIcon: <img
+                    src="./img/marketplace.png"
+                    alt="widgeteria"
+                    style={{ width: 16, height: 16, verticalAlign: 'middle' }}
+                />,
                 label: 'Add to widgeteria',
                 onClick: async () => {
                     const widgets = props.selectedWidgets.map(wid => {

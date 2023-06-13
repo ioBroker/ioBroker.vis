@@ -1949,7 +1949,6 @@ ${this.scripts}
             buildLegacyStructures: this.buildLegacyStructures,
             can: this.can,
             canStates: this.canStates,
-            customSettings: this.props.customSettings,
             dateFormat: this.vis.dateFormat,
             editModeComponentClass: this.props.editModeComponentClass,
             formatUtils: this.formatUtils,

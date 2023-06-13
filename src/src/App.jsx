@@ -1963,8 +1963,7 @@ class App extends Runtime {
                     {this.renderShowProjectUpdateDialog()}
                     {this.renderMessageDialog()}
                     {this.renderLegacyFileSelectorDialog()}
-                    <MarketplaceDialog
-                        open={!!this.state.marketplaceDialog}
+                    {this.state.marketplaceDialog ? <MarketplaceDialog
                         fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}
                         project={this.state.project}
@@ -1972,7 +1971,8 @@ class App extends Runtime {
                         updateWidgets={this.updateWidgets}
                         installedWidgets={this.state.project?.___settings.marketplace}
                         {...this.state.marketplaceDialog}
-                    />
+                        themeName={this.state.themeName}
+                    /> : null}
                 </ThemeProvider>
             </StyledEngineProvider>
         </StylesProvider>;
