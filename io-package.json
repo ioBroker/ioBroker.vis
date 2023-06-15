@@ -197,6 +197,7 @@
         },
         "compact": true,
         "materialize": true,
+        "eraseOnUpload": true,
         "welcomeScreen": {
             "link": "vis/index.html",
             "name": "vis runtime",
