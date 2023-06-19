@@ -273,8 +273,9 @@ class VisCanWidget extends VisBaseWidget {
                     return null;
                 }
 
+                // if filter was disabled
                 if (!options || !options.filter.length) {
-                    // just show
+                    // just show if it was hidden
                     if (this.filterDisplay !== undefined) {
                         this.widDiv.style.display = this.filterDisplay;
                         if (this.widDiv._customHandlers?.onShow) {
@@ -284,10 +285,12 @@ class VisCanWidget extends VisBaseWidget {
                 } else if (options.filter[0] === '$') {
                     // hide all
                     if (this.props.context.allWidgets[this.props.id]?.data?.filterkey) {
-                        this.filterDisplay = this.widDiv.style.display;
-                        this.widDiv.style.display = 'none';
-                        if (this.widDiv._customHandlers?.onHide) {
-                            this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
+                        if (this.widDiv.style.display !== 'none') {
+                            this.filterDisplay = this.widDiv.style.display;
+                            this.widDiv.style.display = 'none';
+                            if (this.widDiv._customHandlers?.onHide) {
+                                this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
+                            }
                         }
                     }
                 } else {
@@ -303,13 +306,22 @@ class VisCanWidget extends VisBaseWidget {
                             }
                         }
 
+                        // this widget was not found in desired filters
                         if (!found) {
-                            this.filterDisplay = this.widDiv.style.display;
-                            this.widDiv.style.display = 'none';
-                            if (this.widDiv._customHandlers?.onHide) {
-                                this.widDiv._customHandlers?.onHide(this.widDiv, this.props.id);
+                            // if it was not hidden
+                            if (this.widDiv.style.display !== 'none') {
+                                // remember display mode
+                                this.filterDisplay = this.widDiv.style.display;
+                                // hide it
+                                this.widDiv.style.display = 'none';
+                                if (this.widDiv._customHandlers?.onHide) {
+                                    this.widDiv._customHandlers?.onHide(this.widDiv, this.props.id);
+                                }
                             }
-                        } else if (this.filterDisplay !== undefined) {
+                        } else
+                        // if it was hidden
+                        if (this.filterDisplay !== undefined && this.widDiv.style.display === 'none') {
+                            // restore it
                             this.widDiv.style.display = this.filterDisplay;
                             if (this.widDiv._customHandlers?.onShow) {
                                 this.widDiv._customHandlers?.onShow(this.widDiv, this.props.id);

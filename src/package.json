@@ -1,6 +1,6 @@
 {
     "name": "vis-admin",
-    "version": "2.0.33",
+    "version": "2.0.34",
     "private": true,
     "dependencies": {
         "@craco/craco": "^7.1.0",
@@ -11,15 +11,15 @@
         "@iobroker/vis-2-widgets-react-dev": "^0.4.0",
         "@material-icons/svg": "^1.0.33",
         "@mui/icons-material": "^5.11.16",
-        "@mui/material": "^5.13.4",
+        "@mui/material": "^5.13.5",
         "@mui/styles": "^5.13.2",
-        "@sentry/browser": "^7.54.0",
-        "@sentry/integrations": "^7.54.0",
-        "ace-builds": "^1.22.0",
+        "@sentry/browser": "^7.56.0",
+        "@sentry/integrations": "^7.56.0",
+        "ace-builds": "^1.22.1",
         "craco-module-federation": "^1.1.0",
         "echarts": "^5.4.2",
         "echarts-for-react": "^3.0.2",
-        "eslint": "^8.42.0",
+        "eslint": "^8.43.0",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-plugin-eqeqeq-fix": "^1.0.3",
         "eslint-plugin-import": "^2.27.5",
@@ -44,7 +44,7 @@
         "react-dropzone": "^14.2.3",
         "react-icons": "^4.9.0",
         "react-scripts": "^5.0.1",
-        "sass": "^1.62.1",
+        "sass": "^1.63.4",
         "uuid": "^9.0.0"
     },
     "scripts": {

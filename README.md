@@ -129,7 +129,7 @@ Note: to use ":" in calculations (e.g. in string formula) use "::" instead.
 for that.
 
 ## Filters
-To visualise on the one view the whole number of widgets, you can use filters to reduce the count of widgets simultaneously shown on the view.
+To visualize on the one view the whole number of widgets, you can use filters to reduce the count of widgets simultaneously shown on the view.
  
 Every widget has a field `filter`. If you set it to some value, e.g. `light`, so you can use other widget `(bars - filters, filter - dropdown)` to control which filter is actually active.
 
@@ -208,7 +208,7 @@ Notice that these settings are valid only for reconnection and not for the first
     ### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 2.0.33 (2023-06-13)
+### 2.0.34 (2023-06-19)
 * (bluefox) Added widgeteria
 
 ### 2.0.29 (2023-05-17)
