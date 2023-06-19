@@ -1978,7 +1978,7 @@ ${this.scripts}
             registerEditorCallback: this.props.runtime ? null : this.props.registerEditorCallback,
             setSelectedGroup: this.props.runtime ? null : this.props.setSelectedGroup,
             setSelectedWidgets: this.props.runtime ? null : this.props.setSelectedWidgets,
-            ignoreMouseEvents: this.props.runtime ? null : this.props.ignoreMouseEvents,
+            onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
             disableInteraction: this.props.disableInteraction,
         };
 
@@ -2043,7 +2043,6 @@ VisEngine.propTypes = {
     theme: PropTypes.object,
     onConfirmDialog: PropTypes.func,
     onShowCode: PropTypes.func,
-    ignoreMouseEvents: PropTypes.func,
 
     adapterName: PropTypes.string.isRequired,
     instance: PropTypes.number.isRequired,

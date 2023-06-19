@@ -545,11 +545,11 @@ class VisView extends React.Component {
         });
     };
 
-    ignoreMouseEvents = ignore => {
+    onIgnoreMouseEvents = ignore => {
         if (this.props.editMode) {
             this.ignoreMouseEvents = ignore;
 
-            this.props.ignoreMouseEvents(ignore);
+            this.props.context.onIgnoreMouseEvents(ignore);
 
             if (ignore && this.movement) {
                 this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
@@ -889,7 +889,7 @@ class VisView extends React.Component {
     static getOneWidget(index, widget, options) {
         // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
-        // viewsActiveFilter, customSettings
+        // viewsActiveFilter, customSettings, onIgnoreMouseEvents
 
         const {
             context, // common
@@ -1421,6 +1421,7 @@ class VisView extends React.Component {
                         mouseDownOnView: this.mouseDownOnView,
                         moveAllowed,
                         ignoreMouseEvents: this.ignoreMouseEvents,
+                        onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                         refParent: this.refView,
                         registerRef: this.registerRef,
                         relativeWidgetOrder,
@@ -1443,6 +1444,7 @@ class VisView extends React.Component {
                             mouseDownOnView: this.mouseDownOnView,
                             moveAllowed,
                             ignoreMouseEvents: this.ignoreMouseEvents,
+                            onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                             refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
                             registerRef: this.registerRef,
                             relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,

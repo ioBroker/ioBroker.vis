@@ -128,7 +128,7 @@ class BasicViewInWidget extends VisRxWidget {
                     e.stopPropagation();
                     e.preventDefault();
                     // Say to view to ignore next clicks on view to hold the widget selection
-                    this.props.ignoreMouseEvents(true);
+                    this.props.onIgnoreMouseEvents(true);
                     this.setState({ showViewSelector: true });
                 }}
             >
@@ -140,7 +140,7 @@ class BasicViewInWidget extends VisRxWidget {
                 onClose={() =>
                     this.setState({ showViewSelector: false }, () =>
                         // Say to view to cancel ignoring clicks
-                        this.props.ignoreMouseEvents(false))}
+                        this.props.onIgnoreMouseEvents(false))}
             >
                 <DialogTitle>{I18n.t('vis_2_widgets_basic_contains_view')}</DialogTitle>
                 <DialogContent>
@@ -151,7 +151,7 @@ class BasicViewInWidget extends VisRxWidget {
                             onClick={() =>
                                 this.setState({ showViewSelector: false }, () => {
                                     // Say to view to cancel ignoring clicks
-                                    this.props.ignoreMouseEvents(false);
+                                    this.props.onIgnoreMouseEvents(false);
                                     this.props.onWidgetsChanged([{
                                         wid: this.props.id,
                                         view: this.props.view,
@@ -231,6 +231,7 @@ BasicViewInWidget.propTypes = {
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
     editModeComponentClass: PropTypes.string,
+    onIgnoreMouseEvents: PropTypes.func,
 };
 
 export default BasicViewInWidget;
