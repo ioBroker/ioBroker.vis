@@ -829,7 +829,7 @@ const WidgetField = props => {
         return <Select
             variant="standard"
             disabled={disabled}
-            value={Array.isArray(value) ? value : (value || '').split(',')}
+            value={Array.isArray(value) ? value : (value || '').toString().split(',')}
             placeholder={isDifferent ? t('different') : null}
             multiple={field.multiple !== false}
             renderValue={selected => {

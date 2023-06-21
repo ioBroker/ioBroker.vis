@@ -11,7 +11,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import CSS from './CSS';
 import Scripts from './Scripts';

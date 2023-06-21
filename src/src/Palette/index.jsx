@@ -17,7 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';

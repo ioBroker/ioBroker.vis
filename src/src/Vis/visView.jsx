@@ -632,12 +632,19 @@ class VisView extends React.Component {
 
         Object.keys(this.widgetsRefs).forEach(wid => {
             const widgets = this.props.context.views[this.props.view].widgets;
-            if (!this.props.selectedWidgets.includes(wid) && widgets[wid] && (!widgets[wid].grouped || this.props.selectedGroup)) {
-                const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
-                horizontals.push(Math.round(boundingRect.top));
-                horizontals.push(Math.round(boundingRect.bottom));
-                verticals.push(Math.round(boundingRect.left));
-                verticals.push(Math.round(boundingRect.right));
+            if (!this.props.selectedWidgets.includes(wid) &&
+                widgets[wid] &&
+                (!widgets[wid].grouped || this.props.selectedGroup)
+            ) {
+                if (!this.widgetsRefs[wid].refService.current) {
+                    console.error('CHECK WHY!!!');
+                } else {
+                    const boundingRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                    horizontals.push(Math.round(boundingRect.top));
+                    horizontals.push(Math.round(boundingRect.bottom));
+                    verticals.push(Math.round(boundingRect.left));
+                    verticals.push(Math.round(boundingRect.right));
+                }
             }
         });
 
@@ -1452,6 +1459,7 @@ class VisView extends React.Component {
                             selectedGroup: this.props.selectedGroup,
                             view,
                             customSettings: this.props.customSettings,
+                            viewsActiveFilter: this.props.viewsActiveFilter,
                         });
                         wColumns[column].push(w);
                     });

@@ -511,11 +511,22 @@ class VisEngine extends React.Component {
                 }
             },
             onWakeUp: (cb, wid) => {
+                if (typeof cb === 'string' && wid === undefined) {
+                    wid = cb;
+                    cb = null;
+                }
+
                 if (!wid) {
                     console.warn('No widget ID for onWakeUp callback! Please fix');
                 }
                 console.warn('onWakeUp not implemented');
-                this.wakeUpCallbacks.push({ cb, wid });
+                if (!cb) {
+                    // remove callback
+                    this.wakeUpCallbacks = this.wakeUpCallbacks.filter(item => item.wid !== wid);
+                } else {
+                    // add callback
+                    this.wakeUpCallbacks.push({ cb, wid });
+                }
             },
             inspectWidgets: (viewDiv, view, addWidget, delWidget, onlyUpdate) => {
                 console.warn('inspectWidgets not implemented: ', viewDiv, view, addWidget, delWidget, onlyUpdate);
@@ -1980,6 +1991,7 @@ ${this.scripts}
             setSelectedWidgets: this.props.runtime ? null : this.props.setSelectedWidgets,
             onIgnoreMouseEvents: this.props.runtime ? null : this.props.onIgnoreMouseEvents,
             disableInteraction: this.props.disableInteraction,
+            toggleTheme: this.props.toggleTheme,
         };
 
         const views = Object.keys(this.props.views).map(view => {
@@ -2052,6 +2064,7 @@ VisEngine.propTypes = {
     userGroups: PropTypes.object,
     renderAlertDialog: PropTypes.func,
     showLegacyFileSelector: PropTypes.func,
+    toggleTheme: PropTypes.func,
 };
 
 export default VisEngine;

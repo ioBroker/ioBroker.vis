@@ -22,7 +22,7 @@ import IconAttributes from '@mui/icons-material/ListAlt';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 
 import {
-    i18n as I18n,
+    I18n,
     Utils,
     Loader,
     Confirm as ConfirmDialog,
