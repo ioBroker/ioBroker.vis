@@ -177,7 +177,7 @@ class VisCanWidget extends VisBaseWidget {
                 if (!attr.startsWith('_')) {
                     let value = style[attr];
                     if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
+                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[+-]?([0-9]*[.])?[0-9]+$/)) {
                             value = `${value}px`;
                         }
                     }
@@ -202,7 +202,7 @@ class VisCanWidget extends VisBaseWidget {
                 if (attr && style[attr] !== undefined && style[attr] !== null && !attr.startsWith('_')) {
                     let value = style[attr];
                     if (attr === 'top' || attr === 'left' || attr === 'width' || attr === 'height') {
-                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[-+]?\d+$/)) {
+                        if (value !== '0' && value !== 0 && value !== null && value !== '' && value.toString().match(/^[+-]?([0-9]*[.])?[0-9]+$/)) {
                             value = `${value}px`;
                         }
                     }

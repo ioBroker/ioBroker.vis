@@ -158,8 +158,8 @@ class VisBaseWidget extends React.Component {
             }
 
             // show resizers again
-            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-            resizers.forEach(item => item.style.display = 'block');
+            const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer');
+            resizers?.forEach(item => item.style.display = 'block');
 
             if (command === 'stopResize') {
                 this.resize = false;
