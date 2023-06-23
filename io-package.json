@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.35",
+        "version": "2.0.36",
         "news": {
-            "2.0.35": {
+            "2.0.36": {
                 "en": "Corrected error with connection",
                 "de": "Fehler behoben mit Verbindung",
                 "ru": "Исправлена ошибка с подключением",
