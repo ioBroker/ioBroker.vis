@@ -965,13 +965,17 @@ class VisCanWidget extends VisBaseWidget {
                 .filter(attr => attr);
 
             if (names.length && widget.data) {
-                // create a copy as we will substitute the values
-                widget = JSON.parse(JSON.stringify(widget));
+                let copied = false;
 
                 Object.keys(widget.data).forEach(attr => {
                     if (typeof widget.data[attr] === 'string' && names.find(a => widget.data[attr].includes(a))) {
                         const result = replaceGroupAttr(widget.data[attr], parentWidgetData);
                         if (result.doesMatch) {
+                            if (!copied) {
+                                copied = true;
+                                // create a copy as we will substitute the values
+                                widget = JSON.parse(JSON.stringify(widget));
+                            }
                             widget.data[attr] = result.newString || '';
                         }
                     }

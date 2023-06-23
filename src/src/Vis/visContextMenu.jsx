@@ -112,14 +112,6 @@ const VisContextMenu = props => {
                 hide: props.selectedWidgets.length !== 1 ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
-            // {
-            //     leftIcon: <UpdateIcon />,
-            //     label: 'Update widget',
-            //     subLabel: `${I18n.t('to version')} ${marketplaceUpdate?.version}`,
-            //     onClick: () => props.updateWidget(props.selectedWidgets[0]),
-            //     hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
-            //         !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
-            // },
             window.VisMarketplace ? {
                 leftIcon: <img
                     src="./img/marketplace.png"

@@ -242,6 +242,9 @@ class App extends Runtime {
             showProjectUpdateDialog: false,
             ignoreMouseEvents: false,
             legacyFileSelector: null,
+            marketplaceDialog: false,
+            marketplaceUpdates: [],
+            marketplaceDeleted: [],
         });
     }
 
@@ -1324,6 +1327,30 @@ class App extends Runtime {
         this.changeProject(project);
     };
 
+    checkForUpdates = async () => {
+        const updates = [];
+        const deleted = [];
+        if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.client) {
+            for (const i in this.state.project.___settings.marketplace) {
+                const widget = this.state.project.___settings.marketplace[i];
+                try {
+                    const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
+                    if (data.version !== widget.version) {
+                        updates.push(data);
+                    }
+                } catch (e) {
+                    if (e.response?.status === 404) {
+                        deleted.push(widget.widget_id);
+                    } else {
+                        console.error(`Cannot check updates for ${widget.widget_id}: ${e}`);
+                    }
+                }
+            }
+        }
+
+        this.setState({ marketplaceUpdates: updates, marketplaceDeleted: deleted });
+    };
+
     updateWidget = async id => {
         const project = JSON.parse(JSON.stringify(this.state.project));
         const widget = project[this.state.selectedView].widgets[id];
@@ -1471,12 +1498,11 @@ class App extends Runtime {
                     window.localStorage.setItem('Vis.hidePalette', 'true');
                     this.setState({ hidePalette: true });
                 }}
-                installWidget={this.installWidget}
                 uninstallWidget={this.uninstallWidget}
                 setMarketplaceDialog={this.setMarketplaceDialog}
                 project={this.state.project}
-                checkForUpdates={this.checkForUpdates}
                 marketplaceUpdates={this.state.marketplaceUpdates}
+                marketplaceDeleted={this.state.marketplaceDeleted}
                 updateWidgets={this.updateWidgets}
             />
         </div>;
@@ -1528,8 +1554,6 @@ class App extends Runtime {
                             ungroupWidgets={this.ungroupWidgets}
                             setSelectedGroup={this.setSelectedGroup}
                             setMarketplaceDialog={this.setMarketplaceDialog}
-                            marketplaceUpdates={this.state.marketplaceUpdates}
-                            updateWidget={this.updateWidget}
                         >
                             { visEngine }
                         </VisContextMenu>

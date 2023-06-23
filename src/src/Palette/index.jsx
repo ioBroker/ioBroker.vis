@@ -293,8 +293,7 @@ const Palette = props => {
                                         updateWidgets={props.updateWidgets}
                                         marketplace={item}
                                         marketplaceUpdates={props.marketplaceUpdates}
-                                        checkForUpdates={props.checkForUpdates}
-                                        installWidget={props.installWidget}
+                                        marketplaceDeleted={props.marketplaceDeleted}
                                         uninstallWidget={props.uninstallWidget}
                                     />
                                 </div>)}
@@ -322,7 +321,13 @@ const Palette = props => {
 Palette.propTypes = {
     classes: PropTypes.object,
     onHide: PropTypes.func,
+    uninstallWidget: PropTypes.func,
+    setMarketplaceDialog: PropTypes.func,
+    updateWidgets: PropTypes.func,
+    project: PropTypes.object,
     widgetsLoaded: PropTypes.bool,
+    marketplaceUpdates: PropTypes.array,
+    marketplaceDeleted: PropTypes.array,
 };
 
 export default withStyles(styles)(Palette);

@@ -1196,10 +1196,10 @@ class VisView extends React.Component {
                 // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
                 // relativeStyle.alignItems = settings.style.alignItems || 'flex-start';
             }
-            relativeStyle.position = 'absolute';
-            relativeStyle.top = 0;
-            relativeStyle.left = 0;
         }
+        relativeStyle.position = 'absolute';
+        relativeStyle.top = 0;
+        relativeStyle.left = 0;
 
         return relativeStyle;
     }
@@ -1259,6 +1259,7 @@ class VisView extends React.Component {
     render() {
         let rxAbsoluteWidgets = [];
         let rxRelativeWidgets = [];
+        let rxGroupWidget;
 
         if (!this.props.context.views || !this.props.view || !this.props.context.views[this.props.view]) {
             return null;
@@ -1353,6 +1354,10 @@ class VisView extends React.Component {
 
                 // calculate the order of relative widgets
                 Object.keys(widgets).forEach(id => {
+                    // the group will be rendered apart
+                    if (id === this.props.selectedGroup) {
+                        return;
+                    }
                     const widget = this.props.context.views[this.props.view].widgets[id];
                     // Ignore grouped widgets in non-group-edit mode. They will be rendered in BasicGroup
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
@@ -1378,9 +1383,9 @@ class VisView extends React.Component {
                         }
                     } else {
                         const pos = listRelativeWidgetsOrder.indexOf(id);
-                        if (pos !== -1) {
-                            listRelativeWidgetsOrder.splice(pos, 1);
-                        }
+                        // if this widget is in relative order, remove it
+                        pos !== -1 && listRelativeWidgetsOrder.splice(pos, 1);
+
                         if (!listAbsoluteWidgetsOrder.includes(id)) {
                             listAbsoluteWidgetsOrder.push(id);
                         }
@@ -1429,7 +1434,7 @@ class VisView extends React.Component {
                         moveAllowed,
                         ignoreMouseEvents: this.ignoreMouseEvents,
                         onIgnoreMouseEvents: this.onIgnoreMouseEvents,
-                        refParent: this.refView,
+                        refParent: this.props.selectedGroup ? this.refRelativeView : this.refView,
                         registerRef: this.registerRef,
                         relativeWidgetOrder,
                         selectedGroup: this.props.selectedGroup,
@@ -1482,6 +1487,28 @@ class VisView extends React.Component {
                     }
                 } else {
                     rxRelativeWidgets = null;
+                }
+
+                // render group widget apart
+                if (this.props.selectedGroup) {
+                    rxGroupWidget = VisView.getOneWidget(0, this.props.context.views[view].widgets[this.props.selectedGroup], {
+                        context: this.props.context,
+                        editMode: this.props.editMode,
+                        id: this.props.selectedGroup,
+                        isRelative: false,
+                        mouseDownOnView: this.mouseDownOnView,
+                        moveAllowed,
+                        ignoreMouseEvents: this.ignoreMouseEvents,
+                        onIgnoreMouseEvents: this.onIgnoreMouseEvents,
+                        refParent: this.refView,
+                        registerRef: this.registerRef,
+                        relativeWidgetOrder,
+                        selectedGroup: this.props.selectedGroup,
+                        selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
+                        view,
+                        viewsActiveFilter: this.props.viewsActiveFilter,
+                        customSettings: this.props.customSettings,
+                    });
                 }
             }
         }
@@ -1601,6 +1628,34 @@ class VisView extends React.Component {
             }
         }
 
+        let renderedWidgets;
+
+        if (this.props.selectedGroup) {
+            // draw all widgets in div, that has exact size of the group
+            renderedWidgets = <>
+                <div
+                    ref={this.refRelativeView}
+                    style={this.getRelativeStyle(settings, this.props.selectedGroup)}
+                    className="vis-relative-view"
+                >
+                    {rxRelativeWidgets}
+                    {rxAbsoluteWidgets}
+                </div>
+                {rxGroupWidget}
+            </>;
+        } else {
+            renderedWidgets = <>
+                {rxRelativeWidgets ? <div
+                    ref={this.refRelativeView}
+                    style={this.getRelativeStyle(settings, this.props.selectedGroup)}
+                    className="vis-relative-view"
+                >
+                    {rxRelativeWidgets}
+                </div> : null}
+                {rxAbsoluteWidgets}
+            </>;
+        }
+
         let renderedView = <div
             className={`${className} visview_${this.props.view.replace(/\s/g, '_')}`}
             ref={this.refView}
@@ -1631,14 +1686,7 @@ class VisView extends React.Component {
                         zIndex: 1000,
                     }}
                 />)}
-            {rxRelativeWidgets ? <div
-                ref={this.refRelativeView}
-                style={this.getRelativeStyle(settings, this.props.selectedGroup)}
-                className="vis-relative-view"
-            >
-                {rxRelativeWidgets}
-            </div> : null}
-            {rxAbsoluteWidgets}
+            {renderedWidgets}
         </div>;
 
         if (settings.navigation && !this.props.visInWidget) {
