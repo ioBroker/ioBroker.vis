@@ -44,17 +44,19 @@ const Widgets = props => {
         const widgetTypes = getWidgetTypes();
         const widgets = props.project[props.selectedView].widgets;
 
+        const shownWidgets = Object.keys(widgets)
+            .filter(widget => (props.selectedGroup ?
+                widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
+                !widgets[widget].groupid));
+
         return {
             name: 'Widgets',
             items: [
                 {
                     type: 'multiselect',
-                    name: I18n.t('Active widget(s) from %s', Object.keys(widgets).length),
+                    name: I18n.t('Active widget(s) from %s', shownWidgets.length),
                     doNotTranslateName: true,
-                    items: Object.keys(widgets)
-                        .filter(widget => (props.selectedGroup ?
-                            widgets[widget].groupid === props.selectedGroup || widget === props.selectedGroup :
-                            !widgets[widget].groupid))
+                    items: shownWidgets
                         .map(widgetId => {
                             const tpl = widgets[widgetId].tpl;
                             const widgetType = widgetTypes.find(w => w.name === tpl);

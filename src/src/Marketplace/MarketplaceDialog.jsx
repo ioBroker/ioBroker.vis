@@ -38,6 +38,7 @@ const MarketplaceDialog = props => {
             } else {
                 await props.installWidget(marketplace.widget_id, marketplace.id);
             }
+            props.onClose();
         };
     }
 
@@ -53,12 +54,14 @@ const MarketplaceDialog = props => {
         <DialogContent>
             {VisMarketplace &&
                 <VisMarketplace
+                    language={I18n.getLanguage()}
                     addPage={props.addPage}
                     widget={props.widget}
                     onClose={props.onClose}
                     installWidget={installWidget}
                     installedWidgets={props.installedWidgets}
                     themeName={props.themeName}
+                    onAdded={() => props.onClose()}
                 />}
         </DialogContent>
         <DialogActions>

@@ -27,6 +27,7 @@ import { I18n, Utils } from '@iobroker/adapter-react-v5';
 import {
     addClass,
     removeClass,
+    replaceGroupAttr,
 } from './visUtils';
 
 class VisBaseWidget extends React.Component {
@@ -158,8 +159,8 @@ class VisBaseWidget extends React.Component {
             }
 
             // show resizers again
-            const resizers = this.refService.current.querySelectorAll('.vis-editmode-resizer');
-            resizers.forEach(item => item.style.display = 'block');
+            const resizers = this.refService.current?.querySelectorAll('.vis-editmode-resizer');
+            resizers?.forEach(item => item.style.display = 'block');
 
             if (command === 'stopResize') {
                 this.resize = false;
@@ -173,13 +174,41 @@ class VisBaseWidget extends React.Component {
     static getDerivedStateFromProps(props, state) {
         const context = props.context;
         let newState = null; // No change to state by default
-        const widget = context.views[props.view].widgets[props.id];
+        let widget = context.views[props.view].widgets[props.id];
         const gap = widget.style.position === 'relative' ?
             (Number.isFinite(context.views[props.view].settings.rowGap) ? parseFloat(context.views[props.view].settings.rowGap) : 0) : 0;
+        let copied = false;
 
+        if (widget.groupid) {
+            // this widget belongs to group
+            const parentWidgetData = context.views[props.view].widgets[widget.groupid].data;
+            // extract attribute names
+            const names = Object.keys(parentWidgetData)
+                .map(attr => (attr.startsWith('attrType_') ? attr.substring(9) : null))
+                .filter(attr => attr);
+
+            if (names.length && widget.data) {
+                Object.keys(widget.data).forEach(attr => {
+                    if (typeof widget.data[attr] === 'string' && names.find(a => widget.data[attr].includes(a))) {
+                        const result = replaceGroupAttr(widget.data[attr], parentWidgetData);
+                        if (result.doesMatch) {
+                            // create a copy as we will substitute the values
+                            if (!copied) {
+                                copied = true;
+                                widget = JSON.parse(JSON.stringify(widget));
+                            }
+                            widget.data[attr] = result.newString || '';
+                        }
+                    }
+                });
+            }
+        }
+
+        // take actual (old) style and data
         let _style = state.style._originalData ? state.style._originalData : JSON.stringify(state.style);
         let _data = state.data._originalData ? state.data._originalData : JSON.stringify(state.data);
 
+        // compare with new style and data
         if (JSON.stringify(widget.style || {}) !== _style ||
             JSON.stringify(widget.data || {}) !== _data ||
             gap !== state.gap
@@ -196,9 +225,18 @@ class VisBaseWidget extends React.Component {
                     console.log(`[${Date.now()}] Rerender because of data.${attr}: ${_data[attr]} !== ${widget.data[attr]}`);
                 }
             });
-            const data = JSON.parse(JSON.stringify(widget.data || {}));
-            // detect for CanWidgets if size was changed
-            const style = JSON.parse(JSON.stringify(widget.style || {}));
+            let data;
+            let style;
+            // restore original data
+            if (copied) {
+                data = widget.data || {};
+                // detect for CanWidgets if size was changed
+                style = widget.style || {};
+            } else {
+                data = JSON.parse(JSON.stringify(widget.data || {}));
+                // detect for CanWidgets if size was changed
+                style = JSON.parse(JSON.stringify(widget.style || {}));
+            }
 
             // replace all _PRJ_NAME with vis.0/name
             VisBaseWidget.replacePRJ_NAME(data, style, props);
@@ -1561,7 +1599,7 @@ class VisBaseWidget extends React.Component {
                     this.props.isRelative && resizable && 'vis-editmode-widget-name-long',
                 )}
             >
-                <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId, multiView) : this.props.id}</span>
+                <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId, multiView) : (widget.data?.name || this.props.id)}</span>
                 {this.state.multiViewWidget ? null :
                     <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />}
                 {!this.state.multiViewWidget && this.props.isRelative && resizable ?

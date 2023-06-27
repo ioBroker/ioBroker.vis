@@ -5,10 +5,13 @@ import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 
 import { IconButton, Tooltip } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import UpdateIcon from '@mui/icons-material/Update';
+import {
+    Delete as DeleteIcon,
+    Update as UpdateIcon,
+    Block as DeletedIcon,
+} from '@mui/icons-material';
 
-import { i18n as I18n, Utils } from '@iobroker/adapter-react-v5';
+import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 const styles = () => ({
     widget: {
@@ -61,6 +64,10 @@ const styles = () => ({
     widgetMarketplace:{
         fontSize: '80%',
         fontStyle: 'italic',
+    },
+    widgetDeleted: {
+        marginTop: 9,
+        color: '#F00',
     },
 });
 
@@ -125,8 +132,10 @@ const Widget = props => {
     label = label.split('<div')[0];
 
     let marketplaceUpdate;
+    let marketplaceDeleted;
     if (props.widgetSet === '__marketplace') {
         marketplaceUpdate = props.marketplaceUpdates?.find(u => u.widget_id === props.widgetType.widget_id);
+        marketplaceDeleted = props.marketplaceDeleted?.includes(props.widgetType.widget_id);
     }
 
     const result = <Tooltip
@@ -152,12 +161,14 @@ const Widget = props => {
                 </Tooltip>
                 {marketplaceUpdate && <Tooltip title={`${I18n.t('Update to version')} ${marketplaceUpdate.version}`}>
                     <IconButton onClick={async () => {
-                        // await props.installWidget(props.widgetType.widget_id);
                         await props.updateWidgets(marketplaceUpdate);
                     }}
                     >
                         <UpdateIcon />
                     </IconButton>
+                </Tooltip>}
+                {marketplaceDeleted && <Tooltip title={I18n.t('Widget was deleted in widgeteria')}>
+                    <DeletedIcon className={props.classes.widgetDeleted} />
                 </Tooltip>}
             </>}
             <span className={props.classes.widgetImageContainer}>
@@ -203,6 +214,11 @@ Widget.propTypes = {
     widgetSet: PropTypes.string,
     widgetType: PropTypes.object,
     widgetTypeName: PropTypes.string,
+    updateWidgets: PropTypes.func,
+    marketplace: PropTypes.object,
+    marketplaceUpdates: PropTypes.array,
+    marketplaceDeleted: PropTypes.array,
+    uninstallWidget: PropTypes.func,
 };
 
 export default withStyles(styles)(Widget);

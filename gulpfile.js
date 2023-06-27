@@ -86,7 +86,7 @@ gulp.task('runtime-1-copy-src', done => {
         fs.writeFileSync(`${__dirname}/runtime/public/index.html`, runtimeText);
     }
 
-    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`);
+    copyFolder(`${__dirname}/src/src/Vis`, `${__dirname}/runtime/src/Vis`,  ['visContextMenu.jsx', 'oldVis.jsx']);
     copyFolder(`${__dirname}/src/src/img`, `${__dirname}/runtime/src/img`);
     const pack = JSON.parse(fs.readFileSync(`${__dirname}/src/package.json`).toString());
     delete pack.dependencies['@devbookhq/splitter'];
@@ -157,14 +157,14 @@ function npmInstall(dir) {
         console.log(`"${cmd} in ${cwd}`);
 
         // System call used for update of js-controller itself,
-        // because during installation npm packet will be deleted too, but some files must be loaded even during the install process.
+        // because during the installation of the npm packet will be deleted too, but some files must be loaded even during the installation process.
         const child = cp.exec(cmd, {cwd});
 
         child.stderr.pipe(process.stderr);
         child.stdout.pipe(process.stdout);
 
         child.on('exit', (code /* , signal */) => {
-            // code 1 is strange error that cannot be explained. Everything is installed but error :(
+            // code 1 is a strange error that cannot be explained. Everything is installed but error :(
             if (code && code !== 1) {
                 reject(`Cannot install: ${code}`);
             } else {

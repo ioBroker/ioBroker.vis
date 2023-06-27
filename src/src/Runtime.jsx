@@ -118,8 +118,6 @@ class Runtime extends GenericApp {
             newProjectName: '',
             projects: null,
             projectDoesNotExist: false,
-            marketplaceDialog: false,
-            marketplaceUpdates: [],
         };
 
         if (this.initState) {
@@ -262,21 +260,6 @@ class Runtime extends GenericApp {
         });
     }
 
-    checkForUpdates = async () => {
-        const updates = [];
-        if (this.state.project?.___settings?.marketplace && window.VisMarketplace?.client) {
-            for (const i in this.state.project.___settings.marketplace) {
-                const widget = this.state.project.___settings.marketplace[i];
-                const { data } = await (await window.VisMarketplace.client).getWidgetById(widget.widget_id);
-                if (data.version !== widget.version) {
-                    updates.push(data);
-                    // console.log(data);
-                }
-            }
-        }
-        this.setState({ marketplaceUpdates: updates });
-    };
-
     loadProject = async (projectName, file) => {
         if (!file) {
             try {
@@ -410,7 +393,11 @@ class Runtime extends GenericApp {
 
         await this.changeView(selectedView);
 
-        this.checkForUpdates();
+        // only in edit mode
+        if (!this.state.runtime && this.checkForUpdates) {
+            // check if some marketplace widgets was updated
+            this.checkForUpdates();
+        }
     };
 
     // this function is required here if the project not defined
@@ -830,6 +817,7 @@ class Runtime extends GenericApp {
             userGroups={this.state.userGroups}
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
+            toggleTheme={newThemeName => this.toggleTheme(newThemeName)}
         />;
     }
 

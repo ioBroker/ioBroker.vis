@@ -35,13 +35,16 @@ class BasicGroup extends VisRxWidget {
                         if (typeof widgetData[attr] === 'string') {
                             let ms = widgetData[attr].match(/(groupAttr\d+)+?/g);
                             if (ms) {
-                                ms.forEach(m => attributes.push(m));
+                                ms.forEach(m => !attributes.includes(m) && attributes.push(m));
                             }
 
                             // new style: {html}, {myAttr}, ...
                             ms = widgetData[attr].match(/%([-_a-zA-Z\d]+)+?%/g);
                             if (ms) {
-                                ms.forEach(m => attributes.push(m.substring(1, m.length - 1)));
+                                ms.forEach(m => {
+                                    const _attr = m.substring(1, m.length - 1);
+                                    !attributes.includes(_attr) && attributes.push(_attr);
+                                });
                             }
                         }
                     });

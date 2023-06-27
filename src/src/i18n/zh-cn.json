@@ -451,5 +451,6 @@
   "convert from widgeteria widget": "从 widderia 小部件转换",
   "to version": "版本",
   "version": "版本",
-  "Add new or update existing widget": "添加新的或更新现有的小部件\n"
+  "Add new or update existing widget": "添加新的或更新现有的小部件\n",
+  "Widget was deleted in widgeteria": "widget 已在 widgeteria 中删除"
 }

@@ -17,7 +17,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
-import { i18n as I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
+import { I18n, Utils, Icon } from '@iobroker/adapter-react-v5';
 
 import Widget from './Widget';
 import { getWidgetTypes } from '../Vis/visWidgetsCatalog';
@@ -295,8 +295,7 @@ const Palette = props => {
                                         updateWidgets={props.updateWidgets}
                                         marketplace={item}
                                         marketplaceUpdates={props.marketplaceUpdates}
-                                        checkForUpdates={props.checkForUpdates}
-                                        installWidget={props.installWidget}
+                                        marketplaceDeleted={props.marketplaceDeleted}
                                         uninstallWidget={props.uninstallWidget}
                                     />
                                 </div>)}
@@ -324,7 +323,13 @@ const Palette = props => {
 Palette.propTypes = {
     classes: PropTypes.object,
     onHide: PropTypes.func,
+    uninstallWidget: PropTypes.func,
+    setMarketplaceDialog: PropTypes.func,
+    updateWidgets: PropTypes.func,
+    project: PropTypes.object,
     widgetsLoaded: PropTypes.bool,
+    marketplaceUpdates: PropTypes.array,
+    marketplaceDeleted: PropTypes.array,
 };
 
 export default withStyles(styles)(Palette);

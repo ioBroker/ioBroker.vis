@@ -451,5 +451,6 @@
   "convert from widgeteria widget": "конвертировать из виджета widgeteria",
   "to version": "к версии",
   "version": "версия",
-  "Add new or update existing widget": "Добавить новый или обновить существующий виджет\n"
+  "Add new or update existing widget": "Добавить новый или обновить существующий виджет\n",
+  "Widget was deleted in widgeteria": "Виджет был удален в виджете"
 }

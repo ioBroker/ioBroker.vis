@@ -112,14 +112,6 @@ const VisContextMenu = props => {
                 hide: props.selectedWidgets.length !== 1 ||
                     props.project[props.selectedView].widgets[props.selectedWidgets[0]].tpl !== '_tplGroup',
             },
-            // {
-            //     leftIcon: <UpdateIcon />,
-            //     label: 'Update widget',
-            //     subLabel: `${I18n.t('to version')} ${marketplaceUpdate?.version}`,
-            //     onClick: () => props.updateWidget(props.selectedWidgets[0]),
-            //     hide: !marketplaceUpdate || props.selectedWidgets.length !== 1 ||
-            //         !props.project[props.selectedView].widgets[props.selectedWidgets[0]].marketplace,
-            // },
             window.VisMarketplace ? {
                 leftIcon: <img
                     src="./img/marketplace.png"
@@ -128,6 +120,7 @@ const VisContextMenu = props => {
                 />,
                 label: 'Add to widgeteria',
                 onClick: async () => {
+                    // copy all selected widgets
                     const widgets = props.selectedWidgets.map(wid => {
                         const w = JSON.parse(JSON.stringify(props.project[props.selectedView].widgets[wid]));
                         w._id = wid;
@@ -144,6 +137,7 @@ const VisContextMenu = props => {
                     const len = widgets.length;
                     for (let w = 0; w < len; w++) {
                         const widget = widgets[w];
+                        // if we are creating the group of groups (only 2 groups could be leveled)
                         if (widget.tpl === '_tplGroup') {
                             const newId = `f${gIdx.toString().padStart(6, '0')}`;
                             gIdx++;
@@ -186,10 +180,11 @@ const VisContextMenu = props => {
                     const cachePosition = document.getElementById(props.selectedWidgets[0]).style.position;
                     document.getElementById(props.selectedWidgets[0]).style.position = 'initial';
 
+                    // create image of widget
                     const dataUrl = await toPng(document.getElementById(props.selectedWidgets[0]));
                     document.getElementById(props.selectedWidgets[0]).style.position = cachePosition;
                     Array.from(document.getElementsByClassName('vis-editmode-resizer')).forEach(el => el.style.display = 'block');
-                    console.log(document.getElementById(props.selectedWidgets[0]));
+                    // console.log(document.getElementById(props.selectedWidgets[0]));
 
                     props.setMarketplaceDialog({
                         addPage: true,

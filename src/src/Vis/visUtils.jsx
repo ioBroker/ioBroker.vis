@@ -12,7 +12,7 @@
  * Licensees may copy, distribute, display, and perform the work and make derivative works based on it only for noncommercial purposes.
  * (Free for non-commercial use).
  */
-import { i18n as I18n } from '@iobroker/adapter-react-v5';
+import { I18n } from '@iobroker/adapter-react-v5';
 
 function replaceGroupAttr(inputStr, groupAttrList) {
     let newString = inputStr;
@@ -21,17 +21,28 @@ function replaceGroupAttr(inputStr, groupAttrList) {
     let ms = inputStr.match(/(groupAttr\d+)+?/g);
     if (ms) {
         match = true;
-        ms.forEach(m =>
-            newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]));
+        ms.forEach(m => {
+            const val = groupAttrList[m];
+            if (val === null || val === undefined) {
+                newString = newString.replace(/groupAttr(\d+)/, '');
+            } else {
+                newString = newString.replace(/groupAttr(\d+)/, groupAttrList[m]);
+            }
+        });
     }
 
-    // new style: {html}, {myAttr}, ...
+    // new style: %html%, %myAttr%, ...
     ms = inputStr.match(/%([-_a-zA-Z\d]+)+?%/g);
     if (ms) {
         match = true;
         ms.forEach(m => {
             const attr = m.substring(1, m.length - 1);
-            newString = newString.replace(m, groupAttrList[attr]);
+            const val = groupAttrList[attr];
+            if (val === null || val === undefined) {
+                newString = newString.replace(m, '');
+            } else {
+                newString = newString.replace(m, val);
+            }
         });
     }
 
@@ -371,19 +382,19 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
 
         const parentWidgetData = views[view].widgets[widget.groupid]?.data;
         if (parentWidgetData) {
-            const aCount = parseInt(parentWidgetData.attrCount, 10);
+            let newGroupData;
 
-            if (aCount && data) {
-                data = JSON.parse(JSON.stringify(data));
-
-                Object.keys(data).forEach(attr => {
-                    if (typeof data[attr] === 'string') {
-                        const result = replaceGroupAttr(data[attr], parentWidgetData);
-                        if (result.doesMatch) {
-                            data[attr] = result.newString || '';
-                        }
+            Object.keys(data).forEach(attr => {
+                if (typeof data[attr] === 'string') {
+                    const result = replaceGroupAttr(data[attr], parentWidgetData);
+                    if (result.doesMatch) {
+                        newGroupData = newGroupData || JSON.parse(JSON.stringify(data));
+                        newGroupData[attr] = result.newString || '';
                     }
-                });
+                }
+            });
+            if (newGroupData) {
+                data = newGroupData;
             }
         } else {
             console.error(`Invalid group id "${widget.groupid}" in widget "${wid}"`);
@@ -394,64 +405,6 @@ function getUsedObjectIDsInWidget(views, view, wid, linkContext) {
         if (!attr) {
             return;
         }
-        /* TODO DO do not forget remove it after a while. Required for import from DashUI */
-        /*
-        if (attr === 'state_id') {
-            data.state_oid = data[attr];
-            delete data[attr];
-            attr = 'state_oid';
-        } else
-        if (attr === 'number_id') {
-            data.number_oid = data[attr];
-            delete data[attr];
-            attr = 'number_oid';
-        } else
-        if (attr === 'toggle_id') {
-            data.toggle_oid = data[attr];
-            delete data[attr];
-            attr = 'toggle_oid';
-        } else
-        if (attr === 'set_id') {
-            data.set_oid = data[attr];
-            delete data[attr];
-            attr = 'set_oid';
-        } else
-        if (attr === 'temp_id') {
-            data.temp_oid = data[attr];
-            delete data[attr];
-            attr = 'temp_oid';
-        } else
-        if (attr === 'drive_id') {
-            data.drive_oid = data[attr];
-            delete data[attr];
-            attr = 'drive_oid';
-        } else
-        if (attr === 'content_id') {
-            data.content_oid = data[attr];
-            delete data[attr];
-            attr = 'content_oid';
-        } else
-        if (attr === 'dialog_id') {
-            data.dialog_oid = data[attr];
-            delete data[attr];
-            attr = 'dialog_oid';
-        } else
-        if (attr === 'max_value_id') {
-            data.max_value_oid = data[attr];
-            delete data[attr];
-            attr = 'max_value_oid';
-        } else
-        if (attr === 'dialog_id') {
-            data.dialog_oid = data[attr];
-            delete data[attr];
-            attr = 'dialog_oid';
-        } else
-        if (attr === 'weoid') {
-            data.woeid = data[attr];
-            delete data[attr];
-            attr = 'woeid';
-        }
-        */
 
         if (typeof data[attr] === 'string') {
             let m;
@@ -828,6 +781,44 @@ function registerWidgetsLoadIndicator(cb) {
     window.__widgetsLoadIndicator = cb;
 }
 
+function _loadComponentHelper(context) {
+    // expected in context
+    // visWidgetsCollection
+    // countRef
+    // dynamicWidgetInstance
+    // i18nPrefix
+    // result
+    const promises = [];
+
+    for (const componentKey in context.visWidgetsCollection.components) {
+        ((_componentKey, _visWidgetsCollection) => {
+            // const start = Date.now();
+            const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
+                .then(Component => {
+                    context.countRef.count++;
+                    // console.log(Component);
+                    if (Component.default) {
+                        Component.default.adapter = context.dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
+                        Component.default.version = context.dynamicWidgetInstance.common.version;
+                        if (context.i18nPrefix) {
+                            Component.default.i18nPrefix = context.i18nPrefix;
+                        }
+                        context.result.push(Component.default);
+                    } else {
+                        console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}. No default found`);
+                    }
+                    window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(context.countRef.count, context.promises.length);
+                })
+                .catch(e => console.error(`Cannot load widget ${context.dynamicWidgetInstance._id}: ${JSON.stringify(e)}`));
+            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
+
+            promises.push(promise);
+        })(componentKey, context.visWidgetsCollection);
+    }
+
+    return Promise.all(promises);
+}
+
 function getRemoteWidgets(socket) {
     return socket.getObjectViewSystem(
         'instance',
@@ -836,7 +827,7 @@ function getRemoteWidgets(socket) {
     )
         .then(objects => {
             const result = [];
-            let count = 0;
+            const countRef = { count: 0 };
             const instances = Object.values(objects);
             const dynamicWidgetInstances = instances.filter(obj => obj.common.visWidgets);
 
@@ -858,6 +849,7 @@ function getRemoteWidgets(socket) {
                         try {
                             if (visWidgetsCollection.components) {
                                 let i18nPrefix = false;
+                                let i18nPromiseWait;
 
                                 // 1. Load language file ------------------
                                 // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
@@ -875,9 +867,9 @@ function getRemoteWidgets(socket) {
                                     const i18nPromise = fetch(`${i18nURL}/i18n/${lang}.json`)
                                         .then(data => data.json())
                                         .then(json => {
-                                            count++;
+                                            countRef.count++;
                                             I18n.extendTranslations(json, lang);
-                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
                                         })
                                         .catch(error => {
                                             if (lang !== 'en') {
@@ -885,9 +877,9 @@ function getRemoteWidgets(socket) {
                                                 return fetch(`${i18nURL}/i18n/en.json`)
                                                     .then(data => data.json())
                                                     .then(json => {
-                                                        count++;
+                                                        countRef.count++;
                                                         I18n.extendTranslations(json, lang);
-                                                        window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                                        window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
                                                     })
                                                     .catch(_error => console.log(`Cannot load i18n "${i18nURL}/i18n/${lang}.json": ${_error}`));
                                             }
@@ -898,9 +890,9 @@ function getRemoteWidgets(socket) {
                                 } else
                                 // dynamicWidgetInstance.common.visWidgets.i18n is deprecated
                                 if (visWidgetsCollection.url && (visWidgetsCollection.i18n === 'component' || dynamicWidgetInstance.common.visWidgets.i18n === 'component')) {
-                                    const i18nPromise = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
+                                    i18nPromiseWait = loadComponent(visWidgetsCollection.name, 'default', './translations', visWidgetsCollection.url)()
                                         .then(translations => {
-                                            count++;
+                                            countRef.count++;
 
                                             // add automatic prefix to all translations
                                             if (translations.default.prefix === true) {
@@ -909,12 +901,10 @@ function getRemoteWidgets(socket) {
                                             i18nPrefix = translations.default.prefix;
 
                                             I18n.extendTranslations(translations.default);
-                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
+                                            window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(countRef.count, promises.length);
                                         })
                                         .catch(error =>
                                             console.log(`Cannot load i18n "${visWidgetsCollection.name}": ${error}`));
-
-                                    promises.push(i18nPromise);
                                 } else
                                 if (visWidgetsCollection.i18n && typeof visWidgetsCollection.i18n === 'object') {
                                     try {
@@ -926,31 +916,28 @@ function getRemoteWidgets(socket) {
 
                                 // 2. Load all components ------------------
                                 if (visWidgetsCollection.components) {
-                                    for (const componentKey in visWidgetsCollection.components) {
-                                        ((_componentKey, _visWidgetsCollection) => {
-                                            // const start = Date.now();
-                                            const promise = loadComponent(_visWidgetsCollection.name, 'default', `./${_visWidgetsCollection.components[_componentKey]}`, _visWidgetsCollection.url)()
-                                                .then(Component => {
-                                                    count++;
-                                                    // console.log(Component);
-                                                    if (Component.default) {
-                                                        Component.default.adapter = dynamicWidgetInstance._id.substring('system.adapter.'.length).replace(/\.\d*$/, '');
-                                                        Component.default.version = dynamicWidgetInstance.common.version;
-                                                        if (i18nPrefix) {
-                                                            Component.default.i18nPrefix = i18nPrefix;
-                                                        }
-                                                        result.push(Component.default);
-                                                    } else {
-                                                        console.error(`Cannot load widget ${dynamicWidgetInstance._id}. No default found`);
-                                                    }
-                                                    window.__widgetsLoadIndicator && window.__widgetsLoadIndicator(count, promises.length);
-                                                })
-                                                .catch(e => console.error(`Cannot load widget ${dynamicWidgetInstance._id}: ${JSON.stringify(e)}`));
-                                            // .then(() => console.log(`${_visWidgetsCollection.name}_${_componentKey}: ${Date.now() - start}ms`));
-
-                                            promises.push(promise);
-                                        })(componentKey, visWidgetsCollection);
+                                    if (i18nPromiseWait) {
+                                        // we must wait for it as the flag i18nPrefix will be used in the component
+                                        promises.push(i18nPromiseWait
+                                            .then(() => _loadComponentHelper({
+                                                visWidgetsCollection,
+                                                countRef,
+                                                dynamicWidgetInstance,
+                                                i18nPrefix,
+                                                result,
+                                            })));
+                                    } else {
+                                        // do not wait for languages
+                                        promises.push(_loadComponentHelper({
+                                            visWidgetsCollection,
+                                            countRef,
+                                            dynamicWidgetInstance,
+                                            i18nPrefix,
+                                            result,
+                                        }));
                                     }
+                                } else if (i18nPromiseWait) {
+                                    promises.push(i18nPromiseWait);
                                 }
                             }
                         } catch (e) {

@@ -451,5 +451,6 @@
   "Ungroup": "Ungroup",
   "convert from widgeteria widget": "convert from widgeteria widget",
   "to version": "to version",
-  "Add new or update existing widget": "Add new or update existing widget\n"
+  "Add new or update existing widget": "Add new or update existing widget\n",
+  "Widget was deleted in widgeteria": "Widget was deleted in widgeteria"
 }

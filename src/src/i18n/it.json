@@ -451,5 +451,6 @@
   "convert from widgeteria widget": "convertire dal widget widgeteria",
   "to version": "alla versione",
   "version": "versione",
-  "Add new or update existing widget": "Aggiungi un nuovo widget o aggiorna quello esistente\n"
+  "Add new or update existing widget": "Aggiungi un nuovo widget o aggiorna quello esistente\n",
+  "Widget was deleted in widgeteria": "Il widget è stato eliminato in widgeteria"
 }
