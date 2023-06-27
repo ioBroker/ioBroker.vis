@@ -165,6 +165,8 @@ const Palette = props => {
         return { widgetsList: _widgetsList, widgetSetProps: _widgetSetProps };
     }, [filter, props.widgetsLoaded]);
 
+    console.log(widgetsList);
+
     if (!props.widgetsLoaded) {
         return null;
     }

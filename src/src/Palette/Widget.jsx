@@ -186,6 +186,10 @@ const Widget = props => {
         preview(getEmptyImage(), { captureDraggingState: true });
     }, [props.widgetType]);
 
+    if (props.widgetType.custom) {
+        return props.widgetType.customPalette(props.socket, props.project, props.selectedView);
+    }
+
     return <span ref={dragRef} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>
         <span ref={widthRef}>
             {result}

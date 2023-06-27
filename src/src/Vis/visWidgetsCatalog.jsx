@@ -134,6 +134,8 @@ export const getWidgetTypes = () => {
                 version: widget.version || undefined,
                 hidden: widget.visHidden,
                 order: widgetInfo.visOrder,
+                custom: widgetInfo.custom,
+                customPalette: widgetInfo.customPalette,
                 i18nPrefix,
             };
             VisWidgetsCatalog.allWidgetsList.push(widgetObj.name);
