@@ -229,7 +229,8 @@ class Runtime extends GenericApp {
             }
 
             const oView = project[view];
-            Object.keys(oView.widgets).forEach(widgetId => {
+            const widgetIDs = Object.keys(oView.widgets);
+            widgetIDs.forEach(widgetId => {
                 const oWidget = oView.widgets[widgetId];
                 // if widget must be shown in more than one view
                 if (oWidget.data && oWidget.data['multi-views']) {
@@ -255,6 +256,21 @@ class Runtime extends GenericApp {
                             }
                         }
                     });
+                }
+
+                // try to find this widget in other widgets under "widget" or "widgetX" name
+                const found = widgetIDs.find(widgetId2 => {
+                    if (widgetId2 === widgetId) {
+                        return false;
+                    }
+                    const oWidget2 = oView.widgets[widgetId2];
+                    const attrs = Object.keys(oWidget2.data);
+                    return attrs.find(attr => attr.startsWith('widget') && oWidget2.data[attr] === widgetId);
+                });
+                if (found) {
+                    oWidget.usedInWidget = true;
+                } else if (oWidget.usedInWidget) {
+                    delete oWidget.usedInWidget;
                 }
             });
         });

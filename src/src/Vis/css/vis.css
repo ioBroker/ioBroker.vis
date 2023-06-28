@@ -107,11 +107,11 @@ body, html {
 .vis-editmode-widget-name {
     font-size: 10px !important;
     background: #002e4f;
-    border-radius: 3px 3px 0 0 !important;
+    border-radius: 3px 3px 0 0;
     position: absolute !important;
-    top: -14px !important;
+    top: -14px;
     left: 0 !important;
-    padding: 1px 16px 1px 3px !important;
+    padding: 1px 16px 1px 3px;
     font-family: Arial, Helvetica, sans-serif !important;
     overflow: visible !important;
     text-shadow: none !important;
@@ -134,17 +134,17 @@ body, html {
     background: white;
     color: black;
 }
-.vis-editmode-widget-name.bottom {
+.vis-editmode-widget-name.vis-editmode-widget-name-bottom {
     top: -0;
     border-radius: 0 0 3px 3px;
     opacity: 0.5;
     z-index: 1002;
 }
-.vis-editmode-widget-name.selected.dark {
+.vis-editmode-widget-name.vis-editmode-widget-name-selected.dark {
     background: #ffc733;
     color: black;
 }
-.vis-editmode-widget-name.selected.light {
+.vis-editmode-widget-name.vis-editmode-widget-name-selected.light {
     background: #0064c0;
     color: #ffffff;
 }

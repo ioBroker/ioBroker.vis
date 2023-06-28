@@ -17,10 +17,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import AnchorIcon from '@mui/icons-material/Anchor';
-import ExpandIcon from '@mui/icons-material/Expand';
-import UpIcon from '@mui/icons-material/ArrowUpward';
-import DownIcon from '@mui/icons-material/ArrowDownward';
+import {
+    Anchor as AnchorIcon,
+    Expand as ExpandIcon,
+    ArrowUpward as UpIcon,
+    ArrowDownward as DownIcon,
+} from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
@@ -95,7 +97,16 @@ class VisBaseWidget extends React.Component {
 
     componentDidMount() {
         // register service ref by view for resize and move only in edit mode
-        this.props.registerRef && this.props.registerRef(this.props.id, this.uuid, this.widDiv, this.refService, this.onMove, this.onResize, this.onTempSelect, this.onCommandBound);
+        this.props.registerRef && this.props.registerRef(
+            this.props.id,
+            this.uuid,
+            this.widDiv,
+            this.refService,
+            this.onMove,
+            this.onResize,
+            this.onTempSelect,
+            this.onCommandBound,
+        );
     }
 
     componentWillUnmount() {
@@ -412,7 +423,7 @@ class VisBaseWidget extends React.Component {
     }
 
     onMove = (x, y, save, calculateRelativeWidgetPosition) => {
-        if (this.state.multiViewWidget || !this.props.editMode) {
+        if (this.state.multiViewWidget || !this.state.editMode) {
             return;
         }
 
@@ -567,7 +578,7 @@ class VisBaseWidget extends React.Component {
                     }
                 });
                 this.resize = false;
-                this.props.onWidgetsChanged([{
+                this.props.context.onWidgetsChanged([{
                     wid: this.props.id,
                     view: this.props.view,
                     style: {
@@ -651,7 +662,7 @@ class VisBaseWidget extends React.Component {
                     this.shadowDiv.remove();
                     this.shadowDiv = null;
 
-                    this.props.onWidgetsChanged([{
+                    this.props.context.onWidgetsChanged([{
                         wid: this.props.id,
                         view: this.props.view,
                         style: {
@@ -660,7 +671,7 @@ class VisBaseWidget extends React.Component {
                         },
                     }], this.props.view, { order: this.movement.order });
                 } else {
-                    this.props.onWidgetsChanged([{
+                    this.props.context.onWidgetsChanged([{
                         wid: this.props.id,
                         view: this.props.view,
                         style: {
@@ -705,7 +716,11 @@ class VisBaseWidget extends React.Component {
         this.props.mouseDownOnView(e, this.props.id, this.props.isRelative, true);
     }
 
-    getResizeHandlers() {
+    getResizeHandlers(selected, widget) {
+        if (!this.state.editMode || !selected || this.props.selectedWidgets?.length !== 1) {
+            return null;
+        }
+
         const thickness = 0.4;
         const shift = 0.3;
         const square = 0.4;
@@ -716,8 +731,8 @@ class VisBaseWidget extends React.Component {
         const thicknessEm = `${thickness}em`;
         const offsetEm = `${shift - thickness}em`;
 
-        const widgetWidth100 = this.props.context.views[this.props.view].widgets[this.props.id].style.width === '100%';
-        const widgetHeight100 = this.props.context.views[this.props.view].widgets[this.props.id].style.height === '100%';
+        const widgetWidth100 = widget.style.width === '100%';
+        const widgetHeight100 = widget.style.height === '100%';
 
         const color = '#014488'; // it is so, to be able to change color in web storm
         const border = `0.1em dashed ${color}`;
@@ -734,17 +749,17 @@ class VisBaseWidget extends React.Component {
         const RESIZERS_OPACITY = 0.9;
         const RESIZERS_OPACITY_DISABLED = 0.5;
 
-        const isRelative = this.props.isRelative;
+        const isRelative = widget.usedInWidget || this.props.isRelative;
 
         const controllable = {
             top: !isRelative && resizeHandlers.includes('n'),
-            bottom: !widgetHeight100 && resizeHandlers.includes('s'),
+            bottom: !widget.usedInWidget && !widgetHeight100 && resizeHandlers.includes('s'),
             left: !isRelative && resizeHandlers.includes('w'),
-            right: !widgetWidth100 && resizeHandlers.includes('e'),
+            right: !widget.usedInWidget && !widgetWidth100 && resizeHandlers.includes('e'),
             'top-left': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('nw'),
             'top-right': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('ne'),
             'bottom-left': !widgetHeight100 && !widgetWidth100 && !isRelative && resizeHandlers.includes('sw'),
-            'bottom-right': !widgetHeight100 && !widgetWidth100 && resizeHandlers.includes('se'),
+            'bottom-right': !widgetHeight100 && !widgetWidth100 && !widget.usedInWidget && resizeHandlers.includes('se'),
         };
 
         const handlers = {
@@ -893,7 +908,12 @@ class VisBaseWidget extends React.Component {
 
     // eslint-disable-next-line react/no-unused-class-component-methods
     isWidgetFilteredOut(widgetData) {
-        return VisBaseWidget.isWidgetFilteredOutStatic(this.props.viewsActiveFilter, widgetData, this.props.view, this.props.editMode);
+        return VisBaseWidget.isWidgetFilteredOutStatic(
+            this.props.viewsActiveFilter,
+            widgetData,
+            this.props.view,
+            this.state.editMode,
+        );
     }
 
     // eslint-disable-next-line react/no-unused-class-component-methods
@@ -996,7 +1016,7 @@ class VisBaseWidget extends React.Component {
     changeOrder(e, dir) {
         e.stopPropagation();
         e.preventDefault();
-        if (this.state.multiViewWidget || !this.props.editMode) {
+        if (this.state.multiViewWidget || !this.state.editMode) {
             return;
         }
 
@@ -1018,7 +1038,7 @@ class VisBaseWidget extends React.Component {
             order[pos] = nextId;
         }
 
-        this.props.onWidgetsChanged(null, this.props.view, { order });
+        this.props.context.onWidgetsChanged(null, this.props.view, { order });
     }
 
     static formatValue(value, decimals, _format) {
@@ -1388,7 +1408,7 @@ class VisBaseWidget extends React.Component {
 
         const widget = this.props.context.views[this.props.view].widgets[this.props.id];
 
-        this.props.onWidgetsChanged([{
+        this.props.context.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
@@ -1405,7 +1425,7 @@ class VisBaseWidget extends React.Component {
         e.preventDefault();
         const widget = this.props.context.views[this.props.view].widgets[this.props.id];
 
-        this.props.onWidgetsChanged([{
+        this.props.context.onWidgetsChanged([{
             wid: this.props.id,
             view: this.props.view,
             style: {
@@ -1576,7 +1596,7 @@ class VisBaseWidget extends React.Component {
             this.props.context.showWidgetNames !== false
         ) {
             // show widget name on widget body
-            const widgetNameBottom = this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15);
+            const widgetNameBottom = !widget.usedInWidget && (this.refService.current?.offsetTop === 0 || (this.refService.current?.offsetTop && this.refService.current?.offsetTop < 15));
 
             // come again when the ref is filled
             if (!this.refService.current) {
@@ -1585,7 +1605,7 @@ class VisBaseWidget extends React.Component {
 
             const [multiView, multiId] = this.state.multiViewWidget ? this.props.id.split('_') : [null, null];
 
-            const resizable = this.isResizable();
+            const resizable = !widget.usedInWidget && this.isResizable();
 
             widgetName = <div
                 title={this.state.multiViewWidget ?
@@ -1593,20 +1613,20 @@ class VisBaseWidget extends React.Component {
                     (this.props.tpl === '_tplGroup' ? I18n.t('Switch to group edit mode by double click') : null)}
                 className={Utils.clsx(
                     'vis-editmode-widget-name',
-                    selected && 'selected',
+                    selected && 'vis-editmode-widget-name-selected',
                     this.state.widgetHint,
-                    widgetNameBottom && 'bottom',
+                    widgetNameBottom && 'vis-editmode-widget-name-bottom',
                     this.props.isRelative && resizable && 'vis-editmode-widget-name-long',
                 )}
             >
                 <span>{this.state.multiViewWidget ? I18n.t('%s from %s', multiId, multiView) : (widget.data?.name || this.props.id)}</span>
-                {this.state.multiViewWidget ? null :
+                {this.state.multiViewWidget || widget.usedInWidget ? null :
                     <AnchorIcon onMouseDown={e => this.onToggleRelative(e)} className={Utils.clsx('vis-anchor', this.props.isRelative ? 'vis-anchor-enabled' : 'vis-anchor-disabled')} />}
-                {!this.state.multiViewWidget && this.props.isRelative && resizable ?
-                    <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} /> : null}
+                {this.state.multiViewWidget || !this.props.isRelative || !resizable || widget.usedInWidget ? null :
+                    <ExpandIcon onMouseDown={e => this.onToggleWidth(e)} className={Utils.clsx('vis-expand', widget.style ? 'vis-expand-enabled' : 'vis-expand-disabled')} />}
             </div>;
 
-            if (this.props.isRelative) {
+            if (this.props.isRelative && !this.state.multiViewWidget && !widget.usedInWidget) {
                 const pos = this.props.relativeWidgetOrder.indexOf(this.props.id);
                 const showUp = !!pos;
                 let showDown = pos !== this.props.relativeWidgetOrder.length - 1;
@@ -1620,7 +1640,7 @@ class VisBaseWidget extends React.Component {
 
                 if (showUp || showDown) {
                     widgetMoveButtons = <div
-                        className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'bottom')}
+                        className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'vis-editmode-widget-name-bottom')}
                         style={{ width: !showUp || !showDown ? 30 : undefined }}
                     >
                         <div className="vis-editmode-widget-number">{this.props.relativeWidgetOrder.indexOf(this.props.id) + 1}</div>
@@ -1641,7 +1661,8 @@ class VisBaseWidget extends React.Component {
         }
 
         const overlay =
-            !this.state.hideHelper &&                        // if the helper does not hidden
+            !this.state.hideHelper &&                        // if the helper not hidden
+            !widget.usedInWidget &&                          // not used in other widget, that has own overlay
             this.state.editMode &&                           // if edit mode
             !widget.data.locked &&                           // if not locked
             (!widget.groupid || this.props.selectedGroup) && // if not in group or in the edit group mode
@@ -1652,6 +1673,7 @@ class VisBaseWidget extends React.Component {
                 /> : null;
 
         let groupInstructions = null;
+
         // Show border of the group if in group edit mode
         if (this.props.selectedGroup === this.props.id) {
             style.borderBottom = '1px dotted #888';
@@ -1685,7 +1707,7 @@ class VisBaseWidget extends React.Component {
             {widgetName}
             {widgetMoveButtons}
             {overlay}
-            {this.state.editMode && this.state.selectedOne ? this.getResizeHandlers() : null}
+            {this.getResizeHandlers(selected, widget)}
             {rxWidget}
             {groupInstructions}
         </div>;

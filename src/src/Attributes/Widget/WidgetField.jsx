@@ -743,6 +743,7 @@ const WidgetField = props => {
                 options = [];
                 Object.keys(props.project).forEach(view =>
                     props.project[view].widgets && Object.keys(props.project[view].widgets)
+                        .filter(wid => field.withGroups || !props.project[props.selectedView].widgets[wid].grouped)
                         .forEach(wid => options.push({
                             wid,
                             view,
@@ -751,6 +752,7 @@ const WidgetField = props => {
                         })));
             } else {
                 options = Object.keys(props.project[props.selectedView].widgets)
+                    .filter(wid => field.withGroups || !props.project[props.selectedView].widgets[wid].grouped)
                     .map(wid => ({
                         wid,
                         view: props.selectedView,
@@ -1076,14 +1078,16 @@ const WidgetField = props => {
                         props.changeProject(_project);
                     },
                     {
-                        projectName,
-                        instance,
-                        adapterName,
-                        socket: props.socket,
+                        context: {
+                            socket: props.socket,
+                            projectName,
+                            instance,
+                            adapterName,
+                            views: props.project,
+                        },
                         selectedView: props.selectedView,
                         selectedWidgets: props.selectedWidgets,
                         selectedWidget: props.selectedWidgets.length === 1 ? props.selectedWidgets[0] : props.selectedWidgets,
-                        project: props.project,
                     },
                 );
             } catch (e) {

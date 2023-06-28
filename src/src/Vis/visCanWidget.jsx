@@ -76,6 +76,8 @@ class VisCanWidget extends VisBaseWidget {
 
         this.refViews = {};
 
+        this.isCanWidget = true;
+
         this.state = {
             mounted: false,
             legacyViewContainers: [],
@@ -99,7 +101,6 @@ class VisCanWidget extends VisBaseWidget {
 
     setupSubscriptions() {
         this.bindings = {};
-        this.isCanWidget = true;
 
         const linkContext = {
             IDs: [],
@@ -1164,7 +1165,7 @@ class VisCanWidget extends VisBaseWidget {
                                     break;
                                 }
                             }
-                            // no existing prepend widgets found, so place first
+                            // no existing prepending widgets found, so place first
                             if (!div) {
                                 parentDiv.appendChild(widgetFragment);
                             }
@@ -1259,7 +1260,7 @@ class VisCanWidget extends VisBaseWidget {
 
                 this.onCommand('updateContainers');
             } else {
-                console.log('Div not jet rendered');
+                console.log('Div not yet rendered');
             }
 
             this.props.registerRef && this.props.registerRef(

@@ -152,7 +152,7 @@ class BasicViewInWidget extends VisRxWidget {
                                 this.setState({ showViewSelector: false }, () => {
                                     // Say to view to cancel ignoring clicks
                                     this.props.onIgnoreMouseEvents(false);
-                                    this.props.onWidgetsChanged([{
+                                    this.props.context.onWidgetsChanged([{
                                         wid: this.props.id,
                                         view: this.props.view,
                                         data: {
@@ -230,7 +230,6 @@ BasicViewInWidget.propTypes = {
     views: PropTypes.object.isRequired,
     view: PropTypes.string.isRequired,
     editMode: PropTypes.bool.isRequired,
-    editModeComponentClass: PropTypes.string,
     onIgnoreMouseEvents: PropTypes.func,
 };
 

@@ -897,17 +897,10 @@ class VisView extends React.Component {
         // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
-
-        const {
-            context, // common
-            id,
-        } = options;
-
         const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
 
         return <Widget
-            {...context} // Todo: migrate ALL widgets on context
-            key={`${index}_${id}`}
+            key={`${index}_${options.id}`}
             tpl={widget.tpl}
             {...options}
         />;
@@ -1358,9 +1351,14 @@ class VisView extends React.Component {
                     if (id === this.props.selectedGroup) {
                         return;
                     }
+
                     const widget = this.props.context.views[this.props.view].widgets[id];
                     // Ignore grouped widgets in non-group-edit mode. They will be rendered in BasicGroup
                     if (!widget || (widget.grouped && !this.props.selectedGroup)) {
+                        return;
+                    }
+
+                    if (!this.props.selectedGroup && widget.usedInWidget) { // do not show built in widgets on view directly
                         return;
                     }
 
