@@ -1018,6 +1018,7 @@ const Widget = props => {
                                                                     disabled={disabled}
                                                                     field={field}
                                                                     widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                                    widgetId={props.selectedWidgets.length > 1 ? null : props.selectedWidgets[0]}
                                                                     isStyle={group.isStyle}
                                                                     index={group.index}
                                                                     isDifferent={isDifferent[field.name]}

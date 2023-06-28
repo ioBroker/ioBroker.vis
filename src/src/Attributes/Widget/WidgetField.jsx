@@ -208,6 +208,7 @@ const WidgetField = props => {
         error,
         disabled,
         index,
+        widgetId,
     } = props;
 
     let customLegacyComponent = null;
@@ -743,7 +744,7 @@ const WidgetField = props => {
                 options = [];
                 Object.keys(props.project).forEach(view =>
                     props.project[view].widgets && Object.keys(props.project[view].widgets)
-                        .filter(wid => field.withGroups || !props.project[props.selectedView].widgets[wid].grouped)
+                        .filter(wid => (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) && (field.withSelf || wid !== widgetId))
                         .forEach(wid => options.push({
                             wid,
                             view,
@@ -752,7 +753,7 @@ const WidgetField = props => {
                         })));
             } else {
                 options = Object.keys(props.project[props.selectedView].widgets)
-                    .filter(wid => field.withGroups || !props.project[props.selectedView].widgets[wid].grouped)
+                    .filter(wid => (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) && (field.withSelf || wid !== widgetId))
                     .map(wid => ({
                         wid,
                         view: props.selectedView,

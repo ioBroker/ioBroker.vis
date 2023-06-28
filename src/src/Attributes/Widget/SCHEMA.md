@@ -181,6 +181,7 @@ onChange: async (field, data, changeData, socket) => {
     - `tpl` - [optional] type of the widget, like `tplMaterial2Switches`
     - `all` - [optional] if true, all widgets of all views will be shown, not only from the current view. Default is false.
     - `withGroups` - [optional] if true, grouped widgets will be shown too. Default is false.
+    - `withSelf` - [optional] if true, current widget will be shown in the list too.
   - `select-views` - Select view via the drop-down menu with folders.
     - `multiple` - [optional] if false, only one view can be selected. Default is true. 
   - `groups` - Selects a user group
