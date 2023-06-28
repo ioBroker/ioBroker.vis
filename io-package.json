@@ -1,8 +1,21 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.0.36",
+        "version": "2.1.0",
         "news": {
+            "2.1.0": {
+                "en": "Allowed to add widgets to widgets",
+                "de": "Erlaubt, Widgets zu Widgets hinzuzufügen",
+                "ru": "Разрешено добавлять виджеты в виджеты",
+                "pt": "Permite adicionar widgets a widgets",
+                "nl": "Toegestaan om wedgetten toe te voegen aan wedgets",
+                "fr": "Permet d'ajouter des widgets aux widgets",
+                "it": "Permesso di aggiungere widget a widgets",
+                "es": "Permitido añadir widgets a widgets",
+                "pl": "Wszystko, aby dodać widgety do widgetów",
+                "uk": "Додайте віджети до віджетів",
+                "zh-cn": "允许添加令人发指的目标"
+            },
             "2.0.36": {
                 "en": "Corrected error with connection",
                 "de": "Fehler behoben mit Verbindung",

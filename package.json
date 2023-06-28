@@ -1,7 +1,7 @@
 {
   "name": "iobroker.vis",
   "description": "Graphical user interface for ioBroker.",
-  "version": "2.0.36",
+  "version": "2.1.0",
   "author": {
     "name": "bluefox",
     "email": "dogafox@gmail.com"
@@ -63,7 +63,8 @@
     "release-patch": "release-script patch --yes --no-update-lockfile",
     "release-minor": "release-script minor --yes --no-update-lockfile",
     "release-major": "release-script major --yes --no-update-lockfile",
-    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd .."
+    "update-packages": "ncu --upgrade && cd src && ncu --upgrade && cd ..",
+    "npm": "npm i && cd src && npm i -f"
   },
   "license": "CC-BY-NC-4.0"
 }
