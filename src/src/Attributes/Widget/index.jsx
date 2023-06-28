@@ -790,8 +790,8 @@ const Widget = props => {
                 <div className={props.classes.widgetNameText}>{widgetLabel}</div>
             </div>
             {!widgets[props.selectedWidgets[0]].marketplace && <>
-                <Button onClick={() => setCssDialogOpened(true)}>CSS</Button>
-                <Button onClick={() => setJsDialogOpened(true)}>JS</Button>
+                {window.location.port === '3000' ? <Button onClick={() => setCssDialogOpened(true)}>CSS</Button> : null}
+                {window.location.port === '3000' ? <Button onClick={() => setJsDialogOpened(true)}>JS</Button> : null}
                 {cssDialogOpened ? <WidgetCSS
                     onClose={() => setCssDialogOpened(false)}
                     widget={widgets[props.selectedWidgets[0]]}

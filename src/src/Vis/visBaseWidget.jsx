@@ -1515,6 +1515,7 @@ class VisBaseWidget extends React.Component {
             style,
             id: `rx_${this.props.id}`,
             refService: this.refService,
+            widget,
         };
 
         // If the resizable flag can be controlled dynamically by settings, and it is now not resizable

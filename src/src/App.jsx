@@ -508,6 +508,20 @@ class App extends Runtime {
                     delete widgets[member];
                 });
             }
+            if (widgets[selectedWidget].usedInWidget) {
+                // find widget where this widget is used
+                Object.keys(widgets).forEach(wid => {
+                    const oWidget = widgets[wid];
+                    const attrs = Object.keys(oWidget.data);
+                    attrs.forEach(attr => {
+                        if (attr.startsWith('widget') && oWidget.data[attr] === selectedWidget) {
+                            console.log(`Widget removed from ${wid}, attribute ${attr}`);
+                            oWidget.data[attr] = '';
+                        }
+                    });
+                });
+            }
+
             delete widgets[selectedWidget];
         });
         this.setSelectedWidgets([]);
