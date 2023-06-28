@@ -385,6 +385,10 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick, components) {
+        if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
+            return content;
+        }
+
         const MyCard = components.Card || Card;
         const MyCardContent = components.CardContent || CardContent;
 
