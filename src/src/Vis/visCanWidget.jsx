@@ -252,6 +252,16 @@ class VisCanWidget extends VisBaseWidget {
     // this method may be not in form onCommand = command => {}
     onCommand(command, options) {
         if (!super.onCommand(command, options)) {
+            if (command === 'onMove') {
+               // move by canJS widgets the name and overlapping div
+                if (this.refService.current && this.widDiv) {
+                    this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
+                    this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
+                    // Move helper to actual widget
+                    this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
+                    this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                }
+            } else
             if (command === 'updateContainers') {
                 // try to find 'vis-view-container' in it
                 const containers = this.widDiv.querySelectorAll('.vis-view-container');

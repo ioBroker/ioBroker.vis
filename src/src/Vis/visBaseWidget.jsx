@@ -27,7 +27,7 @@ import {
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import {
-    addClass,
+    addClass, findWidgetUsages,
     removeClass,
     replaceGroupAttr,
 } from './visUtils';

@@ -615,6 +615,17 @@ class VisView extends React.Component {
             if (widgetsRefs[wid]?.onMove) {
                 widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
             }
+
+            // if widget has included widgets => inform them about the new size
+            const oWidget = this.props.context.views[this.props.view].widgets[wid];
+            const attrs = Object.keys(oWidget.data);
+            attrs.forEach(attr => {
+                if (attr.startsWith('widget') && oWidget.data[attr]) {
+                    if (this.widgetsRefs[oWidget.data[attr]]?.onCommand) {
+                        this.widgetsRefs[oWidget.data[attr]].onCommand('onMove');
+                    }
+                }
+            });
         });
     } : null;
 
