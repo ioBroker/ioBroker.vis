@@ -452,5 +452,10 @@
   "to version": "zur Version",
   "version": "Ausführung",
   "Add new or update existing widget": "Neues Widget hinzufügen oder vorhandenes aktualisieren\n",
-  "Widget was deleted in widgeteria": "Das Widget wurde in der Widgeteria gelöscht"
+  "Widget was deleted in widgeteria": "Das Widget wurde in der Widgeteria gelöscht",
+  "Keep on old place": "Bleiben Sie am alten Ort",
+  "Move to new place": "An einen neuen Ort ziehen",
+  "Should it be moved to new place?": "Sollte es an einen neuen Ort verlegt werden?",
+  "Usage of widget %s": "Verwendung des Widgets %s",
+  "This widget is already used in \"%s\"": "Dieses Widget wird bereits in „%s“ verwendet"
 }

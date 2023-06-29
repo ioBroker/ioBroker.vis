@@ -443,9 +443,9 @@ const WidgetField = props => {
             <DialogTitle>{I18n.t('Usage of widget %s', askForUsage.wid)}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
-                    {I18n.t('This widget is already used in %s widget', usages[0].wid)}
+                    {I18n.t('This widget is already used in "%s"', usages[0].wid)}
                     <br />
-                    {I18n.t('Should it be moved to new widget?')}
+                    {I18n.t('Should it be moved to new place?')}
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -460,7 +460,7 @@ const WidgetField = props => {
                     }}
                     startIcon={<Check />}
                 >
-                    {I18n.t('Move')}
+                    {I18n.t('Move to new place')}
                 </Button>
                 <Button
                     color="grey"
@@ -468,7 +468,7 @@ const WidgetField = props => {
                     onClick={() => setAskForUsage(null)}
                     startIcon={<Close />}
                 >
-                    {I18n.t('Keep in old widget')}
+                    {I18n.t('Keep on old place')}
                 </Button>
             </DialogActions>
         </Dialog>;
