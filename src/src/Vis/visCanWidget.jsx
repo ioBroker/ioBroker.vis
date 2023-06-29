@@ -1067,7 +1067,7 @@ class VisCanWidget extends VisBaseWidget {
 
         // calculate current styles and data (apply current bindings)
         if (!update) {
-            let { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
+            const { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
             const newData = JSON.stringify(widgetData);
             const newStyle = JSON.stringify(widgetStyle);
             // detect if update required
@@ -1129,7 +1129,7 @@ class VisCanWidget extends VisBaseWidget {
         }
 
         // calculate new widgetData and widgetStyle
-        let { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
+        const { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
 
         const newData = JSON.stringify(widgetData);
         const newStyle = JSON.stringify(widgetStyle);

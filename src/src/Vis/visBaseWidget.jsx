@@ -64,6 +64,12 @@ class VisBaseWidget extends React.Component {
             resizable: true,
             resizeHandles: ['n', 'e', 's', 'w', 'nw', 'ne', 'sw', 'se'],
             widgetHint: props.context.widgetHint,
+            isHidden: VisBaseWidget.isWidgetFilteredOutStatic(
+                props.viewsActiveFilter,
+                widget.data,
+                props.view,
+                props.editMode,
+            ),
             gap: style.position === 'relative' ? (Number.isFinite(props.context.views[props.view].settings.rowGap) ? parseFloat(props.context.views[props.view].settings.rowGap) : 0) : 0,
         };
 
@@ -219,10 +225,18 @@ class VisBaseWidget extends React.Component {
         let _style = state.style._originalData ? state.style._originalData : JSON.stringify(state.style);
         let _data = state.data._originalData ? state.data._originalData : JSON.stringify(state.data);
 
+        const isHidden = VisBaseWidget.isWidgetFilteredOutStatic(
+            props.viewsActiveFilter,
+            widget.data,
+            props.view,
+            props.editMode,
+        );
+
         // compare with new style and data
         if (JSON.stringify(widget.style || {}) !== _style ||
             JSON.stringify(widget.data || {}) !== _data ||
-            gap !== state.gap
+            gap !== state.gap ||
+            isHidden !== state.isHidden
         ) {
             _style = JSON.parse(_style);
             Object.keys(_style).forEach(attr => {
@@ -253,6 +267,7 @@ class VisBaseWidget extends React.Component {
             VisBaseWidget.replacePRJ_NAME(data, style, props);
 
             newState = {};
+            newState.isHidden = isHidden;
             newState.style = style;
             newState.data = data;
             newState.gap = gap;
@@ -897,7 +912,7 @@ class VisBaseWidget extends React.Component {
             // we cannot use here find as filterkey could be observable (can) and is not normal array
             for (let f = 0; f < widgetData.filterkey.length; f++) {
                 if (vf.includes(widgetData.filterkey[f])) {
-                    return false;
+                    return false; // widget is not hidden
                 }
             }
             return true;
