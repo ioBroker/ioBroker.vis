@@ -407,6 +407,11 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                     ...deepClone(group),
                     index: i,
                     name: `${group.singleName}-${i}`,
+                    iterable: {
+                        group: group.singleName,
+                        isFirst: i === from,
+                        isLast: i === to,
+                    },
                 };
                 indexedGroup.fields.forEach((field, ii) => {
                     field.singleName = field.name;
@@ -456,6 +461,11 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         ...deepClone(field),
                         index: i,
                         name: `${field.singleName}${i}`,
+                        iterable: {
+                            group: field.singleName,
+                            isFirst: i === from,
+                            isLast: i === to,
+                        },
                     };
                     indexedFields.push(indexedField);
                 }

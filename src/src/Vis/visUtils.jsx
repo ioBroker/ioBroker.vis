@@ -1001,6 +1001,32 @@ function parseDimension(field) {
     return result;
 }
 
+function findWidgetUsages(views, view, widgetId, _result) {
+    if (view) {
+        _result = _result || [];
+        // search in specific view
+
+        Object.keys(views[view].widgets).forEach(wid => {
+            if (wid === widgetId) {
+                return;
+            }
+            const oWidget = views[view].widgets[wid];
+            const attrs = Object.keys(oWidget.data);
+            attrs.forEach(attr => {
+                if (attr.startsWith('widget') && oWidget.data[attr] === widgetId) {
+                    _result.push({ view, wid, attr });
+                }
+            });
+        });
+        return _result;
+    }
+
+    // search in all views
+    const result = [];
+    Object.keys(views).forEach(_view => _view !== '___settings' && findWidgetUsages(views, _view, widgetId, _result));
+    return result;
+}
+
 // module.exports = {
 //     getUsedObjectIDs,
 //     extractBinding,
@@ -1026,4 +1052,5 @@ export {
     getRemoteWidgets,
     registerWidgetsLoadIndicator,
     readFile,
+    findWidgetUsages,
 };

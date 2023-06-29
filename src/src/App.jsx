@@ -40,7 +40,7 @@ import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 import Runtime from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
-import { loadComponent } from './Vis/visUtils';
+import { findWidgetUsages, loadComponent } from './Vis/visUtils';
 import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 
 const generateClassName = createGenerateClassName({
@@ -510,15 +510,9 @@ class App extends Runtime {
             }
             if (widgets[selectedWidget].usedInWidget) {
                 // find widget where this widget is used
-                Object.keys(widgets).forEach(wid => {
-                    const oWidget = widgets[wid];
-                    const attrs = Object.keys(oWidget.data);
-                    attrs.forEach(attr => {
-                        if (attr.startsWith('widget') && oWidget.data[attr] === selectedWidget) {
-                            console.log(`Widget removed from ${wid}, attribute ${attr}`);
-                            oWidget.data[attr] = '';
-                        }
-                    });
+                findWidgetUsages(project, null, selectedWidget).forEach(usage => {
+                    console.log(`Widget removed from ${usage.wid}, attribute ${usage.attr}`);
+                    project[usage.view].widgets[usage.wid].data[usage.attr] = '';
                 });
             }
 

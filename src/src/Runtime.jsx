@@ -27,7 +27,7 @@ import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import { I18n, Loader, LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
-import { readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
+import { findWidgetUsages, readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 const generateClassName = createGenerateClassName({
@@ -259,15 +259,7 @@ class Runtime extends GenericApp {
                 }
 
                 // try to find this widget in other widgets under "widget" or "widgetX" name
-                const found = widgetIDs.find(widgetId2 => {
-                    if (widgetId2 === widgetId) {
-                        return false;
-                    }
-                    const oWidget2 = oView.widgets[widgetId2];
-                    const attrs = Object.keys(oWidget2.data);
-                    return attrs.find(attr => attr.startsWith('widget') && oWidget2.data[attr] === widgetId);
-                });
-                if (found) {
+                if (findWidgetUsages(project, view, widgetId).length) {
                     oWidget.usedInWidget = true;
                 } else if (oWidget.usedInWidget) {
                     delete oWidget.usedInWidget;

@@ -6,12 +6,17 @@ import PropTypes from 'prop-types';
 import {
     Autocomplete, Box, Button, Checkbox, Fade, IconButton, Input, ListItemText,
     ListSubheader, MenuItem, Paper, Popper, Select, Slider, TextField, FormControl,
-    FormHelperText, ListItemIcon,
+    FormHelperText, ListItemIcon, DialogActions,
+    Dialog, DialogTitle, DialogContent, DialogContentText,
 } from '@mui/material';
 
-import FileIcon from '@mui/icons-material/InsertDriveFile';
-import ClearIcon from '@mui/icons-material/Clear';
-import EditIcon from '@mui/icons-material/Edit';
+import {
+    InsertDriveFile as FileIcon,
+    Clear as ClearIcon,
+    Edit as EditIcon,
+    Check,
+    Close,
+} from '@mui/icons-material';
 import { FaFolderOpen as FolderOpenedIcon } from 'react-icons/fa';
 
 import {
@@ -27,6 +32,7 @@ import {
 
 import TextDialog from './TextDialog';
 import MaterialIconSelector from '../../Components/MaterialIconSelector';
+import { findWidgetUsages } from '../../Vis/visUtils';
 
 const POSSIBLE_UNITS = ['px', '%', 'em', 'rem', 'vh', 'vw', 'vmin', 'vmax', 'ex', 'ch', 'cm', 'mm', 'in', 'pt', 'pc'];
 
@@ -193,10 +199,23 @@ const t = (word, ...args) => {
     return wordsCache[hash];
 };
 
+function modifyWidgetUsages(project, usedInView, usedWidgetId, inNewWidgetId, inAttr) {
+    // find where it is used
+    const newProject = JSON.parse(JSON.stringify(project));
+    const usedIn = findWidgetUsages(newProject, usedInView, usedWidgetId);
+    usedIn.forEach(usage => {
+        newProject[usage.view].widgets[usage.wid].data[usage.attr] = '';
+    });
+    newProject[usedInView].widgets[inNewWidgetId].data[inAttr] = usedWidgetId;
+
+    return newProject;
+}
+
 const WidgetField = props => {
     const [idDialog, setIdDialog] = useState(false);
 
     const [objectCache, setObjectCache] = useState(null);
+    const [askForUsage, setAskForUsage] = useState(null);
 
     const {
         field,
@@ -413,6 +432,49 @@ const WidgetField = props => {
             customLegacyComponent.init.call(refCustom.current.children[0] || refCustom.current, field.name, propValue);
         }
     }, []);
+
+    if (askForUsage) {
+        const usages = findWidgetUsages(props.project, props.selectedView, askForUsage.wid);
+        // show dialog with usage
+        return <Dialog
+            open={!0}
+            onClose={() => setAskForUsage(null)}
+        >
+            <DialogTitle>{I18n.t('Usage of widget %s', askForUsage.wid)}</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    {I18n.t('This widget is already used in %s widget', usages[0].wid)}
+                    <br />
+                    {I18n.t('Should it be moved to new widget?')}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button
+                    color="primary"
+                    variant="contained"
+                    default
+                    onClick={() => {
+                        const cb = askForUsage.cb;
+                        setAskForUsage(null);
+                        cb();
+                    }}
+                    startIcon={<Check />}
+                >
+                    {I18n.t('Move')}
+                </Button>
+                <Button
+                    color="grey"
+                    variant="contained"
+                    onClick={() => setAskForUsage(null)}
+                    startIcon={<Close />}
+                >
+                    {I18n.t('Keep in old widget')}
+                </Button>
+            </DialogActions>
+        </Dialog>;
+    }
+
+    // start the rendering of different types of fields
 
     if (customLegacyComponent) {
         // console.log(customLegacyComponent.input);
@@ -744,7 +806,10 @@ const WidgetField = props => {
                 options = [];
                 Object.keys(props.project).forEach(view =>
                     props.project[view].widgets && Object.keys(props.project[view].widgets)
-                        .filter(wid => (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) && (field.withSelf || wid !== widgetId))
+                        .filter(wid =>
+                            (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) &&
+                            (field.withSelf || wid !== widgetId) &&
+                            (!field.hideUsed || !props.project[props.selectedView].widgets[wid].usedInView))
                         .forEach(wid => options.push({
                             wid,
                             view,
@@ -753,7 +818,10 @@ const WidgetField = props => {
                         })));
             } else {
                 options = Object.keys(props.project[props.selectedView].widgets)
-                    .filter(wid => (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) && (field.withSelf || wid !== widgetId))
+                    .filter(wid =>
+                        (field.withGroups || !props.project[props.selectedView].widgets[wid].grouped) &&
+                        (field.withSelf || wid !== widgetId) &&
+                        (!field.hideUsed || !props.project[props.selectedView].widgets[wid].usedInView))
                     .map(wid => ({
                         wid,
                         view: props.selectedView,
@@ -775,7 +843,7 @@ const WidgetField = props => {
 
         return <Select
             variant="standard"
-            disabled={disabled}
+            disabled={disabled || (field.checkUsage && props.selectedWidgets.length > 1)}
             value={value}
             placeholder={isDifferent ? t('different') : null}
             defaultValue={field.default}
@@ -783,7 +851,24 @@ const WidgetField = props => {
                 root: props.classes.clearPadding,
                 select: Utils.clsx(props.classes.fieldContent, props.classes.clearPadding),
             }}
-            onChange={e => change(e.target.value)}
+            onChange={e => {
+                if (field.type === 'widget' &&
+                    field.checkUsage &&
+                    e.target.value &&
+                    props.project[props.selectedView].widgets[e.target.value]?.usedInWidget
+                ) {
+                    // Show dialog
+                    setAskForUsage({
+                        wid: e.target.value,
+                        cb: () => {
+                            const project = modifyWidgetUsages(props.project, props.selectedView, e.target.value, props.selectedWidgets[0], field.name);
+                            props.changeProject(project);
+                        },
+                    });
+                } else {
+                    change(e.target.value);
+                }
+            }}
             renderValue={_value => {
                 if (typeof options[0] === 'object') {
                     const item = options.find(o => o.value === _value);
