@@ -27,7 +27,7 @@ import {
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
 import {
-    addClass, findWidgetUsages,
+    addClass,
     removeClass,
     replaceGroupAttr,
 } from './visUtils';
@@ -103,16 +103,16 @@ class VisBaseWidget extends React.Component {
 
     componentDidMount() {
         // register service ref by view for resize and move only in edit mode
-        this.props.registerRef && this.props.registerRef(
-            this.props.id,
-            this.uuid,
-            this.widDiv,
-            this.refService,
-            this.onMove,
-            this.onResize,
-            this.onTempSelect,
-            this.onCommandBound,
-        );
+        this.props.registerRef && this.props.registerRef({
+            id: this.props.id,
+            uuid: this.uuid,
+            widDiv: this.widDiv,
+            refService: this.refService,
+            onMove: this.onMove,
+            onResize: this.onResize,
+            onTempSelect: this.onTempSelect,
+            onCommand: this.onCommandBound,
+        });
     }
 
     componentWillUnmount() {
@@ -120,15 +120,32 @@ class VisBaseWidget extends React.Component {
         this.updateInterval = null;
 
         // delete service ref from view only in edit mode
-        this.props.registerRef && this.props.registerRef(this.props.id, this.uuid);
+        this.props.registerRef && this.props.registerRef({ id: this.props.id, uuid: this.uuid, remove: true });
         if (this.shadowDiv) {
             this.shadowDiv.remove();
             this.shadowDiv = null;
         }
     }
 
-    // this method may be not in form onCommand = command => {}
+    // this method may be not in form onCommand = command => {}, as it can be overloaded
     onCommand(command) {
+        if (command === 'includePossible') {
+            const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
+            if (overlay && this.beforeIncludeColor === undefined) {
+                this.beforeIncludeColor = overlay.style.backgroundColor;
+                overlay.style.backgroundColor = 'rgba(0, 255, 0, 0.3)';
+            }
+            return true;
+        }
+        if (command === 'includePossibleNOT') {
+            if (this.beforeIncludeColor !== undefined) {
+                const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
+                overlay && (overlay.style.backgroundColor = this.beforeIncludeColor);
+                this.beforeIncludeColor = undefined;
+            }
+            return true;
+        }
+
         if (command === 'startStealMode') {
             this.stealCursor = this.refService.current.style.cursor || 'nocursor';
             this.refService.current.style.cursor = 'crosshair';
@@ -168,6 +185,11 @@ class VisBaseWidget extends React.Component {
         if (command === 'stopMove' || command === 'stopResize') {
             const overlay = this.refService.current?.querySelector('.vis-editmode-overlay');
             if (overlay) {
+                if (this.beforeIncludeColor !== undefined) {
+                    overlay.style.backgroundColor = this.beforeIncludeColor;
+                    this.beforeIncludeColor = undefined;
+                }
+
                 if (this.state.selected) {
                     overlay.className = addClass(overlay.className, 'vis-editmode-selected');
                 } else {

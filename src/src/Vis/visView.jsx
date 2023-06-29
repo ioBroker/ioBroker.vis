@@ -164,19 +164,19 @@ class VisView extends React.Component {
         return null;
     }
 
-    registerRef = (id, uuid, widDiv, refService, onMove, onResize, onTempSelect, onCommand) => {
-        if (onMove) {
-            this.widgetsRefs[id] = {
-                widDiv,
-                refService,
-                onMove,
-                onResize,
-                onTempSelect,
-                onCommand,
-                uuid,
-            };
-        } else if (this.widgetsRefs[id] && this.widgetsRefs[id].uuid === uuid) {
-            delete this.widgetsRefs[id];
+    registerRef = props => {
+        const widgetsRefs = this.widgetsRefs;
+        if (!props.remove) {
+            if (props.update) {
+                delete props.update;
+                Object.assign(widgetsRefs[props.id], props);
+            } else {
+                const id = props.id;
+                delete props.id;
+                widgetsRefs[id] = props;
+            }
+        } else if (widgetsRefs[props.id] && widgetsRefs[props.id].uuid === props.uuid) {
+            delete widgetsRefs[props.id];
         }
     };
 
@@ -441,11 +441,12 @@ class VisView extends React.Component {
         const widgets = this.getWidgetsInRect(this.selectDiv.getBoundingClientRect(), this.movement.simpleMode);
         if (JSON.stringify(widgets) !== JSON.stringify(this.movement.selectedWidgetsWithRectangle)) {
             // select
-            widgets.forEach(id => !this.movement.selectedWidgetsWithRectangle.includes(id) &&
-             this.widgetsRefs[id] &&
-              !this.props.context.views[this.props.view].widgets[id].data.locked &&
-               this.widgetsRefs[id].onTempSelect(true) &&
-               this.props.selectedGroup !== id);
+            widgets.forEach(id =>
+                !this.movement.selectedWidgetsWithRectangle.includes(id) &&
+                this.widgetsRefs[id] &&
+                !this.props.context.views[this.props.view].widgets[id].data.locked &&
+                this.widgetsRefs[id].onTempSelect(true) &&
+                this.props.selectedGroup !== id);
             // deselect
             this.movement.selectedWidgetsWithRectangle.forEach(id => !widgets.includes(id) && this.widgetsRefs[id] && this.widgetsRefs[id].onTempSelect(false));
             this.movement.selectedWidgetsWithRectangle = widgets.filter(widget => !this.props.context.views[this.props.view].widgets[widget].data.locked);
@@ -524,23 +525,25 @@ class VisView extends React.Component {
             y: 0,
         };
 
+        const widgetsRefs = this.widgetsRefs;
+
         this.props.selectedWidgets.forEach(selectedWidget => {
-            const widgetRect = this.widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+            const widgetRect = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
             if (e.pageX <= widgetRect.right && e.pageX >= widgetRect.left && e.pageY <= widgetRect.bottom && e.pageY >= widgetRect.top) {
-                this.movement.startWidget = this.widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
+                this.movement.startWidget = widgetsRefs[selectedWidget].refService.current.getBoundingClientRect();
             }
         });
 
         this.props.selectedWidgets.forEach(_wid => {
-            if (this.widgetsRefs[_wid]?.onMove) {
-                this.widgetsRefs[_wid].onMove(); // indicate start of movement
+            if (widgetsRefs[_wid]?.onMove) {
+                widgetsRefs[_wid].onMove(); // indicate the start of movement
             }
         });
 
         // Indicate about movement start
-        Object.keys(this.widgetsRefs).forEach(_wid => {
-            if (this.widgetsRefs[_wid]?.onCommand) {
-                this.widgetsRefs[_wid].onCommand('startMove');
+        Object.keys(widgetsRefs).forEach(_wid => {
+            if (widgetsRefs[_wid]?.onCommand) {
+                widgetsRefs[_wid].onCommand('startMove');
             }
         });
     };
@@ -576,15 +579,14 @@ class VisView extends React.Component {
             this.movement.y -= Math.ceil((this.movement.startWidget.top - viewRect.top + this.movement.y) % gridSize);
         }
 
-        // console.log(this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
-
         if (!this.movement.isResize && this.props.context.views[this.props.view].settings.snapType === 1) {
             const left = this.movement.startWidget.left + this.movement.x;
             const right = this.movement.startWidget.right + this.movement.x;
             const top = this.movement.startWidget.top + this.movement.y;
             const bottom = this.movement.startWidget.bottom + this.movement.y;
             for (const wid in this.widgetsRefs) {
-                if (wid === this.props.selectedWidgets[0]) {
+                // do not snap to itself
+                if (this.props.selectedWidgets.includes(wid)) {
                     continue;
                 }
                 const widgetRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
@@ -621,12 +623,44 @@ class VisView extends React.Component {
             const attrs = Object.keys(oWidget.data);
             attrs.forEach(attr => {
                 if (attr.startsWith('widget') && oWidget.data[attr]) {
-                    if (this.widgetsRefs[oWidget.data[attr]]?.onCommand) {
-                        this.widgetsRefs[oWidget.data[attr]].onCommand('onMove');
+                    if (widgetsRefs[oWidget.data[attr]]?.onCommand) {
+                        widgetsRefs[oWidget.data[attr]].onCommand('updatePosition');
                     }
                 }
             });
         });
+
+        // if only one widget selected => check if it can be added to other widget
+        if (this.props.selectedWidgets.length === 1 && this.widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
+            let found = false;
+            for (const wid in this.widgetsRefs) {
+                // do not snap to itself
+                if (this.props.selectedWidgets.includes(wid) ||
+                    !this.widgetsRefs[wid] ||
+                    !this.widgetsRefs[wid].canHaveWidgets ||
+                    !this.widgetsRefs[wid].onCommand ||
+                    !this.widgetsRefs[wid].refService?.current
+                ) {
+                    continue;
+                }
+                const baseRect = this.widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
+                const rect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                // check if widget can have other widgets inside
+                if (!found &&
+                    baseRect.top >= rect.top &&
+                    baseRect.left >= rect.left &&
+                    baseRect.right <= rect.right &&
+                    baseRect.bottom <= rect.bottom
+                ) {
+                    found = true;
+                    // we can add only to one widget
+                    this.widgetsRefs[wid].onCommand('includePossible');
+                } else {
+                    // ifnform all other widgets that they do not have inclusion
+                    this.widgetsRefs[wid].onCommand('includePossibleNOT');
+                }
+            }
+        }
     } : null;
 
     showRulers = hide => {
@@ -701,12 +735,38 @@ class VisView extends React.Component {
             });
         }
 
-        // Indicate about movement stop
+        // Indicate every widget about movement stop
         Object.keys(this.widgetsRefs).forEach(_wid => {
             if (this.widgetsRefs[_wid]?.onCommand) {
                 this.widgetsRefs[_wid].onCommand('stopMove');
             }
         });
+
+        // if only one widget selected => check if it can be added to other widget
+        if (this.props.selectedWidgets.length === 1 && this.widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
+            for (const wid in this.widgetsRefs) {
+                // do not add to itself
+                if (this.props.selectedWidgets.includes(wid) ||
+                    !this.widgetsRefs[wid] ||
+                    !this.widgetsRefs[wid].canHaveWidgets ||
+                    !this.widgetsRefs[wid].onCommand ||
+                    !this.widgetsRefs[wid].refService?.current
+                ) {
+                    continue;
+                }
+                const baseRect = this.widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
+                const rect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                // check if widget can have other widgets inside
+                if (baseRect.top >= rect.top &&
+                    baseRect.left >= rect.left &&
+                    baseRect.right <= rect.right &&
+                    baseRect.bottom <= rect.bottom
+                ) {
+                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], wid, (wid, toWid) =>
+                        this.widgetsRefs[toWid].onCommand('include', wid));
+                }
+            }
+        }
 
         this.showRulers(true);
     } : null;

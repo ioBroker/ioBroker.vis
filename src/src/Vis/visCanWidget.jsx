@@ -252,8 +252,8 @@ class VisCanWidget extends VisBaseWidget {
     // this method may be not in form onCommand = command => {}
     onCommand(command, options) {
         if (!super.onCommand(command, options)) {
-            if (command === 'onMove') {
-               // move by canJS widgets the name and overlapping div
+            if (command === 'updatePosition') {
+                // move by canJS widgets the name and overlapping div
                 if (this.refService.current && this.widDiv) {
                     this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
                     this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
@@ -1309,15 +1309,15 @@ class VisCanWidget extends VisBaseWidget {
                 console.log('Div not yet rendered');
             }
 
-            this.props.registerRef && this.props.registerRef(
-                wid,
-                this.widDiv || null,
-                this.refService,
-                this.onMove,
-                this.onResize,
-                this.onTempSelect,
-                this.onCommandBound,
-            );
+            this.props.registerRef && this.props.registerRef({
+                id: wid,
+                winDiv: this.widDiv || null,
+                refService: this.refService,
+                onMove: this.onMove,
+                onResize: this.onResize,
+                onTempSelect: this.onTempSelect,
+                onCommand: this.onCommandBound,
+            });
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
             const error = `can't render ${this.props.tpl} ${wid} on "${this.props.view}": `;

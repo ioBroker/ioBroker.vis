@@ -826,6 +826,8 @@ class Runtime extends GenericApp {
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
             toggleTheme={newThemeName => this.toggleTheme(newThemeName)}
+            askAboutInclude={this.askAboutInclude}
+            changeProject={this.changeProject}
         />;
     }
 
