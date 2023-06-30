@@ -1376,7 +1376,7 @@ class App extends Runtime {
     renderAskAboutIncludeDialog() {
         if (this.state.askAboutInclude) {
             return <Dialog
-                open={true}
+                open={!0}
                 onClose={() => this.setState({ askAboutInclude: null })}
             >
                 <DialogTitle id="alert-dialog-title">{I18n.t('Include widget?')}</DialogTitle>
@@ -1410,6 +1410,8 @@ class App extends Runtime {
                 </DialogActions>
             </Dialog>;
         }
+
+        return null;
     }
 
     askAboutInclude = (wid, toWid, cb) => this.setState({ askAboutInclude: { wid, toWid, cb } });

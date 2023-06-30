@@ -397,8 +397,22 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
         while (groupIndex > -1) {
             const group = fields[groupIndex];
             group.singleName = group.name;
-            const from = Number.isInteger(group.indexFrom) ? group.indexFrom : widgetData?.[group.indexFrom];
-            const to = Number.isInteger(group.indexTo) ? group.indexTo : widgetData?.[group.indexTo];
+            let from;
+            let indexFrom;
+            if (Number.isInteger(group.indexFrom)) {
+                from = group.indexFrom;
+            } else {
+                from = parseInt(widgetData?.[group.indexFrom]);
+                indexFrom = from;
+            }
+            let to;
+            let indexTo;
+            if (Number.isInteger(group.indexTo)) {
+                to = group.indexTo;
+            } else {
+                to = parseInt(widgetData?.[group.indexTo]);
+                indexTo = group.indexTo;
+            }
             delete group.indexFrom;
             delete group.indexTo;
             const indexedGroups = [];
@@ -411,6 +425,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                         group: group.singleName,
                         isFirst: i === from,
                         isLast: i === to,
+                        indexTo,
+                        indexFrom,
                     },
                 };
                 indexedGroup.fields.forEach((field, ii) => {
@@ -451,8 +467,22 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
             while (fieldIndex > -1) {
                 const field = group.fields[fieldIndex];
                 field.singleName = field.name;
-                const from = Number.isInteger(field.indexFrom) ? field.indexFrom : parseInt(widgetData?.[field.indexFrom]);
-                const to = Number.isInteger(field.indexTo) ? field.indexTo : parseInt(widgetData?.[field.indexTo]);
+                let from;
+                let indexFrom;
+                if (Number.isInteger(field.indexFrom)) {
+                    from = field.indexFrom;
+                } else {
+                    from = parseInt(widgetData?.[field.indexFrom]);
+                    indexFrom = from;
+                }
+                let to;
+                let indexTo;
+                if (Number.isInteger(field.indexTo)) {
+                    to = field.indexTo;
+                } else {
+                    to = parseInt(widgetData?.[field.indexTo]);
+                    indexTo = field.indexTo;
+                }
                 delete field.indexFrom;
                 delete field.indexTo;
                 const indexedFields = [];
@@ -465,6 +495,8 @@ export const parseAttributes = (widgetParams, widgetIndex, commonGroups, commonF
                             group: field.singleName,
                             isFirst: i === from,
                             isLast: i === to,
+                            indexFrom,
+                            indexTo,
                         },
                     };
                     indexedFields.push(indexedField);

@@ -23,6 +23,7 @@ import {
     Colorize as ColorizeIcon,
     Code as CodeIcon,
     Info as InfoIcon,
+    Delete,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -705,19 +706,66 @@ const Widget = props => {
     // change groups
     const onGroupMove = useCallback((e, index, iterable, direction) => {
         e.stopPropagation();
-        const newIndex = index + direction;
         const project = JSON.parse(JSON.stringify(props.project));
         const oldGroup = fields.find(f => f.name === `${iterable.group}-${index}`);
-        const newGroup = fields.find(f => f.name === `${iterable.group}-${newIndex}`);
         const _widgets = project[props.selectedView].widgets;
 
+        // if deletion
+        if (!direction) {
+            if (iterable.indexTo) {
+                const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+                const newAccordionOpen = { ...accordionOpen };
+                for (let idx = index; idx < lastGroup.index; idx++) {
+                    const idxGroup = fields.find(f => f.name === `${iterable.group}-${idx}`);
+                    const idxGroupPlus = fields.find(f => f.name === `${iterable.group}-${idx + 1}`);
+                    // for every selected widget
+                    props.selectedWidgets.forEach(wid => {
+                        const widgetData = _widgets[wid].data;
+                        // move all fields of the group to -1
+                        idxGroup.fields.forEach((attr, i) =>
+                            widgetData[idxGroup.fields[i].name] = widgetData[idxGroupPlus.fields[i].name]);
+
+                        // move the group-used flag
+                        widgetData[`g_${iterable.group}-${idx}`] = widgetData[`g_${iterable.group}-${idx + 1}`];
+
+                        // move the opened flag
+                        newAccordionOpen[`${iterable.group}-${idx}`] = newAccordionOpen[`${iterable.group}-${idx + 1}`];
+                    });
+                }
+
+                // delete last group
+                props.selectedWidgets.forEach(wid => {
+                    // order all attributes for better readability
+                    const widgetData = _widgets[wid].data;
+
+                    // delete all fields of the group
+                    lastGroup.fields.forEach(attr => {
+                        delete widgetData[attr.name];
+                    });
+
+                    // delete group-used flag
+                    delete widgetData[`g_${iterable.group}-${lastGroup.index}`];
+
+                    // delete the opened flag
+                    delete newAccordionOpen[`${iterable.group}-${lastGroup.index}`];
+                    widgetData[iterable.indexTo]--;
+                });
+                setAccordionOpen(newAccordionOpen);
+                props.changeProject(project);
+            }
+            return;
+        }
+
+        const newIndex = index + direction;
+        const newGroup = fields.find(f => f.name === `${iterable.group}-${newIndex}`);
+
         // for every selected widget
-        props.selectedWidgets.forEach(selectedWidget => {
+        props.selectedWidgets.forEach(wid => {
             // order all attributes for better readability
-            const oldWidgetData = _widgets[selectedWidget].data;
+            const oldWidgetData = _widgets[wid].data;
             const widgetData = {};
             Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
-            _widgets[selectedWidget].data = widgetData;
+            _widgets[wid].data = widgetData;
 
             // switch all fields of the group
             oldGroup.fields.forEach((attr, i) => {
@@ -938,6 +986,15 @@ const Widget = props => {
                             </div>
                             {group.iterable ? <>
                                 <div className={props.classes.grow} />
+                                {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
+                                    <IconButton
+                                        className={props.classes.groupButton}
+                                        size="small"
+                                        onClick={e => onGroupMove(e, group.index, group.iterable, 0)}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </Tooltip> : null}
                                 {group.iterable.isFirst ?
                                     <div className={props.classes.groupButton} /> :
                                     <Tooltip title={I18n.t('Move up')}>

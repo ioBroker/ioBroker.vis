@@ -762,8 +762,18 @@ class VisView extends React.Component {
                     baseRect.right <= rect.right &&
                     baseRect.bottom <= rect.bottom
                 ) {
-                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], wid, (wid, toWid) =>
-                        this.widgetsRefs[toWid].onCommand('include', wid));
+                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], wid, (_wid, toWid) => {
+                        if (this.widgetsRefs[toWid].onCommand('include', _wid)) {
+                            // if widget has included widgets => inform them about the new size or position
+                            const oWidget = this.props.context.views[this.props.view].widgets[toWid];
+                            const attrs = Object.keys(oWidget.data);
+                            attrs.forEach(attr => {
+                                if (attr.startsWith('widget') && oWidget.data[attr] && this.widgetsRefs[oWidget.data[attr]]?.onCommand) {
+                                    this.widgetsRefs[oWidget.data[attr]].onCommand('updatePosition');
+                                }
+                            });
+                        }
+                    });
                 }
             }
         }
@@ -783,7 +793,7 @@ class VisView extends React.Component {
         }
         let top  = ref.offsetTop - viewTop;
         let left = ref.offsetLeft - viewLeft;
-        // May be bug?
+        // Maybe bug?
         if (!left && !top) {
             const style = this.props.context.views[this.props.view].widgets[widget].style;
             left = parseInt(style?.left || '0', 10) + parseInt(ref.offsetLeft, 10);
