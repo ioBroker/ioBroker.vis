@@ -8,18 +8,21 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactSplit, { SplitDirection, GutterTheme } from '@devbookhq/splitter';
 
 import {
-    IconButton, Paper, Popper, Tab, Tabs, Tooltip, LinearProgress,
+    IconButton, Paper, Popper, Tab, Tabs, Tooltip, LinearProgress, Button,
+    Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText,
 } from '@mui/material';
 
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import CodeIcon from '@mui/icons-material/Code';
-import CodeOffIcon from '@mui/icons-material/CodeOff';
-import PlayIcon from '@mui/icons-material/PlayArrow';
-import StopIcon from '@mui/icons-material/Stop';
-import IconPalette from '@mui/icons-material/Palette';
-import IconAttributes from '@mui/icons-material/ListAlt';
-import ClearAllIcon from '@mui/icons-material/ClearAll';
+import {
+    Add as AddIcon,
+    Close as CloseIcon,
+    Code as CodeIcon,
+    CodeOff as CodeOffIcon,
+    PlayArrow as PlayIcon,
+    Stop as StopIcon,
+    Palette as IconPalette,
+    ListAlt as IconAttributes,
+    ClearAll as ClearAllIcon,
+} from '@mui/icons-material';
 
 import {
     I18n,
@@ -40,7 +43,7 @@ import { getWidgetTypes, parseAttributes } from './Vis/visWidgetsCatalog';
 import VisContextMenu from './Vis/visContextMenu';
 import Runtime from './Runtime';
 import ImportProjectDialog from './Toolbar/ProjectsManager/ImportProjectDialog';
-import { loadComponent } from './Vis/visUtils';
+import { findWidgetUsages, loadComponent } from './Vis/visUtils';
 import MarketplaceDialog from './Marketplace/MarketplaceDialog';
 
 const generateClassName = createGenerateClassName({
@@ -245,6 +248,7 @@ class App extends Runtime {
             marketplaceDialog: false,
             marketplaceUpdates: [],
             marketplaceDeleted: [],
+            askAboutInclude: null,
         });
     }
 
@@ -508,6 +512,14 @@ class App extends Runtime {
                     delete widgets[member];
                 });
             }
+            if (widgets[selectedWidget].usedInWidget) {
+                // find widget where this widget is used
+                findWidgetUsages(project, null, selectedWidget).forEach(usage => {
+                    console.log(`Widget removed from ${usage.wid}, attribute ${usage.attr}`);
+                    project[usage.view].widgets[usage.wid].data[usage.attr] = '';
+                });
+            }
+
             delete widgets[selectedWidget];
         });
         this.setSelectedWidgets([]);
@@ -1361,6 +1373,49 @@ class App extends Runtime {
         }
     };
 
+    renderAskAboutIncludeDialog() {
+        if (this.state.askAboutInclude) {
+            return <Dialog
+                open={!0}
+                onClose={() => this.setState({ askAboutInclude: null })}
+            >
+                <DialogTitle id="alert-dialog-title">{I18n.t('Include widget?')}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {I18n.t('Do you want to include "%s" widget into "%s"?', this.state.askAboutInclude.wid, this.state.askAboutInclude.toWid)}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        onClick={() => {
+                            const askAboutInclude = this.state.askAboutInclude;
+                            this.setState({ askAboutInclude: null });
+                            askAboutInclude.cb(askAboutInclude.wid, askAboutInclude.toWid);
+                        }}
+                        color="primary"
+                        autoFocus
+                        startIcon={<AddIcon />}
+                    >
+                        {I18n.t('Add')}
+                    </Button>
+                    <Button
+                        variant="contained"
+                        onClick={() => this.setState({ askAboutInclude: null })}
+                        color="grey"
+                        startIcon={<CloseIcon />}
+                    >
+                        {I18n.t('Cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>;
+        }
+
+        return null;
+    }
+
+    askAboutInclude = (wid, toWid, cb) => this.setState({ askAboutInclude: { wid, toWid, cb } });
+
     renderTabs() {
         const views = Object.keys(this.state.project)
             .filter(view => !view.startsWith('__') && this.state.openedViews.includes(view));
@@ -1990,6 +2045,7 @@ class App extends Runtime {
                     {this.renderShowProjectUpdateDialog()}
                     {this.renderMessageDialog()}
                     {this.renderLegacyFileSelectorDialog()}
+                    {this.renderAskAboutIncludeDialog()}
                     {this.state.marketplaceDialog ? <MarketplaceDialog
                         fullScreen
                         onClose={() => this.setState({ marketplaceDialog: false })}

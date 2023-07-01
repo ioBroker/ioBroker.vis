@@ -385,6 +385,10 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     wrapContent(content, addToHeader, cardContentStyle, headerStyle, onCardClick, components) {
+        if (this.props.context.views[this.props.view].widgets[this.props.id].usedInWidget) {
+            return content;
+        }
+
         const MyCard = components.Card || Card;
         const MyCardContent = components.CardContent || CardContent;
 
@@ -517,6 +521,32 @@ class VisRxWidget extends VisBaseWidget {
             visInWidget
             {...props}
         />;
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    getWidgetInWidget(view, wid, props) {
+        props = props || {};
+
+        // old (can) widgets require props.refParent
+        return this.props.context.VisView.getOneWidget(props.index || 0, this.props.context.views[view].widgets[wid], {
+            // custom attributes
+            context: this.props.context,
+            editMode: this.state.editMode,
+            id: wid,
+            isRelative: props.isRelative !== undefined ? props.isRelative : true,
+            mouseDownOnView: this.mouseDownOnView,
+            moveAllowed: false,
+            ignoreMouseEvents: this.state.editMode ? true : this.ignoreMouseEvents,
+            onIgnoreMouseEvents: this.props.onIgnoreMouseEvents,
+            refParent: props.refParent,
+            registerRef: this.props.registerRef,
+            relativeWidgetOrder: [wid],
+            selectedGroup: this.props.selectedGroup,
+            selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
+            view,
+            viewsActiveFilter: this.props.viewsActiveFilter,
+            customSettings: this.props.customSettings,
+        });
     }
 
     render() {

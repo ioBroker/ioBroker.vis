@@ -1957,9 +1957,11 @@ ${this.scripts}
             VisView,
             adapterName: this.props.adapterName,
             allWidgets: this.allWidgets,
+            askAboutInclude: this.props.askAboutInclude,
             buildLegacyStructures: this.buildLegacyStructures,
             can: this.can,
             canStates: this.canStates,
+            changeProject: this.props.changeProject,
             dateFormat: this.vis.dateFormat,
             editModeComponentClass: this.props.editModeComponentClass,
             formatUtils: this.formatUtils,
@@ -2065,6 +2067,7 @@ VisEngine.propTypes = {
     renderAlertDialog: PropTypes.func,
     showLegacyFileSelector: PropTypes.func,
     toggleTheme: PropTypes.func,
+    askAboutInclude: PropTypes.func,
 };
 
 export default VisEngine;

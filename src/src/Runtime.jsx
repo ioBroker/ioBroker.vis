@@ -27,7 +27,7 @@ import GenericApp from '@iobroker/adapter-react-v5/GenericApp';
 import { I18n, Loader, LegacyConnection } from '@iobroker/adapter-react-v5';
 
 import VisEngine from './Vis/visEngine';
-import { readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
+import { findWidgetUsages, readFile, registerWidgetsLoadIndicator } from './Vis/visUtils';
 import VisWidgetsCatalog from './Vis/visWidgetsCatalog';
 
 const generateClassName = createGenerateClassName({
@@ -229,7 +229,8 @@ class Runtime extends GenericApp {
             }
 
             const oView = project[view];
-            Object.keys(oView.widgets).forEach(widgetId => {
+            const widgetIDs = Object.keys(oView.widgets);
+            widgetIDs.forEach(widgetId => {
                 const oWidget = oView.widgets[widgetId];
                 // if widget must be shown in more than one view
                 if (oWidget.data && oWidget.data['multi-views']) {
@@ -255,6 +256,13 @@ class Runtime extends GenericApp {
                             }
                         }
                     });
+                }
+
+                // try to find this widget in other widgets under "widget" or "widgetX" name
+                if (findWidgetUsages(project, view, widgetId).length) {
+                    oWidget.usedInWidget = true;
+                } else if (oWidget.usedInWidget) {
+                    delete oWidget.usedInWidget;
                 }
             });
         });
@@ -818,6 +826,8 @@ class Runtime extends GenericApp {
             renderAlertDialog={this.renderAlertDialog}
             showLegacyFileSelector={this.showLegacyFileSelector}
             toggleTheme={newThemeName => this.toggleTheme(newThemeName)}
+            askAboutInclude={this.askAboutInclude}
+            changeProject={this.changeProject}
         />;
     }
 

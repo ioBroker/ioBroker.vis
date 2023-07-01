@@ -452,5 +452,10 @@
   "convert from widgeteria widget": "convert from widgeteria widget",
   "to version": "to version",
   "Add new or update existing widget": "Add new or update existing widget\n",
-  "Widget was deleted in widgeteria": "Widget was deleted in widgeteria"
+  "Widget was deleted in widgeteria": "Widget was deleted in widgeteria",
+  "Keep on old place": "Keep on old place",
+  "Move to new place": "Move to new place",
+  "Should it be moved to new place?": "Should it be moved to new place?",
+  "Usage of widget %s": "Usage of widget %s",
+  "This widget is already used in \"%s\"": "This widget is already used in \"%s\""
 }

@@ -4,19 +4,27 @@ import React, {
     useMemo,
     useRef,
     useState,
+    useCallback,
 } from 'react';
 import { withStyles } from '@mui/styles';
 
 import {
-    Accordion, AccordionDetails, AccordionSummary, Checkbox, Divider, Button,
+    Accordion, AccordionDetails, AccordionSummary,
+    Checkbox, Divider, Button, IconButton,
+    Tooltip,
 } from '@mui/material';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import LockIcon from '@mui/icons-material/Lock';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import ColorizeIcon from '@mui/icons-material/Colorize';
-import CodeIcon from '@mui/icons-material/Code';
-import InfoIcon from '@mui/icons-material/Info';
+import {
+    ArrowDownward,
+    ArrowUpward,
+    ExpandMore as ExpandMoreIcon,
+    Lock as LockIcon,
+    FilterAlt as FilterAltIcon,
+    Colorize as ColorizeIcon,
+    Code as CodeIcon,
+    Info as InfoIcon,
+    Delete,
+} from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
 
@@ -81,6 +89,13 @@ const styles = theme => ({
         '&:hover $colorize': {
             display: 'initial',
         },
+    },
+    groupButton: {
+        width: 24,
+        height: 24,
+    },
+    grow: {
+        flexGrow: 1,
     },
     fieldContent: {
         '&&&&&&': {
@@ -688,6 +703,94 @@ const Widget = props => {
         }
     }, [imageRef]);
 
+    // change groups
+    const onGroupMove = useCallback((e, index, iterable, direction) => {
+        e.stopPropagation();
+        const project = JSON.parse(JSON.stringify(props.project));
+        const oldGroup = fields.find(f => f.name === `${iterable.group}-${index}`);
+        const _widgets = project[props.selectedView].widgets;
+
+        // if deletion
+        if (!direction) {
+            if (iterable.indexTo) {
+                const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+                const newAccordionOpen = { ...accordionOpen };
+                for (let idx = index; idx < lastGroup.index; idx++) {
+                    const idxGroup = fields.find(f => f.name === `${iterable.group}-${idx}`);
+                    const idxGroupPlus = fields.find(f => f.name === `${iterable.group}-${idx + 1}`);
+                    // for every selected widget
+                    props.selectedWidgets.forEach(wid => {
+                        const widgetData = _widgets[wid].data;
+                        // move all fields of the group to -1
+                        idxGroup.fields.forEach((attr, i) =>
+                            widgetData[idxGroup.fields[i].name] = widgetData[idxGroupPlus.fields[i].name]);
+
+                        // move the group-used flag
+                        widgetData[`g_${iterable.group}-${idx}`] = widgetData[`g_${iterable.group}-${idx + 1}`];
+
+                        // move the opened flag
+                        newAccordionOpen[`${iterable.group}-${idx}`] = newAccordionOpen[`${iterable.group}-${idx + 1}`];
+                    });
+                }
+
+                // delete last group
+                props.selectedWidgets.forEach(wid => {
+                    // order all attributes for better readability
+                    const widgetData = _widgets[wid].data;
+
+                    // delete all fields of the group
+                    lastGroup.fields.forEach(attr => {
+                        delete widgetData[attr.name];
+                    });
+
+                    // delete group-used flag
+                    delete widgetData[`g_${iterable.group}-${lastGroup.index}`];
+
+                    // delete the opened flag
+                    delete newAccordionOpen[`${iterable.group}-${lastGroup.index}`];
+                    widgetData[iterable.indexTo]--;
+                });
+                setAccordionOpen(newAccordionOpen);
+                props.changeProject(project);
+            }
+            return;
+        }
+
+        const newIndex = index + direction;
+        const newGroup = fields.find(f => f.name === `${iterable.group}-${newIndex}`);
+
+        // for every selected widget
+        props.selectedWidgets.forEach(wid => {
+            // order all attributes for better readability
+            const oldWidgetData = _widgets[wid].data;
+            const widgetData = {};
+            Object.keys(oldWidgetData).sort().forEach(key => widgetData[key] = oldWidgetData[key]);
+            _widgets[wid].data = widgetData;
+
+            // switch all fields of the group
+            oldGroup.fields.forEach((attr, i) => {
+                const value = widgetData[newGroup.fields[i].name];
+                widgetData[newGroup.fields[i].name] = widgetData[attr.name];
+                widgetData[attr.name] = value;
+            });
+
+            // switch group-used flag
+            let value = widgetData[`g_${iterable.group}-${newIndex}`];
+            widgetData[`g_${iterable.group}-${newIndex}`] = widgetData[`g_${iterable.group}-${index}`];
+            widgetData[`g_${iterable.group}-${index}`] = value;
+
+            if (accordionOpen[`${iterable.group}-${newIndex}`] !== accordionOpen[`${iterable.group}-${index}`]) {
+                const newAccordionOpen = { ...accordionOpen };
+                // copy the opened flag
+                value = newAccordionOpen[`${iterable.group}-${newIndex}`];
+                newAccordionOpen[`${iterable.group}-${newIndex}`] = newAccordionOpen[`${iterable.group}-${index}`];
+                newAccordionOpen[`${iterable.group}-${index}`] = value;
+                setAccordionOpen(newAccordionOpen);
+            }
+        });
+        props.changeProject(project);
+    }, [props.project]);
+
     if (!widgets) {
         return null;
     }
@@ -790,8 +893,8 @@ const Widget = props => {
                 <div className={props.classes.widgetNameText}>{widgetLabel}</div>
             </div>
             {!widgets[props.selectedWidgets[0]].marketplace && <>
-                <Button onClick={() => setCssDialogOpened(true)}>CSS</Button>
-                <Button onClick={() => setJsDialogOpened(true)}>JS</Button>
+                {window.location.port === '3000' ? <Button onClick={() => setCssDialogOpened(true)}>CSS</Button> : null}
+                {window.location.port === '3000' ? <Button onClick={() => setJsDialogOpened(true)}>JS</Button> : null}
                 {cssDialogOpened ? <WidgetCSS
                     onClose={() => setCssDialogOpened(false)}
                     widget={widgets[props.selectedWidgets[0]]}
@@ -881,6 +984,40 @@ const Widget = props => {
                                     :
                                     (window.vis._(`group_${group.singleName || group.name}`) + (group.index !== undefined ? ` [${group.index}]` : ''))}
                             </div>
+                            {group.iterable ? <>
+                                <div className={props.classes.grow} />
+                                {group.iterable.indexTo ? <Tooltip title={I18n.t('Delete')}>
+                                    <IconButton
+                                        className={props.classes.groupButton}
+                                        size="small"
+                                        onClick={e => onGroupMove(e, group.index, group.iterable, 0)}
+                                    >
+                                        <Delete />
+                                    </IconButton>
+                                </Tooltip> : null}
+                                {group.iterable.isFirst ?
+                                    <div className={props.classes.groupButton} /> :
+                                    <Tooltip title={I18n.t('Move up')}>
+                                        <IconButton
+                                            className={props.classes.groupButton}
+                                            size="small"
+                                            onClick={e => onGroupMove(e, group.index, group.iterable, -1)}
+                                        >
+                                            <ArrowUpward />
+                                        </IconButton>
+                                    </Tooltip>}
+                                {group.iterable.isLast ?
+                                    <div className={props.classes.groupButton} /> :
+                                    <Tooltip title={I18n.t('Move down')}>
+                                        <IconButton
+                                            className={props.classes.groupButton}
+                                            size="small"
+                                            onClick={e => onGroupMove(e, group.index, group.iterable, 1)}
+                                        >
+                                            <ArrowDownward />
+                                        </IconButton>
+                                    </Tooltip>}
+                            </> : null}
                             <div>
                                 <Checkbox
                                     checked={group.hasValues}
@@ -1018,6 +1155,7 @@ const Widget = props => {
                                                                     disabled={disabled}
                                                                     field={field}
                                                                     widget={props.selectedWidgets.length > 1 ? commonValues : widget}
+                                                                    widgetId={props.selectedWidgets.length > 1 ? null : props.selectedWidgets[0]}
                                                                     isStyle={group.isStyle}
                                                                     index={group.index}
                                                                     isDifferent={isDifferent[field.name]}

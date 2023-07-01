@@ -292,18 +292,34 @@ class VisFormatUtils {
                                 if (value === undefined || value === null) {
                                     value = values[oids[t].operations[k].arg[a].visOid];
                                 }
-                                try {
-                                    value = JSON.parse(value);
-                                    // if array or object, we format it correctly, else it should be a string
-                                    if (typeof value === 'object') {
-                                        string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
+                                if (value === null) {
+                                    string += `const ${oids[t].operations[k].arg[a].name} = null;`;
+                                } else
+                                if (value === undefined) {
+                                    string += `const ${oids[t].operations[k].arg[a].name} = undefined;`;
+                                } else {
+                                    const type = typeof value;
+                                    if (type === 'string') {
+                                        try {
+                                            value = JSON.parse(value);
+                                            // if array or object, we format it correctly, else it should be a string
+                                            if (typeof value === 'object') {
+                                                string += `const ${oids[t].operations[k].arg[a].name} = JSON.parse("${JSON.stringify(value).replace(/\x22/g, '\\\x22')}");`;
+                                            } else {
+                                                string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                            }
+                                        } catch (e) {
+                                            string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                        }
+                                    } else if (type === 'object') {
+                                        string += `const ${oids[t].operations[k].arg[a].name} = ${JSON.stringify(value)};`;
                                     } else {
-                                        string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
+                                        // boolean, number, ...
+                                        string += `const ${oids[t].operations[k].arg[a].name} = ${value.toString()};`;
                                     }
-                                } catch (e) {
-                                    string += `const ${oids[t].operations[k].arg[a].name} = "${value}";`;
                                 }
                             }
+
                             const { formula } = oids[t].operations[k];
                             if (formula && formula.includes('widget.')) {
                                 const w = JSON.parse(JSON.stringify(widget));

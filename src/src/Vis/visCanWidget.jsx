@@ -76,6 +76,8 @@ class VisCanWidget extends VisBaseWidget {
 
         this.refViews = {};
 
+        this.isCanWidget = true;
+
         this.state = {
             mounted: false,
             legacyViewContainers: [],
@@ -99,7 +101,6 @@ class VisCanWidget extends VisBaseWidget {
 
     setupSubscriptions() {
         this.bindings = {};
-        this.isCanWidget = true;
 
         const linkContext = {
             IDs: [],
@@ -134,8 +135,10 @@ class VisCanWidget extends VisBaseWidget {
             this.renderWidget(() => {
                 const newState = { mounted: true };
 
-                // try to read resize handlers
-                analyzeDraggableResizable(this.widDiv, newState, this.props.context.allWidgets[this.props.id].style);
+                if (this.props.context.allWidgets[this.props.id]) {
+                    // try to read resize handlers
+                    analyzeDraggableResizable(this.widDiv, newState, this.props.context.allWidgets[this.props.id].style);
+                }
 
                 this.setState(newState);
             });
@@ -249,6 +252,16 @@ class VisCanWidget extends VisBaseWidget {
     // this method may be not in form onCommand = command => {}
     onCommand(command, options) {
         if (!super.onCommand(command, options)) {
+            if (command === 'updatePosition') {
+                // move by canJS widgets the name and overlapping div
+                if (this.refService.current && this.widDiv) {
+                    this.refService.current.style.width = `${this.widDiv.offsetWidth}px`;
+                    this.refService.current.style.height = `${this.widDiv.offsetHeight}px`;
+                    // Move helper to actual widget
+                    this.refService.current.style.left = `${this.widDiv.offsetLeft}px`;
+                    this.refService.current.style.top = `${this.widDiv.offsetTop}px`;
+                }
+            } else
             if (command === 'updateContainers') {
                 // try to find 'vis-view-container' in it
                 const containers = this.widDiv.querySelectorAll('.vis-view-container');
@@ -388,8 +401,10 @@ class VisCanWidget extends VisBaseWidget {
         // console.log(`[${this.props.id}] update widget because of "${type}" "${stateId}": ${JSON.stringify(state)}`);
         if (this.widDiv) {
             if (type === 'style') {
-                // apply style from this.props.context.allWidgets.style
-                VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[this.props.id].style, this.state.selected, this.state.editMode);
+                if (this.props.context.allWidgets[this.props.id]) {
+                    // apply style from this.props.context.allWidgets.style
+                    VisCanWidget.applyStyle(this.widDiv, this.props.context.allWidgets[this.props.id].style, this.state.selected, this.state.editMode);
+                }
             } else if (type === 'signal') {
                 this.updateSignal(item);
             } else if (type === 'visibility') {
@@ -417,43 +432,47 @@ class VisCanWidget extends VisBaseWidget {
 
     updateLastChange() {
         if (this.widDiv) {
-            const widgetData = this.props.context.allWidgets[this.props.id].data;
-            const lcDiv = this.widDiv.querySelector('.vis-last-change');
-            if (lcDiv) {
-                lcDiv.innerHTML = window.vis.binds.basic.formatDate(
-                    this.props.context.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
-                    widgetData['lc-format'],
-                    widgetData['lc-is-interval'],
-                    widgetData['lc-is-moment'],
-                );
-            } else {
-                console.warn(`[${this.props.id}] Last change not found!`);
+            const widgetData = this.props.context.allWidgets[this.props.id]?.data;
+            if (widgetData) {
+                const lcDiv = this.widDiv.querySelector('.vis-last-change');
+                if (lcDiv) {
+                    lcDiv.innerHTML = window.vis.binds.basic.formatDate(
+                        this.props.context.canStates.attr(`${widgetData['lc-oid']}.${widgetData['lc-type'] === 'last-change' ? 'lc' : 'ts'}`),
+                        widgetData['lc-format'],
+                        widgetData['lc-is-interval'],
+                        widgetData['lc-is-moment'],
+                    );
+                } else {
+                    console.warn(`[${this.props.id}] Last change not found!`);
+                }
             }
         }
     }
 
     updateVisibility() {
         if (this.widDiv && !this.state.editMode) {
-            const widgetData = this.props.context.allWidgets[this.props.id].data;
-            if (VisBaseWidget.isWidgetHidden(widgetData, this.props.context.canStates, this.props.id) || this.isWidgetFilteredOut(widgetData)) {
-                this.widDiv._storedDisplay = this.widDiv.style.display;
-                this.widDiv.style.display = 'none';
+            const widgetData = this.props.context.allWidgets[this.props.id]?.data;
+            if (widgetData) {
+                if (VisBaseWidget.isWidgetHidden(widgetData, this.props.context.canStates, this.props.id) || this.isWidgetFilteredOut(widgetData)) {
+                    this.widDiv._storedDisplay = this.widDiv.style.display;
+                    this.widDiv.style.display = 'none';
 
-                if (this.widDiv
-                    && this.widDiv._customHandlers
-                    && this.widDiv._customHandlers.onHide
-                ) {
-                    this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
-                }
-            } else {
-                this.widDiv.style.display = this.widDiv._storedDisplay;
-                this.widDiv._storedDisplay = '';
+                    if (this.widDiv
+                        && this.widDiv._customHandlers
+                        && this.widDiv._customHandlers.onHide
+                    ) {
+                        this.widDiv._customHandlers.onHide(this.widDiv, this.props.id);
+                    }
+                } else {
+                    this.widDiv.style.display = this.widDiv._storedDisplay;
+                    this.widDiv._storedDisplay = '';
 
-                if (this.widDiv &&
-                    this.widDiv._customHandlers &&
-                    this.widDiv._customHandlers.onShow
-                ) {
-                    this.widDiv._customHandlers.onShow(this.widDiv, this.props.id);
+                    if (this.widDiv &&
+                        this.widDiv._customHandlers &&
+                        this.widDiv._customHandlers.onShow
+                    ) {
+                        this.widDiv._customHandlers.onShow(this.widDiv, this.props.id);
+                    }
                 }
             }
         }
@@ -624,6 +643,10 @@ class VisCanWidget extends VisBaseWidget {
     isSignalVisible(index, widgetData) {
         widgetData = widgetData || this.props.context.allWidgets[this.props.id].data;
 
+        if (!widgetData) {
+            return false;
+        }
+
         if (this.state.editMode) {
             return !widgetData[`signals-hide-edit-${index}`];
         }
@@ -706,7 +729,10 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     addSignalIcon(widgetData, index) {
-        widgetData = widgetData || this.props.context.allWidgets[this.props.id].data;
+        widgetData = widgetData || this.props.context.allWidgets[this.props.id]?.data;
+        if (!widgetData) {
+            return;
+        }
 
         // <div class="vis-signal ${data[`signals-blink-${index}`] ? 'vis-signals-blink' : ''} ${data[`signals-text-class-${index}`] || ''} " data-index="${index}" style="display: ${display}; pointer-events: none; position: absolute; z-index: 10; top: ${data[`signals-vert-${index}`] || 0}%; left: ${data[`signals-horz-${index}`] || 0}%">
         const divSignal = window.document.createElement('div');
@@ -892,15 +918,21 @@ class VisCanWidget extends VisBaseWidget {
     }
 
     applyBinding(stateId, doNotApplyStyles, widgetData, widgetStyle) {
+        const widgetContext = this.props.context.allWidgets[this.props.id];
+        if (!widgetContext && (!widgetData || !widgetStyle)) {
+            return;
+        }
+
+        const widget = this.props.context.views[this.props.view].widgets[this.props.id];
+
         this.bindings[stateId].forEach(item => {
-            const widgetContext = this.props.context.allWidgets[this.props.id];
             widgetStyle = widgetStyle || widgetContext.style;
 
             const value = this.props.context.formatUtils.formatBinding(
                 item.format,
                 item.view,
                 this.props.id,
-                this.props.context.views[item.view].widgets[this.props.id],
+                widget,
                 widgetData || widgetContext.data,
             );
 
@@ -928,6 +960,66 @@ class VisCanWidget extends VisBaseWidget {
             // this.visibilityOidBinding(binding, value);
             // this.reRenderWidget(binding.view, binding.view, bid);
         });
+    }
+
+    calcData(wid, widget, newWidgetData, newWidgetStyle) {
+        let widgetData;
+        let widgetStyle;
+        let isRelative;
+
+        try {
+            widgetData = { wid, ...(widget.data || {}) };
+            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
+            // Replace _PRJ_NAME
+            Object.keys(widgetData).forEach(attr => {
+                if (attr &&
+                    widgetData[attr] &&
+                    typeof widgetData[attr] === 'string' &&
+                    (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && widgetData[attr].startsWith('_PRJ_NAME')
+                ) {
+                    // "_PRJ_NAME".length = 9
+                    widgetData[attr] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetData[attr].substring(9)}`;
+                }
+            });
+            if (widgetStyle['background-image'] && widgetStyle['background-image'].startsWith('_PRJ_NAME')) {
+                widgetStyle['background-image'] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetStyle['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
+            }
+
+            this.applyBindings(true, widgetData, widgetStyle);
+
+            if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
+                widgetData.filterkey = widgetData.filterkey.split(',')
+                    .map(f => f.trim())
+                    .filter(f => f);
+            }
+
+            isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
+                widgetStyle && (
+                    widgetStyle.position === 'relative' ||
+                    widgetStyle.position === 'static' ||
+                    widgetStyle.position === 'sticky'
+                );
+
+            if (isRelative) {
+                delete widgetStyle.top;
+                delete widgetStyle.left;
+                if (Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
+                    widgetStyle['margin-bottom'] = `${parseFloat(this.props.context.views[this.props.view].settings.rowGap)}px`;
+                }
+            }
+
+            // if multi-view widget dim it in edit mode
+            if (this.state.multiViewWidget && this.state.editMode) {
+                if (widgetStyle.opacity === undefined || widgetStyle.opacity === null || widgetStyle.opacity > 0.3) {
+                    widgetStyle.opacity = 0.3;
+                }
+            }
+        } catch (e) {
+            console.warn(`[${wid}] Cannot bind data of widget: ${e}`);
+            return { widgetData: null, widgetStyle: null, isRelative: false };
+        }
+
+        return { widgetData, widgetStyle, isRelative };
     }
 
     renderWidget(update, newWidgetData, newWidgetStyle, _count, cb) {
@@ -983,100 +1075,44 @@ class VisCanWidget extends VisBaseWidget {
             }
         }
 
-        let isRelative;
-
-        // calculate new styles and data
-        let widgetData;
-        let widgetStyle;
-        try {
-            widgetData = { wid, ...(widget.data || {}) };
-            widgetStyle = JSON.parse(JSON.stringify(newWidgetStyle || widget.style || {}));
-            // Replace _PRJ_NAME
-            Object.keys(widgetData).forEach(attr => {
-                if (attr &&
-                    widgetData[attr] &&
-                    typeof widgetData[attr] === 'string' &&
-                    (attr.startsWith('src') || attr.endsWith('src') || attr.includes('icon')) && widgetData[attr].startsWith('_PRJ_NAME')
-                ) {
-                    // "_PRJ_NAME".length = 9
-                    widgetData[attr] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetData[attr].substring(9)}`;
-                }
-            });
-            if (widgetStyle['background-image'] && widgetStyle['background-image'].startsWith('_PRJ_NAME')) {
-                widgetStyle['background-image'] = `../${this.props.context.adapterName}.${this.props.context.instance}/${this.props.context.projectName}${widgetStyle['background-image'].substring(9)}`;  // "_PRJ_NAME".length = 9
-            }
-
-            this.applyBindings(true, widgetData, widgetStyle);
-
-            if (widgetData.filterkey && typeof widgetData.filterkey === 'string') {
-                widgetData.filterkey = widgetData.filterkey.split(',')
-                    .map(f => f.trim())
-                    .filter(f => f);
-            }
-
-            isRelative = this.props.isRelative !== undefined ? this.props.isRelative :
-                widgetStyle && (
-                    widgetStyle.position === 'relative' ||
-                    widgetStyle.position === 'static' ||
-                    widgetStyle.position === 'sticky'
-                );
-
-            if (isRelative) {
-                delete widgetStyle.top;
-                delete widgetStyle.left;
-                if (Number.isFinite(this.props.context.views[this.props.view].settings.rowGap)) {
-                    widgetStyle['margin-bottom'] = `${parseFloat(this.props.context.views[this.props.view].settings.rowGap)}px`;
-                }
-            }
-
-            // if multi-view widget dim it in edit mode
-            if (this.state.multiViewWidget && this.state.editMode) {
-                if (widgetStyle.opacity === undefined || widgetStyle.opacity === null || widgetStyle.opacity > 0.3) {
-                    widgetStyle.opacity = 0.3;
-                }
-            }
-        } catch (e) {
-            console.log(`[${wid}] Cannot bind data of widget: ${e}`);
-            return;
-        }
-
-        const newData = JSON.stringify(widgetData);
-        const newStyle = JSON.stringify(widgetStyle);
-        // detect if update required
-        if (this.widDiv) {
-            if (this.oldEditMode === this.state.editMode) {
-                if (this.oldData === newData) {
-                    if (this.oldStyle === newStyle || widgetData._no_style) {
-                        // ignore changes
-                        // console.log('Rerender ignored as no changes');
-                        return;
-                    }
-
-                    if (!this.updateOnStyle) {
-                        this.oldStyle = newStyle;
-                        // update global styles
-                        if (this.props.context.allWidgets[wid] && this.props.context.allWidgets[wid].style) {
-                            const mStyle = this.props.context.allWidgets[wid].style;
-                            Object.keys(widgetStyle).forEach(attr => {
-                                if (mStyle[attr] !== widgetStyle[attr]) {
-                                    mStyle.attr(attr, widgetStyle[attr]);
-                                }
-                            });
+        // calculate current styles and data (apply current bindings)
+        if (!update) {
+            const { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
+            const newData = JSON.stringify(widgetData);
+            const newStyle = JSON.stringify(widgetStyle);
+            // detect if update required
+            if (this.widDiv) {
+                if (this.oldEditMode === this.state.editMode) {
+                    if (this.oldData === newData && !update) {
+                        if (this.oldStyle === newStyle || widgetData._no_style) {
+                            // ignore changes
+                            // console.log('Rerender ignored as no changes');
+                            return;
                         }
 
-                        // apply new style changes directly on DOM
-                        VisCanWidget.applyStyle(this.widDiv, widgetStyle, this.state.selected, this.state.editMode);
-                        // fix position
-                        this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
-                        console.log('Rerender ignored as only style applied');
-                        return;
+                        if (!this.updateOnStyle) {
+                            this.oldStyle = newStyle;
+                            // update global styles
+                            if (this.props.context.allWidgets[wid] && this.props.context.allWidgets[wid].style) {
+                                const mStyle = this.props.context.allWidgets[wid].style;
+                                Object.keys(widgetStyle).forEach(attr => {
+                                    if (mStyle[attr] !== widgetStyle[attr]) {
+                                        mStyle.attr(attr, widgetStyle[attr]);
+                                    }
+                                });
+                            }
+
+                            // apply new style changes directly on DOM
+                            VisCanWidget.applyStyle(this.widDiv, widgetStyle, this.state.selected, this.state.editMode);
+                            // fix position
+                            this.widDiv.style.position = isRelative ? (widgetStyle.position || 'relative') : 'absolute';
+                            console.log('Rerender ignored as only style applied');
+                            return;
+                        }
                     }
                 }
             }
         }
-        this.oldEditMode = this.state.editMode;
-        this.oldData = newData;
-        this.oldStyle = newStyle;
 
         this.destroy(update);
 
@@ -1088,6 +1124,7 @@ class VisCanWidget extends VisBaseWidget {
         VisBaseWidget.removeFromArray(this.props.context.linkContext.signals, this.IDs, this.props.view, wid);
         VisBaseWidget.removeFromArray(this.props.context.linkContext.bindings, this.IDs, this.props.view, wid);
 
+        // here will be extracted new bindings
         this.setupSubscriptions();
 
         // subscribe on some new IDs and remove old IDs
@@ -1100,6 +1137,16 @@ class VisCanWidget extends VisBaseWidget {
         if (subscribe.length) {
             this.props.context.linkContext.subscribe(subscribe);
         }
+
+        // calculate new widgetData and widgetStyle
+        const { isRelative, widgetData, widgetStyle } = this.calcData(wid, widget, newWidgetData, newWidgetStyle);
+
+        const newData = JSON.stringify(widgetData);
+        const newStyle = JSON.stringify(widgetStyle);
+
+        this.oldEditMode = this.state.editMode;
+        this.oldData = newData; // with replaced bindings
+        this.oldStyle = newStyle; // with replaced bindings
 
         widgetData.wid = wid; // legacy
         // try to apply bindings to every attribute
@@ -1164,7 +1211,7 @@ class VisCanWidget extends VisBaseWidget {
                                     break;
                                 }
                             }
-                            // no existing prepend widgets found, so place first
+                            // no existing prepending widgets found, so place first
                             if (!div) {
                                 parentDiv.appendChild(widgetFragment);
                             }
@@ -1212,7 +1259,7 @@ class VisCanWidget extends VisBaseWidget {
                     if (this.props.context.$$) {
                         this.addGestures(widgetData);
                     }
-                } else {
+                } else if (this.props.context.allWidgets[this.props.id]) {
                     const newState = analyzeDraggableResizable(this.widDiv, null, this.props.context.allWidgets[this.props.id].style);
 
                     if (this.state.resizable !== newState.resizable ||
@@ -1259,18 +1306,18 @@ class VisCanWidget extends VisBaseWidget {
 
                 this.onCommand('updateContainers');
             } else {
-                console.log('Div not jet rendered');
+                console.log('Div not yet rendered');
             }
 
-            this.props.registerRef && this.props.registerRef(
-                wid,
-                this.widDiv || null,
-                this.refService,
-                this.onMove,
-                this.onResize,
-                this.onTempSelect,
-                this.onCommandBound,
-            );
+            this.props.registerRef && this.props.registerRef({
+                id: wid,
+                winDiv: this.widDiv || null,
+                refService: this.refService,
+                onMove: this.onMove,
+                onResize: this.onResize,
+                onTempSelect: this.onTempSelect,
+                onCommand: this.onCommandBound,
+            });
         } catch (e) {
             const lines = (e.toString() + e.stack.toString()).split('\n');
             const error = `can't render ${this.props.tpl} ${wid} on "${this.props.view}": `;
@@ -1313,7 +1360,7 @@ class VisCanWidget extends VisBaseWidget {
         // this.widDiv is a body of normal can widget
         // props.style is a style of overlay
 
-        if (this.widDiv && this.state.editMode) {
+        if (this.widDiv && this.state.editMode && this.props.context.allWidgets[this.props.id]) {
             const zIndexProp = this.props.context.allWidgets[this.props.id].style['z-index'];
             const zIndex = parseInt((zIndexProp || 0), 10);
             if (this.state.selected) {

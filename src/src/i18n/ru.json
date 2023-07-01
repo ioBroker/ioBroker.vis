@@ -452,5 +452,10 @@
   "to version": "к версии",
   "version": "версия",
   "Add new or update existing widget": "Добавить новый или обновить существующий виджет\n",
-  "Widget was deleted in widgeteria": "Виджет был удален в виджете"
+  "Widget was deleted in widgeteria": "Виджет был удален в виджете",
+  "Keep on old place": "Держись на старом месте",
+  "Move to new place": "Переехать на новое место",
+  "Should it be moved to new place?": "Стоит ли его перенести на новое место?",
+  "Usage of widget %s": "Использование виджета %s",
+  "This widget is already used in \"%s\"": "Этот виджет уже используется в \"%s\""
 }
