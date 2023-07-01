@@ -198,7 +198,7 @@ const Widget = props => {
     }, [props.widgetType]);
 
     if (props.widgetType.custom) {
-        return props.widgetType.customPalette(props.socket, props.project, props.selectedView);
+        return props.widgetType.customPalette(props.socket, props.project, props.changeProject, props.selectedView);
     }
 
     return <span ref={dragRef} id={`widget_${props.widgetTypeName}`} className={`widget-${props.widgetSet}`}>

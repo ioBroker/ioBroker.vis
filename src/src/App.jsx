@@ -1500,10 +1500,13 @@ class App extends Runtime {
                 }}
                 uninstallWidget={this.uninstallWidget}
                 setMarketplaceDialog={this.setMarketplaceDialog}
-                project={this.state.project}
                 marketplaceUpdates={this.state.marketplaceUpdates}
                 marketplaceDeleted={this.state.marketplaceDeleted}
                 updateWidgets={this.updateWidgets}
+                selectedView={this.state.selectedView}
+                project={this.state.project}
+                changeProject={this.changeProject}
+                socket={this.socket}
             />
         </div>;
     }

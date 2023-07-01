@@ -28,6 +28,10 @@ const VisContextMenu = props => {
     const [exportDialog, setExportDialog] = useState(false);
     const [importDialog, setImportDialog] = useState(false);
 
+    if (!props.project[props.selectedView]) {
+        return;
+    }
+
     const menuItemsData = menuPosition => {
         const view = props.project[props.selectedView];
         const coordinatesWidgets = menuPosition ? Object.keys(view.widgets)

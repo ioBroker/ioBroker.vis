@@ -311,6 +311,10 @@ const Palette = props => {
                                     widgetSet={category}
                                     widgetSetProps={widgetSetProps[category]}
                                     widgetTypeName={widgetItem.name}
+                                    selectedView={props.selectedView}
+                                    socket={props.socket}
+                                    project={props.project}
+                                    changeProject={props.changeProject}
                                 />)) : null}
                         </div>
                     </AccordionDetails>
