@@ -149,7 +149,6 @@ body, html {
     color: #ffffff;
 }
 
-
 .vis-editmode-select-rect {
     border: 1px dashed white;
     background-color: #F00;
@@ -242,12 +241,13 @@ body, html {
     background: white;
     color: black;
 }
-.vis-editmode-widget-move-buttons.bottom {
+.vis-editmode-widget-move-buttons.vis-editmode-widget-name-bottom {
     top: -0;
     border-radius: 0 0 3px 3px;
     opacity: 0.5;
     z-index: 1002;
 }
+
 .vis-editmode-move-button {
     position: absolute;
     top: 0;

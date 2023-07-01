@@ -304,7 +304,7 @@ class VisBaseWidget extends React.Component {
 
         if (props.context.widgetHint !== state.widgetHint) {
             newState = newState || {};
-            newState.context.widgetHint = props.widgetHint;
+            newState.widgetHint = props.context.widgetHint;
         }
 
         const selected = !state.multiViewWidget && props.editMode && props.selectedWidgets && props.selectedWidgets.includes(props.id);
@@ -1678,7 +1678,11 @@ class VisBaseWidget extends React.Component {
 
                 if (showUp || showDown) {
                     widgetMoveButtons = <div
-                        className={Utils.clsx('vis-editmode-widget-move-buttons', this.state.widgetHint, widgetNameBottom && 'vis-editmode-widget-name-bottom')}
+                        className={Utils.clsx(
+                            'vis-editmode-widget-move-buttons',
+                            this.state.widgetHint,
+                            widgetNameBottom && 'vis-editmode-widget-name-bottom',
+                        )}
                         style={{ width: !showUp || !showDown ? 30 : undefined }}
                     >
                         <div className="vis-editmode-widget-number">{this.props.relativeWidgetOrder.indexOf(this.props.id) + 1}</div>
