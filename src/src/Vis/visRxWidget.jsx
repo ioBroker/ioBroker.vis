@@ -150,7 +150,8 @@ class VisRxWidget extends VisBaseWidget {
     }
 
     onCommand(command, options) {
-        if (!super.onCommand(command, options)) {
+        const result = super.onCommand(command, options);
+        if (result === false) {
             if (command === 'collectFilters') {
                 return this.state.rxData?.filterkey;
             }
@@ -189,7 +190,7 @@ class VisRxWidget extends VisBaseWidget {
             }
         }
 
-        return null;
+        return result;
     }
 
     // eslint-disable-next-line no-unused-vars,class-methods-use-this
@@ -427,7 +428,8 @@ class VisRxWidget extends VisBaseWidget {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    height: '100%',
+                    height: 'calc(100% - 32px)',
+                    paddingBottom: 16,
                     position: 'relative',
                     ...cardContentStyle,
                 }}
@@ -516,7 +518,7 @@ class VisRxWidget extends VisBaseWidget {
             activeView={view}
             editMode={false}
             key={`${this.props.id}_${view}`}
-            registerRef={this.props.registerRef}
+            askView={this.props.askView}
             view={view}
             visInWidget
             {...props}
@@ -539,7 +541,7 @@ class VisRxWidget extends VisBaseWidget {
             ignoreMouseEvents: this.state.editMode ? true : this.ignoreMouseEvents,
             onIgnoreMouseEvents: this.props.onIgnoreMouseEvents,
             refParent: props.refParent,
-            registerRef: this.props.registerRef,
+            askView: this.props.askView,
             relativeWidgetOrder: [wid],
             selectedGroup: this.props.selectedGroup,
             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
@@ -558,6 +560,20 @@ class VisRxWidget extends VisBaseWidget {
             this.bindingsTimer = setTimeout(async () => {
                 this.bindingsTimer = null;
                 await this.onPropertiesUpdated();
+
+                this.informIncludedWidgets && clearTimeout(this.informIncludedWidgets);
+                this.informIncludedWidgets = setTimeout(() => {
+                    this.informIncludedWidgets = null;
+                    // if widget has included widgets => inform them about the new size or position
+                    const oWidget = this.props.context.views[this.props.view].widgets[this.props.id];
+                    const attrs = Object.keys(oWidget.data);
+                    attrs.forEach(attr => {
+                        if (attr.startsWith('widget') && oWidget.data[attr]) {
+                            const ref = this.props.askView && this.props.askView('getRef', { id: oWidget.data[attr] });
+                            ref && ref.onCommand('updatePosition');
+                        }
+                    });
+                }, 200);
             }, 10);
         }
 
@@ -579,7 +595,7 @@ VisRxWidget.propTypes = {
     isRelative: PropTypes.bool,
     // eslint-disable-next-line react/no-unused-prop-types
     refParent: PropTypes.object.isRequired,
-    registerRef: PropTypes.func,
+    askView: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     selectedWidgets: PropTypes.array,
     viewsActiveFilter: PropTypes.object.isRequired,

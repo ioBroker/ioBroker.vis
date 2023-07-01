@@ -457,5 +457,9 @@
   "Move to new place": "搬到新地方",
   "Should it be moved to new place?": "是否应该搬到新地方？",
   "Usage of widget %s": "小部件 %s 的使用",
-  "This widget is already used in \"%s\"": "该小部件已在“%s”中使用"
+  "This widget is already used in \"%s\"": "该小部件已在“%s”中使用",
+  "orientation": "方向",
+  "horizontal": "水平的",
+  "vertical": "垂直的",
+  "flexible": "灵活的"
 }

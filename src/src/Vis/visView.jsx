@@ -164,20 +164,23 @@ class VisView extends React.Component {
         return null;
     }
 
-    registerRef = props => {
+    askView = (command, props) => {
         const widgetsRefs = this.widgetsRefs;
-        if (!props.remove) {
-            if (props.update) {
-                delete props.update;
-                Object.assign(widgetsRefs[props.id], props);
-            } else {
-                const id = props.id;
-                delete props.id;
-                widgetsRefs[id] = props;
+        if (command === 'register') {
+            const id = props.id;
+            widgetsRefs[id] = props;
+        } else if (command === 'unregister') {
+            if (widgetsRefs[props.id] && widgetsRefs[props.id].uuid === props.uuid) {
+                delete widgetsRefs[props.id];
             }
-        } else if (widgetsRefs[props.id] && widgetsRefs[props.id].uuid === props.uuid) {
-            delete widgetsRefs[props.id];
+        } else if (command === 'update') {
+            if (widgetsRefs[props.id] && widgetsRefs[props.id].uuid === props.uuid) {
+                Object.assign(widgetsRefs[props.id], props);
+            }
+        } else if (command === 'getRef') {
+            return widgetsRefs[props.id];
         }
+        return null;
     };
 
     onMouseWindowDown = e => {
@@ -566,6 +569,7 @@ class VisView extends React.Component {
         if (this.props.selectedWidgets.includes(this.props.selectedGroup) && !this.movement.isResize) {
             return;
         }
+        const widgetsRefs = this.widgetsRefs;
         this.movement.moved = true;
         this.movement.x = e.pageX - this.movement.startX;
         this.movement.y = e.pageY - this.movement.startY;
@@ -584,12 +588,12 @@ class VisView extends React.Component {
             const right = this.movement.startWidget.right + this.movement.x;
             const top = this.movement.startWidget.top + this.movement.y;
             const bottom = this.movement.startWidget.bottom + this.movement.y;
-            for (const wid in this.widgetsRefs) {
+            for (const wid in widgetsRefs) {
                 // do not snap to itself
                 if (this.props.selectedWidgets.includes(wid)) {
                     continue;
                 }
-                const widgetRect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                const widgetRect = widgetsRefs[wid].refService.current.getBoundingClientRect();
 
                 if (Math.abs(widgetRect.top - bottom) <= 10 && left <= widgetRect.right && right >= widgetRect.left) {
                     this.movement.y += Math.round(widgetRect.top - bottom);
@@ -613,38 +617,36 @@ class VisView extends React.Component {
         this.showRulers();
 
         this.props.selectedWidgets.forEach(wid => {
-            const widgetsRefs = this.widgetsRefs;
             if (widgetsRefs[wid]?.onMove) {
                 widgetsRefs[wid].onMove(this.movement.x, this.movement.y, false, this.calculateRelativeWidgetPosition);
             }
 
             // if widget has included widgets => inform them about the new size or position
+            // this code could be disabled, as at the end the widgets will be informed anyway
             const oWidget = this.props.context.views[this.props.view].widgets[wid];
             const attrs = Object.keys(oWidget.data);
             attrs.forEach(attr => {
-                if (attr.startsWith('widget') && oWidget.data[attr]) {
-                    if (widgetsRefs[oWidget.data[attr]]?.onCommand) {
-                        widgetsRefs[oWidget.data[attr]].onCommand('updatePosition');
-                    }
+                if (attr.startsWith('widget') && oWidget.data[attr] && widgetsRefs[oWidget.data[attr]]?.onCommand) {
+                    widgetsRefs[oWidget.data[attr]].onCommand('updatePosition');
                 }
             });
         });
 
-        // if only one widget selected => check if it can be added to other widget
-        if (this.props.selectedWidgets.length === 1 && this.widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
+        // if only one widget selected => check if it can be added to the other widget
+        if (this.props.selectedWidgets.length === 1 && widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
             let found = false;
-            for (const wid in this.widgetsRefs) {
+            for (const wid in widgetsRefs) {
                 // do not snap to itself
                 if (this.props.selectedWidgets.includes(wid) ||
-                    !this.widgetsRefs[wid] ||
-                    !this.widgetsRefs[wid].canHaveWidgets ||
-                    !this.widgetsRefs[wid].onCommand ||
-                    !this.widgetsRefs[wid].refService?.current
+                    !widgetsRefs[wid] ||
+                    !widgetsRefs[wid].canHaveWidgets ||
+                    !widgetsRefs[wid].onCommand ||
+                    !widgetsRefs[wid].refService?.current
                 ) {
                     continue;
                 }
-                const baseRect = this.widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
-                const rect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                const baseRect = widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
+                const rect = widgetsRefs[wid].refService.current.getBoundingClientRect();
                 // check if widget can have other widgets inside
                 if (!found &&
                     baseRect.top >= rect.top &&
@@ -654,10 +656,10 @@ class VisView extends React.Component {
                 ) {
                     found = true;
                     // we can add only to one widget
-                    this.widgetsRefs[wid].onCommand('includePossible');
+                    widgetsRefs[wid].onCommand('includePossible');
                 } else {
                     // ifnform all other widgets that they do not have inclusion
-                    this.widgetsRefs[wid].onCommand('includePossibleNOT');
+                    widgetsRefs[wid].onCommand('includePossibleNOT');
                 }
             }
         }
@@ -722,6 +724,7 @@ class VisView extends React.Component {
     };
 
     onMouseWidgetUp = !this.props.context.runtime ? e => {
+        const widgetsRefs = this.widgetsRefs;
         e && e.stopPropagation();
         this.refView.current?.removeEventListener('mousemove', this.onMouseWidgetMove);
         window.document.removeEventListener('mouseup', this.onMouseWidgetUp);
@@ -729,51 +732,41 @@ class VisView extends React.Component {
         if (this.movement.moved) {
             // console.log('AAA', this.movement.x, this.movement.y, this.movement.startX, this.movement.startY, e.pageX, e.pageY);
             this.props.selectedWidgets.forEach(wid => {
-                if (this.widgetsRefs[wid]?.onMove) {
-                    this.widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true); // indicate end of movement
+                if (widgetsRefs[wid]?.onMove) {
+                    widgetsRefs[wid]?.onMove(this.movement.x, this.movement.y, true); // indicate end of movement
                 }
             });
         }
 
         // Indicate every widget about movement stop
-        Object.keys(this.widgetsRefs).forEach(_wid => {
-            if (this.widgetsRefs[_wid]?.onCommand) {
-                this.widgetsRefs[_wid].onCommand('stopMove');
+        Object.keys(widgetsRefs).forEach(_wid => {
+            if (widgetsRefs[_wid]?.onCommand) {
+                widgetsRefs[_wid].onCommand('stopMove');
             }
         });
 
         // if only one widget selected => check if it can be added to other widget
-        if (this.props.selectedWidgets.length === 1 && this.widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
-            for (const wid in this.widgetsRefs) {
+        if (this.props.selectedWidgets.length === 1 && widgetsRefs[this.props.selectedWidgets[0]]?.refService?.current) {
+            for (const wid in widgetsRefs) {
                 // do not add to itself
                 if (this.props.selectedWidgets.includes(wid) ||
-                    !this.widgetsRefs[wid] ||
-                    !this.widgetsRefs[wid].canHaveWidgets ||
-                    !this.widgetsRefs[wid].onCommand ||
-                    !this.widgetsRefs[wid].refService?.current
+                    !widgetsRefs[wid] ||
+                    !widgetsRefs[wid].canHaveWidgets ||
+                    !widgetsRefs[wid].onCommand ||
+                    !widgetsRefs[wid].refService?.current
                 ) {
                     continue;
                 }
-                const baseRect = this.widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
-                const rect = this.widgetsRefs[wid].refService.current.getBoundingClientRect();
+                const baseRect = widgetsRefs[this.props.selectedWidgets[0]].refService.current.getBoundingClientRect();
+                const rect = widgetsRefs[wid].refService.current.getBoundingClientRect();
                 // check if widget can have other widgets inside
                 if (baseRect.top >= rect.top &&
                     baseRect.left >= rect.left &&
                     baseRect.right <= rect.right &&
                     baseRect.bottom <= rect.bottom
                 ) {
-                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], wid, (_wid, toWid) => {
-                        if (this.widgetsRefs[toWid].onCommand('include', _wid)) {
-                            // if widget has included widgets => inform them about the new size or position
-                            const oWidget = this.props.context.views[this.props.view].widgets[toWid];
-                            const attrs = Object.keys(oWidget.data);
-                            attrs.forEach(attr => {
-                                if (attr.startsWith('widget') && oWidget.data[attr] && this.widgetsRefs[oWidget.data[attr]]?.onCommand) {
-                                    this.widgetsRefs[oWidget.data[attr]].onCommand('updatePosition');
-                                }
-                            });
-                        }
-                    });
+                    this.props.context.askAboutInclude(this.props.selectedWidgets[0], wid, (_wid, toWid) =>
+                        widgetsRefs[toWid].onCommand('include', _wid));
                 }
             }
         }
@@ -975,7 +968,7 @@ class VisView extends React.Component {
     }
 
     static getOneWidget(index, widget, options) {
-        // context, id, isRelative, refParent, registerRef, mouseDownOnView, view,
+        // context, id, isRelative, refParent, askView, mouseDownOnView, view,
         // relativeWidgetOrder, moveAllowed, editMode, multiView, ignoreMouseEvents, selectedGroup
         // viewsActiveFilter, customSettings, onIgnoreMouseEvents
         const Widget = VisWidgetsCatalog.rxWidgets[widget.tpl] || (VisWidgetsCatalog.allWidgetsList?.includes(widget.tpl) ? VisCanWidget : VisBaseWidget);
@@ -1514,7 +1507,7 @@ class VisView extends React.Component {
                         ignoreMouseEvents: this.ignoreMouseEvents,
                         onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                         refParent: this.props.selectedGroup ? this.refRelativeView : this.refView,
-                        registerRef: this.registerRef,
+                        askView: this.askView,
                         relativeWidgetOrder,
                         selectedGroup: this.props.selectedGroup,
                         selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
@@ -1537,7 +1530,7 @@ class VisView extends React.Component {
                             ignoreMouseEvents: this.ignoreMouseEvents,
                             onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                             refParent: this.props.selectedGroup ? this.refRelativeView : this.refRelativeColumnsView[column],
-                            registerRef: this.registerRef,
+                            askView: this.askView,
                             relativeWidgetOrder: this.props.selectedGroup ? relativeWidgetOrder : listRelativeWidgetsOrder,
                             selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,
                             selectedGroup: this.props.selectedGroup,
@@ -1580,7 +1573,7 @@ class VisView extends React.Component {
                         ignoreMouseEvents: this.ignoreMouseEvents,
                         onIgnoreMouseEvents: this.onIgnoreMouseEvents,
                         refParent: this.refView,
-                        registerRef: this.registerRef,
+                        askView: this.askView,
                         relativeWidgetOrder,
                         selectedGroup: this.props.selectedGroup,
                         selectedWidgets: this.movement?.selectedWidgetsWithRectangle || this.props.selectedWidgets,

@@ -251,7 +251,8 @@ class VisCanWidget extends VisBaseWidget {
 
     // this method may be not in form onCommand = command => {}
     onCommand(command, options) {
-        if (!super.onCommand(command, options)) {
+        const result = super.onCommand(command, options);
+        if (result === false) {
             if (command === 'updatePosition') {
                 // move by canJS widgets the name and overlapping div
                 if (this.refService.current && this.widDiv) {
@@ -347,7 +348,7 @@ class VisCanWidget extends VisBaseWidget {
             }
         }
 
-        return null;
+        return result;
     }
 
     componentDidUpdate(/* prevProps, prevState, snapshot */) {
@@ -1309,7 +1310,7 @@ class VisCanWidget extends VisBaseWidget {
                 console.log('Div not yet rendered');
             }
 
-            this.props.registerRef && this.props.registerRef({
+            this.props.askView && this.props.askView('register', {
                 id: wid,
                 winDiv: this.widDiv || null,
                 refService: this.refService,
@@ -1413,7 +1414,7 @@ class VisCanWidget extends VisBaseWidget {
                     editMode={false}
                     key={view}
                     ref={this.refViews[view]}
-                    registerRef={props.registerRef}
+                    askView={props.askView}
                     view={view}
                     visInWidget
                 />;

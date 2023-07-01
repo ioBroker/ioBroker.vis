@@ -219,6 +219,7 @@ Widget.propTypes = {
     marketplaceUpdates: PropTypes.array,
     marketplaceDeleted: PropTypes.array,
     uninstallWidget: PropTypes.func,
+    socket: PropTypes.object,
 };
 
 export default withStyles(styles)(Widget);

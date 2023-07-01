@@ -457,5 +457,9 @@
   "Move to new place": "Verhuizen naar nieuwe plek",
   "Should it be moved to new place?": "Moet het naar een nieuwe plek worden verplaatst?",
   "Usage of widget %s": "Gebruik van widget %s",
-  "This widget is already used in \"%s\"": "Deze widget wordt al gebruikt in \"%s\""
+  "This widget is already used in \"%s\"": "Deze widget wordt al gebruikt in \"%s\"",
+  "orientation": "oriëntatie",
+  "horizontal": "horizontaal",
+  "vertical": "verticaal",
+  "flexible": "flexibel"
 }

@@ -103,7 +103,7 @@ class VisBaseWidget extends React.Component {
 
     componentDidMount() {
         // register service ref by view for resize and move only in edit mode
-        this.props.registerRef && this.props.registerRef({
+        this.props.askView && this.props.askView('register', {
             id: this.props.id,
             uuid: this.uuid,
             widDiv: this.widDiv,
@@ -120,7 +120,7 @@ class VisBaseWidget extends React.Component {
         this.updateInterval = null;
 
         // delete service ref from view only in edit mode
-        this.props.registerRef && this.props.registerRef({ id: this.props.id, uuid: this.uuid, remove: true });
+        this.props.askView && this.props.askView('unregister', { id: this.props.id, uuid: this.uuid });
         if (this.shadowDiv) {
             this.shadowDiv.remove();
             this.shadowDiv = null;
@@ -1691,7 +1691,7 @@ class VisBaseWidget extends React.Component {
             style.overflow = 'visible';
         }
 
-        // if multi-view widget and it is not "can", dim it in edit mode
+        // if multi-view widget and it is not "canJS", dim it in edit mode
         if (!this.isCanWidget && this.state.multiViewWidget && this.state.editMode) {
             if (style.opacity === undefined || style.opacity === null || style.opacity > 0.5) {
                 style.opacity = 0.5;

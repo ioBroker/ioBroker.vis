@@ -457,5 +457,9 @@
   "Move to new place": "Переехать на новое место",
   "Should it be moved to new place?": "Стоит ли его перенести на новое место?",
   "Usage of widget %s": "Использование виджета %s",
-  "This widget is already used in \"%s\"": "Этот виджет уже используется в \"%s\""
+  "This widget is already used in \"%s\"": "Этот виджет уже используется в \"%s\"",
+  "orientation": "Ориентация",
+  "horizontal": "горизонтальный",
+  "vertical": "вертикальный",
+  "flexible": "гибкий"
 }
