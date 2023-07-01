@@ -14,7 +14,7 @@
         "@mui/material": "^5.13.6",
         "@mui/styles": "^5.13.2",
         "@sentry/browser": "^7.56.0",
-        "@sentry/integrations": "^7.56.0",
+        "@sentry/integrations": "^7.57.0",
         "ace-builds": "^1.23.1",
         "craco-module-federation": "^1.1.0",
         "echarts": "^5.4.2",
