@@ -1,9 +1,9 @@
 {
     "common": {
         "name": "vis",
-        "version": "2.1.1",
+        "version": "2.1.2",
         "news": {
-            "2.1.1": {
+            "2.1.2": {
                 "en": "Allowed to add widgets to widgets",
                 "de": "Erlaubt, Widgets zu Widgets hinzuzufügen",
                 "ru": "Разрешено добавлять виджеты в виджеты",
