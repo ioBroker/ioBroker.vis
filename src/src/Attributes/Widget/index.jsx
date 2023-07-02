@@ -789,7 +789,7 @@ const Widget = props => {
             }
         });
         props.changeProject(project);
-    }, [props.project]);
+    }, [props.project, fields]);
 
     if (!widgets) {
         return null;
