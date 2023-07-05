@@ -24,6 +24,7 @@ import {
     Code as CodeIcon,
     Info as InfoIcon,
     Delete,
+    Add,
 } from '@mui/icons-material';
 
 import { I18n, Utils } from '@iobroker/adapter-react-v5';
@@ -59,6 +60,10 @@ const styles = theme => ({
     },
     checkBox: {
         marginTop: '-4px !important',
+    },
+    emptyMoreIcon: {
+        width: 24,
+        height: 24,
     },
     fieldTitle: {
         width: 140,
@@ -754,6 +759,30 @@ const Widget = props => {
                 props.changeProject(project);
             }
             return;
+        } else if (direction === true) {
+            const newAccordionOpen = { ...accordionOpen };
+            const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
+            // add one line
+            const newIndex = lastGroup.index + 1;
+            props.selectedWidgets.forEach(wid => {
+                // order all attributes for better readability
+                const widgetData = _widgets[wid].data;
+
+                lastGroup.fields.forEach((attr, i) => {
+                    const name = lastGroup.fields[i].name.replace(/\d?\d+$/, newIndex);
+                    widgetData[name] = null;
+                });
+
+                // enable group-used flag
+                widgetData[`g_${iterable.group}-${newIndex}`] = true;
+
+                // enable the opened flag
+                newAccordionOpen[`${iterable.group}-${newIndex}`] = true;
+                widgetData[iterable.indexTo] = newIndex;
+                setAccordionOpen(newAccordionOpen);
+                props.changeProject(project);
+            });
+            return;
         }
 
         const newIndex = index + direction;
@@ -967,7 +996,7 @@ const Widget = props => {
                             expanded: props.classes.clearPadding,
                             expandIcon: props.classes.clearPadding,
                         }}
-                        expandIcon={group.hasValues ? <ExpandMoreIcon /> : null}
+                        expandIcon={group.hasValues ? <ExpandMoreIcon /> : <div className={props.classes.emptyMoreIcon} />}
                     >
                         <div
                             style={{
@@ -1007,7 +1036,16 @@ const Widget = props => {
                                         </IconButton>
                                     </Tooltip>}
                                 {group.iterable.isLast ?
-                                    <div className={props.classes.groupButton} /> :
+                                    (group.iterable.indexTo ? <Tooltip title={I18n.t('Add')}>
+                                        <IconButton
+                                            className={props.classes.groupButton}
+                                            size="small"
+                                            onClick={e => onGroupMove(e, group.index, group.iterable, true)}
+                                        >
+                                            <Add />
+                                        </IconButton>
+                                    </Tooltip> : <div className={props.classes.groupButton} />)
+                                    :
                                     <Tooltip title={I18n.t('Move down')}>
                                         <IconButton
                                             className={props.classes.groupButton}
