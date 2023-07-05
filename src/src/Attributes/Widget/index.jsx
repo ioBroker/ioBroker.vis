@@ -759,7 +759,8 @@ const Widget = props => {
                 props.changeProject(project);
             }
             return;
-        } else if (direction === true) {
+        }
+        if (direction === true) {
             const newAccordionOpen = { ...accordionOpen };
             const lastGroup = fields.find(f => f.singleName  === iterable.group && f.iterable?.isLast);
             // add one line

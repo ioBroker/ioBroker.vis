@@ -29,7 +29,7 @@ const VisContextMenu = props => {
     const [importDialog, setImportDialog] = useState(false);
 
     if (!props.project[props.selectedView]) {
-        return;
+        return null;
     }
 
     const menuItemsData = menuPosition => {
