@@ -461,5 +461,7 @@
   "orientation": "Orientação",
   "horizontal": "horizontal",
   "vertical": "vertical",
-  "flexible": "flexível"
+  "flexible": "flexível",
+  "Move down": "Mover para baixo",
+  "Move up": "Subir"
 }

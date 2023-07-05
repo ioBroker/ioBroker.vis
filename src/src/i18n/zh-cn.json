@@ -461,5 +461,7 @@
   "orientation": "方向",
   "horizontal": "水平的",
   "vertical": "垂直的",
-  "flexible": "灵活的"
+  "flexible": "灵活的",
+  "Move down": "下移",
+  "Move up": "提升"
 }

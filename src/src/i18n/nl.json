@@ -461,5 +461,7 @@
   "orientation": "oriëntatie",
   "horizontal": "horizontaal",
   "vertical": "verticaal",
-  "flexible": "flexibel"
+  "flexible": "flexibel",
+  "Move down": "Naar beneden verplaatsen",
+  "Move up": "Ga omhoog"
 }
